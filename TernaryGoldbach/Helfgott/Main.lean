@@ -5,7 +5,7 @@ import TernaryGoldbach.Helfgott.Numerics
 # Assembling Helfgott's proof
 
 This file derives the ternary Goldbach conjecture from the inputs in
-`TernaryGoldbach.Helfgott.Inputs`.  It contains no `sorry`; the proof depends on the five
+`TernaryGoldbach.Helfgott.Inputs`.  It contains no `sorry`; the proof depends on the
 remaining `sorry`s in that file and nothing else (check with `#print axioms ternary_goldbach`).
 
 The argument follows [H, §7.4]:
@@ -82,7 +82,7 @@ namespace TernaryGoldbach
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5`
 is a sum of three primes.
 
-This depends on the five literature inputs in `TernaryGoldbach.Helfgott.Inputs`, which are
+This depends on the literature inputs in `TernaryGoldbach.Helfgott.Inputs`, which are
 still `sorry`. -/
 theorem ternary_goldbach : Statement :=
   statement_of_upTo_of_from

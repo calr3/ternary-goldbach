@@ -4,5 +4,6 @@ import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay
+import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Main
