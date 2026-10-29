@@ -28,6 +28,8 @@ No other file contains one.
 | `Helfgott/SupNorms.lean` | easy sup bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` | ✅ |
 | `Helfgott/Chebyshev.lean` | elementary `θ(N) ≤ N log 4`, `ψ(N) − θ(N) ≤ 1.6√N`, `ψ(N) ≤ 1.387 N` (for `N ≥ 10²⁷`) | ✅ |
 | `Helfgott/Numerics.lean` | the final inequality of [H, §7.4], `C·N^{3/2} log N < 0.084339 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 10⁷` we actually use | ✅ |
+| `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
+| `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 
@@ -41,7 +43,8 @@ References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arX
    This uses explicit formulas for Dirichlet L-functions and Platt's rigorous GRH verification
    for moduli up to 300000.
 3. `minor_arcs_input`: [H, (7.48)], `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`. This uses Vaughan's
-   identity, explicit bilinear bounds, and the large sieve.
+   identity, explicit bilinear bounds, and the large sieve. Vaughan's identity and a (non-sharp)
+   large sieve are now proved in `MinorArcs/`, but they aren't yet connected to this input.
 4. ~~`nonprime_input`~~ **proved**, a weaker form of [H, (7.50)] with constant `10⁷` in place of
    `7.3306`. Helfgott's sharp inputs (`|η₊| ≤ 1.079955`, `|η_*| ≤ 1.414`, and Rosser–Schoenfeld)
    are replaced by easy ones: `|η₊| ≤ 400`, `|η_*| ≤ 6.2`, `ψ(N) ≤ 1.387 N`,

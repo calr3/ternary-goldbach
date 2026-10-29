@@ -9,3 +9,5 @@ import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Main
+import TernaryGoldbach.MinorArcs.Vaughan
+import TernaryGoldbach.MinorArcs.LargeSieve
