@@ -14,8 +14,13 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-All four `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
-No other file contains one.
+The four `sorry`s that `ternary_goldbach` depends on are all in
+[`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
+
+Files under `TernaryGoldbach/MinorArcs/` named in `BLUEPRINT.md` as *blueprint nodes*
+(`TypeI.lean`, `PointwiseBound.lean`) also contain `sorry`s. They are statements of intermediate
+results from the book, waiting to be proved, and `ternary_goldbach` does not depend on them
+(check with `#print axioms`).
 
 ## Layout
 
@@ -32,6 +37,9 @@ No other file contains one.
 | `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < 0.048779 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
+| `Helfgott/Eta2.lean` | explicit formulas for `η₂`, and `|η₂|₁ = 1` | ✅ |
+| `MinorArcs/TypeI.lean` | blueprint: [B, Lemmas 4.1.1–4.1.3, 4.2.2–4.2.4] (Type I sums), facts about `η₂` | 🟡 statements (`eta2_L1` proved) |
+| `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 

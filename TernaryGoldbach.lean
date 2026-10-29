@@ -4,6 +4,7 @@ import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay
+import TernaryGoldbach.Helfgott.Eta2
 import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
@@ -11,3 +12,5 @@ import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Main
 import TernaryGoldbach.MinorArcs.Vaughan
 import TernaryGoldbach.MinorArcs.LargeSieve
+import TernaryGoldbach.MinorArcs.TypeI
+import TernaryGoldbach.MinorArcs.PointwiseBound

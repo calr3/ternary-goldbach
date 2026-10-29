@@ -27,8 +27,11 @@ statements, each with its own `sorry`.
  └─ Thm 13.2.1  (minor-arc total: ℓ² over arcs × ℓ∞ bounds)
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds)
      ├─ Thm 3.1.1  (pointwise: |S_{η₂}(α,x)| for α = a/q + δ/x, x ≥ 2.16·10²⁰)   ← Part I
+     │   [stated: MinorArcs/PointwiseBound.lean `theorem_3_1_1`]
      │   ├─ Ch 3.3  Vaughan's identity (✅ MinorArcs/Vaughan.lean), alternative route
      │   ├─ Ch 4  Type I sums: trigonometric sums (§4.1), Type I estimates (§4.2)
+     │   │   [stated: MinorArcs/TypeI.lean — Lemmas 4.1.1–4.1.3, 4.2.2–4.2.4 (for η = η₂);
+     │   │    η₂ facts: |η₂|₁ = 1 ✅, |η̂₂''|_∞ ≤ 31.521 (App. B, rigorous computation)]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*)
