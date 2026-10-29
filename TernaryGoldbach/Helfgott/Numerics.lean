@@ -66,10 +66,10 @@ theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
   linarith
 
 /-- The final inequality with the cruder constant that comes from the easy sup-norm bounds
-(`Helfgott/SupNorms.lean`): for `N ≥ 10²⁷`,
-`4.41 · 10⁶ · N^{3/2} log N < (1.058259 - 0.97392) x²/κ`. -/
+(`Helfgott/SupNorms.lean`) and elementary Chebyshev bounds (`Helfgott/Chebyshev.lean`): for `N ≥ 10²⁷`,
+`10⁷ · N^{3/2} log N < (1.058259 - 0.97392) x²/κ`. -/
 theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
-    4.41e6 * (N * √N) * Real.log N < (1.058259 - 0.97392) * xOf N ^ 2 / κ := by
+    1e7 * (N * √N) * Real.log N < (1.058259 - 0.97392) * xOf N ^ 2 / κ := by
   obtain ⟨hc0, hc1⟩ := xOf_denom_bounds
   set c := 2 + 9 / (196 * √(2 * Real.pi)) with hc
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN
@@ -102,7 +102,7 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
   rw [hx, hlog, ← hu8, ← hu16]
   have hc2 : c ^ 2 ≤ 4.0804 := by nlinarith [mul_le_mul hc1 hc1 hc0.le (by norm_num)]
   have hc2' : 0 < c ^ 2 := by positivity
-  have lhs : 4.41e6 * (u ^ 16 * u ^ 8) * (16 * Real.log u) ≤ 7.056e7 * u ^ 25 := by
+  have lhs : 1e7 * (u ^ 16 * u ^ 8) * (16 * Real.log u) ≤ 1.6e8 * u ^ 25 := by
     have : u ^ 16 * u ^ 8 * Real.log u ≤ u ^ 16 * u ^ 8 * u :=
       mul_le_mul_of_nonneg_left hlogu (by positivity)
     nlinarith
@@ -114,7 +114,7 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
     calc 0.084339 * u ^ 32 / (4.0804 * 49) = (1.058259 - 0.97392) * (u ^ 32 / 4.0804) / 49 := by
           ring
       _ ≤ _ := by gcongr
-  have key : 7.056e7 * u ^ 25 < 0.084339 * u ^ 32 / (4.0804 * 49) := by
+  have key : 1.6e8 * u ^ 25 < 0.084339 * u ^ 32 / (4.0804 * 49) := by
     have h25 : 0 < u ^ 25 := by positivity
     have h7 : (48 : ℝ) ^ 7 ≤ u ^ 7 := pow_le_pow_left₀ (by norm_num) hu48 7
     rw [show u ^ 32 = u ^ 7 * u ^ 25 by ring, lt_div_iff₀ (by norm_num)]

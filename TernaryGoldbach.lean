@@ -6,5 +6,6 @@ import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay
 import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
+import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Main

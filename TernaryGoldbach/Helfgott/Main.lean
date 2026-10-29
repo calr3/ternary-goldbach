@@ -12,7 +12,7 @@ The argument follows [H, §7.4]:
 
 1. the weighted count equals `∫ = ∫_𝔐 + ∫_𝔪`;
 2. `Re ∫_𝔐 ≥ 1.058259 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`;
-3. so the count restricted to odd primes is `≥ 0.084339 x²/κ - 4.41·10⁶ N^{3/2} log N > 0`;
+3. so the count restricted to odd primes is `≥ 0.084339 x²/κ - 10⁷ N^{3/2} log N > 0`;
 4. a positive count over primes gives a representation;
 5. the cases `N < 10²⁷` follow from the ladder reduction (`ternaryUpTo_of_ladder`).
 -/

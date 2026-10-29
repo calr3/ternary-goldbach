@@ -2,6 +2,7 @@ import TernaryGoldbach.Helfgott.Decay
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
+import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Reduction
 
 /-!
@@ -18,8 +19,6 @@ way these inputs combine into the ternary Goldbach conjecture) is proved in Lean
        up to 8.875 · 10³⁰*, Experiment. Math. 22 (2013).
 [OeSHP] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even
        Goldbach conjecture and computation of prime gaps up to 4 · 10¹⁸*, Math. Comp. 83 (2014).
-[RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,
-       Illinois J. Math. 6 (1962).
 -/
 
 open Complex MeasureTheory ArithmeticFunction
@@ -74,33 +73,25 @@ theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 0.97392 * xOf N ^ 2 / κ := by
   sorry
 
-/-! ## Inputs to the non-prime bound [H, (7.50)] -/
-
-/-- **Rosser–Schoenfeld** [RS62, Thm. 12]: `ψ(x) < 1.03883 x` for `x > 0`. -/
-theorem psi_le_input (N : ℕ) (hN : 1 ≤ N) : psi N ≤ 1.03883 * N := by
-  sorry
-
-/-- **Rosser–Schoenfeld** [RS62, Thm. 13]: `ψ(x) - θ(x) < 1.4262 √x` for `x > 0`. -/
-theorem psi_sub_theta_le_input (N : ℕ) (hN : 1 ≤ N) : psi N - theta N ≤ 1.4262 * √N := by
-  sorry
-
 /-- **Non-prime and even terms**, a weaker form of [H, (7.50)]: the terms where some `nᵢ` is
-even or not prime contribute at most `4.41 · 10⁶ · N^{3/2} log N`.
+even or not prime contribute at most `10⁷ · N^{3/2} log N`.
 
 [H] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
-`|η_*|_∞ ≤ 1.414`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
-(`Helfgott/SupNorms.lean`) instead; the final inequality still has plenty of room
+`|η_*|_∞ ≤ 1.414` and the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x`,
+`ψ(x) - θ(x) < 1.4262 √x`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
+(`Helfgott/SupNorms.lean`) and the elementary `ψ(N) ≤ 1.387 N`, `ψ(N) - θ(N) ≤ 1.6 √N`
+(`Helfgott/Chebyshev.lean`) instead; the final inequality still has room
 (`final_inequality_crude`).
 
-*Proved* from the Rosser–Schoenfeld bounds above via `repSum_sub_le_of_bounds`. -/
+*Proved.* -/
 theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N ≤
-      4.41e6 * (N * √N) * Real.log N := by
+      1e7 * (N * √N) * Real.log N := by
   have hN : 1 ≤ N := le_trans (by norm_num) hN27
   have h := repSum_sub_le_of_bounds hN (fun t ht => abs_etaPlus_le_400 ht)
     (fun t _ => abs_etaStar_le_const t)
-  have hpsi := psi_le_input N hN
-  have hpt := psi_sub_theta_le_input N hN
+  have hpsi := psi_le N hN27
+  have hpt := psi_sub_theta_le N hN27
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
   have hsq : (10 : ℝ) ^ 13 ≤ √N := Real.le_sqrt_of_sq_le (by nlinarith)
   have hlog2 : Real.log 2 ≤ 0.0001 * √N := by
@@ -112,10 +103,10 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
   have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
   calc repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N
       ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (psi N - theta N + Real.log 2) * psi N := h
-    _ ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (1.4263 * √N) * (1.03883 * N) := by
+    _ ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (1.6001 * √N) * (1.387 * N) := by
         gcongr; linarith
-    _ = (3 * (400 ^ 2 * 6.2) * 1.4263 * 1.03883) * (N * √N) * Real.log N := by ring
-    _ ≤ 4.41e6 * (N * √N) * Real.log N := by gcongr; norm_num
+    _ = (3 * (400 ^ 2 * 6.2) * 1.6001 * 1.387) * (N * √N) * Real.log N := by ring
+    _ ≤ 1e7 * (N * √N) * Real.log N := by gcongr; norm_num
 
 /-! ## Computational inputs (for the small cases) -/
 
