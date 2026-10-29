@@ -1,4 +1,5 @@
 import TernaryGoldbach.Helfgott.Eta2
+import TernaryGoldbach.MinorArcs.TrigSums
 
 /-!
 # Type I sums [B, Ch. 4] — blueprint statements
@@ -101,16 +102,12 @@ theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ �
 
 /-! ## §4.1 Trigonometric sums -/
 
-/-- `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q` [B, Lemmas 4.1.1–4.1.3]. -/
-def Approx (α : ℝ) (a : ℤ) (q : ℕ) (Q : ℝ) : Prop :=
-  1 ≤ q ∧ IsCoprime a (q : ℤ) ∧ ∃ β : ℝ, |β| ≤ 1 ∧ α = a / q + β / (q * Q) ∧ (q : ℝ) ≤ Q
-
-/-- **[B, Lemma 4.1.1]** -/
-theorem lemma_4_1_1 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
+/-- **[B, Lemma 4.1.1]**, proved in `MinorArcs/TrigSums.lean` (`TernaryGoldbach.MinorArcs.lemma_4_1_1`). -/
+example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
     ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, min A (C / Real.sin (π * α * n) ^ 2) ≤
-      min (2 * A + 6 * q ^ 2 / π ^ 2 * C) (3 * A + 4 * q / π * √(A * C)) := by
-  sorry
+      min (2 * A + 6 * q ^ 2 / π ^ 2 * C) (3 * A + 4 * q / π * √(A * C)) :=
+  lemma_4_1_1 h y hA hC
 
 open Classical in
 /-- **[B, Lemma 4.1.2]** -/
