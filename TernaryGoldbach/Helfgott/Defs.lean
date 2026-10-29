@@ -4,8 +4,10 @@ import TernaryGoldbach.CircleMethod
 # Helfgott's objects
 
 Definitions of the smoothing functions, exponential sums and major arcs used in the final
-section of H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748
-(cited below as [H]; equation numbers refer to that paper).
+chapter of H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B] (the book
+version, which supersedes the papers).  Equation numbers `[H, (…)]` below refer to the earlier
+paper arXiv:1312.7748, whose definitions agree with [B]: see [B, (7.4)–(7.6), (10.5), (11.10),
+(14.15)].
 
 [H, §7] works with
 

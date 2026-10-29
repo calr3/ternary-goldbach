@@ -11,8 +11,8 @@ remaining `sorry`s in that file and nothing else (check with `#print axioms tern
 The argument follows [H, §7.4]:
 
 1. the weighted count equals `∫ = ∫_𝔐 + ∫_𝔪`;
-2. `Re ∫_𝔐 ≥ 1.058259 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`;
-3. so the count restricted to odd primes is `≥ 0.084339 x²/κ - 10⁷ N^{3/2} log N > 0`;
+2. `Re ∫_𝔐 ≥ 1.058259 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.00948 x²/κ`;
+3. so the count restricted to odd primes is `≥ 0.048779 x²/κ - 6.7·10⁶ N^{3/2} log N > 0`;
 4. a positive count over primes gives a representation;
 5. the cases `N < 10²⁷` follow from the ladder reduction (`ternaryUpTo_of_ladder`).
 -/
@@ -21,16 +21,16 @@ open Complex MeasureTheory ArithmeticFunction
 
 namespace TernaryGoldbach.Helfgott
 
-/-- Steps 1–2: the full weighted count is at least `(1.058259 - 0.97392) x²/κ`. -/
+/-- Steps 1–2: the full weighted count is at least `(1.058259 - 1.00948) x²/κ`. -/
 theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
-    (1.058259 - 0.97392) * xOf N ^ 2 / κ ≤ repSum (fun _ => True) N := by
+    (1.058259 - 1.00948) * xOf N ^ 2 / κ ≤ repSum (fun _ => True) N := by
   set M := majorArcs 8 r₀ (xOf N)
   obtain ⟨hint, hid⟩ := circle_identity_input N (by omega)
   have hsplit := integral_inter_add_diff (measurableSet_majorArcs 8 r₀ (xOf N)) hint
   have hmaj := major_arcs_input N hN hN27
   have hmin := minor_arcs_input N hN27
   -- The minor arc contribution is bounded by the integral of the norm.
-  have hnorm : ‖∫ α in Set.Ioc (0:ℝ) 1 \ M, integrand N α‖ ≤ 0.97392 * xOf N ^ 2 / κ := by
+  have hnorm : ‖∫ α in Set.Ioc (0:ℝ) 1 \ M, integrand N α‖ ≤ 1.00948 * xOf N ^ 2 / κ := by
     refine (norm_integral_le_integral_norm _).trans (le_of_eq_of_le ?_ hmin)
     refine setIntegral_congr_fun (measurableSet_Ioc.diff (measurableSet_majorArcs _ _ _)) ?_
     intro α _

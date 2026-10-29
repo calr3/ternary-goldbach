@@ -12,6 +12,8 @@ $ echo 'import TernaryGoldbach
 'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
 ```
 
+See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
+
 All four `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
 No other file contains one.
 
@@ -27,7 +29,7 @@ No other file contains one.
 | `Helfgott/NonPrime.lean` | [H, (7.50)] from sup bounds on η₊, η_* and bounds on ψ, ψ − θ (constants as parameters) | ✅ |
 | `Helfgott/SupNorms.lean` | easy sup bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` | ✅ |
 | `Helfgott/Chebyshev.lean` | elementary `θ(N) ≤ N log 4`, `ψ(N) − θ(N) ≤ 1.6√N`, `ψ(N) ≤ 1.387 N` (for `N ≥ 10²⁷`) | ✅ |
-| `Helfgott/Numerics.lean` | the final inequality of [H, §7.4], `C·N^{3/2} log N < 0.084339 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 10⁷` we actually use | ✅ |
+| `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < 0.048779 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
@@ -35,17 +37,20 @@ No other file contains one.
 
 ## The inputs
 
-References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748 [H].
+The blueprint follows Helfgott's book *The ternary Goldbach problem*, arXiv:1501.05438v2 [B],
+which supersedes the papers (arXiv:1205.5252, 1305.2897, 1312.7748 [H]). Its definitions and
+constants match [H], with one exception: the corrected minor-arc bound is `1.00948 x²/κ` [B,
+(14.49)] rather than `0.97392 x²/κ` [H, (7.48)], so the final margin is `0.04877 x²/κ`.
 
 1. ~~`circle_identity_input`~~ **proved**: [H, (3.3)/(7.49)] for the infinite smoothed sums,
    from `circle_identity_tsum` and the decay bounds in `Helfgott/Decay.lean`.
-2. `major_arcs_input`: [H, (7.25)], `∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.058259 x²/κ`.
+2. `major_arcs_input`: [B, (14.27)], `∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.058259 x²/κ`.
    This uses explicit formulas for Dirichlet L-functions and Platt's rigorous GRH verification
    for moduli up to 300000.
-3. `minor_arcs_input`: [H, (7.48)], `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`. This uses Vaughan's
+3. `minor_arcs_input`: [B, (14.49)], `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.00948 x²/κ`. This uses Vaughan's
    identity, explicit bilinear bounds, and the large sieve. Vaughan's identity and a (non-sharp)
    large sieve are now proved in `MinorArcs/`, but they aren't yet connected to this input.
-4. ~~`nonprime_input`~~ **proved**, a weaker form of [H, (7.50)] with constant `10⁷` in place of
+4. ~~`nonprime_input`~~ **proved**, a weaker form of [B, (14.51)] with constant `6.7·10⁶` in place of
    `7.3306`. Helfgott's sharp inputs (`|η₊| ≤ 1.079955`, `|η_*| ≤ 1.414`, and Rosser–Schoenfeld)
    are replaced by easy ones: `|η₊| ≤ 400`, `|η_*| ≤ 6.2`, `ψ(N) ≤ 1.387 N`,
    `ψ(N) − θ(N) ≤ 1.6√N`. The final inequality still has room.
@@ -54,9 +59,9 @@ References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arX
 
 ## Caveats
 
-* The definitions in `Helfgott/Defs.lean` were transcribed from the text of arXiv:1312.7748
-  and should be checked against the paper before anyone invests effort in proving inputs 2–4.
-  In particular, §7 of the extracted text writes `η₁ = 2·I[−1/2,1/2]`, while (4.10) gives
-  `η₂(t) = 4 max(log 2 − |log 2t|, 0)` (= `(2·I[1/2,1]) *_M (2·I[1/2,1])`). We used (4.10).
+* The definitions in `Helfgott/Defs.lean` were transcribed from extracted PDF text and
+  cross-checked against [B] (η₁ = 2·1_{[1/2,1]}, η₂ as in [B, (11.10)], η₊ as in [B, (7.4)–(7.6)]
+  with `H = 200`, major arcs [B, (10.5)]). A numerical check gives `max |η₊| ≈ 1.0000` and
+  `max |η_*| ≈ 1.2267`, consistent with [B, (14.3), (14.21)].
 * Helfgott works on `ℝ/ℤ`; here it's `(0, 1]` with the major arcs lifted periodically to `ℝ`.
 * Toolchain: Lean `v4.15.0`, Mathlib `v4.15.0`.

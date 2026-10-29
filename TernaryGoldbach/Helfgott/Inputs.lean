@@ -12,6 +12,9 @@ import TernaryGoldbach.Reduction
 stated as precisely as we could, with a pointer to where it is proved.  Everything else (the
 way these inputs combine into the ternary Goldbach conjecture) is proved in Lean.
 
+[B]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
+       version, which supersedes [H], [Hela], [Helb].  **This is the reference the blueprint
+       follows**; equation numbers below are the book's.
 [H]    H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748.
 [Hela] H. A. Helfgott, *Major arcs for Goldbach's problem*, arXiv:1305.2897.
 [Helb] H. A. Helfgott, *Minor arcs for Goldbach's problem*, arXiv:1205.5252.
@@ -27,7 +30,7 @@ namespace TernaryGoldbach.Helfgott
 
 /-! ## Analytic inputs (for odd `N ≥ 10²⁷`, with `x = xOf N`) -/
 
-/-- **Circle method identity** [H, (3.3), (7.49)].  The sums `S_{η₊}`, `S_{η_*}` converge
+/-- **Circle method identity** [B, (10.3), (14.50)].  The sums `S_{η₊}`, `S_{η_*}` converge
 absolutely because `η₊` and `η_*` decay rapidly (`TernaryGoldbach.Helfgott.Decay`), and the
 integral over `[0, 1]` picks out the representations of `N` (`circle_identity_tsum`).
 
@@ -51,32 +54,33 @@ theorem circle_identity_input (N : ℕ) (hN : 0 < N) :
     Finset.sum_congr rfl fun _ _ => ?_
   split_ifs <;> ring
 
-/-- **Major arcs** [H, (7.25)]:
+/-- **Major arcs** [B, (14.27)]:
 `∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.058259 x²/κ` with `r₀ = 150000`.
 
-*Proof in the literature:* [H, §§3, 7.1–7.2] and [Hela].  This relies on Platt's rigorous
-computer verification of GRH for Dirichlet `L`-functions of modulus `q ≤ 300000` up to a
-bounded height. -/
+*Proof in the literature:* [B, Part II (Chs. 7–9), Ch. 10, §§14.1–14.2]; formerly [H, (7.25)]
+and [Hela].  This relies on Platt's rigorous computer verification of GRH for Dirichlet
+`L`-functions of modulus `q ≤ 300000` up to a bounded height [B, §9.6]. -/
 theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     1.058259 * xOf N ^ 2 / κ ≤
       (∫ α in Set.Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ (xOf N), integrand N α).re := by
   sorry
 
-/-- **Minor arcs** [H, (7.48)]:
-`∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 0.97392 x²/κ` for `x ≥ 4.9 · 10²⁶`
-(true for `x = xOf N` when `N ≥ 10²⁷`, [H, (7.15)]).
+/-- **Minor arcs** [B, (14.49)]:
+`∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.00948 x²/κ` for `x ≥ 4.9 · 10²⁶`
+(true for `x = xOf N` when `N ≥ 10²⁷`, [B, (14.15)]).
 
-*Proof in the literature:* [H, §§5–7.3] (Theorem 6.3 there), building on [Helb]: Vaughan's
-identity, explicit bilinear sum bounds, and the large sieve. -/
+*Proof in the literature:* [B, Part I (Chs. 3–6), Chs. 12–13, §14.3] (Theorem 13.2.1 there):
+Vaughan's identity, Type I and Type II sums, and the large sieve for primes.  (The paper
+version [H, (7.48)] had `0.97392`; the book's corrected bound is `1.00948`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
-        ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 0.97392 * xOf N ^ 2 / κ := by
+        ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.00948 * xOf N ^ 2 / κ := by
   sorry
 
-/-- **Non-prime and even terms**, a weaker form of [H, (7.50)]: the terms where some `nᵢ` is
-even or not prime contribute at most `10⁷ · N^{3/2} log N`.
+/-- **Non-prime and even terms**, a weaker form of [B, (14.51)]: the terms where some `nᵢ` is
+even or not prime contribute at most `6.7 · 10⁶ · N^{3/2} log N`.
 
-[H] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
+[B] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
 `|η_*|_∞ ≤ 1.414` and the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x`,
 `ψ(x) - θ(x) < 1.4262 √x`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
 (`Helfgott/SupNorms.lean`) and the elementary `ψ(N) ≤ 1.387 N`, `ψ(N) - θ(N) ≤ 1.6 √N`
@@ -86,7 +90,7 @@ even or not prime contribute at most `10⁷ · N^{3/2} log N`.
 *Proved.* -/
 theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N ≤
-      1e7 * (N * √N) * Real.log N := by
+      6.7e6 * (N * √N) * Real.log N := by
   have hN : 1 ≤ N := le_trans (by norm_num) hN27
   have h := repSum_sub_le_of_bounds hN (fun t ht => abs_etaPlus_le_400 ht)
     (fun t _ => abs_etaStar_le_const t)
@@ -106,7 +110,7 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     _ ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (1.6001 * √N) * (1.387 * N) := by
         gcongr; linarith
     _ = (3 * (400 ^ 2 * 6.2) * 1.6001 * 1.387) * (N * √N) * Real.log N := by ring
-    _ ≤ 1e7 * (N * √N) * Real.log N := by gcongr; norm_num
+    _ ≤ 6.7e6 * (N * √N) * Real.log N := by gcongr; norm_num
 
 /-! ## Computational inputs (for the small cases) -/
 
