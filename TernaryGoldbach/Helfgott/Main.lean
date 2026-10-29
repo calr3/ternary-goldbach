@@ -5,8 +5,8 @@ import TernaryGoldbach.Helfgott.Numerics
 # Assembling Helfgott's proof
 
 This file derives the ternary Goldbach conjecture from the inputs in
-`TernaryGoldbach.Helfgott.Inputs`.  It contains no `sorry`; the proof depends on the six
-`sorry`s in that file and nothing else (check with `#print axioms ternary_goldbach`).
+`TernaryGoldbach.Helfgott.Inputs`.  It contains no `sorry`; the proof depends on the five
+remaining `sorry`s in that file and nothing else (check with `#print axioms ternary_goldbach`).
 
 The argument follows [H, §7.4]:
 
@@ -25,7 +25,7 @@ namespace TernaryGoldbach.Helfgott
 theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     (1.058259 - 0.97392) * xOf N ^ 2 / κ ≤ repSum (fun _ => True) N := by
   set M := majorArcs 8 r₀ (xOf N)
-  obtain ⟨hint, hid⟩ := circle_identity_input N
+  obtain ⟨hint, hid⟩ := circle_identity_input N (by omega)
   have hsplit := integral_inter_add_diff (measurableSet_majorArcs 8 r₀ (xOf N)) hint
   have hmaj := major_arcs_input N hN hN27
   have hmin := minor_arcs_input N hN27
@@ -82,7 +82,7 @@ namespace TernaryGoldbach
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5`
 is a sum of three primes.
 
-This depends on the six literature inputs in `TernaryGoldbach.Helfgott.Inputs`, which are
+This depends on the five literature inputs in `TernaryGoldbach.Helfgott.Inputs`, which are
 still `sorry`. -/
 theorem ternary_goldbach : Statement :=
   statement_of_upTo_of_from

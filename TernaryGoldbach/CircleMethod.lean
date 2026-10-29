@@ -11,7 +11,9 @@ For weights `a : ℕ → ℂ` supported on `[0, X]` let `S_a(α) = ∑_{n ≤ X}
 * `setIntegral_norm_mul_norm_expSum_le`: `∫₀¹ |S_b||S_c| ≤ ‖b‖₂ ‖c‖₂`;
 * `norm_integral_minor_le`: the minor arc contribution is `≤ (sup_𝔪 |S_a|) ‖b‖₂ ‖c‖₂`;
 * `isSumOfThreePrimes_of_circle`: if the major arcs contribute more than this minor arc
-  bound, and the weights are supported on primes, then `N` is a sum of three primes.
+  bound, and the weights are supported on primes, then `N` is a sum of three primes;
+* `circle_identity_tsum`: the circle method identity for absolutely summable (infinitely
+  supported) weights `T_a(α) = ∑' n, a(n) e(nα)`.
 
 All of this is proved, with no `sorry`.
 -/
@@ -290,5 +292,78 @@ theorem isSumOfThreePrimes_of_circle (X N : ℕ) (a b c : ℕ → ℂ)
   rw [add_re, zero_re] at hre
   have := neg_le_of_abs_le ((abs_re_le_abs _).trans (le_of_eq (Complex.norm_eq_abs _).symm) |>.trans hmin)
   linarith
+
+/-! ## Absolutely convergent exponential series -/
+
+/-- An absolutely convergent exponential series `T_a(α) = ∑ₙ a(n) e(nα)`. -/
+noncomputable def expTsum (a : ℕ → ℂ) (α : ℝ) : ℂ := ∑' n, a n * e (n * α)
+
+theorem norm_mul_e (z : ℂ) (t : ℝ) : ‖z * e t‖ = ‖z‖ := by
+  rw [norm_mul, norm_e, mul_one]
+
+theorem abs_e (t : ℝ) : Complex.abs (e t) = 1 := by
+  rw [← Complex.norm_eq_abs, norm_e]
+
+theorem continuous_expTsum {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖) :
+    Continuous (expTsum a) :=
+  continuous_tsum (fun _ => continuous_const.mul (continuous_e.comp
+    (continuous_const.mul continuous_id))) ha (fun _ _ => (norm_mul_e _ _).le)
+
+theorem setIntegral_const_mul_e_int (z : ℂ) (k : ℤ) :
+    ∫ α in Set.Ioc (0:ℝ) 1, z * e (k * α) = if k = 0 then z else 0 := by
+  rw [← intervalIntegral.integral_of_le zero_le_one, integral_const_mul_e_int]
+
+/-- **Circle method identity for absolutely convergent series.** -/
+theorem circle_identity_tsum (N : ℕ) {a b c : ℕ → ℂ} (ha : Summable fun n => ‖a n‖)
+    (hb : Summable fun n => ‖b n‖) (hc : Summable fun n => ‖c n‖) :
+    IntegrableOn (fun α => expTsum a α * expTsum b α * expTsum c α * e (-(N * α)))
+        (Set.Ioc 0 1) ∧
+      ∫ α in Set.Ioc (0:ℝ) 1, expTsum a α * expTsum b α * expTsum c α * e (-(N * α)) =
+        ∑ n₁ ∈ range (N + 1), ∑ n₂ ∈ range (N + 1), ∑ n₃ ∈ range (N + 1),
+          if n₁ + n₂ + n₃ = N then a n₁ * b n₂ * c n₃ else 0 := by
+  have hcont : Continuous fun α => expTsum a α * expTsum b α * expTsum c α * e (-(N * α)) :=
+    (((continuous_expTsum ha).mul (continuous_expTsum hb)).mul (continuous_expTsum hc)).mul
+      (continuous_e.comp (continuous_const.mul continuous_id).neg)
+  refine ⟨hcont.integrableOn_Ioc, ?_⟩
+  -- Summability of the coefficients of the triple product.
+  have hab : Summable fun z : ℕ × ℕ => ‖a z.1‖ * ‖b z.2‖ :=
+    summable_mul_of_summable_norm (f := fun n => ‖a n‖) (g := fun n => ‖b n‖)
+      (by simpa using ha) (by simpa using hb)
+  have habc : Summable fun t : (ℕ × ℕ) × ℕ => ‖a t.1.1‖ * ‖b t.1.2‖ * ‖c t.2‖ :=
+    summable_mul_of_summable_norm (f := fun z : ℕ × ℕ => ‖a z.1‖ * ‖b z.2‖)
+      (g := fun n => ‖c n‖) (by simpa using hab) (by simpa using hc)
+  set F : (ℕ × ℕ) × ℕ → ℝ → ℂ := fun t α =>
+    a t.1.1 * b t.1.2 * c t.2 * e (((t.1.1 + t.1.2 + t.2 : ℕ) - N : ℤ) * α)
+  have hF : ∀ α : ℝ, expTsum a α * expTsum b α * expTsum c α * e (-(N * α)) = ∑' t, F t α := by
+    intro α
+    have h1 : Summable fun n => ‖a n * e (n * α)‖ := by simpa [norm_mul, abs_e] using ha
+    have h2 : Summable fun n => ‖b n * e (n * α)‖ := by simpa [norm_mul, abs_e] using hb
+    have h3 : Summable fun n => ‖c n * e (n * α)‖ := by simpa [norm_mul, abs_e] using hc
+    have h12 : Summable fun z : ℕ × ℕ => ‖a z.1 * e (z.1 * α) * (b z.2 * e (z.2 * α))‖ := by
+      simpa [norm_mul, abs_e] using hab
+    rw [expTsum, expTsum, expTsum, tsum_mul_tsum_of_summable_norm h1 h2,
+      tsum_mul_tsum_of_summable_norm h12 h3, ← tsum_mul_right]
+    refine tsum_congr fun t => ?_
+    simp only [F]
+    have : (((t.1.1 + t.1.2 + t.2 : ℕ) - N : ℤ) : ℝ) * α =
+        t.1.1 * α + t.1.2 * α + t.2 * α + -(N * α) := by push_cast; ring
+    rw [this, e_add, e_add, e_add]
+    ring
+  simp_rw [hF]
+  have hFint : ∀ t, Integrable (F t) (volume.restrict (Set.Ioc (0:ℝ) 1)) := fun t =>
+    (continuous_const.mul (continuous_e.comp (continuous_const.mul continuous_id))).integrableOn_Ioc
+  have hFnorm : ∀ t, ∫ α in Set.Ioc (0:ℝ) 1, ‖F t α‖ = ‖a t.1.1‖ * ‖b t.1.2‖ * ‖c t.2‖ := by
+    intro t
+    simp [F, norm_mul, abs_e]
+  rw [← integral_tsum_of_summable_integral_norm hFint (by simpa only [hFnorm] using habc)]
+  simp only [F, setIntegral_const_mul_e_int, sub_eq_zero, Nat.cast_inj]
+  rw [tsum_eq_sum (s := (range (N + 1) ×ˢ range (N + 1)) ×ˢ range (N + 1))]
+  · rw [sum_product, sum_product]
+  · intro t ht
+    rw [if_neg]
+    intro h
+    apply ht
+    simp only [mem_product, mem_range]
+    omega
 
 end TernaryGoldbach

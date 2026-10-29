@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes, and it is derived in Lean from **six
+odd integer greater than 5 is a sum of three primes, and it is derived in Lean from **five
 explicitly stated inputs from the literature**, which are still `sorry`. Everything that
 connects those inputs to the theorem is proved.
 
@@ -12,7 +12,7 @@ $ echo 'import TernaryGoldbach
 'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
 ```
 
-All six `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
+All five `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
 No other file contains one.
 
 ## Layout
@@ -21,19 +21,19 @@ No other file contains one.
 |---|---|---|
 | `Statement.lean` | `Statement`, the finite-range versions, and how to combine them | ✅ |
 | `Reduction.lean` | binary Goldbach up to `N` + a prime ladder with gaps `≤ N − 4` ⇒ ternary Goldbach up to the top of the ladder | ✅ |
-| `CircleMethod.lean` | finite circle method: orthogonality, `∫₀¹ S_a S_b S_c e(−Nα) = #weighted reps`, Parseval, an L² Cauchy–Schwarz bound, the minor-arc bound `≤ sup_𝔪|S_a| ‖b‖₂‖c‖₂`, and a general "major > minor ⇒ three primes" criterion | ✅ |
+| `CircleMethod.lean` | finite circle method: orthogonality, `∫₀¹ S_a S_b S_c e(−Nα) = #weighted reps`, Parseval, an L² Cauchy–Schwarz bound, the minor-arc bound `≤ sup_𝔪|S_a| ‖b‖₂‖c‖₂`, a general "major > minor ⇒ three primes" criterion, and the circle identity for absolutely summable series | ✅ |
 | `Helfgott/Defs.lean` | Helfgott's η₊, η_*, h_H, F_H, η₂, φ, Mellin convolution, `S_η(α,x)`, the major arcs `𝔐_{δ₀,r}`, `x = N/(2+9/(196√(2π)))`, the weighted count | ✅ (definitions) |
+| `Helfgott/Decay.lean` | Gaussian decay of η₊ and η_*, so `S_η(α,x)` converges absolutely | ✅ |
 | `Helfgott/Numerics.lean` | the final inequality of [H, §7.4]: `7.3306 N^{3/2} log N < 0.084339 x²/κ` for `N ≥ 10²⁷` | ✅ |
-| `Helfgott/Inputs.lean` | **the six unproved inputs** (see below) | ❌ |
+| `Helfgott/Inputs.lean` | the proved circle identity (input 1) and **the five unproved inputs** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 
-## The six inputs
+## The inputs
 
 References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748 [H].
 
-1. `circle_identity_input`: [H, (3.3)/(7.49)] for the infinite smoothed sums. Its finite
-   analogue is already proved (`circle_identity`), so what's missing is convergence/decay of η₊
-   and η_* and swapping the sum with the integral. **The easiest of the six.**
+1. ~~`circle_identity_input`~~ **proved**: [H, (3.3)/(7.49)] for the infinite smoothed sums,
+   from `circle_identity_tsum` and the decay bounds in `Helfgott/Decay.lean`.
 2. `major_arcs_input`: [H, (7.25)], `∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.058259 x²/κ`.
    This uses explicit formulas for Dirichlet L-functions and Platt's rigorous GRH verification
    for moduli up to 300000.
@@ -41,7 +41,7 @@ References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arX
    identity, explicit bilinear bounds, and the large sieve.
 4. `nonprime_input`: [H, (7.50)], terms with an even or non-prime `nᵢ` contribute at most
    `7.3306 N^{3/2} log N`. This uses sup-norm bounds on η₊, η_* and Rosser–Schoenfeld bounds
-   for ψ − θ and ψ. **Elementary apart from those constants; a good next target.**
+   for ψ − θ and ψ. **Elementary apart from those constants; the natural next target.**
 5. `binary_goldbach_input`: even Goldbach up to `4·10¹⁸` (Oliveira e Silva–Herzog–Pardi).
 6. `prime_ladder_input`: the Helfgott–Platt prime ladder up to `8.875694·10³⁰`.
 

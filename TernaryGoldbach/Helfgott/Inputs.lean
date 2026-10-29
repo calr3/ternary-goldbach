@@ -1,10 +1,11 @@
-import TernaryGoldbach.Helfgott.Defs
+import TernaryGoldbach.Helfgott.Decay
+import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Reduction
 
 /-!
 # Unproved inputs
 
-**Every `sorry` in the project is in this file.**  Each one is a result from the literature,
+**Every `sorry` in the project is in this file.**  Each remaining one is a result from the literature,
 stated as precisely as we could, with a pointer to where it is proved.  Everything else (the
 way these inputs combine into the ternary Goldbach conjecture) is proved in Lean.
 
@@ -26,16 +27,28 @@ namespace TernaryGoldbach.Helfgott
 /-! ## Analytic inputs (for odd `N ≥ 10²⁷`, with `x = xOf N`) -/
 
 /-- **Circle method identity** [H, (3.3), (7.49)].  The sums `S_{η₊}`, `S_{η_*}` converge
-absolutely because `η₊` and `η_*` decay rapidly, and the integral over `[0, 1]` picks out the
-representations of `N`.
+absolutely because `η₊` and `η_*` decay rapidly (`TernaryGoldbach.Helfgott.Decay`), and the
+integral over `[0, 1]` picks out the representations of `N` (`circle_identity_tsum`).
 
-*Formalization notes:* the finite analogue is `TernaryGoldbach.circle_identity`, which is
-proved.  What remains is the decay of `η₊` and `η_*` (so that the `tsum`s converge uniformly)
-and swapping the sum with the integral. -/
-theorem circle_identity_input (N : ℕ) :
+*Proved* — this input no longer depends on `sorry`. -/
+theorem circle_identity_input (N : ℕ) (hN : 0 < N) :
     IntegrableOn (integrand N) (Set.Ioc 0 1) ∧
       ∫ α in Set.Ioc (0:ℝ) 1, integrand N α = (repSum (fun _ => True) N : ℂ) := by
-  sorry
+  have hx : 0 < xOf N := div_pos (by exact_mod_cast hN) xOf_denom_bounds.1
+  have h := circle_identity_tsum N (summable_etaPlus hx) (summable_etaPlus hx)
+    (summable_etaStar hx)
+  have hfun : integrand N = fun α =>
+      expTsum (fun n => ((Λ n * etaPlus (n / xOf N) : ℝ) : ℂ)) α *
+        expTsum (fun n => ((Λ n * etaPlus (n / xOf N) : ℝ) : ℂ)) α *
+        expTsum (fun n => ((Λ n * etaStar (n / xOf N) : ℝ) : ℂ)) α * e (-(N * α)) := by
+    funext α; simp only [integrand, S, expTsum, sq]
+  rw [hfun]
+  refine ⟨h.1, h.2.trans ?_⟩
+  simp only [repSum, and_true, Complex.ofReal_sum, apply_ite (fun r : ℝ => (r : ℂ)),
+    Complex.ofReal_zero, Complex.ofReal_mul]
+  refine Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ =>
+    Finset.sum_congr rfl fun _ _ => ?_
+  split_ifs <;> ring
 
 /-- **Major arcs** [H, (7.25)]:
 `∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.058259 x²/κ` with `r₀ = 150000`.
