@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes, and it is derived in Lean from **eight
+odd integer greater than 5 is a sum of three primes, and it is derived in Lean from **six
 explicitly stated inputs from the literature**, which are still `sorry`. Everything that
 connects those inputs to the theorem is proved.
 
@@ -12,7 +12,7 @@ $ echo 'import TernaryGoldbach
 'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
 ```
 
-All eight `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
+All six `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
 No other file contains one.
 
 ## Layout
@@ -25,8 +25,9 @@ No other file contains one.
 | `Helfgott/Defs.lean` | Helfgott's η₊, η_*, h_H, F_H, η₂, φ, Mellin convolution, `S_η(α,x)`, the major arcs `𝔐_{δ₀,r}`, `x = N/(2+9/(196√(2π)))`, the weighted count | ✅ (definitions) |
 | `Helfgott/Decay.lean` | Gaussian decay of η₊ and η_*, so `S_η(α,x)` converges absolutely | ✅ |
 | `Helfgott/NonPrime.lean` | [H, (7.50)] from sup bounds on η₊, η_* and bounds on ψ, ψ − θ (constants as parameters) | ✅ |
-| `Helfgott/Numerics.lean` | the final inequality of [H, §7.4]: `7.3306 N^{3/2} log N < 0.084339 x²/κ` for `N ≥ 10²⁷` | ✅ |
-| `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the eight unproved facts** (see below) | ❌ |
+| `Helfgott/SupNorms.lean` | easy sup bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` | ✅ |
+| `Helfgott/Numerics.lean` | the final inequality of [H, §7.4], `C·N^{3/2} log N < 0.084339 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 4.41·10⁶` we actually use | ✅ |
+| `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the six unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 
 ## The inputs
@@ -40,9 +41,9 @@ References are to H. A. Helfgott, *The ternary Goldbach conjecture is true*, arX
    for moduli up to 300000.
 3. `minor_arcs_input`: [H, (7.48)], `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`. This uses Vaughan's
    identity, explicit bilinear bounds, and the large sieve.
-4. ~~`nonprime_input`~~ **proved** [H, (7.50)] from four smaller facts, which are still `sorry`:
-   * `etaPlus_sup_input`: `|η₊| ≤ 1.079955` [H, (7.3)] (numerically the max is ≈ 1.0000);
-   * `etaStar_sup_input`: `|η_*| ≤ 1.414` [H, (7.19)] (numerically the max is ≈ 1.2267);
+4. ~~`nonprime_input`~~ **proved**, a weaker form of [H, (7.50)] with constant `4.41·10⁶` in place
+   of `7.3306`. It uses the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` instead of Helfgott's sharp
+   `1.079955`, `1.414`; the final inequality has enough room for that. Two inputs are still `sorry`:
    * `psi_le_input`: `ψ(N) ≤ 1.03883 N` [RS62, Thm. 12];
    * `psi_sub_theta_le_input`: `ψ(N) − θ(N) ≤ 1.4262 √N` [RS62, Thm. 13].
 5. `binary_goldbach_input`: even Goldbach up to `4·10¹⁸` (Oliveira e Silva–Herzog–Pardi).

@@ -5,7 +5,7 @@ import TernaryGoldbach.Helfgott.Defs
 
 We prove Gaussian decay bounds
 
-* `|η₊(t)| ≤ (25600/π) t e^{-t²/2}` (via `|h_H(t)| ≤ 128 H / π`), and
+* `|η₊(t)| ≤ (2000/π) t e^{-t²/2}` (via `|h_H(t)| ≤ 10 H / π`), and
 * `|η_*(t)| ≤ 144 κ² t² e^{-κ²t²/2}`,
 
 for `t ≥ 0`.  From these, `∑ₙ Λ(n) |η(n/x)|` converges for `x > 0`, so `S_η(α, x)` is an
@@ -141,22 +141,38 @@ theorem hBase_eq_zero {u : ℝ} (hu : 2 ≤ u) : hBase u = 0 := by
     subst this; norm_num
   · rfl
 
-theorem abs_hBase_le (u : ℝ) : |hBase u| ≤ 64 * u ^ 2 := by
+/-- `e^{-1/2} ≤ 1/1.625`. -/
+theorem exp_neg_half_le : Real.exp (-(1 / 2)) ≤ 1 / 1.625 := by
+  have h := Real.quadratic_le_exp_of_nonneg (x := 1 / 2) (by norm_num)
+  rw [Real.exp_neg, inv_eq_one_div]
+  exact one_div_le_one_div_of_le (by norm_num) (by linarith)
+
+theorem abs_hBase_le (u : ℝ) : |hBase u| ≤ 5 * u ^ 2 := by
   unfold hBase
   split_ifs with h
   · obtain ⟨h0, h2⟩ := h
-    have he : Real.exp (u - 1 / 2) ≤ 8 := by
-      have : Real.exp (u - 1/2) ≤ Real.exp 1 ^ 2 := by
-        rw [← Real.exp_nat_mul]; exact Real.exp_le_exp.2 (by push_cast; linarith)
-      nlinarith [Real.exp_one_lt_d9, Real.exp_pos 1]
-    have h3 : (2 - u) ^ 3 ≤ 8 := by
-      have : 0 ≤ 2 - u := by linarith
-      nlinarith [pow_le_pow_left₀ this (show 2 - u ≤ 2 by linarith) 3]
+    -- `(2 - u)³ = 8 (1 - u/2)³ ≤ 8 e^{-3u/2}`, so `(2 - u)³ e^{u - 1/2} ≤ 8 e^{-1/2} ≤ 5`.
+    have h1 : 1 - u / 2 ≤ Real.exp (-(u / 2)) := by linarith [Real.add_one_le_exp (-(u / 2))]
+    have h3 : (1 - u / 2) ^ 3 ≤ Real.exp (-(u / 2)) ^ 3 :=
+      pow_le_pow_left₀ (by linarith) h1 3
+    have key : (2 - u) ^ 3 * Real.exp (u - 1 / 2) ≤ 5 := by
+      have e1 : (2 - u) ^ 3 = 8 * (1 - u / 2) ^ 3 := by ring
+      have e2 : Real.exp (-(u / 2)) ^ 3 * Real.exp (u - 1 / 2) = Real.exp (-(u / 2) - 1 / 2) := by
+        rw [← Real.exp_nat_mul, ← Real.exp_add]; congr 1; push_cast; ring
+      have e3 : Real.exp (-(u / 2) - 1 / 2) ≤ Real.exp (-(1 / 2)) :=
+        Real.exp_le_exp.2 (by linarith)
+      have := exp_neg_half_le
+      rw [e1]
+      calc 8 * (1 - u / 2) ^ 3 * Real.exp (u - 1 / 2)
+          ≤ 8 * Real.exp (-(u / 2)) ^ 3 * Real.exp (u - 1 / 2) := by gcongr
+        _ = 8 * Real.exp (-(u / 2) - 1 / 2) := by rw [mul_assoc, e2]
+        _ ≤ 5 := by linarith
     have h3' : 0 ≤ (2 - u) ^ 3 := pow_nonneg (by linarith) 3
     rw [abs_of_nonneg (by positivity)]
-    calc u ^ 2 * (2 - u) ^ 3 * Real.exp (u - 1 / 2) ≤ u ^ 2 * 8 * 8 := by
-          gcongr
-      _ = 64 * u ^ 2 := by ring
+    calc u ^ 2 * (2 - u) ^ 3 * Real.exp (u - 1 / 2)
+        = u ^ 2 * ((2 - u) ^ 3 * Real.exp (u - 1 / 2)) := by ring
+      _ ≤ u ^ 2 * 5 := by gcongr
+      _ = 5 * u ^ 2 := by ring
   · simp; positivity
 
 theorem abs_F_le {H : ℝ} (hH : 0 ≤ H) (y : ℝ) : |F H y| ≤ H / Real.pi := by
@@ -169,13 +185,13 @@ theorem abs_F_le {H : ℝ} (hH : 0 ≤ H) (y : ℝ) : |F H y| ≤ H / Real.pi :=
     nlinarith [Real.pi_pos]
 
 theorem abs_hH_le {H : ℝ} (hH0 : 0 ≤ H) {t : ℝ} (ht : 0 ≤ t) :
-    |hH H t| ≤ 128 * H / Real.pi := by
+    |hH H t| ≤ 10 * H / Real.pi := by
   rcases ht.eq_or_lt with h0 | ht
   · subst h0
     have : hH H 0 = 0 := by
       unfold hH; simp [hBase]
     rw [this, abs_zero]; positivity
-  set K := 64 * (H / Real.pi) * t ^ 2
+  set K := 5 * (H / Real.pi) * t ^ 2
   have hK : 0 ≤ K := by positivity
   have ht2 : 0 < t / 2 := by positivity
   set g := (Set.Ioi (t / 2)).indicator fun y : ℝ => K * y ^ (-3 : ℝ)
@@ -194,7 +210,7 @@ theorem abs_hH_le {H : ℝ} (hH0 : 0 ≤ H) {t : ℝ} (ht : 0 ≤ t) :
       have hrp : y ^ (-3 : ℝ) * y = (y ^ 2)⁻¹ := by
         rw [Real.rpow_neg hy.le, show (3:ℝ) = ((3:ℕ):ℝ) by norm_num, Real.rpow_natCast]
         field_simp; ring
-      calc |hBase (t / y)| * |F H y| ≤ 64 * (t / y) ^ 2 * (H / Real.pi) :=
+      calc |hBase (t / y)| * |F H y| ≤ 5 * (t / y) ^ 2 * (H / Real.pi) :=
             mul_le_mul (abs_hBase_le _) (abs_F_le hH0 y) (abs_nonneg _) (by positivity)
         _ = K * y ^ (-3 : ℝ) * y := by
             rw [mul_assoc K, hrp]; simp only [K]; field_simp; ring
@@ -218,7 +234,7 @@ theorem abs_hH_le {H : ℝ} (hH0 : 0 ≤ H) {t : ℝ} (ht : 0 ≤ t) :
   ring
 
 theorem abs_etaPlus_le {t : ℝ} (ht : 0 ≤ t) :
-    |etaPlus t| ≤ 128 * 200 / Real.pi * t ^ 1 * Real.exp (-(1 / 2) * t ^ 2) := by
+    |etaPlus t| ≤ 10 * 200 / Real.pi * t ^ 1 * Real.exp (-(1 / 2) * t ^ 2) := by
   unfold etaPlus
   rw [abs_mul, abs_mul, abs_of_nonneg ht, abs_of_pos (Real.exp_pos _), pow_one]
   have : -(1 / 2) * t ^ 2 = -t ^ 2 / 2 := by ring

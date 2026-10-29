@@ -12,7 +12,7 @@ The argument follows [H, §7.4]:
 
 1. the weighted count equals `∫ = ∫_𝔐 + ∫_𝔪`;
 2. `Re ∫_𝔐 ≥ 1.058259 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 0.97392 x²/κ`;
-3. so the count restricted to odd primes is `≥ 0.084339 x²/κ - 7.3306 N^{3/2} log N > 0`;
+3. so the count restricted to odd primes is `≥ 0.084339 x²/κ - 4.41·10⁶ N^{3/2} log N > 0`;
 4. a positive count over primes gives a representation;
 5. the cases `N < 10²⁷` follow from the ladder reduction (`ternaryUpTo_of_ladder`).
 -/
@@ -64,7 +64,7 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
   intro N hN hN27
   have h1 := repSum_lower_bound N hN hN27
   have h2 := nonprime_input N hN27
-  have h3 := final_inequality N hN27
+  have h3 := final_inequality_crude N hN27
   apply isSumOfThreePrimes_of_repSum_ne_zero (P := fun n => n.Prime ∧ Odd n) (fun n h => h.1)
   intro h0
   linarith

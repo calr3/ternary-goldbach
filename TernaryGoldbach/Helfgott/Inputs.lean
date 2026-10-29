@@ -1,6 +1,7 @@
 import TernaryGoldbach.Helfgott.Decay
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.NonPrime
+import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Reduction
 
 /-!
@@ -75,16 +76,6 @@ theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Inputs to the non-prime bound [H, (7.50)] -/
 
-/-- **Sup norm of `η₊`** [H, (7.3)], from [Hela, App. B.3, B.5] with `H = 200`:
-`|η₊|_∞ ≤ 1.079955`.  (Numerically the maximum of `|η₊|` on `[0, ∞)` is about `1.0000`.) -/
-theorem etaPlus_sup_input (t : ℝ) (ht : 0 ≤ t) : |etaPlus t| ≤ 1.079955 := by
-  sorry
-
-/-- **Sup norm of `η_*`** [H, (7.19)]: `|η_*|_∞ = |η₂ *_M φ|_∞ ≤ 1.414`.
-(Numerically the maximum is about `1.2267`.) -/
-theorem etaStar_sup_input (t : ℝ) (ht : 0 ≤ t) : |etaStar t| ≤ 1.414 := by
-  sorry
-
 /-- **Rosser–Schoenfeld** [RS62, Thm. 12]: `ψ(x) < 1.03883 x` for `x > 0`. -/
 theorem psi_le_input (N : ℕ) (hN : 1 ≤ N) : psi N ≤ 1.03883 * N := by
   sorry
@@ -93,15 +84,21 @@ theorem psi_le_input (N : ℕ) (hN : 1 ≤ N) : psi N ≤ 1.03883 * N := by
 theorem psi_sub_theta_le_input (N : ℕ) (hN : 1 ≤ N) : psi N - theta N ≤ 1.4262 * √N := by
   sorry
 
-/-- **Non-prime and even terms** [H, (7.50)]: the terms where some `nᵢ` is even or not prime
-contribute at most `7.3306 N^{3/2} log N`.
+/-- **Non-prime and even terms**, a weaker form of [H, (7.50)]: the terms where some `nᵢ` is
+even or not prime contribute at most `4.41 · 10⁶ · N^{3/2} log N`.
 
-*Proved* from the four inputs above via `repSum_sub_le_of_bounds`. -/
+[H] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
+`|η_*|_∞ ≤ 1.414`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
+(`Helfgott/SupNorms.lean`) instead; the final inequality still has plenty of room
+(`final_inequality_crude`).
+
+*Proved* from the Rosser–Schoenfeld bounds above via `repSum_sub_le_of_bounds`. -/
 theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N ≤
-      7.3306 * (N * √N) * Real.log N := by
+      4.41e6 * (N * √N) * Real.log N := by
   have hN : 1 ≤ N := le_trans (by norm_num) hN27
-  have h := repSum_sub_le_of_bounds hN etaPlus_sup_input etaStar_sup_input
+  have h := repSum_sub_le_of_bounds hN (fun t ht => abs_etaPlus_le_400 ht)
+    (fun t _ => abs_etaStar_le_const t)
   have hpsi := psi_le_input N hN
   have hpt := psi_sub_theta_le_input N hN
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
@@ -114,11 +111,11 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
   have hpsi0 : 0 ≤ psi N := Finset.sum_nonneg fun n _ => vonMangoldt_nonneg
   have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
   calc repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N
-      ≤ 3 * (1.079955 ^ 2 * 1.414) * Real.log N * (psi N - theta N + Real.log 2) * psi N := h
-    _ ≤ 3 * (1.079955 ^ 2 * 1.414) * Real.log N * (1.4263 * √N) * (1.03883 * N) := by
+      ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (psi N - theta N + Real.log 2) * psi N := h
+    _ ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (1.4263 * √N) * (1.03883 * N) := by
         gcongr; linarith
-    _ = (3 * (1.079955 ^ 2 * 1.414) * 1.4263 * 1.03883) * (N * √N) * Real.log N := by ring
-    _ ≤ 7.3306 * (N * √N) * Real.log N := by gcongr; norm_num
+    _ = (3 * (400 ^ 2 * 6.2) * 1.4263 * 1.03883) * (N * √N) * Real.log N := by ring
+    _ ≤ 4.41e6 * (N * √N) * Real.log N := by gcongr; norm_num
 
 /-! ## Computational inputs (for the small cases) -/
 
