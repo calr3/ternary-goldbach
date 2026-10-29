@@ -7,7 +7,9 @@ connects those inputs to the theorem is proved.
 
 ```
 $ lake build
-$ lake env lean -c '#print axioms TernaryGoldbach.ternary_goldbach'   # sorryAx appears
+$ echo 'import TernaryGoldbach
+#print axioms TernaryGoldbach.ternary_goldbach' > /tmp/ax.lean && lake env lean /tmp/ax.lean
+'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
 ```
 
 All six `sorry`s are in [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
