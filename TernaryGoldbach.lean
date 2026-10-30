@@ -15,6 +15,7 @@ import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Main
 import TernaryGoldbach.MinorArcs.Vaughan
+import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
