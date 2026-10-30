@@ -300,4 +300,134 @@ theorem typeII_rest_le {T t c : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) 
   have e : T ^ 2 * √T = r ^ 10 := by rw [hsT, hTr]; ring
   rw [e]; linarith
 
+/-- `|δ| q ≤ x/Q = 4T/3` and `2 ≤ δ₀q ≤ T/3` for `q ≤ T/6`, `Q = 3T²/4`. -/
+theorem first_choice_t {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
+    (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
+    |δ| * q ≤ 4 * T / 3 ∧ 2 ≤ delta0 δ * q ∧ delta0 δ * q ≤ T / 3 := by
+  obtain ⟨hq, -, -, hδQ, -⟩ := h
+  have hT0 : 0 < T := by linarith
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  have hδq : |δ| * q ≤ 4 * T / 3 := by
+    rw [abs_div, abs_of_pos (show (0 : ℝ) < T ^ 3 by positivity),
+      div_le_div_iff₀ (by positivity) (by positivity), one_mul] at hδQ
+    have : |δ| * q * (3 / 4 * T ^ 2) ≤ 4 * T / 3 * (3 / 4 * T ^ 2) := by nlinarith
+    exact le_of_mul_le_mul_right this (by positivity)
+  refine ⟨hδq, ?_, ?_⟩
+  · unfold delta0; nlinarith [le_max_left 2 (|δ| / 4)]
+  · unfold delta0
+    rcases le_total 2 (|δ| / 4) with h | h
+    · rw [max_eq_right h]; linarith
+    · rw [max_eq_left h]; linarith
+
+set_option maxHeartbeats 1600000 in
+/-- **[B, (6.60), (6.61)]**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
+`|S_{II}| ≤ x/√(δ₀φ(q)) · √(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.67506)`
+`+ 3.2 x^{5/6}`, `t = δ₀q`. -/
+theorem typeII_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
+    (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
+    ‖typeII α (T ^ 3) (U1 T (delta0 δ * q)) (V1 T)‖ ≤
+      T ^ 3 / √(delta0 δ * Nat.totient q) *
+          (√(Cxt T (delta0 δ * q) * (Real.log (delta0 δ * q) + 0.002) +
+              Real.log (4 * (delta0 δ * q)) / 2) *
+            √(0.30214 * Real.log (delta0 δ * q) + 0.67506)) +
+        3.2 * (T ^ 2 * √T) := by
+  obtain ⟨hδq, ht2, htT⟩ := first_choice_t hT h hqT
+  have h' := h
+  obtain ⟨hq, hcop, ⟨k, h2α⟩, hδQ, hqQ⟩ := h'
+  set t := delta0 δ * q with ht
+  have hT0 : 0 < T := by linarith
+  have ht0 : 0 < t := by linarith
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  have hU := U1_ge hT ht0 htT
+  have hU1 : 1 ≤ U1 T t := by
+    have h3 := sqrt_ge_2449 hT
+    have : (1 : ℝ) ≤ U1 T t := le_trans (by nlinarith) hU
+    exact_mod_cast this
+  have hU0 : (0 : ℝ) < U1 T t := by exact_mod_cast hU1
+  have hV := V1_ge hT0
+  have hUV := U1V1_le hT0 ht0
+  have hUVx : (U1 T t : ℝ) * V1 T ≤ T ^ 3 := by
+    refine hUV.trans (div_le_self (by positivity) ?_)
+    have : (1 : ℝ) ≤ √t := by
+      rw [show (1 : ℝ) = √1 by simp]; exact Real.sqrt_le_sqrt (by linarith)
+    linarith
+  have hVU : (V1 T : ℝ) ≤ T ^ 3 / U1 T t := by
+    rw [le_div_iff₀ hU0]; linarith
+  have hxU := div_U1_le hT ht0 htT
+  have hsT := sqrt_ge_2449 hT
+  have hst : √t ≤ √T := Real.sqrt_le_sqrt (by linarith)
+  have hφ : (0 : ℝ) < Nat.totient q := by exact_mod_cast Nat.totient_pos.2 hq
+  have hUV1 := U1V1_ge hT ht0 htT
+  have hζ := zeta_term_le hT ht0 htT
+  by_cases hδ8 : |δ| < 8
+  · -- `δ₀ = 2`: (6.37).
+    have hd0 : delta0 δ = 2 := by unfold delta0; rw [max_eq_left (by linarith)]
+    have htq : t = 2 * q := by rw [ht, hd0]
+    have hα : |2 * α - a / q - k| ≤ 1 / (q * (3 / 4 * T ^ 2)) := by
+      rw [show 2 * α - a / q - k = δ / T ^ 3 by rw [h2α]; ring]; exact hδQ
+    have := typeII_637 (Q := 3 / 4 * T ^ 2) hq hcop hα (by positivity) hU1 (by linarith) hVU
+      (by
+        calc 3.5 * (T ^ 3 / U1 T t) ≤ 3.5 * (9.0001 * (T * √t)) := by gcongr
+          _ ≤ 3.5 * (9.0001 * (T * √T)) := by gcongr
+          _ ≤ 3 / 4 * T ^ 2 := by
+            have : T * √T * √T = T ^ 2 := sqrt_mul_self_eq hT0.le
+            nlinarith)
+      (by
+        have : rexp 1 ≤ 2.7182818286 := Real.exp_one_lt_d9.le
+        nlinarith)
+    refine this.trans ?_
+    have hmain := typeII_main_le (x := T ^ 3) (c := 2 * q) hT rfl ht2 htT (by rw [htq])
+      (by rw [htq]; linarith) hU0 hV hUV1 hUVx hζ
+    have hrest := typeII_rest_le (c := 2 * q) hT ht2 htT (by rw [htq]) (by rw [htq]; linarith) hq
+      (by linarith)
+    rw [hd0]
+    have hx0 : (0 : ℝ) ≤ T ^ 3 / √(2 * Nat.totient q) := by positivity
+    have := mul_le_mul_of_nonneg_left hmain hx0
+    linarith
+  · -- `δ₀ = |δ|/4`: (6.40).
+    push Not at hδ8
+    have hd0 : delta0 δ = |δ| / 4 := by unfold delta0; rw [max_eq_right (by linarith)]
+    set ε₁ := T ^ 3 / (2 * U1 T t * (3 / 4 * T ^ 2)) with hε₁
+    have hε₁0 : 0 ≤ ε₁ := by positivity
+    have hε₁1 : ε₁ ≤ 0.0015 := by
+      rw [hε₁, div_le_iff₀ (by positivity)]
+      have h1 : 0.0015 * (2 * (0.1924 * (T * √T)) * (3 / 4 * T ^ 2)) ≤
+          0.0015 * (2 * (U1 T t : ℝ) * (3 / 4 * T ^ 2)) := by gcongr
+      have h2 : T ^ 3 ≤ 0.0015 * (2 * (0.1924 * (T * √T)) * (3 / 4 * T ^ 2)) := by
+        have e : 0.0015 * (2 * (0.1924 * (T * √T)) * (3 / 4 * T ^ 2)) =
+            0.0004329 * T ^ 2 * (T * √T) := by ring
+        rw [e]
+        have h5 : T * 2449 ≤ T * √T := mul_le_mul_of_nonneg_left hsT hT0.le
+        have h6 : 0 < T ^ 2 := by positivity
+        nlinarith
+      linarith
+    have hc' : |δ| * q * (1 + ε₁) / 4 = t * (1 + ε₁) := by rw [ht, hd0]; ring
+    have := typeII_640 (Q := 3 / 4 * T ^ 2) hq hcop h2α hδQ hδ8 (by positivity)
+      (by nlinarith) hU1 (by linarith) hVU
+      (by
+        rw [← hε₁, hc']
+        have he : rexp 1 ≤ 2.7182818286 := Real.exp_one_lt_d9.le
+        have h1 : t * (1 + ε₁) ≤ T / 3 * 1.0015 :=
+          mul_le_mul htT (by linarith) (by linarith) (by linarith)
+        have h2 : t * (1 + ε₁) * rexp 1 ≤ T / 3 * 1.0015 * 2.7182818286 :=
+          mul_le_mul h1 he (Real.exp_pos 1).le (by positivity)
+        linarith)
+    simp only [] at this
+    rw [← hε₁, hc'] at this
+    refine this.trans ?_
+    have hct' : t ≤ t * (1 + ε₁) := le_mul_of_one_le_right ht0.le (by linarith)
+    have hc'' : t * (1 + ε₁) ≤ 1.0015 * t := by
+      rw [mul_comm 1.0015]; exact mul_le_mul_of_nonneg_left (by linarith) ht0.le
+    have hmain := typeII_main_le (x := T ^ 3) (c := t * (1 + ε₁)) hT rfl ht2 htT hct' hc'' hU0 hV
+      hUV1 hUVx hζ
+    have hrest := typeII_rest_le (c := t * (1 + ε₁)) hT ht2 htT hct' hc'' hq (by linarith)
+    have e : 2 * T ^ 3 / √(|δ| * Nat.totient q) = T ^ 3 / √(delta0 δ * Nat.totient q) := by
+      rw [hd0, show |δ| * (Nat.totient q : ℝ) = 2 ^ 2 * (|δ| / 4 * Nat.totient q) by ring,
+        Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]
+      field_simp
+    rw [e]
+    have hx0 : (0 : ℝ) ≤ T ^ 3 / √(delta0 δ * Nat.totient q) := by positivity
+    have := mul_le_mul_of_nonneg_left hmain hx0
+    linarith
+
 end TernaryGoldbach.MinorArcs
