@@ -200,18 +200,28 @@ noncomputable def bound_4_50 (x δ : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
       (D ^ 2 * Real.log V / (2 * q * x) + 3 * c₄ / 2 * (U * V ^ 2 / x) +
         3 / 2 * ((U + 1) ^ 2 * V / (2 * x) * Real.log q))
 
-/-- The error term (4.51) of [B, Lemma 4.2.4], with `D = UV`, `c₁ = 1 + |η'|₁/(2x/D)`. -/
+/-- The error term (4.51) of [B, Lemma 4.2.4] (case (b)), with `D = UV`, **as proved**
+(`TypeI2Rest.lean: norm_restPartI2_le_caseB`). Same leading terms as [B]:
+`(2√(c₀c₁)/π) D log(D/√e) + (3c₁/2)(x/q) log D log⁺(D/(c₂x/q)) + (2√(c₀c₁)/π)(q/2) log D log⁺(D/(q/2))`.
+Changes, all documented in `NOTES.md`:
+* `c₁ = 1 + |η'|₁/(x/D)` (odd `n`, as in Lemma 4.2.2); [B] prints `1 + |η'|₁/(2x/D)`, the all-`n` value.
+* Lower-order `q` terms: `q(√3 log(3D) + 2 log⁺(D/(q/2)))` for [B]'s `√3 q log(c₂x/q)` (we bound
+  the weight `log m` on each block of length `q` by `log` of its upper end).
+* `log⁺(q/2)` for [B]'s `log(q/2)` (which is negative for `q = 1`).
+* `(3c₁/2)√(2x/c₂)(log(3√(c₂x/2)) + 1)` for [B]'s `(3c₁/2)√(2x/c₂) log √(c₂x/2)`.
+* `(2√c₀/π)√(2c₂x)(2 + 12 log(5D)) + 5c₀/6π²` for [B]'s `(25c₀/4π²)(2c₂)^{3/2} √x log x`
+  (from our own version of [B, (4.59)–(4.60)], whose constant we could not reproduce). -/
 noncomputable def bound_4_51 (x : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
   let D := U * V
-  let c₁ := 1 + eta2'L1 / (2 * x / D)
+  let c₁ := 1 + eta2'L1 / (x / D)
   2 * √(c₀ * c₁) / π *
       (D * Real.log (D / √(rexp 1)) +
-        q * (√3 * Real.log (c₂ * x / q) + Real.log D / 2 * logPlus (D / (q / 2)))) +
+        q * (√3 * Real.log (3 * D) + (2 + Real.log D / 2) * logPlus (D / (q / 2)))) +
     3 * c₁ / 2 * (x / q) * Real.log D * logPlus (D / (c₂ * x / q)) +
     2 * eta2'L1 / π * q * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * x))) *
-      Real.log (q / 2) +
-    3 * c₁ / (2 * √(2 * c₂)) * √x * Real.log (c₂ * x / 2) +
-    25 * c₀ / (4 * π ^ 2) * (2 * c₂) ^ (3 / 2 : ℝ) * √x * Real.log x
+      logPlus (q / 2) +
+    3 * c₁ / 2 * √(2 * x / c₂) * (Real.log (3 * √(c₂ * x / 2)) + 1) +
+    (2 * √c₀ / π * √(2 * c₂ * x) * (2 + 12 * Real.log (5 * D)) + 5 * c₀ / (6 * π ^ 2))
 
 /-- The error term (4.52) of [B, Lemma 4.2.4] (case `|δ| ≥ 1/2c₂`). -/
 noncomputable def bound_4_52 (x δ : ℝ) (q : ℕ) (U V ε : ℝ) : ℝ :=
