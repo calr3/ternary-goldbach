@@ -32,6 +32,7 @@ import TernaryGoldbach.MinorArcs.TypeI2Rest
 import TernaryGoldbach.MinorArcs.TypeII
 import TernaryGoldbach.MinorArcs.S1Lemma
 import TernaryGoldbach.MinorArcs.TypeIIS1
+import TernaryGoldbach.MinorArcs.TypeIIReduction
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound

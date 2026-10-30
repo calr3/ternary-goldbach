@@ -38,6 +38,12 @@ theorem sum_vonMangoldt_mul_lt {y : ℝ} (hy : 663 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.03884 * y ^ 2 / 2 := by
   sorry
 
+/-- **[B, (5.5)]** ([RS62, Thm. 13]): `ψ(y) - θ(y) = ∑_{n ≤ y, n not prime} Λ(n) < 1.4262 √y`
+for `y > 0`. -/
+theorem sum_vonMangoldt_nonprime_lt {y : ℝ} (hy : 0 < y) :
+    ∑ n ∈ Icc 1 ⌊y⌋₊, (if n.Prime then 0 else (Λ n : ℝ)) < 1.4262 * √y := by
+  sorry
+
 /-- **[B, (2.20)]** (Granville–Ramaré [GR96, Lemma 10.2]):
 `|∑_{n ≤ x, (n, q) = 1} μ(n)/n| ≤ 1` for all `x` and all `q ≥ 1`. -/
 theorem abs_sum_moebius_div_coprime_le_one (x : ℝ) {q : ℕ} (hq : 1 ≤ q) :
