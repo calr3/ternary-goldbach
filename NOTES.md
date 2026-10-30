@@ -101,7 +101,21 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     the coefficients are kept as exact expressions in `c₊` (no rounding to `c_{4,I2}` etc.).
   * Step 3 (next): Lemma 4.2.4 case `q > Q/V` of `S_{I,2}`; Type II (6.38)/(6.39)/(6.41) (larger
     `q`; second parameter choice); `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
-  * Step 4: §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).
+  * Step 4 (in progress): §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).
+    `scripts/thm_3_1_1_numerics.py` evaluates the right-hand sides of our Lean bounds at the
+    (6.49) parameters (U, V rounded down) against Thm 3.1.1 (corrected constant `0.8103`): worst
+    ratio ≈ 0.95 at `x = 2.16·10²⁰`, → 1 slowly as `x → ∞` (along the curve where the AM–GM step
+    (6.77) is tight; there the main terms match [B]'s exactly). Plan for `q ≤ x^{1/3}/6`
+    (`FirstChoice.lean`, with `T = x^{1/3}`, `t = δ₀q`):
+    * ✅ `typeII_main_le`: main term of (6.37)/(6.40) ≤ `√(C_{x,t}(log t + .002) + log(4t)/2)·
+      √(0.30214 log t + 0.67506)` (needs `ζ(3/2) ≤ 2.77`, proved);
+    * parameter facts for `U = ⌊T²/9√t⌋`, `V = ⌊9T/2⌋`, `Q = 3T²/4`;
+    * Type II rest (`T2`, `T3`) ≤ `K₂ x^{5/6}` (needs Lemma C.2.2 `q/φ(q) < Ϝ(r)`, trusted);
+      estimated `≈ 3.0 x^{5/6}` at `x = 2.16·10²⁰` (vs [B]'s 2.74), so the theorem's `3.36 x^{5/6}`
+      will likely become `≈ 4 x^{5/6}`;
+    * `S_{I,1}`, `S_{I,2}` into the slots `2.5x/√t`, `2x/(δ₀φ)(13/4 log t + 7.82)`,
+      `2x/(δ₀q)(13.66 log t + 37.55)`, `K x^{5/6}` (own allocation, see the (6.12) erratum);
+    * AM–GM (6.77) with `ρ = 3.397962` → `R_{x,t} log t + 0.8103`.
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
@@ -152,6 +166,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911`. [B]'s own (6.63) exceeds the stated bound by up to
   ~2.6% (numerically, `q` prime, `δ₀q ~ 10⁵–10⁷`). `PointwiseBound.lean` now uses `0.8103`.
   **To check**: the effect on the later uses of Thm 3.1.1 (Chs. 11, 13 minor-arc totals).
+  **(6.12) understates the μ-sum for odd `q`**: the sum is over `(m, 2q) = 1`, so (2.22) applies
+  with modulus `2q` and gives `(4/5)(2q/φ(2q))/log(M/2q²)`; [B] writes `q/φ(q)`. For odd `q`,
+  `2q/φ(2q) = 2q/φ(q)`, so the term `(3/2 log q + 2.74) x/φ(q)` of (6.58) should be doubled.
+  (It doesn't break Thm 3.1.1 numerically, but [B]'s slot-by-slot derivation of
+  `L_{x,t,q}` doesn't go through as written; we use `min(1, a/ℓ)(ℓ + b) ≤ a + b` to move the `b`
+  part into the `x/(δ₀q)` slot.)
 
 ## Reading the book
 

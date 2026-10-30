@@ -104,4 +104,11 @@ theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x ≤ 1e12) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
   sorry
 
+/-- **[B, Lemma C.2.2]** ([RS62, Thm. 15] for `q ≥ 27`, and `q/φ(q) ≤ 3 < Ϝ(r)` for `q < 27`):
+`q/φ(q) < Ϝ(r) = e^γ log log r + 2.50637/log log r` for `q ≥ 1`, `r ≥ max(3, q)`. -/
+theorem div_totient_lt {q : ℕ} (hq : 1 ≤ q) {r : ℝ} (hr : 3 ≤ r) (hqr : (q : ℝ) ≤ r) :
+    (q : ℝ) / Nat.totient q < Real.exp Real.eulerMascheroniConstant * Real.log (Real.log r) +
+      2.50637 / Real.log (Real.log r) := by
+  sorry
+
 end TernaryGoldbach.Prelim
