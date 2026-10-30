@@ -19,6 +19,8 @@ import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.Eta2LogFourier
 import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeI2Total
+import TernaryGoldbach.MinorArcs.GcdSums
+import TernaryGoldbach.MinorArcs.TypeI2Sum
 import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
