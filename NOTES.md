@@ -54,6 +54,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   In the proof of 4.2.1/4.2.2, `Q = ⌊x/|δq|⌋` is too small by rounding for `c₂x/q ≤ Q/2`
   (we use the unrounded `Q`). Lean's `C/0 = 0` makes `min(A, C/sin²)` vanish where `sin = 0`,
   so Lemma 4.1.1 is also proved with the honest summand (`lemma_4_1_1'`, `minA`).
+  **(4.40) is inconsistent with its proof**: the statement has `x/q`, `η̂(-δ)` (so
+  `min(1, c₀/(2πδ)²)`) and `(m,q) = 1`, the values for the all-`n` version; the proof (p. 67) gives
+  `x/2q`, `η̂(-δ/2)` (so `min(1, c₀/(πδ)²)`) and `(m,2q) = 1`, as in (4.30). `bound_4_40` is the
+  corrected form. **To check in Ch. 6**: §6.2.1 uses (4.40) for `S_{I,1}`; the corrected
+  `δ`-decay is 4× weaker for large `δ` (the prefactor halves), so the final numerics there
+  may need re-checking.
 
 ## Reading the book
 

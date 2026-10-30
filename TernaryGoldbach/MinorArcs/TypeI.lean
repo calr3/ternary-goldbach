@@ -159,12 +159,16 @@ noncomputable def bound_4_32 (x δ : ℝ) (q : ℕ) (D Q₀ ε : ℝ) : ℝ :=
 
 -- [B, Lemma 4.2.2] itself is stated and proved (case (b)) in `MinorArcs/TypeIProof.lean`.
 
-/-- The main term (4.40) of [B, Lemma 4.2.3]. -/
+/-- The main term (4.40) of [B, Lemma 4.2.3], **corrected**.  [B] prints
+`(x/q) min(1, c₀/(2πδ)²) |∑_{m ≤ M/q, (m,q)=1} μ(m)/m · log(x/mq)| + (x/q)|(log·η)^(-δ)| |…|`,
+which are the values for the version with all `n` (cf. (4.9)); its own proof (p. 67) gives, for
+odd `n`, `(x/2q) |η̂(-δ/2)| |∑_{(m,2q)=1} …| + (x/2q) |(log·η)^(-δ/2)| |∑_{(m,2q)=1} …|`, as in
+(4.30).  We state the latter (with `|η̂(-δ/2)| ≤ min(1, c₀/(πδ)²)`). -/
 noncomputable def bound_4_40 (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
-  x / q * minInv (c₀ / (2 * π) ^ 2) δ *
-      |muSum (Mof x δ q D) q q fun m => Real.log (x / (m * q))| +
-    x / q * ‖fourier (fun t => Real.log t * eta2 t) (-δ)‖ *
-      |muSum (Mof x δ q D) q q fun _ => 1| +
+  x / (2 * q) * minInv c₀ (π * δ) *
+      |muSum (Mof x δ q D) q (2 * q) fun m => Real.log (x / (m * q))| +
+    x / (2 * q) * ‖fourier (fun t => Real.log t * eta2 t) (-(δ / 2))‖ *
+      |muSum (Mof x δ q D) q (2 * q) fun _ => 1| +
     c₀ * (1 / 2 - 2 / π ^ 2) * (D ^ 2 / (4 * q * x) * Real.log (rexp (1 / 2) * x / D) + 1 / rexp 1)
 
 /-- The error term (4.41) of [B, Lemma 4.2.3], with `c₁ = 1 + |η'|₁/(x/D)`. -/
