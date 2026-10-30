@@ -72,7 +72,9 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/GcdSums.lean` | [B, (6.9)]: `∑ Λ(v)(q,v)/v ≤ log N + log q`, `∑ Λ(v) v (q,v) ≤ ∑ Λ(v) v + N q log q` | ✅ (uses (2.12)) |
 | `MinorArcs/TypeI2Total.lean`, `TypeI2Sum.lean`, `TypeI2Large.lean` | [B, §6.2.2] (`qV ≤ Q`): (6.5)–(6.8), totals `typeI2_le_small` ((6.12)+(6.13)) and `typeI2_le_large` ((6.12)+(6.14)) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIIS1.lean` | [B, §5.1]: the reduction (5.7)–(5.8), (5.19), **(5.34) `S1_bound` proved**; trusted: `T2_le` [B, (5.31)], (5.36), (5.37) | ✅ (uses trusted numerics) |
-| `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
+| `MinorArcs/Assembly.lean` | [B, §6.1]: `S_{0,∞} = 0`, `|S_{0,2}| ≤ 3 log x`, `|S| ≤ |S_{I,1}| + |S_{I,2}| + |S_{II}| + 3 log x` | ✅ |
+| `MinorArcs/FirstChoice*.lean` | [B, §6.3.1, §6.4]: the parameters (6.49); `S_{II}`, `S_{I,1}`, `S_{I,2}` at them; AM–GM (6.77) (corrected); **Thm 3.1.1 for `q ≤ x^{1/3}/6`** | ✅ (uses trusted bounds) |
+| `MinorArcs/PointwiseBound.lean` | [B, Theorem 3.1.1] (corrected: `0.8103` for `0.5`, `3.8x^{5/6}` for `3.36x^{5/6}`): case `q ≤ x^{1/3}/6` proved, case `q > x^{1/3}/6` `sorry` | 🟡 half |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 

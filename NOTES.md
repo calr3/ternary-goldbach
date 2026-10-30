@@ -115,9 +115,22 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
       **`typeII_first`**: `|S_{II}| ≤ x/√(δ₀φ) √(C_{x,t}(log t + .002) + log(4t)/2)
       √(0.30214 log t + 0.67506) + 3.2 x^{5/6}` for `q ≤ x^{1/3}/6` (both `|δ| < 8` via (6.37) and
       `|δ| ≥ 8` via (6.40)). So the theorem's `3.36 x^{5/6}` will likely become `≈ 4 x^{5/6}`;
-    * `S_{I,1}`, `S_{I,2}` into the slots `2.5x/√t`, `2x/(δ₀φ)(13/4 log t + 7.82)`,
-      `2x/(δ₀q)(13.66 log t + 37.55)`, `K x^{5/6}` (own allocation, see the (6.12) erratum);
-    * AM–GM (6.77) with `ρ = 3.397962` → `R_{x,t} log t + 0.8103`.
+    * ✅ `FirstChoiceMain.lean`: `C_{x,t} ≤ 0.1 log t + 0.14`; AM–GM (6.77) with `√ρ = 1.84332`
+      gives `R_{x,t} log t + 0.8103` (margins ~5·10⁻⁷ in the `log t` coefficient!).
+    * ✅ `FirstChoiceTypeI.lean`, `FirstChoiceTypeI1.lean`: `typeI1_first`,
+      `|S_{I,1}| ≤ 1.80303·2x/(δ₀φ) + (log t + 1.63)·2x/t + 0.014 x^{5/6}` (via
+      `μ L ≤ (4/5)(2q/φ(2q)) + max(L - log(M/2q²), 0)`, `min(1,c₀/(πδ)²) ≤ 2/δ₀`).
+    * ✅ `FirstChoiceTypeI2*.lean`: `typeI2_first`,
+      `|S_{I,2}| ≤ 2.4916 x/√t + 0.8·2x/(δ₀φ) + (15.163 log t + 21.296)·2x/t + 0.553 x^{5/6}`
+      (`ε = 0.07` in (6.14); the `x/|δ|q` term via monotonicity of `(A + log⁺(cy))/y`).
+    * ✅ `FirstChoiceFinal.lean`: **`theorem_3_1_1_first`**, and `PointwiseBound.lean` now proves
+      the first case of `theorem_3_1_1` (corrected constants `0.8103` and `3.8 x^{5/6}`). Our own
+      allocation: the `x/(δ₀q)`-terms total `16.163 log t + 22.93`, which fits into
+      `13.66 log t + 37.55` plus the unused part `3.25 log t + 5.217` of the `x/(δ₀φ)` slot
+      (`x/(δ₀q) ≤ x/(δ₀φ)`). `x^{5/6}`: `3.2 + 0.014 + 0.553 + 0.0001 = 3.767`.
+  * Next: §6.3.2 (`q > x^{1/3}/6`, second choice of parameters `V = x^{1/3}/3`,
+    `U = 500√6 x^{1/3}`, `Q = x/U`), using Lemma 4.2.4 for `S_{I,2}` and (6.38)/(6.39)/(6.41) for
+    `S_{II}`; TODO `intervalIntegrable_H2_div` (provable).
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].

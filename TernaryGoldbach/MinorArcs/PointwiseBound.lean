@@ -1,4 +1,4 @@
-import TernaryGoldbach.MinorArcs.TypeI
+import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 
 /-!
 # The pointwise minor-arc bound [B, Theorem 3.1.1] — blueprint statement
@@ -7,7 +7,9 @@ The main result of Part I of [B]: for `η = η₂` and `2α = a/q + δ/x`, an ex
 `|S_η(α, x)|` that is essentially `x (log q)/√φ(q)`.  Part I (Chs. 3–6) is its proof; it is
 used in [B, Chs. 11, 13] to bound the minor-arc integral (14.49).
 
-**Blueprint node: stated with `sorry`, not yet used by `ternary_goldbach`.**
+**Blueprint node.** The case `q ≤ x^{1/3}/6` is proved (`theorem_3_1_1_first`, modulo the trusted
+literature bounds and computations listed by `#sorry_deps`); the case `q > x^{1/3}/6` ([B, §6.3.2])
+is still `sorry`. Not yet used by `ternary_goldbach`.
 -/
 
 open Real
@@ -25,6 +27,23 @@ noncomputable def R (x t : ℝ) : ℝ :=
 noncomputable def L (t : ℝ) (q : ℕ) : ℝ :=
   q / Nat.totient q * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
+/-- `T = x^{1/3}`: `T³ = x`, `x^{2/3} = T²`, `x^{5/6} = T²√T`, and `T ≥ 6·10⁶` for `x ≥ 2.16·10²⁰`. -/
+theorem cube_root_facts {x : ℝ} (hx : 2.16e20 ≤ x) :
+    6e6 ≤ x ^ (1 / 3 : ℝ) ∧ (x ^ (1 / 3 : ℝ)) ^ 3 = x ∧ x ^ (2 / 3 : ℝ) = (x ^ (1 / 3 : ℝ)) ^ 2 ∧
+      x ^ (5 / 6 : ℝ) = (x ^ (1 / 3 : ℝ)) ^ 2 * √(x ^ (1 / 3 : ℝ)) := by
+  have hx0 : 0 ≤ x := by linarith
+  have h3 : (x ^ (1 / 3 : ℝ)) ^ 3 = x := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hx0]; norm_num
+  refine ⟨?_, h3, ?_, ?_⟩
+  · have : (6e6 : ℝ) = ((6e6 : ℝ) ^ (3 : ℕ)) ^ (1 / 3 : ℝ) := by
+      rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num
+    rw [this]
+    exact Real.rpow_le_rpow (by positivity) (by norm_num; linarith) (by norm_num)
+  · rw [← Real.rpow_natCast, ← Real.rpow_mul hx0]; norm_num
+  · rw [Real.sqrt_eq_rpow, ← Real.rpow_natCast, ← Real.rpow_mul hx0, ← Real.rpow_mul hx0,
+      ← Real.rpow_add' hx0 (by norm_num)]
+    norm_num
+
 /-- **[B, Theorem 3.1.1], corrected** Let `x ≥ 2.16 · 10²⁰`, `η = η₂`, `2α = a/q + δ/x` with
 `q ≤ Q`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ`, `Q = (3/4) x^{2/3}`.  Write `δ₀ = max(2, |δ|/4)`.
 
@@ -40,10 +59,20 @@ theorem theorem_3_1_1 {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)
     ((q : ℝ) ≤ x ^ (1 / 3 : ℝ) / 6 →
       ‖S eta2 x α‖ ≤
         (R x (δ₀ * q) * Real.log (δ₀ * q) + 0.8103) / √(δ₀ * Nat.totient q) * x +
-          2.5 * x / √(δ₀ * q) + 2 * x / (δ₀ * q) * L (δ₀ * q) q + 3.36 * x ^ (5 / 6 : ℝ)) ∧
+          2.5 * x / √(δ₀ * q) + 2 * x / (δ₀ * q) * L (δ₀ * q) q + 3.8 * x ^ (5 / 6 : ℝ)) ∧
     (x ^ (1 / 3 : ℝ) / 6 < q →
       ‖S eta2 x α‖ ≤
         0.276 * x ^ (5 / 6 : ℝ) * Real.log x ^ (3 / 2 : ℝ) + 1234 * x ^ (2 / 3 : ℝ) * Real.log x) := by
-  sorry
+  intro δ₀
+  obtain ⟨hT, h3, h23, h56⟩ := cube_root_facts hx
+  set T := x ^ (1 / 3 : ℝ) with hTdef
+  refine ⟨fun hqT => ?_, fun _ => ?_⟩
+  · rw [h23, ← h3] at h
+    have key := theorem_3_1_1_first hT h hqT
+    rw [h3] at key
+    refine key.trans (le_of_eq ?_)
+    simp only [R, L, h56, Cxt, δ₀, delta0]
+    rfl
+  · sorry
 
 end TernaryGoldbach.MinorArcs

@@ -44,7 +44,8 @@ statements, each with its own `sorry`.
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
      │       [(3.11) decomposition ✅ MinorArcs/Decomposition.lean; (5.2)–(5.5) Type II reduction ✅
      │        MinorArcs/TypeIIReduction.lean; §6.2: S_I1 ✅ TypeITotal, S_I2 (qV ≤ Q) ✅ TypeI2Sum/Large,
-     │        S_II (6.37), (6.40) ✅ TypeIITotal(Gen); to do: Lemma 4.2.4 case, (6.38)–(6.41), §6.3]
+     │        S_II (6.37), (6.40) ✅ TypeIITotal(Gen); §6.3.1 + §6.4 ✅ FirstChoice*: Thm 3.1.1
+     │        for q ≤ x^{1/3}/6 (corrected constants); to do: §6.3.2 (q > x^{1/3}/6)]
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*)
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
