@@ -147,6 +147,11 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   corrected form. **To check in Ch. 6**: §6.2.1 uses (4.40) for `S_{I,1}`; the corrected
   `δ`-decay is 4× weaker for large `δ` (the prefactor halves), so the final numerics there
   may need re-checking. Note §6.2.1 itself copies the uncorrected (4.40).
+  **Theorem 3.1.1's constant `0.5` is not proved**: in §6.4, (6.77), the AM–GM step gives the
+  constant `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020` (ρ = 3.397962), but [B] computes
+  `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911`. [B]'s own (6.63) exceeds the stated bound by up to
+  ~2.6% (numerically, `q` prime, `δ₀q ~ 10⁵–10⁷`). `PointwiseBound.lean` now uses `0.8103`.
+  **To check**: the effect on the later uses of Thm 3.1.1 (Chs. 11, 13 minor-arc totals).
 
 ## Reading the book
 

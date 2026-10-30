@@ -25,14 +25,21 @@ noncomputable def R (x t : ℝ) : ℝ :=
 noncomputable def L (t : ℝ) (q : ℕ) : ℝ :=
   q / Nat.totient q * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
-/-- **[B, Theorem 3.1.1]** Let `x ≥ 2.16 · 10²⁰`, `η = η₂`, `2α = a/q + δ/x` with `q ≤ Q`,
-`(a, q) = 1`, `|δ/x| ≤ 1/qQ`, `Q = (3/4) x^{2/3}`.  Write `δ₀ = max(2, |δ|/4)`. -/
+/-- **[B, Theorem 3.1.1], corrected** Let `x ≥ 2.16 · 10²⁰`, `η = η₂`, `2α = a/q + δ/x` with
+`q ≤ Q`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ`, `Q = (3/4) x^{2/3}`.  Write `δ₀ = max(2, |δ|/4)`.
+
+**Erratum.** [B] states the first term with `R_{x,δ₀q} log δ₀q + 0.5`. Its proof (§6.4, (6.77))
+bounds `√A·√B` by `A/(2√ρ) + (√ρ/2)B` with `B = 0.30214 log δ₀q + 0.67506`, `ρ = 3.397962…`,
+whose constant term is `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020…`; [B] writes
+`(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911` (the `0.67506` term is halved twice). With `0.5`
+the bound does not follow from [B]'s own (6.63) (which exceeds it by up to ~2.6%, e.g. at
+`x = 10²⁵`, `δ₀q ≈ 1.9·10⁵`, `q` prime). We state it with `0.8103`. -/
 theorem theorem_3_1_1 {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)
     (h : Approx2 α x δ a q (3 / 4 * x ^ (2 / 3 : ℝ))) :
     let δ₀ := max 2 (|δ| / 4)
     ((q : ℝ) ≤ x ^ (1 / 3 : ℝ) / 6 →
       ‖S eta2 x α‖ ≤
-        (R x (δ₀ * q) * Real.log (δ₀ * q) + 0.5) / √(δ₀ * Nat.totient q) * x +
+        (R x (δ₀ * q) * Real.log (δ₀ * q) + 0.8103) / √(δ₀ * Nat.totient q) * x +
           2.5 * x / √(δ₀ * q) + 2 * x / (δ₀ * q) * L (δ₀ * q) q + 3.36 * x ^ (5 / 6 : ℝ)) ∧
     (x ^ (1 / 3 : ℝ) / 6 < q →
       ‖S eta2 x α‖ ≤
