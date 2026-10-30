@@ -53,6 +53,7 @@ import TernaryGoldbach.MinorArcs.TypeIIReduction
 import TernaryGoldbach.MinorArcs.TypeIITools
 import TernaryGoldbach.MinorArcs.TypeIITotal
 import TernaryGoldbach.MinorArcs.TypeIITotalGen
+import TernaryGoldbach.MinorArcs.TypeIILarge
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound

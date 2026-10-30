@@ -27,15 +27,17 @@ noncomputable def Ggen (x U V : ℝ) (q : ℕ) (c m β W : ℝ) : ℝ :=
 
 set_option maxHeartbeats 2000000 in
 /-- The pointwise bound behind [B, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
-theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m) (hcV : c * rexp 1 ≤ V)
-    (hS2gen : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
+theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
+    (hV : (117 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
+    (hcV : c * rexp 1 ≤ A)
+    (hS2gen : ∀ W ∈ Set.Icc A (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (m * x / (Nat.totient q * Real.log (W / c)) + q / Nat.totient q * (W / Real.log (W / c))) *
         logSqSum (max V (W / 2)) W)
-    {β : ℝ} (hβ : 0 < β) {W : ℝ} (hW : W ∈ Set.Icc (V : ℝ) (x / U)) :
+    {β : ℝ} (hβ : 0 < β) {W : ℝ} (hW : W ∈ Set.Icc A (x / U)) :
     √(S1 x U W) * (√(S2 α x (max U (x / (2 * W))) (max V (W / 2)) W) +
       √((x / (2 * W) + 1) * (1.4262 ^ 2 * W))) ≤ W * Ggen x U V q c m β W := by
-  obtain ⟨hVW, hWx⟩ := hW
+  obtain ⟨hAW, hWx⟩ := hW
+  have hVW : (V : ℝ) ≤ W := hVA.trans hAW
   have hU1 : (1 : ℝ) ≤ U := by exact_mod_cast hU
   have hU0 : (0 : ℝ) < U := by linarith
   have hW0 : 0 < W := by linarith
@@ -72,7 +74,7 @@ theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : 
   -- `S₂ ≤ P + R`.
   have hW'1 : W / 2 ≤ max (V : ℝ) (W / 2) := le_max_right _ _
   have hW'2 : max (V : ℝ) (W / 2) ≤ W := max_le hVW (by linarith)
-  have hS2 := hS2gen W ⟨hVW, hWx⟩
+  have hS2 := hS2gen W ⟨hAW, hWx⟩
   have hlog := logSqSum_le_half (by linarith) hW'1 (W := W)
   set P := m * x / (Nat.totient q * L) * (1 / 2 * W * Real.log W)
   set R := q / Nat.totient q * (W / L) * (1 / 2 * W * Real.log W)
@@ -163,28 +165,28 @@ theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : 
 
 
 set_option maxHeartbeats 2000000 in
-/-- Integrating `G637` over `[V, x/U]`. -/
-theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
-    (hV : 0 < (V : ℝ)) (hVU : (V : ℝ) ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
-    (hcV : c * rexp 1 ≤ V) {β : ℝ} (hβ : 0 < β) :
-    IntervalIntegrable (Ggen x U V q c m β) volume V (x / U) ∧
-    ∫ W in (V : ℝ)..x / U, Ggen x U V q c m β W ≤
-      x * √(m / (2 * Nat.totient q)) * β / 2 * (Real.log (x / (U * V)) + Real.log c *
-        (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) +
+/-- Integrating `Ggen` over `[A, x/U]` (`V ≤ A` enters only through `κ₁ = kap1 x U V`). -/
+theorem integral_Ggen_le' {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
+    {A : ℝ} (hV : 0 < A) (hVU : A ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
+    (hcV : c * rexp 1 ≤ A) {β : ℝ} (hβ : 0 < β) :
+    IntervalIntegrable (Ggen x U V q c m β) volume A (x / U) ∧
+    ∫ W in A..x / U, Ggen x U V q c m β W ≤
+      x * √(m / (2 * Nat.totient q)) * β / 2 * (Real.log (x / (U * A)) + Real.log c *
+        (Real.log (Real.log (x / U / c)) - Real.log (Real.log (A / c)))) +
       x * √(m / (2 * Nat.totient q)) / (2 * β) *
-        (0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U) +
+        (0.15107 * Real.log (x / (U * A)) + 2 * zeta3 * √(x / A) / U) +
       √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
-      1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √V) := by
+      1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √A) := by
   have hU0 : (0 : ℝ) < U := by exact_mod_cast hU
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
   have he : (2 : ℝ) < rexp 1 := by have := Real.add_one_lt_exp (one_ne_zero (α := ℝ)); linarith
   have hc0 : 0 < c := by linarith
-  have h2q : c < V := by nlinarith
-  have hpos : ∀ W ∈ Set.uIcc (V : ℝ) (x / U), 0 < W := fun W hW => by
+  have h2q : c < A := by nlinarith
+  have hpos : ∀ W ∈ Set.uIcc A (x / U), 0 < W := fun W hW => by
     rw [Set.uIcc_of_le hVU] at hW; exact lt_of_lt_of_le hV hW.1
-  have hLpos : ∀ W ∈ Set.uIcc (V : ℝ) (x / U), 0 < Real.log (W / c) := fun W hW => by
+  have hLpos : ∀ W ∈ Set.uIcc A (x / U), 0 < Real.log (W / c) := fun W hW => by
     rw [Set.uIcc_of_le hVU] at hW
     exact Real.log_pos (by rw [one_lt_div (by positivity)]; linarith [hW.1])
   set c1 := x * √(m / (2 * Nat.totient q)) * β / 2
@@ -198,51 +200,51 @@ theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   set f4 : ℝ → ℝ := fun W => 1 / (W * √W)
   set f5 : ℝ → ℝ := fun W => √W / W
   set f6 : ℝ → ℝ := fun W => √W / (W * √(Real.log (W / c)))
-  have hcl : ContinuousOn (fun W => Real.log (W / c)) (Set.uIcc (V : ℝ) (x / U)) :=
+  have hcl : ContinuousOn (fun W => Real.log (W / c)) (Set.uIcc A (x / U)) :=
     ContinuousOn.log (continuousOn_id.div_const _) fun W hW => (div_pos (hpos W hW) (by positivity)).ne'
-  have hsq : ContinuousOn (fun W : ℝ => √W) (Set.uIcc (V : ℝ) (x / U)) :=
+  have hsq : ContinuousOn (fun W : ℝ => √W) (Set.uIcc A (x / U)) :=
     Real.continuous_sqrt.continuousOn
-  have i1 : IntervalIntegrable f1 volume V (x / U) := ContinuousOn.intervalIntegrable
+  have i1 : IntervalIntegrable f1 volume A (x / U) := ContinuousOn.intervalIntegrable
     (continuousOn_const.div continuousOn_id fun W hW => (hpos W hW).ne')
-  have i2 : IntervalIntegrable f2 volume V (x / U) := ContinuousOn.intervalIntegrable
+  have i2 : IntervalIntegrable f2 volume A (x / U) := ContinuousOn.intervalIntegrable
     (continuousOn_const.div (continuousOn_id.mul hcl) fun W hW =>
       (mul_pos (hpos W hW) (hLpos W hW)).ne')
   obtain ⟨i3, I3⟩ := integral_H2_comp hx hU0 hV hVU
-  have i4 : IntervalIntegrable f4 volume V (x / U) := ContinuousOn.intervalIntegrable
+  have i4 : IntervalIntegrable f4 volume A (x / U) := ContinuousOn.intervalIntegrable
     (continuousOn_const.div (continuousOn_id.mul hsq) fun W hW =>
       (mul_pos (hpos W hW) (Real.sqrt_pos.2 (hpos W hW))).ne')
-  have i5 : IntervalIntegrable f5 volume V (x / U) := ContinuousOn.intervalIntegrable
+  have i5 : IntervalIntegrable f5 volume A (x / U) := ContinuousOn.intervalIntegrable
     (hsq.div continuousOn_id fun W hW => (hpos W hW).ne')
-  have i6 : IntervalIntegrable f6 volume V (x / U) := ContinuousOn.intervalIntegrable
+  have i6 : IntervalIntegrable f6 volume A (x / U) := ContinuousOn.intervalIntegrable
     (hsq.div (continuousOn_id.mul (Real.continuous_sqrt.comp_continuousOn hcl)) fun W hW =>
       (mul_pos (hpos W hW) (Real.sqrt_pos.2 (hLpos W hW))).ne')
   have hG : Ggen x U V q c m β = fun W => c1 * f1 W + c1 * Real.log c * f2 W + c2 * f3 W +
       c2 * (zeta3 * √x / U) * f4 W + c3 * f5 W + c3 * √(Real.log c) * f6 W + c4 * f4 W := by
     ext W; rfl
-  have i3' : IntervalIntegrable f3 volume V (x / U) := i3
-  have I3' : ∫ W in (V : ℝ)..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * V)) := I3
+  have i3' : IntervalIntegrable f3 volume A (x / U) := i3
+  have I3' : ∫ W in A..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * A)) := I3
   have p1 := (i1.const_mul c1).add (i2.const_mul (c1 * Real.log c))
   have p2 := p1.add (i3'.const_mul c2)
   have p3 := p2.add (i4.const_mul (c2 * (zeta3 * √x / U)))
   have p4 := p3.add (i5.const_mul c3)
   have p5 := p4.add (i6.const_mul (c3 * √(Real.log c)))
-  have iG : IntervalIntegrable (Ggen x U V q c m β) volume V (x / U) := by
+  have iG : IntervalIntegrable (Ggen x U V q c m β) volume A (x / U) := by
     rw [hG]; exact p5.add (i4.const_mul c4)
   refine ⟨iG, ?_⟩
   -- Evaluate / bound each piece.
-  have J1 : ∫ W in (V : ℝ)..x / U, f1 W = Real.log (x / (U * V)) := by
+  have J1 : ∫ W in A..x / U, f1 W = Real.log (x / (U * A)) := by
     rw [integral_one_div_of_pos hV (by positivity), div_div, mul_comm (U : ℝ)]
-  have J2 : ∫ W in (V : ℝ)..x / U, f2 W =
-      Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)) :=
+  have J2 : ∫ W in A..x / U, f2 W =
+      Real.log (Real.log (x / U / c)) - Real.log (Real.log (A / c)) :=
     integral_inv_mul_log (by positivity) h2q hVU
-  have J4 : ∫ W in (V : ℝ)..x / U, f4 W ≤ 2 / √V := integral_inv_mul_sqrt_le hV hVU
-  have J5 : ∫ W in (V : ℝ)..x / U, f5 W ≤ 2 * √(x / U) := by
+  have J4 : ∫ W in A..x / U, f4 W ≤ 2 / √A := integral_inv_mul_sqrt_le hV hVU
+  have J5 : ∫ W in A..x / U, f5 W ≤ 2 * √(x / U) := by
     rw [intervalIntegral.integral_congr (g := fun W => 1 / √W) fun W hW => by
       have h0 := hpos W hW
       simp only [f5]; rw [div_eq_div_iff h0.ne' (Real.sqrt_pos.2 h0).ne', one_mul,
         Real.mul_self_sqrt h0.le], integral_inv_sqrt hV hVU]
-    have := Real.sqrt_nonneg (V : ℝ); linarith
-  have J6 : ∫ W in (V : ℝ)..x / U, f6 W ≤
+    have := Real.sqrt_nonneg A; linarith
+  have J6 : ∫ W in A..x / U, f6 W ≤
       2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)) := by
     rw [intervalIntegral.integral_congr (g := fun W => 1 / (√W * √(Real.log (W / c))))
       fun W hW => by
@@ -264,7 +266,7 @@ theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   have hc3 : 0 ≤ c3 := Real.sqrt_nonneg _
   have hc4 : 0 ≤ c4 := by have := Real.sqrt_nonneg (kap1 x U V * (1 / 2 + 1 / U)); positivity
   have hz : 0 ≤ zeta3 * √x / U := by have := zeta3_nonneg; positivity
-  have e4 : zeta3 * √x / U * (2 / √V) = 2 * zeta3 * √(x / V) / U := by
+  have e4 : zeta3 * √x / U * (2 / √A) = 2 * zeta3 * √(x / A) / U := by
     rw [Real.sqrt_div' _ hV.le]; ring
   have K3 := mul_le_mul_of_nonneg_left I3' hc2
   have K4 := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left J4 hz) hc2
@@ -275,6 +277,32 @@ theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   rw [e4] at K4
   nlinarith [K3, K4, K5, K6, K7]
 
+
+/-- `integral_Ggen_le'` with `A = V`. -/
+theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
+    (hV : 0 < (V : ℝ)) (hVU : (V : ℝ) ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
+    (hcV : c * rexp 1 ≤ V) {β : ℝ} (hβ : 0 < β) :
+    IntervalIntegrable (Ggen x U V q c m β) volume V (x / U) ∧
+    ∫ W in (V : ℝ)..x / U, Ggen x U V q c m β W ≤
+      x * √(m / (2 * Nat.totient q)) * β / 2 * (Real.log (x / (U * V)) + Real.log c *
+        (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) +
+      x * √(m / (2 * Nat.totient q)) / (2 * β) *
+        (0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U) +
+      √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
+        (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
+      1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √V) :=
+  integral_Ggen_le' hx hq hU hV hVU hc1 hm hcV hβ
+
+/-- `pointwise_gen'` with `A = V`. -/
+theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
+    (hV : (117 : ℝ) ≤ V) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m) (hcV : c * rexp 1 ≤ V)
+    (hS2gen : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
+      (m * x / (Nat.totient q * Real.log (W / c)) + q / Nat.totient q * (W / Real.log (W / c))) *
+        logSqSum (max V (W / 2)) W)
+    {β : ℝ} (hβ : 0 < β) {W : ℝ} (hW : W ∈ Set.Icc (V : ℝ) (x / U)) :
+    √(S1 x U W) * (√(S2 α x (max U (x / (2 * W))) (max V (W / 2)) W) +
+      √((x / (2 * W) + 1) * (1.4262 ^ 2 * W))) ≤ W * Ggen x U V q c m β W :=
+  pointwise_gen' hq hx hU hV le_rfl hc1 hm hcV hS2gen hβ hW
 
 set_option maxHeartbeats 2000000 in
 /-- **Type II total, general form** (see the module docstring). -/
@@ -351,16 +379,18 @@ set_option maxHeartbeats 2000000 in
 /-- The bound on `S₂` from (5.56)(ii) used for [B, (6.32)]: with `ε₁ = x/2UQ`,
 `c' = |δ|q(1+ε₁)/4`, `L = log(W/c')`, for `|δ| ≥ 8`, `x ≤ Q²`, `W ∈ [V, x/U]`, `c'e ≤ V`:
 `S₂ ≤ ((2/|δ|) x/(φL) + (q/φ) W/L) Σ(log p)²`. -/
-theorem S2_le_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
+theorem S2_le_640' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)
-    (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U)
-    (hcV : |δ| * q * (1 + x / (2 * U * Q)) / 4 * rexp 1 ≤ V)
-    {W : ℝ} (hW : W ∈ Set.Icc (V : ℝ) (x / U)) :
+    (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U) {A : ℝ} (hVA : (V : ℝ) ≤ A)
+    (hcV : |δ| * q * (1 + x / (2 * U * Q)) / 4 * rexp 1 ≤ A)
+    {W : ℝ} (hW : W ∈ Set.Icc A (x / U)) :
     S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (2 / |δ| * x / (Nat.totient q * Real.log (W / (|δ| * q * (1 + x / (2 * U * Q)) / 4))) +
         q / Nat.totient q * (W / Real.log (W / (|δ| * q * (1 + x / (2 * U * Q)) / 4)))) *
         logSqSum (max V (W / 2)) W := by
-  obtain ⟨hVW, hWx⟩ := hW
+  obtain ⟨hAW, hWx⟩ := hW
+  have hVW : (V : ℝ) ≤ W := hVA.trans hAW
+  replace hcV := hcV.trans hAW
   have hU1 : (1 : ℝ) ≤ U := by exact_mod_cast hU
   have hU0 : (0 : ℝ) < U := by linarith
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
@@ -447,6 +477,18 @@ theorem S2_le_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop :
       _ = _ := by field_simp; ring
   exact le_of_mul_le_mul_left key (by positivity)
 
+
+/-- `S2_le_640'` with `A = V`. -/
+theorem S2_le_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
+    (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)
+    (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U)
+    (hcV : |δ| * q * (1 + x / (2 * U * Q)) / 4 * rexp 1 ≤ V)
+    {W : ℝ} (hW : W ∈ Set.Icc (V : ℝ) (x / U)) :
+    S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
+      (2 / |δ| * x / (Nat.totient q * Real.log (W / (|δ| * q * (1 + x / (2 * U * Q)) / 4))) +
+        q / Nat.totient q * (W / Real.log (W / (|δ| * q * (1 + x / (2 * U * Q)) / 4)))) *
+        logSqSum (max V (W / 2)) W :=
+  S2_le_640' hq hcop h2α hδQ hδ8 hx hQx hU le_rfl hcV hW
 
 /-- **Type II total, our version of [B, (6.40)]** (`|δ| ≥ 8`, `|δq|` small): with
 `c' = |δ|q(1+ε₁)/4`, `ε₁ = x/2UQ`, `Λ₀ = log(x/UV)`, `Φ = log c' (log log(x/Uc') - log log(V/c'))`,
