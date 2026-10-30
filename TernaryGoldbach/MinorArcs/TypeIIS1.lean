@@ -453,16 +453,63 @@ theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
     ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T := by
   sorry
 
-/-- `S ↦ H₂(S)/S` is integrable on `[1, T]`. **TODO (provable, not a computation)**: `H₂` is
-bounded (`H2_nonneg`, `H2_le`) and measurable (`g₂` is a step function, so `S ↦ ∫ g₂(uS/s) du`
-is measurable). -/
-theorem intervalIntegrable_H2_div (T : ℝ) :
-    IntervalIntegrable (fun S => H2 S / S) MeasureTheory.volume 1 T := by
-  sorry
+theorem measurable_g2 : Measurable g2 := by
+  have : g2 = (fun N : ℕ => ∑ r₁ ∈ Finset.Icc 1 N, ∑ r₂ ∈ Finset.Icc 1 N,
+      if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
+        (μ r₁ : ℝ) * μ r₂ / ((σ 1 r₁ : ℝ) * σ 1 r₂) else 0) ∘ Nat.floor := rfl
+  rw [this]
+  exact measurable_from_nat.comp Nat.measurable_floor
+
+theorem measurable_T2 : Measurable T2 := by
+  set F : ℕ × ℝ → ℝ := fun p => ∑ s ∈ Finset.Icc 1 p.1,
+    if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * p.2 / s) else 0
+  have hF : Measurable F := by
+    refine measurable_from_prod_countable_right fun n => ?_
+    simp only [F]
+    apply Finset.measurable_sum
+    intro s _
+    by_cases hs : Odd s
+    · simp only [hs, if_true]
+      refine Measurable.const_mul ?_ _
+      simp_rw [intervalIntegral.integral_of_le (show (1 / 2 : ℝ) ≤ 1 by norm_num)]
+      have hf : MeasureTheory.StronglyMeasurable (fun p : ℝ × ℝ => g2 (p.2 * p.1 / s)) :=
+        (measurable_g2.comp (by fun_prop)).stronglyMeasurable
+      exact (hf.integral_prod_right' (ν := MeasureTheory.volume.restrict (Set.Ioc (1 / 2 : ℝ) 1))).measurable
+    · simp only [hs, if_false]; exact measurable_const
+  have : T2 = F ∘ fun S => (⌊S⌋₊, S) := rfl
+  rw [this]
+  exact hF.comp (Nat.measurable_floor.prodMk measurable_id)
+
+theorem measurable_H2 : Measurable H2 := by
+  unfold H2
+  exact Measurable.ite measurableSet_Iio
+    ((measurable_T2.max measurable_const).const_mul _) measurable_const
 
 /-- **[B, (5.37)]** (trusted; numerical: `T₂(S) ≤ 1/2` for `S < 16`). -/
 theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
   sorry
+
+theorem H2_eq_zero_of_lt_one {S : ℝ} (hS : S < 1) : H2 S = 0 := by
+  have hT : T2 S = 0 := by
+    unfold T2
+    rw [Nat.floor_eq_zero.2 hS]; simp
+  unfold H2; rw [if_pos (by linarith), hT]; simp
+
+/-- `S ↦ H₂(S)/S` is interval integrable (`H₂` is measurable, `0 ≤ H₂ ≤ 2/π²`, `H₂ = 0` on
+`(-∞, 1)`). -/
+theorem intervalIntegrable_H2_div (T : ℝ) :
+    IntervalIntegrable (fun S => H2 S / S) MeasureTheory.volume 1 T := by
+  rw [intervalIntegrable_iff]
+  refine MeasureTheory.IntegrableOn.of_bound measure_Ioc_lt_top
+    ((measurable_H2.div measurable_id).aestronglyMeasurable) (2 / π ^ 2) ?_
+  refine Filter.Eventually.of_forall fun S => ?_
+  rw [Real.norm_eq_abs]
+  rcases lt_or_ge S 1 with hS | hS
+  · rw [H2_eq_zero_of_lt_one hS, zero_div, abs_zero]; positivity
+  · rw [abs_div, abs_of_nonneg (H2_nonneg S), abs_of_pos (by linarith)]
+    calc H2 S / S ≤ H2 S / 1 := div_le_div_of_nonneg_left (H2_nonneg S) one_pos hS
+      _ = H2 S := div_one _
+      _ ≤ _ := H2_le S
 
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
   unfold H2
