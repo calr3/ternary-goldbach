@@ -15,11 +15,23 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     trusted `eta2_fourier_bound'` (`|η̂₂''|_∞ ≤ 31.521`, [B, App. B]); checked by temporarily
     turning it into an `axiom` and running `#print axioms`.
   * Still `sorry`: Lemmas 4.2.3–4.2.4 (in `TypeI.lean`), Thm 3.1.1.
-* **Next:** Lemma 4.2.3 (inner sum with `log n`; needs `η_(ρ)(t) = log(ρt) η₂(t)` facts
-  [B, (6.2)]: `|η_(ρ)|₁ ≤ log ρ`, `|η_(ρ)'|₁ ≤ log ρ |η'|₁`, and a bound for `η̂_(ρ)''`) and
-  Lemma 4.2.4 (with `Λ(v)μ(u)`). Both follow the 4.2.2 skeleton (`typeI_eq_main_add_rest`,
-  `norm_mainPart_le`, `norm_restPart_le_caseB/A`) with modified inner sums. Read [B] pp. 65–76
-  (PDF 75–86) first, and check which of 4.2.3/4.2.4 Thm 3.1.1 actually uses.
+* **Next: Lemma 4.2.3** (in progress). Done so far: `InnerSumsGen.lean` (`SmoothData g N V K`,
+  `norm_ToddG_le`, `ToddG_main` for any smoothing), `Eta2Log.lean` (`η_(ρ) = log(ρt)η₂`,
+  `smoothData_eta2log` for `ρ ≥ 4`, `ghat_eta2log`; trusted `eta2log_fourier_bound` = [B, B.2.3]),
+  `SumTools.lean` (sums vs antiderivatives via MVT: `sum_le_of_antitone/monotone`; `F₁, F₂, F₃`
+  for `log(x/t)`, `t log(x/t)`, `log(x/t)/t`). Plan, following [B, pp. 66–70]:
+  1. `typeILog = ∑_{m odd} μ(m) ToddG (eta2log (x/m)) α x m` (copy `inner_eq_Todd`); `ρ = x/m ≥ 4`
+     because `D ≤ x/4`. Per-`m` bounds are `log(x/m) ×` the 4.2.2 bounds.
+  2. Main term: `ToddG_main` + `ghat_eta2log`; error `∑_{m' odd} (qm'/x) log(x/qm') ≤
+     (M/x)log(x/M) + M²/(4qx) log(√e x/M)` via `F₂` (step `2q`), then `(M/x)log(x/M) ≤ 1/e` and
+     monotonicity of `t² log(√e x/t)` to replace `M` by `D`.
+  3. Case (b): R1 = `log x ×` `sum_R1` (scale `B, C` by `log x` in Lemma 4.1.3); R2 with weight
+     `log(x/((j+½)q))` per block, `S2 ≤ log(2x/q) + (2D'/q + D'²/2q²) log(√e x/D')` (via `F₁, F₂`;
+     numerically checked), then [B (4.47)] — NB the book's last step needs `t log(√e x/t)`
+     increasing to handle `D' = D < c₂x/q`; R3 with weight `log(x/(R+jq))` via `F₃` and
+     `√(1+u) ≤ 1 + u/2`, [B (4.48)].
+  4. Case (a): [B (4.44)–(4.45)] and the modified (4.17)–(4.18).
+  Then Lemma 4.2.4 ([B pp. 70–76]).
 
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
 
