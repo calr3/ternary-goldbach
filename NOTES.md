@@ -80,8 +80,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     and `8·1.4262 x√(κ₁(1/2+1/U))/√V` (vs `κ₉x/√V`). `κ₁ = 2/π² + κ₀ζ³√(x/V)/U` kept exact (no
     (6.17) needed). `H₂` now uses `max(T₂, 0)` (so `H₂ ≥ 0`); trusted inputs as listed by
     `#sorry_deps`, plus the TODO `intervalIntegrable_H2_div`.
-  * Step 3 (next): rest of §6.2 explicit totals — (6.38)/(6.39) (larger `q`), (6.40)/(6.41)
-    (`|δ| ≥ 8`), and — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
+  * Step 3b ✅ `MinorArcs/TypeIITotalGen.lean`: `typeII_gen` (any `c`, `m` with
+    `S₂ ≤ (m x/(φL) + (q/φ)W/L)Σ`, `L = log(W/c)`), and **`typeII_640`** (our (6.40): `|δ| ≥ 8`,
+    `c' = |δ|q(1+ε₁)/4`, `c'e ≤ V`, `x ≤ Q²`), with `S2_le_640` from (5.56)(ii) (`R = √(W/c')`).
+    Main term `2x/√(|δ|φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))` as [B]'s.
+  * Step 3 (next): rest of §6.2 explicit totals — (6.38)/(6.39) (larger `q`; needed for the second
+    choice of parameters), (6.41), and — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
     Lemma 4.2.4 (§6.2.2), `|S_{II}|` (§6.2.3: (6.16)–(6.20) …, integrating the S₁·S₂ bounds over
     `W` in ranges `[V, W₀]`, `[W₀, x/U]`), `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
   * Step 4: §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).
