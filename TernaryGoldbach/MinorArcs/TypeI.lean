@@ -1,4 +1,4 @@
-import TernaryGoldbach.Helfgott.Eta2
+import TernaryGoldbach.MinorArcs.InnerSums
 import TernaryGoldbach.MinorArcs.TrigSums
 
 /-!
@@ -43,14 +43,8 @@ noncomputable def logPlus (x : ℝ) : ℝ := max (Real.log x) 0
 /-- `min(1, c/δ²)`, read as `1` when `δ = 0`. -/
 noncomputable def minInv (c δ : ℝ) : ℝ := if δ = 0 then 1 else min 1 (c / δ ^ 2)
 
-/-- The constant `c₀ = 31.521 ≥ |η̂₂''|_∞` [B, (B.6), §6.1]. -/
-def c₀ : ℝ := 31.521
-
 /-- `c₂ = 6π / (5√c₀)` [B, Lemma 4.2.2]. -/
 noncomputable def c₂ : ℝ := 6 * π / (5 * √c₀)
-
-/-- `|η₂'|₁ = 8 log 2` [B, (6.1)]. -/
-noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
 
 /-- The Fourier transform `f̂(t) = ∫ e(-xt) f(x) dx` [B, §2.3]. -/
 noncomputable def fourier (f : ℝ → ℝ) (t : ℝ) : ℂ := ∫ x, e (-(x * t)) * f x
@@ -97,9 +91,11 @@ noncomputable def typeI2 (α x U V : ℝ) : ℂ :=
 theorem eta2_L1 : ∫ t, |eta2 t| = 1 := Helfgott.integral_abs_eta2
 
 /-- `|η̂₂''|_∞ ≤ 31.521` [B, (B.6), Lemma B.2.3], written via `η̂''(t) = (2πit)² η̂(t)`.
-(In [B] this is a rigorous numerical computation.) -/
+Follows from the trusted fact `eta2_fourier_bound'` (in [B] a rigorous numerical computation). -/
 theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ ≤ c₀ := by
-  sorry
+  have h : fourier eta2 t = FourierTransform.fourier (fun u => (eta2 u : ℂ)) t :=
+    (fourier_eq_integral_e _ _).symm
+  rw [h]; exact eta2_fourier_bound' t
 
 /-! ## §4.1 Trigonometric sums -/
 

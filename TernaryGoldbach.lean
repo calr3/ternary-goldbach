@@ -13,5 +13,7 @@ import TernaryGoldbach.Helfgott.Main
 import TernaryGoldbach.MinorArcs.Vaughan
 import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
+import TernaryGoldbach.MinorArcs.FourierSums
+import TernaryGoldbach.MinorArcs.InnerSums
 import TernaryGoldbach.MinorArcs.TypeI
 import TernaryGoldbach.MinorArcs.PointwiseBound
