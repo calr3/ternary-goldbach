@@ -16,7 +16,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   term of `f₁` and `f₂` in (14.47) (`0.11438 → 0.11802`), and (14.43) (`0.30351 → 0.31181`).
   Lemma 11.2.1 still holds (`g/h ≤ 0.61`).
 * **Next: Ch. 11 (Prop 11.2.3), then Ch. 12, Ch. 13 → (14.49).** See the Prop 11.2.3 erratum
-  below before formalizing it.
+  below before formalizing it. Done so far: (11.9) `S_etaStar_eq`, `norm_S_etaStar_le`
+  (`EtaStar.lean`, no `sorry`); Theorem 3.1.1 at scale `wy` with `δ ↦ wδ`
+  (`theorem_3_1_1_scaled(_le_one)`, `EtaStarBound.lean`). Remaining for 11.2.3: monotonicity of
+  `g_z(r)` in `r` (Lemma 11.2.4; needed to pass from `max(2, w|δ|/4)q` to `wr`), the region
+  `w < 1/K` (trivial bound `|S_{η₂}(α,z)| ≤ S_{η₂}(0,z) ≤ 1.04488 z`, Cor. C.1.3, trusted), the
+  large-`w` tail, and integrating against `φ` (convexity, Lemma 11.2.2; `C_{φ,2,K}`).
 * Part I (minor arcs):
   * [B, §2.3] proved (`MinorArcs/FourierSums.lean`), [B, §4.1] proved (`MinorArcs/TrigSums.lean`).
   * [B, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**

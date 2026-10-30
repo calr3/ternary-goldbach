@@ -70,3 +70,5 @@ import TernaryGoldbach.MinorArcs.SecondFinal
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound
+import TernaryGoldbach.MinorArcs.EtaStar
+import TernaryGoldbach.MinorArcs.EtaStarBound
