@@ -432,9 +432,15 @@ theorem integral_g2 {y : ℝ} (hy : 0 < y) :
 noncomputable def T2 (S : ℝ) : ℝ :=
   ∑ s ∈ Icc 1 ⌊S⌋₊, if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * S / s) else 0
 
-/-- `H₂(S)` [B, (5.35)]: `(4/π²) T₂(S)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses its
-computable upper bound `G₂(S) ≥ T₂(S)` in place of `T₂(S)`.) -/
-noncomputable def H2 (S : ℝ) : ℝ := if S < 16 then 4 / π ^ 2 * T2 S else 0.15107
+/-- `H₂(S)` [B, (5.35)]: `(4/π²) max(T₂(S), 0)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses
+its computable upper bound `G₂(S)` in place of `T₂(S)`; `G₂ ≥ T₂` and `G₂ ≥ 0`, so `G₂ ≥ max(T₂, 0)`
+and the book's statements (5.36), (5.37) about `H₂` remain valid for ours.) -/
+noncomputable def H2 (S : ℝ) : ℝ := if S < 16 then 4 / π ^ 2 * max (T2 S) 0 else 0.15107
+
+theorem H2_nonneg (S : ℝ) : 0 ≤ H2 S := by
+  unfold H2; split_ifs
+  · have := le_max_right (T2 S) 0; positivity
+  · norm_num
 
 /-- **Trusted** [B, (5.31) and p. 92]: `T₂(S) ≤ 0.37273` for `S ≥ 16`. For `S ≥ 10⁵` this follows
 from Lemma 5.1.2 (whose range `x ≤ 10⁶` is an interval-arithmetic computation) and the numerics
@@ -447,6 +453,13 @@ theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
     ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T := by
   sorry
 
+/-- `S ↦ H₂(S)/S` is integrable on `[1, T]`. **TODO (provable, not a computation)**: `H₂` is
+bounded (`H2_nonneg`, `H2_le`) and measurable (`g₂` is a step function, so `S ↦ ∫ g₂(uS/s) du`
+is measurable). -/
+theorem intervalIntegrable_H2_div (T : ℝ) :
+    IntervalIntegrable (fun S => H2 S / S) MeasureTheory.volume 1 T := by
+  sorry
+
 /-- **[B, (5.37)]** (trusted; numerical: `T₂(S) ≤ 1/2` for `S < 16`). -/
 theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
   sorry
@@ -454,7 +467,8 @@ theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
   unfold H2
   split_ifs with h
-  · exact le_rfl
+  · have := le_max_left (T2 S) 0; have : (0 : ℝ) < 4 / π ^ 2 := by positivity
+    nlinarith
   · have h1 := T2_le (not_lt.1 h)
     have hpi : (3.141592 : ℝ) < π := Real.pi_gt_d6
     have hpi2 : (9.8696 : ℝ) < π ^ 2 := by nlinarith
