@@ -84,4 +84,46 @@ theorem exp_gamma_le_sharp : rexp eulerMascheroniConstant ≤ 1.7882 := by
   norm_num [Finset.sum_range_succ, Nat.factorial] at h
   linarith
 
+/-- Taylor polynomial of degree 6. -/
+noncomputable def taylor6 (f : ℝ) : ℝ := 1 + f + f ^ 2 / 2 + f ^ 3 / 6 + f ^ 4 / 24 + f ^ 5 / 120 + f ^ 6 / 720
+
+/-- `exp(n + f) ≤ e₊ⁿ (T₆(f) + f⁷/4410)` for `0 ≤ f ≤ 1`. -/
+theorem exp_le_aux (n : ℕ) {f : ℝ} (h0 : 0 ≤ f) (h1 : f ≤ 1) :
+    rexp (n + f) ≤ 2.7182818286 ^ n * (taylor6 f + f ^ 7 / 4410) := by
+  have h := Real.exp_bound' h0 h1 (n := 7) (by norm_num)
+  have e : rexp (n + f) = rexp 1 ^ n * rexp f := by rw [Real.exp_add, ← Real.exp_nat_mul]; ring_nf
+  have he := Real.exp_one_lt_d9
+  have hn : rexp 1 ^ n ≤ 2.7182818286 ^ n := pow_le_pow_left₀ (Real.exp_pos 1).le he.le n
+  have hf : rexp f ≤ taylor6 f + f ^ 7 / 4410 := by
+    refine h.trans (le_of_eq ?_)
+    simp only [taylor6, Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    push_cast; ring
+  rw [e]
+  exact mul_le_mul hn hf (Real.exp_pos _).le (by positivity)
+
+/-- `e₋ⁿ T₆(f) ≤ exp(n + f)` for `0 ≤ f`. -/
+theorem exp_ge_aux (n : ℕ) {f : ℝ} (h0 : 0 ≤ f) :
+    2.7182818283 ^ n * taylor6 f ≤ rexp (n + f) := by
+  have h := Real.sum_le_exp_of_nonneg h0 7
+  have e : rexp (n + f) = rexp 1 ^ n * rexp f := by rw [Real.exp_add, ← Real.exp_nat_mul]; ring_nf
+  have he := Real.exp_one_gt_d9
+  have hn : 2.7182818283 ^ n ≤ rexp 1 ^ n := pow_le_pow_left₀ (by norm_num) he.le n
+  have hf : taylor6 f ≤ rexp f := by
+    refine le_trans (le_of_eq ?_) h
+    simp only [taylor6, Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial]
+    push_cast; ring
+  rw [e]
+  exact mul_le_mul hn hf (by unfold taylor6; positivity) (pow_nonneg (Real.exp_pos 1).le n)
+
+/-- Numerical upper bound for a logarithm: `log z ≤ n + f` if `z ≤ e₋ⁿ T₆(f)`. -/
+theorem log_le_num {z : ℝ} (n : ℕ) (f : ℝ) (hz : 0 < z) (h0 : 0 ≤ f)
+    (h : z ≤ 2.7182818283 ^ n * taylor6 f) : Real.log z ≤ n + f := by
+  rw [Real.log_le_iff_le_exp hz]; exact h.trans (exp_ge_aux n h0)
+
+/-- Numerical lower bound for a logarithm: `n + f ≤ log z` if `e₊ⁿ (T₆(f) + f⁷/4410) ≤ z`. -/
+theorem le_log_num {z : ℝ} (n : ℕ) (f : ℝ) (h0 : 0 ≤ f) (h1 : f ≤ 1)
+    (h : 2.7182818286 ^ n * (taylor6 f + f ^ 7 / 4410) ≤ z) : (n : ℝ) + f ≤ Real.log z := by
+  have hz : 0 < z := lt_of_lt_of_le (by unfold taylor6; positivity) h
+  rw [Real.le_log_iff_exp_le hz]; exact (exp_le_aux n h0 h1).trans h
+
 end TernaryGoldbach.MinorArcs
