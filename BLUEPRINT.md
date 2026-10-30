@@ -53,7 +53,8 @@ statements, each with its own `sorry`.
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [B]'s proof ignores δ_w = wδ, statement
      │   survives for r ≤ r₁, see NOTES and scripts/prop_11_2_3_check.py)
      │   [(11.9) ✅ MinorArcs/EtaStar.lean; Thm 3.1.1 at scale wy ✅ MinorArcs/EtaStarBound.lean;
-     │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean]
+     │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean;
+     │    Prop 11.2.3 (corrected, with a majorant G) ✅ Prop1123.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)

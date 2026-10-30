@@ -74,3 +74,4 @@ import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.EtaStarBound
 import TernaryGoldbach.MinorArcs.GBound
 import TernaryGoldbach.MinorArcs.GMono
+import TernaryGoldbach.MinorArcs.Prop1123

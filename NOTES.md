@@ -15,6 +15,9 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   corrected constants. The changes come from `g(r₀)` in (14.37) (`0.38491 → 0.39761`), the `+0.5`
   term of `f₁` and `f₂` in (14.47) (`0.11438 → 0.11802`), and (14.43) (`0.30351 → 0.31181`).
   Lemma 11.2.1 still holds (`g/h ≤ 0.61`).
+* **Decision (2026-10-30): option (a).** Keep `minor_arcs_input` as a cited input with the
+  caveat below, and keep formalizing the parts of Part I, Ch. 11, Ch. 12 and Prop 13.1.2 that do
+  not depend on the scale question.
 * **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
   "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale
@@ -25,7 +28,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   (`theorem_3_1_1_scaled(_le_one)`, `EtaStarBound.lean`); (11.11) `norm_S_eta2_le_gx`
   (`GBound.lean`, `q/φ(q) ≤ Ϝ(r)` via the trusted Lemma C.2.2); **`gx_antitoneOn`**: `g_x(r)` is
   non-increasing on `[670, x^{1/3}/6]` (`GMono.lean`, no `sorry`; proved via
-  `Q(log r) r^{-p}` with `Q' ≤ pQ`, not [B]'s (11.23)–(11.25)). Remaining for 11.2.3: the region
+  `Q(log r) r^{-p}` with `Q' ≤ pQ`, not [B]'s (11.23)–(11.25)). **`prop_11_2_3`** (`Prop1123.lean`):
+  Prop 11.2.3 in corrected form, `|S_{η_*}| ≤ y(∫_{w₀}^{w₁} Gφ + 17(∫_0^{w₀}φ + ∫_{w₁}^∞φ))` for
+  any integrable majorant `G(w) ≥ g_{wy}(min(1,w) r)` (trivial bound `17z` from Mathlib's
+  Chebyshev `ψ ≤ (log 4 + 4)x`; same 20 trusted items as Thm 3.1.1, checked with
+  `scripts/sorry_deps.lean`). Still to do: closed-form/numerical majorants `G` (the analogue of
+  [B]'s `g_{y,φ}`, via Lemma 11.2.2 convexity and `C_{φ,2,K}`). Old list, for reference: the region
   `w < 1/K` (trivial bound `|S_{η₂}(α,z)| ≤ S_{η₂}(0,z) ≤ 1.04488 z`, Cor. C.1.3, trusted), the
   large-`w` tail, and integrating against `φ` (convexity, Lemma 11.2.2; `C_{φ,2,K}`).
 * Part I (minor arcs):
