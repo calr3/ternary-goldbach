@@ -454,4 +454,101 @@ theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
       ≤ (Real.log q + Real.log V) * (1 / q) := mul_le_mul_of_nonneg_right hC (by positivity)
     _ = _ := by ring
 
+theorem geom_sum_le_three_halves {p : ℕ} (hp : 3 ≤ p) (L : ℕ) :
+    ∑ α ∈ Icc 1 L, ((p : ℝ) ^ α) ≤ 3 / 2 * (p : ℝ) ^ L := by
+  induction L with
+  | zero => simp; norm_num
+  | succ L ih =>
+    rw [sum_Icc_succ_top (by omega)]
+    have hp3 : (3 : ℝ) ≤ p := by exact_mod_cast hp
+    have : (0 : ℝ) ≤ (p : ℝ) ^ L := by positivity
+    rw [pow_succ]; nlinarith [ih]
+
+/-- **Lemma D** (cf. [B, (4.55)]): `∑_{v ≤ V, (v, q) > 1} Λ(v) v ≤ (3/2) V log q` for `q` odd. -/
+theorem sum_vonMangoldt_mul_not_coprime_le {q : ℕ} (hq : Odd q) {V : ℝ} (hV : 1 ≤ V) :
+    ∑ v ∈ Icc 1 ⌊V⌋₊, (if ¬ Nat.Coprime q v then (Λ v : ℝ) * v else 0) ≤
+      3 / 2 * V * Real.log q := by
+  have hq0 : q ≠ 0 := by have := hq.pos; omega
+  set NV := ⌊V⌋₊
+  have hNV : (NV : ℝ) ≤ V := Nat.floor_le (by linarith)
+  have hNV0 : NV ≠ 0 := by
+    have : 1 ≤ NV := Nat.le_floor (by simpa using hV); omega
+  -- Only prime powers contribute.
+  have h1 : ∑ v ∈ Icc 1 NV, (if ¬ Nat.Coprime q v then (Λ v : ℝ) * v else 0) =
+      ∑ v ∈ (Icc 1 NV).filter (fun v => ¬ Nat.Coprime q v ∧ IsPrimePow v), (Λ v : ℝ) * v := by
+    rw [sum_filter]
+    refine sum_congr rfl fun v _ => ?_
+    by_cases hc : Nat.Coprime q v
+    · rw [if_neg (fun h => h hc), if_neg (fun h => h.1 hc)]
+    · rw [if_pos hc]
+      by_cases hpp : IsPrimePow v
+      · rw [if_pos ⟨hc, hpp⟩]
+      · rw [if_neg (fun h => hpp h.2), (ArithmeticFunction.vonMangoldt_eq_zero_iff).2 hpp]; simp
+  rw [h1]
+  set S := (Icc 1 NV).filter (fun v => ¬ Nat.Coprime q v ∧ IsPrimePow v)
+  -- Group by the prime `p = minFac v`, which divides `q`.
+  have hmaps : ∀ v ∈ S, v.minFac ∈ q.primeFactors := by
+    intro v hv
+    simp only [S, mem_filter] at hv
+    obtain ⟨_, hc, hpp⟩ := hv
+    obtain ⟨p, k, hp, hk, rfl⟩ := (isPrimePow_nat_iff v).1 hpp
+    rw [hp.pow_minFac hk.ne']
+    obtain ⟨r, hr, hrq, hrv⟩ := Nat.Prime.not_coprime_iff_dvd.1 hc
+    have : r = p := (Nat.prime_dvd_prime_iff_eq hr hp).1 (hr.dvd_of_dvd_pow hrv)
+    subst this
+    exact Nat.mem_primeFactors.2 ⟨hr, hrq, hq0⟩
+  rw [← sum_fiberwise_of_maps_to hmaps]
+  have hfib : ∀ p ∈ q.primeFactors, ∑ v ∈ S with v.minFac = p, (Λ v : ℝ) * v ≤
+      3 / 2 * NV * Real.log p := by
+    intro p hp
+    obtain ⟨hpp, hpq, _⟩ := Nat.mem_primeFactors.1 hp
+    have hp3 : 3 ≤ p := by
+      rcases hpp.eq_two_or_odd' with h | h
+      · exfalso; subst h; exact (Nat.not_even_iff_odd.2 hq) (even_iff_two_dvd.2 hpq)
+      · have := hpp.two_le; rcases h with ⟨j, hj⟩; omega
+    set L := Nat.log p NV
+    have hsub : S.filter (fun v => v.minFac = p) ⊆ (Icc 1 L).image (fun α => p ^ α) := by
+      intro v hv
+      simp only [S, mem_filter, mem_Icc] at hv
+      obtain ⟨⟨⟨hv1, hvN⟩, _, hppv⟩, hmin⟩ := hv
+      obtain ⟨p', k, hp', hk, rfl⟩ := (isPrimePow_nat_iff _).1 hppv
+      rw [hp'.pow_minFac hk.ne'] at hmin
+      subst hmin
+      simp only [mem_image, mem_Icc]
+      exact ⟨k, ⟨hk, Nat.le_log_of_pow_le hpp.one_lt hvN⟩, rfl⟩
+    calc ∑ v ∈ S with v.minFac = p, (Λ v : ℝ) * v
+        ≤ ∑ v ∈ (Icc 1 L).image (fun α => p ^ α), (Λ v : ℝ) * v :=
+          sum_le_sum_of_subset_of_nonneg hsub fun v _ _ =>
+            mul_nonneg ArithmeticFunction.vonMangoldt_nonneg (Nat.cast_nonneg _)
+      _ = ∑ α ∈ Icc 1 L, Real.log p * (p : ℝ) ^ α := by
+          rw [sum_image (fun a _ b _ h => Nat.pow_right_injective hpp.two_le h)]
+          refine sum_congr rfl fun α hα => ?_
+          rw [ArithmeticFunction.vonMangoldt_apply_pow (by have := (mem_Icc.1 hα).1; omega),
+            ArithmeticFunction.vonMangoldt_apply_prime hpp]
+          push_cast; ring
+      _ = Real.log p * ∑ α ∈ Icc 1 L, (p : ℝ) ^ α := by rw [mul_sum]
+      _ ≤ Real.log p * (3 / 2 * (p : ℝ) ^ L) :=
+          mul_le_mul_of_nonneg_left (geom_sum_le_three_halves hp3 L)
+            (Real.log_nonneg (by exact_mod_cast hpp.one_lt.le))
+      _ ≤ Real.log p * (3 / 2 * NV) := by
+          have h1 : ((p ^ L : ℕ) : ℝ) ≤ NV := by exact_mod_cast Nat.pow_log_le_self p hNV0
+          push_cast at h1
+          have h2 : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hpp.one_lt.le)
+          gcongr
+      _ = _ := by ring
+  refine (sum_le_sum hfib).trans ?_
+  rw [← mul_sum]
+  have hlog : ∑ p ∈ q.primeFactors, Real.log p ≤ Real.log q := by
+    rw [← Real.log_prod (fun p hp => by
+      have := (Nat.mem_primeFactors.1 hp).1.pos; positivity)]
+    apply Real.log_le_log (by
+      apply prod_pos; intro p hp; have := (Nat.mem_primeFactors.1 hp).1.pos; positivity)
+    have := Nat.le_of_dvd (Nat.pos_of_ne_zero hq0) (Nat.prod_primeFactors_dvd q)
+    have h : ((∏ p ∈ q.primeFactors, p : ℕ) : ℝ) ≤ q := by exact_mod_cast this
+    push_cast at h; exact h
+  have hlq : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hq.pos)
+  calc 3 / 2 * (NV : ℝ) * ∑ p ∈ q.primeFactors, Real.log p ≤ 3 / 2 * (NV : ℝ) * Real.log q := by
+        gcongr
+    _ ≤ 3 / 2 * V * Real.log q := by gcongr
+
 end TernaryGoldbach.MinorArcs
