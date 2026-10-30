@@ -892,4 +892,49 @@ theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 
     field_simp; ring
   linarith
 
+
+/-- The terms of `typeI2` not in `mainPartI2`. -/
+noncomputable def restPartI2 (α x M U V : ℝ) (q : ℕ) : ℂ :=
+  ∑ a ∈ Icc 1 (⌊V⌋₊ * ⌊U⌋₊), if Odd a ∧ ¬ (q ∣ a ∧ (a : ℝ) ≤ M) then
+    (coefI2 U V a : ℂ) * Todd α x a else 0
+
+theorem typeI2_eq_main_add_rest {α x M U V : ℝ} {q : ℕ} (hx : 0 < x) (hU : 0 ≤ U) (hV : 0 ≤ V)
+    (hM0 : 0 ≤ M) : typeI2 α x U V = mainPartI2 α x M U V q + restPartI2 α x M U V q := by
+  set NV := ⌊V⌋₊
+  set NU := ⌊U⌋₊
+  set NM := ⌊M⌋₊
+  have hz : ∀ a, NV * NU < a → coefI2 U V a = 0 := fun a ha => coefI2_eq_zero_of_gt hU hV ha
+  rw [typeI2_eq hx hU hV, restPartI2, mainPartI2]
+  have hsplit : ∀ a ∈ Icc 1 (NV * NU), (if Odd a then (coefI2 U V a : ℂ) * Todd α x a else 0) =
+      (if Odd a ∧ (q ∣ a ∧ (a : ℝ) ≤ M) then (coefI2 U V a : ℂ) * Todd α x a else 0) +
+      (if Odd a ∧ ¬ (q ∣ a ∧ (a : ℝ) ≤ M) then (coefI2 U V a : ℂ) * Todd α x a else 0) := by
+    intro a _
+    by_cases h1 : Odd a <;> by_cases h2 : (q ∣ a ∧ (a : ℝ) ≤ M) <;> simp [h1, h2]
+  rw [sum_congr rfl hsplit, sum_add_distrib]
+  congr 1
+  -- Both main sums equal the sum over `a ≤ max(NM, NV NU)`.
+  set N := max NM (NV * NU)
+  have hA : ∑ a ∈ Icc 1 (NV * NU), (if Odd a ∧ (q ∣ a ∧ (a : ℝ) ≤ M) then
+      (coefI2 U V a : ℂ) * Todd α x a else 0) =
+      ∑ a ∈ Icc 1 N, (if Odd a ∧ (q ∣ a ∧ (a : ℝ) ≤ M) then (coefI2 U V a : ℂ) * Todd α x a else 0) :=
+    sum_subset (Icc_subset_Icc le_rfl (le_max_right _ _)) (fun a ha hna => by
+      simp only [mem_Icc] at ha hna
+      split_ifs
+      · rw [hz a (by omega)]; simp
+      · rfl)
+  have hB : ∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * Todd α x a else 0) =
+      ∑ a ∈ Icc 1 N, (if Odd a ∧ (q ∣ a ∧ (a : ℝ) ≤ M) then (coefI2 U V a : ℂ) * Todd α x a else 0) := by
+    rw [← sum_subset (Icc_subset_Icc le_rfl (le_max_left _ _) : Icc 1 NM ⊆ Icc 1 N) (fun a ha hna => by
+      simp only [mem_Icc] at ha hna
+      rw [if_neg]
+      rintro ⟨_, _, hle⟩
+      have : a ≤ NM := Nat.le_floor hle
+      omega)]
+    refine sum_congr rfl fun a ha => ?_
+    have hle : (a : ℝ) ≤ M := (Nat.cast_le.2 (mem_Icc.1 ha).2).trans (Nat.floor_le hM0)
+    by_cases h : Odd a ∧ q ∣ a
+    · rw [if_pos h, if_pos ⟨h.1, h.2, hle⟩]
+    · rw [if_neg h, if_neg (fun h' => h ⟨h'.1, h'.2.1⟩)]
+  rw [hA, hB]
+
 end TernaryGoldbach.MinorArcs

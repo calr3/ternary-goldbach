@@ -31,9 +31,11 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
      `(U+1)²V log q/4`, but `∑_{α: p^α ≤ V} p^α` can exceed `V` (e.g. `V = 9, p = 3`); it is
      `≤ (3/2)V` for odd `p`. So `bound_4_50`'s last term needs a factor `3/2` (lower-order term).
      (2.16) needs `V > 663` if used; check whether (2.15) suffices.
-  3. Rest: weights `log m` (increasing, `≤ log D`), [B (4.56)–(4.6x)], case (a) and (b); the
-     block bounds from 4.2.2 times `log` of the block's upper end; sums via `SumTools`
-     (antiderivatives of `log t`, `t log t`, `log t / t`).
+  3. Rest (`¬(q | a ∧ a ≤ M)`), `|c(a)| ≤ log a`, so weights `log m` (increasing): per block use
+     `log` of the block's *upper* end. Case (b) [B pp. 75–76]: R1 `m ≤ q/2` (4.23)×`log(q/2)`;
+     R2 (4.59)–(4.60) (∫ t log t; uses `UV + (19/18)Q₀ ≤ x/5.6`); R3 (4.61)–(4.62) (uses
+     `x ≥ e² c₂/2`); result (4.51). Case (a) [B pp. 73–75]: (4.57), modified (4.17)–(4.18), (4.58)
+     = (4.52). Antiderivatives needed: `t log t`, `log t / t`, `log t` (add to `SumTools`).
   Reuse: `InnerSums` (`Todd`, `norm_Todd_le_minA/_min_sin`, `Todd_main`), `SumTools`, the range
   lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
