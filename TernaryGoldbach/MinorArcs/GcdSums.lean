@@ -186,4 +186,23 @@ theorem sum_vonMangoldt_mul_gcd_le {q N : ℕ} (hq : 1 ≤ q) :
           rw [← sum_mul, ← sum_mul, ArithmeticFunction.vonMangoldt_sum]; ring
   linarith
 
+/-- (6.9) for a subset `s ⊆ [1, N]`: `∑_{v ∈ s} Λ(v)(q,v)/v ≤ ∑_{v ∈ s} Λ(v)/v + log q`. -/
+theorem sum_vonMangoldt_gcd_div_subset_le {q N : ℕ} (hq : 1 ≤ q) {s : Finset ℕ}
+    (hs : s ⊆ Icc 1 N) :
+    ∑ v ∈ s, (Λ v : ℝ) * (1 / v) * Nat.gcd q v ≤ ∑ v ∈ s, (Λ v : ℝ) * (1 / v) + Real.log q := by
+  rw [sum_mul_gcd_split (by omega)]
+  have h2 : ∑ d ∈ q.divisors.erase 1, (Nat.totient d : ℝ) *
+      ∑ v ∈ s with d ∣ v, (Λ v : ℝ) * (1 / v) ≤ Real.log q := by
+    calc _ ≤ ∑ d ∈ q.divisors.erase 1, (Λ d : ℝ) := by
+          refine sum_le_sum fun d hd => le_trans ?_
+            (totient_mul_sum_vonMangoldt_div_le (ne_of_mem_erase hd) N)
+          refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+          exact sum_le_sum_of_subset_of_nonneg (filter_subset_filter _ hs) fun v _ _ =>
+            mul_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
+      _ ≤ ∑ d ∈ q.divisors, (Λ d : ℝ) :=
+          sum_le_sum_of_subset_of_nonneg (erase_subset _ _) fun _ _ _ =>
+            ArithmeticFunction.vonMangoldt_nonneg
+      _ = Real.log q := ArithmeticFunction.vonMangoldt_sum
+  linarith
+
 end TernaryGoldbach.MinorArcs

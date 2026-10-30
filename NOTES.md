@@ -84,10 +84,23 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     `S₂ ≤ (m x/(φL) + (q/φ)W/L)Σ`, `L = log(W/c)`), and **`typeII_640`** (our (6.40): `|δ| ≥ 8`,
     `c' = |δ|q(1+ε₁)/4`, `c'e ≤ V`, `x ≤ Q²`), with `S2_le_640` from (5.56)(ii) (`R = √(W/c')`).
     Main term `2x/√(|δ|φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))` as [B]'s.
-  * Step 3 (next): rest of §6.2 explicit totals — (6.38)/(6.39) (larger `q`; needed for the second
-    choice of parameters), (6.41), and — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
-    Lemma 4.2.4 (§6.2.2), `|S_{II}|` (§6.2.3: (6.16)–(6.20) …, integrating the S₁·S₂ bounds over
-    `W` in ranges `[V, W₀]`, `[W₀, x/U]`), `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
+  * Step 3c ✅ `MinorArcs/Eta2LogFourier.lean`: (B.17) `|(log·η₂)^| ≤ 2 - log 4` and (B.18)
+    `(2πt)²|(log·η₂)^(t)| ≤ 96 log 2`, **proved** (two integrations by parts on `[1/4,1/2]`, `[1/2,1]`).
+  * Step 3d ✅ `MinorArcs/TypeITotal.lean`: **`typeI1_le`** (§6.2.1, `|S_{I,1}|` for `U ≤ Q₀/2`) from
+    the corrected Lemma 4.2.3 with (2.20), (2.22), (2.23), (B.17), (B.18). Prefactor `x/2q`,
+    `min(1, c₀/(πδ)²)`, sums over `(m, 2q) = 1` (cf. the (4.40) erratum).
+  * Step 3e ✅ `MinorArcs/TypeI2Total.lean`, `GcdSums.lean`, `TypeI2Sum.lean`, `TypeI2Large.lean`
+    (§6.2.2, `qV ≤ Q`): (6.5) `typeI2_eq_sum`; the induced approximation `approx2_mul`;
+    (6.6)–(6.8) `typeI2_le_sum`; (6.9) `∑ Λ(v)(q,v)/v ≤ log N + log q` and
+    `∑ Λ(v) v (q,v) ≤ ∑ Λ(v) v + N q log q` (proved via `(q,v) = ∑_{d|(q,v)} φ(d)`);
+    **`typeI2_le_small`** ((6.12)+(6.13), `|δ| ≤ 1/2c₂`) and **`typeI2_le_large`** ((6.12)+(6.14)).
+    Needs `V ≥ 2·10⁶` (for (2.14), (2.17)), `16V ≤ Q`, `UV ≤ x`. Differences from [B]:
+    `U²V log V` → `U²V log q`; the `Q log(U/(q/2))` term → `Q (log⁺(2U/q) + 1/e)` (no `Q ≤ 2UV/e`);
+    the `max(1, log(c₁₁q²V/x))` term keeps `max(1, …)` (the book's `max(…, 2)` is from (4.31)'s
+    proof, see Lemma 4.1.3 erratum); in (6.14) the `UV/e` term carries a factor `1 + V/Q`, and
+    the coefficients are kept as exact expressions in `c₊` (no rounding to `c_{4,I2}` etc.).
+  * Step 3 (next): Lemma 4.2.4 case `q > Q/V` of `S_{I,2}`; Type II (6.38)/(6.39)/(6.41) (larger
+    `q`; second parameter choice); `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
   * Step 4: §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
