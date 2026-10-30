@@ -37,7 +37,7 @@ def LadderStep (g : ℕ) (a b : ℕ) : Prop := a ≤ b ∧ b ≤ a + g
 /-- Every `m` between the bottom and top rungs of a ladder with gaps `≤ g` is at most `g`
 above some rung that is `≤ m`. -/
 theorem exists_rung_of_chain {g : ℕ} :
-    ∀ (a : ℕ) (l : List ℕ), List.Chain (LadderStep g) a l →
+    ∀ (a : ℕ) (l : List ℕ), List.IsChain (LadderStep g) (a :: l) →
       ∀ m, a ≤ m → m ≤ (a :: l).getLast (List.cons_ne_nil _ _) →
         ∃ p ∈ a :: l, p ≤ m ∧ m ≤ p + g := by
   intro a l
@@ -48,10 +48,10 @@ theorem exists_rung_of_chain {g : ℕ} :
     exact ⟨a, List.mem_singleton_self a, ham, by omega⟩
   | cons b l ih =>
     intro hc m ham hmL
-    rw [List.chain_cons] at hc
+    rw [List.isChain_cons_cons] at hc
     obtain ⟨⟨hab, hba⟩, hc⟩ := hc
-    rcases lt_or_le m b with hmb | hbm
-    · exact ⟨a, List.mem_cons_self _ _, ham, by omega⟩
+    rcases lt_or_ge m b with hmb | hbm
+    · exact ⟨a, List.mem_cons_self, ham, by omega⟩
     · rw [List.getLast_cons (List.cons_ne_nil _ _)] at hmL
       obtain ⟨p, hp, hpm, hmp⟩ := ih b hc m hbm hmL
       exact ⟨p, List.mem_cons_of_mem _ hp, hpm, hmp⟩
@@ -61,7 +61,7 @@ primes `3 = p₀ ≤ p₁ ≤ ⋯ ≤ p_k` with consecutive gaps `≤ N - 4` giv
 odd `n` with `5 < n ≤ p_k + 4`. -/
 theorem ternaryUpTo_of_ladder {N : ℕ} (hN4 : 4 ≤ N) (hN : BinaryGoldbachUpTo N)
     (l : List ℕ) (hprime : ∀ p ∈ 3 :: l, p.Prime ∧ Odd p)
-    (hchain : List.Chain (LadderStep (N - 4)) 3 l) :
+    (hchain : List.IsChain (LadderStep (N - 4)) (3 :: l)) :
     TernaryGoldbachUpTo ((3 :: l).getLast (List.cons_ne_nil _ _) + 4) := by
   apply ternaryUpTo_of_primeCover hN4 hN
   intro m h3m hmM

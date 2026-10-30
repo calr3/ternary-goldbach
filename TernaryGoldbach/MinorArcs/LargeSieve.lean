@@ -43,8 +43,8 @@ theorem hasDerivAt_expSum (X : ℕ) (a : ℕ → ℂ) (α : ℝ) :
     (A' := fun n => a n * (2 * Real.pi * I * n * e (n * α))) (x := α)
     fun n _ => (hasDerivAt_e_mul n α).const_mul (a n)
   convert this using 1
+  · ext; simp [Finset.sum_apply]
   refine sum_congr rfl fun n _ => ?_
-  simp only
   ring
 
 theorem e_nat_mul_add_one (n : ℕ) (α : ℝ) : e (n * (α + 1)) = e (n * α) := by
@@ -100,14 +100,14 @@ theorem gallagher {F F' : ℝ → ℂ} (hF : ∀ t, HasDerivAt F (F' t) t) (hF' 
   have hint : ∫ t in Set.Ioc a b, ‖F c‖ ≤ ∫ t in Set.Ioc a b, (‖F t‖ + C) :=
     setIntegral_mono_on (continuous_const.integrableOn_Ioc)
       ((hFc.norm.add continuous_const).integrableOn_Ioc) measurableSet_Ioc hpt
-  have hvol : (volume (Set.Ioc a b)).toReal = δ := by
-    rw [Real.volume_Ioc, ENNReal.toReal_ofReal (by linarith)]; simp only [a, b]; ring
+  have hvol : volume.real (Set.Ioc a b) = δ := by
+    rw [Real.volume_real_Ioc_of_le hab]; simp only [a, b]; ring
   rw [integral_add hFc.norm.integrableOn_Ioc continuous_const.integrableOn_Ioc,
     setIntegral_const, setIntegral_const, hvol, smul_eq_mul, smul_eq_mul] at hint
   have hδi : 0 < δ⁻¹ := inv_pos.2 hδ
   calc ‖F c‖ = δ⁻¹ * (δ * ‖F c‖) := by field_simp
     _ ≤ δ⁻¹ * ((∫ t in Set.Ioc a b, ‖F t‖) + δ * C) := by gcongr
-    _ = _ := by field_simp; ring
+    _ = _ := by field_simp
 /-! ## Summing over disjoint intervals -/
 
 /-- For a nonnegative continuous 1-periodic `f` and disjoint intervals `I_r` inside a window of
@@ -119,7 +119,7 @@ theorem sum_setIntegral_le_of_disjoint {ι : Type*} {f : ℝ → ℝ} (hf : Cont
     ∑ r ∈ s, ∫ x in I r, f x ≤ ∫ x in Set.Ioc (0:ℝ) 1, f x := by
   have hint : ∀ r ∈ s, IntegrableOn f (I r) :=
     fun r hr => (hf.integrableOn_Ioc (a := β) (b := β + 1)).mono_set (hsub r hr)
-  rw [← integral_finset_biUnion s hI hdisj hint]
+  rw [← integral_biUnion_finset s hI hdisj hint]
   have hwin : ∫ x in Set.Ioc β (β + 1), f x = ∫ x in Set.Ioc (0:ℝ) 1, f x := by
     rw [← intervalIntegral.integral_of_le (by linarith), ← intervalIntegral.integral_of_le zero_le_one,
       hper.intervalIntegral_add_eq β 0, zero_add]
@@ -175,14 +175,14 @@ theorem large_sieve {ι : Type*} (s : Finset ι) (α : ι → ℝ) {δ : ℝ} (h
     refine sum_le_sum fun n hn => ?_
     have hnX : (n : ℝ) ≤ X := by exact_mod_cast Nat.lt_succ_iff.1 (mem_range.1 hn)
     have hb : ‖b n‖ ^ 2 = (2 * Real.pi * n) ^ 2 * ‖a n‖ ^ 2 := by
-      simp only [b, norm_mul, Complex.norm_eq_abs, Complex.abs_two, Complex.abs_ofReal,
-        Complex.abs_I, Complex.abs_natCast, abs_of_pos Real.pi_pos]
+      simp only [b, norm_mul, Complex.norm_ofNat, Complex.norm_real, Real.norm_eq_abs,
+        Complex.norm_I, Complex.norm_natCast, abs_of_pos Real.pi_pos]
       ring
     rw [hb]
     have := Real.pi_pos
     gcongr
   have hhA : ∫ x in Set.Ioc (0:ℝ) 1, h x ≤ 4 * Real.pi * X * A := by
-    rw [MeasureTheory.integral_mul_left]
+    rw [MeasureTheory.integral_const_mul]
     have hcs := setIntegral_norm_mul_norm_expSum_le X a b
     have hsqB : √(∑ n ∈ range (X + 1), ‖b n‖ ^ 2) ≤ 2 * Real.pi * X * √A := by
       calc √(∑ n ∈ range (X + 1), ‖b n‖ ^ 2) ≤ √((2 * Real.pi * X) ^ 2 * A) :=
@@ -226,7 +226,7 @@ theorem farey_sep {Q q q' b b' : ℕ} (hq : 1 ≤ q) (hq' : 1 ≤ q') (hqQ : q �
     exact hne (by rw [this])
   have hk1 : (1 : ℝ) ≤ |(k : ℝ)| := by exact_mod_cast Int.one_le_abs hk
   have hdiff : (b : ℝ) / q - b' / q' = k / (q * q') := by
-    simp only [k]; push_cast; field_simp; ring
+    simp only [k]; push_cast; field_simp
   rw [hdiff, abs_div, abs_of_pos (mul_pos hqr hq'r)]
   have hQq : (q : ℝ) * q' ≤ (Q : ℝ) ^ 2 := by
     rw [sq]; exact mul_le_mul (by exact_mod_cast hqQ) (by exact_mod_cast hq'Q) hq'r.le (by positivity)

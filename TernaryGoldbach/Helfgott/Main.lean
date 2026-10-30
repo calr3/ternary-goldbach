@@ -26,7 +26,7 @@ theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     (1.058259 - 1.00948) * xOf N ^ 2 / κ ≤ repSum (fun _ => True) N := by
   set M := majorArcs 8 r₀ (xOf N)
   obtain ⟨hint, hid⟩ := circle_identity_input N (by omega)
-  have hsplit := integral_inter_add_diff (measurableSet_majorArcs 8 r₀ (xOf N)) hint
+  have hsplit := integral_inter_add_sdiff (measurableSet_majorArcs 8 r₀ (xOf N)) hint
   have hmaj := major_arcs_input N hN hN27
   have hmin := minor_arcs_input N hN27
   -- The minor arc contribution is bounded by the integral of the norm.
@@ -40,8 +40,7 @@ theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
       (∫ α in Set.Ioc (0:ℝ) 1 ∩ M, integrand N α).re +
         (∫ α in Set.Ioc (0:ℝ) 1 \ M, integrand N α).re := by
     rw [← Complex.add_re, hsplit, hid, ofReal_re]
-  have := neg_le_of_abs_le ((abs_re_le_abs _).trans
-    ((Complex.norm_eq_abs _).symm.le.trans hnorm))
+  have := neg_le_of_abs_le ((Complex.abs_re_le_norm _).trans hnorm)
   rw [hre]
   simp only [κ, M] at hmaj this ⊢
   linarith

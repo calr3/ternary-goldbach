@@ -76,4 +76,4 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
   `(2Bq/π) max(2, log(Ce³q/(Bπ)))` for small `C`. The lemma is nonetheless true, and
   `MinorArcs/TrigSums.lean` proves it with a sharper argument (see the docstring there).
 * Helfgott works on `ℝ/ℤ`; here it's `(0, 1]` with the major arcs lifted periodically to `ℝ`.
-* Toolchain: Lean `v4.15.0`, Mathlib `v4.15.0`.
+* Toolchain: Lean `v4.35.0`, Mathlib `v4.35.0` (`lake exe cache get` fetches the Mathlib build).

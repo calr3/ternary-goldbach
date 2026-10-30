@@ -13,7 +13,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   * Thm 3.1.1 is stated in `MinorArcs/PointwiseBound.lean`.
   * Vaughan's identity and a basic large sieve are proved.
 * **Next:** [B, §4.2]. Needs Poisson summation for η₂ (Mathlib has
-  `Real.tsum_eq_tsum_fourierIntegral_of_rpow_decay`; check the decay hypotheses for η₂), the
+  `Real.tsum_eq_tsum_fourier_of_rpow_decay` (in v4.35); check the decay hypotheses for η₂), the
   main-term separation from the proof of Lemma 4.2.1 (pp. 56–63 printed), and then 4.2.2–4.2.4
   as variants. The bound `|η̂₂''|_∞ ≤ 31.521` is `eta2_fourier_bound` (App. B, by computer):
   make it a labelled trusted fact unless we build interval arithmetic.
@@ -43,7 +43,9 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   cancellation near 0 gives false negatives). This caught the Lemma 4.1.3 gap and picked the
   Taylor degrees.
 
-## Lean 4 / Mathlib v4.15 pitfalls hit so far
+## Lean 4 / Mathlib pitfalls hit so far
+
+(Most were found on v4.15; we upgraded to v4.35 on 2026-10-30.)
 
 * `linarith` can fail on decimal literals (`0.93`) and on `set`-introduced variables. Use
   fractions, and `obtain ⟨t, ht⟩ : ∃ t, t = … := ⟨_, rfl⟩` instead of `set`.
@@ -72,6 +74,23 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 
 ## Environment
 
-* Mathlib v4.15.0 is copied from `../landau4/lean/.lake` (it isn't fetched).
-  `lake build` takes about 10 minutes from clean for `TrigSums.lean`.
+* Lean/Mathlib v4.35.0. Fetch the prebuilt Mathlib with `lake exe cache get` (the network
+  allows it). Our own files build in a few minutes; `TrigSums.lean` is the slowest.
+* Upgrade notes (v4.15 → v4.35), useful for the next bump:
+  * Renames: `le_or_lt`→`le_or_gt`, `lt_or_le`→`lt_or_ge`, `Int.floor_add_int`→`Int.floor_add_intCast`,
+    `Int.ediv_add_emod`→`Int.mul_ediv_add_emod`, `primorial_le_4_pow`→`primorial_le_four_pow`,
+    `Finset.sum_eq_add_sum_diff_singleton`→`Finset.sum_eq_add_sum_sdiff_singleton_of_mem`,
+    `Nat.Ico_succ_right`→`Finset.Ico_add_one_right_eq_Icc`, `left_mem_Ici`→`Set.self_mem_Ici`,
+    `integral_finset_biUnion`→`integral_biUnion_finset`, `MeasureTheory.integral_mul_left`→
+    `integral_const_mul`, `*_not_mem*`→`*_notMem*`, `if_pos/if_neg`→`ite_eq_left/right`,
+    `push_neg`→`push Not`, `List.Chain R a l`→`List.IsChain R (a :: l)`.
+  * `Complex.abs` is gone: use `‖·‖` (`Complex.norm_exp`, `Complex.abs_re_le_norm`, `Complex.norm_real`).
+  * `setIntegral_const` now gives `volume.real s • c`: use `Real.volume_real_Ioc_of_le` etc.
+    `integrableOn_const` takes the finiteness proofs as (auto)arguments.
+  * `field_simp` is stronger: a trailing `ring` often errors with "no goals".
+  * `convert … using 1` with `hasDerivAt_id`, `.sub`, `.add` now leaves function-equality goals
+    (`(fun x => …) = id - …`): close them with `funext y; simp only [Pi.sub_apply, id_eq]`.
+  * `ArithmeticFunction` notation needs `open scoped ArithmeticFunction.Moebius
+    ArithmeticFunction.zeta` (Λ comes with `open ArithmeticFunction`).
+  * `Real.sin_gt_sub_cube` is now `0 < x → x - x³/6 < sin x` (no `x ≤ 1`, sharper constant).
 * Clone/push via SSH (`git@github.com:calr3/ternary-goldbach.git`). HTTPS has no credentials.

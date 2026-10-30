@@ -6,7 +6,7 @@ import TernaryGoldbach.Helfgott.NonPrime
 Helfgott uses the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x` and `ψ(x) - θ(x) < 1.4262 √x`
 [RS62, Thms. 12, 13].  For `N ≥ 10²⁷` the following elementary bounds are enough for us:
 
-* `theta_le`: `θ(N) ≤ N log 4` (from `primorial_le_4_pow`);
+* `theta_le`: `θ(N) ≤ N log 4` (from `primorial_le_four_pow`);
 * `psi_sub_theta_le`: `ψ(N) - θ(N) ≤ 1.6 √N`;
 * `psi_le`: `ψ(N) ≤ 1.387 N`.
 
@@ -24,14 +24,14 @@ namespace TernaryGoldbach.Helfgott
 theorem theta_le (N : ℕ) : theta N ≤ N * Real.log 4 := by
   classical
   have h1 : theta N = Real.log (primorial N) := by
-    rw [theta, primorial, Nat.cast_prod, Real.log_prod _ _ (fun p hp => by
+    rw [theta, primorial, Nat.cast_prod, Real.log_prod (fun p hp => by
       have := (mem_filter.1 hp).2.pos; positivity), sum_filter]
     refine sum_congr rfl fun n _ => ?_
     split_ifs with hp
     · exact ArithmeticFunction.vonMangoldt_apply_prime hp
     · rfl
   rw [h1, ← Real.log_pow, show (4:ℝ) ^ N = ((4 ^ N : ℕ) : ℝ) by push_cast; ring]
-  exact Real.log_le_log (by exact_mod_cast primorial_pos N) (by exact_mod_cast primorial_le_4_pow N)
+  exact Real.log_le_log (by exact_mod_cast primorial_pos N) (by exact_mod_cast primorial_le_four_pow N)
 
 open Classical in
 theorem psi_sub_theta_le_sum (N : ℕ) :
@@ -106,7 +106,7 @@ theorem sum_pow_le_theta {N k M : ℕ} (hMN : M ≤ N) (hM : ∀ m, m.Prime → 
   by_cases hp : m.Prime
   · by_cases hk : m ^ k ≤ N
     · simp [hp, hk, hM m hp hk, ArithmeticFunction.vonMangoldt_apply_prime hp]
-    · simp only [hp, hk, and_false, if_false, true_and]
+    · simp only [hp, hk, and_false, ite_false, true_and]
       split_ifs <;> simp [ArithmeticFunction.vonMangoldt_apply_prime hp,
         Real.log_nonneg, hp.one_lt.le]
   · simp [hp]
@@ -126,7 +126,7 @@ theorem psi_sub_theta_le (N : ℕ) (hN : 10 ^ 27 ≤ N) : psi N - theta N ≤ 1.
     rw [← hw32, show w ^ 32 = (w ^ 16) ^ 2 by ring, Real.sqrt_sq (by positivity)]
   have hw69 : (6.9 : ℝ) ≤ w := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : w ^ 32 < (6.9 : ℝ) ^ 32 := pow_lt_pow_left₀ h hw0.le (by norm_num)
     rw [hw32] at this
     linarith [show (6.9 : ℝ) ^ 32 ≤ 10 ^ 27 by norm_num]
@@ -146,7 +146,7 @@ theorem psi_sub_theta_le (N : ℕ) (hN : 10 ^ 27 ≤ N) : psi N - theta N ≤ 1.
     refine sum_pow_le_theta hM3N fun m hm hmk => Nat.le_floor ?_
     have h3 : m ^ 3 ≤ N := (Nat.pow_le_pow_right hm.pos (by simp at hk; omega)).trans hmk
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     have : (w ^ 12) ^ 3 < (m : ℝ) ^ 3 := pow_lt_pow_left₀ hlt (by positivity) (by norm_num)
     have h3r : (m : ℝ) ^ 3 ≤ N := by exact_mod_cast h3
     have : w ^ 32 ≤ (w ^ 12) ^ 3 := by
@@ -162,8 +162,8 @@ theorem psi_sub_theta_le (N : ℕ) (hN : 10 ^ 27 ≤ N) : psi N - theta N ≤ 1.
         ≤ ∑ k ∈ Icc 2 K, ((if k = 2 then A else 0) + B) := by
           refine sum_le_sum fun k hk => ?_
           by_cases h : k = 2
-          · subst h; simp only [if_true]; linarith
-          · simp only [h, if_false, zero_add]; exact hk3 k hk h
+          · subst h; simp only [ite_true]; linarith
+          · simp only [h, ite_false, zero_add]; exact hk3 k hk h
       _ = (∑ k ∈ Icc 2 K, if k = 2 then A else 0) + (Icc 2 K).card * B := by
           rw [sum_add_distrib, sum_const, nsmul_eq_mul]
       _ ≤ A + K * B := by

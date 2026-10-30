@@ -178,7 +178,8 @@ theorem trig_core (t S C : ℝ) (ht : 0 < t) (ht1 : t ≤ 5236 / 10000) (hS1 : t
 theorem sq_div_sin_sq_add_mul_cot_two_mul_le {t : ℝ} (ht : 0 < t) (ht1 : t ≤ π / 6) :
     t ^ 2 / Real.sin t ^ 2 + t * (Real.cos (2 * t) / Real.sin (2 * t)) ≤ 3 / 2 := by
   have hpi : t ≤ 5236 / 10000 := ht1.trans (by linarith [Real.pi_lt_d4])
-  have hS1 := Real.sin_gt_sub_cube ht (by linarith)
+  have hS1 : t - t ^ 3 / 4 < Real.sin t := by
+    have := Real.sin_gt_sub_cube ht; nlinarith [pow_pos ht 3]
   have hS2 := Real.sin_le ht.le
   have hC1 := Real.one_sub_sq_div_two_le_cos (x := t)
   have hSpos : 0 < Real.sin t := Real.sin_pos_of_pos_of_lt_pi ht (by linarith [Real.pi_gt_three])
@@ -188,7 +189,7 @@ theorem sq_div_sin_sq_add_mul_cot_two_mul_le {t : ℝ} (ht : 0 < t) (ht1 : t ≤
   have h : t ^ 2 / Real.sin t ^ 2 + t * ((2 * Real.cos t ^ 2 - 1) / (2 * Real.sin t * Real.cos t)) =
       (2 * t ^ 2 * Real.cos t + t * Real.sin t * (2 * Real.cos t ^ 2 - 1)) /
         (2 * Real.sin t ^ 2 * Real.cos t) := by
-    field_simp; ring
+    field_simp
   rw [h, div_le_iff₀ (by positivity)]
   have hsc := Real.sin_sq_add_cos_sq t
   have : 2 * Real.cos t ^ 2 - 1 = 1 - 2 * Real.sin t ^ 2 := by linarith
@@ -277,7 +278,7 @@ theorem sum_fq_le {q : ℝ} {K : ℕ} (hq : 2 < q) (hK : (K : ℝ) ≤ q / 2) :
     rw [← h]
     refine Finset.sum_bij (fun k _ => k - 2) ?_ ?_ ?_ ?_
     · intro j hj; simp only [Finset.mem_Icc] at hj; simp only [Finset.mem_range]; omega
-    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; simp only at hab; omega
+    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; omega
     · intro k hk; simp only [Finset.mem_range] at hk
       exact ⟨k + 2, by simp only [Finset.mem_Icc]; omega, by simp⟩
     · intro j hj; simp only [Finset.mem_Icc] at hj
@@ -294,7 +295,7 @@ theorem sum_fq_le {q : ℝ} {K : ℕ} (hq : 2 < q) (hK : (K : ℝ) ≤ q / 2) :
     _ ≤ ∫ u in (1 : ℝ)..(q / 2), fq q u := hsum ▸ hKq
     _ = q / π * (Real.cos (π / q) / Real.sin (π / q)) := by
         rw [integral_fq hq0 one_pos (by linarith) (by linarith)]
-        rw [show π * (q / 2) / q = π / 2 by field_simp; ring, Real.cos_pi_div_two, mul_one]
+        rw [show π * (q / 2) / q = π / 2 by field_simp, Real.cos_pi_div_two, mul_one]
         simp
 
 
@@ -333,7 +334,7 @@ theorem integral_minInvSin_le {A C : ℝ} (hA : 0 ≤ A) (hC : 0 ≤ C) :
   have hCw : C / w = √(A * C) := by
     rw [hw', Real.sqrt_mul hA]; field_simp; nlinarith [Real.mul_self_sqrt hC]
   have hsAC : 0 ≤ √(A * C) := Real.sqrt_nonneg _
-  rcases le_or_lt (π / 2) w with hwpi | hwpi
+  rcases le_or_gt (π / 2) w with hwpi | hwpi
   · -- `w ≥ π/2`: bound the integrand by `A`.
     have : ∫ v in (0:ℝ)..(π / 2), min A (C * (1 / Real.sin v ^ 2)) ≤ ∫ v in (0:ℝ)..(π / 2), A :=
       intervalIntegral.integral_mono_on (by positivity) (hII _ _) intervalIntegrable_const
@@ -414,8 +415,8 @@ theorem sum_G_le {q A C : ℝ} (hq : 0 < q) (hA : 0 ≤ A) (hC : 0 ≤ C) {u₁ 
     intro i hi
     have hi' : (i : ℝ) + 1 ≤ m := by exact_mod_cast Finset.mem_range.1 hi
     rw [intervalIntegral.integral_of_le (by push_cast; linarith)]
-    have hvol : (volume (Ioc (u₁ - 1 + i) (u₁ - 1 + (i + 1 : ℕ)))).toReal = 1 := by
-      rw [Real.volume_Ioc, ENNReal.toReal_ofReal (by push_cast; linarith)]; push_cast; ring
+    have hvol : volume.real (Ioc (u₁ - 1 + i) (u₁ - 1 + (i + 1 : ℕ))) = 1 := by
+      rw [Real.volume_real_Ioc_of_le (by push_cast; linarith)]; push_cast; ring
     calc G (u₁ + i) = ∫ _ in Ioc (u₁ - 1 + i) (u₁ - 1 + (i + 1 : ℕ)), G (u₁ + i) := by
           rw [setIntegral_const, hvol, one_smul]
       _ ≤ _ := by
@@ -445,7 +446,7 @@ theorem sum_G_le {q A C : ℝ} (hq : 0 < q) (hA : 0 ≤ A) (hC : 0 ≤ C) {u₁ 
     have : G = fun u => (fun v => min A (C * (1 / Real.sin v ^ 2))) ((π / q) * u) := by
       funext u; simp only [G, fq]; ring_nf
     rw [this, intervalIntegral.integral_comp_mul_left _ hpq, smul_eq_mul, inv_div]
-    congr 2 <;> field_simp
+    congr 2 <;> field_simp <;> simp
   calc ∑ i ∈ Finset.range m, G (u₁ + i)
       ≤ ∑ i ∈ Finset.range m, ∫ u in (u₁ - 1 + i)..(u₁ - 1 + (i + 1 : ℕ)), G u :=
         Finset.sum_le_sum hterm
@@ -464,14 +465,14 @@ theorem sum_range_pair (F : ℕ → ℝ) (q : ℕ) :
   rcases Nat.even_or_odd' q with ⟨K, rfl | rfl⟩
   · have h1 : 2 * K / 2 = K := by omega
     have h2 : ¬ (2 * K % 2 = 1) := by omega
-    rw [h1, if_neg h2, add_zero, two_mul, Finset.sum_range_add]
+    rw [h1, ite_eq_right h2, add_zero, two_mul, Finset.sum_range_add]
     congr 1
     rw [← Finset.sum_range_reflect (fun x => F (K + x))]
     refine Finset.sum_congr rfl fun j hj => ?_
     rw [Finset.mem_range] at hj; congr 1; omega
   · have h1 : (2 * K + 1) / 2 = K := by omega
     have h2 : (2 * K + 1) % 2 = 1 := by omega
-    rw [h1, if_pos h2, show 2 * K + 1 = K + (K + 1) by ring, Finset.sum_range_add,
+    rw [h1, ite_eq_left h2, show 2 * K + 1 = K + (K + 1) by ring, Finset.sum_range_add,
       Finset.sum_range_succ', add_zero, add_assoc]
     congr 1
     congr 1
@@ -482,11 +483,11 @@ theorem sum_range_pair (F : ℕ → ℝ) (q : ℕ) :
 /-- `f_q` is symmetric under `u ↦ q - u` and decreasing towards `q/2`. -/
 theorem fq_le_of_between {q u v : ℝ} (hq : 0 < q) (hu : 0 < u) (huv : u ≤ v) (hvq : v ≤ q - u) :
     fq q v ≤ fq q u := by
-  rcases le_or_lt v (q / 2) with hv | hv
+  rcases le_or_gt v (q / 2) with hv | hv
   · exact fq_anti hq hu huv hv
   · have hsym : fq q v = fq q (q - v) := by
       unfold fq
-      rw [show π * (q - v) / q = π - π * v / q by field_simp; ring, Real.sin_pi_sub]
+      rw [show π * (q - v) / q = π - π * v / q by field_simp, Real.sin_pi_sub]
     rw [hsym]; exact fq_anti hq hu (by linarith) (by linarith)
 
 /-- **P1** (low residues). -/
@@ -530,15 +531,15 @@ theorem fq_half_add_le {q : ℝ} (hq : 3 ≤ q) :
   have key := sq_div_sin_sq_add_mul_cot_two_mul_le ht0 ht1
   have e1 : fq q (1 / 2) = 1 / Real.sin t ^ 2 := by
     simp only [fq, ht]; ring_nf
-  have e2 : π / q = 2 * t := by rw [ht]; field_simp; ring
-  have e3 : q / π = 1 / (2 * t) := by rw [ht]; field_simp; ring
+  have e2 : π / q = 2 * t := by rw [ht]; field_simp
+  have e3 : q / π = 1 / (2 * t) := by rw [ht]; field_simp
   rw [e1, e2, e3]
   have hs : 0 < Real.sin t := Real.sin_pos_of_pos_of_lt_pi ht0 (by linarith [Real.pi_pos])
   have e4 : 6 * q ^ 2 / π ^ 2 = 3 / 2 / t ^ 2 := by rw [ht]; field_simp; ring
   rw [e4, le_div_iff₀ (by positivity)]
   calc (1 / Real.sin t ^ 2 + 2 * (1 / (2 * t) * (Real.cos (2 * t) / Real.sin (2 * t)))) * t ^ 2
       = t ^ 2 / Real.sin t ^ 2 + t * (Real.cos (2 * t) / Real.sin (2 * t)) := by
-        have h2t : t ^ 2 * (2 * (1 / (2 * t))) = t := by field_simp; ring
+        have h2t : t ^ 2 * (2 * (1 / (2 * t))) = t := by field_simp
         calc (1 / Real.sin t ^ 2 + 2 * (1 / (2 * t) * (Real.cos (2 * t) / Real.sin (2 * t)))) * t ^ 2
             = t ^ 2 / Real.sin t ^ 2 +
                 (t ^ 2 * (2 * (1 / (2 * t)))) * (Real.cos (2 * t) / Real.sin (2 * t)) := by ring
@@ -744,7 +745,7 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
   have hQ0 : 0 < Q := by linarith
   set N := ⌊y⌋
   have hfl : ⌊y + q⌋ = N + q := by
-    have := Int.floor_add_int y (q : ℤ); push_cast at this; exact this
+    have := Int.floor_add_intCast y (q : ℤ); push_cast at this; exact this
   rw [hfl]
   set S := Finset.Ioc N (N + q)
   set c : ℝ := N + (q + 1) / 2
@@ -773,7 +774,7 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
     ring
   -- Choose the orientation `σ = ±1` so that `s = σ s₀ ≥ 0`.
   obtain ⟨σ, hσ, hσs⟩ : ∃ σ : ℤ, σ * σ = 1 ∧ 0 ≤ (σ : ℝ) * s₀ := by
-    rcases le_or_lt 0 s₀ with h0 | h0
+    rcases le_or_gt 0 s₀ with h0 | h0
     · exact ⟨1, by norm_num, by simpa using h0⟩
     · exact ⟨-1, by norm_num, by push_cast; linarith⟩
   have hσr : (σ : ℝ) * σ = 1 := by exact_mod_cast hσ
@@ -810,7 +811,7 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
     rw [hkey, fq, mul_one_div]
     congr 1
     have hm : (a * n + c₀ : ℤ) = σ * (q * (m n / q) + (R n : ℤ)) := by
-      rw [hRcast, Int.ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
+      rw [hRcast, Int.mul_ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
     have harg : π * (((a * n + c₀ : ℤ) : ℝ) + τn n) / q =
         (σ : ℝ) * (π * ((R n : ℝ) + τ' n) / q + ((m n / q : ℤ) : ℝ) * π) := by
       rw [hm]; push_cast; simp only [τ']; field_simp; ring_nf
@@ -845,7 +846,7 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
   have hτR : ∀ n ∈ S, τR (R n) = τ' n := by
     intro n hn
     have hex : ∃ n' ∈ S, R n' = R n := ⟨n, hn, rfl⟩
-    simp only [τR, dif_pos hex]
+    simp only [τR, dite_eq_left hex]
     have := hex.choose_spec
     rw [hinj this.1 hn this.2]
   refine ⟨s, hσs, hs1, τR, fun r => ?_, ?_⟩
@@ -887,7 +888,7 @@ theorem le_of_hasDerivAt_le {f g f' g' : ℝ → ℝ} (hf : ∀ x, HasDerivAt f 
     intro y hy
     rw [interior_Ici] at hy
     linarith [h y (le_of_lt hy)]
-  have := hmono (left_mem_Ici) hx hx
+  have := hmono Set.self_mem_Ici hx hx
   simp only at this
   linarith
 
@@ -895,21 +896,21 @@ theorem sin_ge_deg3 {x : ℝ} (hx : 0 ≤ x) : x - x ^ 3 / 6 ≤ Real.sin x := b
   refine le_of_hasDerivAt_le (f := fun x => x - x ^ 3 / 6) (g := Real.sin)
     (f' := fun x => 1 - x ^ 2 / 2) (g' := Real.cos)
     (fun x => ?_) Real.hasDerivAt_sin (by simp) (fun x _ => one_sub_sq_div_two_le_cos) hx
-  convert (hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6) using 1; simp; ring
+  convert (hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 theorem cos_le_deg4 {x : ℝ} (hx : 0 ≤ x) : Real.cos x ≤ 1 - x ^ 2 / 2 + x ^ 4 / 24 := by
   refine le_of_hasDerivAt_le (f := Real.cos) (g := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24)
     (f' := fun x => -Real.sin x) (g' := fun x => -x + x ^ 3 / 6)
     Real.hasDerivAt_cos (fun x => ?_) (by simp) (fun x hx => by linarith [sin_ge_deg3 hx]) hx
   convert ((hasDerivAt_const x (1 : ℝ)).sub ((hasDerivAt_pow 2 x).div_const 2)).add
-    ((hasDerivAt_pow 4 x).div_const 24) using 1; ring
+    ((hasDerivAt_pow 4 x).div_const 24) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 theorem sin_le_deg5 {x : ℝ} (hx : 0 ≤ x) : Real.sin x ≤ x - x ^ 3 / 6 + x ^ 5 / 120 := by
   refine le_of_hasDerivAt_le (f := Real.sin) (g := fun x => x - x ^ 3 / 6 + x ^ 5 / 120)
     (f' := Real.cos) (g' := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24)
     Real.hasDerivAt_sin (fun x => ?_) (by simp) (fun x hx => cos_le_deg4 hx) hx
   convert ((hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6)).add
-    ((hasDerivAt_pow 5 x).div_const 120) using 1; simp; ring
+    ((hasDerivAt_pow 5 x).div_const 120) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 theorem cos_ge_deg6 {x : ℝ} (hx : 0 ≤ x) :
     1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 ≤ Real.cos x := by
@@ -918,7 +919,7 @@ theorem cos_ge_deg6 {x : ℝ} (hx : 0 ≤ x) :
     (g' := fun x => -Real.sin x) (fun x => ?_) Real.hasDerivAt_cos (by simp)
     (fun x hx => by linarith [sin_le_deg5 hx]) hx
   convert (((hasDerivAt_const x (1 : ℝ)).sub ((hasDerivAt_pow 2 x).div_const 2)).add
-    ((hasDerivAt_pow 4 x).div_const 24)).sub ((hasDerivAt_pow 6 x).div_const 720) using 1; ring
+    ((hasDerivAt_pow 4 x).div_const 24)).sub ((hasDerivAt_pow 6 x).div_const 720) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 theorem sin_ge_deg7 {x : ℝ} (hx : 0 ≤ x) :
     x - x ^ 3 / 6 + x ^ 5 / 120 - x ^ 7 / 5040 ≤ Real.sin x := by
@@ -926,8 +927,7 @@ theorem sin_ge_deg7 {x : ℝ} (hx : 0 ≤ x) :
     (g := Real.sin) (f' := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720)
     (g' := Real.cos) (fun x => ?_) Real.hasDerivAt_sin (by simp) (fun x hx => cos_ge_deg6 hx) hx
   convert (((hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6)).add
-    ((hasDerivAt_pow 5 x).div_const 120)).sub ((hasDerivAt_pow 7 x).div_const 5040) using 1
-  simp; ring
+    ((hasDerivAt_pow 5 x).div_const 120)).sub ((hasDerivAt_pow 7 x).div_const 5040) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 
 theorem cos_le_deg8 {x : ℝ} (hx : 0 ≤ x) :
@@ -938,7 +938,7 @@ theorem cos_le_deg8 {x : ℝ} (hx : 0 ≤ x) :
     Real.hasDerivAt_cos (fun x => ?_) (by simp) (fun x hx => by linarith [sin_ge_deg7 hx]) hx
   convert ((((hasDerivAt_const x (1 : ℝ)).sub ((hasDerivAt_pow 2 x).div_const 2)).add
     ((hasDerivAt_pow 4 x).div_const 24)).sub ((hasDerivAt_pow 6 x).div_const 720)).add
-    ((hasDerivAt_pow 8 x).div_const 40320) using 1; ring
+    ((hasDerivAt_pow 8 x).div_const 40320) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
 
 /-- `x cot x ≤ 1 - x²/3` for `0 < x ≤ π/2`, in the form `x cos x ≤ (1 - x²/3) sin x`. -/
 theorem mul_cos_le₁ {x : ℝ} (hx : 0 < x) (hx1 : x ≤ π / 2) :
@@ -1122,7 +1122,7 @@ theorem sum_fq_int_le {q : ℝ} {L : ℕ} (hq : 3 ≤ q) (hL : 2 * (L : ℝ) + 1
     rw [← h]
     refine Finset.sum_bij (fun r _ => r - 2) ?_ ?_ ?_ ?_
     · intro r hr; simp only [Finset.mem_Icc] at hr; simp only [Finset.mem_range]; omega
-    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; simp only at hab; omega
+    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; omega
     · intro k hk; simp only [Finset.mem_range] at hk
       exact ⟨k + 2, by simp only [Finset.mem_Icc]; omega, by simp⟩
     · intro r hr; simp only [Finset.mem_Icc] at hr
@@ -1145,7 +1145,7 @@ theorem sum_fq_int_le {q : ℝ} {L : ℕ} (hq : 3 ≤ q) (hL : 2 * (L : ℝ) + 1
     _ ≤ ∫ u in (3 / 2 : ℝ)..(q / 2), fq q u := hsum ▸ hLq
     _ = _ := by
         rw [integral_fq hq0 (by norm_num) (by linarith) (by linarith)]
-        rw [show π * (q / 2) / q = π / 2 by field_simp; ring, Real.cos_pi_div_two,
+        rw [show π * (q / 2) / q = π / 2 by field_simp, Real.cos_pi_div_two,
           show π * (3 / 2) / q = 3 * π / (2 * q) by ring]
         simp
 
@@ -1161,9 +1161,9 @@ theorem sum_Icc_low_high (F : ℕ → ℝ) (q : ℕ) (hq : 1 ≤ q) :
   congr 1
   refine Finset.sum_bij (fun R _ => q - R) ?_ ?_ ?_ ?_
   · intro R hR; simp only [Finset.mem_Ioc] at hR ⊢; omega
-  · intro a ha b hb hab; simp only [Finset.mem_Ioc] at ha hb; simp only at hab; omega
+  · intro a ha b hb hab; simp only [Finset.mem_Ioc] at ha hb; omega
   · intro k hk; simp only [Finset.mem_Ioc] at hk
-    exact ⟨q - k, by simp only [Finset.mem_Ioc]; omega, by simp only; omega⟩
+    exact ⟨q - k, by simp only [Finset.mem_Ioc]; omega, by omega⟩
   · intro R hR; simp only [Finset.mem_Ioc] at hR; show F R = F (q - (q - R)); congr 1; omega
 
 set_option maxHeartbeats 800000 in
@@ -1233,7 +1233,7 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
     have hL1 : 1 ≤ L := by omega
     have hK1 : 1 ≤ K := by omega
     have hlowC : ∑ r ∈ Finset.Icc 1 L, G r ≤ C * (fq q 1 + ∑ r ∈ Finset.Icc 2 L, fq q r) := by
-      rw [Finset.sum_eq_add_sum_diff_singleton (by simp; omega : 1 ∈ Finset.Icc 1 L)]
+      rw [Finset.sum_eq_add_sum_sdiff_singleton_of_mem (by simp; omega : 1 ∈ Finset.Icc 1 L)]
       rw [show Finset.Icc 1 L \ {1} = Finset.Icc 2 L by ext x; simp; omega, mul_add,
         Finset.mul_sum]
       refine add_le_add ?_ (Finset.sum_le_sum fun r _ => min_le_right _ _)
@@ -1241,7 +1241,7 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
       rw [Nat.cast_one]; exact min_le_right _ _
     have hhighC : ∑ k ∈ Finset.Icc 1 K, G (k - 1 / 2) ≤
         C * (fq q (1 / 2) + ∑ k ∈ Finset.Icc 2 K, fq q (k - 1 / 2)) := by
-      rw [Finset.sum_eq_add_sum_diff_singleton (by simp; omega : 1 ∈ Finset.Icc 1 K)]
+      rw [Finset.sum_eq_add_sum_sdiff_singleton_of_mem (by simp; omega : 1 ∈ Finset.Icc 1 K)]
       rw [show Finset.Icc 1 K \ {1} = Finset.Icc 2 K by ext x; simp; omega, mul_add,
         Finset.mul_sum]
       refine add_le_add ?_ (Finset.sum_le_sum fun k _ => min_le_right _ _)
@@ -1257,11 +1257,11 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
         rw [ht, div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith [Real.pi_pos]
       have key := trig_T2 ht0 ht1
       have e1 : fq q (1 / 2) = 1 / Real.sin t ^ 2 := by simp only [fq, ht]; ring_nf
-      have e2 : π / q = 2 * t := by rw [ht]; field_simp; ring
-      have e3 : (q : ℝ) / π = 1 / (2 * t) := by rw [ht]; field_simp; ring
+      have e2 : π / q = 2 * t := by rw [ht]; field_simp
+      have e3 : (q : ℝ) / π = 1 / (2 * t) := by rw [ht]; field_simp
       have e4 : 5 * (q : ℝ) ^ 2 / π ^ 2 = 5 / 4 / t ^ 2 := by rw [ht]; field_simp; ring
       rw [e1, e2, e3, e4, le_div_iff₀ (by positivity)]
-      have h2t : t ^ 2 * (1 / (2 * t)) = t / 2 := by field_simp; ring
+      have h2t : t ^ 2 * (1 / (2 * t)) = t / 2 := by field_simp
       calc (1 / Real.sin t ^ 2 + 1 / (2 * t) * (Real.cos (2 * t) / Real.sin (2 * t))) * t ^ 2
           = t ^ 2 / Real.sin t ^ 2 + (t ^ 2 * (1 / (2 * t))) *
               (Real.cos (2 * t) / Real.sin (2 * t)) := by ring
@@ -1275,11 +1275,11 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
         rw [ht, div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith [Real.pi_pos]
       have key := trig_T3 ht0 ht1
       have e1 : fq q 1 = 1 / Real.sin t ^ 2 := by simp only [fq, ht]; ring_nf
-      have e2 : 3 * π / (2 * q) = 3 * t / 2 := by rw [ht]; field_simp; ring
+      have e2 : 3 * π / (2 * q) = 3 * t / 2 := by rw [ht]; field_simp
       have e3 : (q : ℝ) / π = 1 / t := by rw [ht]; field_simp
       have e4 : 5 * (q : ℝ) ^ 2 / (3 * π ^ 2) = 5 / 3 / t ^ 2 := by rw [ht]; field_simp; try ring
       rw [e1, e2, e3, e4, le_div_iff₀ (by positivity)]
-      have h2t : t ^ 2 * (1 / t) = t := by field_simp; ring
+      have h2t : t ^ 2 * (1 / t) = t := by field_simp
       calc (1 / Real.sin t ^ 2 + 1 / t * (Real.cos (3 * t / 2) / Real.sin (3 * t / 2))) * t ^ 2
           = t ^ 2 / Real.sin t ^ 2 + (t ^ 2 * (1 / t)) *
               (Real.cos (3 * t / 2) / Real.sin (3 * t / 2)) := by ring
@@ -1304,15 +1304,15 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
     have hGA : ∀ u, G u ≤ A := fun u => min_le_left _ _
     have hG0 : ∀ u, 0 ≤ G u := fun u => le_min hA (mul_nonneg hC (fq_nonneg _ _))
     have hfam1 : ∑ r ∈ Finset.Icc 1 L, G r ≤ 2 * (q / π) * √(A * C) := by
-      rw [← Nat.Ico_succ_right, Finset.sum_Ico_eq_sum_range, Nat.succ_sub_one]
+      rw [← Finset.Ico_add_one_right_eq_Icc, Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
       have := sum_G_le (u₁ := 1) (m := L) hq0 hA hC le_rfl (by linarith)
       refine le_trans (le_of_eq ?_) this
       refine Finset.sum_congr rfl fun i _ => ?_
-      push_cast; ring_nf
+      simp only [G]; push_cast; ring_nf
     have hfam2 : ∑ k ∈ Finset.Icc 1 K, G (k - 1 / 2) ≤ A + 2 * (q / π) * √(A * C) := by
       rcases Nat.lt_or_ge K 1 with hK | hK
       · rw [Finset.Icc_eq_empty (by omega), Finset.sum_empty]; positivity
-      rw [Finset.sum_eq_add_sum_diff_singleton (by simp; omega : 1 ∈ Finset.Icc 1 K)]
+      rw [Finset.sum_eq_add_sum_sdiff_singleton_of_mem (by simp; omega : 1 ∈ Finset.Icc 1 K)]
       rw [show Finset.Icc 1 K \ {1} = Finset.Ico 2 (K + 1) by ext x; simp; omega,
         Finset.sum_Ico_eq_sum_range, show K + 1 - 2 = K - 1 by omega]
       refine add_le_add (hGA _) ?_
@@ -1320,7 +1320,7 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
         (by rw [Nat.cast_sub hK]; push_cast; linarith)
       refine le_trans (le_of_eq ?_) this
       refine Finset.sum_congr rfl fun i _ => ?_
-      push_cast; ring_nf
+      simp only [G]; push_cast; ring_nf
     have h4 : 4 * (q : ℝ) / π * √(A * C) = 2 * (2 * (q / π) * √(A * C)) := by ring
     rw [h4]
     linarith
@@ -1359,7 +1359,7 @@ theorem residue_form₂ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {
     exact_mod_cast h1
   -- Orientation.
   obtain ⟨σ, hσ, hσβ⟩ : ∃ σ : ℤ, σ * σ = 1 ∧ 0 ≤ (σ : ℝ) * β := by
-    rcases le_or_lt 0 β with h0 | h0
+    rcases le_or_gt 0 β with h0 | h0
     · exact ⟨1, by norm_num, by simpa using h0⟩
     · exact ⟨-1, by norm_num, by push_cast; linarith⟩
   have hσr : (σ : ℝ) * σ = 1 := by exact_mod_cast hσ
@@ -1404,10 +1404,10 @@ theorem residue_form₂ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {
     rw [fq, mul_one_div]
     congr 1
     have hm : a * n = σ * (q * (m n / q) + (R n : ℤ)) := by
-      rw [hRcast, Int.ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
+      rw [hRcast, Int.mul_ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
     have harg : π * α * n = (σ : ℝ) * (π * ((R n : ℝ) + τ' n) / q + ((m n / q : ℤ) : ℝ) * π) := by
       have e : π * α * n = π * (((a * n : ℤ) : ℝ) + β * n / Q) / q := by
-        rw [hα]; push_cast; field_simp; ring
+        rw [hα]; push_cast; field_simp
       rw [e, hm]; push_cast; simp only [τ']; field_simp; ring_nf
       rw [show (σ : ℝ) ^ 2 = 1 by rw [sq, hσr]]; ring
     rw [harg]
@@ -1442,7 +1442,7 @@ theorem residue_form₂ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {
   have hτR : ∀ n ∈ S', τR (R n) = τ' n := by
     intro n hn
     have hex : ∃ n' ∈ S', R n' = R n := ⟨n, hn, rfl⟩
-    simp only [τR, dif_pos hex]
+    simp only [τR, dite_eq_left hex]
     have := hex.choose_spec
     rw [hinj this.1 hn this.2]
   refine ⟨τR, fun r => ?_, ?_⟩
@@ -1455,12 +1455,12 @@ theorem residue_form₂ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {
     rw [← Finset.sum_filter_not_add_sum_filter S (fun n => (q : ℤ) ∣ n)]
     have hzero : ∑ n ∈ S.filter (fun n => (q : ℤ) ∣ n),
         (if (q : ℤ) ∣ n then 0 else min A (C / Real.sin (π * α * n) ^ 2)) = 0 :=
-      Finset.sum_eq_zero fun n hn => by rw [if_pos (Finset.mem_filter.1 hn).2]
+      Finset.sum_eq_zero fun n hn => by rw [ite_eq_left (Finset.mem_filter.1 hn).2]
     rw [hzero, add_zero]
     have hS'eq : ∑ n ∈ S', (if (q : ℤ) ∣ n then 0 else min A (C / Real.sin (π * α * n) ^ 2)) =
         ∑ n ∈ S', g (R n) := by
       refine Finset.sum_congr rfl fun n hn => ?_
-      rw [if_neg (Finset.mem_filter.1 hn).2, hterm n]
+      rw [ite_eq_right (Finset.mem_filter.1 hn).2, hterm n]
       simp only [g, hτR n hn]
     rw [hS'eq, ← Finset.sum_image (fun n hn n' hn' h => hinj hn hn' h)]
     refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun r _ _ => hg0 r
@@ -1515,7 +1515,7 @@ theorem residue_form_gen {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) 
     exact_mod_cast h1
   -- Orientation.
   obtain ⟨σ, hσ, hσβ⟩ : ∃ σ : ℤ, σ * σ = 1 ∧ 0 ≤ (σ : ℝ) * β := by
-    rcases le_or_lt 0 β with h0 | h0
+    rcases le_or_gt 0 β with h0 | h0
     · exact ⟨1, by norm_num, by simpa using h0⟩
     · exact ⟨-1, by norm_num, by push_cast; linarith⟩
   have hσr : (σ : ℝ) * σ = 1 := by exact_mod_cast hσ
@@ -1558,10 +1558,10 @@ theorem residue_form_gen {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) 
     intro n
     congr 1
     have hm : a * n = σ * (q * (m n / q) + (R n : ℤ)) := by
-      rw [hRcast, Int.ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
+      rw [hRcast, Int.mul_ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
     have harg : π * α * n = (σ : ℝ) * (π * ((R n : ℝ) + τ' n) / q + ((m n / q : ℤ) : ℝ) * π) := by
       have e : π * α * n = π * (((a * n : ℤ) : ℝ) + β * n / Q) / q := by
-        rw [hα]; push_cast; field_simp; ring
+        rw [hα]; push_cast; field_simp
       rw [e, hm]; push_cast; simp only [τ']; field_simp; ring_nf
       rw [show (σ : ℝ) ^ 2 = 1 by rw [sq, hσr]]; ring
     rw [harg]
@@ -1596,7 +1596,7 @@ theorem residue_form_gen {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) 
   have hτR : ∀ n ∈ S', τR (R n) = τ' n := by
     intro n hn
     have hex : ∃ n' ∈ S', R n' = R n := ⟨n, hn, rfl⟩
-    simp only [τR, dif_pos hex]
+    simp only [τR, dite_eq_left hex]
     have := hex.choose_spec
     rw [hinj this.1 hn this.2]
   refine ⟨τR, fun r => ?_, ?_⟩
@@ -1609,12 +1609,12 @@ theorem residue_form_gen {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) 
     rw [← Finset.sum_filter_not_add_sum_filter S (fun n => (q : ℤ) ∣ n)]
     have hzero : ∑ n ∈ S.filter (fun n => (q : ℤ) ∣ n),
         (if (q : ℤ) ∣ n then 0 else Φ (Real.sin (π * α * n) ^ 2)) = 0 :=
-      Finset.sum_eq_zero fun n hn => by rw [if_pos (Finset.mem_filter.1 hn).2]
+      Finset.sum_eq_zero fun n hn => by rw [ite_eq_left (Finset.mem_filter.1 hn).2]
     rw [hzero, add_zero]
     have hS'eq : ∑ n ∈ S', (if (q : ℤ) ∣ n then 0 else Φ (Real.sin (π * α * n) ^ 2)) =
         ∑ n ∈ S', g (R n) := by
       refine Finset.sum_congr rfl fun n hn => ?_
-      rw [if_neg (Finset.mem_filter.1 hn).2, hterm n]
+      rw [ite_eq_right (Finset.mem_filter.1 hn).2, hterm n]
       simp only [g, hτR n hn]
     rw [hS'eq, ← Finset.sum_image (fun n hn n' hn' h => hinj hn hn' h)]
     refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun r _ _ => hg0 r
@@ -1646,8 +1646,10 @@ theorem integral_inv_sin {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) (hb : b < π) 
     have h1 := (Real.hasDerivAt_sin x).log (hsin x hx).ne'
     have h2 := ((hasDerivAt_const x (1 : ℝ)).add (Real.hasDerivAt_cos x)).log (hcos x hx).ne'
     convert h1.sub h2 using 1
+    · rfl
     have hs := (hsin x hx).ne'
     have hc := (hcos x hx).ne'
+    simp only [Pi.add_apply] at hc ⊢
     field_simp
     nlinarith [Real.sin_sq_add_cos_sq x]
   · exact ContinuousOn.intervalIntegrable (continuousOn_const.div
@@ -1700,7 +1702,7 @@ theorem sin_le_of_between {q u v : ℝ} (hq : 0 < q) (hu : 0 < u) (huv : u ≤ v
       linarith
     · rw [div_le_iff₀ hq]; nlinarith
     · rw [div_le_div_iff_of_pos_right hq]; exact mul_le_mul_of_nonneg_left huw hpi.le
-  rcases le_or_lt v (q / 2) with hv | hv
+  rcases le_or_gt v (q / 2) with hv | hv
   · exact key v huv hv
   · rw [show π * v / q = π - π * (q - v) / q by field_simp; ring, Real.sin_pi_sub]
     exact key (q - v) (by linarith) (by linarith)
@@ -1750,7 +1752,7 @@ theorem sum_Icc_parity (g : ℕ → ℝ) (q : ℕ) :
     · intro j hj; simp only [Finset.mem_filter, Finset.mem_Icc] at hj
       obtain ⟨⟨h1, h2⟩, ⟨m, rfl⟩⟩ := hj; simp only [Finset.mem_Icc]; omega
     · intro a ha b hb hab; simp only [Finset.mem_filter, Finset.mem_Icc] at ha hb
-      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; simp only at hab; omega
+      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; omega
     · intro r hr; simp only [Finset.mem_Icc] at hr
       exact ⟨2 * r, by simp only [Finset.mem_filter, Finset.mem_Icc]; exact ⟨by omega, ⟨r, by ring⟩⟩,
         by simp⟩
@@ -1761,11 +1763,11 @@ theorem sum_Icc_parity (g : ℕ → ℝ) (q : ℕ) :
       obtain ⟨⟨h1, h2⟩, ⟨m, rfl⟩⟩ := hj; simp only [Finset.mem_Icc]; omega
     · intro a ha b hb hab
       simp only [Finset.mem_filter, Finset.mem_Icc, Nat.not_even_iff_odd] at ha hb
-      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; simp only at hab; omega
+      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; omega
     · intro k hk; simp only [Finset.mem_Icc] at hk
       exact ⟨2 * k - 1, by
         simp only [Finset.mem_filter, Finset.mem_Icc, Nat.not_even_iff_odd]
-        exact ⟨by omega, ⟨k - 1, by omega⟩⟩, by simp only; omega⟩
+        exact ⟨by omega, ⟨k - 1, by omega⟩⟩, by omega⟩
     · intro j hj; simp only [Finset.mem_filter, Nat.not_even_iff_odd] at hj
       obtain ⟨_, ⟨m, rfl⟩⟩ := hj
       show g (2 * m + 1) = g (2 * ((2 * m + 1 + 1) / 2) - 1); congr 1; omega
@@ -1779,7 +1781,7 @@ theorem sum_hBC_half_le {B C : ℝ} {q : ℕ} (hq : 2 ≤ q) (hB : 0 ≤ B) (hC 
   have hq2 : (2 : ℝ) ≤ q := by exact_mod_cast hq
   have hII : ∀ a b : ℝ, 0 < a → b < q → a ≤ b → IntervalIntegrable (hBC B C q) volume a b :=
     fun a b ha hb hab => (continuousOn_hBC hq0 ha hb).intervalIntegrable_of_Icc hab
-  rw [Finset.sum_eq_add_sum_diff_singleton (by simp; omega : 1 ∈ Finset.Icc 1 (q - 1)),
+  rw [Finset.sum_eq_add_sum_sdiff_singleton_of_mem (by simp; omega : 1 ∈ Finset.Icc 1 (q - 1)),
     show Finset.Icc 1 (q - 1) \ {1} = Finset.Icc 2 (q - 1) by ext x; simp; omega]
   simp only [Nat.cast_one]
   refine add_le_add le_rfl ?_
@@ -1811,7 +1813,7 @@ theorem sum_hBC_half_le {B C : ℝ} {q : ℕ} (hq : 2 ≤ q) (hB : 0 ≤ B) (hC 
     rw [← h]
     refine Finset.sum_bij (fun j _ => j - 2) ?_ ?_ ?_ ?_
     · intro j hj; simp only [Finset.mem_Icc] at hj; simp only [Finset.mem_range]; omega
-    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; simp only at hab; omega
+    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; omega
     · intro i hi; simp only [Finset.mem_range] at hi
       exact ⟨i + 2, by simp only [Finset.mem_Icc]; omega, by simp⟩
     · intro j hj; simp only [Finset.mem_Icc] at hj
@@ -1926,7 +1928,7 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
   · set x := C / B
     have hx0 : 0 ≤ x := div_nonneg hC hB.le
     have hCx : C = x * B := by simp only [x]; field_simp
-    rcases le_or_lt 1 x with hx1 | hx1
+    rcases le_or_gt 1 x with hx1 | hx1
     · -- `C ≥ B`.
       have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
         rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
@@ -1937,7 +1939,7 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
       refine hbig.trans (mul_le_mul_of_nonneg_left ?_ hBa.le)
       refine le_trans ?_ (le_max_right _ _)
       rw [hlog, hlog2a]; linarith
-    rcases le_or_lt (Real.sin a) x with hxa | hxa
+    rcases le_or_gt (Real.sin a) x with hxa | hxa
     · -- `B sin a ≤ C < B`: split at `w = arcsin x`.
       set w := Real.arcsin x
       have hx1' : x ≤ 1 := hx1.le
@@ -1955,7 +1957,7 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
       have hFw : logTanHalf w = Real.log x - Real.log (1 + y) := by
         simp only [logTanHalf, hsw, hcw]
       have hCcot : C * (Real.cos w / Real.sin w) = B * y := by
-        rw [hsw, hcw, hCx]; field_simp; ring
+        rw [hsw, hcw, hCx]; field_simp
       rw [hFw, hCcot] at hJ
       have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
         rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
@@ -2011,10 +2013,10 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
       calc mBC B C a + (∫ v in a..(π / 2), mBC B C v) / a
           ≤ C / Real.sin a ^ 2 + C * (Real.cos a / Real.sin a) / a := by
             gcongr
-        _ = C / a * (a / Real.sin a ^ 2 + Real.cos a / Real.sin a) := by field_simp; ring
+        _ = C / a * (a / Real.sin a ^ 2 + Real.cos a / Real.sin a) := by field_simp
         _ ≤ B * Real.sin a / a * (a / Real.sin a ^ 2 + Real.cos a / Real.sin a) := by
             gcongr
-        _ = B / a * (a / Real.sin a + Real.cos a) := by field_simp; ring
+        _ = B / a * (a / Real.sin a + Real.cos a) := by field_simp
         _ ≤ B / a * 2 := mul_le_mul_of_nonneg_left hk hBa.le
   · refine hbig.trans (mul_le_mul_of_nonneg_left ?_ hBa.le)
     rw [hlogea, hlog2a]; linarith
@@ -2114,11 +2116,11 @@ theorem lemma_4_1_3 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁
   have hval : hBC B C q (1 / 2) = mBC B C A := by simp only [hBC, mBC, A]; ring_nf
   have hT : ∑ R ∈ Finset.Icc 1 (q - 1), F R ≤ mBC B C A + (∫ v in A..(π / 2), mBC B C v) / A := by
     refine hmerge.trans (hhalf.trans (le_of_eq ?_))
-    rw [hval]; simp only [A]; field_simp; ring
+    rw [hval]; simp only [A]; field_simp
   obtain ⟨f1, f2⟩ := final_4_1_3 hBpos hC hA0 hA1
-  have e1 : B / A = 2 * B * q / π := by simp only [A]; field_simp; ring
-  have e2 : C * rexp 3 / (B * (2 * A)) = C * rexp 3 * q / (B * π) := by simp only [A]; field_simp; ring
-  have e3 : rexp 2 / A = 2 * rexp 2 * q / π := by simp only [A]; field_simp; ring
+  have e1 : B / A = 2 * B * q / π := by simp only [A]; field_simp
+  have e2 : C * rexp 3 / (B * (2 * A)) = C * rexp 3 * q / (B * π) := by simp only [A]; field_simp
+  have e3 : rexp 2 / A = 2 * rexp 2 * q / π := by simp only [A]; field_simp
   rw [e1, e2] at f1
   rw [e1, e3] at f2
   exact ⟨hle.trans (hT.trans f1), hle.trans (hT.trans f2)⟩

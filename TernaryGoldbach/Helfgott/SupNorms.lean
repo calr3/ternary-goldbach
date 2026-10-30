@@ -76,7 +76,7 @@ theorem abs_mellinConv_eta2_phi_le_const (u : ℝ) : |mellinConv eta2 phi u| ≤
   set g := (Set.Ioo (1/4 : ℝ) 1).indicator fun _ => K
   have hgint : Integrable g := by
     refine (integrable_indicator_iff measurableSet_Ioo).2 ?_
-    exact integrableOn_const.2 (Or.inr (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top))
+    exact integrableOn_const (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_ne_top)
   have hbound : ∀ r, ‖eta2 r * phi (u / r) / r‖ ≤ g r := by
     intro r
     by_cases hr : r ∈ Set.Ioo (1/4 : ℝ) 1
@@ -96,8 +96,8 @@ theorem abs_mellinConv_eta2_phi_le_const (u : ℝ) : |mellinConv eta2 phi u| ≤
   rw [Real.norm_eq_abs] at this
   refine (this.trans (setIntegral_le_integral hgint
     (Filter.Eventually.of_forall fun r => Set.indicator_nonneg (fun _ _ => hK) r))).trans ?_
-  rw [integral_indicator measurableSet_Ioo, setIntegral_const, Real.volume_Ioo, smul_eq_mul,
-    ENNReal.toReal_ofReal (by norm_num)]
+  rw [integral_indicator measurableSet_Ioo, setIntegral_const,
+    Real.volume_real_Ioo_of_le (by norm_num), smul_eq_mul]
   simp only [K]
   norm_num
 

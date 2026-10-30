@@ -34,7 +34,7 @@ theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
   have hs0 : 0 < s := Real.sqrt_pos.2 (Real.sqrt_pos.2 hN0)
   have hsbig : (10 : ℝ) ^ 6 ≤ s := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : s ^ 4 < ((10 : ℝ) ^ 6) ^ 4 := pow_lt_pow_left₀ h hs0.le (by norm_num)
     rw [hs4] at this
     linarith [show ((10 : ℝ) ^ 6) ^ 4 ≤ 10 ^ 27 by norm_num]
@@ -90,7 +90,7 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
   have hu0 : 0 < u := Real.sqrt_pos.2 (Real.sqrt_pos.2 (Real.sqrt_pos.2 (Real.sqrt_pos.2 hN0)))
   have hu48 : (48 : ℝ) ≤ u := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : u ^ 16 < (48 : ℝ) ^ 16 := pow_lt_pow_left₀ h hu0.le (by norm_num)
     rw [hu16] at this
     linarith [show (48 : ℝ) ^ 16 ≤ 10 ^ 27 by norm_num]

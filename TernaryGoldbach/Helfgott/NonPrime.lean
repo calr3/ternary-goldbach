@@ -93,19 +93,19 @@ theorem sum_ΛBad_le (N : ℕ) : ∑ n ∈ range (N + 1), ΛBad n ≤ psi N - th
     · exact le_rfl
     · exact Real.log_nonneg (by norm_num)
   rw [hsplit]
-  refine le_trans ?_ (add_le_add_left hlog2 _)
+  refine le_trans ?_ (add_le_add le_rfl hlog2)
   rw [← sum_add_distrib]
   refine sum_le_sum fun n _ => ?_
   unfold ΛBad Good
   have h2 : (0:ℝ) ≤ Real.log 2 := Real.log_nonneg (by norm_num)
   by_cases hp : n.Prime
   · by_cases ho : Odd n
-    · simp only [hp, ho, and_self, if_true]
+    · simp only [hp, ho, and_self, ite_true]
       split_ifs <;> linarith
     · have : n = 2 := (hp.eq_two_or_odd').resolve_right ho
       subst this
       simp [hp, ho, vonMangoldt_apply_prime hp]
-  · simp only [hp, false_and, if_false, if_true]
+  · simp only [hp, false_and, ite_false, ite_true]
     split_ifs <;> simp [vonMangoldt_nonneg, h2]
 
 /-- **[H, (7.50)] with the constants as parameters.** -/
@@ -128,7 +128,7 @@ theorem repSum_sub_le_of_bounds {N : ℕ} (hN : 1 ≤ N) {Ap As : ℝ}
     refine sum_le_sum fun n₁ _ => sum_le_sum fun n₂ _ => sum_le_sum fun n₃ _ => ?_
     have hΛ := fun n : ℕ => (vonMangoldt_nonneg (n := n))
     by_cases hs : n₁ + n₂ + n₃ = N
-    · simp only [hs, true_and, and_true, if_true]
+    · simp only [hs, true_and, and_true, ite_true]
       have hterm : |Λ n₁ * Λ n₂ * Λ n₃ * etaPlus (n₁ / xOf N) * etaPlus (n₂ / xOf N) *
           etaStar (n₃ / xOf N)| ≤ A * (Λ n₁ * Λ n₂ * Λ n₃) := by
         rw [abs_mul, abs_mul, abs_mul, abs_mul, abs_mul, abs_of_nonneg (hΛ n₁),

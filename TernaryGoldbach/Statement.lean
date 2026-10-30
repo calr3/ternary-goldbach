@@ -39,7 +39,7 @@ statement. -/
 theorem statement_of_upTo_of_from {C : ℕ} (h₁ : TernaryGoldbachUpTo C)
     (h₂ : TernaryGoldbachFrom C) : Statement := by
   intro n hn h5
-  rcases le_or_lt C n with h | h
+  rcases le_or_gt C n with h | h
   · exact h₂ n hn h
   · exact h₁ n hn h5 h.le
 

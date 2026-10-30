@@ -35,8 +35,7 @@ theorem continuous_e : Continuous e := by
 
 theorem norm_e (t : ℝ) : ‖e t‖ = 1 := by
   unfold e
-  rw [Complex.norm_eq_abs, Complex.abs_exp]
-  simp
+  simp [Complex.norm_exp]
 
 /-- Orthogonality of additive characters on `[0, 1]`. -/
 theorem integral_e_int (k : ℤ) :
@@ -61,7 +60,7 @@ noncomputable def expSum (X : ℕ) (a : ℕ → ℂ) (α : ℝ) : ℂ :=
 
 theorem continuous_expSum (X : ℕ) (a : ℕ → ℂ) : Continuous (expSum X a) := by
   unfold expSum
-  exact continuous_finset_sum _ fun n _ =>
+  exact continuous_finsetSum _ fun n _ =>
     continuous_const.mul (continuous_e.comp (continuous_const.mul continuous_id))
 
 theorem integral_const_mul_e_int (z : ℂ) (k : ℤ) :
@@ -75,7 +74,7 @@ theorem intervalIntegrable_const_mul_e (z : ℂ) (k : ℤ) :
 
 theorem integral_sum_e {ι : Type*} (s : Finset ι) (z : ι → ℂ) (k : ι → ℤ) :
     ∫ α in (0:ℝ)..1, ∑ i ∈ s, z i * e (k i * α) = ∑ i ∈ s, if k i = 0 then z i else 0 := by
-  rw [intervalIntegral.integral_finset_sum fun i _ => intervalIntegrable_const_mul_e (z i) (k i)]
+  rw [intervalIntegral.integral_finsetSum fun i _ => intervalIntegrable_const_mul_e (z i) (k i)]
   exact sum_congr rfl fun i _ => integral_const_mul_e_int _ _
 
 /-- **The circle method identity.**  The weighted number of representations
@@ -149,7 +148,7 @@ theorem integral_norm_sq_expSum (X : ℕ) (a : ℕ → ℂ) :
 theorem le_sqrt_mul_sqrt_of_forall {P A C : ℝ} (hA : 0 ≤ A) (hC : 0 ≤ C)
     (h : ∀ t : ℝ, 0 < t → P ≤ (t * A + C / t) / 2) : P ≤ √A * √C := by
   by_contra hP
-  push_neg at hP
+  push Not at hP
   have hP0 : 0 < P := lt_of_le_of_lt (by positivity) hP
   rcases hA.eq_or_lt with hA0 | hA0
   · subst hA0
@@ -205,7 +204,7 @@ theorem setIntegral_norm_mul_norm_expSum_le (X : ℕ) (b c : ℕ → ℂ) :
         linarith
     _ = (t * ∫ α in Set.Ioc (0:ℝ) 1, ‖expSum X b α‖ ^ 2) / 2 +
           ((∫ α in Set.Ioc (0:ℝ) 1, ‖expSum X c α‖ ^ 2) / t) / 2 := by
-        rw [MeasureTheory.integral_div, MeasureTheory.integral_add, MeasureTheory.integral_mul_left,
+        rw [MeasureTheory.integral_div, MeasureTheory.integral_add, MeasureTheory.integral_const_mul,
           MeasureTheory.integral_div,
           add_div]
         · exact (by fun_prop : Continuous fun α => t * ‖expSum X b α‖ ^ 2).integrableOn_Ioc
@@ -236,8 +235,8 @@ theorem norm_integral_minor_le (X N : ℕ) (a b c : ℕ → ℂ) {M : Set ℝ} (
         norm_integral_le_integral_norm _
     _ ≤ ∫ α in Set.Ioc (0:ℝ) 1 \ M, B * (‖expSum X b α‖ * ‖expSum X c α‖) := by
         refine setIntegral_mono_on
-          ((continuous_circleIntegrand X N a b c).norm.integrableOn_Ioc.mono_set Set.diff_subset)
-          (hbc.integrableOn_Ioc.mono_set Set.diff_subset) (measurableSet_Ioc.diff hM) ?_
+          ((continuous_circleIntegrand X N a b c).norm.integrableOn_Ioc.mono_set Set.sdiff_subset)
+          (hbc.integrableOn_Ioc.mono_set Set.sdiff_subset) (measurableSet_Ioc.diff hM) ?_
         intro α hα
         simp only [circleIntegrand, norm_mul, norm_e, mul_one]
         rw [mul_assoc]
@@ -245,9 +244,9 @@ theorem norm_integral_minor_le (X N : ℕ) (a b c : ℕ → ℂ) {M : Set ℝ} (
     _ ≤ ∫ α in Set.Ioc (0:ℝ) 1, B * (‖expSum X b α‖ * ‖expSum X c α‖) :=
         setIntegral_mono_set hbc.integrableOn_Ioc
           (Filter.Eventually.of_forall fun _ => by positivity)
-          (Set.diff_subset (s := Set.Ioc (0:ℝ) 1) (t := M)).eventuallyLE
+          (Set.sdiff_subset (s := Set.Ioc (0:ℝ) 1) (t := M)).eventuallyLE
     _ = B * ∫ α in Set.Ioc (0:ℝ) 1, ‖expSum X b α‖ * ‖expSum X c α‖ :=
-        MeasureTheory.integral_mul_left _ _
+        MeasureTheory.integral_const_mul _ _
     _ ≤ _ := mul_le_mul_of_nonneg_left (setIntegral_norm_mul_norm_expSum_le X b c) hB0
 
 /-- If the weighted representation count is nonzero and the weights are supported on primes,
@@ -280,7 +279,7 @@ theorem isSumOfThreePrimes_of_circle (X N : ℕ) (a b c : ℕ → ℂ)
     IsSumOfThreePrimes N := by
   apply isSumOfThreePrimes_of_sum_ne_zero X N a b c ha hb hc
   rw [← circle_identity]
-  have hsplit := integral_inter_add_diff hM
+  have hsplit := integral_inter_add_sdiff hM
     ((continuous_circleIntegrand X N a b c).integrableOn_Ioc (a := 0) (b := 1) (μ := volume))
   have htot : ∫ α in (0:ℝ)..1, expSum X a α * expSum X b α * expSum X c α * e (-(N * α)) =
       ∫ α in Set.Ioc (0:ℝ) 1, circleIntegrand X N a b c α :=
@@ -290,7 +289,7 @@ theorem isSumOfThreePrimes_of_circle (X N : ℕ) (a b c : ℕ → ℂ)
   have hmin := norm_integral_minor_le X N a b c hM hB0 hminor
   have hre := congrArg Complex.re h0
   rw [add_re, zero_re] at hre
-  have := neg_le_of_abs_le ((abs_re_le_abs _).trans (le_of_eq (Complex.norm_eq_abs _).symm) |>.trans hmin)
+  have := neg_le_of_abs_le ((Complex.abs_re_le_norm _).trans hmin)
   linarith
 
 /-! ## Absolutely convergent exponential series -/
@@ -301,8 +300,7 @@ noncomputable def expTsum (a : ℕ → ℂ) (α : ℝ) : ℂ := ∑' n, a n * e 
 theorem norm_mul_e (z : ℂ) (t : ℝ) : ‖z * e t‖ = ‖z‖ := by
   rw [norm_mul, norm_e, mul_one]
 
-theorem abs_e (t : ℝ) : Complex.abs (e t) = 1 := by
-  rw [← Complex.norm_eq_abs, norm_e]
+theorem abs_e (t : ℝ) : ‖e t‖ = 1 := norm_e t
 
 theorem continuous_expTsum {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖) :
     Continuous (expTsum a) :=
@@ -360,7 +358,7 @@ theorem circle_identity_tsum (N : ℕ) {a b c : ℕ → ℂ} (ha : Summable fun 
   rw [tsum_eq_sum (s := (range (N + 1) ×ˢ range (N + 1)) ×ˢ range (N + 1))]
   · rw [sum_product, sum_product]
   · intro t ht
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply ht
     simp only [mem_product, mem_range]

@@ -96,7 +96,7 @@ theorem abs_mellinConv_eta2_phi_le {u : ℝ} (hu : 0 ≤ u) :
   set g := (Set.Ioo (1/4 : ℝ) 1).indicator fun _ => K
   have hgint : Integrable g := by
     refine (integrable_indicator_iff measurableSet_Ioo).2 ?_
-    exact integrableOn_const.2 (Or.inr (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_lt_top))
+    exact integrableOn_const (by rw [Real.volume_Ioo]; exact ENNReal.ofReal_ne_top)
   have hbound : ∀ r, ‖eta2 r * phi (u / r) / r‖ ≤ g r := by
     intro r
     by_cases hr : r ∈ Set.Ioo (1/4 : ℝ) 1
@@ -119,8 +119,8 @@ theorem abs_mellinConv_eta2_phi_le {u : ℝ} (hu : 0 ≤ u) :
   rw [Real.norm_eq_abs] at this
   refine (this.trans (setIntegral_le_integral hgint
     (Filter.Eventually.of_forall fun r => Set.indicator_nonneg (fun _ _ => hK) r))).trans ?_
-  rw [integral_indicator measurableSet_Ioo, setIntegral_const, Real.volume_Ioo, smul_eq_mul,
-    ENNReal.toReal_ofReal (by norm_num)]
+  rw [integral_indicator measurableSet_Ioo, setIntegral_const,
+    Real.volume_real_Ioo_of_le (by norm_num), smul_eq_mul]
   simp only [K]
   nlinarith [show (0:ℝ) ≤ u ^ 2 * Real.exp (-u ^ 2 / 2) by positivity]
 
@@ -209,11 +209,11 @@ theorem abs_hH_le {H : ℝ} (hH0 : 0 ≤ H) {t : ℝ} (ht : 0 ≤ t) :
       rw [Real.norm_eq_abs, abs_div, abs_mul, abs_of_pos hy, div_le_iff₀ hy]
       have hrp : y ^ (-3 : ℝ) * y = (y ^ 2)⁻¹ := by
         rw [Real.rpow_neg hy.le, show (3:ℝ) = ((3:ℕ):ℝ) by norm_num, Real.rpow_natCast]
-        field_simp; ring
+        field_simp
       calc |hBase (t / y)| * |F H y| ≤ 5 * (t / y) ^ 2 * (H / Real.pi) :=
             mul_le_mul (abs_hBase_le _) (abs_F_le hH0 y) (abs_nonneg _) (by positivity)
         _ = K * y ^ (-3 : ℝ) * y := by
-            rw [mul_assoc K, hrp]; simp only [K]; field_simp; ring
+            rw [mul_assoc K, hrp]; simp only [K]; field_simp
     · have : 2 ≤ t / y := by
         simp only [Set.mem_Ioi, not_lt] at hyt
         rw [le_div_iff₀ hy]; linarith
@@ -222,7 +222,7 @@ theorem abs_hH_le {H : ℝ} (hH0 : 0 ≤ H) {t : ℝ} (ht : 0 ≤ t) :
   have := norm_integral_le_of_norm_le hgint.integrableOn hbound
   rw [Real.norm_eq_abs] at this
   refine (this.trans (setIntegral_le_integral hgint (Filter.Eventually.of_forall hg0))).trans ?_
-  rw [integral_indicator measurableSet_Ioi, MeasureTheory.integral_mul_left,
+  rw [integral_indicator measurableSet_Ioi, MeasureTheory.integral_const_mul,
     integral_Ioi_rpow_of_lt (by norm_num) ht2]
   have : (t / 2) ^ ((-3 : ℝ) + 1) = 4 / t ^ 2 := by
     rw [show (-3 : ℝ) + 1 = -((2:ℕ):ℝ) by norm_num, Real.rpow_neg ht2.le, Real.rpow_natCast]

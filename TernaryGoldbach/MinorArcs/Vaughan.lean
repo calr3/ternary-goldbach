@@ -16,6 +16,7 @@ Proved, with no `sorry`.
 -/
 
 open ArithmeticFunction
+open scoped ArithmeticFunction.Moebius ArithmeticFunction.zeta
 
 namespace TernaryGoldbach.MinorArcs
 
@@ -42,7 +43,7 @@ theorem vaughan_apply {U V n : ℕ} (hn : V < n) :
     Λ n = (trunc μ U * log) n - (trunc μ U * trunc Λ V * ζ) n +
       (((μ : ArithmeticFunction ℝ) - trunc μ U) * (Λ - trunc Λ V) * ζ) n := by
   have h := congrArg (fun f : ArithmeticFunction ℝ => f n) (vaughan U V)
-  simp only [add_apply, sub_apply', trunc_apply, if_neg (not_le.2 hn), zero_add] at h
+  simp only [ArithmeticFunction.add_apply, sub_apply', trunc_apply, ite_eq_right (not_le.2 hn), zero_add] at h
   exact h
 
 end TernaryGoldbach.MinorArcs

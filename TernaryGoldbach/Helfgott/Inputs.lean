@@ -123,7 +123,7 @@ consecutive gaps `≤ 4 · 10¹⁸ - 4`, reaching `8.875694 · 10³⁰`.  (Build
 to `10²⁷` would suffice here; [H, §1] says that takes about 25 hours on one processor.) -/
 theorem prime_ladder_input :
     ∃ l : List ℕ, (∀ p ∈ 3 :: l, p.Prime ∧ Odd p) ∧
-      List.Chain (LadderStep (4 * 10 ^ 18 - 4)) 3 l ∧
+      List.IsChain (LadderStep (4 * 10 ^ 18 - 4)) (3 :: l) ∧
       8875694 * 10 ^ 24 ≤ (3 :: l).getLast (List.cons_ne_nil _ _) := by
   sorry
 
