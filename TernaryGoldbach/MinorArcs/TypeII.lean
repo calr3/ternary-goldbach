@@ -483,4 +483,335 @@ theorem lemma_5_2_1 {ι : Type*} (s : Finset ι) {q : ℕ} (hq : 1 ≤ q) (a : �
           mul_le_mul_of_nonneg_right hlog hS0
       _ ≤ _ := hsum.trans hLS
 
+/-! ### [B, Proposition 5.2.4] -/
+
+/-- `S₂(U', W', W) = ∑_{U' < m ≤ x/W, m odd} |∑_{W' < p ≤ W} (log p) e(αmp)|²` [B, (5.38)], `v = 2`. -/
+noncomputable def S2 (α x U' W' W : ℝ) : ℝ := oddSqSum α W' W U' (x / W)
+
+theorem primeExpSum_add_int (W' W β : ℝ) (n : ℤ) :
+    primeExpSum W' W (β + n) = primeExpSum W' W β := by
+  unfold primeExpSum
+  refine sum_congr rfl fun p _ => ?_
+  rw [add_mul, e_add]
+  have : e ((n : ℝ) * p) = 1 := (e_eq_one_iff _).2 ⟨n * p, by push_cast; ring⟩
+  rw [this, mul_one]
+
+/-- Lemma 5.2.1 for a set of odd `m` of width `≤ 2Δ`, with `2α = a/q + δ/x + k`, `δ ≠ 0`:
+`ν = |δ|q/x`, `υ = Δ|δ|/x`, provided `(q + Δ)|δ|/x ≤ 1/q`. -/
+theorem odd_block_bound {α x δ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
+    (h2α : 2 * α = a / q + δ / x + k) (hx : 0 < x) (hδ0 : δ ≠ 0) (s : Finset ℤ)
+    (hodd : ∀ m ∈ s, Odd m) {Δ : ℝ} (hΔ : 0 ≤ Δ)
+    (hwidth : ∀ m ∈ s, ∀ m' ∈ s, |((m - m' : ℤ) : ℝ)| ≤ 2 * Δ)
+    (hcond : (q + Δ) * |δ| / x ≤ 1 / q) {W' W : ℝ} (hW' : 0 ≤ W') :
+    (∑ m ∈ s, ‖primeExpSum W' W (α * m)‖ ^ 2 ≤ (W - W' + x / (|δ| * q)) * logSqSum W' W) ∧
+    (∀ R : ℝ, 1 ≤ R → R ≤ W' → q * R ^ 2 * ((q + Δ) * |δ| / x) ≤ 1 →
+      Nat.totient q / q * Real.log R * ∑ m ∈ s, ‖primeExpSum W' W (α * m)‖ ^ 2 ≤
+        (W - W' + x / (|δ| * q)) * logSqSum W' W) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hδpos : 0 < |δ| := abs_pos.2 hδ0
+  set j : ℤ → ℤ := fun m => (m - 1) / 2
+  have hj : ∀ m ∈ s, (m : ℝ) = 2 * j m + 1 := by
+    intro m hm
+    obtain ⟨t, ht⟩ := hodd m hm
+    have : j m = t := by simp only [j]; omega
+    rw [this, ht]; push_cast; ring
+  set aa : ℤ → ℤ := fun m => j m * a
+  set u : ℤ → ℝ := fun m => α + j m * (δ / x)
+  have hS : ∀ m ∈ s, primeExpSum W' W (α * m) = primeExpSum W' W (aa m / q + u m) := by
+    intro m hm
+    have e : α * m = (aa m / q + u m) + (j m * k : ℤ) := by
+      rw [hj m hm]; simp only [aa, u]; push_cast
+      have : α * (2 * j m + 1) = α + j m * (2 * α) := by ring
+      rw [this, h2α]; ring
+    rw [e, primeExpSum_add_int]
+  have hsum : ∑ m ∈ s, ‖primeExpSum W' W (α * m)‖ ^ 2 =
+      ∑ m ∈ s, ‖primeExpSum W' W (aa m / q + u m)‖ ^ 2 :=
+    sum_congr rfl fun m hm => by rw [hS m hm]
+  have hjdiff : ∀ m ∈ s, ∀ m' ∈ s, ((j m - j m' : ℤ) : ℝ) = ((m - m' : ℤ) : ℝ) / 2 := by
+    intro m hm m' hm'
+    push_cast; rw [hj m hm, hj m' hm']; ring
+  have hres := lemma_5_2_1 s hq aa u (ν := |δ| * q / x) (υ := Δ * |δ| / x) (W' := W') (W := W)
+    (by positivity)
+    (by positivity) (by
+      have : |δ| * q / x + Δ * |δ| / x = (q + Δ) * |δ| / x := by ring
+      rw [this]; exact hcond)
+    (by
+      intro m hm m' hm'
+      have e : u m - u m' = ((j m - j m' : ℤ) : ℝ) * (δ / x) := by simp only [u]; push_cast; ring
+      rw [e, abs_mul, hjdiff m hm m' hm', abs_div, abs_div, abs_of_pos hx]
+      have := hwidth m hm m' hm'
+      rw [abs_two]
+      have h1 : |((m - m' : ℤ) : ℝ)| / 2 ≤ Δ := by linarith
+      calc |((m - m' : ℤ) : ℝ)| / 2 * (|δ| / x) ≤ Δ * (|δ| / x) :=
+            mul_le_mul_of_nonneg_right h1 (by positivity)
+        _ = Δ * |δ| / x := by ring)
+    (by
+      intro m hm m' hm' hne hdvd
+      have hdvd' : (q : ℤ) ∣ j m - j m' := by
+        have : aa m - aa m' = (j m - j m') * a := by simp only [aa]; ring
+        rw [this] at hdvd
+        exact hcop.symm.dvd_of_dvd_mul_right hdvd
+      have hjne : j m - j m' ≠ 0 := by
+        intro h
+        have := hjdiff m hm m' hm'
+        rw [h] at this
+        push_cast at this
+        exact hne (by have : ((m : ℝ) - m') = 0 := by linarith
+                      exact_mod_cast sub_eq_zero.1 this)
+      have hq' : (q : ℝ) ≤ |((j m - j m' : ℤ) : ℝ)| := by
+        rw [← Int.cast_abs]; exact_mod_cast Int.le_of_dvd (abs_pos.2 hjne) ((dvd_abs _ _).2 hdvd')
+      have e : u m - u m' = ((j m - j m' : ℤ) : ℝ) * (δ / x) := by simp only [u]; push_cast; ring
+      rw [e, abs_mul, abs_div, abs_of_pos hx]
+      calc |δ| * q / x = q * (|δ| / x) := by ring
+        _ ≤ _ := mul_le_mul_of_nonneg_right hq' (by positivity)) hW'
+  have hinv : (|δ| * q / x)⁻¹ = x / (|δ| * q) := by rw [inv_div]
+  rw [hinv] at hres
+  refine ⟨hsum ▸ hres.1, fun R hR hRW hRq => hsum ▸ hres.2 R hR hRW (by
+    have : |δ| * q / x + Δ * |δ| / x = (q + Δ) * |δ| / x := by ring
+    rw [this]; exact hRq)⟩
+
+/-- Odd integers in `(A₀, A₁]` differ by at most `A₁ - A₀` (strictly less). -/
+theorem abs_sub_le_of_mem_Ioc {A₀ A₁ : ℝ} {m m' : ℤ} (hm : m ∈ Ioc ⌊A₀⌋ ⌊A₁⌋)
+    (hm' : m' ∈ Ioc ⌊A₀⌋ ⌊A₁⌋) : |((m - m' : ℤ) : ℝ)| ≤ A₁ - A₀ := by
+  rw [mem_Ioc] at hm hm'
+  have h1 : (⌊A₁⌋ : ℝ) ≤ A₁ := Int.floor_le _
+  have h2 : A₀ < (⌊A₀⌋ : ℝ) + 1 := Int.lt_floor_add_one _
+  have : |m - m'| ≤ ⌊A₁⌋ - ⌊A₀⌋ - 1 := by rw [abs_le]; omega
+  have : ((|m - m'| : ℤ) : ℝ) ≤ ⌊A₁⌋ - ⌊A₀⌋ - 1 := by exact_mod_cast this
+  rw [← Int.cast_abs]; linarith
+
+/-- **[B, (5.56)]**: if `δ ≠ 0` and `x/4W + q ≤ x/|δ|q` (and `U' ≥ x/2W`), then
+(i) `S₂ ≤ (W - W' + x/|δ|q) ∑ (log p)²`;
+(ii) for `1 ≤ R ≤ W'` with `R² ≤ (x/|δ|q)/(q + x/4W)`,
+`(φ(q)/q) log R · S₂ ≤ (W - W' + x/|δ|q) ∑ (log p)²` ([B]'s gain, with `R` capped at `W'`). -/
+theorem prop_5_2_4_c {α x δ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hx : 0 < x) (hW : 0 < W)
+    (hδ0 : δ ≠ 0) (hcond : x / (4 * W) + q ≤ x / (|δ| * q)) (hU' : x / (2 * W) ≤ U')
+    (hW' : 0 ≤ W') :
+    (S2 α x U' W' W ≤ (W - W' + x / (|δ| * q)) * logSqSum W' W) ∧
+    (∀ R : ℝ, 1 ≤ R → R ≤ W' → R ^ 2 ≤ x / (|δ| * q) / (q + x / (4 * W)) →
+      Nat.totient q / q * Real.log R * S2 α x U' W' W ≤
+        (W - W' + x / (|δ| * q)) * logSqSum W' W) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hδpos : 0 < |δ| := abs_pos.2 hδ0
+  set s := (Ioc ⌊U'⌋ ⌊x / W⌋).filter Odd
+  have hS2 : S2 α x U' W' W = ∑ m ∈ s, ‖primeExpSum W' W (α * m)‖ ^ 2 := by
+    rw [S2, oddSqSum, sum_filter]
+  have hcond' : (q + x / (4 * W)) * |δ| / x ≤ 1 / q := by
+    rw [div_le_div_iff₀ hx hq0]
+    rw [le_div_iff₀ (by positivity)] at hcond
+    nlinarith
+  have hres := odd_block_bound hq hcop h2α hx hδ0 s (fun m hm => (mem_filter.1 hm).2) (W' := W')
+    (W := W)
+    (Δ := x / (4 * W)) (by positivity) (by
+      intro m hm m' hm'
+      have := abs_sub_le_of_mem_Ioc (mem_filter.1 hm).1 (mem_filter.1 hm').1
+      have h2 : x / W - U' ≤ 2 * (x / (4 * W)) := by
+        have : x / W - x / (2 * W) = 2 * (x / (4 * W)) := by field_simp; ring
+        linarith
+      linarith) hcond' hW'
+  rw [hS2]
+  refine ⟨hres.1, fun R hR hRW hR2 => hres.2 R hR hRW ?_⟩
+  have hpos : 0 < (q : ℝ) + x / (4 * W) := by positivity
+  rw [le_div_iff₀ hpos] at hR2
+  have : R ^ 2 * (q + x / (4 * W)) * (|δ| * q) ≤ x := by
+    rwa [le_div_iff₀ (by positivity)] at hR2
+  rw [mul_div_assoc', div_le_one hx]
+  nlinarith
+
+/-- **[B, (5.53)]**: for `q ≤ ρQ`, `0 < ρ ≤ 1`, `W' ≥ W/2`, `U' ≥ x/2W`,
+`S₂ ≤ (max(1, 2ρ)(x/8q + x/2W) + W/2 + 2q) ∑ (log p)²`. -/
+theorem prop_5_2_4_a {α x Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hρ : 0 < ρ)
+    (hρ1 : ρ ≤ 1) (hqρ : (q : ℝ) ≤ ρ * Q) (hx : 0 < x) (hW : 0 < W) (hW'W : W / 2 ≤ W')
+    (hW'W' : W' ≤ W) (hU' : x / (2 * W) ≤ U') :
+    S2 α x U' W' W ≤ (max 1 (2 * ρ) * (x / (8 * q) + x / (2 * W)) + W / 2 + 2 * q) *
+      logSqSum W' W := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hQ : 0 < Q := by nlinarith
+  have hqQ : (q : ℝ) ≤ Q := hqρ.trans (by nlinarith)
+  have hL := logSqSum_nonneg W' W
+  have h := lemma_5_2_3_a hq hcop hα hqQ (by linarith) hW'W' (W' := W') (W := W) U' (x / W)
+  rw [S2]
+  refine h.trans ?_
+  set m := min (2 * (q : ℝ)) Q
+  have hm0 : 0 < m := lt_min (by positivity) hQ
+  have hm : 1 / m ≤ max 1 (2 * ρ) / (2 * q) := by
+    rcases min_choice (2 * (q : ℝ)) Q with h | h
+    · rw [show m = 2 * (q : ℝ) from h, div_le_div_iff₀ (by positivity) (by positivity)]
+      nlinarith [le_max_left 1 (2 * ρ)]
+    · rw [show m = Q from h, div_le_div_iff₀ hQ (by positivity)]
+      nlinarith [le_max_right 1 (2 * ρ)]
+  set D := x / W - U'
+  have hD : D ≤ x / (2 * W) := by
+    simp only [D]; have : x / W - x / (2 * W) = x / (2 * W) := by field_simp; ring
+    linarith
+  have hM : 1 ≤ max 1 (2 * ρ) := le_max_left _ _
+  have hB0 : 0 ≤ (W - W' + 2 * q) * logSqSum W' W := mul_nonneg (by linarith) hL
+  rcases le_or_gt D 0 with hD0 | hD0
+  · rw [Nat.ceil_eq_zero.2 (div_nonpos_of_nonpos_of_nonneg hD0 hm0.le)]
+    simp only [Nat.cast_zero, zero_mul]
+    have : 0 ≤ max 1 (2 * ρ) * (x / (8 * q) + x / (2 * W)) + W / 2 + 2 * q := by positivity
+    positivity
+  have hceil : (⌈D / m⌉₊ : ℝ) ≤ D / m + 1 := (Nat.ceil_lt_add_one (by positivity)).le
+  rw [← mul_assoc]
+  refine mul_le_mul_of_nonneg_right ?_ hL
+  have hDm : D / m ≤ x / (2 * W) * (max 1 (2 * ρ) / (2 * q)) := by
+    rw [div_eq_mul_one_div]; exact mul_le_mul hD hm (by positivity) (by positivity)
+  calc (⌈D / m⌉₊ : ℝ) * (W - W' + 2 * q) ≤ (D / m + 1) * (W - W' + 2 * q) :=
+        mul_le_mul_of_nonneg_right hceil (by linarith)
+    _ = D / m * (W - W') + D / m * (2 * q) + (W - W' + 2 * q) := by ring
+    _ ≤ x / (2 * W) * (max 1 (2 * ρ) / (2 * q)) * (W / 2) +
+        x / (2 * W) * (max 1 (2 * ρ) / (2 * q)) * (2 * q) + (W / 2 + 2 * q) := by
+        gcongr <;> linarith
+    _ = _ := by field_simp; ring
+
+/-- **[B, (5.55)]**: if `W > x/4q` (and `q ≤ Q`, `W' ≥ W/2`, `U' ≥ x/2W`),
+`S₂ ≤ (W/2 + q/(1 - x/4Wq)) ∑ (log p)²`. -/
+theorem prop_5_2_4_b {α x Q U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q)
+    (hx : 0 < x) (hW : 0 < W) (hWq : x / (4 * q) < W) (hW'W : W / 2 ≤ W') (hU' : x / (2 * W) ≤ U') :
+    S2 α x U' W' W ≤ (W / 2 + q / (1 - x / (4 * W * q))) * logSqSum W' W := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hϱ1 : x / (4 * W * q) < 1 := by
+    rw [div_lt_one (by positivity)]; rw [div_lt_iff₀ (by positivity)] at hWq; linarith
+  have h := lemma_5_2_3_c hq hcop hα (ϱ := x / (4 * W * q)) (ρ := 1) (by positivity) hϱ1.le
+    zero_le_one (by linarith) (by linarith) (W' := W') (W := W) (by linarith) (A₀ := U')
+    (A₁ := x / W) (by
+      have : 2 * (x / (4 * W * q)) * q = x / (2 * W) := by field_simp; ring
+      have h2 : x / W - x / (2 * W) = x / (2 * W) := by field_simp; ring
+      linarith)
+  rw [S2, mul_one] at *
+  refine h.trans (mul_le_mul_of_nonneg_right ?_ (logSqSum_nonneg _ _))
+  linarith
+
+/-- Splitting `∑_{⌊a⌋ < n ≤ ⌊b⌋} G(n)` (`G ≥ 0`) into blocks of real length `h > 0`. -/
+theorem sum_Ioc_le_blocks_real {G : ℤ → ℝ} (hG : ∀ n, 0 ≤ G n) {h : ℝ} (hh : 0 < h) :
+    ∀ (J : ℕ) (a b : ℝ), b ≤ a + J * h →
+      ∑ n ∈ Ioc ⌊a⌋ ⌊b⌋, G n ≤
+        ∑ j ∈ range J, ∑ n ∈ Ioc ⌊a + j * h⌋ ⌊min (a + (j + 1) * h) b⌋, G n := by
+  intro J
+  induction J with
+  | zero =>
+    intro a b hab
+    simp only [CharP.cast_eq_zero, zero_mul, add_zero] at hab
+    rw [Ioc_eq_empty (not_lt.2 (Int.floor_mono hab))]; simp
+  | succ J ih =>
+    intro a b hab
+    rw [sum_range_succ']
+    simp only [CharP.cast_eq_zero, zero_mul, add_zero, zero_add, one_mul]
+    have hih := ih (a + h) b (by push_cast at hab; linarith)
+    have hrw : ∀ j : ℕ, a + h + j * h = a + ((j + 1 : ℕ) : ℝ) * h := fun j => by push_cast; ring
+    have hrw2 : ∀ j : ℕ, a + h + (j + 1) * h = a + (((j + 1 : ℕ) : ℝ) + 1) * h := fun j => by
+      push_cast; ring
+    simp_rw [hrw, hrw2] at hih
+    rcases le_or_gt b (a + h) with hb | hb
+    · rw [min_eq_right hb]
+      have : ∑ n ∈ Ioc ⌊a + h⌋ ⌊b⌋, G n = 0 := by
+        rw [Ioc_eq_empty (not_lt.2 (Int.floor_mono hb))]; simp
+      have h0 : 0 ≤ ∑ j ∈ range J, ∑ n ∈ Ioc ⌊a + ((j + 1 : ℕ) : ℝ) * h⌋
+          ⌊min (a + (((j + 1 : ℕ) : ℝ) + 1) * h) b⌋, G n :=
+        sum_nonneg fun _ _ => sum_nonneg fun _ _ => hG _
+      linarith
+    · rw [min_eq_left hb.le]
+      have hsplit : ∑ n ∈ Ioc ⌊a⌋ ⌊b⌋, G n =
+          ∑ n ∈ Ioc ⌊a⌋ ⌊a + h⌋, G n + ∑ n ∈ Ioc ⌊a + h⌋ ⌊b⌋, G n := by
+        rw [← sum_union (Finset.disjoint_left.2 fun n h1 h2 => by
+          simp only [mem_Ioc] at h1 h2; omega)]
+        congr 1
+        ext n; simp only [mem_Ioc, mem_union]
+        have h1 : ⌊a⌋ ≤ ⌊a + h⌋ := Int.floor_mono (by linarith)
+        have h2 : ⌊a + h⌋ ≤ ⌊b⌋ := Int.floor_mono hb.le
+        omega
+      rw [hsplit]; linarith
+
+set_option maxHeartbeats 1000000 in
+/-- **[B, (5.57)]**: if `δ ≠ 0`, `q ≤ ρQ`, `0 ≤ ρ < 1` (and `|δ/x| ≤ 1/qQ`, `W' ≥ W/2`,
+`U' ≥ x/2W`), `S₂ ≤ (x/|δq| + W/2 + x/(8(1-ρ)Q) + x/(4(1-ρ)W)) ∑ (log p)²`. -/
+theorem prop_5_2_4_d {α x δ Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q))
+    (hρ1 : ρ < 1) (hqρ : (q : ℝ) ≤ ρ * Q) (hx : 0 < x) (hW : 0 < W) (hδ0 : δ ≠ 0)
+    (hW'W : W / 2 ≤ W') (hU' : x / (2 * W) ≤ U') :
+    S2 α x U' W' W ≤
+      (x / (|δ| * q) + W / 2 + x / (8 * (1 - ρ) * Q) + x / (4 * (1 - ρ) * W)) * logSqSum W' W := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hδpos : 0 < |δ| := abs_pos.2 hδ0
+  have hL := logSqSum_nonneg W' W
+  have hρ : 0 < ρ := by
+    by_contra h; push Not at h
+    have : ρ * Q ≤ 0 ∨ Q < 0 := by
+      rcases le_or_gt 0 Q with hQ | hQ
+      · left; nlinarith
+      · right; exact hQ
+    rcases this with h1 | h1
+    · linarith
+    · -- `|δ/x| ≤ 1/(qQ) < 0` is impossible.
+      have : 1 / ((q : ℝ) * Q) < 0 := by
+        rw [one_div]; exact inv_lt_zero.2 (by nlinarith)
+      linarith [abs_nonneg (δ / x)]
+  have hQ : 0 < Q := by nlinarith
+  set Q' := x / (|δ| * q) with hQ'def
+  have hQQ' : Q ≤ Q' := by
+    rw [abs_div, abs_of_pos hx, div_le_div_iff₀ hx (by positivity)] at hδQ
+    rw [hQ'def, le_div_iff₀ (by positivity)]; nlinarith
+  have hqQ' : (q : ℝ) ≤ ρ * Q' := hqρ.trans (by nlinarith)
+  have hgap : (1 - ρ) * Q' ≤ Q' - q := by linarith
+  have hQ'pos : 0 < Q' := by positivity
+  have hgap0 : 0 < Q' - q := lt_of_lt_of_le (by nlinarith) hgap
+  set h := 2 * (Q' - q)
+  have hh : 0 < h := by positivity
+  set J := ⌈(x / W - U') / h⌉₊
+  have hblocks := sum_Ioc_le_blocks_real
+    (G := fun m : ℤ => if Odd m then ‖primeExpSum W' W (α * m)‖ ^ 2 else 0)
+    (fun m => by split_ifs; exacts [sq_nonneg _, le_rfl]) hh J U' (x / W) (by
+      have := Nat.le_ceil ((x / W - U') / h); rw [div_le_iff₀ hh] at this; linarith)
+  rw [S2, oddSqSum]
+  refine hblocks.trans ?_
+  have hblock : ∀ j ∈ range J,
+      ∑ m ∈ Ioc ⌊U' + j * h⌋ ⌊min (U' + (j + 1) * h) (x / W)⌋,
+        (if Odd m then ‖primeExpSum W' W (α * m)‖ ^ 2 else 0) ≤ (W / 2 + Q') * logSqSum W' W := by
+    intro j _
+    set B := Ioc ⌊U' + j * h⌋ ⌊min (U' + (j + 1) * h) (x / W)⌋
+    rw [← sum_filter]
+    have hres := (odd_block_bound hq hcop h2α hx hδ0 (B.filter Odd) (fun m hm => (mem_filter.1 hm).2)
+      (Δ := Q' - q) hgap0.le (by
+        intro m hm m' hm'
+        have := abs_sub_le_of_mem_Ioc (mem_filter.1 hm).1 (mem_filter.1 hm').1
+        have : min (U' + (j + 1) * h) (x / W) - (U' + j * h) ≤ h := by
+          have := min_le_left (U' + (j + 1) * h) (x / W); linarith
+        linarith) (by
+        have e : ((q : ℝ) + (Q' - q)) * |δ| / x = 1 / q := by
+          simp only [hQ'def]; field_simp; ring
+        rw [e]) (W' := W') (W := W) (by linarith)).1
+    refine hres.trans (mul_le_mul_of_nonneg_right ?_ hL)
+    linarith
+  refine (sum_le_sum hblock).trans ?_
+  rw [sum_const, card_range, nsmul_eq_mul, ← mul_assoc]
+  refine mul_le_mul_of_nonneg_right ?_ hL
+  set D := x / W - U'
+  have hD : D ≤ x / (2 * W) := by
+    simp only [D]; have : x / W - x / (2 * W) = x / (2 * W) := by field_simp; ring
+    linarith
+  have hJ : (J : ℝ) ≤ 1 + x / (2 * W) / h := by
+    rcases le_or_gt D 0 with hD0 | hD0
+    · have : J = 0 := Nat.ceil_eq_zero.2 (div_nonpos_of_nonpos_of_nonneg hD0 hh.le)
+      rw [this]; push_cast; positivity
+    · have := (Nat.ceil_lt_add_one (show 0 ≤ D / h by positivity)).le
+      have : D / h ≤ x / (2 * W) / h := div_le_div_of_nonneg_right hD hh.le
+      linarith
+  have h1ρ : 0 < 1 - ρ := by linarith
+  have hJ' : (J : ℝ) ≤ 1 + x / (4 * W * (1 - ρ) * Q') := by
+    refine hJ.trans ?_
+    have : x / (2 * W) / h ≤ x / (4 * W * (1 - ρ) * Q') := by
+      simp only [h]
+      rw [div_div, div_le_div_iff₀ (by positivity) (by positivity)]
+      have := mul_le_mul_of_nonneg_left hgap (show 0 ≤ x * (4 * W) by positivity)
+      nlinarith
+    linarith
+  calc (J : ℝ) * (W / 2 + Q') ≤ (1 + x / (4 * W * (1 - ρ) * Q')) * (W / 2 + Q') :=
+        mul_le_mul_of_nonneg_right hJ' (by positivity)
+    _ = Q' + W / 2 + x / (8 * (1 - ρ) * Q') + x / (4 * (1 - ρ) * W) := by field_simp; ring
+    _ ≤ Q' + W / 2 + x / (8 * (1 - ρ) * Q) + x / (4 * (1 - ρ) * W) := by
+        gcongr
+
 end TernaryGoldbach.MinorArcs
