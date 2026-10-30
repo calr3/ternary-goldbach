@@ -18,9 +18,13 @@ The four `sorry`s that `ternary_goldbach` depends on are all in
 [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
 
 Files under `TernaryGoldbach/MinorArcs/` named in `BLUEPRINT.md` as *blueprint nodes*
-(`TypeI.lean`, `PointwiseBound.lean`) also contain `sorry`s. They are statements of intermediate
-results from the book, waiting to be proved, and `ternary_goldbach` does not depend on them
-(check with `#print axioms`).
+(`TypeI.lean`, `TypeIProof.lean`, `PointwiseBound.lean`) also contain `sorry`s. They are
+statements of intermediate results from the book, waiting to be proved, and `ternary_goldbach`
+does not depend on them (check with `#print axioms`).
+
+One `sorry` there is a **trusted computation** rather than a gap:
+`MinorArcs/InnerSums.lean: eta2_fourier_bound'`, the bound `|η̂₂''|_∞ ≤ 31.521` that [B,
+App. B] obtains by rigorous numerics.
 
 ## Layout
 
@@ -37,9 +41,13 @@ results from the book, waiting to be proved, and `ternary_goldbach` does not dep
 | `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < 0.048779 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
-| `Helfgott/Eta2.lean` | explicit formulas for `η₂`, and `|η₂|₁ = 1` | ✅ |
-| `MinorArcs/TrigSums.lean` | [B, §4.1, Lemmas 4.1.1–4.1.3]: trigonometric sums (4.1.3 by a sharper argument than the book's) | ✅ |
-| `MinorArcs/TypeI.lean` | blueprint: [B, Lemmas 4.2.2–4.2.4] (Type I estimates), facts about `η₂` | 🟡 statements (§4.1 and `eta2_L1` proved) |
+| `Helfgott/Eta2.lean` | explicit formulas for `η₂`, `|η₂|₁ = 1`, continuity, compact support, total variation `8 log 2` | ✅ |
+| `MinorArcs/TrigSums.lean` | [B, §4.1, Lemmas 4.1.1–4.1.3]: trigonometric sums (4.1.3 by a sharper argument than the book's; 4.1.1 also with the summand read as `A` where `sin = 0`) | ✅ |
+| `MinorArcs/FourierSums.lean` | [B, §2.3]: `∑ 1/(n−s)² = π²/sin²(πs)` (via Parseval), `∑_{n≠0} 1/(n−r)² ≤ π² − 4`, Lemma 2.3.1 (via Poisson summation), both bounds of (2.2) (with total variation for `|f'|₁`) | ✅ |
+| `MinorArcs/InnerSums.lean` | `T_{m,∘}` and its bounds [B, (4.36)]; the Poisson main term [B, (4.33)–(4.34)]; the trusted `|η̂₂''|_∞ ≤ c₀` | 🟡 one trusted computation |
+| `MinorArcs/BlockSums.lean` | splitting sums into blocks of length `q`; `∑ 1/(R+jq)` and `∑ √(1+q/(R+jq))` bounds | ✅ |
+| `MinorArcs/TypeI.lean` | blueprint: definitions and bounds of [B, Lemmas 4.2.2–4.2.4]; statements of 4.2.3–4.2.4 | 🟡 statements |
+| `MinorArcs/TypeIProof.lean` | [B, Lemma 4.2.2]: **case (b) proved** (`lemma_4_2_2_caseB`); case (a) `sorry` | 🟡 case (a) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |

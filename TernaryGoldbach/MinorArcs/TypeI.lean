@@ -49,9 +49,12 @@ noncomputable def c₂ : ℝ := 6 * π / (5 * √c₀)
 /-- The Fourier transform `f̂(t) = ∫ e(-xt) f(x) dx` [B, §2.3]. -/
 noncomputable def fourier (f : ℝ → ℝ) (t : ℝ) : ℂ := ∫ x, e (-(x * t)) * f x
 
-/-- `M = min(Q/2, D)`, `Q = ⌊x/|δq|⌋` (proof of [B, Lemma 4.2.1]); `M = D` if `δ = 0`. -/
+/-- `M = min(Q/2, D)` with `Q = x/|δq|` (`M = D` if `δ = 0`).  [B, proof of Lemma 4.2.1] uses
+`Q = ⌊x/|δq|⌋`; the statement of [B, Lemma 4.2.2] only needs `M ∈ [min(Q₀/2, D), D]`, which
+holds for this `M` too, and the unrounded `Q` avoids an issue with the rounding (with `⌊·⌋`,
+`c₂x/q ≤ Q/2` can fail by less than `1/2` when `|δ| ≤ 1/2c₂`). -/
 noncomputable def Mof (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
-  if δ = 0 then D else min ((⌊x / (|δ| * q)⌋₊ : ℝ) / 2) D
+  if δ = 0 then D else min (x / (|δ| * q) / 2) D
 
 /-- `2α = a/q + δ/x (mod 1)`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ₀`, `q ≤ Q₀` [B, Lemmas 4.2.2–4.2.4]. -/
 def Approx2 (α x δ : ℝ) (a : ℤ) (q : ℕ) (Q₀ : ℝ) : Prop :=
@@ -154,14 +157,7 @@ noncomputable def bound_4_32 (x δ : ℝ) (q : ℕ) (D Q₀ ε : ℝ) : ℝ :=
     3 / 2 * c₁ * (2 + (1 + ε) / ε * logPlus (2 * D / y)) * (x / Q₀) +
     35 * c₀ * c₂ / (3 * π ^ 2) * q
 
-/-- **[B, Lemma 4.2.2]** for `η = η₂`. -/
-theorem lemma_4_2_2 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : 16 ≤ Q₀) (hD : 1 ≤ D) (hDx : D ≤ x) :
-    ((|δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) →
-      ‖typeI α x D‖ ≤ bound_4_30 x δ q D + bound_4_31 x q D) ∧
-    (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 →
-      ‖typeI α x D‖ ≤ bound_4_30 x δ q D + bound_4_32 x δ q D Q₀ ε) := by
-  sorry
+-- [B, Lemma 4.2.2] itself is stated and proved (case (b)) in `MinorArcs/TypeIProof.lean`.
 
 /-- The main term (4.40) of [B, Lemma 4.2.3]. -/
 noncomputable def bound_4_40 (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
