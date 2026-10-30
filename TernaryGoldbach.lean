@@ -16,4 +16,6 @@ import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.MinorArcs.InnerSums
 import TernaryGoldbach.MinorArcs.TypeI
+import TernaryGoldbach.MinorArcs.BlockSums
+import TernaryGoldbach.MinorArcs.TypeIProof
 import TernaryGoldbach.MinorArcs.PointwiseBound
