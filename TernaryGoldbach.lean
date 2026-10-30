@@ -58,6 +58,7 @@ import TernaryGoldbach.MinorArcs.SecondChoice
 import TernaryGoldbach.MinorArcs.SecondNumerics
 import TernaryGoldbach.MinorArcs.SecondBridge
 import TernaryGoldbach.MinorArcs.SecondParams
+import TernaryGoldbach.MinorArcs.SecondTypeIIa
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound
