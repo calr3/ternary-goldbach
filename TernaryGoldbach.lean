@@ -28,6 +28,7 @@ import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.MinorArcs.TypeI2Proof
 import TernaryGoldbach.MinorArcs.TypeI2Rest
 import TernaryGoldbach.MinorArcs.TypeII
+import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound

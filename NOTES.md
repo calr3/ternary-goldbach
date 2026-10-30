@@ -51,6 +51,8 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     `W/2`, so we assume `W ≥ 50000` (the slack `1 - 3σ/(1-σ/3.5) = 0.0054` absorbs the `+1`);
     `σ₀ = 0.30286` (rational) instead of `σ = e^{-0.50136}/2`. (5.56) is stated as (i) without and
     (ii) with the log gain (`R` capped at `W'`), avoiding `min(1, ·/log)` with `log ≤ 0`.
+* §5.1 blueprint: `MinorArcs/TypeIIS1.lean` (`S1`, `g2`, `T2`, `H2`; statements of (5.34), (5.36),
+  (5.37) as `sorry`). `T2(S) = 1 - 1/S` on `[1, 2)` (matches [B]'s `G_v`).
 * **Next**: §5.1 (S₁, [B pp. 80–92]: Lemma 5.1.1 identity + error, Lemma 5.1.2 (Rankin trick, with
   trusted interval-arithmetic ranges), (5.28)–(5.37) numerics → trusted), then Ch. 6 (assembly;
   re-check numerics for the (4.40), 4.2.4 and 5.2 corrections).
