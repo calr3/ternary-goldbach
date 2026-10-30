@@ -30,8 +30,8 @@ statements, each with its own `sorry`.
      │   [stated: MinorArcs/PointwiseBound.lean `theorem_3_1_1`]
      │   ├─ Ch 3.3  Vaughan's identity (✅ MinorArcs/Vaughan.lean), alternative route
      │   ├─ Ch 4  Type I sums: trigonometric sums (§4.1), Type I estimates (§4.2)
-     │   │   [Lemmas 4.1.1, 4.1.2 ✅ MinorArcs/TrigSums.lean;
-     │   │    stated: MinorArcs/TypeI.lean — Lemmas 4.1.3, 4.2.2–4.2.4 (for η = η₂);
+     │   │   [§4.1: Lemmas 4.1.1–4.1.3 ✅ MinorArcs/TrigSums.lean (4.1.3: book's proof has a gap; fixed);
+     │   │    stated: MinorArcs/TypeI.lean — Lemmas 4.2.2–4.2.4 (for η = η₂);
      │   │    η₂ facts: |η₂|₁ = 1 ✅, |η̂₂''|_∞ ≤ 31.521 (App. B, rigorous computation)]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)

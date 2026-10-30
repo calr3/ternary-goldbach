@@ -38,8 +38,8 @@ results from the book, waiting to be proved, and `ternary_goldbach` does not dep
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
 | `Helfgott/Eta2.lean` | explicit formulas for `η₂`, and `|η₂|₁ = 1` | ✅ |
-| `MinorArcs/TrigSums.lean` | [B, Lemmas 4.1.1, 4.1.2]: trigonometric sums `∑ min(A, C/sin²(παn))` | ✅ |
-| `MinorArcs/TypeI.lean` | blueprint: [B, Lemmas 4.1.3, 4.2.2–4.2.4] (Type I sums), facts about `η₂` | 🟡 statements (4.1.1, 4.1.2, `eta2_L1` proved) |
+| `MinorArcs/TrigSums.lean` | [B, §4.1, Lemmas 4.1.1–4.1.3]: trigonometric sums (4.1.3 by a sharper argument than the book's) | ✅ |
+| `MinorArcs/TypeI.lean` | blueprint: [B, Lemmas 4.2.2–4.2.4] (Type I estimates), facts about `η₂` | 🟡 statements (§4.1 and `eta2_L1` proved) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
@@ -72,5 +72,8 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
   cross-checked against [B] (η₁ = 2·1_{[1/2,1]}, η₂ as in [B, (11.10)], η₊ as in [B, (7.4)–(7.6)]
   with `H = 200`, major arcs [B, (10.5)]). A numerical check gives `max |η₊| ≈ 1.0000` and
   `max |η_*| ≈ 1.2267`, consistent with [B, (14.3), (14.21)].
+* [B]'s proof of Lemma 4.1.3 has a small gap: its intermediate bound can exceed the stated
+  `(2Bq/π) max(2, log(Ce³q/(Bπ)))` for small `C`. The lemma is nonetheless true, and
+  `MinorArcs/TrigSums.lean` proves it with a sharper argument (see the docstring there).
 * Helfgott works on `ℝ/ℤ`; here it's `(0, 1]` with the major arcs lifted periodically to `ℝ`.
 * Toolchain: Lean `v4.15.0`, Mathlib `v4.15.0`.

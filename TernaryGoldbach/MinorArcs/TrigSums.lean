@@ -9,9 +9,22 @@ Proofs of [B, Lemmas 4.1.1, 4.1.2]: for `α = a/q + β/qQ`, `(a, q) = 1`, `|β| 
 * (4.1.2) if `0 ≤ y₁ < y₂ ≤ Q/2`, `y₂ - y₁ ≤ q`:
   `∑_{y₁ < n ≤ y₂, q ∤ n} min(A, C/sin²(παn)) ≤ min((20/3π²) C q², 2A + (4q/π) √(AC))`.
 
+* (4.1.3) under the same hypotheses,
+  `∑_{y₁ < n ≤ y₂, q ∤ n} min(B/|sin(παn)|, C/sin²(παn)) ≤ (2Bq/π) max(2, log(Ce³q/(Bπ)))`
+  and `≤ (2Bq/π) log(2e²q/π)`.
+
 For 4.1.2 the final step needs `t²/sin²t + (t/2) cot 2t ≤ 5/4` (tight to fourth order) and
 `t²/sin²t + t cot(3t/2) ≤ 5/3`; we prove them from `x cot x ≤ 1 - x²/3 (- x⁴/45)` and
 `t²/sin²t ≤ 1 + t²/3 + …`, using alternating Taylor bounds for `sin`, `cos` up to degree 8.
+
+For 4.1.3 we do **not** follow [B]'s proof, which bounds the sum by
+`2 ∑_{r ≤ q/2} min(B/sin(π(r-1/2)/q), C/sin²(π(r-1/2)/q))`: that intermediate quantity can exceed
+the stated `(2Bq/π) max(2, …)` (numerically by ≈7% at `q = 140`, `C ≈ Bπ/2q`), and [B]'s
+treatment of small `C` ("relax the input to `C = B sin π/q`") yields `max(≈2.55, …)`, not
+`max(2, …)`.  The statement itself is true.  We use the sharper fact that the residues lie at
+distance `≥ r` (low) and `≥ k - 1/2` (high), i.e. at most one point per half-integer, so the sum
+is `≤ h(1/2) + (2q/π) ∫_{π/2q}^{π/2} min(B/sin v, C/sin² v) dv`, and then treat the three ranges
+`C ≥ B`, `B sin(π/2q) ≤ C < B`, `C < B sin(π/2q)` separately.
 
 The argument follows [B] for the first bound: reduce to residues `R = 0, …, q-1` with shifts
 in a window `[s - 1/2, s + 1/2]`, pair `R = k` with `R = q - 1 - k`, and use convexity of
@@ -1465,5 +1478,649 @@ theorem lemma_4_1_2 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁
       min (20 / (3 * π ^ 2) * C * q ^ 2) (2 * A + 4 * q / π * √(A * C)) := by
   obtain ⟨τ, hτ, hle⟩ := residue_form₂ h hy hlen hy₂ hA hC
   exact hle.trans (core_4_1_2 h.1 hA hC τ hτ)
+
+
+/-! ## Lemma 4.1.3 -/
+
+open Classical in
+/-- **Reduction for Lemmas 4.1.2–4.1.3**, for any nonnegative summand `Φ(sin²(παn))`.  For `0 ≤ y₁ < n ≤ y₂ ≤ Q/2`, `q ∤ n`, `y₂ - y₁ ≤ q`, the terms
+are bounded by `Φ(sin²(π(R + τ_R)/q))` over distinct residues `R ∈ [1, q-1]`, `τ_R ∈ [0, 1/2]`. -/
+theorem residue_form_gen {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
+    (hy : 0 ≤ y₁) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) (Φ : ℝ → ℝ) (hΦ : ∀ x, 0 ≤ Φ x) :
+    ∃ τ : ℕ → ℝ, (∀ R, τ R ∈ Icc (0 : ℝ) (1 / 2)) ∧
+      ∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋,
+          (if (q : ℤ) ∣ n then 0 else Φ (Real.sin (π * α * n) ^ 2)) ≤
+        ∑ R ∈ Finset.Icc 1 (q - 1), Φ (Real.sin (π * (R + τ R) / q) ^ 2) := by
+  obtain ⟨hq1, hcop, β, hβ, hα, hqQ⟩ := h
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
+  have hQ0 : 0 < Q := by linarith
+  have hqz : (0 : ℤ) < q := by exact_mod_cast hq1
+  set S := Finset.Ioc ⌊y₁⌋ ⌊y₂⌋
+  set S' := S.filter fun n => ¬ (q : ℤ) ∣ n
+  have hS : ∀ n ∈ S, 1 ≤ n ∧ (n : ℝ) ≤ y₂ := by
+    intro n hn
+    rw [Finset.mem_Ioc] at hn
+    have h0 : 0 ≤ ⌊y₁⌋ := Int.floor_nonneg.2 hy
+    exact ⟨by omega, (Int.cast_le.2 hn.2).trans (Int.floor_le y₂)⟩
+  have hgap : ∀ n ∈ S, ∀ n' ∈ S, n - n' < q := by
+    intro n hn n' hn'
+    rw [Finset.mem_Ioc] at hn hn'
+    have h1 : ((n - n' : ℤ) : ℝ) < q := by
+      have a1 : (n : ℝ) ≤ y₂ := (Int.cast_le.2 hn.2).trans (Int.floor_le y₂)
+      have a2 : y₁ < n' := by
+        have := Int.lt_floor_add_one y₁
+        have : ((⌊y₁⌋ : ℤ) : ℝ) + 1 ≤ n' := by exact_mod_cast hn'.1
+        linarith
+      push_cast; linarith
+    exact_mod_cast h1
+  -- Orientation.
+  obtain ⟨σ, hσ, hσβ⟩ : ∃ σ : ℤ, σ * σ = 1 ∧ 0 ≤ (σ : ℝ) * β := by
+    rcases le_or_lt 0 β with h0 | h0
+    · exact ⟨1, by norm_num, by simpa using h0⟩
+    · exact ⟨-1, by norm_num, by push_cast; linarith⟩
+  have hσr : (σ : ℝ) * σ = 1 := by exact_mod_cast hσ
+  have hσabs : |(σ : ℝ)| = 1 := by
+    have : |(σ : ℝ)| * |(σ : ℝ)| = 1 := by rw [← abs_mul, hσr, abs_one]
+    nlinarith [abs_nonneg (σ : ℝ)]
+  set τ' := fun n : ℤ => (σ : ℝ) * β * n / Q
+  have hτ' : ∀ n ∈ S, τ' n ∈ Icc (0 : ℝ) (1 / 2) := by
+    intro n hn
+    obtain ⟨h1, h2⟩ := hS n hn
+    have hn0 : (0 : ℝ) ≤ n := by exact_mod_cast (by omega : (0 : ℤ) ≤ n)
+    have hσβ1 : (σ : ℝ) * β ≤ 1 := by
+      calc (σ : ℝ) * β ≤ |(σ : ℝ) * β| := le_abs_self _
+        _ = |β| := by rw [abs_mul, hσabs, one_mul]
+        _ ≤ 1 := hβ
+    simp only [τ', mem_Icc]
+    constructor
+    · positivity
+    · rw [div_le_iff₀ hQ0]; nlinarith
+  set m := fun n : ℤ => σ * (a * n)
+  set R := fun n : ℤ => (m n % (q : ℤ)).toNat
+  have hRcast : ∀ n, ((R n : ℕ) : ℤ) = m n % q := fun n =>
+    Int.toNat_of_nonneg (Int.emod_nonneg _ hqz.ne')
+  have hRlt : ∀ n, R n < q := by
+    intro n; simp only [R]
+    have h1 := Int.emod_nonneg (m n) hqz.ne'
+    have h2 := Int.emod_lt_of_pos (m n) hqz
+    omega
+  have hRpos : ∀ n ∈ S', 1 ≤ R n := by
+    intro n hn
+    rw [Finset.mem_filter] at hn
+    by_contra h0
+    have h00 : m n % q = 0 := by have := hRcast n; omega
+    apply hn.2
+    have h1 : (q : ℤ) ∣ σ * (a * n) := Int.dvd_of_emod_eq_zero h00
+    have h2 : (q : ℤ) ∣ σ * (σ * (a * n)) := dvd_mul_of_dvd_right h1 σ
+    rw [← mul_assoc, hσ, one_mul] at h2
+    exact hcop.symm.dvd_of_dvd_mul_left h2
+  have hterm : ∀ n : ℤ, Φ (Real.sin (π * α * n) ^ 2) = Φ (Real.sin (π * (R n + τ' n) / q) ^ 2) := by
+    intro n
+    congr 1
+    have hm : a * n = σ * (q * (m n / q) + (R n : ℤ)) := by
+      rw [hRcast, Int.ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
+    have harg : π * α * n = (σ : ℝ) * (π * ((R n : ℝ) + τ' n) / q + ((m n / q : ℤ) : ℝ) * π) := by
+      have e : π * α * n = π * (((a * n : ℤ) : ℝ) + β * n / Q) / q := by
+        rw [hα]; push_cast; field_simp; ring
+      rw [e, hm]; push_cast; simp only [τ']; field_simp; ring_nf
+      rw [show (σ : ℝ) ^ 2 = 1 by rw [sq, hσr]]; ring
+    rw [harg]
+    rcases Int.eq_one_or_neg_one_of_mul_eq_one hσ with hs | hs <;>
+    · subst hs; push_cast
+      simp only [one_mul, neg_one_mul, Real.sin_neg, neg_sq]
+      rw [sin_sq_add_int_mul_pi]
+  have hinj : Set.InjOn R S' := by
+    intro n hn n' hn' hR
+    have hn1 := (Finset.mem_filter.1 hn).1
+    have hn1' := (Finset.mem_filter.1 hn').1
+    have hmod : m n % q = m n' % q := by rw [← hRcast, ← hRcast]; exact congrArg _ hR
+    have hdvd : (q : ℤ) ∣ a * (n - n') := by
+      have h1 : (q : ℤ) ∣ m n - m n' := Int.ModEq.dvd hmod.symm
+      have : m n - m n' = σ * (a * (n - n')) := by simp only [m]; ring
+      rw [this] at h1
+      have h2 : (q : ℤ) ∣ σ * (σ * (a * (n - n'))) := dvd_mul_of_dvd_right h1 σ
+      rwa [← mul_assoc, hσ, one_mul] at h2
+    have hd : (q : ℤ) ∣ n - n' := hcop.symm.dvd_of_dvd_mul_left hdvd
+    have g1 := hgap n hn1 n' hn1'
+    have g2 := hgap n' hn1' n hn1
+    obtain ⟨t, ht⟩ := hd
+    have : t = 0 := by
+      by_contra ht0
+      rcases lt_or_gt_of_ne ht0 with h | h
+      · have : (q : ℤ) * t ≤ -q := by nlinarith
+        omega
+      · have : (q : ℤ) ≤ q * t := by nlinarith
+        omega
+    subst this; omega
+  set τR := fun r : ℕ => if hr : ∃ n ∈ S', R n = r then τ' hr.choose else 0
+  have hτR : ∀ n ∈ S', τR (R n) = τ' n := by
+    intro n hn
+    have hex : ∃ n' ∈ S', R n' = R n := ⟨n, hn, rfl⟩
+    simp only [τR, dif_pos hex]
+    have := hex.choose_spec
+    rw [hinj this.1 hn this.2]
+  refine ⟨τR, fun r => ?_, ?_⟩
+  · simp only [τR]
+    split_ifs with hr
+    · exact hτ' _ (Finset.mem_filter.1 hr.choose_spec.1).1
+    · exact ⟨le_rfl, by norm_num⟩
+  · set g := fun r : ℕ => Φ (Real.sin (π * (r + τR r) / q) ^ 2)
+    have hg0 : ∀ r, 0 ≤ g r := fun r => hΦ _
+    rw [← Finset.sum_filter_not_add_sum_filter S (fun n => (q : ℤ) ∣ n)]
+    have hzero : ∑ n ∈ S.filter (fun n => (q : ℤ) ∣ n),
+        (if (q : ℤ) ∣ n then 0 else Φ (Real.sin (π * α * n) ^ 2)) = 0 :=
+      Finset.sum_eq_zero fun n hn => by rw [if_pos (Finset.mem_filter.1 hn).2]
+    rw [hzero, add_zero]
+    have hS'eq : ∑ n ∈ S', (if (q : ℤ) ∣ n then 0 else Φ (Real.sin (π * α * n) ^ 2)) =
+        ∑ n ∈ S', g (R n) := by
+      refine Finset.sum_congr rfl fun n hn => ?_
+      rw [if_neg (Finset.mem_filter.1 hn).2, hterm n]
+      simp only [g, hτR n hn]
+    rw [hS'eq, ← Finset.sum_image (fun n hn n' hn' h => hinj hn hn' h)]
+    refine Finset.sum_le_sum_of_subset_of_nonneg ?_ fun r _ _ => hg0 r
+    intro r hr
+    obtain ⟨n, hn, rfl⟩ := Finset.mem_image.1 hr
+    simp only [Finset.mem_Icc]
+    exact ⟨hRpos n hn, by have := hRlt n; omega⟩
+
+/-- An antiderivative of `1/sin`: `F(v) = log sin v - log(1 + cos v)` (`= log tan(v/2)`). -/
+
+noncomputable def logTanHalf (v : ℝ) : ℝ := Real.log (Real.sin v) - Real.log (1 + Real.cos v)
+
+theorem integral_inv_sin {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) (hb : b < π) :
+    ∫ x in a..b, 1 / Real.sin x = logTanHalf b - logTanHalf a := by
+  have hsin : ∀ x ∈ uIcc a b, 0 < Real.sin x := fun x hx => by
+    rw [uIcc_of_le hab] at hx
+    exact Real.sin_pos_of_pos_of_lt_pi (by linarith [hx.1]) (by linarith [hx.2])
+  have hcos : ∀ x ∈ uIcc a b, 0 < 1 + Real.cos x := fun x hx => by
+    have := hsin x hx
+    have h1 := Real.neg_one_le_cos x
+    rcases h1.lt_or_eq with h | h
+    · linarith
+    · exfalso
+      have h0 : Real.sin x ^ 2 = 0 := by nlinarith [Real.sin_sq_add_cos_sq x]
+      have : Real.sin x = 0 := pow_eq_zero_iff two_ne_zero |>.1 h0
+      linarith
+  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt (f := logTanHalf)]
+  · intro x hx
+    have h1 := (Real.hasDerivAt_sin x).log (hsin x hx).ne'
+    have h2 := ((hasDerivAt_const x (1 : ℝ)).add (Real.hasDerivAt_cos x)).log (hcos x hx).ne'
+    convert h1.sub h2 using 1
+    have hs := (hsin x hx).ne'
+    have hc := (hcos x hx).ne'
+    field_simp
+    nlinarith [Real.sin_sq_add_cos_sq x]
+  · exact ContinuousOn.intervalIntegrable (continuousOn_const.div
+      Real.continuous_sin.continuousOn fun x hx => (hsin x hx).ne')
+
+theorem logTanHalf_pi_div_two : logTanHalf (π / 2) = 0 := by
+  simp [logTanHalf]
+
+/-- `cot(a/2) = (1 + cos a)/sin a ≤ 2/a` for `0 < a ≤ 1`. -/
+theorem neg_logTanHalf_le {a : ℝ} (ha : 0 < a) (ha1 : a ≤ 1) :
+    -logTanHalf a ≤ Real.log (2 / a) := by
+  have hs : 0 < Real.sin a := Real.sin_pos_of_pos_of_lt_pi ha (by linarith [Real.pi_gt_three])
+  have hc : 0 < 1 + Real.cos a := by
+    have := Real.cos_pos_of_mem_Ioo ⟨by linarith [Real.pi_gt_three], by linarith [Real.pi_gt_three]⟩
+      (x := a); linarith
+  have key : (1 + Real.cos a) / Real.sin a ≤ 2 / a := by
+    rw [div_le_div_iff₀ hs ha]
+    have h1 := sin_ge_deg3 ha.le
+    have h3 := cos_le_deg4 ha.le
+    have h4 := mul_le_mul_of_nonneg_left h3 ha.le
+    have ha2 : a ^ 2 ≤ 1 := by nlinarith
+    nlinarith [pow_pos ha 3, pow_pos ha 5]
+  unfold logTanHalf
+  rw [neg_sub, ← Real.log_div hc.ne' hs.ne']
+  exact Real.log_le_log (by positivity) key
+
+/-- `a / sin a ≤ 2 - log 2` (indeed `≤ 1.12`) for `0 < a ≤ π/4`. -/
+theorem div_sin_le {a : ℝ} (ha : 0 < a) (ha1 : a ≤ π / 4) : a / Real.sin a ≤ 112 / 100 := by
+  have ha1' : a ≤ 786 / 1000 := ha1.trans (by linarith [Real.pi_lt_d4])
+  have hs := sin_ge_deg3 ha.le
+  have ha2 : a ^ 2 ≤ 618 / 1000 := by nlinarith
+  have hs1 : a * (1 - a ^ 2 / 6) ≤ Real.sin a := by nlinarith
+  have hk : 897 / 1000 ≤ 1 - a ^ 2 / 6 := by linarith
+  have hs0 : 0 < Real.sin a := by nlinarith
+  rw [div_le_iff₀ hs0]
+  nlinarith
+
+theorem log_two_bounds : 0.693 < Real.log 2 ∧ Real.log 2 < 0.694 :=
+  ⟨by linarith [Real.log_two_gt_d9], by linarith [Real.log_two_lt_d9]⟩
+
+
+/-- `sin` is larger in the middle: `0 < u ≤ v ≤ q - u ⇒ sin(πu/q) ≤ sin(πv/q)`. -/
+theorem sin_le_of_between {q u v : ℝ} (hq : 0 < q) (hu : 0 < u) (huv : u ≤ v) (hvq : v ≤ q - u) :
+    Real.sin (π * u / q) ≤ Real.sin (π * v / q) := by
+  have hpi := Real.pi_pos
+  have key : ∀ w, u ≤ w → w ≤ q / 2 → Real.sin (π * u / q) ≤ Real.sin (π * w / q) := by
+    intro w huw hw
+    refine Real.sin_le_sin_of_le_of_le_pi_div_two ?_ ?_ ?_
+    · have : 0 < π * u / q := by positivity
+      linarith
+    · rw [div_le_iff₀ hq]; nlinarith
+    · rw [div_le_div_iff_of_pos_right hq]; exact mul_le_mul_of_nonneg_left huw hpi.le
+  rcases le_or_lt v (q / 2) with hv | hv
+  · exact key v huv hv
+  · rw [show π * v / q = π - π * (q - v) / q by field_simp; ring, Real.sin_pi_sub]
+    exact key (q - v) (by linarith) (by linarith)
+
+/-- `h(u) = min(B / sin(πu/q), C / sin²(πu/q))`. -/
+noncomputable def hBC (B C q u : ℝ) : ℝ :=
+  min (B / Real.sin (π * u / q)) (C / Real.sin (π * u / q) ^ 2)
+
+theorem hBC_nonneg {B C q u : ℝ} (hB : 0 ≤ B) (hC : 0 ≤ C) (hq : 0 < q) (hu : 0 < u)
+    (huq : u < q) : 0 ≤ hBC B C q u := by
+  have := sin_pos_of_mem hq hu huq
+  exact le_min (by positivity) (by positivity)
+
+/-- `min(B/|s|, C/s²) ≤ h(u)` whenever `|s| ≥ sin(πu/q) > 0`. -/
+theorem minBC_le_hBC {B C q u s : ℝ} (hB : 0 ≤ B) (hC : 0 ≤ C) (hpos : 0 < Real.sin (π * u / q))
+    (hs : Real.sin (π * u / q) ≤ |s|) :
+    min (B / √(s ^ 2)) (C / s ^ 2) ≤ hBC B C q u := by
+  rw [Real.sqrt_sq_eq_abs]
+  have hs2 : Real.sin (π * u / q) ^ 2 ≤ s ^ 2 := by
+    rw [← sq_abs s]; exact pow_le_pow_left₀ hpos.le hs 2
+  exact min_le_min (div_le_div_of_nonneg_left hB hpos hs)
+    (div_le_div_of_nonneg_left hC (by positivity) hs2)
+
+theorem hBC_anti {B C q u v : ℝ} (hB : 0 ≤ B) (hC : 0 ≤ C) (hq : 0 < q) (hu : 0 < u)
+    (huv : u ≤ v) (hv : v ≤ q / 2) : hBC B C q v ≤ hBC B C q u := by
+  have hpos := sin_pos_of_mem hq hu (by linarith)
+  have hle := sin_le_of_between hq hu huv (by linarith)
+  have := minBC_le_hBC (s := Real.sin (π * v / q)) hB hC hpos (hle.trans (le_abs_self _))
+  rwa [Real.sqrt_sq_eq_abs, abs_of_pos (hpos.trans_le hle)] at this
+
+theorem continuousOn_hBC {B C q a b : ℝ} (hq : 0 < q) (ha : 0 < a) (hb : b < q) :
+    ContinuousOn (hBC B C q) (Icc a b) := by
+  have hs : ∀ u ∈ Icc a b, Real.sin (π * u / q) ≠ 0 := fun u hu =>
+    (sin_pos_of_mem hq (by linarith [hu.1]) (by linarith [hu.2])).ne'
+  have hc : ContinuousOn (fun u => Real.sin (π * u / q)) (Icc a b) :=
+    Real.continuous_sin.comp_continuousOn ((continuousOn_const.mul continuousOn_id).div_const q)
+  exact (continuousOn_const.div hc hs).inf (continuousOn_const.div (hc.pow 2)
+    fun u hu => pow_ne_zero 2 (hs u hu))
+
+/-- Parity split of `1, …, q-1` into `2r` (`r ≤ (q-1)/2`) and `2k - 1` (`k ≤ q/2`). -/
+theorem sum_Icc_parity (g : ℕ → ℝ) (q : ℕ) :
+    ∑ j ∈ Finset.Icc 1 (q - 1), g j =
+      ∑ r ∈ Finset.Icc 1 ((q - 1) / 2), g (2 * r) + ∑ k ∈ Finset.Icc 1 (q / 2), g (2 * k - 1) := by
+  rw [← Finset.sum_filter_add_sum_filter_not (Finset.Icc 1 (q - 1)) (fun j => Even j)]
+  congr 1
+  · refine Finset.sum_bij (fun j _ => j / 2) ?_ ?_ ?_ ?_
+    · intro j hj; simp only [Finset.mem_filter, Finset.mem_Icc] at hj
+      obtain ⟨⟨h1, h2⟩, ⟨m, rfl⟩⟩ := hj; simp only [Finset.mem_Icc]; omega
+    · intro a ha b hb hab; simp only [Finset.mem_filter, Finset.mem_Icc] at ha hb
+      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; simp only at hab; omega
+    · intro r hr; simp only [Finset.mem_Icc] at hr
+      exact ⟨2 * r, by simp only [Finset.mem_filter, Finset.mem_Icc]; exact ⟨by omega, ⟨r, by ring⟩⟩,
+        by simp⟩
+    · intro j hj; simp only [Finset.mem_filter] at hj
+      obtain ⟨_, ⟨m, rfl⟩⟩ := hj; show g (m + m) = g (2 * ((m + m) / 2)); congr 1; omega
+  · refine Finset.sum_bij (fun j _ => (j + 1) / 2) ?_ ?_ ?_ ?_
+    · intro j hj; simp only [Finset.mem_filter, Finset.mem_Icc, Nat.not_even_iff_odd] at hj
+      obtain ⟨⟨h1, h2⟩, ⟨m, rfl⟩⟩ := hj; simp only [Finset.mem_Icc]; omega
+    · intro a ha b hb hab
+      simp only [Finset.mem_filter, Finset.mem_Icc, Nat.not_even_iff_odd] at ha hb
+      obtain ⟨_, ⟨m, rfl⟩⟩ := ha; obtain ⟨_, ⟨m', rfl⟩⟩ := hb; simp only at hab; omega
+    · intro k hk; simp only [Finset.mem_Icc] at hk
+      exact ⟨2 * k - 1, by
+        simp only [Finset.mem_filter, Finset.mem_Icc, Nat.not_even_iff_odd]
+        exact ⟨by omega, ⟨k - 1, by omega⟩⟩, by simp only; omega⟩
+    · intro j hj; simp only [Finset.mem_filter, Nat.not_even_iff_odd] at hj
+      obtain ⟨_, ⟨m, rfl⟩⟩ := hj
+      show g (2 * m + 1) = g (2 * ((2 * m + 1 + 1) / 2) - 1); congr 1; omega
+
+
+/-- `∑_{j=1}^{q-1} h(j/2) ≤ h(1/2) + 2 ∫_{1/2}^{q/2} h`. -/
+theorem sum_hBC_half_le {B C : ℝ} {q : ℕ} (hq : 2 ≤ q) (hB : 0 ≤ B) (hC : 0 ≤ C) :
+    ∑ j ∈ Finset.Icc 1 (q - 1), hBC B C q ((j : ℝ) / 2) ≤
+      hBC B C q (1 / 2) + 2 * ∫ u in (1 / 2 : ℝ)..(q / 2), hBC B C q u := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast (by omega : 0 < q)
+  have hq2 : (2 : ℝ) ≤ q := by exact_mod_cast hq
+  have hII : ∀ a b : ℝ, 0 < a → b < q → a ≤ b → IntervalIntegrable (hBC B C q) volume a b :=
+    fun a b ha hb hab => (continuousOn_hBC hq0 ha hb).intervalIntegrable_of_Icc hab
+  rw [Finset.sum_eq_add_sum_diff_singleton (by simp; omega : 1 ∈ Finset.Icc 1 (q - 1)),
+    show Finset.Icc 1 (q - 1) \ {1} = Finset.Icc 2 (q - 1) by ext x; simp; omega]
+  simp only [Nat.cast_one]
+  refine add_le_add le_rfl ?_
+  -- Each `h(j/2)` is at most twice the integral over `[(j-1)/2, j/2]`.
+  have hterm : ∀ j ∈ Finset.Icc 2 (q - 1),
+      hBC B C q ((j : ℝ) / 2) ≤ 2 * ∫ u in (((j : ℝ) - 1) / 2)..((j : ℝ) / 2), hBC B C q u := by
+    intro j hj
+    have hj2 : (2 : ℝ) ≤ j := by exact_mod_cast (Finset.mem_Icc.1 hj).1
+    have hjq : (j : ℝ) ≤ q - 1 := by
+      have := (Finset.mem_Icc.1 hj).2
+      have : (j : ℝ) ≤ ((q - 1 : ℕ) : ℝ) := by exact_mod_cast this
+      rwa [Nat.cast_sub (by omega), Nat.cast_one] at this
+    have h := intervalIntegral.integral_mono_on (by linarith) intervalIntegrable_const
+      (hII (((j : ℝ) - 1) / 2) ((j : ℝ) / 2) (by linarith) (by linarith) (by linarith))
+      fun u hu => hBC_anti hB hC hq0 (by linarith [hu.1]) hu.2 (by linarith)
+    rw [intervalIntegral.integral_const, smul_eq_mul] at h
+    linarith
+  have hsum : ∑ j ∈ Finset.Icc 2 (q - 1), ∫ u in (((j : ℝ) - 1) / 2)..((j : ℝ) / 2), hBC B C q u =
+      ∫ u in (1 / 2 : ℝ)..((q : ℝ) - 1) / 2, hBC B C q u := by
+    have h := intervalIntegral.sum_integral_adjacent_intervals (μ := volume) (f := hBC B C q)
+      (a := fun i : ℕ => ((i : ℝ) + 1) / 2) (n := q - 2) fun i hi => by
+        have : (i : ℝ) + 3 ≤ q := by exact_mod_cast (by omega : i + 3 ≤ q)
+        show IntervalIntegrable (hBC B C q) volume (((i : ℝ) + 1) / 2) ((((i + 1 : ℕ) : ℝ) + 1) / 2)
+        push_cast
+        exact hII _ _ (by positivity) (by linarith) (by linarith)
+    simp only [Nat.cast_zero, zero_add] at h
+    rw [show (((q - 2 : ℕ) : ℝ) + 1) / 2 = ((q : ℝ) - 1) / 2 by
+      rw [Nat.cast_sub hq]; push_cast; ring] at h
+    rw [← h]
+    refine Finset.sum_bij (fun j _ => j - 2) ?_ ?_ ?_ ?_
+    · intro j hj; simp only [Finset.mem_Icc] at hj; simp only [Finset.mem_range]; omega
+    · intro a ha b hb hab; simp only [Finset.mem_Icc] at ha hb; simp only at hab; omega
+    · intro i hi; simp only [Finset.mem_range] at hi
+      exact ⟨i + 2, by simp only [Finset.mem_Icc]; omega, by simp⟩
+    · intro j hj; simp only [Finset.mem_Icc] at hj
+      push_cast [Nat.cast_sub hj.1]; ring_nf
+  have htail : ∫ u in (1 / 2 : ℝ)..((q : ℝ) - 1) / 2, hBC B C q u ≤
+      ∫ u in (1 / 2 : ℝ)..(q / 2), hBC B C q u := by
+    have e := intervalIntegral.integral_add_adjacent_intervals (μ := volume) (a := (1 / 2 : ℝ))
+      (b := ((q : ℝ) - 1) / 2) (c := q / 2) (hII _ _ (by norm_num) (by linarith) (by linarith))
+      (hII _ _ (by linarith) (by linarith) (by linarith))
+    have := intervalIntegral.integral_nonneg (μ := volume) (show ((q : ℝ) - 1) / 2 ≤ q / 2 by linarith)
+      fun u hu => hBC_nonneg (u := u) hB hC hq0 (by linarith [hu.1]) (by linarith [hu.2])
+    linarith
+  calc ∑ j ∈ Finset.Icc 2 (q - 1), hBC B C q ((j : ℝ) / 2)
+      ≤ ∑ j ∈ Finset.Icc 2 (q - 1), 2 * ∫ u in (((j : ℝ) - 1) / 2)..((j : ℝ) / 2), hBC B C q u :=
+        Finset.sum_le_sum hterm
+    _ = 2 * ∫ u in (1 / 2 : ℝ)..((q : ℝ) - 1) / 2, hBC B C q u := by rw [← Finset.mul_sum, hsum]
+    _ ≤ _ := by linarith
+
+/-- The function `min(B/sin v, C/sin² v)`. -/
+noncomputable def mBC (B C v : ℝ) : ℝ := min (B / Real.sin v) (C / Real.sin v ^ 2)
+
+theorem integral_hBC {B C : ℝ} {q : ℝ} (hq : 0 < q) :
+    ∫ u in (1 / 2 : ℝ)..(q / 2), hBC B C q u = q / π * ∫ v in (π / (2 * q))..(π / 2), mBC B C v := by
+  have hpq : π / q ≠ 0 := (div_pos Real.pi_pos hq).ne'
+  have : hBC B C q = fun u => mBC B C ((π / q) * u) := by
+    funext u; simp only [hBC, mBC]; ring_nf
+  rw [this, intervalIntegral.integral_comp_mul_left (fun v => mBC B C v) hpq, smul_eq_mul, inv_div]
+  congr 2 <;> field_simp <;> ring_nf <;> simp
+
+theorem continuousOn_mBC {B C a b : ℝ} (ha : 0 < a) (hb : b < π) :
+    ContinuousOn (mBC B C) (Icc a b) := by
+  have hs : ∀ v ∈ Icc a b, Real.sin v ≠ 0 := fun v hv =>
+    (Real.sin_pos_of_pos_of_lt_pi (by linarith [hv.1]) (by linarith [hv.2])).ne'
+  exact (continuousOn_const.div Real.continuous_sin.continuousOn hs).inf
+    (continuousOn_const.div (Real.continuous_sin.continuousOn.pow 2) fun v hv => pow_ne_zero 2 (hs v hv))
+
+/-- Splitting `∫_a^{π/2} min(B/sin, C/sin²)` at `w`. -/
+theorem integral_mBC_le_split {B C a w : ℝ} (hB : 0 ≤ B) (hC : 0 ≤ C) (ha : 0 < a) (haw : a ≤ w)
+    (hw : w ≤ π / 2) :
+    ∫ v in a..(π / 2), mBC B C v ≤
+      B * (logTanHalf w - logTanHalf a) + C * (Real.cos w / Real.sin w) := by
+  have hpi := Real.pi_pos
+  have hII : ∀ x y, 0 < x → x ≤ y → y ≤ π / 2 → IntervalIntegrable (mBC B C) volume x y :=
+    fun x y hx hxy hy => (continuousOn_mBC hx (by linarith)).intervalIntegrable_of_Icc hxy
+  have hsin : ∀ v ∈ Icc a (π / 2), 0 < Real.sin v := fun v hv =>
+    Real.sin_pos_of_pos_of_lt_pi (by linarith [hv.1]) (by linarith [hv.2])
+  rw [← intervalIntegral.integral_add_adjacent_intervals (b := w) (hII _ _ ha haw hw)
+    (hII _ _ (by linarith) hw le_rfl)]
+  have h1 : ∫ v in a..w, mBC B C v ≤ B * (logTanHalf w - logTanHalf a) := by
+    have hg : IntervalIntegrable (fun v => B * (1 / Real.sin v)) volume a w :=
+      (continuousOn_const.mul (continuousOn_const.div Real.continuous_sin.continuousOn
+        fun v hv => (hsin v ⟨hv.1, hv.2.trans hw⟩).ne')).intervalIntegrable_of_Icc haw
+    have := intervalIntegral.integral_mono_on haw (hII _ _ ha haw hw) hg
+      fun v _ => (min_le_left (B / Real.sin v) (C / Real.sin v ^ 2)).trans (le_of_eq (by ring))
+    rw [intervalIntegral.integral_const_mul, integral_inv_sin ha haw (by linarith)] at this
+    exact this
+  have h2 : ∫ v in w..(π / 2), mBC B C v ≤ C * (Real.cos w / Real.sin w) := by
+    have hw0 : 0 < w := by linarith
+    have hg : IntervalIntegrable (fun v => C * (1 / Real.sin v ^ 2)) volume w (π / 2) :=
+      (continuousOn_const.mul (continuousOn_const.div (Real.continuous_sin.continuousOn.pow 2)
+        fun v hv => pow_ne_zero 2 (hsin v ⟨by linarith [hv.1], hv.2⟩).ne')).intervalIntegrable_of_Icc hw
+    have := intervalIntegral.integral_mono_on hw (hII _ _ hw0 hw le_rfl) hg
+      fun v _ => (min_le_right (B / Real.sin v) (C / Real.sin v ^ 2)).trans (le_of_eq (by ring))
+    rw [intervalIntegral.integral_const_mul, integral_inv_sin_sq hw0 hw (by linarith),
+      Real.cos_pi_div_two, zero_div, sub_zero] at this
+    exact this
+  linarith
+
+
+/-- `log(1 + y) ≥ y log 2` for `0 ≤ y ≤ 1` (concavity of `log`). -/
+theorem log_one_add_ge {y : ℝ} (hy0 : 0 ≤ y) (hy1 : y ≤ 1) : y * Real.log 2 ≤ Real.log (1 + y) := by
+  have h : (1 - y) • Real.log 1 + y • Real.log 2 ≤ Real.log ((1 - y) • (1 : ℝ) + y • (2 : ℝ)) :=
+    strictConcaveOn_log_Ioi.concaveOn.2 (by norm_num : (1 : ℝ) ∈ Ioi 0)
+      (by norm_num : (2 : ℝ) ∈ Ioi 0) (by linarith) hy0 (by ring)
+  simp only [smul_eq_mul, Real.log_one, mul_zero, zero_add, mul_one] at h
+  rw [show (1 - y) + y * 2 = 1 + y by ring] at h
+  exact h
+
+set_option maxHeartbeats 2000000 in
+/-- The analytic bound for Lemma 4.1.3: `h(1/2) + (2q/π) J` against both right-hand sides. -/
+theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 : a ≤ π / 4) :
+    mBC B C a + (∫ v in a..(π / 2), mBC B C v) / a ≤
+        B / a * max 2 (Real.log (C * rexp 3 / (B * (2 * a)))) ∧
+      mBC B C a + (∫ v in a..(π / 2), mBC B C v) / a ≤ B / a * Real.log (rexp 2 / a) := by
+  have hpi := Real.pi_pos
+  have ha2 : a ≤ π / 2 := by linarith
+  have ha1' : a ≤ 1 := ha1.trans (by linarith [Real.pi_lt_d2])
+  have hsa : 0 < Real.sin a := Real.sin_pos_of_pos_of_lt_pi ha (by linarith)
+  have hca : 0 < Real.cos a := Real.cos_pos_of_mem_Ioo ⟨by linarith, by linarith⟩
+  have hdiv := div_sin_le ha ha1
+  have hF := neg_logTanHalf_le ha ha1'
+  have hl2 := log_two_bounds
+  have hlog2a : Real.log (2 / a) = Real.log 2 - Real.log a := Real.log_div (by norm_num) ha.ne'
+  -- `J ≤ -B F(a)` always.
+  have hJ1 : ∫ v in a..(π / 2), mBC B C v ≤ B * Real.log (2 / a) := by
+    have := integral_mBC_le_split hB.le hC ha ha2 le_rfl
+    rw [logTanHalf_pi_div_two, Real.cos_pi_div_two, zero_div, mul_zero, add_zero, zero_sub] at this
+    nlinarith
+  have hmA : mBC B C a ≤ B / Real.sin a := min_le_left _ _
+  have hBsa : B / Real.sin a = B / a * (a / Real.sin a) := by field_simp
+  -- The `C ≥ B`-type bound.
+  have hbig : mBC B C a + (∫ v in a..(π / 2), mBC B C v) / a ≤
+      B / a * (a / Real.sin a + Real.log (2 / a)) := by
+    rw [mul_add, ← hBsa]
+    have := div_le_div_of_nonneg_right hJ1 ha.le
+    rw [show B * Real.log (2 / a) / a = B / a * Real.log (2 / a) by ring] at this
+    linarith
+  have hBa : 0 < B / a := by positivity
+  have hlogea : Real.log (rexp 2 / a) = 2 - Real.log a := by
+    rw [Real.log_div (by positivity) ha.ne', Real.log_exp]
+  refine ⟨?_, ?_⟩
+  · set x := C / B
+    have hx0 : 0 ≤ x := div_nonneg hC hB.le
+    have hCx : C = x * B := by simp only [x]; field_simp
+    rcases le_or_lt 1 x with hx1 | hx1
+    · -- `C ≥ B`.
+      have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
+        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
+          Real.log_div (by positivity) ha.ne', Real.log_div (by positivity) (by norm_num),
+          Real.log_mul (by positivity) (by positivity), Real.log_exp]
+        try ring
+      have hlx : 0 ≤ Real.log x := Real.log_nonneg hx1
+      refine hbig.trans (mul_le_mul_of_nonneg_left ?_ hBa.le)
+      refine le_trans ?_ (le_max_right _ _)
+      rw [hlog, hlog2a]; linarith
+    rcases le_or_lt (Real.sin a) x with hxa | hxa
+    · -- `B sin a ≤ C < B`: split at `w = arcsin x`.
+      set w := Real.arcsin x
+      have hx1' : x ≤ 1 := hx1.le
+      have hxpos : 0 < x := hsa.trans_le hxa
+      have hsw : Real.sin w = x := Real.sin_arcsin (by linarith) hx1'
+      have hcw : Real.cos w = √(1 - x ^ 2) := Real.cos_arcsin x
+      have haw : a ≤ w := by
+        rw [← Real.arcsin_sin (x := a) (by linarith) ha2]; exact Real.monotone_arcsin hxa
+      have hw2 : w ≤ π / 2 := Real.arcsin_le_pi_div_two x
+      set y := √(1 - x ^ 2)
+      have hy0 : 0 ≤ y := Real.sqrt_nonneg _
+      have hy1 : y ≤ 1 := by
+        rw [show (1 : ℝ) = √1 by simp]; exact Real.sqrt_le_sqrt (by nlinarith)
+      have hJ := integral_mBC_le_split hB.le hC ha haw hw2
+      have hFw : logTanHalf w = Real.log x - Real.log (1 + y) := by
+        simp only [logTanHalf, hsw, hcw]
+      have hCcot : C * (Real.cos w / Real.sin w) = B * y := by
+        rw [hsw, hcw, hCx]; field_simp; ring
+      rw [hFw, hCcot] at hJ
+      have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
+        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
+          Real.log_div (by positivity) ha.ne', Real.log_div (by positivity) (by norm_num),
+          Real.log_mul (by positivity) (by positivity), Real.log_exp]
+        try ring
+      have hconc := log_one_add_ge hy0 hy1
+      have hJ' : (∫ v in a..(π / 2), mBC B C v) / a ≤
+          B / a * (Real.log x - Real.log (1 + y) + Real.log (2 / a) + y) := by
+        rw [div_le_iff₀ ha]
+        have : B / a * (Real.log x - Real.log (1 + y) + Real.log (2 / a) + y) * a =
+            B * (Real.log x - Real.log (1 + y) + Real.log (2 / a) + y) := by field_simp
+        rw [this]
+        have h2 := mul_le_mul_of_nonneg_left hF hB.le
+        linarith only [hJ, h2]
+      refine le_trans ?_ (mul_le_mul_of_nonneg_left (le_max_right _ _) hBa.le)
+      rw [hlog]
+      have hm' : mBC B C a ≤ B / a * (a / Real.sin a) := hmA.trans (le_of_eq hBsa)
+      have hy2 : y * (1 - Real.log 2) ≤ 1 - Real.log 2 := by
+        have : 0 ≤ 1 - Real.log 2 := by linarith [hl2.2]
+        nlinarith
+      have key : a / Real.sin a + (Real.log x - Real.log (1 + y) + Real.log (2 / a) + y) ≤
+          Real.log x + 3 - Real.log 2 - Real.log a := by
+        rw [hlog2a]; linarith only [hl2.1, hl2.2, hdiv, hconc, hy2]
+      have h3 := mul_le_mul_of_nonneg_left key hBa.le
+      rw [mul_add] at h3
+      linarith only [h3, hm', hJ']
+    · -- `C < B sin a`: only the `C/sin²` branch matters.
+      have hJ := integral_mBC_le_split hB.le hC ha le_rfl ha2
+      rw [sub_self, mul_zero, zero_add] at hJ
+      have hmC : mBC B C a ≤ C / Real.sin a ^ 2 := min_le_right _ _
+      -- `a/sin a + cos a ≤ 2`.
+      have hk : a / Real.sin a + Real.cos a ≤ 2 := by
+        have h1 := sin_ge_deg3 ha.le
+        have h3 := cos_le_deg4 ha.le
+        rw [div_add' _ _ _ hsa.ne', div_le_iff₀ hsa]
+        have hsc : a ≤ Real.sin a * (2 - Real.cos a) := by
+          have e1 : (1 : ℝ) + a ^ 2 / 2 - a ^ 4 / 24 ≤ 2 - Real.cos a := by linarith
+          have ha2' : a ^ 2 ≤ 1 := by nlinarith
+          have e0 : 0 ≤ a - a ^ 3 / 6 := by nlinarith
+          have e3 : 0 ≤ 1 + a ^ 2 / 2 - a ^ 4 / 24 := by nlinarith [sq_nonneg (a ^ 2)]
+          have hmul : (a - a ^ 3 / 6) * (1 + a ^ 2 / 2 - a ^ 4 / 24) ≤ Real.sin a * (2 - Real.cos a) :=
+            mul_le_mul h1 e1 e3 hsa.le
+          have hexp : (a - a ^ 3 / 6) * (1 + a ^ 2 / 2 - a ^ 4 / 24) - a =
+              a ^ 3 * (1 / 3 - a ^ 2 / 8 + a ^ 4 / 144) := by ring
+          have hpos : 0 ≤ a ^ 3 * (1 / 3 - a ^ 2 / 8 + a ^ 4 / 144) :=
+            mul_nonneg (pow_pos ha 3).le (by nlinarith [sq_nonneg (a ^ 2)])
+          linarith
+        linarith
+      refine le_trans ?_ (mul_le_mul_of_nonneg_left (le_max_left _ _) hBa.le)
+      have hC' : C ≤ B * Real.sin a := by
+        simp only [x] at hxa; have := (div_lt_iff₀ hB).1 hxa; linarith
+      calc mBC B C a + (∫ v in a..(π / 2), mBC B C v) / a
+          ≤ C / Real.sin a ^ 2 + C * (Real.cos a / Real.sin a) / a := by
+            gcongr
+        _ = C / a * (a / Real.sin a ^ 2 + Real.cos a / Real.sin a) := by field_simp; ring
+        _ ≤ B * Real.sin a / a * (a / Real.sin a ^ 2 + Real.cos a / Real.sin a) := by
+            gcongr
+        _ = B / a * (a / Real.sin a + Real.cos a) := by field_simp; ring
+        _ ≤ B / a * 2 := mul_le_mul_of_nonneg_left hk hBa.le
+  · refine hbig.trans (mul_le_mul_of_nonneg_left ?_ hBa.le)
+    rw [hlogea, hlog2a]; linarith
+
+
+open Classical in
+/-- **[B, Lemma 4.1.3]** -/
+theorem lemma_4_1_3 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
+    (hy : 0 ≤ y₁) (_hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {B C : ℝ}
+    (hB : 0 ≤ B) (hC : 0 ≤ C) :
+    (∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋, (if (q : ℤ) ∣ n then 0 else
+        min (B / |Real.sin (π * α * n)|) (C / Real.sin (π * α * n) ^ 2))) ≤
+      2 * B * q / π * max 2 (Real.log (C * rexp 3 * q / (B * π))) ∧
+    (∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋, (if (q : ℤ) ∣ n then 0 else
+        min (B / |Real.sin (π * α * n)|) (C / Real.sin (π * α * n) ^ 2))) ≤
+      2 * B * q / π * Real.log (2 * rexp 2 * q / π) := by
+  have habs : ∀ s : ℝ, |s ^ 2| = s ^ 2 := fun s => abs_of_nonneg (sq_nonneg s)
+  set Φ := fun x : ℝ => min (B / √x) (C / |x|)
+  have hΦ : ∀ x, 0 ≤ Φ x := fun x =>
+    le_min (div_nonneg hB (Real.sqrt_nonneg _)) (div_nonneg hC (abs_nonneg _))
+  have hsum_eq : ∀ n : ℤ, min (B / |Real.sin (π * α * n)|) (C / Real.sin (π * α * n) ^ 2) =
+      Φ (Real.sin (π * α * n) ^ 2) := fun n => by
+    simp only [Φ, Real.sqrt_sq_eq_abs, habs]
+  simp_rw [hsum_eq]
+  obtain ⟨τ, hτ, hle⟩ := residue_form_gen h hy hlen hy₂ Φ hΦ
+  have hq1 := h.1
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
+  -- Nonnegativity of the right-hand sides.
+  have hR1 : 0 ≤ 2 * B * q / π * max 2 (Real.log (C * rexp 3 * q / (B * π))) :=
+    mul_nonneg (by positivity) (le_trans (by norm_num) (le_max_left _ _))
+  have hR2 : 0 ≤ 2 * B * q / π * Real.log (2 * rexp 2 * q / π) := by
+    refine mul_nonneg (by positivity) (Real.log_nonneg ?_)
+    rw [le_div_iff₀ Real.pi_pos]
+    have hq1r : (1 : ℝ) ≤ q := by exact_mod_cast hq1
+    have he : 3 ≤ rexp 2 := by linarith [Real.add_one_le_exp 2]
+    have : 3 ≤ rexp 2 * q := by nlinarith
+    linarith [Real.pi_lt_d2]
+  -- Edge cases.
+  rcases Nat.lt_or_ge q 2 with hq2 | hq2
+  · have : q = 1 := by omega
+    subst this
+    simp only [Nat.sub_self, Finset.Icc_eq_empty (by norm_num : ¬ (1 ≤ 0)), Finset.sum_empty] at hle
+    exact ⟨hle.trans hR1, hle.trans hR2⟩
+  rcases hB.eq_or_lt with hB0 | hBpos
+  · have hzero : ∑ R ∈ Finset.Icc 1 (q - 1), Φ (Real.sin (π * (R + τ R) / q) ^ 2) ≤ 0 :=
+      Finset.sum_nonpos fun R _ => by
+        simp only [Φ, ← hB0, zero_div]; exact min_le_left _ _
+    exact ⟨(hle.trans hzero).trans hR1, (hle.trans hzero).trans hR2⟩
+  -- Main case.
+  set A := π / (2 * q)
+  have hA0 : 0 < A := by positivity
+  have hA1 : A ≤ π / 4 := by
+    have hq2r : (2 : ℝ) ≤ q := by exact_mod_cast hq2
+    rw [div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith [Real.pi_pos]
+  set L := (q - 1) / 2
+  set K := q / 2
+  have hLq : 2 * (L : ℝ) + 1 ≤ q := by exact_mod_cast (by omega : 2 * L + 1 ≤ q)
+  have hKq : 2 * (K : ℝ) ≤ q := by exact_mod_cast (by omega : 2 * K ≤ q)
+  set F := fun R : ℕ => Φ (Real.sin (π * (R + τ R) / q) ^ 2)
+  have hlow : ∀ r ∈ Finset.Icc 1 L, F r ≤ hBC B C q r := by
+    intro r hr
+    have hr1 : (1 : ℝ) ≤ r := by exact_mod_cast (Finset.mem_Icc.1 hr).1
+    have hrL : (r : ℝ) ≤ L := by exact_mod_cast (Finset.mem_Icc.1 hr).2
+    have hpos := sin_pos_of_mem hq0 (by linarith : (0 : ℝ) < r) (by linarith)
+    have hbet := sin_le_of_between hq0 (by linarith : (0 : ℝ) < r)
+      (by linarith [(hτ r).1] : (r : ℝ) ≤ r + τ r) (by linarith [(hτ r).2])
+    show Φ (Real.sin (π * (r + τ r) / q) ^ 2) ≤ _
+    simp only [Φ, habs]
+    exact minBC_le_hBC hB hC hpos (hbet.trans (le_abs_self _))
+  have hhigh : ∀ k ∈ Finset.Icc 1 K, F (q - k) ≤ hBC B C q (k - 1 / 2) := by
+    intro k hk
+    have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast (Finset.mem_Icc.1 hk).1
+    have hkK : (k : ℝ) ≤ K := by exact_mod_cast (Finset.mem_Icc.1 hk).2
+    have hkq : k ≤ q := by have := (Finset.mem_Icc.1 hk).2; omega
+    have hsym : Real.sin (π * (((q - k : ℕ) : ℝ) + τ (q - k)) / q) =
+        Real.sin (π * (k - τ (q - k)) / q) := by
+      rw [Nat.cast_sub hkq, show π * ((q : ℝ) - k + τ (q - k)) / q =
+        π - π * (k - τ (q - k)) / q by field_simp; ring, Real.sin_pi_sub]
+    have hpos := sin_pos_of_mem hq0 (by linarith : (0 : ℝ) < k - 1 / 2) (by linarith)
+    have hbet := sin_le_of_between hq0 (by linarith : (0 : ℝ) < k - 1 / 2)
+      (by linarith [(hτ (q - k)).2] : (k : ℝ) - 1 / 2 ≤ k - τ (q - k))
+      (by linarith [(hτ (q - k)).1])
+    show Φ (Real.sin (π * (((q - k : ℕ) : ℝ) + τ (q - k)) / q) ^ 2) ≤ _
+    rw [hsym]
+    simp only [Φ, habs]
+    exact minBC_le_hBC hB hC hpos (hbet.trans (le_abs_self _))
+  have hmerge : ∑ R ∈ Finset.Icc 1 (q - 1), F R ≤ ∑ j ∈ Finset.Icc 1 (q - 1), hBC B C q ((j : ℝ) / 2) := by
+    rw [sum_Icc_low_high F q hq1, sum_Icc_parity (fun j : ℕ => hBC B C q ((j : ℝ) / 2)) q]
+    refine add_le_add ((Finset.sum_le_sum hlow).trans (le_of_eq ?_))
+      ((Finset.sum_le_sum hhigh).trans (le_of_eq ?_))
+    · refine Finset.sum_congr rfl fun r _ => ?_; push_cast; ring_nf
+    · refine Finset.sum_congr rfl fun k hk => ?_
+      have hk1 := (Finset.mem_Icc.1 hk).1
+      push_cast [Nat.cast_sub (by omega : 1 ≤ 2 * k)]; ring_nf
+  have hhalf := sum_hBC_half_le hq2 hB hC
+  rw [integral_hBC hq0] at hhalf
+  have hval : hBC B C q (1 / 2) = mBC B C A := by simp only [hBC, mBC, A]; ring_nf
+  have hT : ∑ R ∈ Finset.Icc 1 (q - 1), F R ≤ mBC B C A + (∫ v in A..(π / 2), mBC B C v) / A := by
+    refine hmerge.trans (hhalf.trans (le_of_eq ?_))
+    rw [hval]; simp only [A]; field_simp; ring
+  obtain ⟨f1, f2⟩ := final_4_1_3 hBpos hC hA0 hA1
+  have e1 : B / A = 2 * B * q / π := by simp only [A]; field_simp; ring
+  have e2 : C * rexp 3 / (B * (2 * A)) = C * rexp 3 * q / (B * π) := by simp only [A]; field_simp; ring
+  have e3 : rexp 2 / A = 2 * rexp 2 * q / π := by simp only [A]; field_simp; ring
+  rw [e1, e2] at f1
+  rw [e1, e3] at f2
+  exact ⟨hle.trans (hT.trans f1), hle.trans (hT.trans f2)⟩
 
 end TernaryGoldbach.MinorArcs

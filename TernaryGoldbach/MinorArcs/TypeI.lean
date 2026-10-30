@@ -9,7 +9,8 @@ arXiv:1501.05438v2) that the minor-arc argument uses.  **These are blueprint nod
 stated with `sorry` and are not (yet) used by `ternary_goldbach`.**  They were transcribed from
 the typeset PDF; equation numbers are the book's.
 
-* §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality.
+* §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality and **proved** in
+  `MinorArcs/TrigSums.lean`.
 * §4.2, Type I estimates: Lemmas 4.2.2–4.2.4, which [B, §6.2] applies with `η = η₂`,
   `c₀ = 31.521`, `|η₂'|₁ = 8 log 2`, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
   smoothing hypotheses ("η continuous, piecewise `C²`, compactly supported, `|η|₁ = 1`,
@@ -120,8 +121,9 @@ example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
   lemma_4_1_2 h hy hy₁₂ hlen hy₂ hA hC
 
 open Classical in
-/-- **[B, Lemma 4.1.3]** -/
-theorem lemma_4_1_3 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
+/-- **[B, Lemma 4.1.3]**, proved in `MinorArcs/TrigSums.lean` (by a sharper argument than [B]'s;
+see the module docstring there). -/
+example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {B C : ℝ}
     (hB : 0 ≤ B) (hC : 0 ≤ C) :
     (∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋, (if (q : ℤ) ∣ n then 0 else
@@ -129,8 +131,8 @@ theorem lemma_4_1_3 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁
       2 * B * q / π * max 2 (Real.log (C * rexp 3 * q / (B * π))) ∧
     (∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋, (if (q : ℤ) ∣ n then 0 else
         min (B / |Real.sin (π * α * n)|) (C / Real.sin (π * α * n) ^ 2))) ≤
-      2 * B * q / π * Real.log (2 * rexp 2 * q / π) := by
-  sorry
+      2 * B * q / π * Real.log (2 * rexp 2 * q / π) :=
+  lemma_4_1_3 h hy hy₁₂ hlen hy₂ hB hC
 
 /-! ## §4.2 Type I estimates (for `η = η₂`) -/
 
