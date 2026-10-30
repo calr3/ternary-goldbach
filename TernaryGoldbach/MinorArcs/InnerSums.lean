@@ -9,6 +9,9 @@ import TernaryGoldbach.Helfgott.Eta2
   computation in [B]; `sorry` here).
 * `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [B, (4.35)], and `norm_Todd_le`: the three
   bounds of [B, (4.36)], from [B, (2.2)] and [B, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
+* `Todd_main`: the main term [B, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
+  `T_{m,∘}(α) = κ'((x/2m) η̂₂(-δ/2) + O*((m/x)(c₀/2π²)(π² - 4)))`, `κ' = e((a + k₀q)/2) = ±1`,
+  by Poisson summation.
 
 Everything here except `eta2_fourier_bound'` is proved.
 -/
@@ -35,6 +38,19 @@ theorem norm_fourier_comp_affine (h : ℝ → ℂ) {lam : ℝ} (hlam : 0 < lam) 
   rw [integral_const_mul, integral_comp_affine (fun w => e (-(w * (t / lam))) * h w) hlam, norm_mul, norm_e, one_mul, norm_smul,
     Real.norm_eq_abs, abs_of_pos (inv_pos.2 hlam)]
 
+
+/-- `𝓕[h(λ· + μ)](t) = λ⁻¹ e(μt/λ) 𝓕h(t/λ)` for `λ > 0`. -/
+theorem fourier_comp_affine (h : ℝ → ℂ) {lam : ℝ} (hlam : 0 < lam) (μ t : ℝ) :
+    𝓕 (fun u => h (lam * u + μ)) t = (lam⁻¹ : ℂ) * (e (μ * t / lam) * 𝓕 h (t / lam)) := by
+  rw [fourier_eq_integral_e, fourier_eq_integral_e]
+  have : ∀ v, e (-(v * t)) * h (lam * v + μ) =
+      e (μ * t / lam) * (fun w => e (-(w * (t / lam))) * h w) (lam * v + μ) := by
+    intro v; simp only
+    rw [← mul_assoc, ← e_add]; congr 2; field_simp; ring
+  simp_rw [this]
+  rw [integral_const_mul, integral_comp_affine (fun w => e (-(w * (t / lam))) * h w) hlam,
+    Complex.real_smul]
+  push_cast; ring
 
 namespace MinorArcs
 
@@ -149,6 +165,141 @@ theorem norm_Todd_le (α : ℝ) :
     refine this.trans (le_of_eq ?_); ring
 
 end
+
+/-- `η̂₂` as a function `ℝ → ℂ`. -/
+noncomputable def eta2hat (t : ℝ) : ℂ := 𝓕 (fun u => (eta2 u : ℂ)) t
+
+theorem norm_eta2hat_le_one (t : ℝ) : ‖eta2hat t‖ ≤ 1 := by
+  rw [eta2hat, fourier_eq_integral_e]
+  refine (norm_integral_le_integral_norm _).trans (le_of_eq ?_)
+  simp_rw [norm_mul, norm_e, one_mul, Complex.norm_real, Real.norm_eq_abs]
+  exact Helfgott.integral_abs_eta2
+
+theorem norm_eta2hat_le (t : ℝ) (ht : t ≠ 0) : ‖eta2hat t‖ ≤ c₀ / (2 * π * t) ^ 2 := by
+  have h := eta2_fourier_bound' t
+  rw [le_div_iff₀ (by positivity)]; rw [mul_comm]; exact h
+
+
+/-- The phase in [B, proof of Lemma 4.2.2]: if `2α = a/q + δ/x + k₀` and `m = qm'` with `m'` odd,
+then `e(αm(2r+1)) = κ' e((δm/2x)(2r+1))` with `κ' = e((a + k₀q)/2)` independent of `m'`, `r`. -/
+theorem e_phase {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1 ≤ q) (hm' : Odd m')
+    (h2α : 2 * α = a / q + δ / x + k₀) (r : ℤ) :
+    e (α * ((q * m' : ℕ) : ℝ) * (2 * r + 1)) =
+      e ((a + k₀ * q) / 2) * e (δ * ((q * m' : ℕ) : ℝ) / (2 * x) * (2 * r + 1)) := by
+  obtain ⟨j, rfl⟩ := hm'
+  have hq0 : (q : ℝ) ≠ 0 := by
+    have : (1 : ℝ) ≤ q := by exact_mod_cast hq
+    linarith
+  have hα : α = (a / q + δ / x + k₀) / 2 := by linarith
+  have : α * ((q * (2 * j + 1) : ℕ) : ℝ) * (2 * r + 1) =
+      (a + k₀ * q) / 2 + δ * ((q * (2 * j + 1) : ℕ) : ℝ) / (2 * x) * (2 * r + 1) +
+        (((a + k₀ * q) * (2 * j * r + j + r) : ℤ) : ℝ) := by
+    rw [hα]; push_cast; field_simp; ring
+  rw [this, e_add, e_add, e_intCast, mul_one]
+
+/-- **The main term of [B, (4.33)–(4.34)]**: for `m = qm'` with `m'` odd and `|δ|m/x ≤ 1/2`,
+`T_{m,∘}(α) = κ'((x/2m) η̂₂(-δ/2) + E)` with `|E| ≤ (m/x)(c₀/2π²)(π² - 4)`. -/
+theorem Todd_main {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1 ≤ q) (hm' : Odd m')
+    (h2α : 2 * α = a / q + δ / x + k₀) (hr : |δ * (q * m' : ℕ) / x| ≤ 1 / 2) :
+    ∃ E : ℂ, Todd α x (q * m') = e ((a + k₀ * q) / 2) *
+        ((x / (2 * (q * m' : ℕ)) : ℝ) * eta2hat (-(δ / 2)) + E) ∧
+      ‖E‖ ≤ (q * m' : ℕ) / x * (c₀ / (2 * π ^ 2)) * (π ^ 2 - 4) := by
+  set m : ℕ := q * m' with hmdef
+  have hm1 : 1 ≤ m := Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by
+    obtain ⟨j, rfl⟩ := hm'; omega))
+  have hmR : (0 : ℝ) < m := by exact_mod_cast hm1
+  set β : ℝ := δ * m / (2 * x)
+  set ρ : ℝ := δ * m / x
+  set h : ℝ → ℂ := fun u => e (β * (2 * u + 1)) * (eta2 (m * (2 * u + 1) / x) : ℂ)
+  -- Step A: the phase.
+  have hA : Todd α x m = e ((a + k₀ * q) / 2) * ∑' r : ℤ, h r := by
+    rw [Todd, ← tsum_mul_left]
+    refine tsum_congr fun r => ?_
+    simp only [h, hmdef]; rw [e_phase hx hq hm' h2α r]; ring
+  -- Step C: the Fourier transform of `h`.
+  set G : ℝ → ℂ := fun v => (eta2 (m / x * v + 0) : ℂ) * e (β * v)
+  have hhG : h = fun u => G (2 * u + 1) := by
+    funext u; simp only [h, G]; rw [show (m : ℝ) / x * (2 * u + 1) + 0 = m * (2 * u + 1) / x by ring]
+    ring
+  have hlam : (0 : ℝ) < m / x := by positivity
+  have hF : ∀ k : ℤ, 𝓕 h k =
+      (x / (2 * m) : ℝ) * (e (k / 2) * eta2hat (k * x / (2 * m) - δ / 2)) := by
+    intro k
+    rw [hhG, fourier_comp_affine G two_pos 1 k]
+    simp only [G]
+    rw [fourier_mul_e (fun v => (eta2 (m / x * v + 0) : ℂ)) β,
+      fourier_comp_affine (fun u => (eta2 u : ℂ)) hlam 0, zero_mul, zero_div, e_zero, one_mul]
+    have : ((k : ℝ) / 2 - β) / (m / x) = k * x / (2 * m) - δ / 2 := by
+      simp only [β]; field_simp
+    rw [this, eta2hat]
+    push_cast
+    field_simp
+  -- Step D: bounds on the non-zero frequencies.
+  set C : ℝ := m / x * (c₀ / (2 * π ^ 2))
+  have hρ : |ρ| ≤ 1 / 2 := by simpa [ρ, hmdef] using hr
+  have hkρ : ∀ k : ℤ, k ≠ 0 → (k : ℝ) - ρ ≠ 0 := by
+    intro k hk h0
+    have hk1 : (1 : ℝ) ≤ |(k : ℝ)| := by exact_mod_cast Int.one_le_abs hk
+    have : (k : ℝ) = ρ := by linarith
+    rw [this] at hk1; linarith
+  have hbound : ∀ k : ℤ, k ≠ 0 → ‖𝓕 h k‖ ≤ C * (1 / ((k : ℝ) - ρ) ^ 2) := by
+    intro k hk
+    rw [hF k, norm_mul, norm_mul, norm_e, one_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos (by positivity)]
+    have ht : (k : ℝ) * x / (2 * m) - δ / 2 = x / (2 * m) * ((k : ℝ) - ρ) := by
+      simp only [ρ]; field_simp
+    have hne : (k : ℝ) * x / (2 * m) - δ / 2 ≠ 0 := by
+      rw [ht]; exact mul_ne_zero (by positivity) (hkρ k hk)
+    refine (mul_le_mul_of_nonneg_left (norm_eta2hat_le _ hne) (by positivity)).trans
+      (le_of_eq ?_)
+    rw [ht]; simp only [C]
+    have := hkρ k hk
+    field_simp
+  obtain ⟨hs, hsle⟩ := tsum_inv_sq_sub_le hρ
+  have hsummF : Summable fun k : ℤ => 𝓕 h k := by
+    refine Summable.of_norm_bounded (g := fun k : ℤ => (if k = 0 then ‖𝓕 h 0‖ else 0) +
+      C * (if k = 0 then 0 else 1 / ((k : ℝ) - ρ) ^ 2)) ?_ ?_
+    · exact (summable_of_ne_finset_zero (s := {0}) (fun k hk => by simp at hk; simp [hk])).add
+        (hs.mul_left C)
+    · intro k
+      by_cases hk : k = 0
+      · subst hk; simp
+      · simp only [hk, ite_false, zero_add]; exact hbound k hk
+  -- Step B: Poisson summation.
+  have hcont : Continuous h := by
+    simp only [h]
+    exact (continuous_e.comp (by fun_prop)).mul
+      (continuous_ofReal.comp (Helfgott.continuous_eta2.comp (by fun_prop)))
+  have hcs : HasCompactSupport h := by
+    have h1 : HasCompactSupport (fun u => (eta2 u : ℂ)) :=
+      Helfgott.hasCompactSupport_eta2.comp_left (g := fun t : ℝ => (t : ℂ)) (by simp)
+    have h2 := (h1.comp_homeomorph (Homeomorph.addRight (m / x : ℝ))).comp_homeomorph
+      (Homeomorph.mulLeft₀ (2 * m / x : ℝ) (by positivity))
+    have h3 : HasCompactSupport fun u : ℝ => (eta2 (m * (2 * u + 1) / x) : ℂ) := by
+      convert h2 using 1; funext u; simp only [Function.comp]
+      congr 2; simp; ring
+    simp only [h]; exact h3.mul_left
+  have hP := Real.tsum_eq_tsum_fourier_of_rpow_decay_of_summable hcont one_lt_two
+    (isBigO_of_hasCompactSupport hcs 2) hsummF 0
+  simp only [zero_add, QuotientAddGroup.mk_zero, fourier_eval_zero, mul_one] at hP
+  -- Step F: separate the zero frequency.
+  refine ⟨∑' k : ℤ, if k = 0 then 0 else 𝓕 h k, ?_, ?_⟩
+  · rw [hA, hP, hsummF.tsum_eq_add_tsum_ite 0, hF 0]
+    congr 2
+    simp only [Int.cast_zero, zero_div, e_zero, one_mul, zero_mul, zero_sub]
+  · have hsn : Summable fun k : ℤ => ‖if k = 0 then (0 : ℂ) else 𝓕 h k‖ := by
+      refine Summable.of_nonneg_of_le (fun _ => norm_nonneg _) (fun k => ?_) (hs.mul_left C)
+      by_cases hk : k = 0
+      · simp [hk]
+      · simp only [hk, ite_false]; exact hbound k hk
+    refine (norm_tsum_le_tsum_norm hsn).trans ?_
+    refine (hsn.tsum_le_tsum (fun k => ?_) (hs.mul_left C)).trans ?_
+    · by_cases hk : k = 0
+      · simp [hk]
+      · simp only [hk, ite_false]; exact hbound k hk
+    · rw [tsum_mul_left]
+      have hC : 0 ≤ C := by simp only [C]; unfold c₀; positivity
+      exact mul_le_mul_of_nonneg_left hsle hC
 
 end MinorArcs
 
