@@ -814,4 +814,271 @@ theorem prop_5_2_4_d {α x δ Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 
     _ ≤ Q' + W / 2 + x / (8 * (1 - ρ) * Q) + x / (4 * (1 - ρ) * W) := by
         gcongr
 
+/-! ### [B, Lemma 5.2.3, (5.51)] -/
+
+/-- The weighted large sieve for `S(β)`: `∑_r (W - W' + 1 + (3/2)δ_r⁻¹)⁻¹ |S(β_r)|² ≤ ∑ (log p)²`. -/
+theorem large_sieve_primes_weighted {ι : Type*} (s : Finset ι) (β δ : ι → ℝ)
+    (hδ : ∀ r ∈ s, 0 < δ r)
+    (hsep : ∀ r ∈ s, ∀ r' ∈ s, r ≠ r' → δ r ≤ |(β r - β r') - round (β r - β r')|)
+    {W' W : ℝ} (hW' : 0 ≤ W') :
+    ∑ r ∈ s, (W - W' + 1 + 3 / 2 * (δ r)⁻¹)⁻¹ * ‖primeExpSum W' W (β r)‖ ^ 2 ≤ logSqSum W' W := by
+  rcases lt_or_ge ⌊W'⌋₊ ⌊W⌋₊ with hlt | hge
+  · set M := ⌊W'⌋₊
+    set N := ⌊W⌋₊ - M
+    have hMN : M + N = ⌊W⌋₊ := by omega
+    set a : ℕ → ℂ := fun n => if n.Prime then (Real.log n : ℂ) else 0
+    have hS : ∀ t, primeExpSum W' W t = ∑ n ∈ Ioc M (M + N), a n * e (t * n) := by
+      intro t
+      rw [primeExpSum, hMN, sum_filter]
+      refine sum_congr rfl fun n _ => ?_
+      simp only [a]; split_ifs <;> simp
+    have hL : logSqSum W' W = ∑ n ∈ Ioc M (M + N), ‖a n‖ ^ 2 := by
+      rw [logSqSum, hMN, sum_filter]
+      refine sum_congr rfl fun n _ => ?_
+      simp only [a]; split_ifs
+      · rw [Complex.norm_real, Real.norm_eq_abs, sq_abs]
+      · simp
+    have hW0 : 0 ≤ W := by
+      by_contra h; push Not at h
+      have : ⌊W⌋₊ = 0 := Nat.floor_eq_zero.2 (by linarith)
+      omega
+    have hN : (N : ℝ) ≤ W - W' + 1 := by
+      have h1 : (⌊W⌋₊ : ℝ) ≤ W := Nat.floor_le hW0
+      have h2 : W' < (⌊W'⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one W'
+      have : (N : ℝ) = ⌊W⌋₊ - ⌊W'⌋₊ := by simp only [N, M]; rw [Nat.cast_sub hlt.le]
+      rw [this]; linarith
+    rw [hL]
+    refine le_trans ?_ (Prelim.large_sieve_weighted s β δ hδ hsep M N a)
+    refine sum_le_sum fun r hr => ?_
+    rw [hS]
+    refine mul_le_mul_of_nonneg_right ?_ (sq_nonneg _)
+    have h0 : 0 < (N : ℝ) + 3 / 2 * (δ r)⁻¹ := by
+      have := hδ r hr; positivity
+    exact inv_anti₀ h0 (by linarith)
+  · have hempty : Ioc ⌊W'⌋₊ ⌊W⌋₊ = ∅ := Ioc_eq_empty (not_lt.2 hge)
+    simp [primeExpSum, logSqSum, hempty]
+
+/-- The general separation of `A/q + b/r - b'/r' + u` (`r, r'` coprime to `q`,
+`(b, r) = (b', r') = 1`): unless `q | A`, `r = r'`, `b = b'`, it is `≥ 1/(qrr') - |u|`. -/
+theorem frac_sep {q r r' b b' : ℕ} (hq : 1 ≤ q) (hr : 1 ≤ r) (hr' : 1 ≤ r')
+    (hrq : Nat.Coprime r q) (hr'q : Nat.Coprime r' q) (hb : b < r) (hb' : b' < r')
+    (hbr : Nat.Coprime r b) (hb'r : Nat.Coprime r' b') {A : ℤ}
+    (hne : ¬ ((q : ℤ) ∣ A ∧ r = r' ∧ b = b')) (u : ℝ) :
+    1 / ((q : ℝ) * r * r') - |u| ≤
+      |(A / q + b / r - b' / r' + u : ℝ) - round (A / q + b / r - b' / r' + u : ℝ)| := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hr0 : (0 : ℝ) < r := by exact_mod_cast hr
+  have hr'0 : (0 : ℝ) < r' := by exact_mod_cast hr'
+  set M : ℤ := A * r * r' + q * (b * r' - b' * r)
+  have hM : (A / q + b / r - b' / r' : ℝ) = M / (q * r * r') := by
+    simp only [M]; push_cast; field_simp; ring
+  have hdiv : ¬ ((q * r * r' : ℕ) : ℤ) ∣ M := by
+    intro hdiv
+    apply hne
+    have hrq' : IsCoprime (r : ℤ) q := Nat.isCoprime_iff_coprime.2 hrq
+    have hr'q' : IsCoprime (r' : ℤ) q := Nat.isCoprime_iff_coprime.2 hr'q
+    have hbr' : IsCoprime (r : ℤ) b := Nat.isCoprime_iff_coprime.2 hbr
+    have hb'r' : IsCoprime (r' : ℤ) b' := Nat.isCoprime_iff_coprime.2 hb'r
+    have h1 : (r : ℤ) ∣ r' := by
+      have : (r : ℤ) ∣ M := dvd_trans (⟨(q : ℤ) * r', by push_cast; ring⟩ : (r : ℤ) ∣ ((q * r * r' : ℕ) : ℤ)) hdiv
+      have h2 : (r : ℤ) ∣ q * (b * r') := by
+        have e : (q : ℤ) * (b * r') = M - r * (A * r' - q * b') := by simp only [M]; ring
+        rw [e]; exact dvd_sub this (dvd_mul_right _ _)
+      exact hbr'.dvd_of_dvd_mul_left (hrq'.dvd_of_dvd_mul_left h2)
+    have h1' : (r' : ℤ) ∣ r := by
+      have : (r' : ℤ) ∣ M := dvd_trans (⟨(q : ℤ) * r, by push_cast; ring⟩ : (r' : ℤ) ∣ ((q * r * r' : ℕ) : ℤ)) hdiv
+      have h2 : (r' : ℤ) ∣ q * (b' * r) := by
+        have e : (q : ℤ) * (b' * r) = r' * (A * r + q * b) - M := by simp only [M]; ring
+        rw [e]; exact dvd_sub (dvd_mul_right _ _) this
+      exact hb'r'.dvd_of_dvd_mul_left (hr'q'.dvd_of_dvd_mul_left h2)
+    have hrr : r = r' := by
+      have := Int.dvd_antisymm (by positivity) (by positivity) h1 h1'
+      exact_mod_cast this
+    subst hrr
+    have h3 : ((q * r : ℕ) : ℤ) ∣ A * r + q * (b - b') := by
+      have e : M = r * (A * r + q * (b - b')) := by simp only [M]; ring
+      rw [e] at hdiv
+      have : ((q * r * r : ℕ) : ℤ) = r * ((q * r : ℕ) : ℤ) := by push_cast; ring
+      rw [this] at hdiv
+      exact (Int.dvd_of_mul_dvd_mul_left (by positivity) hdiv)
+    have h4 : (r : ℤ) ∣ b - b' := by
+      have : (r : ℤ) ∣ q * (b - b') := by
+        have hr3 : (r : ℤ) ∣ A * r + q * (b - b') :=
+          dvd_trans (⟨(q : ℤ), by push_cast; ring⟩ : (r : ℤ) ∣ ((q * r : ℕ) : ℤ)) h3
+        have e : (q : ℤ) * (b - b') = (A * r + q * (b - b')) - A * r := by ring
+        rw [e]; exact dvd_sub hr3 (dvd_mul_left _ _)
+      exact hrq'.dvd_of_dvd_mul_left this
+    have hbb : b = b' := by
+      obtain ⟨c, hc⟩ := h4
+      have : c = 0 := by
+        by_contra hc0
+        have : (r : ℤ) ≤ |(b : ℤ) - b'| := by
+          rw [hc, abs_mul]; nlinarith [abs_nonneg (r : ℤ), Int.one_le_abs hc0, abs_of_pos (show (0:ℤ) < r by positivity)]
+        have : |(b : ℤ) - b'| < r := by rw [abs_lt]; constructor <;> omega
+        omega
+      rw [this, mul_zero] at hc; omega
+    subst hbb
+    have h5 : (q : ℤ) ∣ A := by
+      have e : A * r + q * (b - b) = A * r := by ring
+      rw [e] at h3
+      have : ((q * r : ℕ) : ℤ) = q * r := by push_cast; ring
+      rw [this] at h3
+      exact Int.dvd_of_mul_dvd_mul_right (by positivity) h3
+    exact ⟨h5, rfl, rfl⟩
+  apply le_dist_round_of_forall
+  intro n
+  have hne' : M - n * (q * r * r' : ℕ) ≠ 0 := by
+    intro h; exact hdiv ⟨n, by linarith⟩
+  have hqrr : (0 : ℝ) < q * r * r' := by positivity
+  have h1 : 1 / ((q : ℝ) * r * r') ≤ |(M : ℝ) / (q * r * r') - n| := by
+    have e : (M : ℝ) / (q * r * r') - n = ((M - n * (q * r * r' : ℕ) : ℤ) : ℝ) / (q * r * r') := by
+      push_cast; field_simp
+    rw [e, abs_div, abs_of_pos hqrr]
+    refine div_le_div_of_nonneg_right ?_ hqrr.le
+    rw [← Int.cast_abs]; exact_mod_cast Int.one_le_abs hne'
+  have h3 := abs_sub_abs_le_abs_sub ((M : ℝ) / (q * r * r') - n) (-u)
+  have e2 : (A / q + b / r - b' / r' + u : ℝ) - n = ((M : ℝ) / (q * r * r') - n) - (-u) := by
+    rw [← hM]; ring
+  rw [e2]
+  rw [abs_neg] at h3
+  linarith
+
+theorem dist_round_add_int (t : ℝ) (n : ℤ) : |(t + n) - round (t + n)| = |t - round t| := by
+  rw [round_add_intCast]; push_cast; ring_nf
+
+set_option maxHeartbeats 2000000 in
+/-- One block of [B, (5.51)]: for odd `m` in a set of width `< 2q`, with `qR² < Q`, `1 ≤ R ≤ W'`,
+`(∑_{r ≤ R, (r,q)=1} μ²(r)/φ(r) · (W - W' + 1 + (3/2)(1/(qrR) - 1/Q)⁻¹)⁻¹) ∑_m |S(αm)|² ≤ ∑ (log p)²`
+(Montgomery's inequality and the weighted large sieve, [B, (5.46)–(5.48)]). -/
+theorem odd_block_weighted {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
+    (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) {R : ℝ} (hR1 : 1 ≤ R) (hRQ : q * R ^ 2 < Q)
+    {W' W : ℝ} (hW' : 0 ≤ W') (hWW : W' ≤ W) (hRW : R ≤ W') (s : Finset ℤ) (hodd : ∀ m ∈ s, Odd m)
+    (hwidth : ∀ m ∈ s, ∀ m' ∈ s, |m - m'| < 2 * q) :
+    (∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+        (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ)) *
+      ∑ m ∈ s, ‖primeExpSum W' W (α * m)‖ ^ 2 ≤ logSqSum W' W := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  have hQ : 0 < Q := lt_of_le_of_lt (by positivity) hRQ
+  set N := ⌊R⌋₊
+  set C := (Icc 1 N).filter (fun r => Squarefree r ∧ Nat.Coprime r q)
+  set T := (s ×ˢ (C ×ˢ range N)).filter (fun t => t.2.2 < t.2.1 ∧ Nat.Coprime t.2.1 t.2.2)
+  set β : ℤ × ℕ × ℕ → ℝ := fun t => α * t.1 + t.2.2 / t.2.1
+  set δ : ℤ × ℕ × ℕ → ℝ := fun t => 1 / (q * t.2.1 * R) - 1 / Q
+  set w : ℕ → ℝ := fun r => (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹
+  have hCmem : ∀ r ∈ C, 1 ≤ r ∧ (r : ℝ) ≤ R ∧ Squarefree r ∧ Nat.Coprime r q := by
+    intro r hr
+    rw [mem_filter, mem_Icc] at hr
+    exact ⟨hr.1.1, (Nat.cast_le.2 hr.1.2).trans (Nat.floor_le (by linarith)), hr.2.1, hr.2.2⟩
+  have hδpos : ∀ r : ℕ, 1 ≤ r → (r : ℝ) ≤ R → 0 < 1 / (q * r * R) - 1 / Q := by
+    intro r hr hrR
+    have : (q : ℝ) * r * R < Q := by
+      have : (q : ℝ) * r * R ≤ q * R ^ 2 := by
+        rw [sq, ← mul_assoc]; exact mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hrR hq0.le) (by linarith)
+      linarith
+    have hr0 : (0 : ℝ) < r := by exact_mod_cast hr
+    rw [sub_pos]; exact one_div_lt_one_div_of_lt (by positivity) this
+  have hw0 : ∀ r ∈ C, 0 ≤ w r := by
+    intro r hr
+    obtain ⟨hr1, hrR, _, _⟩ := hCmem r hr
+    have := hδpos r hr1 hrR
+    simp only [w]
+    have : 0 ≤ W - W' := by linarith
+    positivity
+  -- The weighted large sieve over `T`.
+  have hLS := large_sieve_primes_weighted T β δ (W' := W') (W := W) (by
+      intro t ht
+      rw [mem_filter, mem_product, mem_product] at ht
+      obtain ⟨hr1, hrR, _, _⟩ := hCmem _ ht.1.2.1
+      exact hδpos _ hr1 hrR) (by
+      intro t ht t' ht' hne
+      rw [mem_filter, mem_product, mem_product] at ht ht'
+      obtain ⟨⟨hm, hr, _⟩, hb, hbr⟩ := ht
+      obtain ⟨⟨hm', hr', _⟩, hb', hb'r⟩ := ht'
+      obtain ⟨hr1, hrR, _, hrq⟩ := hCmem _ hr
+      obtain ⟨hr1', hrR', _, hr'q⟩ := hCmem _ hr'
+      obtain ⟨j, hj⟩ : ∃ j : ℤ, t.1 - t'.1 = 2 * j := by
+        obtain ⟨u, hu⟩ := hodd _ hm; obtain ⟨u', hu'⟩ := hodd _ hm'; exact ⟨u - u', by omega⟩
+      have hjq : |j| < q := by
+        have := hwidth _ hm _ hm'; rw [hj, abs_mul] at this; norm_num at this; omega
+      set ε := 2 * α - a / q - k
+      have e : β t - β t' = ((j * a : ℤ) / q + t.2.2 / t.2.1 - t'.2.2 / t'.2.1 + j * ε : ℝ) +
+          ((j * k : ℤ) : ℝ) := by
+        simp only [β, ε]
+        have : (t.1 : ℝ) - t'.1 = 2 * j := by exact_mod_cast hj
+        push_cast
+        linear_combination α * this
+      rw [e, dist_round_add_int]
+      have hfs := frac_sep hq hr1 hr1' hrq hr'q hb hb' hbr hb'r (A := j * a) (by
+        rintro ⟨hA, hrr, hbb⟩
+        have hqj : (q : ℤ) ∣ j := hcop.symm.dvd_of_dvd_mul_right hA
+        have hj0 : j = 0 := by
+          by_contra h0
+          have := Int.le_of_dvd (abs_pos.2 h0) ((dvd_abs _ _).2 hqj); omega
+        apply hne
+        have : t.1 = t'.1 := by omega
+        exact Prod.ext this (Prod.ext hrr hbb)) (j * ε)
+      refine le_trans ?_ hfs
+      simp only [δ]
+      have h1 : 1 / ((q : ℝ) * t.2.1 * R) ≤ 1 / (q * t.2.1 * t'.2.1) := by
+        have hr0 : (0 : ℝ) < t'.2.1 := by exact_mod_cast hr1'
+        apply one_div_le_one_div_of_le (by positivity)
+        exact mul_le_mul_of_nonneg_left hrR' (by positivity)
+      have h2 : |(j : ℝ) * ε| ≤ 1 / Q := by
+        rw [abs_mul]
+        have hjq' : |(j : ℝ)| ≤ q - 1 := by
+          have : |j| ≤ q - 1 := by omega
+          rw [← Int.cast_abs]; exact_mod_cast this
+        calc |(j : ℝ)| * |ε| ≤ (q - 1) * (1 / (q * Q)) :=
+              mul_le_mul hjq' hα (abs_nonneg _) (by linarith)
+          _ ≤ 1 / Q := by
+              rw [div_eq_mul_one_div 1 Q, mul_one_div, mul_one_div, div_le_div_iff₀ (by positivity) hQ]
+              nlinarith
+      linarith) hW'
+  -- Rewrite the sum over `T`.
+  have hT : ∑ t ∈ T, (W - W' + 1 + 3 / 2 * (δ t)⁻¹)⁻¹ * ‖primeExpSum W' W (β t)‖ ^ 2 =
+      ∑ m ∈ s, ∑ r ∈ C, w r *
+        ∑ b ∈ (range r).filter r.Coprime, ‖primeExpSum W' W (α * m + b / r)‖ ^ 2 := by
+    rw [sum_filter, sum_product]
+    refine sum_congr rfl fun m _ => ?_
+    rw [sum_product]
+    refine sum_congr rfl fun r hr => ?_
+    have hrN : r ≤ N := (mem_Icc.1 (mem_filter.1 hr).1).2
+    have hset : (range r).filter r.Coprime = (range N).filter (fun b => b < r ∧ r.Coprime b) := by
+      ext b; simp only [mem_filter, mem_range]; constructor
+      · rintro ⟨h1, h2⟩; exact ⟨h1.trans_le hrN, h1, h2⟩
+      · rintro ⟨_, h1, h2⟩; exact ⟨h1, h2⟩
+    rw [hset, sum_filter, mul_sum]
+    refine sum_congr rfl fun b _ => ?_
+    split_ifs <;> simp [β, δ, w]
+  rw [hT] at hLS
+  -- Montgomery.
+  have hMont : ∀ m : ℤ, ∀ r ∈ C, (1 / Nat.totient r : ℝ) * ‖primeExpSum W' W (α * m)‖ ^ 2 ≤
+      ∑ b ∈ (range r).filter r.Coprime, ‖primeExpSum W' W (α * m + b / r)‖ ^ 2 := by
+    intro m r hr
+    obtain ⟨hr1, hrR, hrsq, _⟩ := hCmem r hr
+    have hφ : (0 : ℝ) < Nat.totient r := by exact_mod_cast Nat.totient_pos.2 hr1
+    have hM := montgomery_ineq hrsq ((Ioc ⌊W'⌋₊ ⌊W⌋₊).filter Nat.Prime)
+      (fun n => (Real.log n : ℂ)) (by
+        intro p hp
+        rw [mem_filter, mem_Ioc] at hp
+        refine (Nat.Prime.coprime_iff_not_dvd hp.2).2 fun hpr => ?_
+        have : p ≤ r := Nat.le_of_dvd hr1 hpr
+        have h2 : W' < (⌊W'⌋₊ : ℝ) + 1 := Nat.lt_floor_add_one W'
+        have h3 : (p : ℝ) ≤ r := by exact_mod_cast this
+        have h4 : (⌊W'⌋₊ : ℝ) + 1 ≤ p := by exact_mod_cast hp.1.1
+        linarith) (α * m)
+    simp only [primeExpSum] at hM ⊢
+    rw [one_div, ← div_eq_inv_mul, div_le_iff₀ hφ]
+    linarith [hM]
+  refine le_trans ?_ hLS
+  rw [sum_mul, sum_comm]
+  refine sum_le_sum fun r hr => ?_
+  rw [mul_sum]
+  refine sum_le_sum fun m _ => ?_
+  calc w r * (1 / Nat.totient r : ℝ) * ‖primeExpSum W' W (α * m)‖ ^ 2
+      = w r * ((1 / Nat.totient r : ℝ) * ‖primeExpSum W' W (α * m)‖ ^ 2) := by ring
+    _ ≤ _ := mul_le_mul_of_nonneg_left (hMont m r hr) (hw0 r hr)
+
 end TernaryGoldbach.MinorArcs

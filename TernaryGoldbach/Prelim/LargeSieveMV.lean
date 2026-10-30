@@ -38,4 +38,11 @@ theorem large_sieve_weighted {ι : Type*} (s : Finset ι) (α δ : ι → ℝ)
       ∑ n ∈ Ioc M (M + N), ‖a n‖ ^ 2 := by
   sorry
 
+/-- **[MV73, Lemma 8]** (for `R ≥ 100`) plus a direct numerical check for `2 ≤ R < 100`
+([B, p. 97]): `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) > log R + 0.25068` for `R ≥ 2`. -/
+theorem sum_weighted_mu_sq_div_totient {R : ℝ} (hR : 2 ≤ R) :
+    Real.log R + 0.25068 ≤ ∑ r ∈ (Icc 1 ⌊R⌋₊).filter Squarefree,
+      (1 + r / R)⁻¹ * (1 / Nat.totient r : ℝ) := by
+  sorry
+
 end TernaryGoldbach.Prelim
