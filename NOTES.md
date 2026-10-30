@@ -17,8 +17,9 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   * Still `sorry`: Lemma 4.2.4 (in `TypeI.lean`), Thm 3.1.1.
 * **Next: Lemma 4.2.4** ([B pp. 70–76], `typeI2 = ∑_v Λ(v) ∑_u μ(u) ∑_n …`); both of its cases
   are used ([B, §6.2.2]). Plan:
-  1. Group by `a = uv`: `typeI2 = ∑_{a ≤ UV odd} c(a) T_{a,∘}` with
-     `c(a) = ∑_{v | a, a/U ≤ v ≤ V} Λ(v) μ(a/v)`, `|c(a)| ≤ log a` (`∑_{v|a} Λ(v) = log a`).
+  1. ✅ (`TypeI2Proof.lean`: `typeI2_eq`, `coefI2`, `abs_coefI2_le`) Group by `a = uv`:
+     `typeI2 = ∑_{a ≤ ⌊V⌋⌊U⌋ odd} c(a) T_{a,∘}`, `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)`,
+     `|c(a)| ≤ log a`.
   2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)]: split `v` into `(v, q) = 1` and
      `v = p^α`, `p | q`; uses (2.20), (2.12) (`Prelim/LambdaMu.lean`, trusted) → `(x/2q) min(1,
      c₀/(πδ)²) log Vq`; error via `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.15), (2.16) → (4.50).
