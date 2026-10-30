@@ -109,10 +109,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     (`FirstChoice.lean`, with `T = x^{1/3}`, `t = δ₀q`):
     * ✅ `typeII_main_le`: main term of (6.37)/(6.40) ≤ `√(C_{x,t}(log t + .002) + log(4t)/2)·
       √(0.30214 log t + 0.67506)` (needs `ζ(3/2) ≤ 2.77`, proved);
-    * parameter facts for `U = ⌊T²/9√t⌋`, `V = ⌊9T/2⌋`, `Q = 3T²/4`;
-    * Type II rest (`T2`, `T3`) ≤ `K₂ x^{5/6}` (needs Lemma C.2.2 `q/φ(q) < Ϝ(r)`, trusted);
-      estimated `≈ 3.0 x^{5/6}` at `x = 2.16·10²⁰` (vs [B]'s 2.74), so the theorem's `3.36 x^{5/6}`
-      will likely become `≈ 4 x^{5/6}`;
+    * ✅ `FirstChoiceParams.lean`: parameter facts for `U = ⌊T²/9√t⌋`, `V = ⌊9T/2⌋`, `Q = 3T²/4`;
+    * ✅ `FirstChoiceTypeII.lean`: `typeII_rest_le` (lower-order Type II terms ≤ `3.2 x^{5/6}`, vs
+      [B]'s 2.74; uses Lemma C.2.2 `q/φ(q) < Ϝ(r)`, trusted, and `e^γ < e^{2/3}`) and
+      **`typeII_first`**: `|S_{II}| ≤ x/√(δ₀φ) √(C_{x,t}(log t + .002) + log(4t)/2)
+      √(0.30214 log t + 0.67506) + 3.2 x^{5/6}` for `q ≤ x^{1/3}/6` (both `|δ| < 8` via (6.37) and
+      `|δ| ≥ 8` via (6.40)). So the theorem's `3.36 x^{5/6}` will likely become `≈ 4 x^{5/6}`;
     * `S_{I,1}`, `S_{I,2}` into the slots `2.5x/√t`, `2x/(δ₀φ)(13/4 log t + 7.82)`,
       `2x/(δ₀q)(13.66 log t + 37.55)`, `K x^{5/6}` (own allocation, see the (6.12) erratum);
     * AM–GM (6.77) with `ρ = 3.397962` → `R_{x,t} log t + 0.8103`.
