@@ -266,4 +266,83 @@ theorem sum_vonMangoldt_gcd_le {q : ℕ} (hq : 1 ≤ q) {V : ℝ} (hV : 1 ≤ V)
     · exact Nat.div_pos (Nat.le_of_dvd (by omega) (Nat.gcd_dvd_right q v)) hg
     · exact (Nat.div_le_self v _).trans hvV
 
+
+/-- Sums over pairs `(v, u)`, `v ≤ V`, `u ≤ U`, regrouped by `a = vu`. -/
+theorem sum_pairs_eq_sum_divisors {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) (g : ℕ → ℕ → ℝ) :
+    ∑ p ∈ Icc 1 ⌊V⌋₊ ×ˢ Icc 1 ⌊U⌋₊, g p.1 p.2 = ∑ a ∈ Icc 1 (⌊V⌋₊ * ⌊U⌋₊),
+      ∑ v ∈ a.divisors, (if (v : ℝ) ≤ V ∧ ((a / v : ℕ) : ℝ) ≤ U then g v (a / v) else 0) := by
+  set NU := ⌊U⌋₊
+  set NV := ⌊V⌋₊
+  rw [← sum_fiberwise_of_maps_to (t := Icc 1 (NV * NU)) (g := fun p : ℕ × ℕ => p.1 * p.2)
+    (fun p hp => by
+      simp only [mem_product, mem_Icc] at hp ⊢
+      exact ⟨Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega)),
+        Nat.mul_le_mul hp.1.2 hp.2.2⟩)]
+  refine sum_congr rfl fun a _ => ?_
+  rw [← sum_filter]
+  refine sum_nbij' (fun p => p.1) (fun v => (v, a / v)) ?_ ?_ ?_ ?_ ?_
+  · intro p hp
+    simp only [mem_filter, mem_product, mem_Icc] at hp
+    obtain ⟨⟨⟨h1, h2⟩, h3, h4⟩, h5⟩ := hp
+    have hdiv : a / p.1 = p.2 := by rw [← h5]; exact Nat.mul_div_cancel_left _ (by omega)
+    simp only [mem_filter, Nat.mem_divisors]
+    refine ⟨⟨⟨p.2, h5.symm⟩, by
+      intro ha; rw [ha] at h5; rcases Nat.mul_eq_zero.1 h5 with h | h <;> omega⟩,
+      (Nat.le_floor_iff hV).1 h2, ?_⟩
+    rw [hdiv]; exact (Nat.le_floor_iff hU).1 h4
+  · intro v hv
+    simp only [mem_filter, Nat.mem_divisors] at hv
+    obtain ⟨⟨hva, ha0⟩, h1, h2⟩ := hv
+    have hv1 : 1 ≤ v := Nat.pos_of_dvd_of_pos hva (Nat.pos_of_ne_zero ha0)
+    have hav : v * (a / v) = a := Nat.mul_div_cancel' hva
+    simp only [mem_filter, mem_product, mem_Icc]
+    refine ⟨⟨⟨hv1, Nat.le_floor h1⟩, ?_, Nat.le_floor h2⟩, hav⟩
+    rcases Nat.eq_zero_or_pos (a / v) with h | h
+    · rw [h, mul_zero] at hav; omega
+    · exact h
+  · intro p hp
+    simp only [mem_filter, mem_product, mem_Icc] at hp
+    obtain ⟨⟨⟨h1, _⟩, _⟩, h5⟩ := hp
+    have hdiv : a / p.1 = p.2 := by rw [← h5]; exact Nat.mul_div_cancel_left _ (by omega)
+    ext <;> simp [hdiv]
+  · intro v _; rfl
+  · intro p hp
+    simp only [mem_filter, mem_product, mem_Icc] at hp
+    obtain ⟨⟨⟨h1, _⟩, _⟩, h5⟩ := hp
+    have hdiv : a / p.1 = p.2 := by rw [← h5]; exact Nat.mul_div_cancel_left _ (by omega)
+    simp only [hdiv]
+
+/-- `c(a) = 0` for `a > ⌊V⌋⌊U⌋`. -/
+theorem coefI2_eq_zero_of_gt {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) {a : ℕ}
+    (ha : ⌊V⌋₊ * ⌊U⌋₊ < a) : coefI2 U V a = 0 := by
+  refine sum_eq_zero fun v hv => ?_
+  rw [if_neg]
+  rintro ⟨h1, h2⟩
+  have hva : v ∣ a := (Nat.mem_divisors.1 hv).1
+  have : v * (a / v) ≤ ⌊V⌋₊ * ⌊U⌋₊ := Nat.mul_le_mul (Nat.le_floor h1) (Nat.le_floor h2)
+  rw [Nat.mul_div_cancel' hva] at this; omega
+
+/-- `∑_{a ≤ N} [P a] c(a) f(a) = ∑_{v ≤ V, u ≤ U} [P(vu)] Λ(v) μ(u) f(vu)` for `N ≥ ⌊V⌋⌊U⌋`. -/
+theorem sum_coefI2_eq {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) (P : ℕ → Prop) [DecidablePred P]
+    (f : ℕ → ℝ) {N : ℕ} (hN : ⌊V⌋₊ * ⌊U⌋₊ ≤ N) :
+    ∑ a ∈ Icc 1 N, (if P a then coefI2 U V a * f a else 0) =
+      ∑ p ∈ Icc 1 ⌊V⌋₊ ×ˢ Icc 1 ⌊U⌋₊,
+        (if P (p.1 * p.2) then (Λ p.1 : ℝ) * (μ p.2 : ℝ) * f (p.1 * p.2) else 0) := by
+  rw [sum_pairs_eq_sum_divisors hU hV (fun v u =>
+    if P (v * u) then (Λ v : ℝ) * (μ u : ℝ) * f (v * u) else 0)]
+  have hsub : Icc 1 (⌊V⌋₊ * ⌊U⌋₊) ⊆ Icc 1 N := Icc_subset_Icc le_rfl hN
+  rw [← sum_subset hsub (fun a ha hna => by
+    rw [coefI2_eq_zero_of_gt hU hV (by simp only [mem_Icc] at ha hna; omega)]; simp)]
+  refine sum_congr rfl fun a _ => ?_
+  rw [coefI2]
+  split_ifs with hP
+  · rw [sum_mul]
+    refine sum_congr rfl fun v hv => ?_
+    have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
+    rw [hva, if_pos hP]
+    split_ifs <;> ring
+  · refine (sum_eq_zero fun v hv => ?_).symm
+    have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
+    rw [hva, if_neg hP]; split_ifs <;> rfl
+
 end TernaryGoldbach.MinorArcs
