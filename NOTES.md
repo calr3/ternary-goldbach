@@ -36,6 +36,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
      R2 (4.59)–(4.60) (∫ t log t; uses `UV + (19/18)Q₀ ≤ x/5.6`); R3 (4.61)–(4.62) (uses
      `x ≥ e² c₂/2`); result (4.51). Case (a) [B pp. 73–75]: (4.57), modified (4.17)–(4.18), (4.58)
      = (4.52). Antiderivatives needed: `t log t`, `log t / t`, `log t` (add to `SumTools`).
+     **Errata/decisions found while planning** (to apply to `bound_4_51/52`, documented):
+     * `c₁` should be `1 + |η'|₁/(x/D)` (odd `n`, as in 4.2.2); [B] prints `1 + |η'|₁/(2x/D)`,
+       the value for the all-`n` Lemma 4.2.1.
+     * R2 (4.59)–(4.60): [B]'s condition "`(2/9 + 3/2 + log(D' + 19q/18)) ≤ x`" must mean
+       `≤ log x`, and I could not reproduce the exact constant from `UV + (19/18)Q₀ ≤ x/5.6`.
+       Own derivation (midpoint convexity of `t log t`, upper limit `D' + 3q/2`): same leading
+       terms `(5c₀c₂/3π²) D' log(D'/√e) + (25c₀/4π²)(2c₂)^{3/2} √x log x`, plus an extra
+       `(25c₀/3π²)(2c₂)^{3/2} √x` (+ a constant for `D' < √e`); needs `D' + 3q/2 ≤ x`, which
+       follows from the hypothesis. Plan: add that `√x` term to `bound_4_51` rather than chase
+       [B]'s constant.
   Reuse: `InnerSums` (`Todd`, `norm_Todd_le_minA/_min_sin`, `Todd_main`), `SumTools`, the range
   lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
