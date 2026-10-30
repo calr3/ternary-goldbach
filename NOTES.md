@@ -15,11 +15,17 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   corrected constants. The changes come from `g(r₀)` in (14.37) (`0.38491 → 0.39761`), the `+0.5`
   term of `f₁` and `f₂` in (14.47) (`0.11438 → 0.11802`), and (14.43) (`0.30351 → 0.31181`).
   Lemma 11.2.1 still holds (`g/h ≤ 0.61`).
+* **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
+  "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
+  of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale
+  `x`. The obvious repairs fail numerically. Decide how to proceed before formalizing Ch. 13.
 * **Next: Ch. 11 (Prop 11.2.3), then Ch. 12, Ch. 13 → (14.49).** See the Prop 11.2.3 erratum
   below before formalizing it. Done so far: (11.9) `S_etaStar_eq`, `norm_S_etaStar_le`
   (`EtaStar.lean`, no `sorry`); Theorem 3.1.1 at scale `wy` with `δ ↦ wδ`
-  (`theorem_3_1_1_scaled(_le_one)`, `EtaStarBound.lean`). Remaining for 11.2.3: monotonicity of
-  `g_z(r)` in `r` (Lemma 11.2.4; needed to pass from `max(2, w|δ|/4)q` to `wr`), the region
+  (`theorem_3_1_1_scaled(_le_one)`, `EtaStarBound.lean`); (11.11) `norm_S_eta2_le_gx`
+  (`GBound.lean`, `q/φ(q) ≤ Ϝ(r)` via the trusted Lemma C.2.2); **`gx_antitoneOn`**: `g_x(r)` is
+  non-increasing on `[670, x^{1/3}/6]` (`GMono.lean`, no `sorry`; proved via
+  `Q(log r) r^{-p}` with `Q' ≤ pQ`, not [B]'s (11.23)–(11.25)). Remaining for 11.2.3: the region
   `w < 1/K` (trivial bound `|S_{η₂}(α,z)| ≤ S_{η₂}(0,z) ≤ 1.04488 z`, Cor. C.1.3, trusted), the
   large-`w` tail, and integrating against `φ` (convexity, Lemma 11.2.2; `C_{φ,2,K}`).
 * Part I (minor arcs):
@@ -160,6 +166,42 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
+
+## Ch. 13: scale erratum (the ℓ∞ and ℓ² inputs use arcs at different scales)
+
+Prop 13.1.2 combines, **for one family of arcs** `𝔐_{δ₀,r}` ((10.5), defined with a parameter
+`x`), an ℓ² bound `∫_{𝔐_{δ₀,r+1}} |S₁|² ≤ H(r) Σ|aₙ|²` (13.4) and an ℓ∞ bound
+`|S₂(α)| ≤ g(r)` off `𝔐_{δ₀,r}` (13.5). In the proof of Thm 13.2.1 (pp. 249–252):
+
+* the ℓ² input `H(r) = (log(r+1) + c⁺)/(log √x + c⁻)` comes from Cor 12.2.5 (12.42) with
+  arcs at **scale `x`**: `c⁻ = 0.6394 < log(1/√(2·8)) + log 2 + 1.3325822` is `log 2Q + c_E` with
+  `Q = √(x/16)`. `J` (14.7), the major arcs (14.27) and `E_{η_*,r,8}` (14.17) are also at
+  scale `x`, and so is our `majorArcs 8 r₀ (xOf N)` in `minor_arcs_input`;
+* the ℓ∞ input (13.14)–(13.17) is derived only for `α` outside the arcs at **scale
+  `y = x/κ`**: "Let α ∉ 𝔐_{8,r} … where y is used instead of x to define 𝔐_{8,r}" (p. 249). The
+  paper arXiv:1312.7748, p. 48, has the same sentence.
+
+The `y`-arcs are `κ = 49` times wider. For `α` outside the `x`-arcs but inside the `y`-arcs
+(`q ≤ r`, `8r/κ ≤ |δ_y| q < 8r`), Thm 3.1.1 at scale `y` gives only
+`r_α = max(q, |δ_y|q/8) ≥ max(q, r/κ)`. For example, take `q = 1` and `α` just outside the
+`x`-arc around `0` at level `r₀`: `δ_y ≈ 8r₀/κ`, so `r_α ≈ 3061` and the bound is `g(3061) ≈ 7 g(r₀)`.
+(The true value there is tiny: it is a major-arc point for the shorter sum `S_{η_*}`.)
+
+Repairs tried (`scripts/minor_arc_scale_check.py`; all at `x = 4.9·10²⁶`, our constants):
+1. **Everything at scale `y`**: `c⁻ → c⁻ − log 7`, which gives `M ≈ 0.8497` and
+   `Z ≈ 1.0654 x²/κ > 1.058259`. **Fails.** (With [B]'s `0.5`, `Z ≈ 1.049`, which would pass.)
+   It also needs the major arcs to be `𝔐_{392,r₀}` at scale `x`, beyond Thm 7.1.4's range
+   `|δ| ≤ 600000·gcd(q,2)/q`.
+2. **Everything at scale `x`, with Part II on the gap**: Cor 7.1.3 (GRH-verified, `q ≤ 300000`,
+   `|δ_y| ≤ 4·300000/q`) bounds `S_{η_*}` on the gap whenever `q ≤ 300000`, including all of level
+   `r₀`. But for levels `r ∈ (300000, r₁]` the gap contains `q ∈ (300000, r]`, where only
+   `g(q) ≥ g(300000)` is available. The tail (14.43) needs `g(r₁)`; with `g(3·10⁵) ≈ 0.0317`
+   instead of `g(r₁) ≈ 0.0156` it grows from `0.312` to `0.636`. **Fails** by a wide margin.
+
+So neither [B]'s argument as written nor these repairs establishes (14.49) over the complement of
+the scale-`x` arcs. `minor_arcs_input` remains a cited-but-unverified input. Possible ways forward:
+a finer ℓ² accounting of the gap region (by `q` and `δ`), different parameters (`κ`, `r₁`), or
+checking whether a later version of [B] fixes this.
 
 ## Ch. 11: Prop 11.2.3 erratum (the proof ignores that `δ` scales with `w`)
 

@@ -77,7 +77,12 @@ version [H, (7.48)] had `0.97392`; the book has `1.00948`.)
 with `R log δ₀q + 0.5` and `3.36 x^{5/6}`.  The proved version (`MinorArcs/PointwiseBound.lean`)
 has `0.8103` and `3.8`: [B]'s `0.5` is an arithmetic slip in (6.77).  Re-running [B, §14.3] with
 these constants (`scripts/minor_arc_total_numerics.py`) gives `M ≤ 0.82744`, so the bound is
-`1.037499 x²/κ`.  The final margin drops from `0.048779` to `0.020659`, which is still enough. -/
+`1.037499 x²/κ`.  The final margin drops from `0.048779` to `0.020659`, which is still enough.
+
+**Caveat (see `NOTES.md`, "Ch. 13: scale erratum").** [B]'s proof of Thm 13.2.1 derives its ℓ∞
+input only off the major arcs at scale `x/κ`, which are 49 times wider than the arcs here (scale
+`x`, as in (14.27)), while its ℓ² input uses scale `x`.  We have not found a repair that
+recovers this bound, so this input's proof in the literature has a gap. -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by

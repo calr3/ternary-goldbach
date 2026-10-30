@@ -26,6 +26,8 @@ statements, each with its own `sorry`.
 (14.49)  [§14.3: numerics, M ≤ 0.80508x (14.48)]
  └─ Thm 13.2.1  (minor-arc total: ℓ² over arcs × ℓ∞ bounds)
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds)
+     │   ⚠ Thm 13.2.1's proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ²
+     │     input and (14.27); see NOTES "Ch. 13: scale erratum"
      ├─ Thm 3.1.1  (pointwise: |S_{η₂}(α,x)| for α = a/q + δ/x, x ≥ 2.16·10²⁰)   ← Part I
      │   [stated: MinorArcs/PointwiseBound.lean `theorem_3_1_1`]
      │   ├─ Ch 3.3  Vaughan's identity (✅ MinorArcs/Vaughan.lean), alternative route
@@ -50,7 +52,8 @@ statements, each with its own `sorry`.
      │   ⇒ Thm 3.1.1 ✅ PointwiseBound `theorem_3_1_1` (modulo the trusted inputs)
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [B]'s proof ignores δ_w = wδ, statement
      │   survives for r ≤ r₁, see NOTES and scripts/prop_11_2_3_check.py)
-     │   [(11.9) ✅ MinorArcs/EtaStar.lean; Thm 3.1.1 at scale wy ✅ MinorArcs/EtaStarBound.lean]
+     │   [(11.9) ✅ MinorArcs/EtaStar.lean; Thm 3.1.1 at scale wy ✅ MinorArcs/EtaStarBound.lean;
+     │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)

@@ -30,3 +30,9 @@ for y in [mpf(10)**25, mpf(10)**40, mpf(10)**100]:
         A=quad(lambda w: g1(w*y,w*r)*phi(w),[1/K,1,4,12,40])
         Alow=quad(lambda w: g1(w*y,w*r)*phi(w),[1/K,1]); Clow=quad(lambda w: g1(w*y,r)*phi(w),[1/K,1])
         print(f"y=1e{int(log(y,10))} r={float(r):.3g}: A/C = {float(A/C):.4f}  (w<1 part: A {float(Alow):.4g} vs C {float(Clow):.4g}; C/|phi|1 = {float(C/sqrt(pi/2)):.5g})")
+
+print("--- g_{y,phi}(r) ~ C(r)/|phi|_1 at y = 1e25")
+y=mpf(10)**25; K=log(y)/2
+for r in [mpf(150000), mpf(300000), mpf(400000), mpf(3)/8*y**(mpf(4)/15)]:
+    C=quad(lambda w: g1(w*y,r)*phi(w),[1/K,1,4,12,40])
+    print(float(r), float(C/sqrt(pi/2)))

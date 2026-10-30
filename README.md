@@ -79,6 +79,8 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/PointwiseBound.lean` | **[B, Theorem 3.1.1]**, both cases (corrected first case: `0.8103` for `0.5`, `3.8x^{5/6}` for `3.36x^{5/6}`; second case with [B]'s `0.276`, `1234`) | ✅ (uses trusted bounds) |
 | `MinorArcs/EtaStar.lean` | [B, (11.9)]: `S_{η_*}(α,x) = ∫₀^∞ S_{η₂}(α, wx/κ) φ(w) dw/w` (Mellin substitution + Fubini) and its triangle inequality | ✅ |
 | `MinorArcs/EtaStarBound.lean` | towards [B, Prop 11.2.3]: Theorem 3.1.1 at scale `wy` with `δ` rescaled to `wδ` (`w ≤ 1` automatic; `w > 1` with the extra `Q_{wy}` hypothesis) | ✅ (uses trusted bounds) |
+| `MinorArcs/GBound.lean` | [B, (11.11)–(11.13)]: `|S_{η₂}(α,x)| ≤ g_x(r) x`, `r = max(1,|δ|/8)q` (our constants `0.8103`, `3.8`) | ✅ (uses trusted bounds) |
+| `MinorArcs/GMono.lean` | [B, Lemma 11.2.4] for one scale: `g_x(r)` non-increasing on `[670, x^{1/3}/6]` (by a different argument) | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 
@@ -113,6 +115,10 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
   these constants (`scripts/minor_arc_total_numerics.py`) gives the minor-arc total
   `1.0376 x²/κ` instead of `1.00948 x²/κ`. The final margin is then `0.020659 x²/κ` instead of
   `0.04877 x²/κ`, which still suffices.
+* **[B]'s proof of Thm 13.2.1 (the minor-arc total) mixes two scales of major arcs.** Its ℓ∞ input is
+  derived only off the arcs at scale `x/κ`, 49 times wider than the scale-`x` arcs of its ℓ² input
+  and of (14.27). The obvious repairs do not recover (14.49) (`scripts/minor_arc_scale_check.py`,
+  `NOTES.md`). So `minor_arcs_input`, though cited from [B], currently has a gap in its proof.
 * [B]'s proof of Prop 11.2.3 applies Theorem 3.1.1 at scale `wx` without rescaling `δ` to `wδ`.
   The statement survives with about 11% to spare (`scripts/prop_11_2_3_check.py`, see `NOTES.md`).
 
