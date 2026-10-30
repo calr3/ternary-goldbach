@@ -64,8 +64,20 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     with the exact triple sum `T₂` in place of the book's computable bound `G₂ ≥ T₂`. The error
     constant `1.27(1+1/√2)(1-2^{-3/2})³ ζ(3/2)³ ≈ 0.586 ζ(3/2)³` is rounded up to `1.27 ζ(3/2)³`
     as in [B]. `T₂(S) = 1 - 1/S` on `[1, 2)` (matches [B]'s `G_v`).
-* **Next**: Ch. 6 (assembly of the minor-arc bound; re-check numerics for the (4.40), 4.2.4 and
-  5.2 corrections). Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
+* **Ch. 6 in progress.**
+  * Step 1 ✅ `MinorArcs/Decomposition.lean`: (3.11) `S_{η₂} = S_{I,1} - S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}`
+    (`decomposition`, `U V : ℕ`), from Vaughan via `sum_odd_conv`; `S_{I,1} = typeILog`,
+    `S_{I,2} = typeI2`.
+  * Step 2 ✅ `MinorArcs/TypeIIReduction.lean`: (5.2)–(5.5): `η₂(mn/x) = 4∫ 1[…] dW/W`,
+    `S_{II} = 4∫_V^{x/U} IIsum(W) dW/W`, `|IIsum| ≤ √S₁(√S₂ + √S₃)`, `S₃ ≤ (x/2W+1)·1.4262²W`
+    (trusted [RS62, Thm. 13] in `LambdaMu.lean`); `norm_typeII_le` takes any integrable majorant
+    `g(W)`. Needs `U ≥ 1`, `V ≥ 2`, `V ≤ x/U`.
+  * Step 3 (next): §6.2 explicit totals — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
+    Lemma 4.2.4 (§6.2.2), `|S_{II}|` (§6.2.3: (6.16)–(6.20) …, integrating the S₁·S₂ bounds over
+    `W` in ranges `[V, W₀]`, `[W₀, x/U]`), `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
+  * Step 4: §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).
+  * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
+* Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.

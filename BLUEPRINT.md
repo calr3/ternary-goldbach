@@ -42,6 +42,8 @@ statements, each with its own `sorry`.
      │   │    §5.1: Lemma 5.1.1, (5.7)–(5.8), (5.34) ✅ MinorArcs/TypeIIS1.lean; trusted f(X) ≤ 1.27X,
      │   │    T₂(S) ≤ 0.37273 (S ≥ 16; Lemma 5.1.2 + computations), (5.36), (5.37)]
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
+     │       [(3.11) decomposition ✅ MinorArcs/Decomposition.lean; (5.2)–(5.5) Type II reduction ✅
+     │        MinorArcs/TypeIIReduction.lean; §6.2 explicit totals, §6.3 numerics to do]
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*)
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
