@@ -157,7 +157,7 @@ noncomputable def bound_4_32 (x δ : ℝ) (q : ℕ) (D Q₀ ε : ℝ) : ℝ :=
     3 / 2 * c₁ * (2 + (1 + ε) / ε * logPlus (2 * D / y)) * (x / Q₀) +
     35 * c₀ * c₂ / (3 * π ^ 2) * q
 
--- [B, Lemma 4.2.2] itself is stated and proved (case (b)) in `MinorArcs/TypeIProof.lean`.
+-- [B, Lemma 4.2.2] itself is stated and proved in `MinorArcs/TypeIProof.lean`.
 
 /-- The main term (4.40) of [B, Lemma 4.2.3], **corrected**.  [B] prints
 `(x/q) min(1, c₀/(2πδ)²) |∑_{m ≤ M/q, (m,q)=1} μ(m)/m · log(x/mq)| + (x/q)|(log·η)^(-δ)| |…|`,
@@ -171,7 +171,9 @@ noncomputable def bound_4_40 (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
       |muSum (Mof x δ q D) q (2 * q) fun _ => 1| +
     c₀ * (1 / 2 - 2 / π ^ 2) * (D ^ 2 / (4 * q * x) * Real.log (rexp (1 / 2) * x / D) + 1 / rexp 1)
 
-/-- The error term (4.41) of [B, Lemma 4.2.3], with `c₁ = 1 + |η'|₁/(x/D)`. -/
+/-- The error term (4.41) of [B, Lemma 4.2.3], with `c₁ = 1 + |η'|₁/(x/D)`.  **Slightly weakened**:
+the last term has `log(2ex/c₂)` where [B] has `log(2√e x/c₂)`; [B]'s final step in (4.47) is only
+justified for `q ≥ 2` (for `q = 1` it would need a numerical comparison). -/
 noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
   let c₁ := 1 + eta2'L1 / (x / D)
   2 * √(c₀ * c₁) / π * D * Real.log (rexp 1 * x / D) +
@@ -180,7 +182,7 @@ noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
         Real.log x +
       2 * √(c₀ * c₁) / π * (√3 + 1 / 2 * logPlus (D / (q / 2))) * Real.log (q / c₂)) * q +
     3 * c₁ / 2 * √(2 * x / c₂) * Real.log (2 * x / c₂) +
-    20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * x) * Real.log (2 * √(rexp 1) * x / c₂)
+    20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * x) * Real.log (2 * rexp 1 * x / c₂)
 
 /-- The bound (4.42) of [B, Lemma 4.2.3] (case `|δ| ≥ 1/2c₂`; this is the whole bound). -/
 noncomputable def bound_4_42 (x δ : ℝ) (q : ℕ) (D ε : ℝ) : ℝ :=
@@ -193,13 +195,7 @@ noncomputable def bound_4_42 (x δ : ℝ) (q : ℕ) (D ε : ℝ) : ℝ :=
     (3 * c₁ / 4 * (2 / √5 + (1 + ε) / (2 * ε) * Real.log x) +
       40 / 3 * √2 * c₀ * c₂ ^ (3 / 2 : ℝ)) * √x * Real.log x
 
-/-- **[B, Lemma 4.2.3]** for `η = η₂` (and `ρ₀ = 4`, by [B, (6.2)]). -/
-theorem lemma_4_2_3 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : max 16 (2 * √x) ≤ Q₀) (hD : √3 ≤ D) (hDx : D ≤ min (x / 4) (x / rexp 1)) :
-    ((|δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) →
-      ‖typeILog α x D‖ ≤ bound_4_40 x δ q D + bound_4_41 x q D) ∧
-    (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 → ‖typeILog α x D‖ ≤ bound_4_42 x δ q D ε) := by
-  sorry
+-- [B, Lemma 4.2.3] itself is stated (and case (b) proved) in `MinorArcs/TypeILogProof.lean`.
 
 /-- `c₄ = 1.03884` [B, Lemma 4.2.4]. -/
 def c₄ : ℝ := 1.03884

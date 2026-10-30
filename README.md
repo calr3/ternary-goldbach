@@ -22,9 +22,10 @@ Files under `TernaryGoldbach/MinorArcs/` named in `BLUEPRINT.md` as *blueprint n
 statements of intermediate results from the book, waiting to be proved, and `ternary_goldbach`
 does not depend on them (check with `#print axioms`).
 
-One `sorry` there is a **trusted computation** rather than a gap:
-`MinorArcs/InnerSums.lean: eta2_fourier_bound'`, the bound `|η̂₂''|_∞ ≤ 31.521` that [B,
-App. B] obtains by rigorous numerics.
+Two `sorry`s there are **trusted computations** rather than gaps: the bounds
+`|η̂₂''|_∞ ≤ 31.521` (`MinorArcs/InnerSums.lean: eta2_fourier_bound'`, [B, (B.6)]) and
+`|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` (`MinorArcs/Eta2Log.lean: eta2log_fourier_bound`, [B, Lemma B.2.3]),
+which [B, App. B] obtains by rigorous numerics.
 
 ## Layout
 
@@ -48,6 +49,10 @@ App. B] obtains by rigorous numerics.
 | `MinorArcs/BlockSums.lean` | splitting sums into blocks of length `q`; `∑ 1/(R+jq)` and `∑ √(1+q/(R+jq))` bounds | ✅ |
 | `MinorArcs/TypeI.lean` | blueprint: definitions and bounds of [B, Lemmas 4.2.2–4.2.4]; statements of 4.2.3–4.2.4 | 🟡 statements |
 | `MinorArcs/TypeIProof.lean` | **[B, Lemma 4.2.2] proved** (both cases), modulo the trusted `|η̂₂''|_∞ ≤ 31.521` | ✅ (uses the trusted bound) |
+| `MinorArcs/InnerSumsGen.lean` | (4.36) and the Poisson main term for a general smoothing function | ✅ |
+| `MinorArcs/Eta2Log.lean` | `η_(ρ)(t) = log(ρt) η₂(t)`: [B, (4.38)], Lemma B.2.1; trusted Lemma B.2.3 | 🟡 one trusted computation |
+| `MinorArcs/SumTools.lean` | sums vs antiderivatives (MVT); the log-weighted sums of [B, Lemma 4.2.3] | ✅ |
+| `MinorArcs/TypeILogProof.lean` | [B, Lemma 4.2.3]: **case (b) proved** (`lemma_4_2_3_caseB`, with (4.40) corrected and (4.41) slightly weakened); case (a) `sorry` | 🟡 case (a) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
@@ -80,6 +85,9 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
   cross-checked against [B] (η₁ = 2·1_{[1/2,1]}, η₂ as in [B, (11.10)], η₊ as in [B, (7.4)–(7.6)]
   with `H = 200`, major arcs [B, (10.5)]). A numerical check gives `max |η₊| ≈ 1.0000` and
   `max |η_*| ≈ 1.2267`, consistent with [B, (14.3), (14.21)].
+* [B, (4.40)] (Lemma 4.2.3) states the main term of the all-`n` version; its own proof gives
+  `x/2q`, `η̂(−δ/2)` and `(m, 2q) = 1`. `bound_4_40` is the corrected statement. The last term
+  of (4.41) is proved with `log(2ex/c₂)` in place of `log(2√e x/c₂)`.
 * [B]'s proof of Lemma 4.1.3 has a small gap: its intermediate bound can exceed the stated
   `(2Bq/π) max(2, log(Ce³q/(Bπ)))` for small `C`. The lemma is nonetheless true, and
   `MinorArcs/TrigSums.lean` proves it with a sharper argument (see the docstring there).
