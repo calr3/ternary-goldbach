@@ -21,7 +21,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
      `typeI2 = ∑_{a ≤ ⌊V⌋⌊U⌋ odd} c(a) T_{a,∘}`, `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)`,
      `|c(a)| ≤ log a`.
   2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)], via `Todd_main`:
-     (i) `|∑_{a ≤ M odd, q|a} c(a)/a| ≤ (log q + log V)/q`: reindex `(v, u)`, `q | uv ⟺ q/(q,v) | u`,
+     (i) ✅ `abs_sum_coefI2_div_le`: `|∑_{a ≤ M odd, q|a} c(a)/a| ≤ (log q + log V)/q`: reindex `(v, u)`, `q | uv ⟺ q/(q,v) | u`,
      inner `u`-sum `= μ(q')/q' ∑_{w ≤ R/q', (w,2q')=1} μ(w)/w`, bounded by `(q,v)/q` with (2.20);
      then `∑_{v ≤ V} Λ(v)(q,v)/v ≤ ∑_{v | q} Λ(v) + ∑_{v ≤ V} Λ(v)/v ≤ log q + log V` (terms with
      `v ∤ q` inject via `v ↦ v/(q,v)`, same `Λ`), using (2.12).
