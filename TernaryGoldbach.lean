@@ -59,6 +59,8 @@ import TernaryGoldbach.MinorArcs.SecondNumerics
 import TernaryGoldbach.MinorArcs.SecondBridge
 import TernaryGoldbach.MinorArcs.SecondParams
 import TernaryGoldbach.MinorArcs.SecondTypeIIa
+import TernaryGoldbach.MinorArcs.SecondTypeIIaNum
+import TernaryGoldbach.MinorArcs.SecondTypeIIaPieces
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound
