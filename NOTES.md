@@ -31,7 +31,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
      increasing to handle `D' = D < c₂x/q`; R3 with weight `log(x/(R+jq))` via `F₃` and
      `√(1+u) ≤ 1 + u/2`, [B (4.48)].
   4. Case (a): [B (4.44)–(4.45)] and the modified (4.17)–(4.18).
-  Then Lemma 4.2.4 ([B pp. 70–76]).
+  **Next: Lemma 4.2.4** ([B pp. 70–76]); both its cases are used ([B, §6.2.2]).
 
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
 
@@ -71,7 +71,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   `x/2q`, `η̂(-δ/2)` (so `min(1, c₀/(πδ)²)`) and `(m,2q) = 1`, as in (4.30). `bound_4_40` is the
   corrected form. **To check in Ch. 6**: §6.2.1 uses (4.40) for `S_{I,1}`; the corrected
   `δ`-decay is 4× weaker for large `δ` (the prefactor halves), so the final numerics there
-  may need re-checking.
+  may need re-checking. Note §6.2.1 itself copies the uncorrected (4.40).
 
 ## Reading the book
 
