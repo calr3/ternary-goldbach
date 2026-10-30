@@ -223,26 +223,22 @@ noncomputable def bound_4_51 (x : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
     3 * c₁ / 2 * √(2 * x / c₂) * (Real.log (3 * √(c₂ * x / 2)) + 1) +
     (2 * √c₀ / π * √(2 * c₂ * x) * (2 + 12 * Real.log (5 * D)) + 5 * c₀ / (6 * π ^ 2))
 
-/-- The error term (4.52) of [B, Lemma 4.2.4] (case `|δ| ≥ 1/2c₂`). -/
-noncomputable def bound_4_52 (x δ : ℝ) (q : ℕ) (U V ε : ℝ) : ℝ :=
+/-- The error term (4.52) of [B, Lemma 4.2.4] (case (a), `|δ| ≥ 1/2c₂`), with `D = UV`,
+`y = x/|δ|q`, **as proved** (`TypeI2Rest.lean: norm_restPartI2_le_caseA`). Same leading term
+`(2√(c₀c₁)/π) D log(D/e)` as [B]; the other terms have the same shape as [B]'s
+(`(1+ε) (y+1) (… log …)` and `(x/Q₀)(… log …)`, the latter `≤ (√x/2)(…)` since `Q₀ ≥ 2√x`) but
+cruder constants; `c₁ = 1 + |η'|₁/(x/D)` as in `bound_4_51`; `min(y+1, 2D)` as in `bound_4_32`. -/
+noncomputable def bound_4_52 (x δ : ℝ) (q : ℕ) (U V Q₀ ε : ℝ) : ℝ :=
   let D := U * V
-  let c₁ := 1 + eta2'L1 / (2 * x / D)
+  let c₁ := 1 + eta2'L1 / (x / D)
   let y := x / (|δ| * q)
-  2 * √(c₀ * c₁) / π * D * Real.log (D / rexp 1) +
-    2 * √(c₀ * c₁) / π * (1 + ε) * (y + 1) *
-      ((√(3 + 2 * ε) - 1) * Real.log ((y + 1) / √2) +
-        1 / 2 * Real.log D * logPlus (rexp 2 * D / y)) +
-    (3 * c₁ / 2 * (1 / 2 + 3 * (1 + ε) / (16 * ε) * Real.log x) +
-      20 * c₀ / (3 * π ^ 2) * (2 * c₂) ^ (3 / 2 : ℝ)) * √x * Real.log x
+  let Y := min ((⌊y⌋₊ : ℝ) + 1) (2 * D)
+  2 * √(c₀ * c₁) / π * (D * Real.log (D / rexp 1) +
+      (1 + ε) * Y * (√(3 + 2 * ε) * Real.log (5 * D) + 1 / 2 +
+        (2 + Real.log D / 2) * logPlus (2 * D / y))) +
+    3 * c₁ / 2 * (2 * Real.log (5 * D) + (1 + ε) / ε * Real.log D * logPlus (2 * D / y)) * (x / Q₀) +
+    35 * c₀ * c₂ / (3 * π ^ 2) * q * Real.log D
 
-/-- **[B, Lemma 4.2.4]** for `η = η₂`. -/
-theorem lemma_4_2_4 {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : max (2 * rexp 1) (2 * √x) ≤ Q₀) (hx : rexp 2 * c₂ / 2 ≤ x) (hU : 1 ≤ U) (hV : 1 ≤ V)
-    (hUV : U * V + 19 / 18 * Q₀ ≤ x / 5.6) :
-    ((|δ| ≤ 1 / (2 * c₂) ∨ U * V ≤ Q₀ / 2) →
-      ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_51 x q U V) ∧
-    (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 →
-      ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_52 x δ q U V ε) := by
-  sorry
+-- [B, Lemma 4.2.4] itself is stated and proved in `MinorArcs/TypeI2Rest.lean`.
 
 end TernaryGoldbach.MinorArcs

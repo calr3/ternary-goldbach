@@ -47,12 +47,15 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/FourierSums.lean` | [B, §2.3]: `∑ 1/(n−s)² = π²/sin²(πs)` (via Parseval), `∑_{n≠0} 1/(n−r)² ≤ π² − 4`, Lemma 2.3.1 (via Poisson summation), both bounds of (2.2) (with total variation for `|f'|₁`) | ✅ |
 | `MinorArcs/InnerSums.lean` | `T_{m,∘}` and its bounds [B, (4.36)]; the Poisson main term [B, (4.33)–(4.34)]; the trusted `|η̂₂''|_∞ ≤ c₀` | 🟡 one trusted computation |
 | `MinorArcs/BlockSums.lean` | splitting sums into blocks of length `q`; `∑ 1/(R+jq)` and `∑ √(1+q/(R+jq))` bounds | ✅ |
-| `MinorArcs/TypeI.lean` | blueprint: definitions and bounds of [B, Lemmas 4.2.2–4.2.4]; statements of 4.2.3–4.2.4 | 🟡 statements |
+| `MinorArcs/TypeI.lean` | definitions and bounds of [B, Lemmas 4.2.2–4.2.4] (the bounds of 4.2.4 in our corrected form) | ✅ definitions |
 | `MinorArcs/TypeIProof.lean` | **[B, Lemma 4.2.2] proved** (both cases), modulo the trusted `|η̂₂''|_∞ ≤ 31.521` | ✅ (uses the trusted bound) |
 | `MinorArcs/InnerSumsGen.lean` | (4.36) and the Poisson main term for a general smoothing function | ✅ |
 | `MinorArcs/Eta2Log.lean` | `η_(ρ)(t) = log(ρt) η₂(t)`: [B, (4.38)], Lemma B.2.1; trusted Lemma B.2.3 | 🟡 one trusted computation |
 | `MinorArcs/SumTools.lean` | sums vs antiderivatives (MVT); the log-weighted sums of [B, Lemma 4.2.3] | ✅ |
 | `MinorArcs/TypeILogProof.lean` | **[B, Lemma 4.2.3] proved** in the form [B, §6.2.1] uses ((4.40) corrected, (4.41) slightly weakened; the unused (4.42) omitted) | ✅ (uses the trusted bounds) |
+| `Prelim/LambdaMu.lean` | trusted literature bounds on sums of `Λ` and `μ` [B, (2.12), (2.15), (2.16), (2.20)] | 🟡 trusted |
+| `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ |
+| `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |

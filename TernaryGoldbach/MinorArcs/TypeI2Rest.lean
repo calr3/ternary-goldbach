@@ -171,18 +171,18 @@ theorem sum_R2W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤
     _ = _ := by simp only [K]; field_simp
 
 set_option maxHeartbeats 1000000 in
-/-- Weighted range (R3) (cf. [B, (4.61)–(4.62)]): for `1 ≤ R`, `q/2 ≤ R < D`, with
+/-- Weighted range (R3) (cf. [B, (4.61)–(4.62)]), general form: for `1 ≤ R < D`, with
 `c₁ = 1 + |η'|₁/(x/D)`,
-`∑_{R < m ≤ D} log m |T_{m,∘}| ≤ (3c₁/2) x (log(3R)/R + (log D/q) log(D/R)) +
-(2√(c₀c₁)/π)(√3 q log(3R) + D(log D - 1) - R(log R - 1) + 2q log(D/R) + (q/2) log D log(D/R))`. -/
-theorem sum_R3W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
+`∑_{R < m ≤ D} log m |T_{m,∘}| ≤ (3c₁/2) x (log(R+q)/R + (log D/q) log(D/R)) +
+(2√(c₀c₁)/π)(√(1+q/R) q log(R+q) + D(log D - 1) - R(log R - 1) + 2q log(D/R) + (q/2) log D log(D/R))`. -/
+theorem sum_R3W' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
-    (hδ : |δ / x| * (q * Q) ≤ 1) {R D : ℝ} (hR1 : 1 ≤ R) (hRq : (q : ℝ) / 2 ≤ R) (hRD : R < D) :
+    (hδ : |δ / x| * (q * Q) ≤ 1) {R D : ℝ} (hR1 : 1 ≤ R) (hRD : R < D) :
     ∑ n ∈ Ioc ⌊R⌋ ⌊D⌋, Real.log n * Tn α x n ≤
       3 * (1 + eta2'L1 / (x / D)) / 2 * x *
-          (Real.log (3 * R) / R + Real.log D / q * Real.log (D / R)) +
+          (Real.log (R + q) / R + Real.log D / q * Real.log (D / R)) +
         2 * √(c₀ * (1 + eta2'L1 / (x / D))) / π *
-          (q * √3 * Real.log (3 * R) + (D * (Real.log D - 1) - R * (Real.log R - 1)) +
+          (q * √(1 + q / R) * Real.log (R + q) + (D * (Real.log D - 1) - R * (Real.log R - 1)) +
             2 * q * Real.log (D / R) + q / 2 * Real.log D * Real.log (D / R)) := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hR0 : 0 < R := by linarith
@@ -220,21 +220,18 @@ theorem sum_R3W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤
   -- The term `j = 0`.
   have h0 : Real.log (min (R + (((0 : ℕ) : ℝ) + 1) * q) D) *
       (P1 * (1 / (R + ((0 : ℕ) : ℝ) * q)) + 2 * q * √(c₀ * c₁) / π * √(1 + q / (R + ((0 : ℕ) : ℝ) * q))) ≤
-      P1 * (Real.log (3 * R) / R) + Bc * (q * √3 * Real.log (3 * R)) := by
+      P1 * (Real.log (R + q) / R) + Bc * (q * √(1 + q / R) * Real.log (R + q)) := by
     simp only [Nat.cast_zero, zero_add, one_mul, zero_mul, add_zero]
     have hW0 : 0 ≤ Real.log (min (R + q) D) := Real.log_nonneg (le_min (by linarith) hD1)
-    have hW : Real.log (min (R + q) D) ≤ Real.log (3 * R) :=
-      Real.log_le_log (lt_min (by linarith) hD0) ((min_le_left _ _).trans (by linarith))
-    have hs : √(1 + q / R) ≤ √3 := Real.sqrt_le_sqrt (by
-      have : q / R ≤ 2 := by rw [div_le_iff₀ hR0]; linarith
-      linarith)
+    have hW : Real.log (min (R + q) D) ≤ Real.log (R + q) :=
+      Real.log_le_log (lt_min (by linarith) hD0) (min_le_left _ _)
     have e : 2 * q * √(c₀ * c₁) / π = Bc * q := by simp only [Bc]; ring
     rw [e]
     calc Real.log (min (R + q) D) * (P1 * (1 / R) + Bc * q * √(1 + q / R))
         = P1 * (1 / R) * Real.log (min (R + q) D) + Bc * q * (Real.log (min (R + q) D) * √(1 + q / R)) := by
           ring
-      _ ≤ P1 * (1 / R) * Real.log (3 * R) + Bc * q * (Real.log (3 * R) * √3) := by
-          have := Real.log_nonneg (show (1 : ℝ) ≤ 3 * R by linarith)
+      _ ≤ P1 * (1 / R) * Real.log (R + q) + Bc * q * (Real.log (R + q) * √(1 + q / R)) := by
+          have := Real.log_nonneg (show (1 : ℝ) ≤ R + q by linarith)
           gcongr
       _ = _ := by ring
   -- The terms `j = i + 1`.
@@ -333,15 +330,42 @@ theorem sum_R3W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤
     field_simp
   rw [e1] at h1
   rw [e2] at h2
-  have e3 : P1 * (Real.log (3 * R) / R + Real.log D / q * Real.log (D / R)) +
-      Bc * (q * √3 * Real.log (3 * R) + (D * (Real.log D - 1) - R * (Real.log R - 1)) +
+  have e3 : P1 * (Real.log (R + q) / R + Real.log D / q * Real.log (D / R)) +
+      Bc * (q * √(1 + q / R) * Real.log (R + q) + (D * (Real.log D - 1) - R * (Real.log R - 1)) +
         2 * q * Real.log (D / R) + q / 2 * Real.log D * Real.log (D / R)) =
-      (P1 * (Real.log (3 * R) / R) + Bc * (q * √3 * Real.log (3 * R))) +
+      (P1 * (Real.log (R + q) / R) + Bc * (q * √(1 + q / R) * Real.log (R + q))) +
       P1 * (Real.log D / q * Real.log (D / R)) +
         Bc * (q * Real.log (D / R) + q / 2 * Real.log D * Real.log (D / R)) +
       Bc * ((D * (Real.log D - 1) - R * (Real.log R - 1)) + q * Real.log (D / R)) := by ring
   rw [e3]
   linarith
+
+
+/-- Weighted range (R3) for `q/2 ≤ R` (cf. [B, (4.61)–(4.62)]). -/
+theorem sum_R3W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
+    (hδ : |δ / x| * (q * Q) ≤ 1) {R D : ℝ} (hR1 : 1 ≤ R) (hRq : (q : ℝ) / 2 ≤ R) (hRD : R < D) :
+    ∑ n ∈ Ioc ⌊R⌋ ⌊D⌋, Real.log n * Tn α x n ≤
+      3 * (1 + eta2'L1 / (x / D)) / 2 * x *
+          (Real.log (3 * R) / R + Real.log D / q * Real.log (D / R)) +
+        2 * √(c₀ * (1 + eta2'L1 / (x / D))) / π *
+          (q * √3 * Real.log (3 * R) + (D * (Real.log D - 1) - R * (Real.log R - 1)) +
+            2 * q * Real.log (D / R) + q / 2 * Real.log D * Real.log (D / R)) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hR0 : 0 < R := by linarith
+  have hl : Real.log (R + q) ≤ Real.log (3 * R) := Real.log_le_log (by positivity) (by linarith)
+  have hl0 : 0 ≤ Real.log (R + q) := Real.log_nonneg (by linarith)
+  have hs : √(1 + q / R) ≤ √3 := Real.sqrt_le_sqrt (by
+    have : q / R ≤ 2 := by rw [div_le_iff₀ hR0]; linarith
+    linarith)
+  refine (sum_R3W' hx hq hcop h2α hqQ hδ hR1 hRD).trans ?_
+  have hc0 := c₀_pos
+  have hV := eta2'L1_pos
+  have hD0 : 0 < D := by linarith
+  have h1 : Real.log (R + q) / R ≤ Real.log (3 * R) / R := div_le_div_of_nonneg_right hl hR0.le
+  have h2 : q * √(1 + q / R) * Real.log (R + q) ≤ q * √3 * Real.log (3 * R) := by
+    gcongr
+  gcongr
 
 /-! ### Case (b): assembling (4.51) -/
 
@@ -814,5 +838,336 @@ theorem lemma_4_2_4_caseB {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Appr
   · exact norm_mainPartI2_le hx0 hq h2α hU hV hM0 hMδ hMD
   · exact norm_restPartI2_le_caseB hx0 hq hcop h2α hqQ hδ (by linarith) (by linarith) hD2 hcx
       hD'Q hMD'
+
+/-! ### Case (a): (4.52) -/
+
+/-- `‖restPartI2‖ ≤ ∑_{0 < n ≤ UV, ¬(q ∣ n ∧ n ≤ M)} log n |T_{n,∘}|` (since `|c(a)| ≤ log a`). -/
+theorem norm_restPartI2_le_sum {α x M U V : ℝ} {q : ℕ} (hU : 0 ≤ U) (hV : 0 ≤ V) :
+    ‖restPartI2 α x M U V q‖ ≤ ∑ n ∈ Ioc (0 : ℤ) ⌊U * V⌋,
+      Real.log n * (if ¬ ((q : ℤ) ∣ n ∧ (n : ℝ) ≤ M) then Tn α x n else 0) := by
+  have hlog : ∀ n : ℤ, 0 ≤ Real.log (n : ℝ) := fun n => Real.log_intCast_nonneg n
+  set g : ℤ → ℝ := fun n => if ¬ ((q : ℤ) ∣ n ∧ (n : ℝ) ≤ M) then Tn α x n else 0
+  have hg0 : ∀ n, 0 ≤ g n := fun n => by
+    simp only [g]; split_ifs <;> first | exact Tn_nonneg _ _ _ | exact le_rfl
+  rw [restPartI2]
+  refine (norm_sum_le _ _).trans ?_
+  have hfl : ((⌊U * V⌋₊ : ℕ) : ℤ) = ⌊U * V⌋ := Int.natCast_floor_eq_floor (by positivity)
+  rw [← hfl, ← sum_Icc_eq_Ioc_int]
+  have hsub : Icc 1 (⌊V⌋₊ * ⌊U⌋₊) ⊆ Icc 1 ⌊U * V⌋₊ := Icc_subset_Icc le_rfl (Nat.le_floor (by
+    push_cast
+    calc (⌊V⌋₊ : ℝ) * ⌊U⌋₊ ≤ V * U :=
+          mul_le_mul (Nat.floor_le hV) (Nat.floor_le hU) (by positivity) hV
+      _ = U * V := by ring))
+  refine le_trans ?_ (sum_le_sum_of_subset_of_nonneg hsub fun n _ _ =>
+    mul_nonneg (hlog n) (hg0 n))
+  refine sum_le_sum fun m _ => ?_
+  by_cases h : Odd m ∧ ¬ ((q : ℕ) ∣ m ∧ (m : ℝ) ≤ M)
+  · rw [if_pos h, norm_mul]
+    have hg : g (m : ℤ) = ‖Todd α x m‖ := by
+      simp only [g]
+      rw [if_pos (by
+        intro ⟨hd, hle⟩; exact h.2 ⟨by exact_mod_cast hd, by exact_mod_cast hle⟩)]
+      simp [Tn]
+    change _ ≤ Real.log ((m : ℤ) : ℝ) * g (m : ℤ)
+    rw [hg]
+    have hc : ‖(coefI2 U V m : ℂ)‖ ≤ Real.log ((m : ℤ) : ℝ) := by
+      rw [Complex.norm_real, Real.norm_eq_abs, Int.cast_natCast]; exact abs_coefI2_le U V m
+    exact mul_le_mul_of_nonneg_right hc (norm_nonneg _)
+  · rw [if_neg h, norm_zero]; exact mul_nonneg (hlog _) (hg0 _)
+
+set_option maxHeartbeats 4000000 in
+/-- **[B, Lemma 4.2.4], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
+of `typeI2` with `¬(q ∣ a ∧ a ≤ M)`, `M = Mof x δ q (UV)`, contribute at most `bound_4_52`. -/
+theorem norm_restPartI2_le_caseA {α x δ Q₀ U V ε : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
+    (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k)
+    (hδQ₀ : |δ / x| ≤ 1 / (q * Q₀)) (hqQ₀ : (q : ℝ) ≤ Q₀) (hQ₀2 : 2 ≤ Q₀)
+    (hδ : 1 / (2 * c₂) ≤ |δ|) (hU : 0 ≤ U) (hV : 0 ≤ V) (hD1 : 1 ≤ U * V)
+    (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    ‖restPartI2 α x (Mof x δ q (U * V)) U V q‖ ≤ bound_4_52 x δ q U V Q₀ ε := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hη := eta2'L1_pos
+  have hc0 := c₀_pos
+  have hc2 := c₂_pos
+  have hlog : ∀ n : ℤ, 0 ≤ Real.log (n : ℝ) := fun n => Real.log_intCast_nonneg n
+  set D := U * V with hDdef
+  have hD0 : 0 < D := by linarith
+  have hδpos : 0 < |δ| := lt_of_lt_of_le (by positivity) hδ
+  have hδ0 : δ ≠ 0 := abs_pos.1 hδpos
+  set Qr := x / (|δ| * q) with hQrdef
+  have hQrpos : 0 < Qr := by positivity
+  have hQ₀0 : 0 < Q₀ := by linarith
+  have hQ₀Qr : Q₀ ≤ Qr := by
+    rw [abs_div, abs_of_pos hx, div_le_div_iff₀ hx (by positivity)] at hδQ₀
+    rw [hQrdef, le_div_iff₀ (by positivity)]; nlinarith
+  have hqQr : (q : ℝ) ≤ Qr := hqQ₀.trans hQ₀Qr
+  set M := Mof x δ q D
+  have hMdef : M = min (Qr / 2) D := by simp only [M, Mof, if_neg hδ0]; rfl
+  have hM1 : 1 ≤ M := by rw [hMdef]; exact le_min (by linarith) hD1
+  have hM0 : 0 < M := by linarith
+  have hMQ : M ≤ Qr / 2 := by rw [hMdef]; exact min_le_left _ _
+  have hMD : M ≤ D := by rw [hMdef]; exact min_le_right _ _
+  have hexact : |δ / x| * (q * Qr) = 1 := by
+    rw [abs_div, abs_of_pos hx, hQrdef]; field_simp
+  set c₁ := 1 + eta2'L1 / (x / D) with hc₁def
+  have hc₁ : 1 ≤ c₁ := by
+    simp only [c₁]; have : 0 ≤ eta2'L1 / (x / D) := by positivity
+    linarith
+  set Bc := 2 * √(c₀ * c₁) / π with hBcdef
+  have hBc : 0 ≤ Bc := by positivity
+  have hBc' : 2 * √c₀ / π ≤ Bc := by
+    have := Real.pi_pos
+    have : √c₀ ≤ √(c₀ * c₁) := Real.sqrt_le_sqrt (by nlinarith)
+    simp only [Bc]; gcongr
+  set Y := min ((⌊Qr⌋₊ : ℝ) + 1) (2 * D) with hYdef
+  have hfl1 : Qr ≤ (⌊Qr⌋₊ : ℝ) + 1 := (Nat.lt_floor_add_one Qr).le
+  have hYM : 2 * M ≤ Y := le_min (by linarith) (by linarith)
+  have hlogD : 0 ≤ Real.log D := Real.log_nonneg hD1
+  have hlog5 : 0 ≤ Real.log (5 * D) := Real.log_nonneg (by linarith)
+  have hlP := logPlus_nonneg (2 * D / Qr)
+  -- `qM/x ≤ c₂` and `q² ≤ 2c₂x`.
+  have hqM : q * M / x ≤ c₂ := by
+    have h1 : q * M / x ≤ q * (Qr / 2) / x := by gcongr
+    have h2 : (q : ℝ) * (Qr / 2) / x = 1 / (2 * |δ|) := by rw [hQrdef]; field_simp
+    have h3 : 1 / (2 * |δ|) ≤ c₂ := by
+      rw [div_le_iff₀ (by positivity)]
+      rw [div_le_iff₀ (by positivity)] at hδ; linarith
+    linarith
+  have hq2 : (q : ℝ) ^ 2 ≤ 2 * c₂ * x := by
+    have h1 : (q : ℝ) * Q₀ ≤ 2 * c₂ * x := by
+      rw [abs_div, abs_of_pos hx, div_le_div_iff₀ hx (by positivity)] at hδQ₀
+      rw [div_le_iff₀ (by positivity)] at hδ
+      nlinarith
+    nlinarith
+  -- Step 1 and the split at `M`.
+  set g : ℤ → ℝ := fun n => if ¬ ((q : ℤ) ∣ n ∧ (n : ℝ) ≤ M) then Tn α x n else 0
+  have hsplit : ∑ n ∈ Ioc (0 : ℤ) ⌊D⌋, Real.log n * g n ≤
+      ∑ n ∈ Ioc 0 ⌊M⌋, Real.log n * (if (q : ℤ) ∣ n then 0 else Tn α x n) +
+        ∑ n ∈ Ioc ⌊M⌋ ⌊D⌋, Real.log n * Tn α x n := by
+    have hsub : Ioc (0 : ℤ) ⌊D⌋ = Ioc 0 ⌊M⌋ ∪ Ioc ⌊M⌋ ⌊D⌋ := by
+      have h1 : 0 ≤ ⌊M⌋ := Int.floor_nonneg.2 hM0.le
+      have h2 : ⌊M⌋ ≤ ⌊D⌋ := Int.floor_mono hMD
+      ext n; simp only [mem_Ioc, mem_union]; omega
+    rw [hsub, sum_union (disjoint_left.2 fun n h1 h2 => by simp only [mem_Ioc] at h1 h2; omega)]
+    refine add_le_add (sum_le_sum fun n hn => ?_) (sum_le_sum fun n _ => ?_)
+    · rw [mem_Ioc] at hn
+      have hnM : (n : ℝ) ≤ M := (Int.cast_le.2 hn.2).trans (Int.floor_le _)
+      by_cases hd : (q : ℤ) ∣ n
+      · simp only [g]; rw [if_neg (not_not.2 ⟨hd, hnM⟩), if_pos hd]
+      · simp only [g]; rw [if_pos (fun h => hd h.1), if_neg hd]
+    · have := Tn_nonneg α x n
+      have := hlog n
+      simp only [g]
+      split_ifs <;> nlinarith
+  -- Range (A1), weight `log M`.
+  have hA1 := sum_A1 hx hq hcop h2α hqQr hexact.le hM0.le hMQ (α := α)
+  have hA1' : ∑ n ∈ Ioc ⌊(0 : ℝ)⌋ ⌊M⌋, (if (q : ℤ) ∣ n then 0 else Tn α x n) ≤
+      2 * √c₀ / π * M + 35 * c₀ * c₂ / (3 * π ^ 2) * q := by
+    refine hA1.trans ?_
+    have e1 : (q : ℝ) * M ^ 2 / x ≤ c₂ * M := by
+      have : (q : ℝ) * M ^ 2 / x = (q * M / x) * M := by ring
+      rw [this]; exact mul_le_mul_of_nonneg_right hqM hM0.le
+    have e2 : 3 * (q : ℝ) ^ 2 * M / x ≤ 3 * c₂ * q := by
+      have : 3 * (q : ℝ) ^ 2 * M / x = 3 * q * (q * M / x) := by ring
+      rw [this]; nlinarith
+    have e3 : 2 * (q : ℝ) ^ 3 / x ≤ 4 * c₂ * q := by
+      rw [div_le_iff₀ hx]; nlinarith
+    calc 5 * c₀ / (3 * π ^ 2) * (q * M ^ 2 / x + 3 * q ^ 2 * M / x + 2 * q ^ 3 / x)
+        ≤ 5 * c₀ / (3 * π ^ 2) * (c₂ * M + 3 * c₂ * q + 4 * c₂ * q) := by gcongr
+      _ = 5 * c₀ * c₂ / (3 * π ^ 2) * M + 35 * c₀ * c₂ / (3 * π ^ 2) * q := by ring
+      _ = _ := by rw [c₂_identity]
+  rw [Int.floor_zero] at hA1'
+  have hW1 : ∑ n ∈ Ioc 0 ⌊M⌋, Real.log n * (if (q : ℤ) ∣ n then 0 else Tn α x n) ≤
+      Real.log M * (2 * √c₀ / π * M + 35 * c₀ * c₂ / (3 * π ^ 2) * q) := by
+    have hpt : ∀ n ∈ Ioc 0 ⌊M⌋, Real.log n * (if (q : ℤ) ∣ n then 0 else Tn α x n) ≤
+        Real.log M * (if (q : ℤ) ∣ n then 0 else Tn α x n) := by
+      intro n hn
+      refine mul_le_mul_of_nonneg_right ?_ (by split_ifs; exacts [le_rfl, Tn_nonneg _ _ _])
+      rw [mem_Ioc] at hn
+      have h1 : (1 : ℝ) ≤ n := by exact_mod_cast (show (1 : ℤ) ≤ n by omega)
+      exact Real.log_le_log (by linarith) ((Int.cast_le.2 hn.2).trans (Int.floor_le _))
+    refine (sum_le_sum hpt).trans ?_
+    rw [← mul_sum]
+    exact mul_le_mul_of_nonneg_left hA1' (Real.log_nonneg hM1)
+  have hlogM : 0 ≤ Real.log M := Real.log_nonneg hM1
+  have hlogMD : Real.log M ≤ Real.log D := Real.log_le_log hM0 hMD
+  -- Range (A2): above `M`, with the second approximation (`0` if empty).
+  set T3 := if M < D then D * (Real.log D - 1) - M * (Real.log M - 1) else 0 with hT3def
+  have hW2 : ∑ n ∈ Ioc ⌊M⌋ ⌊D⌋, Real.log n * Tn α x n ≤
+      3 * c₁ / 2 * (2 * Real.log (5 * D) + (1 + ε) / ε * Real.log D * logPlus (2 * D / Qr)) *
+          (x / Q₀) +
+        Bc * ((1 + ε) * Y * (√(3 + 2 * ε) * Real.log (5 * D) +
+          (2 + Real.log D / 2) * logPlus (2 * D / Qr)) + T3) := by
+    by_cases hDM : M < D
+    · rw [hT3def, if_pos hDM]
+      have hMeq : M = Qr / 2 := by
+        rcases min_choice (Qr / 2) D with h | h
+        · rw [hMdef, h]
+        · exfalso; rw [hMdef, h] at hDM; linarith
+      set ξ := (a : ℝ) / q + δ / x
+      have hξ : |ξ - a / q| = 1 / (q * Qr) := by
+        simp only [ξ, add_sub_cancel_left]
+        rw [eq_div_iff (by positivity)]; linarith [hexact]
+      obtain ⟨a', q', hq'1, hcop', hq'Q', happ', hq'low⟩ := second_approx hq hcop hqQr hε hξ
+      have hq'0 : (0 : ℝ) < q' := by exact_mod_cast hq'1
+      set δ' := x * (ξ - a' / q')
+      have hδ'x : δ' / x = ξ - a' / q' := by simp only [δ']; field_simp
+      have h2α' : 2 * α = a' / q' + δ' / x + k := by rw [hδ'x, h2α]; ring
+      have hδ' : |δ' / x| * (q' * ((1 + ε) * Qr)) ≤ 1 := by
+        rw [hδ'x]
+        have := happ'
+        rw [le_div_iff₀ (by positivity)] at this; linarith
+      have hA2 := sum_R3W' hx hq'1 hcop' h2α' hq'Q' hδ' hM1 hDM (α := α)
+      rw [← hc₁def, ← hBcdef] at hA2
+      refine hA2.trans ?_
+      have hDMlog : 0 ≤ Real.log (D / M) := Real.log_nonneg (by rw [le_div_iff₀ hM0]; linarith)
+      have hlogeq : Real.log (D / M) ≤ logPlus (2 * D / Qr) := by
+        rw [hMeq, show D / (Qr / 2) = 2 * D / Qr by field_simp]; exact le_max_left _ _
+      have hxM : x / M ≤ 2 * (x / Q₀) := by
+        rw [hMeq, show x / (Qr / 2) = 2 * (x / Qr) by field_simp]
+        gcongr
+      have hxq' : x / q' ≤ (1 + ε) / ε * (x / Q₀) := by
+        have h1 : x / q' ≤ x / (ε * Qr / (1 + ε)) :=
+          div_le_div_of_nonneg_left hx.le (by positivity) hq'low
+        have h2 : x / (ε * Qr / (1 + ε)) = (1 + ε) / ε * (x / Qr) := by field_simp
+        have h3 : x / Qr ≤ x / Q₀ := div_le_div_of_nonneg_left hx.le hQ₀0 hQ₀Qr
+        rw [h2] at h1
+        exact h1.trans (mul_le_mul_of_nonneg_left h3 (by positivity))
+      have hsqrt : √(1 + q' / M) ≤ √(3 + 2 * ε) := by
+        apply Real.sqrt_le_sqrt
+        rw [hMeq, div_div_eq_mul_div]
+        have : (q' : ℝ) * 2 / Qr ≤ 2 * (1 + ε) := by
+          rw [div_le_iff₀ hQrpos]; nlinarith
+        linarith
+      have hq'min : (q' : ℝ) ≤ (1 + ε) * Y := by
+        refine hq'Q'.trans (mul_le_mul_of_nonneg_left (le_min hfl1 ?_) (by linarith))
+        rw [hMeq] at hDM; linarith
+      have hMq' : Real.log (M + q') ≤ Real.log (5 * D) := by
+        refine Real.log_le_log (by positivity) ?_
+        have : (q' : ℝ) ≤ 4 * D := by
+          have : (q' : ℝ) ≤ (1 + ε) * Qr := hq'Q'
+          rw [hMeq] at hDM; nlinarith
+        linarith
+      have hlMq : 0 ≤ Real.log (M + q') := Real.log_nonneg (by linarith)
+      have hP1 : x * (Real.log (M + q') / M + Real.log D / q' * Real.log (D / M)) ≤
+          (2 * Real.log (5 * D) + (1 + ε) / ε * Real.log D * logPlus (2 * D / Qr)) * (x / Q₀) := by
+        have e : x * (Real.log (M + q') / M + Real.log D / q' * Real.log (D / M)) =
+            (x / M) * Real.log (M + q') + (x / q') * (Real.log D * Real.log (D / M)) := by
+          field_simp
+        rw [e]
+        have h1 : (x / M) * Real.log (M + q') ≤ (2 * (x / Q₀)) * Real.log (5 * D) :=
+          mul_le_mul hxM hMq' hlMq (by positivity)
+        have h2 : (x / q') * (Real.log D * Real.log (D / M)) ≤
+            ((1 + ε) / ε * (x / Q₀)) * (Real.log D * logPlus (2 * D / Qr)) :=
+          mul_le_mul hxq' (mul_le_mul_of_nonneg_left hlogeq hlogD) (by positivity) (by positivity)
+        linarith
+      have hP2 : q' * √(1 + q' / M) * Real.log (M + q') + 2 * q' * Real.log (D / M) +
+            q' / 2 * Real.log D * Real.log (D / M) ≤
+          (1 + ε) * Y * (√(3 + 2 * ε) * Real.log (5 * D) +
+            (2 + Real.log D / 2) * logPlus (2 * D / Qr)) := by
+        have h1 : √(1 + q' / M) * Real.log (M + q') ≤ √(3 + 2 * ε) * Real.log (5 * D) :=
+          mul_le_mul hsqrt hMq' hlMq (by positivity)
+        have h2 : 2 * Real.log (D / M) + Real.log D / 2 * Real.log (D / M) ≤
+            (2 + Real.log D / 2) * logPlus (2 * D / Qr) := by
+          have := mul_le_mul_of_nonneg_left hlogeq (show 0 ≤ 2 + Real.log D / 2 by positivity)
+          linarith
+        have hX : 0 ≤ √(3 + 2 * ε) * Real.log (5 * D) + (2 + Real.log D / 2) * logPlus (2 * D / Qr) := by
+          positivity
+        calc q' * √(1 + q' / M) * Real.log (M + q') + 2 * q' * Real.log (D / M) +
+              q' / 2 * Real.log D * Real.log (D / M)
+            = q' * (√(1 + q' / M) * Real.log (M + q') +
+                (2 * Real.log (D / M) + Real.log D / 2 * Real.log (D / M))) := by ring
+          _ ≤ q' * (√(3 + 2 * ε) * Real.log (5 * D) + (2 + Real.log D / 2) * logPlus (2 * D / Qr)) :=
+              mul_le_mul_of_nonneg_left (add_le_add h1 h2) hq'0.le
+          _ ≤ _ := mul_le_mul_of_nonneg_right hq'min hX
+      have hk1 : 0 ≤ 3 * c₁ / 2 := by positivity
+      have hP1' := mul_le_mul_of_nonneg_left hP1 hk1
+      have hP2' := mul_le_mul_of_nonneg_left hP2 hBc
+      linarith
+    · rw [hT3def, if_neg hDM, Ioc_eq_empty (not_lt.2 (Int.floor_mono (not_lt.1 hDM))), sum_empty,
+        add_zero]
+      have : 0 ≤ 2 * Real.log (5 * D) + (1 + ε) / ε * Real.log D * logPlus (2 * D / Qr) := by
+        positivity
+      have : 0 ≤ (1 + ε) * Y * (√(3 + 2 * ε) * Real.log (5 * D) +
+          (2 + Real.log D / 2) * logPlus (2 * D / Qr)) := by
+        have : 0 ≤ Y := by linarith
+        positivity
+      positivity
+  -- The `D log D` terms: `log M (2√c₀/π) M + Bc T3 ≤ Bc (D (log D - 1) + M)`.
+  have hT : Real.log M * (2 * √c₀ / π * M) + Bc * T3 ≤ Bc * (D * (Real.log D - 1) + M) := by
+    have h1 : Real.log M * (2 * √c₀ / π * M) ≤ Bc * (M * Real.log M) := by
+      have := mul_le_mul_of_nonneg_right hBc' (mul_nonneg hM0.le hlogM)
+      linarith
+    by_cases hDM : M < D
+    · rw [hT3def, if_pos hDM]
+      have e : Bc * (M * Real.log M) + Bc * (D * (Real.log D - 1) - M * (Real.log M - 1)) =
+          Bc * (D * (Real.log D - 1) + M) := by ring
+      linarith
+    · rw [hT3def, if_neg hDM, mul_zero, add_zero]
+      have hMDe : M = D := le_antisymm hMD (not_lt.1 hDM)
+      have e : Bc * (M * Real.log M) = Bc * (D * (Real.log D - 1) + M) := by rw [hMDe]; ring
+      linarith
+  -- Combine.
+  refine (norm_restPartI2_le_sum hU hV).trans ?_
+  rw [← hDdef]
+  refine hsplit.trans ?_
+  unfold bound_4_52
+  simp only []
+  rw [← hc₁def, ← hBcdef, ← hQrdef, ← hYdef]
+  have hlogDe : Real.log (D / rexp 1) = Real.log D - 1 := by
+    rw [Real.log_div hD0.ne' (by positivity), Real.log_exp]
+  rw [hlogDe]
+  have hMY : Bc * M ≤ Bc * ((1 + ε) * Y * (1 / 2)) := by
+    refine mul_le_mul_of_nonneg_left ?_ hBc
+    nlinarith
+  have hq : Real.log M * (35 * c₀ * c₂ / (3 * π ^ 2) * q) ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * q * Real.log D := by
+    have := mul_le_mul_of_nonneg_right hlogMD (show 0 ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * q by positivity)
+    linarith
+  linarith
+
+/-- **[B, Lemma 4.2.4], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.50) + (4.52), in our form
+(`bound_4_50`, `bound_4_52`), with `M = Mof x δ q (UV)`. -/
+theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
+    (hQ₀2 : 2 ≤ Q₀) (hx : 0 < x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hδ : 1 / (2 * c₂) ≤ |δ|) {ε : ℝ}
+    (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_52 x δ q U V Q₀ ε := by
+  obtain ⟨hq, hcop, ⟨k, h2α⟩, hδQ₀, hqQ₀⟩ := h
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hδpos : 0 < |δ| := lt_of_lt_of_le (by have := c₂_pos; positivity) hδ
+  have hδ0 : δ ≠ 0 := abs_pos.1 hδpos
+  have hD1 : 1 ≤ U * V := by nlinarith
+  set M := Mof x δ q (U * V)
+  have hMdef : M = min (x / (|δ| * q) / 2) (U * V) := by simp only [M, Mof, if_neg hδ0]
+  have hMD : M ≤ U * V := by rw [hMdef]; exact min_le_right _ _
+  have hM0 : 0 ≤ M := by rw [hMdef]; exact le_min (by positivity) (by linarith)
+  have hMδ : |δ| * M ≤ x / 2 := by
+    have h1 : |δ| * M ≤ |δ| * (x / (|δ| * q) / 2) := by
+      rw [hMdef]; exact mul_le_mul_of_nonneg_left (min_le_left _ _) (abs_nonneg _)
+    have h2 : |δ| * (x / (|δ| * q) / 2) = x / (2 * q) := by field_simp
+    have h3 : x / (2 * q) ≤ x / 2 := div_le_div_of_nonneg_left hx.le (by norm_num)
+      (by have : (1 : ℝ) ≤ q := by exact_mod_cast hq
+          linarith)
+    linarith
+  rw [typeI2_eq_main_add_rest hx (by linarith) (by linarith) hM0]
+  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
+  · exact norm_mainPartI2_le hx hq h2α hU hV hM0 hMδ hMD
+  · exact norm_restPartI2_le_caseA hx hq hcop h2α hδQ₀ hqQ₀ hQ₀2 hδ (by linarith) (by linarith)
+      hD1 hε hε1
+
+/-- **[B, Lemma 4.2.4]** for `η = η₂`, in our form: the main term `bound_4_50` (factor `3/2`
+added) and the error terms `bound_4_51`, `bound_4_52` (corrected `c₁`, cruder lower-order terms;
+see their docstrings). Hypotheses: [B]'s `x ≥ e²c₂/2` is replaced by `x ≥ 10`; we need `UV ≥ 2`;
+[B]'s `UV + (19/18)Q₀ ≤ x/5.6` and `Q₀ ≥ 2√x` are not needed (the latter only to turn `x/Q₀`
+into `√x/2`). Depends only on the trusted `eta2_fourier_bound'` and the literature bounds
+(2.12), (2.15), (2.20). -/
+theorem lemma_4_2_4 {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
+    (hQ₀ : 2 * rexp 1 ≤ Q₀) (hx : 10 ≤ x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hD2 : 2 ≤ U * V) :
+    ((|δ| ≤ 1 / (2 * c₂) ∨ U * V ≤ Q₀ / 2) →
+      ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_51 x q U V) ∧
+    (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 →
+      ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_52 x δ q U V Q₀ ε) := by
+  have hQ₀2 : 2 ≤ Q₀ := by
+    have := Real.add_one_le_exp (1 : ℝ); linarith
+  exact ⟨lemma_4_2_4_caseB h hx hU hV hD2,
+    fun hδ ε hε hε1 => lemma_4_2_4_caseA h hQ₀2 (by linarith) hU hV hδ hε hε1⟩
 
 end TernaryGoldbach.MinorArcs

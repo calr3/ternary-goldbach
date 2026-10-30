@@ -14,40 +14,32 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     dependencies are the trusted `eta2_fourier_bound'` ([B, (B.6)]) and `eta2log_fourier_bound`
     ([B, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
     `#print axioms`.
-  * Still `sorry`: Lemma 4.2.4 (in `TypeI.lean`), Thm 3.1.1.
-* **Next: Lemma 4.2.4** ([B pp. 70–76], `typeI2 = ∑_v Λ(v) ∑_u μ(u) ∑_n …`); both of its cases
-  are used ([B, §6.2.2]). Plan:
-  1. ✅ (`TypeI2Proof.lean`: `typeI2_eq`, `coefI2`, `abs_coefI2_le`) Group by `a = uv`:
-     `typeI2 = ∑_{a ≤ ⌊V⌋⌊U⌋ odd} c(a) T_{a,∘}`, `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)`,
-     `|c(a)| ≤ log a`.
-  2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)], via `Todd_main`:
-     (i) ✅ `abs_sum_coefI2_div_le`: `|∑_{a ≤ M odd, q|a} c(a)/a| ≤ (log q + log V)/q`: reindex `(v, u)`, `q | uv ⟺ q/(q,v) | u`,
-     inner `u`-sum `= μ(q')/q' ∑_{w ≤ R/q', (w,2q')=1} μ(w)/w`, bounded by `(q,v)/q` with (2.20);
-     then `∑_{v ≤ V} Λ(v)(q,v)/v ≤ ∑_{v | q} Λ(v) + ∑_{v ≤ V} Λ(v)/v ≤ log q + log V` (terms with
-     `v ∤ q` inject via `v ↦ v/(q,v)`, same `Λ`), using (2.12).
-     ✅ `norm_mainPartI2_le` (main term ≤ `bound_4_50`).
-     (ii) ✅ error `∑ |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`, via
-     `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.12), (2.15). **Erratum**: [B (4.55)] has
-     `(U+1)²V log q/4`, but `∑_{α: p^α ≤ V} p^α` can exceed `V` (e.g. `V = 9, p = 3`); it is
-     `≤ (3/2)V` for odd `p`. So `bound_4_50`'s last term needs a factor `3/2` (lower-order term).
-     (2.16) needs `V > 663` if used; check whether (2.15) suffices.
-  3. Rest (`¬(q | a ∧ a ≤ M)`), `|c(a)| ≤ log a`, so weights `log m` (increasing): per block use
-     `log` of the block's *upper* end. Case (b) [B pp. 75–76]: R1 `m ≤ q/2` (4.23)×`log(q/2)`;
-     R2 (4.59)–(4.60) (∫ t log t; uses `UV + (19/18)Q₀ ≤ x/5.6`); R3 (4.61)–(4.62) (uses
-     `x ≥ e² c₂/2`); result (4.51). Case (a) [B pp. 73–75]: (4.57), modified (4.17)–(4.18), (4.58)
-     = (4.52). Antiderivatives needed: `t log t`, `log t / t`, `log t` (add to `SumTools`).
-     **Errata/decisions found while planning** (to apply to `bound_4_51/52`, documented):
-     * `c₁` should be `1 + |η'|₁/(x/D)` (odd `n`, as in 4.2.2); [B] prints `1 + |η'|₁/(2x/D)`,
-       the value for the all-`n` Lemma 4.2.1.
-     * R2 (4.59)–(4.60): [B]'s condition "`(2/9 + 3/2 + log(D' + 19q/18)) ≤ x`" must mean
-       `≤ log x`, and I could not reproduce the exact constant from `UV + (19/18)Q₀ ≤ x/5.6`.
-       Own derivation (midpoint convexity of `t log t`, upper limit `D' + 3q/2`): same leading
-       terms `(5c₀c₂/3π²) D' log(D'/√e) + (25c₀/4π²)(2c₂)^{3/2} √x log x`, plus an extra
-       `(25c₀/3π²)(2c₂)^{3/2} √x` (+ a constant for `D' < √e`); needs `D' + 3q/2 ≤ x`, which
-       follows from the hypothesis. Plan: add that `√x` term to `bound_4_51` rather than chase
-       [B]'s constant.
-  Reuse: `InnerSums` (`Todd`, `norm_Todd_le_minA/_min_sin`, `Todd_main`), `SumTools`, the range
-  lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
+  * **Lemma 4.2.4** (`TypeI2Rest.lean: lemma_4_2_4`) is proved, both cases. Its non-standard
+    dependencies are `eta2_fourier_bound'`, (2.12), (2.15), (2.20) (checked with a script that
+    walks the dependency closure for `sorryAx`; (2.16) turned out not to be needed).
+  * Still `sorry`: Thm 3.1.1 (Ch. 5 Type II, Ch. 6 assembly).
+* **Lemma 4.2.4: how it was done / decisions** (all documented in the `bound_4_5x` docstrings):
+  * `typeI2 = ∑_{a odd} c(a) T_{a,∘}`, `|c(a)| ≤ log a`; main term (4.50) with factor `3/2` (erratum
+    in (4.55)).
+  * Rest: weights `log m`; on each block of length `q` use `log` of the block's upper end
+    (`sum_log_mul_le_blocks`), with the per-block bounds `block_R2`/`block_R3` extracted from
+    Lemma 4.2.2. (R2): `∑(j+3/2) log((j+3/2)q)` via `t log t` increasing and `F(t)=(t²/2)(log t-1/2)`
+    (upper limit `D'+2q`), giving `(2√c₀/π) D'(log D' - 1/2) + O(√x log D)`. (R3): `log(R+q)` for the
+    first block, then `log(min(R+(j+1)q, D)) ≤ log y_j + q/y_j` and `∑ log y_j ≤ (G(D)-G(R))/q + …`,
+    `G(t) = t(log t - 1)`. Case (a): weight `log M` on `(0, M]` (crude, costs `Bc·M ≤ Bc(1+ε)Y/2`),
+    second approximation above `M` (`sum_R3W'`, general `q' ≤ 2(1+ε)M`).
+  * **Errata/changes**: `c₁ = 1 + |η'|₁/(x/D)` (odd `n`; [B] prints the all-`n` value `2x/D`);
+    (4.59)–(4.60) as printed is garbled ("`≤ x`" for "`≤ log x`") and its constant could not be
+    reproduced — our (R2) gives `(2√c₀/π)√(2c₂x)(2 + 12 log 5D) + 5c₀/6π²` instead of
+    `(25c₀/4π²)(2c₂)^{3/2}√x log x` (similar size); `log⁺(q/2)` for `log(q/2)` (negative at `q=1`).
+    Leading terms are [B]'s: `(2√(c₀c₁)/π) D log(D/√e)` in (b), `D log(D/e)` in (a); the `q`- and
+    `x/Q₀`-terms have the same shape but cruder constants (`bound_4_52` keeps `x/Q₀`, which is
+    `≤ √x/2` when `Q₀ ≥ 2√x`). Hypotheses: `x ≥ 10`, `UV ≥ 2` (instead of `x ≥ e²c₂/2`);
+    [B]'s `UV + (19/18)Q₀ ≤ x/5.6` is not needed.
+  * **To check in Ch. 6** (§6.2.2): plug our `bound_4_51/52` in place of [B]'s; the lower-order
+    changes should be harmless, but the corrected `c₁` and the (R2) constant must be re-run.
+* **Next: Ch. 5 (Type II sums)**, [B pp. 77–], then Ch. 6 (assembly of Thm 3.1.1, re-check numerics
+  for the (4.40) and 4.2.4 corrections).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
