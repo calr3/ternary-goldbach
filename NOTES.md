@@ -128,17 +128,18 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
       allocation: the `x/(δ₀q)`-terms total `16.163 log t + 22.93`, which fits into
       `13.66 log t + 37.55` plus the unused part `3.25 log t + 5.217` of the `x/(δ₀φ)` slot
       (`x/(δ₀q) ≤ x/(δ₀φ)`). `x^{5/6}`: `3.2 + 0.014 + 0.553 + 0.0001 = 3.767`.
-  * In progress: §6.3.2 (`q > x^{1/3}/6`). ✅ `TypeIILarge.lean`: the `W`-integral split at
-    `W₀` (`norm_typeII_le_split`, `G53`, `typeII_split_gen`) and our versions of (6.38)
-    (`typeII_638`), (6.39) (`typeII_639`), (6.41) (`typeII_641`). Plan (numerics in
-    `/tmp/num`-style scripts, to be moved to `scripts/`): `U = ⌊1225 T⌋`, `V = ⌊T/3⌋`
-    (`T = x^{1/3}`), re-approximate with `Q₀ = T²/349 ≥ 3.5x/U` (**not** [B]'s `Q = x/U`, see
-    errata), `θ = 8` (not 4: better, and still `θ|δq| ≤ θU/3.5 ≤ x/U`). Numerically our bounds
-    give `|S_{II}| ≤ 0.2514 x^{5/6}(log x)^{3/2}` (worst: case (b) at `x = 2.16·10²⁰`; case (a)
-    0.2467) and `|S_{I,1}| + |S_{I,2}| ≤ 1234.2 x^{2/3} log x` (worst: `|δ|` just above `1/2c₂`),
-    so the book's `0.276`, `1234` should survive (the small `S_I` excess is absorbed by `S_{II}`'s
-    margin). Remaining: Dirichlet re-approximation + case split, Type I/II numerics, the
-    "bridge" case below.
+  * ✅ §6.3.2 (`q > x^{1/3}/6`): **Theorem 3.1.1 is proved in full** (`PointwiseBound.lean`,
+    `#sorry_deps theorem_3_1_1` = the same 20 trusted items as the first case). Files:
+    `TypeIILarge.lean` ((6.20) split integral; (6.38), (6.39), (6.41)), `SecondChoice.lean`
+    (Dirichlet, `approx_gap`, `second_case_split`), `SecondBridge.lean` (case (c)),
+    `SecondParams.lean`, `SecondNumerics.lean` (Taylor exp/log bounds `log_le_num`/`le_log_num`,
+    `e^γ ≤ 1.7882` via `H₁₂₈`), `SecondTypeIIa*.lean` (case (a1): reduction
+    `typeII_a1` + 12 generated pieces + tail ≥ 70), `SecondTypeIIb*.lean` (cases (a2), (b)),
+    `SecondTypeI1/2.lean` (Type I: `≤ (0.0716L² + 3175.9L + 8399.2)T²`), `SecondFinal.lean`.
+    Choices: `U = ⌊1225T⌋`, `V = ⌊T/3⌋`, `Q₀ = T²/349 ≥ 3.5x/U`, `θ = 8` in (6.38) and (6.41).
+    All Type II cases are `≤ 1.413 L^{3/2} T^{5/2}` (`L = log T`; target `0.276·3√3 = 1.4341`),
+    Type I borrows `≤ 205 L T²` of the remaining slack. Piece generators:
+    `scripts/gen_a1_pieces.py`, `scripts/gen_b_pieces.py` (exact rational checks first).
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
@@ -244,6 +245,11 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * Reusable lemmas: `le_of_hasDerivAt_le` (compare functions via derivatives on [0,∞)), the sin/cos
   Taylor chain, `sum_range_pair`, `sum_Icc_low_high`, `sum_Icc_parity`, and the generic residue
   reduction `residue_form_gen` (any summand Φ(sin²(παn)) ≥ 0) in `TrigSums.lean`.
+
+* `linarith` cannot use hypotheses with division by a decimal literal (`L / 2.9`, `x / 13.8`):
+  rewrite as multiplication or with `div_le_iff₀` first. Unascribed numeral `have`s (`have : 4 * … ≤ 0.13`)
+  may elaborate in the wrong type; write `(4 : ℝ)`. `set` does not abbreviate hypotheses created
+  later, so `linarith` may see `Real.log …` and the `set` variable as different atoms.
 
 ## Environment
 

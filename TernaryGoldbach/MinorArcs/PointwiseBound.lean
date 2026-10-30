@@ -1,4 +1,5 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceFinal
+import TernaryGoldbach.MinorArcs.SecondFinal
 
 /-!
 # The pointwise minor-arc bound [B, Theorem 3.1.1] — blueprint statement
@@ -7,9 +8,11 @@ The main result of Part I of [B]: for `η = η₂` and `2α = a/q + δ/x`, an ex
 `|S_η(α, x)|` that is essentially `x (log q)/√φ(q)`.  Part I (Chs. 3–6) is its proof; it is
 used in [B, Chs. 11, 13] to bound the minor-arc integral (14.49).
 
-**Blueprint node.** The case `q ≤ x^{1/3}/6` is proved (`theorem_3_1_1_first`, modulo the trusted
-literature bounds and computations listed by `#sorry_deps`); the case `q > x^{1/3}/6` ([B, §6.3.2])
-is still `sorry`. Not yet used by `ternary_goldbach`.
+**Blueprint node.** Proved, modulo the trusted literature bounds and computations listed by
+`#sorry_deps`: the case `q ≤ x^{1/3}/6` is `theorem_3_1_1_first`, the case `q > x^{1/3}/6`
+([B, §6.3.2], with [B]'s constants `0.276`, `1234`) is `theorem_3_1_1_second` (with two
+corrections to [B]'s argument, see `SecondChoice.lean` and `NOTES.md`). Not yet used by
+`ternary_goldbach`.
 -/
 
 open Real
@@ -73,6 +76,20 @@ theorem theorem_3_1_1 {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)
     refine key.trans (le_of_eq ?_)
     simp only [R, L, h56, Cxt, δ₀, delta0]
     rfl
-  · sorry
+  · rw [h23, ← h3] at h
+    have key := theorem_3_1_1_second hT h (by linarith)
+    rw [h3] at key
+    refine key.trans (le_of_eq_of_le rfl ?_)
+    have hT0 : 0 < T := by linarith
+    have hL := fifteen_six_le_log hT
+    have hL0 : 0 ≤ Real.log T := by linarith
+    have hlx : Real.log x = 3 * Real.log T := by rw [← h3, Real.log_pow]; push_cast; ring
+    have hrpow : Real.log x ^ (3 / 2 : ℝ) = 3 * Real.log T * (√3 * √(Real.log T)) := by
+      rw [hlx, show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add (by positivity),
+        Real.rpow_one, ← Real.sqrt_eq_rpow, Real.sqrt_mul (by norm_num)]
+    rw [h56, h23, hrpow, hlx]
+    have hs3 : 1.73205 ≤ √3 := by rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
+    have hP : 0 ≤ T ^ 2 * √T * (Real.log T * √(Real.log T)) := by positivity
+    nlinarith
 
 end TernaryGoldbach.MinorArcs
