@@ -18,7 +18,7 @@ The four `sorry`s that `ternary_goldbach` depends on are all in
 [`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
 
 Files under `TernaryGoldbach/MinorArcs/` named in `BLUEPRINT.md` as *blueprint nodes*
-(`TypeI.lean`, `TypeIProof.lean`, `PointwiseBound.lean`) also contain `sorry`s. They are
+(`TypeI.lean`, `PointwiseBound.lean`) also contain `sorry`s. They are
 statements of intermediate results from the book, waiting to be proved, and `ternary_goldbach`
 does not depend on them (check with `#print axioms`).
 
@@ -47,7 +47,7 @@ App. B] obtains by rigorous numerics.
 | `MinorArcs/InnerSums.lean` | `T_{m,∘}` and its bounds [B, (4.36)]; the Poisson main term [B, (4.33)–(4.34)]; the trusted `|η̂₂''|_∞ ≤ c₀` | 🟡 one trusted computation |
 | `MinorArcs/BlockSums.lean` | splitting sums into blocks of length `q`; `∑ 1/(R+jq)` and `∑ √(1+q/(R+jq))` bounds | ✅ |
 | `MinorArcs/TypeI.lean` | blueprint: definitions and bounds of [B, Lemmas 4.2.2–4.2.4]; statements of 4.2.3–4.2.4 | 🟡 statements |
-| `MinorArcs/TypeIProof.lean` | [B, Lemma 4.2.2]: **case (b) proved** (`lemma_4_2_2_caseB`); case (a) `sorry` | 🟡 case (a) |
+| `MinorArcs/TypeIProof.lean` | **[B, Lemma 4.2.2] proved** (both cases), modulo the trusted `|η̂₂''|_∞ ≤ 31.521` | ✅ (uses the trusted bound) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |

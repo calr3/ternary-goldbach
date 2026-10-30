@@ -10,19 +10,23 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * Part I (minor arcs):
   * [B, §2.3] proved (`MinorArcs/FourierSums.lean`), [B, §4.1] proved (`MinorArcs/TrigSums.lean`).
   * [B, §4.2]: the inner-sum bounds (4.36) and the Poisson main term (4.33)–(4.34) are proved
-    (`MinorArcs/InnerSums.lean`), and **Lemma 4.2.2, case (b)** is proved
-    (`MinorArcs/TypeIProof.lean: lemma_4_2_2_caseB`). Its only non-standard dependency is the
-    trusted `eta2_fourier_bound'` (`|η̂₂''|_∞ ≤ 31.521`, [B, App. B]).
-  * Still `sorry`: Lemma 4.2.2 case (a) (`|δ| ≥ 1/2c₂`), Lemmas 4.2.3–4.2.4 (in `TypeI.lean`),
-    Thm 3.1.1.
-* **Next:** Lemma 4.2.2 case (a). It needs the second approximation `a'/q'` (Dirichlet with
-  `Q' = ⌈(1+ε)Q⌉`, giving `q' ≥ εQ/(1+ε)`) and [B, (4.16)–(4.20)] doubled/halved as described
-  in [B, proof of 4.2.2]; reuse `sum_R2` (for `m ≤ M = Q/2`) and the `lemma_4_1_1'` block
-  argument of `sum_R3` (with `q'`). Then 4.2.3 (with `log n`) and 4.2.4 (with `Λ(v)μ(u)`):
-  both follow the same skeleton (`typeI_eq_main_add_rest`, `norm_mainPart_le`,
-  `norm_restPart_le_caseB`), with modified inner sums.
+    (`MinorArcs/InnerSums.lean`), and **Lemma 4.2.2** is proved in full
+    (`MinorArcs/TypeIProof.lean: lemma_4_2_2`). Its only non-standard dependency is the
+    trusted `eta2_fourier_bound'` (`|η̂₂''|_∞ ≤ 31.521`, [B, App. B]); checked by temporarily
+    turning it into an `axiom` and running `#print axioms`.
+  * Still `sorry`: Lemmas 4.2.3–4.2.4 (in `TypeI.lean`), Thm 3.1.1.
+* **Next:** Lemma 4.2.3 (inner sum with `log n`; needs `η_(ρ)(t) = log(ρt) η₂(t)` facts
+  [B, (6.2)]: `|η_(ρ)|₁ ≤ log ρ`, `|η_(ρ)'|₁ ≤ log ρ |η'|₁`, and a bound for `η̂_(ρ)''`) and
+  Lemma 4.2.4 (with `Λ(v)μ(u)`). Both follow the 4.2.2 skeleton (`typeI_eq_main_add_rest`,
+  `norm_mainPart_le`, `norm_restPart_le_caseB/A`) with modified inner sums. Read [B] pp. 65–76
+  (PDF 75–86) first, and check which of 4.2.3/4.2.4 Thm 3.1.1 actually uses.
 
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
+
+* Case (a) uses `second_approx` (Dirichlet via `Real.exists_rat_abs_sub_le_and_den_le`,
+  `q' ≥ εQ/(1+ε)`), `sum_A1` (blocks from 0, Lemma 4.1.2) and `sum_R3'` with `(a', q')`.
+  The proof gives (4.32) with the unrounded `x/|δq|` where [B] has `min(⌊x/|δq|⌋ + 1, 2D)`
+  (never larger).
 
 * `typeI = mainPart + restPart` (`typeI_eq_main_add_rest`): `mainPart` is `q ∣ m ≤ M`.
 * `mainPart` via `Todd_main` (Poisson); `restPart` via `|T_{m,∘}|` bounds (`norm_Todd_le_minA`,
