@@ -201,16 +201,96 @@ theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : �
     _ = a * √P₁ + a * √P₂ + a * √P₃ + a * √S3 := by ring
     _ ≤ _ := by linarith
 
+/-- [B, §6.2.3]: `∫_V^A √(log W)/W^{3/2} dW ≤ (2/√V)(√(log V) + 1/√(log V))` for `1 < V ≤ A`
+(via `√(log W) ≤ √(log V) + (log W - log V)/(2√(log V))` and `∫_V^∞ log(W/V) W^{-3/2} dW = 4/√V`). -/
+theorem integral_sqrt_log_div_W32_le {V A : ℝ} (hV : 1 < V) (hVA : V ≤ A) :
+    ∫ W in V..A, √(Real.log W) / (W * √W) ≤
+      2 * (√(Real.log V) + 1 / √(Real.log V)) / √V := by
+  have hV0 : 0 < V := by linarith
+  have hlV : 0 < Real.log V := Real.log_pos hV
+  set k := √(Real.log V) with hk
+  have hk0 : 0 < k := Real.sqrt_pos.2 hlV
+  have hkk : k * k = Real.log V := Real.mul_self_sqrt hlV.le
+  have hpos : ∀ W ∈ Set.uIcc V A, 1 < W := fun W hW => by
+    rw [Set.uIcc_of_le hVA] at hW; linarith [hW.1]
+  have hW0 : ∀ W ∈ Set.uIcc V A, W ≠ 0 := fun W hW => by linarith [hpos W hW]
+  have hsq0 : ∀ W ∈ Set.uIcc V A, √W ≠ 0 := fun W hW =>
+    (Real.sqrt_pos.2 (by linarith [hpos W hW])).ne'
+  have hsq : ContinuousOn (fun W : ℝ => √W) (Set.uIcc V A) := Real.continuous_sqrt.continuousOn
+  have hlogc : ContinuousOn (fun W => Real.log W) (Set.uIcc V A) :=
+    ContinuousOn.log continuousOn_id hW0
+  have i1 : IntervalIntegrable (fun W => √(Real.log W) / (W * √W)) volume V A :=
+    ((Real.continuous_sqrt.comp_continuousOn hlogc).div (continuousOn_id.mul hsq)
+      fun W hW => mul_ne_zero (hW0 W hW) (hsq0 W hW)).intervalIntegrable
+  have i4 : IntervalIntegrable (fun W => 1 / (W * √W)) volume V A :=
+    (continuousOn_const.div (continuousOn_id.mul hsq)
+      fun W hW => mul_ne_zero (hW0 W hW) (hsq0 W hW)).intervalIntegrable
+  have i6 : IntervalIntegrable (fun W => (Real.log W - Real.log V) / (W * √W)) volume V A :=
+    ((hlogc.sub continuousOn_const).div (continuousOn_id.mul hsq)
+      fun W hW => mul_ne_zero (hW0 W hW) (hsq0 W hW)).intervalIntegrable
+  -- `∫ (log W - log V)/W^{3/2} = G(A) - G(V)`, `G(W) = -2(log W - log V)/√W - 4/√W`.
+  have hI6 : ∫ W in V..A, (Real.log W - Real.log V) / (W * √W) =
+      (-2 * (Real.log A - Real.log V) / √A - 4 / √A) -
+        (-2 * (Real.log V - Real.log V) / √V - 4 / √V) := by
+    refine intervalIntegral.integral_eq_sub_of_hasDerivAt
+      (f := fun W => -2 * (Real.log W - Real.log V) / √W - 4 / √W) (fun W hW => ?_) i6
+    have hW := hpos W hW
+    have hW0' : 0 < W := by linarith
+    have hs : 0 < √W := Real.sqrt_pos.2 hW0'
+    have h1 := (((Real.hasDerivAt_log hW0'.ne').sub_const (Real.log V)).const_mul (-2)).div
+      (Real.hasDerivAt_sqrt hW0'.ne') hs.ne'
+    have h2 := (hasDerivAt_const W (4 : ℝ)).div (Real.hasDerivAt_sqrt hW0'.ne') hs.ne'
+    convert h1.sub h2 using 1
+    have hss : √W * √W = W := Real.mul_self_sqrt hW0'.le
+    field_simp
+    rw [show √W ^ 2 = W by rw [sq, hss]]
+    ring
+  have hmono : ∀ W ∈ Set.Icc V A, √(Real.log W) / (W * √W) ≤
+      k * (1 / (W * √W)) + 1 / (2 * k) * ((Real.log W - Real.log V) / (W * √W)) := by
+    intro W hW
+    have hW1 : 0 < W * √W := mul_pos (by linarith [hW.1]) (Real.sqrt_pos.2 (by linarith [hW.1]))
+    have hlW : 0 ≤ Real.log W := Real.log_nonneg (by linarith [hW.1])
+    have hsW := Real.sq_sqrt hlW
+    have key : √(Real.log W) ≤ k + (Real.log W - Real.log V) / (2 * k) := by
+      rw [← sub_nonneg]
+      have : k + (Real.log W - Real.log V) / (2 * k) - √(Real.log W) =
+          (√(Real.log W) - k) ^ 2 / (2 * k) := by
+        field_simp; linear_combination hkk - hsW
+      rw [this]; positivity
+    calc √(Real.log W) / (W * √W) ≤ (k + (Real.log W - Real.log V) / (2 * k)) / (W * √W) :=
+          div_le_div_of_nonneg_right key hW1.le
+      _ = _ := by ring
+  have hJ := intervalIntegral.integral_mono_on hVA i1 ((i4.const_mul k).add (i6.const_mul _)) hmono
+  rw [intervalIntegral.integral_add (i4.const_mul k) (i6.const_mul _),
+    intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+    integral_inv_mul_sqrt_eq hV0 hVA, hI6] at hJ
+  refine hJ.trans ?_
+  have hA0 : 0 < √A := Real.sqrt_pos.2 (by linarith)
+  have hsV : 0 < √V := Real.sqrt_pos.2 hV0
+  have hlA : Real.log V ≤ Real.log A := Real.log_le_log hV0 hVA
+  have t1 : 0 ≤ k * (2 / √A) := by positivity
+  have t2 : 0 ≤ 1 / (2 * k) * (2 * (Real.log A - Real.log V) / √A + 4 / √A) := by
+    have : 0 ≤ Real.log A - Real.log V := by linarith
+    positivity
+  have e : 2 * (k + 1 / k) / √V = k * (2 / √V) + 1 / (2 * k) * (4 / √V) := by
+    field_simp; ring
+  rw [e]
+  have e2 : k * (2 / √V - 2 / √A) + 1 / (2 * k) * (-2 * (Real.log A - Real.log V) / √A - 4 / √A -
+      (-2 * (Real.log V - Real.log V) / √V - 4 / √V)) =
+      k * (2 / √V) + 1 / (2 * k) * (4 / √V) - k * (2 / √A) -
+        1 / (2 * k) * (2 * (Real.log A - Real.log V) / √A + 4 / √A) := by ring
+  rw [e2]; linarith
+
 set_option maxHeartbeats 1000000 in
 /-- Integrating `G53` over `[V, A]`: with `κ = κ₁`, `M = r x²/16q + qx`, `L_A = log A`,
-`∫ ≤ √κ (√M (2/3)(L_A^{3/2} - L_V^{3/2}) + √r x √L_A/√V + √(xA) √L_A) + c₄(2/√V - 2/√A)`. -/
+`∫ ≤ √κ (√M (2/3)(L_A^{3/2} - L_V^{3/2}) + √r x (√L_V + 1/√L_V)/√V + √(xA) √L_A) + c₄(2/√V - 2/√A)`. -/
 theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (hr : 0 ≤ r) {A : ℝ}
     (hV : 1 < V) (hVA : V ≤ A) :
     IntervalIntegrable (G53 x U V M r) volume V A ∧
     ∫ W in V..A, G53 x U V M r W ≤
       √(kap1 x U V) * (√M * (2 / 3 *
         (Real.log A * √(Real.log A) - Real.log V * √(Real.log V))) +
-        √r * x * √(Real.log A) / √V + √x * √(Real.log A) * √A) +
+        √r * x * (√(Real.log V) + 1 / √(Real.log V)) / √V + √x * √(Real.log A) * √A) +
       1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √V - 2 / √A) := by
   have hV0 : 0 < V := by linarith
   have hpos : ∀ W ∈ Set.uIcc V A, 1 < W := fun W hW => by
@@ -250,17 +330,8 @@ theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (
   have hmono : ∀ W ∈ Set.Icc V A, √(Real.log W) ≤ √(Real.log A) := fun W hW =>
     Real.sqrt_le_sqrt (Real.log_le_log (by linarith [hW.1]) hW.2)
   have J1 := integral_sqrt_log_div hV hVA
-  have J2 : ∫ W in V..A, g2 W ≤ √(Real.log A) * (2 / √V) := by
-    calc ∫ W in V..A, g2 W ≤ ∫ W in V..A, √(Real.log A) * g4 W := by
-          refine intervalIntegral.integral_mono_on hVA i2 (i4.const_mul _) fun W hW => ?_
-          have hW1 : 0 < W * √W := mul_pos (by linarith [hW.1]) (Real.sqrt_pos.2 (by linarith [hW.1]))
-          simp only [g2, g4]; rw [mul_one_div]
-          exact div_le_div_of_nonneg_right (hmono W hW) hW1.le
-      _ = √(Real.log A) * (2 / √V - 2 / √A) := by
-          rw [intervalIntegral.integral_const_mul, integral_inv_mul_sqrt_eq hV0 hVA]
-      _ ≤ _ := by
-          have : 0 ≤ 2 / √A := by positivity
-          nlinarith
+  have J2 : ∫ W in V..A, g2 W ≤ 2 * (√(Real.log V) + 1 / √(Real.log V)) / √V :=
+    integral_sqrt_log_div_W32_le hV hVA
   have J3 : ∫ W in V..A, g3 W ≤ √(Real.log A) * (2 * √A) := by
     calc ∫ W in V..A, g3 W ≤ ∫ W in V..A, √(Real.log A) * g5 W := by
           refine intervalIntegral.integral_mono_on hVA i3 (i5.const_mul _) fun W hW => ?_
@@ -284,7 +355,8 @@ theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (
   have hc3 : 0 ≤ c3 := by positivity
   have K2 := mul_le_mul_of_nonneg_left J2 hc2
   have K3 := mul_le_mul_of_nonneg_left J3 hc3
-  have e2 : c2 * (√(Real.log A) * (2 / √V)) = √κ * (√r * x * √(Real.log A) / √V) := by
+  have e2 : c2 * (2 * (√(Real.log V) + 1 / √(Real.log V)) / √V) =
+      √κ * (√r * x * (√(Real.log V) + 1 / √(Real.log V)) / √V) := by
     simp only [c2]; ring
   have e3 : c3 * (√(Real.log A) * (2 * √A)) = √κ * (√x * √(Real.log A) * √A) := by
     simp only [c3]; ring
@@ -319,7 +391,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       4 * (√(kap1 x U V) * (√M * (2 / 3 *
         (Real.log A * √(Real.log A) - Real.log V * √(Real.log V))) +
-        √r * x * √(Real.log A) / √V + √x * √(Real.log A) * √A)) +
+        √r * x * (√(Real.log V) + 1 / √(Real.log V)) / √V + √x * √(Real.log A) * √A)) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
   have hU1 : (1 : ℝ) ≤ U := by exact_mod_cast hU
   have hU0 : (0 : ℝ) < U := by linarith
@@ -339,7 +411,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
   set c4 := 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U))
   set R53 := √(kap1 x U V) * (√M * (2 / 3 *
     (Real.log A * √(Real.log A) - Real.log V * √(Real.log V))) +
-    √r * x * √(Real.log A) / √V + √x * √(Real.log A) * √A)
+    √r * x * (√(Real.log V) + 1 / √(Real.log V)) / √V + √x * √(Real.log A) * √A)
   have hc4 : 0 ≤ c4 := by positivity
   have hRHS2 : 0 ≤ 4 * √(kap1 x U V * q * x / (2 * φ)) * (2 * √(x / U) + √(Real.log c) *
       (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) := by positivity
@@ -412,7 +484,8 @@ theorem typeII_top {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
     ‖typeII α x U V‖ ≤
       4 * (√(kap1 x U V) * (√M * (2 / 3 *
         (Real.log (x / U) * √(Real.log (x / U)) - Real.log V * √(Real.log V))) +
-        √r * x * √(Real.log (x / U)) / √V + √x * √(Real.log (x / U)) * √(x / U))) +
+        √r * x * (√(Real.log V) + 1 / √(Real.log V)) / √V +
+        √x * √(Real.log (x / U)) * √(x / U))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
   have hV2 : 2 ≤ V := by exact_mod_cast (show (2 : ℝ) ≤ V by linarith)
   obtain ⟨i53, I53⟩ := integral_G53_le hx (U : ℝ) (V : ℝ) M hr (by linarith : (1 : ℝ) < V) hVU
@@ -494,7 +567,8 @@ theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
         (2 * rexp 1 * √(2 * q) + 4 * √(x / U / Real.log (x / U / (2 * q))))) +
       4 * (√(kap1 x U V) * (√(x ^ 2 / (16 * q) + q * x) * (2 / 3 *
         (Real.log (2 * θ * q) * √(Real.log (2 * θ * q)) - Real.log V * √(Real.log V))) +
-        x * √(Real.log (2 * θ * q)) / √V + √x * √(Real.log (2 * θ * q)) * √(2 * θ * q))) +
+        x * (√(Real.log V) + 1 / √(Real.log V)) / √V +
+        √x * √(Real.log (2 * θ * q)) * √(2 * θ * q))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
@@ -518,7 +592,8 @@ theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
     ‖typeII α x U V‖ ≤
       4 * (√(kap1 x U V) * (√(x ^ 2 / (8 * q) + q * x) * (2 / 3 *
         (Real.log (x / U) * √(Real.log (x / U)) - Real.log V * √(Real.log V))) +
-        √2 * x * √(Real.log (x / U)) / √V + √x * √(Real.log (x / U)) * √(x / U))) +
+        √2 * x * (√(Real.log V) + 1 / √(Real.log V)) / √V +
+        √x * √(Real.log (x / U)) * √(x / U))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hmax : max 1 (2 * (1 : ℝ)) = 2 := by norm_num
@@ -548,7 +623,7 @@ theorem typeII_641 {α x δ Q ρ θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) 
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       4 * (√(kap1 x U V) * (√(x ^ 2 / (2 * |δ| * q) + x ^ 2 / (16 * (1 - ρ) * Q)) * (2 / 3 *
         (Real.log (θ * |δ| * q) * √(Real.log (θ * |δ| * q)) - Real.log V * √(Real.log V))) +
-        √(1 / (2 * (1 - ρ))) * x * √(Real.log (θ * |δ| * q)) / √V +
+        √(1 / (2 * (1 - ρ))) * x * (√(Real.log V) + 1 / √(Real.log V)) / √V +
         √x * √(Real.log (θ * |δ| * q)) * √(θ * |δ| * q))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
   intro c

@@ -62,4 +62,26 @@ theorem sqrt_ge_of_log {L : ℝ} (hL : 15.6 ≤ L) :
 theorem sqrt_fifteen_six_ge : (3.9496 : ℝ) ≤ √15.6 := by
   rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
 
+/-- `γ < 0.5812`, from `γ < H₁₂₈ - log 128` (Mathlib's `eulerMascheroniSeq'` bound). -/
+theorem eulerMascheroni_lt : eulerMascheroniConstant < 0.5812 := by
+  have h := Real.eulerMascheroniConstant_lt_eulerMascheroniSeq' 128
+  have h1 : eulerMascheroniSeq' 128 = (harmonic 128 : ℝ) - Real.log 128 := by
+    rw [eulerMascheroniSeq']; norm_num
+  have hH : (harmonic 128 : ℝ) ≤ 5.4331471 := by
+    have : harmonic 128 ≤ (54331471 / 10000000 : ℚ) := by
+      simp only [harmonic, Finset.sum_range_succ, Finset.sum_range_zero]; norm_num
+    have := (Rat.cast_le (K := ℝ)).2 this
+    rw [Rat.cast_div] at this; norm_num at this ⊢
+  have hl : Real.log 128 = 7 * Real.log 2 := by
+    rw [show (128 : ℝ) = 2 ^ 7 by norm_num, Real.log_pow]; norm_num
+  have h2 := Real.log_two_gt_d9
+  linarith
+
+/-- `e^γ ≤ 1.7882`. -/
+theorem exp_gamma_le_sharp : rexp eulerMascheroniConstant ≤ 1.7882 := by
+  refine (Real.exp_le_exp.2 eulerMascheroni_lt.le).trans ?_
+  have h := Real.exp_bound' (x := 0.5812) (by norm_num) (by norm_num) (n := 6) (by norm_num)
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h
+  linarith
+
 end TernaryGoldbach.MinorArcs
