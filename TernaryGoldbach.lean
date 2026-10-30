@@ -80,3 +80,4 @@ import TernaryGoldbach.MinorArcs.LargeSievePrimes
 import TernaryGoldbach.Prelim.GaussInduced
 import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MinorArcs.LargeSieveWeights
+import TernaryGoldbach.MinorArcs.Plancherel
