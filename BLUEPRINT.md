@@ -37,6 +37,8 @@ statements, each with its own `sorry`.
      │   │          ((4.50)–(4.52) corrected, see NOTES); trusted literature (2.12), (2.15), (2.20);
      │   │    trusted (App. B): |η̂₂''|_∞ ≤ 31.521, |η̂_(ρ)''|_∞ ≤ 31.521 log ρ]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
+     │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), trusted sharp large
+     │   │    sieves (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved; §5.1 (S₁) to do]
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*)
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6

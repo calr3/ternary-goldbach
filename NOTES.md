@@ -38,8 +38,22 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     [B]'s `UV + (19/18)Q₀ ≤ x/5.6` is not needed.
   * **To check in Ch. 6** (§6.2.2): plug our `bound_4_51/52` in place of [B]'s; the lower-order
     changes should be harmless, but the corrected `c₁` and the (R2) constant must be re-run.
-* **Next: Ch. 5 (Type II sums)**, [B pp. 77–], then Ch. 6 (assembly of Thm 3.1.1, re-check numerics
-  for the (4.40) and 4.2.4 corrections).
+* **Ch. 5, §5.2 (S₂) done** (`MinorArcs/TypeII.lean`, `v = 2`, i.e. `m` odd):
+  * Trusted (`Prelim/LargeSieveMV.lean`): optimal large sieve `(N - 1 + δ⁻¹)` (needs `δ ≤ 1` for a
+    single point), MV weighted large sieve `∑ (N + (3/2)δ_r⁻¹)⁻¹|S|² ≤ ‖a‖²`, [MV73, Lemma 8]
+    `∑_{r≤R}(1+r/R)⁻¹μ²/φ ≥ log R + 0.25068` (`R ≥ 2`, with [B]'s numerical check below 100).
+  * Proved: Montgomery's inequality (ω(p)=1: Ramanujan sum `c_r(n) = μ(r)` + Cauchy–Schwarz),
+    (5.41) via `rad`/σ-multiplicativity, Lemma 5.2.1 (both parts), Lemma 5.2.3 (5.50)–(5.52),
+    Prop 5.2.4 (5.53)–(5.57).
+  * **Errata/changes**: Lemma 5.2.1 needs `R ≤ W'` (primes `p > W'` coprime to `r ≤ R`) — we cap `R`
+    (statement (ii) takes any `1 ≤ R ≤ W'` with `qR²(ν+υ) ≤ 1`, gain `(φ(q)/q) log R`);
+    (5.52) must be over odd `m` (display omits it); (5.51)/(5.54): `#(W', W] ≤ W/2 + 1`, not
+    `W/2`, so we assume `W ≥ 50000` (the slack `1 - 3σ/(1-σ/3.5) = 0.0054` absorbs the `+1`);
+    `σ₀ = 0.30286` (rational) instead of `σ = e^{-0.50136}/2`. (5.56) is stated as (i) without and
+    (ii) with the log gain (`R` capped at `W'`), avoiding `min(1, ·/log)` with `log ≤ 0`.
+* **Next**: §5.1 (S₁, [B pp. 80–92]: Lemma 5.1.1 identity + error, Lemma 5.1.2 (Rankin trick, with
+  trusted interval-arithmetic ranges), (5.28)–(5.37) numerics → trusted), then Ch. 6 (assembly;
+  re-check numerics for the (4.40), 4.2.4 and 5.2 corrections).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.

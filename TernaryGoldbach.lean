@@ -2,6 +2,8 @@ import TernaryGoldbach.Statement
 import TernaryGoldbach.Reduction
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
+import TernaryGoldbach.Prelim.SumMuSqPhi
+import TernaryGoldbach.Prelim.LargeSieveMV
 import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay
@@ -25,4 +27,7 @@ import TernaryGoldbach.MinorArcs.TypeIProof
 import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.MinorArcs.TypeI2Proof
 import TernaryGoldbach.MinorArcs.TypeI2Rest
+import TernaryGoldbach.MinorArcs.TypeII
+import TernaryGoldbach.MinorArcs.TypeIINumerics
+import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.PointwiseBound

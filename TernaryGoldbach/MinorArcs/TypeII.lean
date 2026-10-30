@@ -1251,4 +1251,224 @@ theorem weight_caseA {Q W' W : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqW : 13.5 * q ≤
             (1 + r / R)⁻¹ / Nat.totient r) := this
       _ = _ := by field_simp; rfl
 
+theorem aux_weight_eq {W v : ℝ} (hW : W ≠ 0) (hv : v ≠ 0) :
+    W * ((1 / 2 + 1 / W) * v + 3 / 2) / v = W / 2 + 1 + 3 / 2 * (W / v) := by
+  field_simp
+
+/-- The weight sum for `R = 2`, `W/13.5 < q < W/2`, `q` odd [B, p. 97]. -/
+theorem weight_caseB {Q W' W : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqodd : Odd q) (hqW : W < 13.5 * q)
+    (hqW2 : 2 * q < W) (hQW : 3.5 * W ≤ Q) (hW : 10000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) :
+    Nat.totient q / q * Real.log (W / (2 * q)) / W ≤
+      ∑ r ∈ (Icc 1 ⌊(2 : ℝ)⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+        (W - W' + 1 + 3 / 2 * (1 / (q * r * 2) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hW0 : 0 < W := by linarith
+  have hQ0 : 0 < Q := by linarith
+  have hC : (Icc 1 ⌊(2 : ℝ)⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q) = {1, 2} := by
+    rw [show ⌊(2 : ℝ)⌋₊ = 2 by norm_num]
+    ext r
+    simp only [mem_filter, mem_Icc, mem_insert, mem_singleton]
+    constructor
+    · rintro ⟨⟨h1, h2⟩, _⟩; omega
+    · rintro (rfl | rfl)
+      · exact ⟨⟨le_rfl, by norm_num⟩, squarefree_one, Nat.coprime_one_left q⟩
+      · exact ⟨⟨by norm_num, le_rfl⟩, Nat.prime_two.squarefree, Nat.coprime_two_left.2 hqodd⟩
+  rw [hC, sum_pair (by norm_num)]
+  simp only [Nat.totient_one, Nat.totient_two, Nat.cast_one, div_one, mul_one, Nat.cast_ofNat]
+  -- `z² = W/(2q)`, `A = 1/2 + 1/W`.
+  set y := W / (2 * q) with hy
+  have hy1 : 1 < y := by rw [hy, lt_div_iff₀ (by positivity)]; linarith
+  have hy2 : y ≤ 6.76 := by rw [hy, div_le_iff₀ (by positivity)]; linarith
+  set z := √y
+  have hz2 : z ^ 2 = y := Real.sq_sqrt (by linarith)
+  have hz1 : 1 ≤ z := by rw [show (1 : ℝ) = √1 by simp]; exact Real.sqrt_le_sqrt hy1.le
+  have hz26 : z ≤ 13 / 5 := by
+    rw [show (13 / 5 : ℝ) = √((13 / 5) ^ 2) by rw [Real.sqrt_sq (by norm_num)]]
+    exact Real.sqrt_le_sqrt (by linarith)
+  set A := 1 / 2 + 1 / W
+  have hA1 : 1 / 2 ≤ A := by simp only [A]; have : 0 < 1 / W := by positivity
+                             linarith
+  have hA2 : A ≤ 1 / 2 + 1 / 10000 := by
+    simp only [A]; have : 1 / W ≤ 1 / 10000 := one_div_le_one_div_of_le (by norm_num) hW
+    linarith
+  -- The two weights.
+  have hQinv : 1 / Q ≤ 2 / 7 / W := by
+    rw [div_div, div_le_div_iff₀ hQ0 (by positivity)]; linarith
+  have hweight : ∀ c : ℝ, (c = 1 ∨ c = 1 / 2) →
+      (c * z ^ 2 - 2 / 7) / (A * (c * z ^ 2 - 2 / 7) + 3 / 2) / W ≤
+        (W - W' + 1 + 3 / 2 * (c / (2 * q) - 1 / Q)⁻¹)⁻¹ := by
+    intro c hc
+    have hc0 : 1 / 2 ≤ c := by rcases hc with rfl | rfl <;> norm_num
+    have hv : 0 < c * z ^ 2 - 2 / 7 := by nlinarith
+    have h1 : (c * z ^ 2 - 2 / 7) / W ≤ c / (2 * q) - 1 / Q := by
+      have : c / (2 * q) = c * z ^ 2 / W := by rw [hz2, hy]; field_simp
+      rw [this]
+      have : (c * z ^ 2 - 2 / 7) / W = c * z ^ 2 / W - 2 / 7 / W := by ring
+      linarith
+    have hpos : 0 < (c * z ^ 2 - 2 / 7) / W := by positivity
+    have h2 : (c / (2 * q) - 1 / Q)⁻¹ ≤ W / (c * z ^ 2 - 2 / 7) := by
+      have := inv_anti₀ hpos h1; rwa [inv_div] at this
+    have h3 : W - W' + 1 + 3 / 2 * (c / (2 * q) - 1 / Q)⁻¹ ≤
+        W * (A * (c * z ^ 2 - 2 / 7) + 3 / 2) / (c * z ^ 2 - 2 / 7) := by
+      have e : W * (A * (c * z ^ 2 - 2 / 7) + 3 / 2) / (c * z ^ 2 - 2 / 7) =
+          W / 2 + 1 + 3 / 2 * (W / (c * z ^ 2 - 2 / 7)) := aux_weight_eq hW0.ne' hv.ne'
+      rw [e]; nlinarith
+    have hpos2 : 0 < W - W' + 1 + 3 / 2 * (c / (2 * q) - 1 / Q)⁻¹ := by
+      have : 0 < (c / (2 * q) - 1 / Q)⁻¹ := inv_pos.2 (lt_of_lt_of_le hpos h1)
+      nlinarith
+    calc (c * z ^ 2 - 2 / 7) / (A * (c * z ^ 2 - 2 / 7) + 3 / 2) / W
+        = (W * (A * (c * z ^ 2 - 2 / 7) + 3 / 2) / (c * z ^ 2 - 2 / 7))⁻¹ := by
+          field_simp
+      _ ≤ _ := inv_anti₀ hpos2 h3
+  have hw1 := hweight 1 (Or.inl rfl)
+  have hw2 := hweight (1 / 2) (Or.inr rfl)
+  have e1 : (1 : ℝ) / (q * 2) = 1 / (2 * q) := by ring
+  have e2 : (1 : ℝ) / (q * 2 * 2) = 1 / 2 / (2 * q) := by field_simp
+  rw [e1, e2]
+  have hT := sub_inv_le_Tz hA1 hA2 hz1 hz26
+  have hlog := two_log_le_sub_inv hz1
+  have hlogy : Real.log y = 2 * Real.log z := by rw [← hz2, Real.log_pow]; norm_num
+  have hTz : Tz A z = (1 * z ^ 2 - 2 / 7) / (A * (1 * z ^ 2 - 2 / 7) + 3 / 2) +
+      (1 / 2 * z ^ 2 - 2 / 7) / (A * (1 / 2 * z ^ 2 - 2 / 7) + 3 / 2) := by
+    unfold Tz; ring_nf
+  have hφ : (Nat.totient q : ℝ) / q ≤ 1 := by
+    rw [div_le_one hq0]; exact_mod_cast Nat.totient_le q
+  have hlog0 : 0 ≤ Real.log y := Real.log_nonneg hy1.le
+  calc Nat.totient q / q * Real.log y / W ≤ 1 * Real.log y / W := by gcongr
+    _ ≤ Tz A z / W := by rw [one_mul]; gcongr; linarith
+    _ = _ := by rw [hTz, add_div]
+    _ ≤ _ := add_le_add hw1 hw2
+
+theorem totient_two_mul_le (m : ℕ) : Nat.totient (2 * m) ≤ m := by
+  induction m using Nat.strong_induction_on with
+  | _ m ih =>
+    rcases Nat.even_or_odd m with ⟨m', rfl⟩ | hodd
+    · rcases Nat.eq_zero_or_pos m' with rfl | hm'
+      · simp
+      · rw [show m' + m' = 2 * m' by ring, Nat.totient_two_mul_of_even ⟨m', by ring⟩]
+        have := ih m' (by omega)
+        omega
+    · rw [Nat.totient_two_mul_of_odd hodd]; exact Nat.totient_le m
+
+/-- `(1/2 + 1/y) log y ≤ 2` for `1 ≤ y ≤ 6.76`. -/
+theorem half_add_inv_mul_log_le {y : ℝ} (hy : 1 ≤ y) (hy2 : y ≤ 6.76) :
+    (1 / 2 + 1 / y) * Real.log y ≤ 2 := by
+  set z := √y
+  have hz2 : z ^ 2 = y := Real.sq_sqrt (by linarith)
+  have hz1 : 1 ≤ z := by rw [show (1 : ℝ) = √1 by simp]; exact Real.sqrt_le_sqrt hy
+  have hz26 : z ≤ 13 / 5 := by
+    rw [show (13 / 5 : ℝ) = √((13 / 5) ^ 2) by rw [Real.sqrt_sq (by norm_num)]]
+    exact Real.sqrt_le_sqrt (by linarith)
+  have hlog : Real.log y = 2 * Real.log z := by rw [← hz2, Real.log_pow]; norm_num
+  have h := two_log_le_sub_inv hz1
+  have hz0 : 0 < z := by linarith
+  rw [hlog, ← hz2]
+  have hl0 : 0 ≤ 2 * Real.log z := by have := Real.log_nonneg hz1; linarith
+  calc (1 / 2 + 1 / z ^ 2) * (2 * Real.log z) ≤ (1 / 2 + 1 / z ^ 2) * (z - 1 / z) :=
+        mul_le_mul_of_nonneg_left h (by positivity)
+    _ ≤ 2 := by
+        rw [show (1 / 2 + 1 / z ^ 2) * (z - 1 / z) = (z ^ 4 / 2 + z ^ 2 / 2 - 1) / z ^ 3 by
+          field_simp; ring]
+        rw [div_le_iff₀ (by positivity)]
+        nlinarith [mul_nonneg (sub_nonneg.2 hz1) (sub_nonneg.2 hz26),
+          mul_nonneg (mul_nonneg (sub_nonneg.2 hz1) (sub_nonneg.2 hz26)) hz0.le,
+          mul_nonneg (mul_nonneg (sub_nonneg.2 hz1) (sub_nonneg.2 hz26)) (sq_nonneg z)]
+
+set_option maxHeartbeats 1000000 in
+/-- **[B, Lemma 5.2.3], (5.51)**: if `2α = a/q + O*(1/qQ)`, `q < W/2`, `Q ≥ 3.5W` (and
+`W ≥ 50000`, `W/2 ≤ W' ≤ W`),
+`∑_{A₀ < m ≤ A₁, m odd} |S(αm)|² ≤ ⌈(A₁ - A₀)/2q⌉ (q/φ(q)) (W/log(W/2q)) ∑ (log p)²`.
+The condition `W ≥ 50000` is ours: the number of integers in `(W', W]` is `≤ W/2 + 1`, not `≤ W/2`
+as [B] uses, and the slack in [B]'s constants absorbs the `+1` only for `W` large. -/
+theorem lemma_5_2_3_b {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
+    (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) {W' W : ℝ} (hqW : 2 * q < W) (hQW : 3.5 * W ≤ Q)
+    (hW : 50000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) (A₀ A₁ : ℝ) :
+    oddSqSum α W' W A₀ A₁ ≤
+      ⌈(A₁ - A₀) / (2 * q)⌉₊ * (q / Nat.totient q * (W / Real.log (W / (2 * q))) * logSqSum W' W) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hW0 : 0 < W := by linarith
+  have hφ : (0 : ℝ) < Nat.totient q := by exact_mod_cast Nat.totient_pos.2 hq
+  have hy1 : 1 < W / (2 * q) := by rw [lt_div_iff₀ (by positivity)]; linarith
+  have hlog : 0 < Real.log (W / (2 * q)) := Real.log_pos hy1
+  have hL := logSqSum_nonneg W' W
+  set K₀ := Nat.totient q / q * Real.log (W / (2 * q)) / W
+  have hK₀ : 0 < K₀ := by positivity
+  have hLK : logSqSum W' W / K₀ = q / Nat.totient q * (W / Real.log (W / (2 * q))) * logSqSum W' W := by
+    simp only [K₀]; field_simp
+  rcases le_or_gt (13.5 * (q : ℝ)) W with hA | hB
+  · obtain ⟨hR2, hRQ, hRW, hK⟩ := weight_caseA (Q := Q) hq hA hQW hW hW'W hWW
+    have := odd_blocks_from_weight hq hcop hα (by linarith) hRQ (by linarith) hWW hRW hK₀ hK A₀ A₁
+    rwa [hLK] at this
+  · rcases Nat.even_or_odd q with hev | hodd
+    · -- `q` even: (5.50) is better.
+      have h := lemma_5_2_3_a hq hcop hα (by linarith : (q : ℝ) ≤ Q) (by linarith)
+        hWW (W' := W') (W := W) A₀ A₁
+      have hmin : min (2 * (q : ℝ)) Q = 2 * q := min_eq_left (by linarith)
+      rw [hmin] at h
+      refine h.trans (mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _))
+      refine mul_le_mul_of_nonneg_right ?_ hL
+      have hqφ : 2 ≤ (q : ℝ) / Nat.totient q := by
+        obtain ⟨m, hm⟩ := hev
+        have h2m : q = 2 * m := by omega
+        have h1 := totient_two_mul_le m
+        rw [← h2m] at h1
+        have h3 : (Nat.totient q : ℝ) ≤ m := by exact_mod_cast h1
+        have h4 : (q : ℝ) = 2 * m := by exact_mod_cast h2m
+        rw [le_div_iff₀ hφ]; linarith
+      have hy2 : W / (2 * q) ≤ 6.76 := by
+        rw [div_le_iff₀ (by positivity)]; linarith
+      have hkey := half_add_inv_mul_log_le hy1.le hy2
+      -- `W - W' + 2q ≤ W(1/2 + 2q/W) ≤ 2W/log(W/2q) ≤ (q/φ(q)) W/log(W/2q)`.
+      have h1 : W - W' + 2 * q ≤ W * (1 / 2 + 1 / (W / (2 * q))) := by
+        have : W * (1 / 2 + 1 / (W / (2 * q))) = W / 2 + 2 * q := by field_simp
+        linarith
+      have h2 : W * (1 / 2 + 1 / (W / (2 * q))) ≤ 2 * W / Real.log (W / (2 * q)) := by
+        rw [le_div_iff₀ hlog]; nlinarith
+      calc W - W' + 2 * q ≤ 2 * W / Real.log (W / (2 * q)) := h1.trans h2
+        _ = 2 * (W / Real.log (W / (2 * q))) := by ring
+        _ ≤ _ := mul_le_mul_of_nonneg_right hqφ (by positivity)
+    · have hK := weight_caseB (Q := Q) hq hodd hB hqW hQW (by linarith) hW'W hWW
+      have := odd_blocks_from_weight hq hcop hα (R := 2) (by norm_num) (by nlinarith)
+        (by linarith) hWW (by linarith) hK₀ hK A₀ A₁
+      rwa [hLK] at this
+
+/-- **[B, (5.54)]**: if `q < W/2` and `Q ≥ 3.5W` (and `W ≥ 50000`, `W/2 ≤ W' ≤ W`, `U' ≥ x/2W`),
+`S₂ ≤ (x/(4φ(q) log(W/2q)) + (q/φ(q)) W/log(W/2q)) ∑ (log p)²`. -/
+theorem prop_5_2_4_e {α x Q U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x)
+    (hqW : 2 * q < W) (hQW : 3.5 * W ≤ Q) (hW : 50000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W)
+    (hU' : x / (2 * W) ≤ U') :
+    S2 α x U' W' W ≤ (x / (4 * Nat.totient q * Real.log (W / (2 * q))) +
+      q / Nat.totient q * (W / Real.log (W / (2 * q)))) * logSqSum W' W := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hW0 : 0 < W := by linarith
+  have hφ : (0 : ℝ) < Nat.totient q := by exact_mod_cast Nat.totient_pos.2 hq
+  have hy1 : 1 < W / (2 * q) := by rw [lt_div_iff₀ (by positivity)]; linarith
+  have hlog : 0 < Real.log (W / (2 * q)) := Real.log_pos hy1
+  have hL := logSqSum_nonneg W' W
+  have h := lemma_5_2_3_b hq hcop hα hqW hQW hW hW'W hWW U' (x / W)
+  rw [S2]
+  refine h.trans ?_
+  rw [← mul_assoc]
+  refine mul_le_mul_of_nonneg_right ?_ hL
+  set D := x / W - U'
+  have hD : D ≤ x / (2 * W) := by
+    simp only [D]; have : x / W - x / (2 * W) = x / (2 * W) := by field_simp; ring
+    linarith
+  have hJ : (⌈D / (2 * q)⌉₊ : ℝ) ≤ x / (4 * W * q) + 1 := by
+    rcases le_or_gt D 0 with hD0 | hD0
+    · rw [Nat.ceil_eq_zero.2 (div_nonpos_of_nonpos_of_nonneg hD0 (by positivity))]
+      push_cast; positivity
+    · have := (Nat.ceil_lt_add_one (show 0 ≤ D / (2 * q) by positivity)).le
+      have : D / (2 * q) ≤ x / (4 * W * q) := by
+        rw [div_le_div_iff₀ (by positivity) (by positivity)]
+        have h1 := mul_le_mul_of_nonneg_right hD (show (0 : ℝ) ≤ 4 * W * q by positivity)
+        have h2 : x / (2 * W) * (4 * W * q) = x * (2 * q) := by field_simp; ring
+        linarith
+      linarith
+  calc (⌈D / (2 * q)⌉₊ : ℝ) * (q / Nat.totient q * (W / Real.log (W / (2 * q))))
+      ≤ (x / (4 * W * q) + 1) * (q / Nat.totient q * (W / Real.log (W / (2 * q)))) :=
+        mul_le_mul_of_nonneg_right hJ (by positivity)
+    _ = _ := by field_simp
+
 end TernaryGoldbach.MinorArcs
