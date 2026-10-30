@@ -56,6 +56,8 @@ statements, each with its own `sorry`.
      │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean;
      │    Prop 11.2.3 (corrected, with a majorant G) ✅ Prop1123.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
+     │   [MinorArcs/LargeSievePrimes.lean: Cor 12.2.5 ✅ from Prop 12.1.2 (❌ sorry, in progress) and
+     │    Prop 12.2.4 (trusted computation); Gauss sums ✅ Prelim/GaussInduced.lean]
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)
  Preliminaries: §2.5 explicit bounds on sums of μ and Λ (Ramaré et al.)
