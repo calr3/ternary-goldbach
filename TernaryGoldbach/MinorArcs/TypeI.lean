@@ -184,18 +184,8 @@ noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
     3 * c₁ / 2 * √(2 * x / c₂) * Real.log (2 * x / c₂) +
     20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * x) * Real.log (2 * rexp 1 * x / c₂)
 
-/-- The bound (4.42) of [B, Lemma 4.2.3] (case `|δ| ≥ 1/2c₂`; this is the whole bound). -/
-noncomputable def bound_4_42 (x δ : ℝ) (q : ℕ) (D ε : ℝ) : ℝ :=
-  let c₁ := 1 + eta2'L1 / (x / D)
-  let y := x / (|δ| * q)
-  2 * √(c₀ * c₁) / π * D * Real.log (rexp 1 * x / D) +
-    2 * √(c₀ * c₁) / π * (1 + ε) * (y + 1) *
-      (√(3 + 2 * ε) * logPlus (2 * √(rexp 1) * |δ| * q) +
-        1 / 2 * logPlus (2 * D / y) * logPlus (2 * |δ| * q)) +
-    (3 * c₁ / 4 * (2 / √5 + (1 + ε) / (2 * ε) * Real.log x) +
-      40 / 3 * √2 * c₀ * c₂ ^ (3 / 2 : ℝ)) * √x * Real.log x
-
--- [B, Lemma 4.2.3] itself is stated (and case (b) proved) in `MinorArcs/TypeILogProof.lean`.
+-- [B, Lemma 4.2.3] itself is stated and proved in `MinorArcs/TypeILogProof.lean` (the unused bound
+-- (4.42) is omitted; see there).
 
 /-- `c₄ = 1.03884` [B, Lemma 4.2.4]. -/
 def c₄ : ℝ := 1.03884

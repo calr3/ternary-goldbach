@@ -1241,19 +1241,15 @@ theorem lemma_4_2_3_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   · exact norm_mainPartL_le hx0 hq h2α hM0 hMδ hMD hD4 hDe
   · exact norm_restPartL_le_caseB hx hq hcop h2α hqQ hδ hD1 hD4 hDe hD'Q hMD'
 
-/-- **[B, Lemma 4.2.3], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.42).  Not yet proved. -/
-theorem lemma_4_2_3_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : max 16 (2 * √x) ≤ Q₀) (hD : √3 ≤ D) (hDx : D ≤ min (x / 4) (x / rexp 1))
-    (hδ : 1 / (2 * c₂) ≤ |δ|) {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
-    ‖typeILog α x D‖ ≤ bound_4_42 x δ q D ε := by
-  sorry
+/-- **[B, Lemma 4.2.3]** for `η = η₂` (and `ρ₀ = 4`, by [B, (6.2)]), in the form used by [B, §6.2.1]:
+if `|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`, (4.39) is at most (4.40) + (4.41).
 
-/-- **[B, Lemma 4.2.3]** for `η = η₂` (and `ρ₀ = 4`, by [B, (6.2)]). -/
+[B]'s second statement, the bound (4.42) for `|δ| ≥ 1/2c₂`, is not formalized: it is never used
+(§6.2.1 takes `D = U ≤ Q₀/2`), and as printed it omits the main term (4.40), which the proof
+(p. 67) separates in both cases. -/
 theorem lemma_4_2_3 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : max 16 (2 * √x) ≤ Q₀) (hD : √3 ≤ D) (hDx : D ≤ min (x / 4) (x / rexp 1)) :
-    ((|δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) →
-      ‖typeILog α x D‖ ≤ bound_4_40 x δ q D + bound_4_41 x q D) ∧
-    (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 → ‖typeILog α x D‖ ≤ bound_4_42 x δ q D ε) :=
-  ⟨lemma_4_2_3_caseB h hD hDx, fun hδ _ hε hε1 => lemma_4_2_3_caseA h hQ₀ hD hDx hδ hε hε1⟩
+    (hD : √3 ≤ D) (hDx : D ≤ min (x / 4) (x / rexp 1)) (hcase : |δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) :
+    ‖typeILog α x D‖ ≤ bound_4_40 x δ q D + bound_4_41 x q D :=
+  lemma_4_2_3_caseB h hD hDx hcase
 
 end TernaryGoldbach.MinorArcs
