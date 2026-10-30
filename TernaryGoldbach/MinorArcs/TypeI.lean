@@ -110,14 +110,14 @@ example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : 
   lemma_4_1_1 h y hA hC
 
 open Classical in
-/-- **[B, Lemma 4.1.2]** -/
-theorem lemma_4_1_2 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
+/-- **[B, Lemma 4.1.2]**, proved in `MinorArcs/TrigSums.lean`. -/
+example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
     ∑ n ∈ Finset.Ioc ⌊y₁⌋ ⌊y₂⌋,
         (if (q : ℤ) ∣ n then 0 else min A (C / Real.sin (π * α * n) ^ 2)) ≤
-      min (20 / (3 * π ^ 2) * C * q ^ 2) (2 * A + 4 * q / π * √(A * C)) := by
-  sorry
+      min (20 / (3 * π ^ 2) * C * q ^ 2) (2 * A + 4 * q / π * √(A * C)) :=
+  lemma_4_1_2 h hy hy₁₂ hlen hy₂ hA hC
 
 open Classical in
 /-- **[B, Lemma 4.1.3]** -/
