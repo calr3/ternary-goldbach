@@ -24,4 +24,5 @@ import TernaryGoldbach.MinorArcs.SumTools
 import TernaryGoldbach.MinorArcs.TypeIProof
 import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.MinorArcs.TypeI2Proof
+import TernaryGoldbach.MinorArcs.TypeI2Rest
 import TernaryGoldbach.MinorArcs.PointwiseBound
