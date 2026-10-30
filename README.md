@@ -39,7 +39,7 @@ which [B, App. B] obtains by rigorous numerics.
 | `Helfgott/NonPrime.lean` | [H, (7.50)] from sup bounds on η₊, η_* and bounds on ψ, ψ − θ (constants as parameters) | ✅ |
 | `Helfgott/SupNorms.lean` | easy sup bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` | ✅ |
 | `Helfgott/Chebyshev.lean` | elementary `θ(N) ≤ N log 4`, `ψ(N) − θ(N) ≤ 1.6√N`, `ψ(N) ≤ 1.387 N` (for `N ≥ 10²⁷`) | ✅ |
-| `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < 0.048779 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
+| `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < (1.058259 − 1.0376) x²/κ = 0.020659 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
 | `Helfgott/Eta2.lean` | explicit formulas for `η₂`, `|η₂|₁ = 1`, continuity, compact support, total variation `8 log 2` | ✅ |
@@ -85,14 +85,16 @@ which [B, App. B] obtains by rigorous numerics.
 The blueprint follows Helfgott's book *The ternary Goldbach problem*, arXiv:1501.05438v2 [B],
 which supersedes the papers (arXiv:1205.5252, 1305.2897, 1312.7748 [H]). Its definitions and
 constants match [H], with one exception: the corrected minor-arc bound is `1.00948 x²/κ` [B,
-(14.49)] rather than `0.97392 x²/κ` [H, (7.48)], so the final margin is `0.04877 x²/κ`.
+(14.49)] rather than `0.97392 x²/κ` [H, (7.48)], so [B]'s final margin is `0.04877 x²/κ` (ours: `0.020659 x²/κ`, see Caveats).
 
 1. ~~`circle_identity_input`~~ **proved**: [H, (3.3)/(7.49)] for the infinite smoothed sums,
    from `circle_identity_tsum` and the decay bounds in `Helfgott/Decay.lean`.
 2. `major_arcs_input`: [B, (14.27)], `∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.058259 x²/κ`.
    This uses explicit formulas for Dirichlet L-functions and Platt's rigorous GRH verification
    for moduli up to 300000.
-3. `minor_arcs_input`: [B, (14.49)], `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.00948 x²/κ`. This uses Vaughan's
+3. `minor_arcs_input`: [B, (14.49)], stated as `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`. This is
+   weaker than [B]'s `1.00948` because our proved Theorem 3.1.1 has corrected constants (see
+   Caveats). This uses Vaughan's
    identity, explicit bilinear bounds, and the large sieve. Vaughan's identity and a (non-sharp)
    large sieve are now proved in `MinorArcs/`, but they aren't yet connected to this input.
 4. ~~`nonprime_input`~~ **proved**, a weaker form of [B, (14.51)] with constant `6.7·10⁶` in place of
@@ -103,6 +105,14 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
 6. `prime_ladder_input`: the Helfgott–Platt prime ladder up to `8.875694·10³⁰`.
 
 ## Caveats
+
+* [B]'s Theorem 3.1.1 constant `0.5` comes from an arithmetic slip in (6.77). The correct value
+  is `0.8103`, and `3.36 x^{5/6}` becomes `3.8 x^{5/6}` in our proof. Re-running [B, §14.3] with
+  these constants (`scripts/minor_arc_total_numerics.py`) gives the minor-arc total
+  `1.0376 x²/κ` instead of `1.00948 x²/κ`. The final margin is then `0.020659 x²/κ` instead of
+  `0.04877 x²/κ`, which still suffices.
+* [B]'s proof of Prop 11.2.3 applies Theorem 3.1.1 at scale `wx` without rescaling `δ` to `wδ`.
+  The statement survives with about 11% to spare (`scripts/prop_11_2_3_check.py`, see `NOTES.md`).
 
 * The definitions in `Helfgott/Defs.lean` were transcribed from extracted PDF text and
   cross-checked against [B] (η₁ = 2·1_{[1/2,1]}, η₂ as in [B, (11.10)], η₊ as in [B, (7.4)–(7.6)]

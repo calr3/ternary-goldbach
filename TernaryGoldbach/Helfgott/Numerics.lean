@@ -20,9 +20,9 @@ theorem xOf_denom_bounds : 0 < 2 + 9 / (196 * √(2 * Real.pi)) ∧
   linarith
 
 /-- The final numerical step of [H, §7.4]: for `N ≥ 10²⁷`,
-`7.3306 N^{3/2} log N < (1.058259 - 1.00948) x²/κ`. -/
+`7.3306 N^{3/2} log N < (1.058259 - 1.0376) x²/κ`. -/
 theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
-    7.3306 * (N * √N) * Real.log N < (1.058259 - 1.00948) * xOf N ^ 2 / κ := by
+    7.3306 * (N * √N) * Real.log N < (1.058259 - 1.0376) * xOf N ^ 2 / κ := by
   obtain ⟨hc0, hc1⟩ := xOf_denom_bounds
   set c := 2 + 9 / (196 * √(2 * Real.pi)) with hc
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN
@@ -50,15 +50,15 @@ theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
     have : s ^ 4 * s ^ 2 * Real.log s ≤ s ^ 4 * s ^ 2 * s :=
       mul_le_mul_of_nonneg_left hlogs (by positivity)
     nlinarith
-  have rhs : 0.048779 * s ^ 8 / (4.0804 * 49) ≤ (1.058259 - 1.00948) * (s ^ 8 / c ^ 2) / κ := by
+  have rhs : 0.020659 * s ^ 8 / (4.0804 * 49) ≤ (1.058259 - 1.0376) * (s ^ 8 / c ^ 2) / κ := by
     rw [κ]
     have : s ^ 8 / 4.0804 ≤ s ^ 8 / c ^ 2 :=
       div_le_div_of_nonneg_left (by positivity) hc2' hc2
     have h8 : 0 ≤ s ^ 8 := by positivity
-    calc 0.048779 * s ^ 8 / (4.0804 * 49) = (1.058259 - 1.00948) * (s ^ 8 / 4.0804) / 49 := by
+    calc 0.020659 * s ^ 8 / (4.0804 * 49) = (1.058259 - 1.0376) * (s ^ 8 / 4.0804) / 49 := by
           ring
       _ ≤ _ := by gcongr
-  have key : 29.3224 * s ^ 7 < 0.048779 * s ^ 8 / (4.0804 * 49) := by
+  have key : 29.3224 * s ^ 7 < 0.020659 * s ^ 8 / (4.0804 * 49) := by
     have h7 : 0 < s ^ 7 := by positivity
     have : s ^ 8 = s * s ^ 7 := by ring
     rw [this, lt_div_iff₀ (by norm_num)]
@@ -67,9 +67,9 @@ theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
 
 /-- The final inequality with the cruder constant that comes from the easy sup-norm bounds
 (`Helfgott/SupNorms.lean`) and elementary Chebyshev bounds (`Helfgott/Chebyshev.lean`): for `N ≥ 10²⁷`,
-`6.7 · 10⁶ · N^{3/2} log N < (1.058259 - 1.00948) x²/κ`. -/
+`6.7 · 10⁶ · N^{3/2} log N < (1.058259 - 1.0376) x²/κ`. -/
 theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
-    6.7e6 * (N * √N) * Real.log N < (1.058259 - 1.00948) * xOf N ^ 2 / κ := by
+    6.7e6 * (N * √N) * Real.log N < (1.058259 - 1.0376) * xOf N ^ 2 / κ := by
   obtain ⟨hc0, hc1⟩ := xOf_denom_bounds
   set c := 2 + 9 / (196 * √(2 * Real.pi)) with hc
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN
@@ -96,25 +96,38 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
     linarith [show (48 : ℝ) ^ 16 ≤ 10 ^ 27 by norm_num]
   have hlog : Real.log N = 16 * Real.log u := by
     rw [← hu16, Real.log_pow]; push_cast; ring
-  have hlogu : Real.log u ≤ u := (Real.log_le_sub_one_of_pos hu0).trans (by linarith)
+  -- `log u ≤ u/e ≤ u/2.7` (from `log(u/e) ≤ u/e - 1`).
+  have hlogu : Real.log u ≤ u / 2.7 := by
+    have he := Real.exp_one_gt_d9
+    have he0 : 0 < Real.exp 1 := Real.exp_pos 1
+    have h1 := Real.log_le_sub_one_of_pos (div_pos hu0 he0)
+    rw [Real.log_div hu0.ne' he0.ne', Real.log_exp] at h1
+    have : u / Real.exp 1 ≤ u / 2.7 := div_le_div_of_nonneg_left hu0.le (by norm_num) (by linarith)
+    linarith
   have hx : xOf N ^ 2 = u ^ 32 / c ^ 2 := by
     rw [xOf, div_pow, ← hu16]; ring
   rw [hx, hlog, ← hu8, ← hu16]
   have hc2 : c ^ 2 ≤ 4.0804 := by nlinarith [mul_le_mul hc1 hc1 hc0.le (by norm_num)]
   have hc2' : 0 < c ^ 2 := by positivity
-  have lhs : 6.7e6 * (u ^ 16 * u ^ 8) * (16 * Real.log u) ≤ 1.072e8 * u ^ 25 := by
-    have : u ^ 16 * u ^ 8 * Real.log u ≤ u ^ 16 * u ^ 8 * u :=
+  have lhs : 6.7e6 * (u ^ 16 * u ^ 8) * (16 * Real.log u) ≤ 3.971e7 * u ^ 25 := by
+    have : u ^ 16 * u ^ 8 * Real.log u ≤ u ^ 16 * u ^ 8 * (u / 2.7) :=
       mul_le_mul_of_nonneg_left hlogu (by positivity)
-    nlinarith
-  have rhs : 0.048779 * u ^ 32 / (4.0804 * 49) ≤
-      (1.058259 - 1.00948) * (u ^ 32 / c ^ 2) / κ := by
+    have e : u ^ 16 * u ^ 8 * (u / 2.7) = u ^ 25 / 2.7 := by ring
+    have h25 : 0 ≤ u ^ 25 := by positivity
+    rw [e] at this
+    rw [show 6.7e6 * (u ^ 16 * u ^ 8) * (16 * Real.log u) = 1.072e8 * (u ^ 16 * u ^ 8 * Real.log u)
+      by ring]
+    calc 1.072e8 * (u ^ 16 * u ^ 8 * Real.log u) ≤ 1.072e8 * (u ^ 25 / 2.7) := by gcongr
+      _ ≤ 3.971e7 * u ^ 25 := by rw [mul_div_assoc']; rw [div_le_iff₀ (by norm_num)]; nlinarith
+  have rhs : 0.020659 * u ^ 32 / (4.0804 * 49) ≤
+      (1.058259 - 1.0376) * (u ^ 32 / c ^ 2) / κ := by
     rw [κ]
     have : u ^ 32 / 4.0804 ≤ u ^ 32 / c ^ 2 :=
       div_le_div_of_nonneg_left (by positivity) hc2' hc2
-    calc 0.048779 * u ^ 32 / (4.0804 * 49) = (1.058259 - 1.00948) * (u ^ 32 / 4.0804) / 49 := by
+    calc 0.020659 * u ^ 32 / (4.0804 * 49) = (1.058259 - 1.0376) * (u ^ 32 / 4.0804) / 49 := by
           ring
       _ ≤ _ := by gcongr
-  have key : 1.072e8 * u ^ 25 < 0.048779 * u ^ 32 / (4.0804 * 49) := by
+  have key : 3.971e7 * u ^ 25 < 0.020659 * u ^ 32 / (4.0804 * 49) := by
     have h25 : 0 < u ^ 25 := by positivity
     have h7 : (48 : ℝ) ^ 7 ≤ u ^ 7 := pow_le_pow_left₀ (by norm_num) hu48 7
     rw [show u ^ 32 = u ^ 7 * u ^ 25 by ring, lt_div_iff₀ (by norm_num)]

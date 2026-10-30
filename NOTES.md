@@ -7,6 +7,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 
 * `ternary_goldbach` depends only on the 4 `sorry`s in `Helfgott/Inputs.lean`: the major arcs
   (14.27), the minor arcs (14.49), binary Goldbach up to 4·10¹⁸, and the prime ladder.
+* **(14.49) is now stated with `1.0376` instead of [B]'s `1.00948`** (final margin `0.020659`
+  instead of `0.048779`; `final_inequality(_crude)` re-proved). That is what [B, §14.3] gives
+  when re-run with the Theorem 3.1.1 we actually proved (`0.8103`, `3.8 x^{5/6}` instead of
+  `0.5`, `3.36`): `scripts/minor_arc_total_numerics.py` reproduces [B]'s `M ≤ 0.80508` as
+  `0.80279` (slightly less rounding) and gives `M ≤ 0.82744`, `Z ≤ 1.037499 x²/κ` with the
+  corrected constants. The changes come from `g(r₀)` in (14.37) (`0.38491 → 0.39761`), the `+0.5`
+  term of `f₁` and `f₂` in (14.47) (`0.11438 → 0.11802`), and (14.43) (`0.30351 → 0.31181`).
+  Lemma 11.2.1 still holds (`g/h ≤ 0.61`).
+* **Next: Ch. 11 (Prop 11.2.3), then Ch. 12, Ch. 13 → (14.49).** See the Prop 11.2.3 erratum
+  below before formalizing it.
 * Part I (minor arcs):
   * [B, §2.3] proved (`MinorArcs/FourierSums.lean`), [B, §4.1] proved (`MinorArcs/TrigSums.lean`).
   * [B, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**
@@ -17,7 +27,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   * **Lemma 4.2.4** (`TypeI2Rest.lean: lemma_4_2_4`) is proved, both cases. Its non-standard
     dependencies are `eta2_fourier_bound'`, (2.12), (2.15), (2.20) (checked with a script that
     walks the dependency closure for `sorryAx`; (2.16) turned out not to be needed).
-  * Still `sorry`: Thm 3.1.1 (Ch. 5 Type II, Ch. 6 assembly).
+  * Thm 3.1.1 is proved (see Ch. 6 below).
 * **Lemma 4.2.4: how it was done / decisions** (all documented in the `bound_4_5x` docstrings):
   * `typeI2 = ∑_{a odd} c(a) T_{a,∘}`, `|c(a)| ≤ log a`; main term (4.50) with factor `3/2` (erratum
     in (4.55)).
@@ -146,6 +156,30 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
+## Ch. 11: Prop 11.2.3 erratum (the proof ignores that `δ` scales with `w`)
+
+[B]'s proof writes `S_{η_*}(α,x) = ∫ S_{η₂}(α, wx) φ(w) dw/w` (11.9) and applies Thm 3.1.1 to
+each `S_{η₂}(α, wx)` with the same `r = max(1, |δ|/8) q`. At scale `wx`, though,
+`2α = a/q + δ_w/(wx)` with **`δ_w = wδ`**, so:
+
+* for `w < 1` the parameter is `r_w = max(1, w|δ|/8) q ≤ r`, and the bound `g_{wx}(r_w)` is
+  *weaker* than the `g_{wx}(r)` [B] uses (`g` is decreasing);
+* for `w > 1`, Thm 3.1.1's hypothesis `|δ_w/(wx)| ≤ 1/(q Q_{wx})` does not follow from
+  `|δ/x| ≤ 1/(q Q_x)`, because `Q_{wx} > Q_x`. It holds for `w ≤ ((4/3)x^{1/3}/(8r))^{3/2}`,
+  which is `≥ 94` when `r ≤ r₁ = (3/8)x^{4/15}`, `x ≥ 10²⁵`. Beyond that, `φ(w) ≤ e^{-4400}`
+  and the trivial bound suffices. (Alternatively, a Dirichlet re-approximation `a'/q' ≠ a/q` at
+  level `Q_{wx}` has `q' ≥ Q_x(1 - q/Q_{wx})`, which is the `h` case.)
+
+The statement survives. For `|δ| ≤ 8`, `r_w = q = r` and nothing changes. For `|δ| > 8`,
+`r_w ≥ w r`, and `A(r) = ∫ g_{wy,1}(wr) φ(w) dw ≤ 0.89 ∫ g_{wy,1}(r) φ(w) dw = C(r)` (the gain
+for `w > 1` outweighs the loss for `w < 1`; `scripts/prop_11_2_3_check.py`, `r₀ ≤ r ≤ r₁`,
+`y ∈ [10²⁵, 10¹⁰⁰]`). **Plan for Lean:** state Prop 11.2.3 only for `r ≤ r₁` (all that Ch. 13
+needs; for `r > r₁` Ch. 13 uses `g(r₁)`). Prove it with per-`w` bounds `g_{wy,1}(r)` (`|δ| ≤ 8`)
+and `g_{wy,1}(wr)` (`|δ| > 8`). Then either show the `|δ| > 8` integral is `≤` [B]'s closed form
+`g_{y,φ}(r)`, or carry a closed form for `∫ g_{wy,1}(wr)φ(w)dw` into Ch. 13 directly.
+Also note that the case `r > r₁` of Ch. 13 needs, for `w ≤ 1`, `g_{wy}(max(q, wr')) ≤ g_{wy}(w r₁)`.
+That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the same way.
+
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
 
 * Case (a) uses `second_approx` (Dirichlet via `Real.exists_rat_abs_sub_le_and_den_le`,
@@ -164,7 +198,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 ## Decisions made
 
 * Follow the book [B] = arXiv:1501.05438v2, not the 2013 papers. Its minor-arc bound is
-  1.00948 (not 0.97392), so the final margin is 0.048779·x²/κ.
+  1.00948 (not 0.97392), so [B]'s final margin is 0.048779·x²/κ (ours is 0.020659, see Status).
 * Where the final inequality has room, prove cruder constants instead of the book's sharp
   ones (e.g. non-prime terms: 6.7·10⁶ instead of 7.3306). Record each such change in the
   docstrings and the README.
@@ -189,7 +223,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   constant `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020` (ρ = 3.397962), but [B] computes
   `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911`. [B]'s own (6.63) exceeds the stated bound by up to
   ~2.6% (numerically, `q` prime, `δ₀q ~ 10⁵–10⁷`). `PointwiseBound.lean` now uses `0.8103`.
-  **To check**: the effect on the later uses of Thm 3.1.1 (Chs. 11, 13 minor-arc totals).
+  ✅ Checked: the effect on Chs. 11, 13, §14.3 is `1.00948 → 1.0376` in (14.49) (see Status).
   **(6.12) understates the μ-sum for odd `q`**: the sum is over `(m, 2q) = 1`, so (2.22) applies
   with modulus `2q` and gives `(4/5)(2q/φ(2q))/log(M/2q²)`; [B] writes `q/φ(q)`. For odd `q`,
   `2q/φ(2q) = 2q/φ(q)`, so the term `(3/2 log q + 2.74) x/φ(q)` of (6.58) should be doubled.

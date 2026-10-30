@@ -15,7 +15,7 @@ statements, each with its own `sorry`.
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
 | (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input` | ❌ `sorry` |
-| (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input` | ❌ `sorry` |
+| (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ❌ `sorry` |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
 | `N < 10²⁷`: [HP13] | `binary_goldbach_input`, `prime_ladder_input` | ❌ trusted computation |
@@ -48,7 +48,8 @@ statements, each with its own `sorry`.
      │        §6.3.1 + §6.4 ✅ FirstChoice*: Thm 3.1.1 for q ≤ x^{1/3}/6 (corrected constants);
      │        §6.3.2 ✅ Second*: Thm 3.1.1 for q > x^{1/3}/6 ([B]'s constants; corrected case split)]
      │   ⇒ Thm 3.1.1 ✅ PointwiseBound `theorem_3_1_1` (modulo the trusted inputs)
-     ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*)
+     ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [B]'s proof ignores δ_w = wδ, statement
+     │   survives for r ≤ r₁, see NOTES and scripts/prop_11_2_3_check.py)
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)
