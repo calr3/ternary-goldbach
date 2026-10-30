@@ -2,6 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeIProof
 import TernaryGoldbach.Prelim.LargeSieveMV
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.MinorArcs.Montgomery
+import TernaryGoldbach.MinorArcs.TypeIINumerics
 
 /-!
 # Type II sums [B, Ch. 5]: the sum `S₂` via the large sieve [B, §5.2]
@@ -1080,5 +1081,174 @@ theorem odd_block_weighted {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hc
   calc w r * (1 / Nat.totient r : ℝ) * ‖primeExpSum W' W (α * m)‖ ^ 2
       = w r * ((1 / Nat.totient r : ℝ) * ‖primeExpSum W' W (α * m)‖ ^ 2) := by ring
     _ ≤ _ := mul_le_mul_of_nonneg_left (hMont m r hr) (hw0 r hr)
+
+/-- Blocks of `2q` consecutive integers and a lower bound `K₀` for the weight sum of
+`odd_block_weighted`: `∑_{A₀ < m ≤ A₁, m odd} |S(αm)|² ≤ ⌈(A₁ - A₀)/2q⌉ ∑ (log p)²/K₀`. -/
+theorem odd_blocks_from_weight {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
+    (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) {R : ℝ} (hR1 : 1 ≤ R)
+    (hRQ : q * R ^ 2 < Q) {W' W : ℝ} (hW' : 0 ≤ W') (hWW : W' ≤ W) (hRW : R ≤ W') {K₀ : ℝ}
+    (hK₀ : 0 < K₀)
+    (hK : K₀ ≤ ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+        (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ))
+    (A₀ A₁ : ℝ) :
+    oddSqSum α W' W A₀ A₁ ≤ ⌈(A₁ - A₀) / (2 * q)⌉₊ * (logSqSum W' W / K₀) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have h2q : 1 ≤ 2 * q := by omega
+  have hblocks := sum_Ioc_le_blocks
+    (G := fun m : ℤ => if Odd m then ‖primeExpSum W' W (α * m)‖ ^ 2 else 0)
+    (fun m => by split_ifs; exacts [sq_nonneg _, le_rfl]) h2q ⌈(A₁ - A₀) / ((2 * q : ℕ) : ℝ)⌉₊ A₀ A₁
+    (nblocks_spec (by positivity))
+  rw [oddSqSum]
+  refine hblocks.trans ?_
+  have hcast : ((2 * q : ℕ) : ℝ) = 2 * q := by push_cast; ring
+  rw [hcast] at *
+  have hblock : ∀ j ∈ range ⌈(A₁ - A₀) / (2 * (q : ℝ))⌉₊,
+      ∑ m ∈ Ioc ⌊A₀ + j * (2 * (q : ℝ))⌋ ⌊min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁⌋,
+        (if Odd m then ‖primeExpSum W' W (α * m)‖ ^ 2 else 0) ≤ logSqSum W' W / K₀ := by
+    intro j _
+    set B := Ioc ⌊A₀ + j * (2 * (q : ℝ))⌋ ⌊min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁⌋
+    rw [← sum_filter]
+    have hw := odd_block_weighted hq hcop hα hR1 hRQ hW' hWW hRW (B.filter Odd)
+      (fun m hm => (mem_filter.1 hm).2) (by
+        intro m hm m' hm'
+        have h1 := abs_sub_le_of_mem_Ioc (mem_filter.1 hm).1 (mem_filter.1 hm').1
+        have h2 : min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁ - (A₀ + j * (2 * q)) ≤ 2 * q := by
+          have := min_le_left (A₀ + (j + 1) * (2 * (q : ℝ))) A₁; linarith
+        have h3 : |((m - m' : ℤ) : ℝ)| < 2 * q := by
+          rw [mem_filter, mem_Ioc] at hm hm'
+          have h1' : (⌊min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁⌋ : ℝ) ≤ min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁ :=
+            Int.floor_le _
+          have h2' : A₀ + j * (2 * (q : ℝ)) < (⌊A₀ + j * (2 * (q : ℝ))⌋ : ℝ) + 1 := Int.lt_floor_add_one _
+          have : |m - m'| ≤ ⌊min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁⌋ - ⌊A₀ + j * (2 * (q : ℝ))⌋ - 1 := by
+            rw [abs_le]; omega
+          have : ((|m - m'| : ℤ) : ℝ) ≤ ⌊min (A₀ + (j + 1) * (2 * (q : ℝ))) A₁⌋ - ⌊A₀ + j * (2 * (q : ℝ))⌋ - 1 := by
+            exact_mod_cast this
+          rw [← Int.cast_abs]; linarith
+        rw [← Int.cast_abs] at h3
+        exact_mod_cast h3)
+    rw [le_div_iff₀ hK₀]
+    calc (∑ m ∈ B.filter Odd, ‖primeExpSum W' W (α * m)‖ ^ 2) * K₀
+        ≤ (∑ m ∈ B.filter Odd, ‖primeExpSum W' W (α * m)‖ ^ 2) *
+          ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+            (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ) :=
+          mul_le_mul_of_nonneg_left hK (sum_nonneg fun _ _ => sq_nonneg _)
+      _ ≤ _ := by rw [mul_comm]; exact hw
+  refine (sum_le_sum hblock).trans ?_
+  rw [sum_const, card_range, nsmul_eq_mul]
+
+/-- The weight sum for `R = √(σ₀W/q)`, `σ₀ = 0.30286`, `q ≤ W/13.5` [B, p. 96–97]. -/
+theorem weight_caseA {Q W' W : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqW : 13.5 * q ≤ W) (hQW : 3.5 * W ≤ Q)
+    (hW : 50000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) :
+    let R := √(0.30286 * W / q)
+    2 ≤ R ∧ q * R ^ 2 < Q ∧ R ≤ W' ∧
+    Nat.totient q / q * Real.log (W / (2 * q)) / W ≤
+      ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+        (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ) := by
+  intro R
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  have hW0 : 0 < W := by linarith
+  have hR2 : R ^ 2 = 0.30286 * W / q := Real.sq_sqrt (by positivity)
+  have hR0 : 0 < R := Real.sqrt_pos.2 (by positivity)
+  have hRle : R ^ 2 ≤ 0.30286 * W := by
+    rw [hR2, div_le_iff₀ hq0]; nlinarith
+  have hRge : 2 ≤ R := by
+    have : (4 : ℝ) ≤ R ^ 2 := by
+      rw [hR2, le_div_iff₀ hq0]; nlinarith
+    nlinarith
+  have hqR : q * R ^ 2 = 0.30286 * W := by rw [hR2]; field_simp
+  refine ⟨hRge, by rw [hqR]; linarith, ?_, ?_⟩
+  · -- `R² ≤ σ₀W ≤ (W/2)²`.
+    have : R ^ 2 ≤ (W / 2) ^ 2 := by nlinarith
+    have : R ≤ W / 2 := by nlinarith
+    linarith
+  · -- Each weight is `≥ (2/W)(1 + r/R)⁻¹`.
+    set C := (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q)
+    have hw : ∀ r ∈ C, (2 / W) * ((1 + r / R)⁻¹ * (1 / Nat.totient r : ℝ)) ≤
+        (W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹)⁻¹ * (1 / Nat.totient r : ℝ) := by
+      intro r hr
+      rw [mem_filter, mem_Icc] at hr
+      have hr1 : (1 : ℝ) ≤ r := by exact_mod_cast hr.1.1
+      have hrR : (r : ℝ) ≤ R := (Nat.cast_le.2 hr.1.2).trans (Nat.floor_le hR0.le)
+      have hφ : (0 : ℝ) ≤ 1 / Nat.totient r := by positivity
+      rw [← mul_assoc]
+      refine mul_le_mul_of_nonneg_right ?_ hφ
+      -- `1/(qrR) - 1/Q ≥ (1 - σ₀/3.5)/(qrR)`.
+      have hqrR : (q : ℝ) * r * R ≤ 0.30286 * W := by
+        rw [← hqR, sq]; nlinarith [mul_le_mul_of_nonneg_left hrR hq0.le]
+      have hqrR0 : (0 : ℝ) < q * r * R := by positivity
+      have hδ : (1 - 0.30286 / 3.5) / (q * r * R) ≤ 1 / (q * r * R) - 1 / Q := by
+        have : 1 / Q ≤ (0.30286 / 3.5) / (q * r * R) := by
+          rw [div_le_div_iff₀ (by linarith) hqrR0]; nlinarith
+        have e : (1 - 0.30286 / 3.5) / (q * r * R) = 1 / (q * r * R) - (0.30286 / 3.5) / (q * r * R) := by
+          ring
+        linarith
+      have hδpos : 0 < (1 - 0.30286 / 3.5) / (q * r * R) := by positivity
+      have hinv : (1 / (q * r * R) - 1 / Q)⁻¹ ≤ ((1 - 0.30286 / 3.5) / (q * r * R))⁻¹ :=
+        inv_anti₀ hδpos hδ
+      -- `(3/2) qrR/(1 - σ₀/3.5) ≤ (W/2)(r/R) c`, `c = 0.99465`.
+      have hqRW : (q : ℝ) * R = 0.30286 * W / R := by
+        field_simp
+        linarith [hqR]
+      have h1 : 3 / 2 * ((1 - 0.30286 / 3.5) / (q * r * R))⁻¹ ≤ W / 2 * (r / R) * 0.99465 := by
+        rw [inv_div, show (q : ℝ) * r * R = r * (q * R) by ring, hqRW]
+        rw [show 3 / 2 * (r * (0.30286 * W / R) / (1 - 0.30286 / 3.5)) =
+          W / 2 * (r / R) * (3 * 0.30286 / (1 - 0.30286 / 3.5)) by field_simp]
+        gcongr; norm_num
+      -- `1 ≤ (W/2)(r/R)(1 - c)`.
+      have h2 : 1 ≤ W / 2 * (r / R) * (1 - 0.99465) := by
+        have hRW : R ≤ W / 2 * (1 - 0.99465) := by
+          have : R ^ 2 ≤ (W / 2 * (1 - 0.99465)) ^ 2 := by nlinarith
+          nlinarith
+        have : 1 / R ≤ r / R := div_le_div_of_nonneg_right hr1 hR0.le
+        have h3 : 1 ≤ W / 2 * (1 - 0.99465) * (1 / R) := by
+          rw [mul_one_div, le_div_iff₀ hR0]; linarith
+        calc (1 : ℝ) ≤ W / 2 * (1 - 0.99465) * (1 / R) := h3
+          _ ≤ W / 2 * (1 - 0.99465) * (r / R) := by gcongr
+          _ = _ := by ring
+      have hden : W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹ ≤ W / 2 * (1 + r / R) := by
+        have := mul_le_mul_of_nonneg_left hinv (show (0 : ℝ) ≤ 3 / 2 by norm_num)
+        nlinarith
+      have hpos : 0 < W - W' + 1 + 3 / 2 * (1 / (q * r * R) - 1 / Q)⁻¹ := by
+        have : 0 < (1 / (q * r * R) - 1 / Q)⁻¹ := inv_pos.2 (lt_of_lt_of_le hδpos hδ)
+        linarith
+      calc 2 / W * (1 + r / R)⁻¹ = (W / 2 * (1 + r / R))⁻¹ := by field_simp
+        _ ≤ _ := inv_anti₀ hpos hden
+    refine le_trans ?_ (sum_le_sum hw)
+    rw [← mul_sum]
+    -- The coprime reduction and [MV73, Lemma 8].
+    have hred := Prelim.sum_sqfree_div_totient_le hq (fun r => (1 + r / R)⁻¹)
+      (fun n => by positivity) (fun m n hmn => by
+        apply inv_anti₀ (by positivity)
+        have : (m : ℝ) ≤ n := by exact_mod_cast hmn
+        have := div_le_div_of_nonneg_right this hR0.le; linarith) ⌊R⌋₊
+    have hMV := Prelim.sum_weighted_mu_sq_div_totient hRge
+    have hconv : ∀ s : Finset ℕ, ∑ r ∈ s, (1 + r / R)⁻¹ * (1 / Nat.totient r : ℝ) =
+        ∑ r ∈ s, (1 + r / R)⁻¹ / Nat.totient r := fun s => sum_congr rfl fun r _ => by ring
+    rw [hconv] at hMV ⊢
+    have hφq : (0 : ℝ) < Nat.totient q := by exact_mod_cast Nat.totient_pos.2 hq
+    -- `log R + 0.25068 ≥ (1/2) log(W/2q)`.
+    have hlogR : 1 / 2 * Real.log (W / (2 * q)) ≤ Real.log R + 0.25068 := by
+      have h1 : Real.log R = 1 / 2 * Real.log (0.30286 * W / q) := by
+        rw [← hR2, Real.log_pow]; ring
+      have h2 : Real.log (0.30286 * W / q) = Real.log (W / (2 * q)) + Real.log (2 * 0.30286) := by
+        rw [← Real.log_mul (by positivity) (by norm_num)]; congr 1; field_simp
+      have h3 : -0.50136 ≤ Real.log (2 * 0.30286) := by
+        rw [Real.le_log_iff_exp_le (by norm_num), Real.exp_neg]
+        have := exp_50136_ge
+        rw [inv_le_comm₀ (Real.exp_pos _) (by norm_num)]
+        calc (2 * 0.30286 : ℝ)⁻¹ ≤ 1.65096 := by norm_num
+          _ ≤ _ := this
+      rw [h1, h2]; linarith
+    have hS : 1 / 2 * Real.log (W / (2 * q)) ≤
+        q / Nat.totient q * ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+          (1 + r / R)⁻¹ / Nat.totient r := by linarith
+    have := mul_le_mul_of_nonneg_left hS (show (0 : ℝ) ≤ 2 / W * (Nat.totient q / q) by positivity)
+    calc Nat.totient q / q * Real.log (W / (2 * q)) / W
+        = 2 / W * (Nat.totient q / q) * (1 / 2 * Real.log (W / (2 * q))) := by field_simp
+      _ ≤ 2 / W * (Nat.totient q / q) * (q / Nat.totient q *
+          ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),
+            (1 + r / R)⁻¹ / Nat.totient r) := this
+      _ = _ := by field_simp; rfl
 
 end TernaryGoldbach.MinorArcs
