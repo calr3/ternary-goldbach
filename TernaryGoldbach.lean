@@ -26,6 +26,9 @@ import TernaryGoldbach.MinorArcs.Assembly
 import TernaryGoldbach.MinorArcs.FirstChoice
 import TernaryGoldbach.MinorArcs.FirstChoiceParams
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
+import TernaryGoldbach.MinorArcs.FirstChoiceMain
+import TernaryGoldbach.MinorArcs.FirstChoiceTypeI
+import TernaryGoldbach.MinorArcs.FirstChoiceTypeI1
 import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
