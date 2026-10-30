@@ -190,13 +190,15 @@ noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
 /-- `c₄ = 1.03884` [B, Lemma 4.2.4]. -/
 def c₄ : ℝ := 1.03884
 
-/-- The main term (4.50) of [B, Lemma 4.2.4]. -/
+/-- The main term (4.50) of [B, Lemma 4.2.4]. **Corrected**: the last term has a factor `3/2` that [B] lacks. [B, (4.55)] bounds
+`∑_{p^α ≤ V, p | q} (log p) p^α` by `V log q`, but `∑_{α : p^α ≤ V} p^α` can exceed `V` (e.g.
+`V = 9`, `p = 3`); it is at most `(3/2) V` for odd `p` (`sum_vonMangoldt_mul_not_coprime_le`). -/
 noncomputable def bound_4_50 (x δ : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
   let D := U * V
   x / (2 * q) * minInv c₀ (π * δ) * Real.log (V * q) +
     (1 / 4 - 1 / π ^ 2) * c₀ *
       (D ^ 2 * Real.log V / (2 * q * x) + 3 * c₄ / 2 * (U * V ^ 2 / x) +
-        (U + 1) ^ 2 * V / (2 * x) * Real.log q)
+        3 / 2 * ((U + 1) ^ 2 * V / (2 * x) * Real.log q))
 
 /-- The error term (4.51) of [B, Lemma 4.2.4], with `D = UV`, `c₁ = 1 + |η'|₁/(2x/D)`. -/
 noncomputable def bound_4_51 (x : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
