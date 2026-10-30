@@ -96,8 +96,8 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     **`typeI2_le_small`** ((6.12)+(6.13), `|δ| ≤ 1/2c₂`) and **`typeI2_le_large`** ((6.12)+(6.14)).
     Needs `V ≥ 2·10⁶` (for (2.14), (2.17)), `16V ≤ Q`, `UV ≤ x`. Differences from [B]:
     `U²V log V` → `U²V log q`; the `Q log(U/(q/2))` term → `Q (log⁺(2U/q) + 1/e)` (no `Q ≤ 2UV/e`);
-    the `max(1, log(c₁₁q²V/x))` term keeps `max(1, …)` (the book's `max(…, 2)` is from (4.31)'s
-    proof, see Lemma 4.1.3 erratum); in (6.14) the `UV/e` term carries a factor `1 + V/Q`, and
+    the `c_{5,I2} max(log(c₁₁q²V/x), 2) Q` term is ours from `bound_4_31`:
+    `(2|η₂'|₁/π) max(1, log(c₀e³q²V/4π|η₂'|₁x)) Q` (to compare in §6.3); in (6.14) the `UV/e` term carries a factor `1 + V/Q`, and
     the coefficients are kept as exact expressions in `c₊` (no rounding to `c_{4,I2}` etc.).
   * Step 3 (next): Lemma 4.2.4 case `q > Q/V` of `S_{I,2}`; Type II (6.38)/(6.39)/(6.41) (larger
     `q`; second parameter choice); `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
