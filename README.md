@@ -82,6 +82,7 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/GBound.lean` | [B, (11.11)–(11.13)]: `|S_{η₂}(α,x)| ≤ g_x(r) x`, `r = max(1,|δ|/8)q` (our constants `0.8103`, `3.8`) | ✅ (uses trusted bounds) |
 | `MinorArcs/GMono.lean` | [B, Lemma 11.2.4] for one scale: `g_x(r)` non-increasing on `[670, x^{1/3}/6]` (by a different argument) | ✅ |
 | `MinorArcs/Prop1123.lean` | **[B, Prop 11.2.3] in corrected form** (`δ ↦ wδ`; general cut-offs `w₀`, `w₁` and majorant `G`); trivial bound `|S_{η₂}(α,z)| ≤ 17z` | ✅ (uses trusted bounds) |
+| `MinorArcs/Prop1312.lean` | [B, Lemma 13.1.1 (Abel summation, inequality form), Prop 13.1.2] in discrete, measure-space form: ℓ² over nested arcs + ℓ∞ off them | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
 

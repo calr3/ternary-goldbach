@@ -18,6 +18,8 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * **Decision (2026-10-30): option (a).** Keep `minor_arcs_input` as a cited input with the
   caveat below, and keep formalizing the parts of Part I, Ch. 11, Ch. 12 and Prop 13.1.2 that do
   not depend on the scale question.
+* ✅ Prop 13.1.2 (`Prop1312.lean`): any measure space; nested measurable `M n`; conclusion
+  `g(r₀)(H(r₀) − I₀) + Σ_{r₀<n≤r₁} g(n)(H(n) − H(n−1))` (discrete; `≤ ∫ g H'` for monotone `g`, `H`).
 * **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
   "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale
