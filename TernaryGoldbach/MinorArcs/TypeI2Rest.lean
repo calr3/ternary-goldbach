@@ -744,4 +744,75 @@ theorem norm_restPartI2_le_caseB {α x δ Q M U V : ℝ} {a k : ℤ} {q : ℕ} (
   rw [hW1'] at hW1
   linarith
 
+theorem three_fifths_le_c₂ : 3 / 5 ≤ c₂ := by
+  unfold c₂
+  have hc0 : √c₀ ≤ 6 := by
+    rw [Real.sqrt_le_left (by norm_num)]; unfold c₀; norm_num
+  have hpi := Real.pi_gt_three
+  have : 0 < √c₀ := Real.sqrt_pos.2 c₀_pos
+  rw [le_div_iff₀ (by positivity)]
+  nlinarith
+
+/-- **[B, Lemma 4.2.4], case (b)** (`|δ| ≤ 1/2c₂` or `UV ≤ Q₀/2`), for `η = η₂`: (4.50) + (4.51),
+in our corrected form (`bound_4_50`, `bound_4_51`), with `M = Mof x δ q (UV)`. Hypotheses: [B]'s
+`x ≥ e²c₂/2` is replaced by `x ≥ 10`, and we need `UV ≥ 2`. -/
+theorem lemma_4_2_4_caseB {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
+    (hx : 10 ≤ x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hD2 : 2 ≤ U * V)
+    (hcase : |δ| ≤ 1 / (2 * c₂) ∨ U * V ≤ Q₀ / 2) :
+    ‖typeI2 α x U V‖ ≤ bound_4_50 x δ q U V + bound_4_51 x q U V := by
+  obtain ⟨hq, hcop, ⟨k, h2α⟩, hδQ₀, hqQ₀⟩ := h
+  have hx0 : 0 < x := by linarith
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hc2 := c₂_pos
+  have hQ₀0 : 0 < Q₀ := lt_of_lt_of_le hq0 hqQ₀
+  set D := U * V with hDdef
+  have hD : 1 ≤ D := by linarith
+  -- The approximation parameter `Q` and `M = min(Q/2, D)`, as in Lemma 4.2.2.
+  obtain ⟨Q, hqQ, hδ, hD'Q, hMQ⟩ : ∃ Q : ℝ, (q : ℝ) ≤ Q ∧ |δ / x| * (q * Q) ≤ 1 ∧
+      min (c₂ * x / q) D ≤ Q / 2 ∧ Mof x δ q D = min (Q / 2) D := by
+    by_cases hδ0 : δ = 0
+    · refine ⟨max Q₀ (2 * D), hqQ₀.trans (le_max_left _ _), by simp [hδ0], ?_, ?_⟩
+      · have := le_max_right Q₀ (2 * D)
+        exact (min_le_right _ _).trans (by linarith)
+      · rw [Mof, if_pos hδ0, min_eq_right]
+        have := le_max_right Q₀ (2 * D); linarith
+    · have hδpos : 0 < |δ| := abs_pos.2 hδ0
+      have hQ₀le : Q₀ ≤ x / (|δ| * q) := by
+        rw [abs_div, abs_of_pos hx0, div_le_div_iff₀ hx0 (by positivity)] at hδQ₀
+        rw [le_div_iff₀ (by positivity)]; nlinarith
+      refine ⟨x / (|δ| * q), hqQ₀.trans hQ₀le, ?_, ?_, by rw [Mof, if_neg hδ0]⟩
+      · rw [abs_div, abs_of_pos hx0]; field_simp; rfl
+      · rcases hcase with hc | hc
+        · refine (min_le_left _ _).trans ?_
+          have h1 : 2 * c₂ * |δ| ≤ 1 := by
+            rw [le_div_iff₀ (by positivity)] at hc; linarith
+          have e : c₂ * x / q = (2 * c₂ * |δ|) * (x / (|δ| * q) / 2) := by field_simp
+          rw [e]; exact mul_le_of_le_one_left (by positivity) h1
+        · exact (min_le_right _ _).trans (hc.trans (by linarith))
+  set M := Mof x δ q D
+  have hMD : M ≤ D := by rw [hMQ]; exact min_le_right _ _
+  have hM0 : 0 ≤ M := by
+    rw [hMQ]; exact le_min (by linarith) (by linarith)
+  have hMD' : min (c₂ * x / q) D ≤ M := by rw [hMQ]; exact le_min hD'Q (min_le_right _ _)
+  have hMδ : |δ| * M ≤ x / 2 := by
+    have h1 : |δ| * M ≤ |δ| * (Q / 2) := by
+      rw [hMQ]; exact mul_le_mul_of_nonneg_left (min_le_left _ _) (abs_nonneg _)
+    have h2 : |δ| * (q * Q) ≤ x := by
+      have e : |δ / x| * (q * Q) = |δ| * (q * Q) / x := by rw [abs_div, abs_of_pos hx0]; ring
+      rw [e, div_le_one hx0] at hδ; exact hδ
+    have h3 : |δ| * Q ≤ x := by
+      have : |δ| * Q ≤ |δ| * (q * Q) := by
+        have hQ0 : 0 ≤ Q := by linarith
+        have : Q ≤ q * Q := by
+          nlinarith [mul_nonneg (sub_nonneg.2 (show (1 : ℝ) ≤ q by exact_mod_cast hq)) hQ0]
+        exact mul_le_mul_of_nonneg_left this (abs_nonneg _)
+      linarith
+    linarith
+  have hcx : 6 ≤ c₂ * x := by nlinarith [three_fifths_le_c₂]
+  rw [typeI2_eq_main_add_rest hx0 (by linarith) (by linarith) hM0]
+  refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
+  · exact norm_mainPartI2_le hx0 hq h2α hU hV hM0 hMδ hMD
+  · exact norm_restPartI2_le_caseB hx0 hq hcop h2α hqQ hδ (by linarith) (by linarith) hD2 hcx
+      hD'Q hMD'
+
 end TernaryGoldbach.MinorArcs
