@@ -22,6 +22,7 @@ import TernaryGoldbach.MinorArcs.TypeI2Total
 import TernaryGoldbach.MinorArcs.GcdSums
 import TernaryGoldbach.MinorArcs.TypeI2Sum
 import TernaryGoldbach.MinorArcs.TypeI2Large
+import TernaryGoldbach.MinorArcs.Assembly
 import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
