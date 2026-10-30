@@ -128,9 +128,17 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
       allocation: the `x/(δ₀q)`-terms total `16.163 log t + 22.93`, which fits into
       `13.66 log t + 37.55` plus the unused part `3.25 log t + 5.217` of the `x/(δ₀φ)` slot
       (`x/(δ₀q) ≤ x/(δ₀φ)`). `x^{5/6}`: `3.2 + 0.014 + 0.553 + 0.0001 = 3.767`.
-  * Next: §6.3.2 (`q > x^{1/3}/6`, second choice of parameters `V = x^{1/3}/3`,
-    `U = 500√6 x^{1/3}`, `Q = x/U`), using Lemma 4.2.4 for `S_{I,2}` and (6.38)/(6.39)/(6.41) for
-    `S_{II}`; TODO `intervalIntegrable_H2_div` (provable).
+  * In progress: §6.3.2 (`q > x^{1/3}/6`). ✅ `TypeIILarge.lean`: the `W`-integral split at
+    `W₀` (`norm_typeII_le_split`, `G53`, `typeII_split_gen`) and our versions of (6.38)
+    (`typeII_638`), (6.39) (`typeII_639`), (6.41) (`typeII_641`). Plan (numerics in
+    `/tmp/num`-style scripts, to be moved to `scripts/`): `U = ⌊1225 T⌋`, `V = ⌊T/3⌋`
+    (`T = x^{1/3}`), re-approximate with `Q₀ = T²/349 ≥ 3.5x/U` (**not** [B]'s `Q = x/U`, see
+    errata), `θ = 8` (not 4: better, and still `θ|δq| ≤ θU/3.5 ≤ x/U`). Numerically our bounds
+    give `|S_{II}| ≤ 0.2514 x^{5/6}(log x)^{3/2}` (worst: case (b) at `x = 2.16·10²⁰`; case (a)
+    0.2467) and `|S_{I,1}| + |S_{I,2}| ≤ 1234.2 x^{2/3} log x` (worst: `|δ|` just above `1/2c₂`),
+    so the book's `0.276`, `1234` should survive (the small `S_I` excess is absorbed by `S_{II}`'s
+    margin). Remaining: Dirichlet re-approximation + case split, Type I/II numerics, the
+    "bridge" case below.
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
@@ -187,6 +195,17 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   (It doesn't break Thm 3.1.1 numerically, but [B]'s slot-by-slot derivation of
   `L_{x,t,q}` doesn't go through as written; we use `min(1, a/ℓ)(ℓ + b) ≤ a + b` to move the `b`
   part into the `x/(δ₀q)` slot.)
+
+  **§6.3.2 uses (5.54) outside its range**: Prop. 5.2.4 assumes `Q ≥ 3.5W`, but with [B]'s
+  second choice `Q = x/U`, (6.38) applies (5.54) for `W` up to `x/U = Q`. Fix: re-approximate
+  with `Q₀ ≥ 3.5x/U` (costs nothing visible; the `Q`-terms of `S_I` are lower order).
+  **§6.3.2's case split has a gap**: [B] says that for the new approximation `a'/q'`, either
+  `q' > y` or `|δ'| > 8y/q'`, "since otherwise `a'/q'` would already be a valid approximation under
+  the first choice". But Thm 3.1.1's hypothesis is an *arbitrary* approximation `a/q` with
+  `q > y`, and two approximations can coexist (e.g. `2α = 1/Q`: `1/1` with `δ = x/Q` and `1/⌊Q⌋`).
+  Fix: in that case (`q' ≤ y`, `|δ'| ≤ 8y/q'`), `a'/q'` is an approximation for `Q = (3/4)x^{2/3}`
+  and `1/qq' ≤ |a/q - a'/q'| ≤ 1/qQ + |δ'|/x` forces `δ₀'q' ∈ [2y(1 - y/Q), 2y]`, where the first
+  case of the theorem gives `≈ 59 x^{5/6} ≤ 0.276 x^{5/6}(log x)^{3/2}`.
 
 ## Reading the book
 
