@@ -79,3 +79,4 @@ import TernaryGoldbach.MinorArcs.Prop1312
 import TernaryGoldbach.MinorArcs.LargeSievePrimes
 import TernaryGoldbach.Prelim.GaussInduced
 import TernaryGoldbach.MinorArcs.Bombieri
+import TernaryGoldbach.MinorArcs.LargeSieveWeights
