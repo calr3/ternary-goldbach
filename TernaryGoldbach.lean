@@ -1,6 +1,7 @@
 import TernaryGoldbach.Statement
 import TernaryGoldbach.Reduction
 import TernaryGoldbach.CircleMethod
+import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay

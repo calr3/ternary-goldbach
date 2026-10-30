@@ -15,9 +15,20 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     ([B, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
     `#print axioms`.
   * Still `sorry`: Lemma 4.2.4 (in `TypeI.lean`), Thm 3.1.1.
-* **Next: Lemma 4.2.4** ([B pp. 70–76], sum `∑_v Λ(v) ∑_u μ(u) ∑_n …`); both of its cases are used
-  ([B, §6.2.2]). Reuse: `InnerSumsGen` (general smoothing), `SumTools` (sums vs antiderivatives),
-  the R/A range lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
+* **Next: Lemma 4.2.4** ([B pp. 70–76], `typeI2 = ∑_v Λ(v) ∑_u μ(u) ∑_n …`); both of its cases
+  are used ([B, §6.2.2]). Plan:
+  1. Group by `a = uv`: `typeI2 = ∑_{a ≤ UV odd} c(a) T_{a,∘}` with
+     `c(a) = ∑_{v | a, a/U ≤ v ≤ V} Λ(v) μ(a/v)`, `|c(a)| ≤ log a` (`∑_{v|a} Λ(v) = log a`).
+  2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)]: split `v` into `(v, q) = 1` and
+     `v = p^α`, `p | q`; uses (2.20), (2.12) (`Prelim/LambdaMu.lean`, trusted) → `(x/2q) min(1,
+     c₀/(πδ)²) log Vq`; error via `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.15), (2.16) → (4.50).
+     NB (2.16) needs `V > 663`, so the formal statement must assume it (Ch. 6 has `V ≥ 2·10⁶`).
+  3. Rest: weights `log m` (increasing, `≤ log D`), [B (4.56)–(4.6x)], case (a) and (b); the
+     block bounds from 4.2.2 times `log` of the block's upper end; sums via `SumTools`
+     (antiderivatives of `log t`, `t log t`, `log t / t`).
+  Reuse: `InnerSums` (`Todd`, `norm_Todd_le_minA/_min_sin`, `Todd_main`), `SumTools`, the range
+  lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
+* `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
