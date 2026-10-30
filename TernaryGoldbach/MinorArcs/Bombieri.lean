@@ -178,4 +178,45 @@ theorem norm_sq_gaussSum {q : ℕ} [NeZero q] (ψ : DirichletCharacter ℂ q) :
   rw [hμ, hχ]
   split_ifs <;> simp_all
 
+/-- The weight `w(q, c) = c [q/c squarefree and coprime to c]` (`= |τ(ψ)|²` for `ψ` mod `q` of
+conductor `c`). -/
+noncomputable def wq (q c : ℕ) : ℝ :=
+  if Squarefree (q / c) ∧ Nat.Coprime (q / c) c then (c : ℝ) else 0
+
+/-- **Bombieri's identity, lifted to a common modulus `L`**: for `q ∣ L` and `aₙ` supported on
+`n` coprime to `L`,
+`φ(q) Σ_{b unit mod q} |S(b/q + β)|² = Σ_{Ψ mod L, cond Ψ ∣ q} w(q, cond Ψ) |S_{Ψ⁻¹}(β)|²`. -/
+theorem totient_mul_sum_units_lift {q L : ℕ} [NeZero q] [NeZero L] (hqL : q ∣ L) {a : ℕ → ℂ}
+    (ha : Summable fun n => ‖a n‖) (hcop : ∀ n, a n ≠ 0 → Nat.Coprime n L) (β : ℝ) :
+    q.totient * ∑ b ∈ (univ : Finset (ZMod q)).filter IsUnit, ‖expTsum a ((b.val : ℝ) / q + β)‖ ^ 2 =
+      ∑ Ψ : DirichletCharacter ℂ L,
+        (if Ψ.conductor ∣ q then wq q Ψ.conductor else 0) * ‖Schar Ψ⁻¹ a β‖ ^ 2 := by
+  classical
+  have hcopq : ∀ n, a n ≠ 0 → Nat.Coprime n q := fun n hn => (hcop n hn).coprime_dvd_right hqL
+  rw [totient_mul_sum_units ha hcopq]
+  -- the right side as a sum over the image of `changeLevel`
+  have himg : (univ : Finset (DirichletCharacter ℂ q)).image (DirichletCharacter.changeLevel hqL) =
+      univ.filter (fun Ψ : DirichletCharacter ℂ L => Ψ.conductor ∣ q) := by
+    ext Ψ
+    simp only [mem_image, mem_univ, true_and, mem_filter]
+    constructor
+    · rintro ⟨ψ, rfl⟩
+      rw [DirichletCharacter.conductor_changeLevel]
+      exact DirichletCharacter.conductor_dvd_level ψ
+    · intro h
+      have hm := (DirichletCharacter.mem_conductorSet_iff_conductor_dvd Ψ hqL).2 h
+      rw [DirichletCharacter.mem_conductorSet_iff] at hm
+      obtain ⟨_, ψ, hψ⟩ := hm
+      exact ⟨ψ, hψ.symm⟩
+  simp_rw [ite_mul, zero_mul]
+  rw [← sum_filter, ← himg, sum_image fun ψ₁ _ ψ₂ _ h => DirichletCharacter.changeLevel_injective hqL h]
+  refine sum_congr rfl fun ψ _ => ?_
+  have hS : Schar (DirichletCharacter.changeLevel hqL ψ)⁻¹ a β = Schar ψ⁻¹ a β := by
+    unfold Schar
+    refine tsum_congr fun n => ?_
+    by_cases han : a n = 0
+    · simp [han]
+    rw [← map_inv, changeLevel_apply_natCast, if_pos (hcop n han)]
+  rw [DirichletCharacter.conductor_changeLevel, norm_sq_gaussSum, hS, wq]
+
 end TernaryGoldbach
