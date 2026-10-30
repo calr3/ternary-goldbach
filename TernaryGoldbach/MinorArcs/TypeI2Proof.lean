@@ -772,4 +772,124 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
       _ = _ := by ring
   linarith
 
+
+/-- The main part of `typeI2`: `∑_{a ≤ M, a odd, q | a} c(a) T_{a,∘}(α)`. -/
+noncomputable def mainPartI2 (α x M U V : ℝ) (q : ℕ) : ℂ :=
+  ∑ a ∈ Icc 1 ⌊M⌋₊, if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * Todd α x a else 0
+
+set_option maxHeartbeats 1000000 in
+/-- **[B, (4.50)]** (with the factor `3/2`, see `bound_4_50`): the terms with `q | a ≤ M`. -/
+theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
+    (h2α : 2 * α = a₀ / q + δ / x + k) (hU : 1 ≤ U) (hV : 1 ≤ V) (hM0 : 0 ≤ M)
+    (hMδ : |δ| * M ≤ x / 2) (hMD : M ≤ U * V) :
+    ‖mainPartI2 α x M U V q‖ ≤ bound_4_50 x δ q U V := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hc0 := c₀_pos
+  have hpi4 : (0 : ℝ) ≤ 1 / 4 - 1 / π ^ 2 := by
+    have := Real.pi_gt_three
+    rw [sub_nonneg, div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith
+  have hlogq : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hq)
+  have hlogV : 0 ≤ Real.log V := Real.log_nonneg hV
+  have hc4 : (0 : ℝ) < c₄ := by unfold c₄; norm_num
+  have hRHS : 0 ≤ bound_4_50 x δ q U V := by
+    unfold bound_4_50; simp only []
+    have := minInv_nonneg c₀ (π * δ) hc0.le
+    have : 0 ≤ Real.log (V * q) :=
+      Real.log_nonneg (one_le_mul_of_one_le_of_one_le hV (by exact_mod_cast hq))
+    positivity
+  rcases Nat.even_or_odd q with hqe | hqo
+  · have : mainPartI2 α x M U V q = 0 := by
+      refine sum_eq_zero fun a _ => ?_
+      rw [if_neg]; rintro ⟨ho, hd⟩
+      exact (Nat.not_even_iff_odd.2 ho) ((even_iff_two_dvd.2 (even_iff_two_dvd.1 hqe)).trans_dvd hd |>
+        fun h => h)
+    rw [this, norm_zero]; exact hRHS
+  set NM := ⌊M⌋₊
+  have hNM : (NM : ℝ) ≤ M := Nat.floor_le hM0
+  -- Per-term data from `Todd_main`.
+  have hT : ∀ a : ℕ, ∃ E : ℂ, Odd a → q ∣ a → 1 ≤ a → a ≤ NM →
+      Todd α x a = e ((a₀ + k * q) / 2) * ((x / (2 * a) : ℝ) * eta2hat (-(δ / 2)) + E) ∧
+      ‖E‖ ≤ a / x * (c₀ / (2 * π ^ 2)) * (π ^ 2 - 4) := by
+    intro a
+    by_cases h : Odd a ∧ q ∣ a ∧ 1 ≤ a ∧ a ≤ NM
+    · obtain ⟨ho, ⟨m', rfl⟩, h1, hle⟩ := h
+      have hm'o : Odd m' := (Nat.odd_mul.1 ho).2
+      have hr : |δ * (q * m' : ℕ) / x| ≤ 1 / 2 := by
+        have hqm : ((q * m' : ℕ) : ℝ) ≤ M := (by exact_mod_cast hle : ((q * m' : ℕ) : ℝ) ≤ NM).trans hNM
+        rw [abs_div, abs_mul, abs_of_pos hx, Nat.abs_cast, div_le_iff₀ hx]
+        nlinarith [abs_nonneg δ]
+      obtain ⟨E, hE1, hE2⟩ := Todd_main hx hq hm'o h2α hr
+      exact ⟨E, fun _ _ _ _ => ⟨hE1, hE2⟩⟩
+    · exact ⟨0, fun h1 h2 h3 h4 => absurd ⟨h1, h2, h3, h4⟩ h⟩
+  choose E hE using hT
+  set κ := e ((a₀ + k * q) / 2)
+  set η0 := eta2hat (-(δ / 2))
+  have hsplit : mainPartI2 α x M U V q = κ * (((x / 2 : ℝ) : ℂ) * η0 *
+        ((∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then coefI2 U V a * (1 / a) else 0) : ℝ) : ℂ) +
+      ∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * E a else 0)) := by
+    rw [mainPartI2, Complex.ofReal_sum, mul_sum, ← sum_add_distrib, mul_sum]
+    refine sum_congr rfl fun a ha => ?_
+    have ha1 : 1 ≤ a := (mem_Icc.1 ha).1
+    have haN : a ≤ NM := (mem_Icc.1 ha).2
+    by_cases h : Odd a ∧ q ∣ a
+    · rw [if_pos h, if_pos h, if_pos h, (hE a h.1 h.2 ha1 haN).1]
+      have ha0 : (0 : ℝ) < a := by exact_mod_cast ha1
+      push_cast; field_simp
+    · rw [if_neg h, if_neg h, if_neg h]; simp
+  rw [hsplit, norm_mul, norm_e, one_mul]
+  refine (norm_add_le _ _).trans ?_
+  have h1 : ‖((x / 2 : ℝ) : ℂ) * η0 *
+      ((∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then coefI2 U V a * (1 / a) else 0) : ℝ) : ℂ)‖ ≤
+      x / (2 * q) * minInv c₀ (π * δ) * Real.log (V * q) := by
+    rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real, Real.norm_eq_abs,
+      Real.norm_eq_abs, abs_of_pos (by positivity)]
+    have hS := abs_sum_coefI2_div_le hU hV hM0 hqo
+    have hη := norm_eta2hat_le_minInv δ
+    have := minInv_nonneg c₀ (π * δ) hc0.le
+    rw [Real.log_mul (by linarith) hq0.ne']
+    calc x / 2 * ‖η0‖ * |∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then coefI2 U V a * (1 / a) else 0)|
+        ≤ x / 2 * minInv c₀ (π * δ) * ((Real.log q + Real.log V) / q) := by gcongr
+      _ = _ := by field_simp; ring
+  have h2 : ‖∑ a ∈ Icc 1 NM, (if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * E a else 0)‖ ≤
+      c₀ * (π ^ 2 - 4) / (2 * π ^ 2 * x) *
+        (M ^ 2 * Real.log V / (4 * q) + 3 * c₄ / 4 * M * V + 3 / 2 * (U + 1) ^ 2 * V * Real.log q / 4) := by
+    refine (norm_sum_le _ _).trans ?_
+    have hterm : ∀ a ∈ Icc 1 NM, ‖(if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * E a else 0)‖ ≤
+        c₀ * (π ^ 2 - 4) / (2 * π ^ 2 * x) * (if Odd a ∧ q ∣ a then |coefI2 U V a| * a else 0) := by
+      intro a ha
+      by_cases h : Odd a ∧ q ∣ a
+      · rw [if_pos h, if_pos h, norm_mul, Complex.norm_real, Real.norm_eq_abs]
+        have hE2 := (hE a h.1 h.2 (mem_Icc.1 ha).1 (mem_Icc.1 ha).2).2
+        calc |coefI2 U V a| * ‖E a‖ ≤ |coefI2 U V a| * (a / x * (c₀ / (2 * π ^ 2)) * (π ^ 2 - 4)) :=
+              mul_le_mul_of_nonneg_left hE2 (abs_nonneg _)
+          _ = _ := by field_simp
+      · rw [if_neg h, if_neg h, norm_zero, mul_zero]
+    refine (sum_le_sum hterm).trans ?_
+    rw [← mul_sum]
+    have hpi2 : (0 : ℝ) ≤ π ^ 2 - 4 := by have := Real.pi_gt_three; nlinarith
+    exact mul_le_mul_of_nonneg_left (sum_abs_coefI2_mul_le hU hV hM0 hqo) (by positivity)
+  refine (add_le_add h1 h2).trans ?_
+  unfold bound_4_50; simp only []
+  have hD : M ^ 2 ≤ (U * V) ^ 2 := by gcongr
+  have hMV : M * V ≤ U * V * V := by gcongr
+  have e : c₀ * (π ^ 2 - 4) / (2 * π ^ 2 * x) = 2 * (1 / 4 - 1 / π ^ 2) * c₀ / x := by
+    field_simp; ring
+  rw [e]
+  have hk : 0 ≤ 2 * (1 / 4 - 1 / π ^ 2) * c₀ / x := by positivity
+  have hstep : 2 * (1 / 4 - 1 / π ^ 2) * c₀ / x *
+      (M ^ 2 * Real.log V / (4 * q) + 3 * c₄ / 4 * M * V + 3 / 2 * (U + 1) ^ 2 * V * Real.log q / 4) ≤
+      2 * (1 / 4 - 1 / π ^ 2) * c₀ / x *
+      ((U * V) ^ 2 * Real.log V / (4 * q) + 3 * c₄ / 4 * (U * V * V) + 3 / 2 * (U + 1) ^ 2 * V * Real.log q / 4) := by
+    apply mul_le_mul_of_nonneg_left _ hk
+    have h3 : 3 * c₄ / 4 * M * V ≤ 3 * c₄ / 4 * (U * V * V) := by
+      rw [mul_assoc]; exact mul_le_mul_of_nonneg_left hMV (by positivity)
+    have h4 : M ^ 2 * Real.log V / (4 * q) ≤ (U * V) ^ 2 * Real.log V / (4 * q) := by gcongr
+    linarith
+  have e2 : 2 * (1 / 4 - 1 / π ^ 2) * c₀ / x *
+      ((U * V) ^ 2 * Real.log V / (4 * q) + 3 * c₄ / 4 * (U * V * V) + 3 / 2 * (U + 1) ^ 2 * V * Real.log q / 4) =
+      (1 / 4 - 1 / π ^ 2) * c₀ * ((U * V) ^ 2 * Real.log V / (2 * q * x) + 3 * c₄ / 2 * (U * V ^ 2 / x) +
+        3 / 2 * ((U + 1) ^ 2 * V / (2 * x) * Real.log q)) := by
+    field_simp; ring
+  linarith
+
 end TernaryGoldbach.MinorArcs

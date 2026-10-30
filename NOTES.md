@@ -25,7 +25,8 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
      inner `u`-sum `= μ(q')/q' ∑_{w ≤ R/q', (w,2q')=1} μ(w)/w`, bounded by `(q,v)/q` with (2.20);
      then `∑_{v ≤ V} Λ(v)(q,v)/v ≤ ∑_{v | q} Λ(v) + ∑_{v ≤ V} Λ(v)/v ≤ log q + log V` (terms with
      `v ∤ q` inject via `v ↦ v/(q,v)`, same `Λ`), using (2.12).
-     (ii) error `∑ |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`, via
+     ✅ `norm_mainPartI2_le` (main term ≤ `bound_4_50`).
+     (ii) ✅ error `∑ |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`, via
      `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.12), (2.15). **Erratum**: [B (4.55)] has
      `(U+1)²V log q/4`, but `∑_{α: p^α ≤ V} p^α` can exceed `V` (e.g. `V = 9, p = 3`); it is
      `≤ (3/2)V` for odd `p`. So `bound_4_50`'s last term needs a factor `3/2` (lower-order term).
