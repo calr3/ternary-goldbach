@@ -412,4 +412,152 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
           nlinarith [pow_pos hT0 2]
   linarith
 
+theorem logPlus_le_log_of_le' {y Y : ℝ} (hy : 0 ≤ y) (hyY : y ≤ Y) (hY : 1 ≤ Y) :
+    logPlus y ≤ Real.log Y := by
+  rcases hy.lt_or_eq with h | h
+  · exact logPlus_le_log_of_le h hyY hY
+  · rw [← h]; simp [logPlus]; exact Real.log_nonneg hY
+
+/-- `(A + log⁺(cy))/y ≤ (A + log⁺(cy₀))/y₀` for `y ≥ y₀ > 0`, `A ≥ 1`, `c > 0`. -/
+theorem div_logPlus_anti {A c y y₀ : ℝ} (hA : 1 ≤ A) (hc : 0 < c) (hy₀ : 0 < y₀) (hy : y₀ ≤ y) :
+    (A + logPlus (c * y)) / y ≤ (A + logPlus (c * y₀)) / y₀ := by
+  have hy0 : 0 < y := lt_of_lt_of_le hy₀ hy
+  have h1 : logPlus (c * y) ≤ logPlus (c * y₀) + (y / y₀ - 1) := by
+    have hl := Real.log_le_sub_one_of_pos (show 0 < y / y₀ by positivity)
+    have hl0 : 0 ≤ Real.log (y / y₀) := Real.log_nonneg (by rw [le_div_iff₀ hy₀]; linarith)
+    unfold logPlus
+    refine max_le ?_ ?_
+    · have : Real.log (c * y) = Real.log (c * y₀) + Real.log (y / y₀) := by
+        rw [← Real.log_mul (by positivity) (by positivity)]; congr 1; field_simp
+      rw [this]
+      have := le_max_left (Real.log (c * y₀)) 0
+      linarith
+    · have := le_max_right (Real.log (c * y₀)) 0
+      linarith
+  have hB : 1 ≤ A + logPlus (c * y₀) := by have := logPlus_nonneg (c * y₀); linarith
+  rw [div_le_div_iff₀ hy0 hy₀]
+  have hr : 0 ≤ y / y₀ - 1 := by rw [sub_nonneg, le_div_iff₀ hy₀]; linarith
+  have e : y = y₀ * (y / y₀) := by field_simp
+  have : (A + logPlus (c * y₀) - 1) * (y / y₀ - 1) ≥ 0 := mul_nonneg (by linarith) hr
+  calc (A + logPlus (c * y)) * y₀ ≤ (A + logPlus (c * y₀) + (y / y₀ - 1)) * y₀ :=
+        mul_le_mul_of_nonneg_right (by linarith) hy₀.le
+    _ ≤ (A + logPlus (c * y₀)) * (y₀ * (y / y₀)) := by nlinarith
+    _ = (A + logPlus (c * y₀)) * y := by rw [← e]
+
+theorem logPlus_mono' {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) : logPlus a ≤ logPlus b := by
+  rcases ha.lt_or_eq with h | h
+  · exact max_le_max (Real.log_le_log h hab) le_rfl
+  · rw [← h]; simp only [logPlus, Real.log_zero, max_self]; exact logPlus_nonneg b
+
+/-- The `x/|δ|q` part of (6.14) at the parameters: `≤ (2.016 log t + 0.3108) · 2x/t`. -/
+theorem typeI2_B8x_first {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x)
+    (hδ : 1 / (2 * c₂) ≤ |δ|) (hUV0 : 0 ≤ U * V)
+    (hUV : U * V ≤ x / (2 * √(delta0 δ * q))) :
+    x / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x))) ≤
+      (2.016 * Real.log (delta0 δ * q) + 0.3108) * (2 * x / (delta0 δ * q)) := by
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
+  have hq1 : (1 : ℝ) ≤ q := by exact_mod_cast hq
+  obtain ⟨hc2a, hc2b⟩ := c₂_bounds
+  have hc2p := c₂_pos
+  have hδ0 : 0 < |δ| := lt_of_lt_of_le (by positivity) hδ
+  have hd := delta0_ge δ
+  set t := delta0 δ * q with ht
+  have ht2 : 2 ≤ t := by rw [ht]; nlinarith
+  have ht0 : 0 < t := by linarith
+  have hst : 0 < √t := Real.sqrt_pos.2 ht0
+  have hs2 : 0 < √2 := by positivity
+  have hlq0 : 0 ≤ Real.log q := Real.log_nonneg hq1
+  have hlt0 : 0 ≤ Real.log t := Real.log_nonneg (by linarith)
+  have hlog2 := Real.log_two_gt_d9
+  have hlog2' := Real.log_two_lt_d9
+  have harg : 6 * U * V * |δ| * q / (√2 * x) ≤ 3 * |δ| * q / (√2 * √t) := by
+    rw [div_le_div_iff₀ (by positivity) (by positivity)]
+    have : U * V * (2 * √t) ≤ x := by rwa [le_div_iff₀ (by positivity)] at hUV
+    have : 0 ≤ |δ| * q * √2 := by positivity
+    nlinarith
+  have harg0 : 0 ≤ 6 * U * V * |δ| * q / (√2 * x) := by
+    rw [show 6 * U * V * |δ| * q = 6 * (U * V) * |δ| * q by ring]; positivity
+  have hlogq : Real.log q ≤ Real.log t - 0.693147 := by
+    have h1 : Real.log q ≤ Real.log (t / 2) := Real.log_le_log hq0 (by rw [ht]; nlinarith)
+    rw [Real.log_div ht0.ne' (by norm_num)] at h1; linarith
+  rcases le_or_gt (|δ| / 4) 2 with h8 | h8
+  · -- `δ₀ = 2`, `t = 2q`.
+    have hd0 : delta0 δ = 2 := by unfold delta0; exact max_eq_left h8
+    have htq : t = 2 * q := by rw [ht, hd0]
+    have hsq0 : 0 < √q := Real.sqrt_pos.2 hq0
+    have hsq : √2 * √t = 2 * √q := by
+      rw [htq, ← Real.sqrt_mul (by norm_num), show (2 : ℝ) * (2 * q) = 2 ^ 2 * q by ring,
+        Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]
+    have harg2 : 6 * U * V * |δ| * q / (√2 * x) ≤ 1.5 * √q * |δ| := by
+      refine harg.trans (le_of_eq ?_)
+      rw [hsq, show 3 * |δ| * q / (2 * √q) = 1.5 * |δ| * (q / √q) by ring, Real.div_sqrt]
+      ring
+    have hlp := logPlus_mono' harg0 harg2
+    set A := 1.03883 + Real.log q with hA
+    have hA1 : 1 ≤ A := by rw [hA]; linarith
+    have hmono := div_logPlus_anti hA1 (show 0 < 1.5 * √q by positivity)
+      (show 0 < 1 / (2 * c₂) by positivity) hδ
+    -- `log⁺(1.5√q/(2c₂)) ≤ 0.11941 + log q/2`.
+    have hlp2 : logPlus (1.5 * √q * (1 / (2 * c₂))) ≤ 0.11941 + Real.log q / 2 := by
+      have h1 : 1.5 * √q * (1 / (2 * c₂)) ≤ 1.11941 * √q := by
+        rw [mul_one_div, div_le_iff₀ (by positivity)]; nlinarith
+      have h2 : 1 ≤ 1.11941 * √q := by
+        have : 1 ≤ √q := by rw [show (1 : ℝ) = √1 by simp]; exact Real.sqrt_le_sqrt hq1
+        nlinarith
+      refine (logPlus_le_log_of_le' (by positivity) h1 h2).trans ?_
+      rw [Real.log_mul (by norm_num) hsq0.ne', Real.log_sqrt hq0.le]
+      have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 1.11941 by norm_num)
+      linarith
+    calc x / (|δ| * q) * (A + logPlus (6 * U * V * |δ| * q / (√2 * x)))
+        ≤ x / (|δ| * q) * (A + logPlus (1.5 * √q * |δ|)) := by gcongr
+      _ = x / q * ((A + logPlus (1.5 * √q * |δ|)) / |δ|) := by field_simp
+      _ ≤ x / q * ((A + logPlus (1.5 * √q * (1 / (2 * c₂)))) / (1 / (2 * c₂))) := by gcongr
+      _ = x / q * (2 * c₂ * (A + logPlus (1.5 * √q * (1 / (2 * c₂))))) := by field_simp
+      _ ≤ x / q * (1.344 * (A + (0.11941 + Real.log q / 2))) := by
+          have : 0 ≤ A + logPlus (1.5 * √q * (1 / (2 * c₂))) := by
+            have := logPlus_nonneg (1.5 * √q * (1 / (2 * c₂))); linarith
+          gcongr
+          · linarith
+      _ ≤ (2.016 * Real.log t + 0.3108) * (2 * x / t) := by
+          have hin : 1.344 * (A + (0.11941 + Real.log q / 2)) ≤ 2.016 * Real.log t + 0.3108 := by
+            rw [hA]; linarith
+          have e : 2 * x / t = x / q := by rw [htq]; field_simp
+          rw [e, mul_comm (2.016 * Real.log t + 0.3108)]
+          exact mul_le_mul_of_nonneg_left hin (by positivity)
+  · -- `δ₀ = |δ|/4`.
+    have hd0 : delta0 δ = |δ| / 4 := by unfold delta0; exact max_eq_right h8.le
+    have hδt : |δ| * q = 4 * t := by rw [ht, hd0]; ring
+    have harg2 : 6 * U * V * |δ| * q / (√2 * x) ≤ 8.4854 * √t := by
+      refine harg.trans ?_
+      rw [show 3 * |δ| * q = 3 * (|δ| * q) by ring, hδt, div_le_iff₀ (by positivity)]
+      have : √t * √t = t := Real.mul_self_sqrt ht0.le
+      have : 1.41421 ≤ √2 := by rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
+      nlinarith
+    have hlp : logPlus (6 * U * V * |δ| * q / (√2 * x)) ≤ 2.1402 + Real.log t / 2 := by
+      have h1 : 1 ≤ 8.4854 * √t := by
+        have : 1.4142 ≤ √t := by rw [Real.le_sqrt (by norm_num) ht0.le]; nlinarith
+        nlinarith
+      refine (logPlus_le_log_of_le' harg0 harg2 h1).trans ?_
+      rw [Real.log_mul (by norm_num) hst.ne', Real.log_sqrt ht0.le]
+      have h8 := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 8.4854 / 8 by norm_num)
+      rw [Real.log_div (by norm_num) (by norm_num), show (8 : ℝ) = 2 ^ 3 by norm_num,
+        Real.log_pow] at h8
+      push_cast at h8
+      linarith
+    rw [hδt]
+    have e : x / (4 * t) = (2 * x / t) / 8 := by field_simp; ring
+    rw [e]
+    have : 0 ≤ 2 * x / t := by positivity
+    have hG : 1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x)) ≤
+        1.5 * Real.log t + 2.4859 := by linarith
+    calc 2 * x / t / 8 * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x)))
+        ≤ 2 * x / t / 8 * (1.5 * Real.log t + 2.4859) := by gcongr
+      _ ≤ _ := by
+          rw [mul_comm ((2.016 * Real.log t + 0.3108))]
+          have e2 : 2 * x / t / 8 * (1.5 * Real.log t + 2.4859) =
+              2 * x / t * ((1.5 * Real.log t + 2.4859) / 8) := by ring
+          rw [e2]
+          gcongr
+          linarith
+
 end TernaryGoldbach.MinorArcs
