@@ -83,7 +83,8 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/GMono.lean` | [B, Lemma 11.2.4] for one scale: `g_x(r)` non-increasing on `[670, x^{1/3}/6]` (by a different argument) | ✅ |
 | `MinorArcs/Prop1123.lean` | **[B, Prop 11.2.3] in corrected form** (`δ ↦ wδ`; general cut-offs `w₀`, `w₁` and majorant `G`); trivial bound `|S_{η₂}(α,z)| ≤ 17z` | ✅ (uses trusted bounds) |
 | `MinorArcs/Prop1312.lean` | [B, Lemma 13.1.1 (Abel summation, inequality form), Prop 13.1.2] in discrete, measure-space form: ℓ² over nested arcs + ℓ∞ off them | ✅ |
-| `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; Prop 12.1.2 (blueprint node, `sorry`, being proved); **Prop 12.2.4 (trusted computation)**; Cor 12.2.5 (12.42) proved from them | 🟡 |
+| `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (trusted computation)** | 🟡 one trusted computation |
+| `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the trusted 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |

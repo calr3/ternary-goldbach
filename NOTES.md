@@ -20,6 +20,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   not depend on the scale question.
 * ✅ Prop 13.1.2 (`Prop1312.lean`): any measure space; nested measurable `M n`; conclusion
   `g(r₀)(H(r₀) − I₀) + Σ_{r₀<n≤r₁} g(n)(H(n) − H(n−1))` (discrete; `≤ ∫ g H'` for monotone `g`, `H`).
+* ✅ **Ch. 12: Prop 12.1.2 proved** (`LargeSieveProof.lean`, no `sorry`), so Cor 12.2.5 (12.42)
+  depends only on the trusted computation Prop 12.2.4. Route: Bombieri's identity in the form
+  `φ(q) Σ_b^* |S(b/q+β)|² = Σ_{Ψ mod L, cond Ψ ∣ q} w(q, cond Ψ) |S_{Ψ⁻¹}(β)|²`. That uses
+  Parseval over characters, `gaussSum_mulShift_eq`, `τ(χ↑) = μ(r)χ(r)τ(χ)` (ℕ-indexed Möbius proof),
+  `|τ(χ)|² = N` for primitive `χ`, and the lift to one modulus `L = ∏_{q ≤ 2Q} q`, which avoids
+  dependent types. Then `weight_sum` gives `Σ_{q̃ ≤ X} [c∣q] w/φ(q) = (c/φ(c)) κ_c G_{c̃}(X/c̃)`.
+  The arcs part is periodization, covering, and Farey disjointness at level `Q`. Pointwise in `β`,
+  the hypothesis on `G` is used with `s = 2Q₀/m_{Q₀}(β)`.
+  **Change from [B]: `δ₀ ≥ 2` instead of `δ₀ ≥ 1`**. The proof needs primes `n > √x` to be coprime
+  to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`. [B] uses `δ₀ = 8`.
 * **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
   "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale

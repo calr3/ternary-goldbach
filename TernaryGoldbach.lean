@@ -83,3 +83,4 @@ import TernaryGoldbach.MinorArcs.LargeSieveWeights
 import TernaryGoldbach.MinorArcs.Plancherel
 import TernaryGoldbach.MinorArcs.Periodize
 import TernaryGoldbach.MinorArcs.LargeSieveArcs
+import TernaryGoldbach.MinorArcs.LargeSieveProof
