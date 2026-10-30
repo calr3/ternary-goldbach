@@ -9,29 +9,17 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   (14.27), the minor arcs (14.49), binary Goldbach up to 4·10¹⁸, and the prime ladder.
 * Part I (minor arcs):
   * [B, §2.3] proved (`MinorArcs/FourierSums.lean`), [B, §4.1] proved (`MinorArcs/TrigSums.lean`).
-  * [B, §4.2]: the inner-sum bounds (4.36) and the Poisson main term (4.33)–(4.34) are proved
-    (`MinorArcs/InnerSums.lean`), and **Lemma 4.2.2** is proved in full
-    (`MinorArcs/TypeIProof.lean: lemma_4_2_2`). Its only non-standard dependency is the
-    trusted `eta2_fourier_bound'` (`|η̂₂''|_∞ ≤ 31.521`, [B, App. B]); checked by temporarily
-    turning it into an `axiom` and running `#print axioms`.
-  * Still `sorry`: Lemmas 4.2.3–4.2.4 (in `TypeI.lean`), Thm 3.1.1.
-* **Next: Lemma 4.2.3** (in progress). Done so far: `InnerSumsGen.lean` (`SmoothData g N V K`,
-  `norm_ToddG_le`, `ToddG_main` for any smoothing), `Eta2Log.lean` (`η_(ρ) = log(ρt)η₂`,
-  `smoothData_eta2log` for `ρ ≥ 4`, `ghat_eta2log`; trusted `eta2log_fourier_bound` = [B, B.2.3]),
-  `SumTools.lean` (sums vs antiderivatives via MVT: `sum_le_of_antitone/monotone`; `F₁, F₂, F₃`
-  for `log(x/t)`, `t log(x/t)`, `log(x/t)/t`). Plan, following [B, pp. 66–70]:
-  1. `typeILog = ∑_{m odd} μ(m) ToddG (eta2log (x/m)) α x m` (copy `inner_eq_Todd`); `ρ = x/m ≥ 4`
-     because `D ≤ x/4`. Per-`m` bounds are `log(x/m) ×` the 4.2.2 bounds.
-  2. Main term: `ToddG_main` + `ghat_eta2log`; error `∑_{m' odd} (qm'/x) log(x/qm') ≤
-     (M/x)log(x/M) + M²/(4qx) log(√e x/M)` via `F₂` (step `2q`), then `(M/x)log(x/M) ≤ 1/e` and
-     monotonicity of `t² log(√e x/t)` to replace `M` by `D`.
-  3. Case (b): R1 = `log x ×` `sum_R1` (scale `B, C` by `log x` in Lemma 4.1.3); R2 with weight
-     `log(x/((j+½)q))` per block, `S2 ≤ log(2x/q) + (2D'/q + D'²/2q²) log(√e x/D')` (via `F₁, F₂`;
-     numerically checked), then [B (4.47)] — NB the book's last step needs `t log(√e x/t)`
-     increasing to handle `D' = D < c₂x/q`; R3 with weight `log(x/(R+jq))` via `F₃` and
-     `√(1+u) ≤ 1 + u/2`, [B (4.48)].
-  4. Case (a): [B (4.44)–(4.45)] and the modified (4.17)–(4.18).
-  **Next: Lemma 4.2.4** ([B pp. 70–76]); both its cases are used ([B, §6.2.2]).
+  * [B, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**
+    (`TypeILogProof.lean: lemma_4_2_3`, the case §6.2.1 uses) are proved. Their only non-standard
+    dependencies are the trusted `eta2_fourier_bound'` ([B, (B.6)]) and `eta2log_fourier_bound`
+    ([B, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
+    `#print axioms`.
+  * Still `sorry`: Lemma 4.2.4 (in `TypeI.lean`), Thm 3.1.1.
+* **Next: Lemma 4.2.4** ([B pp. 70–76], sum `∑_v Λ(v) ∑_u μ(u) ∑_n …`); both of its cases are used
+  ([B, §6.2.2]). Reuse: `InnerSumsGen` (general smoothing), `SumTools` (sums vs antiderivatives),
+  the R/A range lemmas of `TypeIProof`/`TypeILogProof` as templates. Then Ch. 5 (Type II).
+* Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
+  the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
 
