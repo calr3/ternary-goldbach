@@ -548,14 +548,12 @@ theorem fq_half_add_le {q : ℝ} (hq : 3 ≤ q) :
 
 /-- **Core of the first bound of Lemma 4.1.1.**  Residues `R = 0, …, q-1`, each shifted by
 `τ_R ∈ [s - 1/2, s + 1/2]`, `0 ≤ s ≤ 1/2`. -/
-theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
-    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) :
-    ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) ≤ 2 * A + 6 * q ^ 2 / π ^ 2 * C := by
-  set F := fun R : ℕ => min A (C * fq q (R + τ R))
-  have hFA : ∀ R, F R ≤ A := fun R => min_le_left _ _
-  have hF0 : ∀ R, 0 ≤ F R := fun R => le_min hA (mul_nonneg hC (fq_nonneg _ _))
+theorem core_bound₁' {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
+    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2))
+    (F : ℕ → ℝ) (hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
+    (hFC : ∀ R, 1 ≤ R → R + 2 ≤ q → F R ≤ C * fq q (R + τ R)) :
+    ∑ R ∈ Finset.range q, F R ≤ 2 * A + 6 * q ^ 2 / π ^ 2 * C := by
   have hextra : 0 ≤ 6 * q ^ 2 / π ^ 2 * C := by positivity
-  show ∑ R ∈ Finset.range q, F R ≤ _
   rw [sum_range_pair]
   rcases Nat.lt_or_ge q 3 with hq3 | hq3
   · interval_cases q
@@ -575,12 +573,12 @@ theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
     have hk1 : (1 : ℝ) ≤ k := by exact_mod_cast hk.1
     have hkK : (k : ℝ) + 1 ≤ K := by exact_mod_cast hk.2
     have h1 : F k ≤ C * fq q (k - 1 / 2 + s) :=
-      (min_le_right _ _).trans (mul_le_mul_of_nonneg_left
+      (hFC _ (by omega) (by omega)).trans (mul_le_mul_of_nonneg_left
         (fq_low hq0 hs0 hk.1 (by linarith) (hτ k)) hC)
     have hcast : ((q - 1 - k : ℕ) : ℝ) = q - ((k + 1 : ℕ) : ℝ) := by
       rw [Nat.cast_sub (by omega), Nat.cast_sub (by omega)]; push_cast; ring
     have h2 : F (q - 1 - k) ≤ C * fq q (k + 1 / 2 - s) := by
-      refine (min_le_right _ _).trans (mul_le_mul_of_nonneg_left ?_ hC)
+      refine (hFC _ (by omega) (by omega)).trans (mul_le_mul_of_nonneg_left ?_ hC)
       have := fq_high (k := k + 1) hq0 hs1 (by omega) (by push_cast; linarith) hs0
         (hτ (q - 1 - k))
       rw [hcast]; convert this using 2; push_cast; ring
@@ -599,7 +597,7 @@ theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
         have : (2 * K + 1 : ℝ) = q := by exact_mod_cast (by omega : 2 * K + 1 = q)
         linarith
       calc F K ≤ C * fq q (K - 1 / 2 + s) :=
-            (min_le_right _ _).trans (mul_le_mul_of_nonneg_left
+            (hFC _ (by omega) (by omega)).trans (mul_le_mul_of_nonneg_left
               (fq_low hq0 hs0 hK1 hK' (hτ K)) hC)
         _ ≤ C * g K := by
             have hK1' : (1 : ℝ) ≤ K := by exact_mod_cast hK1
@@ -628,17 +626,20 @@ theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
         linarith
     _ = 2 * A + 6 * q ^ 2 / π ^ 2 * C := by ring
 
+theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
+    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) :
+    ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) ≤ 2 * A + 6 * q ^ 2 / π ^ 2 * C :=
+  core_bound₁' hq hs0 hs1 hA hC τ hτ _ (fun _ => le_min hA (mul_nonneg hC (fq_nonneg _ _)))
+    (fun _ => min_le_left _ _) (fun _ _ _ => min_le_right _ _)
 
 /-- **Core of the second bound of Lemma 4.1.1.** -/
-theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
-    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) :
-    ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) ≤ 3 * A + 4 * q / π * √(A * C) := by
-  set F := fun R : ℕ => min A (C * fq q (R + τ R))
+theorem core_bound₂' {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
+    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2))
+    (F : ℕ → ℝ) (hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
+    (hFC : ∀ R, 1 ≤ R → R + 2 ≤ q → F R ≤ C * fq q (R + τ R)) :
+    ∑ R ∈ Finset.range q, F R ≤ 3 * A + 4 * q / π * √(A * C) := by
   set G := fun u : ℝ => min A (C * fq q u)
-  have hFA : ∀ R, F R ≤ A := fun R => min_le_left _ _
-  have hF0 : ∀ R, 0 ≤ F R := fun R => le_min hA (mul_nonneg hC (fq_nonneg _ _))
   have hextra : 0 ≤ 4 * q / π * √(A * C) := by positivity
-  show ∑ R ∈ Finset.range q, F R ≤ _
   rw [sum_range_pair]
   rcases Nat.lt_or_ge q 3 with hq3 | hq3
   · interval_cases q
@@ -665,7 +666,7 @@ theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
     · rw [Finset.mem_range] at hi
       have hcast : ((q - 1 - (1 + i) : ℕ) : ℝ) = q - ((i + 2 : ℕ) : ℝ) := by
         rw [Nat.cast_sub (by omega), Nat.cast_sub (by omega)]; push_cast; ring
-      refine min_le_min le_rfl (mul_le_mul_of_nonneg_left ?_ hC)
+      refine le_min (hFA _) ((hFC _ (by omega) (by omega)).trans (mul_le_mul_of_nonneg_left ?_ hC))
       have := fq_high (k := i + 2) hq0 hs1 (by omega)
         (by have : ((i + 2 : ℕ) : ℝ) ≤ K := by exact_mod_cast (by omega : i + 2 ≤ K)
             linarith) hs0 (hτ (q - 1 - (1 + i)))
@@ -684,7 +685,7 @@ theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
     have hterm : ∀ i, 2 + i ≤ K → ((2 + i : ℕ) : ℝ) + s ≤ q / 2 →
         F (2 + i) ≤ G (3 / 2 + s + i) := by
       intro i hiK hRs
-      refine min_le_min le_rfl (mul_le_mul_of_nonneg_left ?_ hC)
+      refine le_min (hFA _) ((hFC _ (by omega) (by omega)).trans (mul_le_mul_of_nonneg_left ?_ hC))
       have := fq_low hq0 hs0 (by omega : 1 ≤ 2 + i) hRs (hτ (2 + i))
       convert this using 2; push_cast; ring
     rw [hsplit]
@@ -723,6 +724,11 @@ theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
   rw [h4]
   linarith [hFA 0, hFA (q - 1)]
 
+theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
+    (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) :
+    ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) ≤ 3 * A + 4 * q / π * √(A * C) :=
+  core_bound₂' hq hs0 hs1 hA hC τ hτ _ (fun _ => le_min hA (mul_nonneg hC (fq_nonneg _ _)))
+    (fun _ => min_le_left _ _) (fun _ _ _ => min_le_right _ _)
 
 /-- `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q` [B, Lemmas 4.1.1–4.1.3]. -/
 def Approx (α : ℝ) (a : ℤ) (q : ℕ) (Q : ℝ) : Prop :=
@@ -736,10 +742,10 @@ theorem sin_sq_add_int_mul_pi (x : ℝ) (k : ℤ) : Real.sin (x + k * π) ^ 2 = 
 /-- **Reduction to residues.**  For `n ∈ (y, y + q]`, the terms `min(A, C/sin²(παn))` are, up to
 reordering, `min(A, C f_q(R + τ_R))` for `R = 0, …, q-1`, with all `τ_R` in a window
 `[s - 1/2, s + 1/2]`, `0 ≤ s ≤ 1/2`. -/
-theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A C : ℝ) :
+theorem residue_formΦ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) (Φ : ℝ → ℝ) :
     ∃ s : ℝ, 0 ≤ s ∧ s ≤ 1 / 2 ∧ ∃ τ : ℕ → ℝ, (∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) ∧
-      ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, min A (C / Real.sin (π * α * n) ^ 2) =
-        ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) := by
+      ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, Φ (Real.sin (π * α * n) ^ 2) =
+        ∑ R ∈ Finset.range q, Φ (Real.sin (π * (R + τ R) / q) ^ 2) := by
   obtain ⟨hq1, hcop, β, hβ, hα, hqQ⟩ := h
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
   have hQ0 : 0 < Q := by linarith
@@ -805,11 +811,10 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
   have hRcast : ∀ n, ((R n : ℕ) : ℤ) = m n % q := fun n =>
     Int.toNat_of_nonneg (Int.emod_nonneg _ hqz.ne')
   -- Each term only depends on the residue.
-  have hterm : ∀ n : ℤ, min A (C / Real.sin (π * α * n) ^ 2) = min A (C * fq q (R n + τ' n)) := by
+  have hterm : ∀ n : ℤ, Φ (Real.sin (π * α * n) ^ 2) = Φ (Real.sin (π * (R n + τ' n) / q) ^ 2) := by
     intro n
     congr 1
-    rw [hkey, fq, mul_one_div]
-    congr 1
+    rw [hkey]
     have hm : (a * n + c₀ : ℤ) = σ * (q * (m n / q) + (R n : ℤ)) := by
       rw [hRcast, Int.mul_ediv_add_emod]; simp only [m]; rw [← mul_assoc, hσ, one_mul]
     have harg : π * (((a * n + c₀ : ℤ) : ℝ) + τn n) / q =
@@ -865,6 +870,13 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
     · intro n hn; rw [hτR n hn]
 
 
+theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A C : ℝ) :
+    ∃ s : ℝ, 0 ≤ s ∧ s ≤ 1 / 2 ∧ ∃ τ : ℕ → ℝ, (∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2)) ∧
+      ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, min A (C / Real.sin (π * α * n) ^ 2) =
+        ∑ R ∈ Finset.range q, min A (C * fq q (R + τ R)) := by
+  obtain ⟨s, hs0, hs1, τ, hτ, heq⟩ := residue_formΦ h y (fun t => min A (C / t))
+  exact ⟨s, hs0, hs1, τ, hτ, by rw [heq]; simp only [fq, mul_one_div]⟩
+
 /-- **[B, Lemma 4.1.1]** -/
 theorem lemma_4_1_1 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
@@ -874,6 +886,51 @@ theorem lemma_4_1_1 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : 
   rw [heq]
   exact le_min (core_bound₁ h.1 hs0 hs1 hA hC τ hτ) (core_bound₂ h.1 hs0 hs1 hA hC τ hτ)
 
+
+/-- `min(A, C/t)`, read as `A` at `t = 0` (so `minA A C (sin² θ)` is the honest
+`min(A, C/sin² θ)`, even at `sin θ = 0`). -/
+noncomputable def minA (A C t : ℝ) : ℝ := if t = 0 then A else min A (C / t)
+
+theorem minA_le (A C t : ℝ) (hA : 0 ≤ A) : minA A C t ≤ A := by
+  unfold minA; split_ifs <;> simp [min_le_left]
+
+theorem minA_nonneg {A C t : ℝ} (hA : 0 ≤ A) (hC : 0 ≤ C) (ht : 0 ≤ t) : 0 ≤ minA A C t := by
+  unfold minA; split_ifs; exacts [hA, le_min hA (div_nonneg hC ht)]
+
+theorem min_le_minA {A C t : ℝ} (hA : 0 ≤ A) : min A (C / t) ≤ minA A C t := by
+  unfold minA; split_ifs with h
+  · exact min_le_left _ _
+  · exact le_rfl
+
+/-- **[B, Lemma 4.1.1]**, with the summand read as `A` where `sin(παn) = 0` (`minA`).  Since
+`min A (C / 0) = 0` in Lean, this is stronger than `lemma_4_1_1`, and it is the form needed
+for bounding sums of `|T_m|` [B, (4.13)–(4.14)]. -/
+theorem lemma_4_1_1' {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
+    (hA : 0 ≤ A) (hC : 0 ≤ C) :
+    ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, minA A C (Real.sin (π * α * n) ^ 2) ≤
+      min (2 * A + 6 * q ^ 2 / π ^ 2 * C) (3 * A + 4 * q / π * √(A * C)) := by
+  obtain ⟨s, hs0, hs1, τ, hτ, heq⟩ := residue_formΦ h y (minA A C)
+  rw [heq]
+  have hq0 : (0 : ℝ) < q := by exact_mod_cast h.1
+  have hF0 : ∀ R : ℕ, 0 ≤ minA A C (Real.sin (π * (R + τ R) / q) ^ 2) :=
+    fun _ => minA_nonneg hA hC (sq_nonneg _)
+  have hFA : ∀ R : ℕ, minA A C (Real.sin (π * (R + τ R) / q) ^ 2) ≤ A :=
+    fun _ => minA_le _ _ _ hA
+  have hFC : ∀ R : ℕ, 1 ≤ R → R + 2 ≤ q →
+      minA A C (Real.sin (π * (R + τ R) / q) ^ 2) ≤ C * fq q (R + τ R) := by
+    intro R h1 h2
+    have hR1 : (1 : ℝ) ≤ R := by exact_mod_cast h1
+    have hR2 : (R : ℝ) + 2 ≤ q := by exact_mod_cast h2
+    obtain ⟨t1, t2⟩ := hτ R
+    have hpos : 0 < Real.sin (π * (R + τ R) / q) := by
+      apply Real.sin_pos_of_pos_of_lt_pi
+      · apply div_pos (mul_pos Real.pi_pos (by linarith)) hq0
+      · rw [div_lt_iff₀ hq0]; nlinarith [Real.pi_pos]
+    unfold minA
+    rw [if_neg (by positivity)]
+    exact (min_le_right _ _).trans (le_of_eq (by rw [fq, mul_one_div]))
+  exact le_min (core_bound₁' h.1 hs0 hs1 hA hC τ hτ _ hF0 hFA hFC)
+    (core_bound₂' h.1 hs0 hs1 hA hC τ hτ _ hF0 hFA hFC)
 
 /-! ## Taylor bounds and the inequalities for Lemma 4.1.2 -/
 
