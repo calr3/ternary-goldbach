@@ -18,7 +18,7 @@ open TernaryGoldbach.Prelim
 
 /-! ### Sums over odd integers -/
 
-theorem sum_odd_Icc (K : ℕ) (g : ℕ → ℝ) :
+theorem sum_filter_odd_Icc (K : ℕ) (g : ℕ → ℝ) :
     ∑ t ∈ (Icc 1 K).filter Odd, g t = ∑ i ∈ range ((K + 1) / 2), g (2 * i + 1) := by
   symm
   refine sum_nbij' (fun i => 2 * i + 1) (fun t => t / 2) (fun i hi => ?_) (fun t ht => ?_)
@@ -60,7 +60,7 @@ theorem sum_range_inv_sqrt_odd (j : ℕ) :
 /-- `∑_{t ≤ K odd} 1/√t ≤ √K`. -/
 theorem sum_odd_inv_sqrt_le (K : ℕ) :
     ∑ t ∈ (Icc 1 K).filter Odd, 1 / √(t : ℝ) ≤ √(K : ℝ) := by
-  rw [sum_odd_Icc]
+  rw [sum_filter_odd_Icc]
   push_cast
   refine (sum_range_inv_sqrt_odd _).trans (sqrt_le_sqrt ?_)
   have : 2 * ((K + 1) / 2) ≤ K + 1 := Nat.mul_div_le _ _
@@ -98,7 +98,7 @@ theorem sum_odd_rpow_le_zeta (K : ℕ) :
   rw [tsum_mul_left] at hsplit
   have hodd : ∑' k, f (2 * k + 1) = (1 - 2 ^ (-(3 / 2) : ℝ)) * ∑' n, f n := by linarith
   rw [zeta_three_halves_eq, ← show ∑' n, f n = ∑' n : ℕ, 1 / (n : ℝ) ^ (3 / 2 : ℝ) from rfl,
-    ← hodd, sum_odd_Icc]
+    ← hodd, sum_filter_odd_Icc]
   exact hso.sum_le_tsum _ (fun i _ => hf0 _)
 
 theorem one_sub_two_rpow_pos : (0 : ℝ) < 1 - 2 ^ (-(3 / 2) : ℝ) := by

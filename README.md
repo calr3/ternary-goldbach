@@ -61,6 +61,9 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/Montgomery.lean` | Ramanujan sums at coprime `n`; Montgomery's inequality (case `ω(p) = 1`) | ✅ |
 | `MinorArcs/TypeII.lean` | [B, §5.2]: **Lemma 5.2.1, Lemma 5.2.3 ((5.50)–(5.52)), Prop 5.2.4 ((5.53)–(5.57)) proved** (odd `m`, `v = 2`), modulo the trusted sharp large sieves | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIINumerics.lean` | numerical inequalities for (5.51) | ✅ |
+| `Prelim/SqfreeCount.lean` | `∑_{m²∣l} μ(m) = [l sq-free]`; `∑_{(m,P)=1} μ(m)/m² = (6/π²)/∏_{p∣P}(1-p⁻²)` (via `L(μ·χ₀, 2)`); squarefree `l ∈ (a, b]` coprime to `P`: `(b-a)(6/π²)P/σ(P) + O*(∑_{e∣P} f(√(b/e)))`; trusted `f(X) ≤ 1.27X` [B, p. 83] | ✅ (one trusted computation) |
+| `MinorArcs/S1Lemma.lean` | [B, Lemma 5.1.1] (`v = 2`), with `∑_{t≤Y odd} t^{-1/2} ≤ √Y` and `∑_{d odd} d^{-3/2} ≤ (1-2^{-3/2})ζ(3/2)` | ✅ |
+| `MinorArcs/TypeIIS1.lean` | [B, §5.1]: the reduction (5.7)–(5.8), (5.19), **(5.34) `S1_bound` proved**; trusted: `T2_le` [B, (5.31)], (5.36), (5.37) | ✅ (uses trusted numerics) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
 | `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |

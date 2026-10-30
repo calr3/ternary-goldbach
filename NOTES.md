@@ -51,11 +51,21 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     `W/2`, so we assume `W ≥ 50000` (the slack `1 - 3σ/(1-σ/3.5) = 0.0054` absorbs the `+1`);
     `σ₀ = 0.30286` (rational) instead of `σ = e^{-0.50136}/2`. (5.56) is stated as (i) without and
     (ii) with the log gain (`R` capped at `W'`), avoiding `min(1, ·/log)` with `log ≤ 0`.
-* §5.1 blueprint: `MinorArcs/TypeIIS1.lean` (`S1`, `g2`, `T2`, `H2`; statements of (5.34), (5.36),
-  (5.37) as `sorry`). `T2(S) = 1 - 1/S` on `[1, 2)` (matches [B]'s `G_v`).
-* **Next**: §5.1 (S₁, [B pp. 80–92]: Lemma 5.1.1 identity + error, Lemma 5.1.2 (Rankin trick, with
-  trusted interval-arithmetic ranges), (5.28)–(5.37) numerics → trusted), then Ch. 6 (assembly;
-  re-check numerics for the (4.40), 4.2.4 and 5.2 corrections).
+* **Ch. 5, §5.1 (S₁) done** modulo numerics (`Prelim/SqfreeCount.lean`, `MinorArcs/S1Lemma.lean`,
+  `MinorArcs/TypeIIS1.lean`):
+  * Proved: the reduction (5.7)–(5.8) (`S1_eq`, bijection `(m,d₁,d₂) ↔ (s,r₁,r₂,l)`); Lemma 5.1.1
+    for `v = 2` (`lemma_5_1_1`; main-term constant `(6/π²)P/σ(P)` from Mathlib's
+    `L(χ₀μ, 2) = 1/L(χ₀, 2)`); (5.19) (`integral_g2`); **(5.34) `S1_bound`**.
+  * Trusted: `fsq_le` (`f(X) ≤ 1.27X`, [B p. 83]; provable: reduce to integers `n ≤ 37` using
+    `∑ μ²(m)/m² = 15/π²` — the extremal case `n = 2` needs `15/π² ≤ 1.52`, i.e. `π² ≥ 9.8684`);
+    `T2_le` (`T₂(S) ≤ 0.37273` for `S ≥ 16`: Lemma 5.1.2 + the computations of [B pp. 90–92]);
+    (5.36) `integral_H2_le`, (5.37) `H2_le`.
+  * Changes: `S1_bound` assumes `U ≥ 1` (so `x/(WUs) ≤ x/W`; harmless in Ch. 6). `H₂` is defined
+    with the exact triple sum `T₂` in place of the book's computable bound `G₂ ≥ T₂`. The error
+    constant `1.27(1+1/√2)(1-2^{-3/2})³ ζ(3/2)³ ≈ 0.586 ζ(3/2)³` is rounded up to `1.27 ζ(3/2)³`
+    as in [B]. `T₂(S) = 1 - 1/S` on `[1, 2)` (matches [B]'s `G_v`).
+* **Next**: Ch. 6 (assembly of the minor-arc bound; re-check numerics for the (4.40), 4.2.4 and
+  5.2 corrections). Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
 * `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
