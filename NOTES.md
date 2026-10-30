@@ -20,10 +20,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   1. ✅ (`TypeI2Proof.lean`: `typeI2_eq`, `coefI2`, `abs_coefI2_le`) Group by `a = uv`:
      `typeI2 = ∑_{a ≤ ⌊V⌋⌊U⌋ odd} c(a) T_{a,∘}`, `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)`,
      `|c(a)| ≤ log a`.
-  2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)]: split `v` into `(v, q) = 1` and
-     `v = p^α`, `p | q`; uses (2.20), (2.12) (`Prelim/LambdaMu.lean`, trusted) → `(x/2q) min(1,
-     c₀/(πδ)²) log Vq`; error via `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.15), (2.16) → (4.50).
-     NB (2.16) needs `V > 663`, so the formal statement must assume it (Ch. 6 has `V ≥ 2·10⁶`).
+  2. Main term (`q | a ≤ M = min(UV, Q/2)`), [B (4.53)–(4.55)], via `Todd_main`:
+     (i) `|∑_{a ≤ M odd, q|a} c(a)/a| ≤ (log q + log V)/q`: reindex `(v, u)`, `q | uv ⟺ q/(q,v) | u`,
+     inner `u`-sum `= μ(q')/q' ∑_{w ≤ R/q', (w,2q')=1} μ(w)/w`, bounded by `(q,v)/q` with (2.20);
+     then `∑_{v ≤ V} Λ(v)(q,v)/v ≤ ∑_{v | q} Λ(v) + ∑_{v ≤ V} Λ(v)/v ≤ log q + log V` (terms with
+     `v ∤ q` inject via `v ↦ v/(q,v)`, same `Λ`), using (2.12).
+     (ii) error `∑ |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`, via
+     `∑_{u ≤ R odd, q|u} u ≤ R²/4q + 3R/4`, (2.12), (2.15). **Erratum**: [B (4.55)] has
+     `(U+1)²V log q/4`, but `∑_{α: p^α ≤ V} p^α` can exceed `V` (e.g. `V = 9, p = 3`); it is
+     `≤ (3/2)V` for odd `p`. So `bound_4_50`'s last term needs a factor `3/2` (lower-order term).
+     (2.16) needs `V > 663` if used; check whether (2.15) suffices.
   3. Rest: weights `log m` (increasing, `≤ log D`), [B (4.56)–(4.6x)], case (a) and (b); the
      block bounds from 4.2.2 times `log` of the block's upper end; sums via `SumTools`
      (antiderivatives of `log t`, `t log t`, `log t / t`).
