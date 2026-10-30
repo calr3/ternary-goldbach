@@ -72,7 +72,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     `S_{II} = 4∫_V^{x/U} IIsum(W) dW/W`, `|IIsum| ≤ √S₁(√S₂ + √S₃)`, `S₃ ≤ (x/2W+1)·1.4262²W`
     (trusted [RS62, Thm. 13] in `LambdaMu.lean`); `norm_typeII_le` takes any integrable majorant
     `g(W)`. Needs `U ≥ 1`, `V ≥ 2`, `V ≤ x/U`.
-  * Step 3 (next): §6.2 explicit totals — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
+  * Step 3a ✅ `MinorArcs/TypeIITools.lean`, `MinorArcs/TypeIITotal.lean`: **`typeII_637`**, our
+    (6.37) (`q ≤ V/2e`, any `δ`, `U, V : ℕ`, `V ≥ 50000`, `Q ≥ 3.5x/U`). Main term exactly [B]'s
+    `x/√(2φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))`; secondary terms cruder:
+    `4√(κ₁qx/2φ)(2√(x/U) + √log 2q (2e√(2q) + 4√((x/U)/log(x/2Uq))))` (vs [B]'s
+    `√2κ₂√(q/φ)(1+1.15√…)x/√U`; we replace the numerical (6.22) `2.3√(T/log T)` by a split at `ce²`)
+    and `8·1.4262 x√(κ₁(1/2+1/U))/√V` (vs `κ₉x/√V`). `κ₁ = 2/π² + κ₀ζ³√(x/V)/U` kept exact (no
+    (6.17) needed). `H₂` now uses `max(T₂, 0)` (so `H₂ ≥ 0`); trusted inputs as listed by
+    `#sorry_deps`, plus the TODO `intervalIntegrable_H2_div`.
+  * Step 3 (next): rest of §6.2 explicit totals — (6.38)/(6.39) (larger `q`), (6.40)/(6.41)
+    (`|δ| ≥ 8`), and — `|S_{I,1}|` (6.4) from Lemma 4.2.3, `|S_{I,2}|` from
     Lemma 4.2.4 (§6.2.2), `|S_{II}|` (§6.2.3: (6.16)–(6.20) …, integrating the S₁·S₂ bounds over
     `W` in ranges `[V, W₀]`, `[W₀, x/U]`), `S_{0,2}` (powers of 2, negligible), `S_{0,∞} = 0`.
   * Step 4: §6.3 parameter choices and numerics → Theorem 3.1.1 (`PointwiseBound.lean`).

@@ -65,6 +65,7 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/S1Lemma.lean` | [B, Lemma 5.1.1] (`v = 2`), with `∑_{t≤Y odd} t^{-1/2} ≤ √Y` and `∑_{d odd} d^{-3/2} ≤ (1-2^{-3/2})ζ(3/2)` | ✅ |
 | `MinorArcs/Decomposition.lean` | [B, (3.11)]: `S_{η₂} = S_{I,1} − S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}` (`v = 2`) from Vaughan's identity | ✅ |
 | `MinorArcs/TypeIIReduction.lean` | [B, (5.2)–(5.5)]: `S_{II} = 4∫ IIsum(W) dW/W`, Cauchy–Schwarz `|IIsum| ≤ √S₁(√S₂+√S₃)`; trusted [RS62, Thm. 13] | ✅ |
+| `MinorArcs/TypeIITools.lean`, `MinorArcs/TypeIITotal.lean` | [B, §6.2.3]: integrals, our version of (6.37) `typeII_637` (Type II total for `q ≤ V/2e`) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIIS1.lean` | [B, §5.1]: the reduction (5.7)–(5.8), (5.19), **(5.34) `S1_bound` proved**; trusted: `T2_le` [B, (5.31)], (5.36), (5.37) | ✅ (uses trusted numerics) |
 | `MinorArcs/PointwiseBound.lean` | blueprint: [B, Theorem 3.1.1], the pointwise minor-arc bound | 🟡 statement |
 | `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
