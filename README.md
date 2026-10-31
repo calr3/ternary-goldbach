@@ -64,8 +64,11 @@ The 5 `sorry`s that `ternary_goldbach` depends on are:
   downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
   `Prelim/LargeSieveMV.lean` are also proved.)
 
-`lake build` also warns about four further `sorry`s in `Prelim/LambdaMu.lean` that nothing uses
-((2.16), (2.18), (2.21), (2.24)).
+There are no other `sorry`s. Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
+(2.16) and (2.18) are proved in `Prelim/LambdaMuExtra.lean` (with three more finite checks, listed
+below but not in the `#print axioms` output), (2.24) is proved for `x < 10¹⁰` (our sieve; [B] cites
+Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated: our substitute is
+`|∑_{n≤x} μ(n)/n| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`.
 
 ## Numerical axioms
 
@@ -108,6 +111,9 @@ lists each one by name. Most are interval-arithmetic computations.
 | `Prelim.moebius_sqrt_small` (`LiouvilleBound.lean`) | (2.24) range | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))` for `1 ≤ k < 10¹⁰` | segmented Möbius sieve (`scripts/moebius_sqrt_check.py`; equality at `k = 1`, otherwise max ratio `0.612` at `k = 2`; [B] cites Helfgott's check to `10¹²`) |
 | `Prelim.liouville_small` (`LiouvilleBound.lean`) | — | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵` | direct (`scripts/liouville_small_check.py`; max `0.7831` at `k = 10`) |
 | `Prelim.C_grid` (`LiouvilleBound.lean`) | (2.22) optimisation | `(2.8 + (i+1)/100)·G(2.8 + i/100) ≤ 2.8` for `i < 7720`, `G(a) = ∑_{u≤3000} \|μ(u)\|/u² min(5/3, 0.99/(a − 2 log u)) + (5/3)/3000.5` | direct (`scripts/moebius_C_grid.py`; max `2.7422`) |
+| `Prelim.lambda_mul_small` (`LambdaMuExtra.lean`, unused) | (2.16) range | `∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 1.6·10⁶` | sieve (`scripts/psi_extra_check.py`; max ratio `1.03583` at `k = 663`) |
+| `Prelim.lambda_sqrt_small` (`LambdaMuExtra.lean`, unused) | (2.18) range | `∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 2·10⁶` | same script (max ratio `1.99838`) |
+| `Prelim.lambda_sqrt_point` (`LambdaMuExtra.lean`, unused) | (2.18) | `∑_{n≤K} Λ(n)/√n − ψ(K)/√(K+1) − 1.0004√(K+1) ≤ −2`, `K = 2·10⁶` | same script (value `−3.2553`) |
 | `Prelim.mertens_product_small` (`MertensProduct.lean`) | Lemma C.2.2 range | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for primes `5 ≤ x ≤ 10⁸` | direct (`scripts/mertens_product_check.py`; tightest at `x = 23`, margin `2.4·10⁻⁷`, checked to 40 digits) |
 
 `fsq_le` and `H2_le` look small enough to prove in Lean. `prop_12_2_4` and `T2_le` would need an

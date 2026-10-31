@@ -10,7 +10,7 @@ import TernaryGoldbach.Prelim.MoebiusCoprime
   one literature input, Dusart's explicit prime number theorem `|θ(x) − x| < x/log³ x` for
   `x ≥ 89 967 803` ([Dus18, Thm. 4.2]; `dusart_theta`, a `sorry`), together with finite computer
   checks stated as numerical axioms (`scripts/psi_checks.py`, `scripts/psi_mid_check.py`).
-* The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are recorded as **trusted facts** (`sorry`),
+* The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
   each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are stated but unused.  Lemma C.2.2 (`div_totient_lt`) is
   proved in `Prelim/MertensProduct.lean`.
 
@@ -842,11 +842,7 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 
 /-! ### (2.16)–(2.18) -/
 
-/-- **[B, (2.16)]** ((2.15) and partial summation for `y > 200000`, a computation for
-`663 < y ≤ 200000`): `∑_{n ≤ y} Λ(n) n < 1.03884 y²/2` for `y > 663`. -/
-theorem sum_vonMangoldt_mul_lt {y : ℝ} (hy : 663 < y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.03884 * y ^ 2 / 2 := by
-  sorry
+/- [B, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). -/
 
 /-- `ψ(m) ≥ (1 − 1/12000) m − 0.95 √m − 11` for all `m`. -/
 theorem psi_lower_all (m : ℕ) :
@@ -933,10 +929,8 @@ theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 1.6e6 < y) :
   · exact (psi_mul_mid N hN h).trans_le hmono
   · exact (psi_mul_large h.le).trans_le hmono
 
-/-- **[B, (2.18)]**: `∑_{n ≤ y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`. -/
-theorem sum_vonMangoldt_div_sqrt_lt {y : ℝ} (hy : 1 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) / √n < 2 * 1.0004 * √y := by
-  sorry
+/- [B, (2.18)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.14) by summation by parts and finite
+checks). -/
 
 /-! ### (2.19) -/
 
@@ -1132,19 +1126,15 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 
 /-! ### Sums of `μ` (trusted) -/
 
-/-- **[B, (2.21)]** (Ramaré [Ram13]): `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. -/
-theorem abs_sum_moebius_div_le_log {x : ℝ} (hx : 11815 ≤ x) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.03 / Real.log x := by
-  sorry
+/- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is not used by the
+formalization and is not stated here; our weaker substitute is `MoebiusBound.abs_sum_moebius_div_le`
+(`0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`). -/
 
 /- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
 (Acta Arith. 165 (2014)) from our own `q = 1` bound (`Prelim/MoebiusBound.lean`). -/
 
-/-- **[B, (2.24)]** (a computation by Helfgott): `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for
-`0 < x ≤ 10¹²`. -/
-theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x ≤ 1e12) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
-  sorry
+/- [B, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 10¹⁰` in
+`Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`) from our own sieve. -/
 
 end TernaryGoldbach.Prelim

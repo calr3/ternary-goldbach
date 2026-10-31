@@ -9,6 +9,7 @@ import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.MoebiusBound
 import TernaryGoldbach.Prelim.Liouville
 import TernaryGoldbach.Prelim.LiouvilleBound
+import TernaryGoldbach.Prelim.LambdaMuExtra
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV

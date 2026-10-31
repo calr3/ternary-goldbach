@@ -222,7 +222,8 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms. Status 2026-10-31:
 `ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `cor_7_1_3`, `prop_7_1_5`,
-`l2_major_14_7`) and 29 numerical axioms.
+`l2_major_14_7`) and 29 numerical axioms. No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
+three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 
 **(2.23): DONE, elementary, weaker constant** (`Prelim/MoebiusLog.lean`): `|L_q(x)| ≤ q/φ(q) + 2.67` instead of
 Ramaré's `1.00303 q/φ(q)`. Downstream: `typeI1_le`/`abs_muSum_log_le` carry `2q/φ(2q) + 2.67`; `typeI1_first`'s

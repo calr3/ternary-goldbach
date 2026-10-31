@@ -30,6 +30,16 @@ theorem m_sqrt {y : ℝ} (h1 : 1 ≤ y) (h2 : y < 1e10) :
   apply Real.sqrt_le_sqrt
   exact div_le_div_of_nonneg_left (by norm_num) hy0 (Nat.lt_floor_add_one y).le
 
+/-- **[B, (2.24)]** on our checked range: `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for `0 < x < 10¹⁰`
+([B] cites Helfgott's computation for `x ≤ 10¹²`). -/
+theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x < 1e10) :
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
+  rcases lt_or_ge x 1 with h | h
+  · have : ⌊x⌋₊ = 0 := Nat.floor_eq_zero.2 h
+    rw [this]; simp only [Finset.Icc_self, Icc_eq_empty_of_lt zero_lt_one, sum_empty, abs_zero]
+    positivity
+  · rw [Real.sqrt_div (by norm_num)]; exact m_sqrt h hx'
+
 theorem abs_ls_le (z : ℝ) :
     |ls z| ≤ ∑ u ∈ Icc 1 (Nat.sqrt ⌊z⌋₊),
       |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) := by
