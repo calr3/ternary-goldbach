@@ -91,3 +91,5 @@ import TernaryGoldbach.MinorArcs.PhiIntegrals
 import TernaryGoldbach.MinorArcs.LinftyLevels
 import TernaryGoldbach.MinorArcs.BaseGap
 import TernaryGoldbach.MinorArcs.EtaU
+import TernaryGoldbach.MinorArcs.PartIICited
+import TernaryGoldbach.MinorArcs.BaseGap2
