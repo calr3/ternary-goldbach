@@ -10,8 +10,8 @@ import TernaryGoldbach.Prelim.MoebiusCoprime
   one literature input, Dusart's explicit prime number theorem `|θ(x) − x| < x/log³ x` for
   `x ≥ 89 967 803` ([Dus18, Thm. 4.2]; `dusart_theta`, a `sorry`), together with finite computer
   checks stated as numerical axioms (`scripts/psi_checks.py`, `scripts/psi_mid_check.py`).
-* The bounds on sums of `μ` — (2.21)–(2.24) — are recorded as **trusted facts** (`sorry`), each
-  with its source.  (2.16) and (2.18) are stated but unused.  Lemma C.2.2 (`div_totient_lt`) is
+* The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are recorded as **trusted facts** (`sorry`),
+  each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are stated but unused.  Lemma C.2.2 (`div_totient_lt`) is
   proved in `Prelim/MertensProduct.lean`.
 
 Two remarks.
@@ -1142,13 +1142,6 @@ theorem abs_sum_moebius_div_le_log {x : ℝ} (hx : 11815 ≤ x) :
 theorem abs_sum_moebius_div_coprime_le_log {x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqx : (q : ℝ) < x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤
       4 / 5 * (q / Nat.totient q) / Real.log (x / q) := by
-  sorry
-
-/-- **[B, (2.23)]** (Ramaré [Ramb]): `|∑_{n ≤ x, (n,q)=1} μ(n)/n · log(x/n)| ≤ 1.00303 q/φ(q)`
-for all `x > 0`, `q ≥ 1`. -/
-theorem abs_sum_moebius_div_log_coprime_le {x : ℝ} (hx : 0 < x) {q : ℕ} (hq : 1 ≤ q) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n * Real.log (x / n) else 0)| ≤
-      1.00303 * (q / Nat.totient q) := by
   sorry
 
 /-- **[B, (2.24)]** (a computation by Helfgott): `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for

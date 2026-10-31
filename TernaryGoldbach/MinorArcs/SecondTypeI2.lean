@@ -7,7 +7,7 @@ import TernaryGoldbach.MinorArcs.TypeI2Rest
 With `D = UV ≤ 408.3334 T²`, `L = log T`:
 * `b451_second` (case (a), `|δ| ≤ 1/2c₂`): `(4.51) ≤ (0.031 L² + 3003.1 L + 8298) T²`;
 * `b452_second` (`ε = 0.01`, `|δ| ≥ 1/2c₂`): `(4.52) ≤ (3155.7 L + 8391.5) T²`;
-* **`typeI_second`**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0716 L² + 3175.9 L + 8399.2) T²`.
+* **`typeI_second`**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0716 L² + 3175.9 L + 8407.2) T²`.
 -/
 
 open Real
@@ -515,11 +515,11 @@ theorem typeI2_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     refine (key.2 hδ.le 0.01 (by norm_num) (by norm_num)).trans ?_
     nlinarith [mul_nonneg (sq_nonneg (Real.log T)) (sq_nonneg T), mul_nonneg hL0 (sq_nonneg T)]
 
-/-- **Type I at the second parameters**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0716 L² + 3175.9 L + 8399.2) T²`. -/
+/-- **Type I at the second parameters**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0716 L² + 3175.9 L + 8407.2) T²`. -/
 theorem typeI_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :
     ‖typeILog α (T ^ 3) (U2 T)‖ + ‖typeI2 α (T ^ 3) (U2 T) (V2 T)‖ ≤
-      (0.0716 * Real.log T ^ 2 + 3175.9 * Real.log T + 8399.2) * T ^ 2 := by
+      (0.0716 * Real.log T ^ 2 + 3175.9 * Real.log T + 8407.2) * T ^ 2 := by
   have h1 := typeI1_second hT h hc
   have h2 := typeI2_second hT h hc
   have hL0 : 0 ≤ Real.log T := by linarith [fifteen_six_le_log hT]

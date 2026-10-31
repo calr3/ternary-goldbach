@@ -308,11 +308,11 @@ theorem logFB_nonneg (δ : ℝ) : 0 ≤ logFourierBound δ := by
   · exact le_min hl4 (by positivity)
 
 set_option maxHeartbeats 4000000 in
-/-- **`S_{I,1}` at the second parameters**: `≤ (0.0406 L² + 14.1 L + 7.7) T²`. -/
+/-- **`S_{I,1}` at the second parameters**: `≤ (0.0406 L² + 14.1 L + 15.7) T²`. -/
 theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :
     ‖typeILog α (T ^ 3) (U2 T)‖ ≤
-      (0.0406 * Real.log T ^ 2 + 14.1 * Real.log T + 7.7) * T ^ 2 := by
+      (0.0406 * Real.log T ^ 2 + 14.1 * Real.log T + 15.7) * T ^ 2 := by
   have hT0 : 0 < T := by linarith
   set L := Real.log T with hLdef
   have hL := fifteen_six_le_log hT
@@ -361,14 +361,14 @@ theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     rw [this]; nlinarith [pow_pos hT0 2])
   have hmu := muBound_le_one (U2 T) q
   have hmu0 := muBound_nonneg (U2 T) hq1
-  have hbr : 1.00303 * (2 * (q : ℝ) / (Nat.totient (2 * q) : ℝ)) +
-      Real.log (T ^ 3 / U2 T) * muBound (U2 T) q ≤ 4.6396 * L + 1.9157 := by
+  have hbr : (2 * (q : ℝ) / (Nat.totient (2 * q) : ℝ) + 2.67) +
+      Real.log (T ^ 3 / U2 T) * muBound (U2 T) q ≤ 4.6396 * L + 4.58 := by
     have h1 : Real.log (T ^ 3 / U2 T) * muBound (U2 T) q ≤ 2 * L := by
       nlinarith [mul_le_mul hlxU hmu hmu0 (by linarith)]
     have h2 : 2 * (q : ℝ) / (Nat.totient (2 * q) : ℝ) ≤ 2 * (1.7882 * (0.7358 * L) + 0.9549) := by
       nlinarith
     nlinarith
-  have hbr0 : 0 ≤ 1.00303 * (2 * (q : ℝ) / (Nat.totient (2 * q) : ℝ)) +
+  have hbr0 : 0 ≤ (2 * (q : ℝ) / (Nat.totient (2 * q) : ℝ) + 2.67) +
       Real.log (T ^ 3 / U2 T) * muBound (U2 T) q := by positivity
   have tA := mul_le_mul hxm hbr hbr0 (by positivity)
   -- `logFB`.

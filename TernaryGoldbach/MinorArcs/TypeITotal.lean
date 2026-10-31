@@ -1,6 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.MinorArcs.Eta2LogFourier
 import TernaryGoldbach.Prelim.LambdaMu
+import TernaryGoldbach.Prelim.MoebiusLog
 
 /-!
 # Type I totals [B, §6.2.1]: `S_{I,1}`
@@ -47,7 +48,7 @@ theorem abs_muSum_one_le {U : ℝ} {q : ℕ} (hq : 1 ≤ q) (hU : 0 < U) :
 
 theorem abs_muSum_log_le {x U : ℝ} {q : ℕ} (hq : 1 ≤ q) (hU : 0 < U) (hUx : U ≤ x) :
     |muSum U q (2 * q) fun m => Real.log (x / (m * q))| ≤
-      1.00303 * (2 * q / Nat.totient (2 * q)) + Real.log (x / U) * muBound U q := by
+      (2 * q / Nat.totient (2 * q) + 2.67) + Real.log (x / U) * muBound U q := by
   have h2q : 1 ≤ 2 * q := by omega
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hsplit : (muSum U q (2 * q) fun m => Real.log (x / (m * q))) =
@@ -87,14 +88,14 @@ theorem norm_fourier_logeta2_half_le (δ : ℝ) :
       _ ≤ _ := hd
 
 /-- **[B, §6.2.1]**, our version of (6.3)/(6.4): for `U ≤ Q₀/2`,
-`|S_{I,1}| ≤ (x/2q) min(1, c₀/(πδ)²) (1.00303 (2q/φ(2q)) + log(x/U) μ_U)`
+`|S_{I,1}| ≤ (x/2q) min(1, c₀/(πδ)²) (2q/φ(2q) + 2.67 + log(x/U) μ_U)` ([B]: `1.00303 (2q/φ(2q))`)
 `+ (x/2q) min(2 - log 4, 96 log 2/(πδ)²) μ_U + c₀(1/2 - 2/π²)(U²/(4qx) log(√e x/U) + 1/e)`
 `+ (4.41)`, with `μ_U = min(1, (4/5)(2q/φ(2q))/log(U/2q²))`. -/
 theorem typeI1_le {α x δ Q₀ U : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hU : √3 ≤ U) (hUx : U ≤ min (x / 4) (x / rexp 1)) (hUQ : U ≤ Q₀ / 2) :
     ‖typeILog α x U‖ ≤
       x / (2 * q) * minInv c₀ (π * δ) *
-          (1.00303 * (2 * q / Nat.totient (2 * q)) + Real.log (x / U) * muBound U q) +
+          ((2 * q / Nat.totient (2 * q) + 2.67) + Real.log (x / U) * muBound U q) +
         x / (2 * q) * logFourierBound δ * muBound U q +
         c₀ * (1 / 2 - 2 / π ^ 2) * (U ^ 2 / (4 * q * x) * Real.log (rexp (1 / 2) * x / U) +
           1 / rexp 1) +
@@ -131,7 +132,7 @@ theorem typeI1_le {α x δ Q₀ U : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x �
   have hmb : 0 ≤ muBound U q := (abs_nonneg _).trans hB
   have h1 : x / (2 * q) * minInv c₀ (π * δ) *
       |muSum U q (2 * q) fun m => Real.log (x / (m * q))| ≤ x / (2 * q) * minInv c₀ (π * δ) *
-        (1.00303 * (2 * q / Nat.totient (2 * q)) + Real.log (x / U) * muBound U q) :=
+        ((2 * q / Nat.totient (2 * q) + 2.67) + Real.log (x / U) * muBound U q) :=
     mul_le_mul_of_nonneg_left hA (mul_nonneg hc hmi)
   have h2 : x / (2 * q) * ‖fourier (fun t => Real.log t * eta2 t) (-(δ / 2))‖ *
       |muSum U q (2 * q) fun _ => 1| ≤ x / (2 * q) * logFourierBound δ * muBound U q :=

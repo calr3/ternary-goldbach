@@ -220,12 +220,13 @@ theorem typeI1_c0_term_le {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) 
 
 set_option maxHeartbeats 1600000 in
 /-- **[B, (6.56)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
-`|S_{I,1}| ≤ 1.80303 · 2x/(δ₀φ(q)) + (log t + 1.63) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q`. -/
+`|S_{I,1}| ≤ 1.80303 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q` (with the
+elementary (2.23); [B]'s `1.00303` would give `1.63`). -/
 theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
     ‖typeILog α (T ^ 3) (U1 T (delta0 δ * q))‖ ≤
       1.80303 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
-        (Real.log (delta0 δ * q) + 1.63) * (2 * T ^ 3 / (delta0 δ * q)) + 0.014 * (T ^ 2 * √T) := by
+        (Real.log (delta0 δ * q) + 2.96) * (2 * T ^ 3 / (delta0 δ * q)) + 0.014 * (T ^ 2 * √T) := by
   obtain ⟨hδq, ht2, htT⟩ := first_choice_t hT h hqT
   have hq : 1 ≤ q := h.1
   set t := delta0 δ * q with ht
@@ -276,17 +277,17 @@ theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
           2 * Real.log t + 2.63 := max_le this (by linarith)
       linarith
   have h1 : T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
-      (1.00303 * (2 * q / Nat.totient (2 * q)) + Real.log (T ^ 3 / U1 T t) * muBound (U1 T t) q) ≤
-      1.80303 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (2 * Real.log t + 2.63) * (T ^ 3 / t) := by
+      ((2 * q / Nat.totient (2 * q) + 2.67) + Real.log (T ^ 3 / U1 T t) * muBound (U1 T t) q) ≤
+      1.80303 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (2 * Real.log t + 5.30) * (T ^ 3 / t) := by
     have hA := xphi_le (x := T ^ 3) (δ := δ) hx0 hq
     have hB := xq_le (x := T ^ 3) (δ := δ) hx0 hq
     rw [← ht] at hB
     have hc0 : 0 ≤ T ^ 3 / (2 * q) * minInv c₀ (π * δ) := by positivity
     calc _ ≤ T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
-          (1.80303 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 2.63)) :=
+          (1.80303 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 5.30)) :=
           mul_le_mul_of_nonneg_left (by linarith) hc0
       _ = 1.80303 * (T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (2 * q / Nat.totient (2 * q))) +
-          (2 * Real.log t + 2.63) * (T ^ 3 / (2 * q) * minInv c₀ (π * δ)) := by ring
+          (2 * Real.log t + 5.30) * (T ^ 3 / (2 * q) * minInv c₀ (π * δ)) := by ring
       _ ≤ _ := by gcongr
   have h2 : T ^ 3 / (2 * q) * logFourierBound δ * muBound (U1 T t) q ≤ 0.6138 * (T ^ 3 / t) := by
     have hF := logFB_le_delta0 δ
@@ -304,8 +305,8 @@ theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
       _ = 0.6138 * (T ^ 3 / t) := by rw [ht]; field_simp
   have h3 := typeI1_c0_term_le hT hq hU1 hU2
   have h4 := bound_4_41_first hT hq hqT hU hU2
-  have e : (Real.log t + 1.63) * (2 * T ^ 3 / t) =
-      (2 * Real.log t + 2.63) * (T ^ 3 / t) + 0.6138 * (T ^ 3 / t) + 0.0162 * (T ^ 3 / t) := by
+  have e : (Real.log t + 2.96) * (2 * T ^ 3 / t) =
+      (2 * Real.log t + 5.30) * (T ^ 3 / t) + 0.6138 * (T ^ 3 / t) + 0.0062 * (T ^ 3 / t) := by
     field_simp; ring
   have : 0 ≤ T ^ 3 / t := by positivity
   rw [e]

@@ -222,6 +222,13 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**(2.23): DONE, elementary, weaker constant** (`Prelim/MoebiusLog.lean`): `|L_q(x)| ≤ q/φ(q) + 2.67` instead of
+Ramaré's `1.00303 q/φ(q)`. Downstream: `typeI1_le`/`abs_muSum_log_le` carry `2q/φ(2q) + 2.67`; `typeI1_first`'s
+`(log t + 1.63)·2x/t` becomes `(log t + 2.96)·2x/t` (Theorem 3.1.1 first case unchanged: its `2x/t` budget
+`16.91 log t + 42.77` had room); `typeI1_second` `7.7 → 15.7`, `typeI_second` `8399.2 → 8407.2`, absorbed in
+`theorem_3_1_1_second` (margin ≈ 1400 at `T = 6·10⁶`). The Python models (`thm_3_1_1_numerics.py`,
+`prelim_sensitivity.py`) still use `1.00303`.
+
 **(14.28): DONE** (`MinorArcs/EBound.lean`, `Helfgott/HHBound.lean`), constant `8·10⁻¹¹` instead of `8.4029·10⁻¹²`.
 [B]'s constant is exactly tight at `x₊ = 4.9·10²⁶` and needs Appendix A's `|η₊|_∞ ≤ 1.079955`, `|tη₊|_∞ ≤ 1.19073`.
 Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵`; `minor_total` with `t = 5·10⁻⁴`: total

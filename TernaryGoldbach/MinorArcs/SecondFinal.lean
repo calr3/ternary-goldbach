@@ -69,13 +69,13 @@ theorem theorem_3_1_1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T
   obtain ⟨δ', a', q', h'⟩ := exists_approx2 α (by positivity : 0 < T ^ 3)
     (show 1 ≤ Q2 T by unfold Q2; rw [le_div_iff₀ (by norm_num)]; nlinarith)
   -- The final inequality, given the Type I and Type II bounds.
-  have hfin : ∀ X : ℝ, X ≤ (0.0716 * L ^ 2 + 3175.9 * L + 8399.2) * T ^ 2 +
+  have hfin : ∀ X : ℝ, X ≤ (0.0716 * L ^ 2 + 3175.9 * L + 8407.2) * T ^ 2 +
       1.413 * (L * √L) * (T ^ 2 * √T) + 3 * (3 * L) →
       X ≤ 1.4341 * (T ^ 2 * √T) * (L * √L) + 3702 * L * T ^ 2 := by
     intro X hX
     refine hX.trans ?_
     -- `0.0716 L² + 8400 ≤ 526.1 L + 0.0211 L^{3/2} √T`.
-    have hs : 0.0716 * L ^ 2 + 8399.2 + 9 * L / T ^ 2 ≤ 526.1 * L + 0.0211 * (L * √L) * √T := by
+    have hs : 0.0716 * L ^ 2 + 8407.2 + 9 * L / T ^ 2 ≤ 526.1 * L + 0.0211 * (L * √L) * √T := by
       have h9 : 9 * L / T ^ 2 ≤ 0.8 := by
         have hLT : L ≤ T := by have := Real.log_le_sub_one_of_pos hT0; linarith
         rw [div_le_iff₀ (by positivity)]; nlinarith
