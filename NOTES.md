@@ -217,6 +217,33 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
+## Prelim sensitivity: which literature bounds can be weakened (2026-10-31)
+
+`scripts/prelim_sensitivity.py` (approximate models, not certified): it re-runs the Thm 3.1.1
+first-case model (`thm_3_1_1_numerics.py`) with each `Prelim/` constant as a parameter, then
+re-runs the repair-3 cell model (`minor_arc_cells_check.py`). Lean needs worst `Z ≤ 1.037`; the
+baseline is `0.9646`. The second case (`0.276`, `1234`) is scaled heuristically: by `√` of the
+factors on the S2 side and on C.2.2, and linearly by the ψ ratio.
+
+The ✓ bounds can be weakened as shown, but the constants in Thm 3.1.1 change (`0.8103 → ≈1.07`),
+so the Lean numerics (FirstChoice*, Second* pieces, cells) would have to be regenerated.
+
+* ✓ (2.14)/(2.15)/(2.17) `ψ(y) ≤ a y`: anything up to `a ≈ 1.376` works (Chebyshev's elementary
+  `1.10555` gives `Z = 0.985`). Note that `log 4 = 1.386` just fails.
+* ✓ (2.12) `log x + 0.4`; (5.5) `2√y`; (2.23) `2 q/φ(q)`: no visible effect.
+* ✓ (2.22): the constant `4/5` can go up to about 22. It cannot be dropped (`Z = 2.4`), and its
+  `1/log(x/q)` decay is PNT-strength, so a crude explicit PNT is still needed.
+* ✗ the large sieve: only 19% slack on the S2 side. Gallagher's form (factor ≥ π) fails, so the
+  sharp Selberg / Montgomery–Vaughan forms are needed (pure analysis, no prime data).
+* ✗ (2.19) `½ y log y`: the binomial-coefficient bound (`log 2`) fails. It needs
+  `θ(y) − θ(y/2) ≲ 0.59 y`, i.e. a weak explicit PNT (Chebyshev's constants give ≈ 0.645).
+* ✗ C.2.2: the coefficient of `log log r` can go up to 2.14 (`e^γ = 1.781`); a crude elementary
+  Mertens (≈ 2.4) fails. Possible route: an exact primorial computation of `max_{q ≤ r} q/φ(q)` for
+  the finite range of levels, plus an elementary Mertens bound for large `r`, where the asymptotic
+  numerics have room.
+* Not modelled: (2.13) (only in TypeI2Large), [MV73, Lemma 8]'s `0.25068`, (2.20) (elementary
+  as stated).
+
 ## Ch. 13: scale erratum (the ℓ∞ and ℓ² inputs use arcs at different scales)
 
 Prop 13.1.2 combines, **for one family of arcs** `𝔐_{δ₀,r}` ((10.5), defined with a parameter
