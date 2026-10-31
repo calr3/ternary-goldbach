@@ -224,6 +224,14 @@ Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical
 `ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `cor_7_1_3`, `prop_7_1_5`,
 `l2_major_14_7`) and 29 numerical axioms. No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
+*Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
+(Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is
+derived from `Dusart.theorem_4_2`, which is `sorry` there. Their sorry-free BKLNW chain (`thm_1a_table`,
+`cor_2_1`, `bklnw_cor_8_1b`, table 11 bounds `|θ − x| ≤ B_k x/log^k x`) rests on `BKLNW_app.theorem_2`
+(`|ψ(x) − x| ≤ ε(b) x`, Table 8) and Büthe's Theorem 2 (`θ(x) < x` for `x ≤ 10¹⁹`, etc.), both `sorry`, which in
+turn need the explicit formula, zero-free regions (MT/MTY), `N(T)` bounds (HSW) and RH verification (Platt, GW,
+PT; the numerical part). No complete chain exists yet; porting the BKLNW part would replace `dusart_theta` by
+those (analytic) inputs. Watch IEANTN for progress.
 
 **(2.23): DONE, elementary, weaker constant** (`Prelim/MoebiusLog.lean`): `|L_q(x)| ≤ q/φ(q) + 2.67` instead of
 Ramaré's `1.00303 q/φ(q)`. Downstream: `typeI1_le`/`abs_muSum_log_le` carry `2q/φ(2q) + 2.67`; `typeI1_first`'s
