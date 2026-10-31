@@ -222,6 +222,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**(2.12), (2.15), (5.5): DONE** (in `Prelim/LambdaMu.lean`), from (2.14) `ψ(y) ≤ 1.0004y` (`y ≥ 2·10⁶`, still
+`sorry`) and finite checks (`scripts/psi_checks.py`): (2.15) directly; (5.5) via
+`ψ − θ ≤ ψ(√N) + N^{1/3} log N` (prime powers `p^k`, `k ≥ 2`, dominated by `∑_{p ≤ √N} ∑_{2 ≤ k ≤ log_p N}`), which is
+`< 1.4262√N` for `N ≥ 10¹²`; (2.12) via `∑ Λ(n)⌊N/n⌋ = log N! ≤ N log N − N + 1 + log N` and Abel summation of
+`∑ Λ(n){N/n}` over `(N/2, N]` (`≤ 1.03883 N log 2 + 2.08`), valid for `N ≥ 30`. Remaining LambdaMu `sorry`s
+all need explicit-PNT input (RS62/RR96/Ramaré). PNT+ (AlexKontorovich/PrimeNumberTheoremAnd, `IEANTN/`, same
+toolchain v4.35.0) is formalizing explicit estimates (RS, Dusart, FKS2, Mertens, Büthe); as of 2026-10-31 its
+RS `theorem_12` (= our (2.15)) is still `sorry` and its FKS2 corollaries rest on trusted tables and sorried
+Büthe/Dusart/Kadiri inputs; importing it would also mean building a very large project here.
+
 **[MV73, Lemmas 7, 8]: DONE** (`Prelim/MVLemma7.lean`, `MVLemma8.lean`). Lemma 8 for `R > 10⁴` by Abel
 summation against Lemma 7 (`G(r) ≥ log r + 1.07`, `r ≥ 6`), comparing `∑ f(r) log(r/(r−1))` with
 `Φ(t) = log(t/(R+t))` via the monotonicity of `t log(1+1/t)` (margin 0.04); for `2 ≤ R ≤ 10⁴` from the book's
