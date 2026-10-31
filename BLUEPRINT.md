@@ -28,6 +28,9 @@ statements, each with its own `sorry`.
      │   [conditional on an ℓ∞ bound off the scale-x arcs ✅ MinorArcs/Thm1321.lean
      │    `thm_13_2_1_conditional` (uses only Prop 12.2.4); off the scale-y arcs r_α ≥ r ✅
      │    MinorArcs/OffArcs.lean; missing: the gap 𝔐_{8,n}(y) \ 𝔐_{8,n}(x) (`hv_of_split`)]
+     │   [repair 3 (NOTES): `thm_13_2_1_repaired` ✅ (base level 𝔐_{8,r₀}(x), higher levels
+     │    𝔐_{8,n}(y), (12.42) with δ₀ = 392); Prop 11.2.3′ ✅ MinorArcs/Prop1123b.lean;
+     │    to do: base gap via Cor 7.1.3, the S₁/S₂ split, numerics]
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds) ✅ MinorArcs/Prop1312.lean (discrete form)
      │   ⚠ Thm 13.2.1's proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ²
      │     input and (14.27); see NOTES "Ch. 13: scale erratum"

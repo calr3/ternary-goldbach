@@ -253,7 +253,9 @@ Result: `Z ≤ 0.866 x²/κ` at `y = 10²⁵` (decreasing: `0.823` at `10²⁶`,
 correctly. **So the flaw is fixable**; `minor_arcs_input` (`≤ 1.0376`) is true by this route.
 
 Formalization plan (repair 3):
-1. Prop 11.2.3′ in Lean (fresh approximations; `OffArcs.lean` + `theorem_3_1_1` + `gx_antitoneOn`).
+1. ✅ Prop 11.2.3′ (`Prop1123b.lean: prop_11_2_3'`, same 20 trusted items as Thm 3.1.1), and
+   ✅ the repaired assembly `thm_13_2_1_repaired` (`Thm1321.lean`: mixed family `Mmix`, (12.42)
+   with `δ₀ = 392`; uses only Prop 12.2.4).
 2. The base-gap bound from Cor 7.1.3 (a new cited Part II input) via the character expansion
    (`Bombieri.lean` tools, `gauss_induced`) and a bound on `η̂_*`.
 3. Thm 13.2.1 assembly with the mixed family (generalize `thm_13_2_1_conditional`). Also the

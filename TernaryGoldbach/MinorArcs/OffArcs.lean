@@ -94,4 +94,26 @@ theorem majorArcs_mono {δ₀ x : ℝ} (hδ₀ : 0 ≤ δ₀) (hx : 0 < x) :
     have : δ₀ * r / (q * x) ≤ δ₀ * r' / (q * x) := by gcongr
     exact Or.inr ⟨q, ⟨hq1, by linarith, hqe⟩, b, hb, ⟨by linarith [hαI.1], by linarith [hαI.2]⟩⟩
 
+/-- The arcs grow with `δ₀` and with the level. -/
+theorem majorArcs_subset {δ₀ δ₀' r r' x : ℝ} (hδ₀ : 0 ≤ δ₀) (hδ : δ₀ ≤ δ₀') (hr0 : 0 ≤ r)
+    (hrr' : r ≤ r') (hx : 0 < x) : majorArcs δ₀ r x ⊆ majorArcs δ₀' r' x := by
+  intro α hα
+  simp only [majorArcs, Set.mem_union, Set.mem_iUnion] at hα ⊢
+  rcases hα with ⟨q, ⟨hq1, hqr, hqo⟩, b, hb, hαI⟩ | ⟨q, ⟨hq1, hqr, hqe⟩, b, hb, hαI⟩
+  · have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
+    have : δ₀ * r / (2 * q * x) ≤ δ₀' * r' / (2 * q * x) := by gcongr; linarith
+    exact Or.inl ⟨q, ⟨hq1, hqr.trans hrr', hqo⟩, b, hb, ⟨by linarith [hαI.1], by linarith [hαI.2]⟩⟩
+  · have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
+    have : δ₀ * r / (q * x) ≤ δ₀' * r' / (q * x) := by gcongr; linarith
+    exact Or.inr ⟨q, ⟨hq1, by linarith, hqe⟩, b, hb, ⟨by linarith [hαI.1], by linarith [hαI.2]⟩⟩
+
+/-- Rescaling: `𝔐_{δ₀,r}(x/c) = 𝔐_{cδ₀,r}(x)`. -/
+theorem majorArcs_div (δ₀ r x c : ℝ) :
+    majorArcs δ₀ r (x / c) = majorArcs (δ₀ * c) r x := by
+  have e1 : ∀ q : ℝ, δ₀ * r / (2 * q * (x / c)) = δ₀ * c * r / (2 * q * x) := fun q => by
+    rw [mul_div_assoc', div_div_eq_mul_div]; ring
+  have e2 : ∀ q : ℝ, δ₀ * r / (q * (x / c)) = δ₀ * c * r / (q * x) := fun q => by
+    rw [mul_div_assoc', div_div_eq_mul_div]; ring
+  simp only [majorArcs, e1, e2]
+
 end TernaryGoldbach.MinorArcs
