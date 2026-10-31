@@ -239,6 +239,16 @@ Ram14 = hal-02572851 (Acta Arith. 165: `log(x/q)|m_q(x)| ≤ 2 q/φ(q)` for `q <
 `x ≤ 1.1·10¹⁰`); FA13 = hal-02573950 (`|∑ μ(d)/d log(x/d)| ≤ 1.4 + r/φ(r)` at `ε = 0`, weaker than 1.00303).
 Options: (a) obtain [Ramb] and formalize Ram13 → [Ramb] from Dusart; (b) formalize Ram13 + Ram14 and redo the Type I
 numerics (`TypeITotal.lean`, `muBound`, `c_{4,I} = 1.00303`) with the weaker constants.
+*Slack* (`scripts/prelim_sensitivity.py`): the cell model is unchanged (worst `Z = 0.9646 ≤ 1.037`) with (2.23) up to
+`≥ 6` and (2.22) up to `≈ 22.8`, so weaker constants suffice — but the Lean Type I chains (`FirstChoiceTypeI1`,
+`SecondTypeI1`, `TypeI2Sum`, `TypeI2Large`, `TypeITotal`) hard-code `4/5` and `1.00303` and would need re-deriving.
+*(2.23) elementary*: `∑_{(n,q)=1} μ(n)/n · H(x/n) = ∑_{k≤x, rad k | q} 1/k ∈ [1, q/φ(q)]`, `H(y) = log y + γ + O*(1/⌊y⌋)`
+(Mathlib `eulerMascheroniSeq` bounds), `|m_q| ≤ 1` ⇒ `|∑ μ(n)/n log(x/n)| ≤ q/φ(q) + γ + 2 ≤ 3.58 q/φ(q)`.
+*(2.22) sketch*: with `ψ̃_q(y) = ∑_{m≤y,(m,q)=1} Λ(m)/m = log y + c_q + r_q(y)` (any constant `c_q`; take the limit, which
+exists by `E1_diff`), `μ*Λ = −μ log` gives `m_q(x)(log x + c_q) = −∑_{n≤x,(n,q)=1} μ(n)/n · r_q(x/n)`; `r_q = r + T_q`
+with `T_q(y) = ∑_{p|q} ∑_{p^k>y} log p/p^k`, whose contribution is `≤ ∑_{p|q} (log²p · p/(p−1)² + log p/(p−1))` — this
+grows like `(log log q)²` relative to `q/φ(q)`, so a uniform constant needs more care (Ram14 goes through Liouville).
+
 
 **Lemma C.2.2: DONE** (`Prelim/MertensProduct.lean`). Route: PNT+'s sorry-free Mertens file (ported to
 `Prelim/PNTMertens.lean`, same Mathlib commit) gives `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)`,
