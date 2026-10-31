@@ -256,6 +256,14 @@ Formalization plan (repair 3):
 1. ✅ Prop 11.2.3′ (`Prop1123b.lean: prop_11_2_3'`, same 20 trusted items as Thm 3.1.1), and
    ✅ the repaired assembly `thm_13_2_1_repaired` (`Thm1321.lean`: mixed family `Mmix`, (12.42)
    with `δ₀ = 392`; uses only Prop 12.2.4).
+   ✅ Per-level ℓ∞ in closed form (`LinftyLevels.lean: norm_S_etaStar_le_ghat`): off
+   `𝔐_{8,n}(y)`, `|S_{η_*}| ≤ y·ghatY(y,n)`, `ghatY = 1.398·max(g_y(n), h(y)) + 17(670/n)³/3`
+   (`w₀ = 670/n`, `w₁ = ∞`; `g_{wy}(min(1,w)n) ≤ g_y(n) max(1,1/w)`, `h(wy) ≤ h(y) max(1,1/w)`,
+   `∫_{w₀}^∞ max(1,1/w)φ ≤ 1.398` in `PhiIntegrals.lean`). Numerics with exactly this majorant
+   (`/tmp`-style check, to be turned into a script): cells in `y`, blocks of ratio 1.25 in the
+   level, `r₂ = min((2√(x/784))^{0.6}/2 - 1, √(x/784)/20000)`: worst `Z ≈ 0.965` (cell
+   `[1.01e25, 10^25.5]`), using `I₀ ≥ 8.6249x` and `E/x ≤ 10⁻⁶` with `t = 0.004` in
+   `|a+b|² ≤ (1+t)|a|² + (1+1/t)|b|²`.
 2. The base-gap bound from Cor 7.1.3 (a new cited Part II input) via the character expansion
    (`Bombieri.lean` tools, `gauss_induced`) and a bound on `η̂_*`.
 3. Thm 13.2.1 assembly with the mixed family (generalize `thm_13_2_1_conditional`). Also the
