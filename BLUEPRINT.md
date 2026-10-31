@@ -43,11 +43,11 @@ statements, each with its own `sorry`.
      │   │    §4.1: Lemmas 4.1.1–4.1.3 ✅ MinorArcs/TrigSums.lean (4.1.3: book's proof has a gap; fixed);
      │   │    §4.2: Lemma 4.2.2 ✅ MinorArcs/TypeIProof.lean; Lemma 4.2.3 ✅ MinorArcs/TypeILogProof.lean
      │   │          ((4.40) corrected; unused (4.42) omitted); Lemma 4.2.4 ✅ MinorArcs/TypeI2Rest.lean
-     │   │          ((4.50)–(4.52) corrected, see NOTES); trusted literature (2.12), (2.15); (2.20) ✅;
+     │   │          ((4.50)–(4.52) corrected, see NOTES); (2.12), (2.15) ✅ (Dusart + finite checks); (2.20) ✅;
      │   │    trusted (App. B): |η̂₂''|_∞ ≤ 31.521, |η̂_(ρ)''|_∞ ≤ 31.521 log ρ]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
-     │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), trusted sharp large
-     │   │    sieves (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved;
+     │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), sharp large
+     │   │    sieves ✅ (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved;
      │   │    §5.1: Lemma 5.1.1, (5.7)–(5.8), (5.34) ✅ MinorArcs/TypeIIS1.lean; trusted f(X) ≤ 1.27X,
      │   │    T₂(S) ≤ 0.37273 (S ≥ 16; Lemma 5.1.2 + computations), (5.36), (5.37)]
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)

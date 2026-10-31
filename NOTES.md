@@ -222,6 +222,20 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**(2.13), (2.14), (2.17), (2.19): DONE** (`Prelim/LambdaMu.lean`). All of [B]'s `ψ`/`θ` inputs now rest on one
+cited result, Dusart's `|θ(x) − x| < x/log³x` for `x ≥ 89 967 803` ([Dus18, Thm 4.2] = arXiv:1002.0442 Thm 5.2;
+the table there also has `η₁ = 0.001` from `x ≥ 908 994 923`), plus finite checks (`scripts/psi_mid_check.py`, a
+segmented sieve to `10¹⁰`, a few minutes, < 1 GB): `ψ ≤ 1.0004n` on `[2·10⁶, 10⁹]` (max 1.0003639), `|ψ − n| ≤ 0.95√n`
+on `[11, 10¹⁰]` (max 0.7906), `|θ − n| ≤ 1.95√n` on `[5·10⁵, 10¹⁰]` (max 1.8071, `θ < n` throughout),
+`∑Λ(m)m < 1.0008n²/2` on `[1.6·10⁶, 10⁸]`. Proofs:
+* (2.14): strong induction, `ψ(n) ≤ θ(n) + ψ(√n) + n^{1/3} log n ≤ n(1 + 1/log³n) + 7.04√n` above `10⁹`.
+* (2.13): summation by parts from `X = 10⁶` with `ψ(m) ≥ m − 0.95√m − m/log³m`; the tails telescope
+  (`1/(√m(m+1)) ≤ 2/√m − 2/√(m+1)`, `1/((m+1)log³m) ≤ 2/log²m − 2/log²(m+1)`); total `≥ log(N+1) − 0.59`,
+  versus `log(3/√2) = 0.752` (equality at `N = 2`).
+* (2.17): `∑Λ(n)n = Nψ(N) − ∑_{m<N}ψ(m)` with uniform `(1 − 1/12000)m − 0.95√m − 11 ≤ ψ(m) ≤ 1.00016m + 0.95√m`.
+* (2.19): split `(N/2, N]` at `3N/4`: saving `log(4/3)·(θ(3N/4) − θ(N/2)) ≈ 0.0719N` beats the errors for `N > 10⁶`
+  (with `θ` within `1.95√n + n/log³n`; this is tight-ish, needs `c' ≤ 2.05`).
+
 **(2.12), (2.15), (5.5): DONE** (in `Prelim/LambdaMu.lean`), from (2.14) `ψ(y) ≤ 1.0004y` (`y ≥ 2·10⁶`, still
 `sorry`) and finite checks (`scripts/psi_checks.py`): (2.15) directly; (5.5) via
 `ψ − θ ≤ ψ(√N) + N^{1/3} log N` (prime powers `p^k`, `k ≥ 2`, dominated by `∑_{p ≤ √N} ∑_{2 ≤ k ≤ log_p N}`), which is
