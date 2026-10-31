@@ -59,9 +59,10 @@ theorem ghatY_le_num {Y M u a₁ b₁ b₂ ρ c₁ c₂ s₁ s₂ t₁ h₁ G : 
     (h6 : c₂ ≤ Real.log (Real.log M)) (hc₂ : 0 < c₂)
     (h7 : 1.7882 * c₁ + 2.50637 / c₂ ≤ s₁ ^ 2) (hs₁ : 0 ≤ s₁) (h8 : s₂ ^ 2 ≤ 2 * M) (hs₂ : 0 < s₂)
     (h9 : Y ^ (-1 / 6 : ℝ) ≤ t₁) (h10 : hfun Y ≤ h₁)
-    (hG : 1.398 * max ((((0.27125 * ρ + 0.41415) * a₁ + 0.8103) * s₁ + 2.5) / s₂ +
-        ((1.7882 * c₁ + 2.50637 / c₂) * (13 / 4 * a₁ + 7.82) + 13.66 * a₁ + 37.55) / M + 3.8 * t₁) h₁ +
-        17 * (670 / M) ^ 3 / 3 ≤ G) :
+    (hGa : 1.398 * ((((0.27125 * ρ + 0.41415) * a₁ + 0.8103) * s₁ + 2.5) / s₂ +
+        ((1.7882 * c₁ + 2.50637 / c₂) * (13 / 4 * a₁ + 7.82) + 13.66 * a₁ + 37.55) / M + 3.8 * t₁) +
+        17 * (670 / M) ^ 3 / 3 ≤ G)
+    (hGb : 1.398 * h₁ + 17 * (670 / M) ^ 3 / 3 ≤ G) :
     ghatY Y M ≤ G := by
   have hY0 : 0 < Y := by linarith
   have hM0 : 0 < M := by linarith
@@ -122,8 +123,9 @@ theorem ghatY_le_num {Y M u a₁ b₁ b₂ ρ c₁ c₂ s₁ s₂ t₁ h₁ G : 
       ((1.7882 * c₁ + 2.50637 / c₂) * (13 / 4 * a₁ + 7.82) + 13.66 * a₁ + 37.55) / M + 3.8 * t₁ := by
     unfold gx; linarith
   unfold ghatY
-  have := max_le_max hgx h10
-  linarith
+  rcases le_total (gx Y M) (hfun Y) with h | h
+  · rw [max_eq_right h]; linarith
+  · rw [max_eq_left h]; linarith
 
 theorem ghatY_mono_y {Y y M : ℝ} (hY : 1e25 ≤ Y) (hYy : Y ≤ y) (hM : 670 ≤ M)
     (hMY : M ≤ Y ^ (1 / 3 : ℝ) / 6) : ghatY y M ≤ ghatY Y M := by
@@ -277,20 +279,31 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
     (hG : ∀ i < k, ghatY Y (p i) ≤ G i) (hℓ : ∀ i < k, Real.log ((p (i + 1) : ℝ) / p i) ≤ ℓ i)
     (hG0 : ghatY Y 150000 ≤ G0) (hGt : ghatY Y r₂ ≤ Gt)
     (hcl0 : cL 150000 ≤ cl0) (hclt : clt ≤ cL (r₂ - 1)) (hclt0 : 0 ≤ clt) (hcD : cL (r₂ - 1) ≤ Dx x)
-    (hb : 8.6296 ≤ cl0 * ((0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - (Real.log 14 - cE))))
-    (hτ : 0 ≤ (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE))))
-    (hfin : G0 * (cl0 * ((0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - (Real.log 14 - cE))) - 8.6296) +
-        ((0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - (Real.log 14 - cE))) *
-          ∑ i ∈ Finset.range k, G i * ℓ i +
-        Gt * ((0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE)))) ≤ 1.037) :
+    {sD' τ' : ℝ}
+    (hsD' : (0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - 1.3066) ≤ sD')
+    (hτ' : (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - 1.3064)) ≤ τ')
+    (hb : 8.6296 ≤ cl0 * sD') (hτ0 : 0 ≤ τ')
+    (hfin : G0 * (cl0 * sD' - 8.6296) + sD' * ∑ i ∈ Finset.range k, G i * ℓ i + Gt * τ' ≤ 1.037) :
     Mexpr x r₂ ≤ 1.037 := by
+  obtain ⟨h14a, h14b⟩ := log14_bounds
+  have hcE : cE = 1.33258 := rfl
+  have hL1 : 60 ≤ L₁ := (hL₀.trans hL₀x).trans hL₁x
+  have hsD'' : (0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - (Real.log 14 - cE)) ≤ sD' := by
+    refine le_trans ?_ hsD'
+    apply div_le_div_of_nonneg_left (by linarith) (by linarith) (by rw [hcE]; linarith)
+  have hτ'' : (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE))) ≤ τ' := by
+    refine le_trans ?_ hτ'
+    refine mul_le_mul_of_nonneg_left ?_ (by linarith)
+    have : clt / (L₁ / 2 - 1.3064) ≤ clt / (L₁ / 2 - (Real.log 14 - cE)) :=
+      div_le_div_of_nonneg_left hclt0 (by rw [hcE]; linarith) (by rw [hcE]; linarith)
+    linarith
   have hx0 : 0 < x := by linarith
   set y := x / κ with hy_def
   have hy : 1e25 ≤ y := hY.trans hYx
   have hYr : (r₂ : ℝ) ≤ y ^ (1 / 3 : ℝ) / 6 :=
     hr2Y.trans (by gcongr)
-  set sD := (0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - (Real.log 14 - cE)) with hsD_def
-  have hsD := sig_div_Dx_le hx hL₀ hL₀x
+  set sD := sD' with hsD_def
+  have hsD := (sig_div_Dx_le hx hL₀ hL₀x).trans hsD''
   have hDpos : 0 < Dx x := by
     rw [Dx_eq hx0]; obtain ⟨h1, h2⟩ := log14_bounds; unfold cE
     have : 60 ≤ Real.log x := hL₀.trans hL₀x
@@ -377,8 +390,7 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
   have hr2_670 : (670 : ℝ) ≤ r₂ := by exact_mod_cast (by omega : 670 ≤ r₂)
   have hgt := (ghatY_mono_y hY hYx hr2_670 hr2Y).trans hGt
   have hgt0 := ghatY_nonneg (y := y) (n := r₂) (by linarith) (by linarith)
-  have htail : ghatY y r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x) ≤
-      Gt * ((0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE)))) := by
+  have htail : ghatY y r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x) ≤ Gt * τ' := by
     have h1 := tail_le hx hL₁x (hclt0.trans hclt) hcD
     have h2 : (0.640208000017 * L₁ - 0.021095) * (1 - cL (r₂ - 1) / (L₁ / 2 - (Real.log 14 - cE))) ≤
         (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE))) := by
@@ -392,9 +404,8 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
       have e : sig x - cL (r₂ - 1) * sig x / Dx x = sig x * (1 - cL (r₂ - 1) / Dx x) := by field_simp
       rw [e]; exact mul_nonneg hsig0 (by rw [sub_nonneg, div_le_one hDpos]; exact hcD)
     calc ghatY y r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x)
-        ≤ ghatY y r₂ * ((0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - (Real.log 14 - cE)))) :=
-          mul_le_mul_of_nonneg_left (h1.trans h2) hgt0
-      _ ≤ _ := mul_le_mul_of_nonneg_right hgt hτ
+        ≤ ghatY y r₂ * τ' := mul_le_mul_of_nonneg_left ((h1.trans h2).trans hτ'') hgt0
+      _ ≤ _ := mul_le_mul_of_nonneg_right hgt hτ0
   unfold Mexpr
   rw [← hy_def]
   linarith
@@ -433,5 +444,13 @@ theorem cell_conditions {x X ℓr L₀ : ℝ} {r₂ : ℕ} (hXx : X ≤ x) (hX :
     obtain ⟨h1, h2⟩ := log14_bounds
     unfold cE
     linarith
+
+theorem le_cL_pred {r : ℕ} (hr : 1 ≤ r) {c : ℝ} (h : c ≤ Real.log (2 * (r : ℝ)) + 1.36) :
+    c ≤ cL (r - 1) := by
+  unfold cL
+  rw [Nat.cast_sub hr]; push_cast
+  simpa using h
+
+theorem cL_le {n : ℕ} {c : ℝ} (h : Real.log (2 * ((n : ℝ) + 1)) + 1.36 ≤ c) : cL n ≤ c := h
 
 end TernaryGoldbach.MinorArcs
