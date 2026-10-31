@@ -1,9 +1,9 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes, and it is derived in Lean from **four
-explicitly stated inputs from the literature**, which are still `sorry`. Everything that
-connects those inputs to the theorem is proved.
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **28 explicitly
+stated results from the literature or trusted computations**, which are still `sorry`. Everything
+that connects those results to the theorem is proved.
 
 ```
 $ lake build
@@ -14,18 +14,26 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The four `sorry`s that `ternary_goldbach` depends on are all in
-[`TernaryGoldbach/Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean).
+The 28 `sorry`s that `ternary_goldbach` depends on are:
 
-Files under `TernaryGoldbach/MinorArcs/` named in `BLUEPRINT.md` as *blueprint nodes*
-(e.g. `TypeI.lean`) also contain `sorry`s. They are
-statements of intermediate results from the book, waiting to be proved, and `ternary_goldbach`
-does not depend on them (check with `#print axioms`).
+* **three unproved inputs** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
+  `major_arcs_input`, `binary_goldbach_input`, `prime_ladder_input` (see "The inputs" below);
+* **four cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
+  [B, (14.7)], [B, (14.28)];
+* **trusted computations from [B]**:
+  * `|η̂₂''|_∞ ≤ 31.521` (`MinorArcs/InnerSums.lean: eta2_fourier_bound'`, [B, (B.6)]);
+  * `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` (`MinorArcs/Eta2Log.lean: eta2log_fourier_bound`, [B, Lemma B.2.3]);
+  * Prop 12.2.4 (`MinorArcs/LargeSievePrimes.lean`);
+  * `T2_le`, `H2_le`, `integral_H2_le` ([B, (5.31), (5.36), (5.37)], `MinorArcs/TypeIIS1.lean`);
+  * `fsq_le` ([B, p. 83], `Prelim/SqfreeCount.lean`);
+* **fourteen literature bounds** in `Prelim/`:
+  * eleven bounds on sums of `Λ`, `μ` and `1/φ` ([B, (2.12)–(2.20)], [RS62]) in `Prelim/LambdaMu.lean`;
+  * the optimal and weighted large sieves and [MV73, Lemma 8] in `Prelim/LargeSieveMV.lean`.
 
-Two `sorry`s there are **trusted computations** rather than gaps: the bounds
-`|η̂₂''|_∞ ≤ 31.521` (`MinorArcs/InnerSums.lean: eta2_fourier_bound'`, [B, (B.6)]) and
-`|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` (`MinorArcs/Eta2Log.lean: eta2log_fourier_bound`, [B, Lemma B.2.3]),
-which [B, App. B] obtains by rigorous numerics.
+`lake build` also warns about four further `sorry`s in `Prelim/LambdaMu.lean` that nothing uses.
+
+In the table, "uses trusted bounds" means that the file's main theorems depend on some of
+these `sorry`s, through `#print axioms`; the file itself contains no `sorry`.
 
 ## Layout
 
@@ -47,24 +55,24 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/FourierSums.lean` | [B, §2.3]: `∑ 1/(n−s)² = π²/sin²(πs)` (via Parseval), `∑_{n≠0} 1/(n−r)² ≤ π² − 4`, Lemma 2.3.1 (via Poisson summation), both bounds of (2.2) (with total variation for `|f'|₁`) | ✅ |
 | `MinorArcs/InnerSums.lean` | `T_{m,∘}` and its bounds [B, (4.36)]; the Poisson main term [B, (4.33)–(4.34)]; the trusted `|η̂₂''|_∞ ≤ c₀` | 🟡 one trusted computation |
 | `MinorArcs/BlockSums.lean` | splitting sums into blocks of length `q`; `∑ 1/(R+jq)` and `∑ √(1+q/(R+jq))` bounds | ✅ |
-| `MinorArcs/TypeI.lean` | definitions and bounds of [B, Lemmas 4.2.2–4.2.4] (the bounds of 4.2.4 in our corrected form) | ✅ definitions |
+| `MinorArcs/TypeI.lean` | definitions and bounds of [B, Lemmas 4.2.2–4.2.4] (the bounds of 4.2.4 in our corrected form) | ✅ (one lemma uses the trusted (B.6)) |
 | `MinorArcs/TypeIProof.lean` | **[B, Lemma 4.2.2] proved** (both cases), modulo the trusted `|η̂₂''|_∞ ≤ 31.521` | ✅ (uses the trusted bound) |
 | `MinorArcs/InnerSumsGen.lean` | (4.36) and the Poisson main term for a general smoothing function | ✅ |
 | `MinorArcs/Eta2Log.lean` | `η_(ρ)(t) = log(ρt) η₂(t)`: [B, (4.38)], Lemma B.2.1; trusted Lemma B.2.3 | 🟡 one trusted computation |
 | `MinorArcs/SumTools.lean` | sums vs antiderivatives (MVT); the log-weighted sums of [B, Lemma 4.2.3] | ✅ |
 | `MinorArcs/TypeILogProof.lean` | **[B, Lemma 4.2.3] proved** in the form [B, §6.2.1] uses ((4.40) corrected, (4.41) slightly weakened; the unused (4.42) omitted) | ✅ (uses the trusted bounds) |
 | `Prelim/LambdaMu.lean` | trusted literature bounds on sums of `Λ` and `μ` [B, (2.12), (2.15), (2.16), (2.20)] | 🟡 trusted |
-| `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ |
+| `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
 | `Prelim/LargeSieveMV.lean` | trusted literature: the optimal large sieve `N − 1 + δ⁻¹` (Selberg, Montgomery–Vaughan), the weighted large sieve [MV73, (1.6)], [MV73, Lemma 8] (+ numerical check) | 🟡 trusted |
 | `Prelim/SumMuSqPhi.lean` | `∑_{n≤N} 1/n ≤ ∑_{r≤N sq-free} 1/φ(r)`; the coprime reduction; [B, (5.41)] `(φ(q)/q) log R ≤ ∑_{r≤R,(r,q)=1} μ²/φ` | ✅ |
 | `MinorArcs/Montgomery.lean` | Ramanujan sums at coprime `n`; Montgomery's inequality (case `ω(p) = 1`) | ✅ |
 | `MinorArcs/TypeII.lean` | [B, §5.2]: **Lemma 5.2.1, Lemma 5.2.3 ((5.50)–(5.52)), Prop 5.2.4 ((5.53)–(5.57)) proved** (odd `m`, `v = 2`), modulo the trusted sharp large sieves | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIINumerics.lean` | numerical inequalities for (5.51) | ✅ |
-| `Prelim/SqfreeCount.lean` | `∑_{m²∣l} μ(m) = [l sq-free]`; `∑_{(m,P)=1} μ(m)/m² = (6/π²)/∏_{p∣P}(1-p⁻²)` (via `L(μ·χ₀, 2)`); squarefree `l ∈ (a, b]` coprime to `P`: `(b-a)(6/π²)P/σ(P) + O*(∑_{e∣P} f(√(b/e)))`; trusted `f(X) ≤ 1.27X` [B, p. 83] | ✅ (one trusted computation) |
-| `MinorArcs/S1Lemma.lean` | [B, Lemma 5.1.1] (`v = 2`), with `∑_{t≤Y odd} t^{-1/2} ≤ √Y` and `∑_{d odd} d^{-3/2} ≤ (1-2^{-3/2})ζ(3/2)` | ✅ |
+| `Prelim/SqfreeCount.lean` | `∑_{m²∣l} μ(m) = [l sq-free]`; `∑_{(m,P)=1} μ(m)/m² = (6/π²)/∏_{p∣P}(1-p⁻²)` (via `L(μ·χ₀, 2)`); squarefree `l ∈ (a, b]` coprime to `P`: `(b-a)(6/π²)P/σ(P) + O*(∑_{e∣P} f(√(b/e)))`; trusted `f(X) ≤ 1.27X` [B, p. 83] | 🟡 one trusted computation |
+| `MinorArcs/S1Lemma.lean` | [B, Lemma 5.1.1] (`v = 2`), with `∑_{t≤Y odd} t^{-1/2} ≤ √Y` and `∑_{d odd} d^{-3/2} ≤ (1-2^{-3/2})ζ(3/2)` | ✅ (uses trusted `fsq_le`) |
 | `MinorArcs/Decomposition.lean` | [B, (3.11)]: `S_{η₂} = S_{I,1} − S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}` (`v = 2`) from Vaughan's identity | ✅ |
-| `MinorArcs/TypeIIReduction.lean` | [B, (5.2)–(5.5)]: `S_{II} = 4∫ IIsum(W) dW/W`, Cauchy–Schwarz `|IIsum| ≤ √S₁(√S₂+√S₃)`; trusted [RS62, Thm. 13] | ✅ |
+| `MinorArcs/TypeIIReduction.lean` | [B, (5.2)–(5.5)]: `S_{II} = 4∫ IIsum(W) dW/W`, Cauchy–Schwarz `|IIsum| ≤ √S₁(√S₂+√S₃)`; [RS62, Thm. 13] (trusted, in `Prelim/LambdaMu.lean`) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIITools.lean`, `MinorArcs/TypeIITotal.lean` | [B, §6.2.3]: integrals, our version of (6.37) `typeII_637` (Type II total for `q ≤ V/2e`) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeIITotalGen.lean` | [B, §6.2.3]: general Type II total `typeII_gen`; our (6.40) `typeII_640` (`|δ| ≥ 8`) | ✅ (uses trusted bounds) |
 | `MinorArcs/Eta2LogFourier.lean` | [B, (B.17), (B.18)]: `|(log·η₂)^| ≤ 2 − log 4`, `(2πt)²|(log·η₂)^(t)| ≤ 96 log 2` | ✅ |
@@ -88,14 +96,14 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/Prop1123b.lean` | Prop 11.2.3′: ℓ∞ bound for `S_{η_*}` off `𝔐_{8,n}(x/κ)`, fresh Dirichlet approximation at each scale `wy` | ✅ (uses trusted bounds) |
 | `MinorArcs/LinftyLevels.lean`, `PhiIntegrals.lean` | ℓ∞ bound per level, closed form `ĝ(y,n) = 1.398 max(g_y(n), h(y)) + 17(670/n)³/3`; `∫_{w₀}^∞ max(1,1/w)φ ≤ 1.398` | ✅ (uses trusted bounds) |
 | `MinorArcs/BaseGap.lean`, `BaseGap2.lean`, `EtaU.lean` | base gap `𝔐_{8,r₀}(x/κ) \ 𝔐_{8,r₀}(x)`: character expansion, `|η̂(t)| ≤ c₀√(π/2)/(2πt)²` (Fubini), non-coprime terms; `|S_{η_*}| ≤ 0.012 x/κ` there | ✅ (uses cited Cor 7.1.3, trusted (B.6)) |
-| `MinorArcs/PartIICited.lean` | cited Part II results: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], [B, (14.28)] | ❌ cited |
+| `MinorArcs/PartIICited.lean` | cited Part II results: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], [B, (14.28)] | ❌ four cited results |
 | `MinorArcs/MinorTotal.lean` | (14.49) via repair 3: `S₁/S₂` split, `I₀ ≥ 8.6296x`, `T ≤ σ(x)x`, assembly `minor_total` | ✅ (uses the above) |
 | `MinorArcs/NumericsCore.lean`, `NumericsCells.lean` (generated by `scripts/gen_cells.py`), `NumericsAsymp.lean`, `NumericsFinal.lean` | the numerical inequality `Mexpr x r₂ ≤ 1.037` for all `x ≥ 4.9·10²⁶` | ✅ |
 | `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (trusted computation)** | 🟡 one trusted computation |
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the trusted 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
-| `Helfgott/Inputs.lean` | proved inputs 1 and 4, and **the four unproved facts** (see below) | ❌ |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ |
+| `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4, and **the three unproved inputs** (see below) | ❌ three inputs |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 28) |
 
 ## The inputs
 

@@ -5,8 +5,8 @@ import TernaryGoldbach.MinorArcs.TrigSums
 # Type I sums [B, Ch. 4] — blueprint statements
 
 Statements of the results of [B, Ch. 4] (H. A. Helfgott, *The ternary Goldbach problem*,
-arXiv:1501.05438v2) that the minor-arc argument uses.  **These are blueprint nodes: they are
-stated with `sorry` and are not (yet) used by `ternary_goldbach`.**  They were transcribed from
+arXiv:1501.05438v2) that the minor-arc argument uses.  They are proved in
+`TypeIProof.lean`, `TypeILogProof.lean` and `TypeI2Rest.lean`.  They were transcribed from
 the typeset PDF; equation numbers are the book's.
 
 * §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality and **proved** in

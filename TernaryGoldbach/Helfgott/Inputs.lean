@@ -9,7 +9,8 @@ import TernaryGoldbach.MinorArcs.NumericsFinal
 /-!
 # Unproved inputs
 
-**Every `sorry` in the project is in this file.**  Each remaining one is a result from the literature,
+**The three unproved top-level inputs.**  (Other `sorry`s, the cited and trusted results that
+`minor_arcs_input` uses, are listed in `README.md`.)  Each remaining one is a result from the literature,
 stated as precisely as we could, with a pointer to where it is proved.  Everything else (the
 way these inputs combine into the ternary Goldbach conjecture) is proved in Lean.
 
