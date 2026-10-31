@@ -1137,12 +1137,9 @@ theorem abs_sum_moebius_div_le_log {x : ℝ} (hx : 11815 ≤ x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.03 / Real.log x := by
   sorry
 
-/-- **[B, (2.22)]** (Ramaré [Ramb]): `|∑_{n ≤ x, (n,q)=1} μ(n)/n| ≤ (4/5)(q/φ(q))/log(x/q)` for
-`q < x` (stated in [B] for `q ≤ x`; at `q = x` the right side is `+∞`). -/
-theorem abs_sum_moebius_div_coprime_le_log {x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqx : (q : ℝ) < x) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤
-      4 / 5 * (q / Nat.totient q) / Real.log (x / q) := by
-  sorry
+/- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
+`Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
+(Acta Arith. 165 (2014)) from our own `q = 1` bound (`Prelim/MoebiusBound.lean`). -/
 
 /-- **[B, (2.24)]** (a computation by Helfgott): `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for
 `0 < x ≤ 10¹²`. -/

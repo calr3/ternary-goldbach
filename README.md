@@ -1,8 +1,8 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **6 explicitly
-stated results from the literature**, which are still `sorry`, and **24 numerical axioms**
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **5 explicitly
+stated results from the literature**, which are still `sorry`, and **29 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
 ```
@@ -21,12 +21,17 @@ $ echo 'import TernaryGoldbach
  TernaryGoldbach.MinorArcs.eta2log_fourier_bound,
  TernaryGoldbach.MinorArcs.integral_H2_le,
  TernaryGoldbach.MinorArcs.prop_12_2_4,
+ TernaryGoldbach.Prelim.C_grid,
+ TernaryGoldbach.Prelim.K_blocks,
+ TernaryGoldbach.Prelim.K_pieces,
  TernaryGoldbach.Prelim.fsq_le,
+ TernaryGoldbach.Prelim.liouville_small,
  TernaryGoldbach.Prelim.logsq_small,
  TernaryGoldbach.Prelim.mertens_lower_small,
  TernaryGoldbach.Prelim.mertens_point,
  TernaryGoldbach.Prelim.mertens_product_small,
  TernaryGoldbach.Prelim.mertens_small,
+ TernaryGoldbach.Prelim.moebius_sqrt_small,
  TernaryGoldbach.Prelim.nonprime_small,
  TernaryGoldbach.Prelim.psi_mid,
  TernaryGoldbach.Prelim.psi_mul_mid,
@@ -41,19 +46,22 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 6 `sorry`s that `ternary_goldbach` depends on are:
+The 5 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
 * **three cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
   [B, (14.7)] ([B, (14.28)] is proved, in a weaker form, in `MinorArcs/EBound.lean`);
-* **two literature results** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
-  `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]), and Ramaré's (2.22).
+* **one literature result** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
+  `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]).
   All the bounds on `ψ` and `θ` that [B] quotes — (2.12)–(2.15), (2.17), (2.19), (5.5) — and
   Lemma C.2.2 ([RS62, Thm. 15], in `Prelim/MertensProduct.lean`) are proved from Dusart's bound
   plus finite checks; C.2.2 also uses Mertens' theorem with Euler's constant, ported from PNT+.
   (2.23) is proved elementarily with the weaker constant `q/φ(q) + 2.67` (`Prelim/MoebiusLog.lean`;
-  [B]: `1.00303 q/φ(q)`), absorbed downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
+  [B]: `1.00303 q/φ(q)`), absorbed downstream. (2.22) is proved with constant `2.8` (for [B]'s `4/5`)
+  by Ramaré's Liouville route from our own `|∑_{n≤x} μ(n)/n| ≤ 0.54/(log x − 0.7521)`, `x ≥ 10¹⁰`
+  (`Prelim/MoebiusBound.lean`, `Prelim/Liouville.lean`, `Prelim/LiouvilleBound.lean`), also absorbed
+  downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
   `Prelim/LargeSieveMV.lean` are also proved.)
 
 `lake build` also warns about four further `sorry`s in `Prelim/LambdaMu.lean` that nothing uses
@@ -63,9 +71,11 @@ The 6 `sorry`s that `ternary_goldbach` depends on are:
 
 These are finite computer computations: seven from [B] (the book describes the method but
 doesn't include the code or the output), the two computational inputs for small `N`, four finite
-checks behind [MV73, Lemmas 7, 8], and eleven checks of `ψ`, `θ` and Mertens products over finite ranges (our own computations,
-reproducible with `scripts/mv_lemma8_check.py`, `scripts/psi_checks.py`, `scripts/psi_mid_check.py`,
-`scripts/mertens_product_check.py`). They are stated as Lean `axiom`s, so `#print axioms`
+checks behind [MV73, Lemmas 7, 8], eleven checks of `ψ`, `θ` and Mertens products over finite ranges, and five
+checks behind (2.22) (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
+`scripts/psi_checks.py`, `scripts/psi_mid_check.py`, `scripts/mertens_product_check.py`,
+`scripts/moebius_K_check.py`, `scripts/moebius_sqrt_check.py`, `scripts/liouville_small_check.py`,
+`scripts/moebius_C_grid.py`). They are stated as Lean `axiom`s, so `#print axioms`
 lists each one by name. Most are interval-arithmetic computations.
 
 | Axiom | [B] | Statement | How [B] obtains it |
@@ -93,6 +103,11 @@ lists each one by name. Most are interval-arithmetic computations.
 | `Prelim.mertens_lower_small` (`LambdaMu.lean`) | (2.13) range | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)` for `3 ≤ n ≤ 10⁶` | direct (`scripts/psi_checks.py`; min margin `0.014`) |
 | `Prelim.mertens_point` (`LambdaMu.lean`) | — | `∑_{m≤X} Λ(m)/m − ψ(X)/(X+1) − log(X+2) ≥ −1.5776`, `X = 10⁶` | direct (same script; value `−1.57721`) |
 | `Prelim.logsq_small` (`LambdaMu.lean`) | (2.19) range | `∑_{n/2<p≤n} (log p)² ≤ (1/2) n log n` for `117 ≤ n ≤ 10⁶` | direct (same script; min margin `2.14`) |
+| `Prelim.K_pieces` (`MoebiusBound.lean`) | (2.22) input | `∑_{k<1000} ∑_{i<⌈400/k⌉} g_{k,i} log(b/a) ≤ 0.4035`: pieces `[a,b)` of `[k,k+1)`, `g` the larger endpoint value of `\|∑_{n≤k}Λ(n)/n − log y − E(10⁹)\|` | segmented sieve to `10⁹` (`scripts/moebius_K_check.py`; value `0.40342`) |
+| `Prelim.K_blocks` (`MoebiusBound.lean`) | (2.22) input | for `1000 ≤ k < 10⁹`: `\|∑_{n≤k}Λ(n)/n − log t − E(10⁹)\| ≤ h_j` at `t = k, k+1`, `j = ⌊log₂(k/1000)⌋`, 20 block constants | same sieve (block maxima `+ 10⁻⁷`, rounded up) |
+| `Prelim.moebius_sqrt_small` (`LiouvilleBound.lean`) | (2.24) range | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))` for `1 ≤ k < 10¹⁰` | segmented Möbius sieve (`scripts/moebius_sqrt_check.py`; equality at `k = 1`, otherwise max ratio `0.612` at `k = 2`; [B] cites Helfgott's check to `10¹²`) |
+| `Prelim.liouville_small` (`LiouvilleBound.lean`) | — | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵` | direct (`scripts/liouville_small_check.py`; max `0.7831` at `k = 10`) |
+| `Prelim.C_grid` (`LiouvilleBound.lean`) | (2.22) optimisation | `(2.8 + (i+1)/100)·G(2.8 + i/100) ≤ 2.8` for `i < 7720`, `G(a) = ∑_{u≤3000} \|μ(u)\|/u² min(5/3, 0.99/(a − 2 log u)) + (5/3)/3000.5` | direct (`scripts/moebius_C_grid.py`; max `2.7422`) |
 | `Prelim.mertens_product_small` (`MertensProduct.lean`) | Lemma C.2.2 range | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for primes `5 ≤ x ≤ 10⁸` | direct (`scripts/mertens_product_check.py`; tightest at `x = 23`, margin `2.4·10⁻⁷`, checked to 40 digits) |
 
 `fsq_le` and `H2_le` look small enough to prove in Lean. `prop_12_2_4` and `T2_le` would need an
@@ -133,7 +148,9 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusLog.lean` | **(2.23), elementary form**: `\|∑_{n≤x,(n,q)=1} μ(n)/n log(x/n)\| ≤ q/φ(q) + 2.67` via `∑ μ_q(n)/n · H(x/n) = ∑_{k≤x, rad k ∣ q} 1/k ∈ [0, q/φ(q)]` (multiplicativity, Euler product over `q`-factored numbers), `H(M) = log y + γ + O*(1/M)` and (2.20); the Type I constants change accordingly (`log t + 1.63 → 2.96` in `typeI1_first`, `7.7 → 15.7` in `typeI1_second`) and still close | ✅ |
 | `Prelim/PNTMertens.lean` | Mertens' second theorem `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with an integral formula for `E₂Λ`; **ported from PNT+** (Apache 2.0, `licenses/`) | ✅ |
 | `Prelim/MertensProduct.lean` | **[B, Lemma C.2.2] proved**: `\|E₂Λ(x)\| = O(1/log³x)` from Dusart, the log series, `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (finite check below), and the exchange argument `q/φ(q) ≤ ∏_{p≤p_{ω(q)}} p/(p−1)` | ✅ (Dusart, one numerical axiom) |
-| `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`), not yet on the main path | ✅ (Dusart, two numerical axioms) |
+| `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (Dusart, two numerical axioms) |
+| `Prelim/Liouville.lean` | Ramaré's identities (Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2): `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` by multiplicativity, and their `1/n`-weighted partial-sum forms | ✅ |
+| `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, Dusart) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
@@ -181,7 +198,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 6 `sorry`s and 24 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 29 axioms) |
 
 ## The inputs
 

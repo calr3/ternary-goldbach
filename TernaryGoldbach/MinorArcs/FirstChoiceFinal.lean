@@ -92,9 +92,9 @@ theorem theorem_3_1_1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have hK : 0 ≤ T ^ 2 * √T := by positivity
   have hS' : 2.5 * T ^ 3 / √t = 2.5 * (T ^ 3 / √t) := by ring
   rw [hS']
-  -- `(3.25 log t + 5.21697)(2x/(δ₀φ) - 2x/t) ≥ 0`.
-  have hspill : (13 / 4 * Real.log t + 5.21697) * (2 * T ^ 3 / t) ≤
-      (13 / 4 * Real.log t + 5.21697) * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) :=
+  -- `(3.25 log t + 1.22)(2x/(δ₀φ) - 2x/t) ≥ 0` (`7.82 = 3.8 + 2.8 + 1.22`).
+  have hspill : (13 / 4 * Real.log t + 1.22) * (2 * T ^ 3 / t) ≤
+      (13 / 4 * Real.log t + 1.22) * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) :=
     mul_le_mul_of_nonneg_left hXφq (by positivity)
   nlinarith
 

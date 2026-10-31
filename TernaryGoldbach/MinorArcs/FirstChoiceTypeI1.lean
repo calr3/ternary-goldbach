@@ -64,18 +64,18 @@ theorem muBound_le_one (U : ℝ) (q : ℕ) : muBound U q ≤ 1 := by
   · exact min_le_left _ _
   · exact le_rfl
 
-/-- `μ L ≤ (4/5)(2q/φ(2q)) + max(L - log(M/2q²), 0)` for `μ = muBound M q`, `L ≥ 0`. -/
+/-- `μ L ≤ 2.8(2q/φ(2q)) + max(L - log(M/2q²), 0)` for `μ = muBound M q`, `L ≥ 0`. -/
 theorem muBound_mul_le {M L : ℝ} {q : ℕ} (hq : 1 ≤ q) (hM : 0 < M) (hL : 0 ≤ L) :
-    muBound M q * L ≤ 4 / 5 * (2 * q / Nat.totient (2 * q)) +
+    muBound M q * L ≤ 2.8 * (2 * q / Nat.totient (2 * q)) +
       max (L - Real.log (M / (2 * q ^ 2))) 0 := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hφ : (0 : ℝ) < Nat.totient (2 * q) := by exact_mod_cast Nat.totient_pos.2 (by omega)
-  have ha : 0 ≤ 4 / 5 * (2 * (q : ℝ) / Nat.totient (2 * q)) := by positivity
+  have ha : 0 ≤ 2.8 * (2 * (q : ℝ) / Nat.totient (2 * q)) := by positivity
   unfold muBound
   split_ifs with h
   · set ℓ := Real.log (M / (2 * q ^ 2))
     have hℓ : 0 < ℓ := Real.log_pos (by rw [one_lt_div (by positivity)]; exact h)
-    set a := 4 / 5 * (2 * (q : ℝ) / Nat.totient (2 * q))
+    set a := 2.8 * (2 * (q : ℝ) / Nat.totient (2 * q))
     have hm0 : 0 ≤ min 1 (a / ℓ) := le_min zero_le_one (by positivity)
     have hm1 : min 1 (a / ℓ) * ℓ ≤ a := by
       calc min 1 (a / ℓ) * ℓ ≤ a / ℓ * ℓ := mul_le_mul_of_nonneg_right (min_le_right _ _) hℓ.le
@@ -220,12 +220,12 @@ theorem typeI1_c0_term_le {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) 
 
 set_option maxHeartbeats 1600000 in
 /-- **[B, (6.56)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
-`|S_{I,1}| ≤ 1.80303 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q` (with the
+`|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q` (with the
 elementary (2.23); [B]'s `1.00303` would give `1.63`). -/
 theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
     ‖typeILog α (T ^ 3) (U1 T (delta0 δ * q))‖ ≤
-      1.80303 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
+      3.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
         (Real.log (delta0 δ * q) + 2.96) * (2 * T ^ 3 / (delta0 δ * q)) + 0.014 * (T ^ 2 * √T) := by
   obtain ⟨hδq, ht2, htT⟩ := first_choice_t hT h hqT
   have hq : 1 ≤ q := h.1
@@ -265,9 +265,9 @@ theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have hmu := muBound_le_one (U1 T t : ℝ) q
   have hmu0 := muBound_nonneg (U1 T t : ℝ) hq
   have hρ : (0 : ℝ) ≤ 2 * q / Nat.totient (2 * q) := by positivity
-  -- `log(x/U) μ ≤ 0.8ρ + 2 log t + 2.63`.
+  -- `log(x/U) μ ≤ 2.8ρ + 2 log t + 2.63`.
   have hLμ : Real.log (T ^ 3 / U1 T t) * muBound (U1 T t) q ≤
-      4 / 5 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 2.63) := by
+      2.8 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 2.63) := by
     rw [mul_comm]
     refine (muBound_mul_le hq (by linarith) (Real.log_nonneg ?_)).trans ?_
     · rw [le_div_iff₀ (by linarith)]; nlinarith [pow_pos hT0 2]
@@ -278,15 +278,15 @@ theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
       linarith
   have h1 : T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
       ((2 * q / Nat.totient (2 * q) + 2.67) + Real.log (T ^ 3 / U1 T t) * muBound (U1 T t) q) ≤
-      1.80303 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (2 * Real.log t + 5.30) * (T ^ 3 / t) := by
+      3.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (2 * Real.log t + 5.30) * (T ^ 3 / t) := by
     have hA := xphi_le (x := T ^ 3) (δ := δ) hx0 hq
     have hB := xq_le (x := T ^ 3) (δ := δ) hx0 hq
     rw [← ht] at hB
     have hc0 : 0 ≤ T ^ 3 / (2 * q) * minInv c₀ (π * δ) := by positivity
     calc _ ≤ T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
-          (1.80303 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 5.30)) :=
+          (3.8 * (2 * q / Nat.totient (2 * q)) + (2 * Real.log t + 5.30)) :=
           mul_le_mul_of_nonneg_left (by linarith) hc0
-      _ = 1.80303 * (T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (2 * q / Nat.totient (2 * q))) +
+      _ = 3.8 * (T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (2 * q / Nat.totient (2 * q))) +
           (2 * Real.log t + 5.30) * (T ^ 3 / (2 * q) * minInv c₀ (π * δ)) := by ring
       _ ≤ _ := by gcongr
   have h2 : T ^ 3 / (2 * q) * logFourierBound δ * muBound (U1 T t) q ≤ 0.6138 * (T ^ 3 / t) := by

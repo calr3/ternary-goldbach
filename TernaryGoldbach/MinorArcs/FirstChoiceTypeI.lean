@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.TypeI2Large
 /-!
 # [B, §6.3.1]: the Type I terms at the first choice of parameters
 
-`S_{I,1}` ((6.56)): `|S_{I,1}| ≤ 1.80303 · 2x/(δ₀φ(q)) + (log t + 1.617) · 2x/t + 0.015 x^{5/6}`.
+`S_{I,1}` ((6.56)): `|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 1.617) · 2x/t + 0.015 x^{5/6}`.
 -/
 
 open Real

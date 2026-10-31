@@ -220,7 +220,9 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 ## Removing the remaining `sorry`s (goal set 2026-10-31)
 
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
-Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
+Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms. Status 2026-10-31:
+`ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `cor_7_1_3`, `prop_7_1_5`,
+`l2_major_14_7`) and 29 numerical axioms.
 
 **(2.23): DONE, elementary, weaker constant** (`Prelim/MoebiusLog.lean`): `|L_q(x)| ≤ q/φ(q) + 2.67` instead of
 Ramaré's `1.00303 q/φ(q)`. Downstream: `typeI1_le`/`abs_muSum_log_le` carry `2q/φ(2q) + 2.67`; `typeI1_first`'s
@@ -236,13 +238,27 @@ Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵
 `G_H(z) = ∫_0^z sin(Hv)/(πv)dv`, `|G_H| ≤ 3/π` (bound `1/π` on `[0,1/H]`, integrate by parts beyond), integrate by
 parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε²) = (6/π)e^{1/2} + O(Hε²) ≤ 3.15`.
 
-**(2.22): in progress.** Step 1 done (`Prelim/MoebiusBound.lean`): `|m(x)| ≤ 0.54/(log x − 0.7521)` for
-`x ≥ 10¹⁰`, with `K = ∑_{n≤x}|E(x/n) − E(x)|/n ≤ 0.4259 + 0.0755 + 0.0378` (parts A/B/C; numerical axioms
-`K_pieces ≤ 0.4035`, `K_blocks`, segmented sieve to `10⁹`). Next: λ = sq ∗ μ, μ = μ_sq ∗ λ, λ_q = (μ²·1_{·|q}) ∗ λ
-(multiplicativity), ℓ bound `|ℓ(z)| ≤ 0.95/log z` (needs `|m(y)| ≤ √(2/y)` for `y < 10¹⁰`, a Möbius sieve, and a
-direct Liouville check for `z ≤ 10⁵`; model sup ≈ 0.94 near `z ≈ 10¹⁵`), then Lemma 3.2 with `μ²(u)`: model
-`C ≈ 2.66` (`sup_y min(y, y∑_{u sq-free} min(π²/6, c_ℓ/(y − 2 log u))/u²)`, attained near `y ≈ 2.8`).
-**Original plan (feasible, large).** Budget: Theorem 3.1.1 (first case) has `2x/(δ₀φ(q))(13/4 log t + 7.82)`;
+**(2.22): DONE with constant `2.8`** (for [B]'s `4/5` from [Ramb]; `Prelim/MoebiusBound.lean`, `Liouville.lean`,
+`LiouvilleBound.lean`). Ramaré's Liouville route (Ram14 = hal-02572851) with our own `q = 1` input:
+1. `MoebiusBound`: `m(x)(log x + E(x)) = −∑_{n≤x} μ(n)/n (E(x/n) − E(x))` and
+   `K = ∑_{n≤x}|E(x/n) − E(x)|/n ≤ 0.4259 + 0.0755 + 0.0378 ≤ 0.54` for `x ≥ 10¹⁰` (fine pieces below `1000`,
+   dyadic blocks to `10⁹`: numerical axioms `K_pieces`, `K_blocks`; Dusart beyond), so
+   `|m(x)| ≤ 0.54/(log x − 0.7521)` ((2.13) for `E(x) ≥ −log(3/√2)`).
+2. `Liouville`: `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` (multiplicativity, prime powers), `(Fχ_q) ∗ (Gχ_q) =
+   (F ∗ G)χ_q`, and the `1/n`-weighted partial sums: Lemmas 2.3, 3.2, 2.5 of Ram14 for every `q`.
+3. `LiouvilleBound`: `|ℓ(z)| log z ≤ 0.99` for all `z > 1` — `z ≤ 10⁵` by the numerical axiom `liouville_small`
+   (max `0.7831` at `z → 11⁻`); `10⁵ ≤ z < 10¹⁰` from `|m(y)| ≤ √(2/y)` (numerical axiom `moebius_sqrt_small`,
+   a Möbius sieve to `10¹⁰`; max of `|m(k)|√((k+1)/2)` over `2 ≤ k < 10¹⁰` is `0.612` at `k = 2`, equality at
+   `k = 1`); `z ≥ 10¹⁰` from step 1 for `z/u² ≥ 10¹⁰` (`∑ 1/u² ≤ 5/3`, `∑ log u/u² ≤ 1.0117`, total `0.984`).
+   Then `|ℓ_q(x)| log(x/q) ≤ 0.99 q/φ(q)` (`∑_{d∣q} μ²(d)/d ≤ q/φ(q)` via `sum_factored_le`), `|ℓ_q| ≤ 5/3`.
+4. `|m_q(x)| ≤ (q/φ(q)) ∑_{u² ≤ x} |μ(u)|/u² β(log(x/q), u)`, `β(y, u) = min(5/3, 0.99/(y − 2 log u))` (or `5/3`);
+   `y·∑ ≤ 2.8` on `[2.8, 80)` by the grid axiom `C_grid` (step `0.01`, `u ≤ 3000`, max `2.7422`), for `y ≥ 80`
+   analytically (split at `u ≤ e^{y/8}`: `≤ 2.2 + 0.007`), and `|m_q| ≤ 1` for `y ≤ 2.8`.
+Downstream: `muBound` uses `2.8`; `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, and the
+first-case spill `5.21697 → 1.22` (`3.8 + 2.8 + 1.22 = 7.82`), so Theorem 3.1.1's statement is unchanged.
+*Remark on Ram14*: Lemma 2.4's first claim `|ℓ(x)| ≤ 0.55/log x` for all `x > 1` fails on `x ∈ (≈ 10.6, 11)`:
+`ℓ(10) = 0.3266` and `0.3266 · log 11 = 0.783`. (We use `0.99`; Ram14's Theorem 1.1 constants are not used.)
+**Original plan (as carried out, with the modelled constants).** Budget: Theorem 3.1.1 (first case) has `2x/(δ₀φ(q))(13/4 log t + 7.82)`;
 the δ₀φ constant used is `1 + 2C` (typeI1 `1 + C`, typeI2 `C`, `C` = the (2.22) constant), so `C ≤ 3.4` keeps
 the statement (and GBound/cells) unchanged. Route (Ram14 = hal-02572851, with our own q = 1 input):
 1. `m(x)(log x + c₀) = −∑_{n≤x} μ(n)/n · r(x/n)`, `r(y) = ψ̃(y) − log y − c₀`, `c₀ = lim(ψ̃(y) − log y)` (exists by
@@ -255,7 +271,7 @@ the statement (and GBound/cells) unchanged. Route (Ram14 = hal-02572851, with ou
 4. Lemma 3.2: `m_q(x) = ∑_{u²≤x,(u,q)=1} μ(u)/u² ℓ_q(x/u²)` and the `ρ(U, y)` optimisation ⇒ `C ≈ 2.4–3`.
 5. Refactor `muBound` (`4/5 → C`) through `TypeITotal`, `FirstChoiceTypeI1/I2`, `TypeI2Sum`, `TypeI2Large`.
 
-**(2.22), (2.23): open; sources located.** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
+**(2.22), (2.23): sources (both now proved with weaker constants, above).** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
 functions involving the Moebius function*, Math. Comp. 84 (2015) 1359–1387, with a **corrigendum** in Math. Comp. 88
 (2019) 2383–2388 (check whether it touches `4/5` or `1.00303` before relying on them). Not on arXiv/HAL; the AMS PDF
 could not be fetched from this environment. Open-access relatives (HAL): Ram13 = hal-02572812 (Acta Arith. 157:

@@ -3,7 +3,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeI1
 /-!
 # [B, §6.3.1, (6.57)–(6.59)]: `S_{I,2}` at the first choice of parameters
 
-`|S_{I,2}| ≤ 2.4916 x/√t + 0.8 · 2x/(δ₀φ(q)) + (15.17 log t + 21.3) · 2x/t + 0.56 x^{5/6}`.
+`|S_{I,2}| ≤ 2.4916 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.17 log t + 21.3) · 2x/t + 0.56 x^{5/6}`.
 -/
 
 open Real
@@ -90,13 +90,13 @@ theorem log_108_le : Real.log 108 ≤ 4.696 := by
   push_cast at h; linarith
 
 /-- The `μ`-term of `S_{I,2}` ([B, (6.57)]) at the parameters: with `min(1,a/ℓ)(ℓ + b) ≤ a + b`,
-`≤ 0.8 · 2x/(δ₀φ(q)) + (1.5 log t + 1.309) · 2x/t`. -/
+`≤ 2.8 · 2x/(δ₀φ(q)) + (1.5 log t + 1.309) · 2x/t`. -/
 theorem typeI2_mu_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3) :
     T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
         muBound (min (3 / 4 * T ^ 2 / (2 * V1 T)) (U1 T (delta0 δ * q))) q *
         Real.log (V1 T * q) ≤
-      0.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
+      2.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
         (1.5 * Real.log (delta0 δ * q) + 1.309) * (2 * T ^ 3 / (delta0 δ * q)) := by
   set t := delta0 δ * q with ht
   have hT0 : 0 < T := by linarith
@@ -152,11 +152,11 @@ theorem typeI2_mu_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
   calc T ^ 3 / (2 * q) * minInv c₀ (π * δ) * muBound M₀ q * Real.log (V1 T * q)
       = T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (muBound M₀ q * Real.log (V1 T * q)) := by ring
     _ ≤ T ^ 3 / (2 * q) * minInv c₀ (π * δ) *
-        (4 / 5 * (2 * q / Nat.totient (2 * q)) + (4.696 + 3 * Real.log q)) :=
+        (2.8 * (2 * q / Nat.totient (2 * q)) + (4.696 + 3 * Real.log q)) :=
         mul_le_mul_of_nonneg_left (by linarith) hc0
-    _ = 0.8 * (T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (2 * q / Nat.totient (2 * q))) +
+    _ = 2.8 * (T ^ 3 / (2 * q) * minInv c₀ (π * δ) * (2 * q / Nat.totient (2 * q))) +
         (4.696 + 3 * Real.log q) * (T ^ 3 / (2 * q) * minInv c₀ (π * δ)) := by ring
-    _ ≤ 0.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (4.696 + 3 * Real.log q) * (T ^ 3 / t) := by
+    _ ≤ 2.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) + (4.696 + 3 * Real.log q) * (T ^ 3 / t) := by
         have : 0 ≤ 4.696 + 3 * Real.log q := by have := Real.log_nonneg hq1; linarith
         gcongr
     _ ≤ _ := by

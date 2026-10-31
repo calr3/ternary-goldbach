@@ -2,6 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.MinorArcs.Eta2LogFourier
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.MoebiusLog
+import TernaryGoldbach.Prelim.LiouvilleBound
 
 /-!
 # Type I totals [B, §6.2.1]: `S_{I,1}`
@@ -16,10 +17,11 @@ namespace TernaryGoldbach.MinorArcs
 open TernaryGoldbach.Helfgott (eta2)
 
 /-- The bound on `|∑_{m ≤ U/q, (m,2q)=1} μ(m)/m|` from (2.20), (2.22):
-`min(1, (4/5)(2q/φ(2q))/log(U/2q²))` (the second only if `2q² < U`). -/
+`min(1, 2.8(2q/φ(2q))/log(U/2q²))` (the second only if `2q² < U`; [B] has `4/5` from [Ramb], we prove
+`2.8` in `Prelim/LiouvilleBound.lean`). -/
 noncomputable def muBound (U : ℝ) (q : ℕ) : ℝ :=
   if 2 * (q : ℝ) ^ 2 < U then
-    min 1 (4 / 5 * (2 * q / Nat.totient (2 * q)) / Real.log (U / (2 * q ^ 2))) else 1
+    min 1 (2.8 * (2 * q / Nat.totient (2 * q)) / Real.log (U / (2 * q ^ 2))) else 1
 
 /-- The bound on `|(log·η₂)^(-δ/2)|` from (B.17), (B.18): `min(2 - log 4, 96 log 2/(πδ)²)`. -/
 noncomputable def logFourierBound (δ : ℝ) : ℝ :=
@@ -90,7 +92,7 @@ theorem norm_fourier_logeta2_half_le (δ : ℝ) :
 /-- **[B, §6.2.1]**, our version of (6.3)/(6.4): for `U ≤ Q₀/2`,
 `|S_{I,1}| ≤ (x/2q) min(1, c₀/(πδ)²) (2q/φ(2q) + 2.67 + log(x/U) μ_U)` ([B]: `1.00303 (2q/φ(2q))`)
 `+ (x/2q) min(2 - log 4, 96 log 2/(πδ)²) μ_U + c₀(1/2 - 2/π²)(U²/(4qx) log(√e x/U) + 1/e)`
-`+ (4.41)`, with `μ_U = min(1, (4/5)(2q/φ(2q))/log(U/2q²))`. -/
+`+ (4.41)`, with `μ_U = min(1, 2.8(2q/φ(2q))/log(U/2q²))`. -/
 theorem typeI1_le {α x δ Q₀ U : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hU : √3 ≤ U) (hUx : U ≤ min (x / 4) (x / rexp 1)) (hUQ : U ≤ Q₀ / 2) :
     ‖typeILog α x U‖ ≤
