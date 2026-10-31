@@ -5,6 +5,7 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV
+import TernaryGoldbach.Prelim.Shan
 import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.Decay
