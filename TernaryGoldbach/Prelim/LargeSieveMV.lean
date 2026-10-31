@@ -1,12 +1,14 @@
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LargeSieveMVProof
+import TernaryGoldbach.Prelim.MVLemma7
 
 /-!
 # The sharp large sieve inequalities
 
 [B, §5.2] uses two sharp forms of the large sieve. Both are **proved** in
 `Prelim/LargeSieveMVProof.lean`, from the Montgomery–Vaughan Hilbert inequalities
-(`Prelim/HilbertReal.lean`, `Prelim/HilbertCsc.lean`). [MV73, Lemma 8] below is still `sorry`.
+(`Prelim/HilbertReal.lean`, `Prelim/HilbertCsc.lean`). [MV73, Lemma 8] below is proved in
+`Prelim/MVLemma7.lean`, `Prelim/MVLemma8.lean` (modulo finite numerical checks stated as axioms).
 
 Notation: `S(α) = ∑_{M < n ≤ M+N} a(n) e(αn)`; `‖t‖ = |t - round t|` is the distance from `t`
 to the nearest integer.
@@ -46,6 +48,12 @@ theorem large_sieve_weighted {ι : Type*} (s : Finset ι) (α δ : ι → ℝ)
 theorem sum_weighted_mu_sq_div_totient {R : ℝ} (hR : 2 ≤ R) :
     Real.log R + 0.25068 ≤ ∑ r ∈ (Icc 1 ⌊R⌋₊).filter Squarefree,
       (1 + r / R)⁻¹ * (1 / Nat.totient r : ℝ) := by
-  sorry
+  have hR0 : 0 < R := by linarith
+  refine (MV.lemma8 hR).trans (le_of_eq ?_)
+  rw [MV.WR, sum_filter]
+  refine sum_congr rfl fun r _ => ?_
+  have e : (1 + r / R)⁻¹ = R / (R + r) := by field_simp
+  simp only [MV.gS, e]
+  split_ifs <;> ring
 
 end TernaryGoldbach.Prelim

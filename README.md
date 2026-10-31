@@ -1,8 +1,8 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **16 explicitly
-stated results from the literature**, which are still `sorry`, and **9 numerical axioms**
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **15 explicitly
+stated results from the literature**, which are still `sorry`, and **13 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
 ```
@@ -21,27 +21,32 @@ $ echo 'import TernaryGoldbach
  TernaryGoldbach.MinorArcs.eta2log_fourier_bound,
  TernaryGoldbach.MinorArcs.integral_H2_le,
  TernaryGoldbach.MinorArcs.prop_12_2_4,
- TernaryGoldbach.Prelim.fsq_le]
+ TernaryGoldbach.Prelim.fsq_le,
+ TernaryGoldbach.Prelim.MV.GS_N0,
+ TernaryGoldbach.Prelim.MV.lemma7_numeric,
+ TernaryGoldbach.Prelim.MV.lemma8_numeric,
+ TernaryGoldbach.Prelim.MV.prod_ap_le]
 ```
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 16 `sorry`s that `ternary_goldbach` depends on are:
+The 15 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
 * **four cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
   [B, (14.7)], [B, (14.28)];
-* **eleven literature bounds** in `Prelim/`:
-  * ten bounds on sums of `Λ`, `μ` and `1/φ` ([B, (2.12)–(2.23)], [RS62]) in `Prelim/LambdaMu.lean`;
-  * [MV73, Lemma 8] in `Prelim/LargeSieveMV.lean` (the two sharp large sieves there are now proved).
+* **ten literature bounds** in `Prelim/LambdaMu.lean`: sums of `Λ`, `μ` and `1/φ`
+  ([B, (2.12)–(2.23)], [RS62]). (The sharp large sieves and [MV73, Lemmas 7, 8] in
+  `Prelim/LargeSieveMV.lean` are now proved.)
 
 `lake build` also warns about four further `sorry`s in `Prelim/LambdaMu.lean` that nothing uses.
 
 ## Numerical axioms
 
 These are finite computer computations: seven from [B] (the book describes the method but
-doesn't include the code or the output), and the two computational inputs for small `N`. They are stated as Lean `axiom`s, so `#print axioms`
+doesn't include the code or the output), the two computational inputs for small `N`, and four finite
+checks behind [MV73, Lemmas 7, 8] (our own computations, reproducible with `scripts/mv_lemma8_check.py`). They are stated as Lean `axiom`s, so `#print axioms`
 lists each one by name. Most are interval-arithmetic computations.
 
 | Axiom | [B] | Statement | How [B] obtains it |
@@ -55,6 +60,10 @@ lists each one by name. Most are interval-arithmetic computations.
 | `Prelim.fsq_le` (`SqfreeCount.lean`) | p. 83 | `f(X) ≤ 1.27 X` | `f(X)/X` has local maxima only at squarefree integers: check up to a constant, then a crude bound gives `< 1.26981` |
 | `Helfgott.binary_goldbach_input` (`Inputs.lean`) | [OeSHP] | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | exhaustive computer search |
 | `Helfgott.prime_ladder_input` (`Inputs.lean`) | [HP] | a chain of certified odd primes from 3 to `≥ 8.875694·10³⁰` with gaps `≤ 4·10¹⁸ − 4` | computer construction with primality certificates |
+| `Prelim.MV.lemma8_numeric` (`MVLemma8.lean`) | [B, p. 97] | for `2 ≤ n ≤ 10⁴`: `∑_{r≤n} μ²(r)/φ(r)·(n+1)/(n+1+r) > log(n+1) + 0.25068` and `∑_{r≤n} μ²(r)/φ(r)·r(n+1)/((n+1+r)(n+r)) ≤ 1` | direct computation (`scripts/mv_lemma8_check.py`; margin `1.1·10⁻⁶` at `n = 4`, also checked exactly) |
+| `Prelim.MV.lemma7_numeric` (`MVLemma7.lean`) | [B, (12.9)] range | `G(r) = ∑_{s≤r} μ²(s)/φ(s) ≥ log(r+1) + 1.07` for `6 ≤ r < 3·10⁷` | sieve computation (same script; margin `0.044`) |
+| `Prelim.MV.GS_N0` (`MVLemma7.lean`) | — | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | same computation (value `1.33258`) |
+| `Prelim.MV.prod_ap_le` (`MVLemma7.lean`) | — | `∏_{p<10⁴} (1 + (p^{−2/3} + p^{−1/3})/(p−1)) ≤ 7.99` | finite product (value `7.98552`) |
 
 `fsq_le` and `H2_le` look small enough to prove in Lean. `prop_12_2_4` and `T2_le` would need an
 external certificate.
@@ -92,7 +101,8 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
-| `Prelim/LargeSieveMV.lean` | the optimal large sieve `N − 1 + δ⁻¹` and the weighted large sieve [MV73, (1.6)] (**proved**, from `LargeSieveMVProof`); [MV73, Lemma 8] (+ numerical check) | 🟡 Lemma 8 trusted |
+| `Prelim/LargeSieveMV.lean` | the optimal large sieve `N − 1 + δ⁻¹` and the weighted large sieve [MV73, (1.6)] (from `LargeSieveMVProof`); [MV73, Lemma 8] (from `MVLemma7`) | ✅ (uses numerical axioms) |
+| `Prelim/MVLemma8.lean`, `Prelim/MVLemma7.lean` | [MV73, Lemma 8] from Lemma 7 by Abel summation (finite check for `R ≤ 10⁴`); [MV73, Lemma 7] `G(r) ≥ log r + 1.07` from `|G(N) − log N − κ| ≤ (2 + 3/e + γ)·9.32·N^{−1/3}` (convolution `μ²/φ = (h ∗ 1)/n`, Euler product `∑ h(d)/d = 1`, Rankin's trick) and a finite check below `3·10⁷` | ✅ (four numerical axioms) |
 | `Prelim/Shan.lean` | Shan's spacing lemma `∑_{k≠l} δ_k/|λ_k−λ_l|^σ ≤ 2ζ(σ)/δ_l^{σ−1}` (Yangjit, Lemmas 2.2–2.5) | ✅ |
 | `Prelim/HilbertIdentity.lean`, `HilbertReal.lean` | Montgomery–Vaughan Hilbert inequalities on ℝ: eigenvector identity (Preissmann–Lévêque), Preissmann's Cauchy–Schwarz argument with our own substitute for his Lemme 6; weighted constant `4.66 < 3π/2`, uniform `π/δ` | ✅ |
 | `Prelim/HilbertCsc.lean` | the `csc` forms on the circle by periodization (Fejér mean of the `csc` series) | ✅ |
@@ -135,7 +145,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 16 `sorry`s and 9 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 15 `sorry`s and 13 axioms) |
 
 ## The inputs
 

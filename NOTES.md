@@ -222,6 +222,19 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**[MV73, Lemmas 7, 8]: DONE** (`Prelim/MVLemma7.lean`, `MVLemma8.lean`). Lemma 8 for `R > 10⁴` by Abel
+summation against Lemma 7 (`G(r) ≥ log r + 1.07`, `r ≥ 6`), comparing `∑ f(r) log(r/(r−1))` with
+`Φ(t) = log(t/(R+t))` via the monotonicity of `t log(1+1/t)` (margin 0.04); for `2 ≤ R ≤ 10⁴` from the book's
+finite endpoint check plus a finite monotonicity condition (numerical axiom). Lemma 7: `h = (nμ²/φ) ∗ μ`
+(`h(p) = 1/(p−1)`, `h(p²) = −p/(p−1)`), `G(N) = ∑_{d≤N} (h(d)/d) H(N/d)`, `∑ h(d)/d = 1` by Mathlib's
+`EulerProduct`, Rankin with `σ = 2/3`: `P = ∑|h(d)|d^{−2/3} ≤ 7.99·exp(0.1426) ≤ 9.32` (the finite product over
+`p < 10⁴` is a numerical axiom; the tail is bounded by an integral). Then
+`|G(N) − log N − κ| ≤ (2 + 3/e + γ)P N^{−1/3}`; comparing with `N₀ = 3·10⁷` (numerical value of `G(N₀)`)
+eliminates `κ`. Finite range `6 ≤ r < 3·10⁷` is a numerical axiom. Checks: `scripts/mv_lemma8_check.py`.
+**Resource note:** the first `GS_asymp` proof (one big `nlinarith` over a large context) exhausted memory and
+crashed WSL; keep proofs split, use `linarith only`/`nlinarith only`, compile with `lake env lean -M 10000`, and
+rebuild many modules sequentially (`lake build M` one module at a time in topological order).
+
 **Large sieves (`Prelim/LargeSieveMV.lean`): DONE 2026-10-31** (both proved; files Shan, HilbertIdentity, HilbertReal, HilbertCsc, LargeSieveMVProof). Achieved constants: weighted 4.66 (real line), csc 4.66/π ≤ 1.4834 ≤ 3/2. Sources: Yangjit, arXiv:2203.14950
 (Shan's proof of the spacing lemma, Prop 3.1, Preissmann's Cauchy–Schwarz argument);
 Preissmann–Lévêque, arXiv:1303.1085, Lemma 5(b) (the eigenvector identity).
