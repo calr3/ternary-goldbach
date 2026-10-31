@@ -47,7 +47,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   28 explicitly labelled items (`scripts/sorry_deps.lean`): the 3 remaining `Helfgott/Inputs`
   items (major arcs (14.27), binary Goldbach ≤ 4·10¹⁸, prime ladder), the cited Part II results
   `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, and the literature bounds in
-  `Prelim/` ([RS62] etc., Lemma C.2.2): 20 `sorry`s ((2.20) proved 2026-10-31, `Prelim/MoebiusCoprime.lean`). Plus 7 **numerical axioms** (Lean `axiom`s,
+  `Prelim/` ([RS62] etc., Lemma C.2.2): 16 `sorry`s now (large sieves proved) ((2.20) proved 2026-10-31, `Prelim/MoebiusCoprime.lean`). Plus 7 **numerical axioms** (Lean `axiom`s,
   2026-10-31, at the user's request; listed in README "Numerical axioms"): `prop_12_2_4`, the
   (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`, `fsq_le`.
 * ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
@@ -222,7 +222,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
-**Large sieves (`Prelim/LargeSieveMV.lean`), plan in progress.** Sources: Yangjit, arXiv:2203.14950
+**Large sieves (`Prelim/LargeSieveMV.lean`): DONE 2026-10-31** (both proved; files Shan, HilbertIdentity, HilbertReal, HilbertCsc, LargeSieveMVProof). Achieved constants: weighted 4.66 (real line), csc 4.66/π ≤ 1.4834 ≤ 3/2. Sources: Yangjit, arXiv:2203.14950
 (Shan's proof of the spacing lemma, Prop 3.1, Preissmann's Cauchy–Schwarz argument);
 Preissmann–Lévêque, arXiv:1303.1085, Lemma 5(b) (the eigenvector identity).
 1. Shan's lemma: for `λ` strictly increasing (a finite set) with `δ_k` the distance to the nearest other

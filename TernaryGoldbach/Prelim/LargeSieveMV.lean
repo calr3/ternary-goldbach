@@ -1,11 +1,12 @@
 import TernaryGoldbach.CircleMethod
+import TernaryGoldbach.Prelim.LargeSieveMVProof
 
 /-!
-# The sharp large sieve inequalities (trusted literature)
+# The sharp large sieve inequalities
 
-[B, §5.2] uses two sharp forms of the large sieve. We record them as **trusted facts**
-(`sorry`), with sources. Our own `MinorArcs/LargeSieve.lean` proves Gallagher's weaker form
-(`δ⁻¹ + 4πX`), whose constant is too large for [B]'s numerics.
+[B, §5.2] uses two sharp forms of the large sieve. Both are **proved** in
+`Prelim/LargeSieveMVProof.lean`, from the Montgomery–Vaughan Hilbert inequalities
+(`Prelim/HilbertReal.lean`, `Prelim/HilbertCsc.lean`). [MV73, Lemma 8] below is still `sorry`.
 
 Notation: `S(α) = ∑_{M < n ≤ M+N} a(n) e(αn)`; `‖t‖ = |t - round t|` is the distance from `t`
 to the nearest integer.
@@ -25,7 +26,8 @@ theorem large_sieve_opt {ι : Type*} (s : Finset ι) (α : ι → ℝ) {δ : ℝ
     (M N : ℕ) (a : ℕ → ℂ) :
     ∑ r ∈ s, ‖∑ n ∈ Ioc M (M + N), a n * e (α r * n)‖ ^ 2 ≤
       ((N : ℝ) - 1 + δ⁻¹) * ∑ n ∈ Ioc M (M + N), ‖a n‖ ^ 2 := by
-  sorry
+  classical
+  exact LS.large_sieve_opt s α hδ hδ1 hsep M N a
 
 /-- **The large sieve with weights** (Montgomery–Vaughan, *The large sieve*, Mathematika 20
 (1973), (1.6) / Thm. 1; [B, (5.48)]): if `δ_r > 0` and `‖α_r - α_{r'}‖ ≥ δ_r` for `r' ≠ r`, then
@@ -36,7 +38,8 @@ theorem large_sieve_weighted {ι : Type*} (s : Finset ι) (α δ : ι → ℝ)
     (M N : ℕ) (a : ℕ → ℂ) :
     ∑ r ∈ s, ((N : ℝ) + 3 / 2 * (δ r)⁻¹)⁻¹ * ‖∑ n ∈ Ioc M (M + N), a n * e (α r * n)‖ ^ 2 ≤
       ∑ n ∈ Ioc M (M + N), ‖a n‖ ^ 2 := by
-  sorry
+  classical
+  exact LS.large_sieve_weighted s α δ hδ hsep M N a
 
 /-- **[MV73, Lemma 8]** (for `R ≥ 100`) plus a direct numerical check for `2 ≤ R < 100`
 ([B, p. 97]): `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) > log R + 0.25068` for `R ≥ 2`. -/

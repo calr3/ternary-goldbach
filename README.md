@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **18 explicitly
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **16 explicitly
 stated results from the literature**, which are still `sorry`, and **9 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
@@ -26,15 +26,15 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 18 `sorry`s that `ternary_goldbach` depends on are:
+The 16 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
 * **four cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
   [B, (14.7)], [B, (14.28)];
-* **thirteen literature bounds** in `Prelim/`:
+* **eleven literature bounds** in `Prelim/`:
   * ten bounds on sums of `Λ`, `μ` and `1/φ` ([B, (2.12)–(2.23)], [RS62]) in `Prelim/LambdaMu.lean`;
-  * the optimal and weighted large sieves and [MV73, Lemma 8] in `Prelim/LargeSieveMV.lean`.
+  * [MV73, Lemma 8] in `Prelim/LargeSieveMV.lean` (the two sharp large sieves there are now proved).
 
 `lake build` also warns about four further `sorry`s in `Prelim/LambdaMu.lean` that nothing uses.
 
@@ -92,7 +92,11 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
-| `Prelim/LargeSieveMV.lean` | trusted literature: the optimal large sieve `N − 1 + δ⁻¹` (Selberg, Montgomery–Vaughan), the weighted large sieve [MV73, (1.6)], [MV73, Lemma 8] (+ numerical check) | 🟡 trusted |
+| `Prelim/LargeSieveMV.lean` | the optimal large sieve `N − 1 + δ⁻¹` and the weighted large sieve [MV73, (1.6)] (**proved**, from `LargeSieveMVProof`); [MV73, Lemma 8] (+ numerical check) | 🟡 Lemma 8 trusted |
+| `Prelim/Shan.lean` | Shan's spacing lemma `∑_{k≠l} δ_k/|λ_k−λ_l|^σ ≤ 2ζ(σ)/δ_l^{σ−1}` (Yangjit, Lemmas 2.2–2.5) | ✅ |
+| `Prelim/HilbertIdentity.lean`, `HilbertReal.lean` | Montgomery–Vaughan Hilbert inequalities on ℝ: eigenvector identity (Preissmann–Lévêque), Preissmann's Cauchy–Schwarz argument with our own substitute for his Lemme 6; weighted constant `4.66 < 3π/2`, uniform `π/δ` | ✅ |
+| `Prelim/HilbertCsc.lean` | the `csc` forms on the circle by periodization (Fejér mean of the `csc` series) | ✅ |
+| `Prelim/LargeSieveMVProof.lean` | large sieves by duality; `N − 1 + δ⁻¹` by a dilation trick | ✅ |
 | `Prelim/SumMuSqPhi.lean` | `∑_{n≤N} 1/n ≤ ∑_{r≤N sq-free} 1/φ(r)`; the coprime reduction; [B, (5.41)] `(φ(q)/q) log R ≤ ∑_{r≤R,(r,q)=1} μ²/φ` | ✅ |
 | `MinorArcs/Montgomery.lean` | Ramanujan sums at coprime `n`; Montgomery's inequality (case `ω(p) = 1`) | ✅ |
 | `MinorArcs/TypeII.lean` | [B, §5.2]: **Lemma 5.2.1, Lemma 5.2.3 ((5.50)–(5.52)), Prop 5.2.4 ((5.53)–(5.57)) proved** (odd `m`, `v = 2`), modulo the trusted sharp large sieves | ✅ (uses trusted bounds) |
@@ -131,7 +135,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 18 `sorry`s and 9 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 16 `sorry`s and 9 axioms) |
 
 ## The inputs
 
