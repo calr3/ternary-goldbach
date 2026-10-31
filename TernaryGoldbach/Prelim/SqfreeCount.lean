@@ -226,12 +226,11 @@ noncomputable def fsq (X : ℝ) : ℝ :=
   ∑' m : ℕ, if Squarefree m ∧ m ≠ 0 then (if (m : ℝ) ≤ X then 1 else X ^ 2 / (2 * (m : ℝ) ^ 2))
     else 0
 
-/-- **Trusted computation** [B, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. The book: `f(X)/X` has local
+/-- **Numerical axiom** [B, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. The book: `f(X)/X` has local
 maxima only at squarefree integers, so it suffices to check `X` up to a constant, beyond which the
 crude bound via `{m sq-free} ⊂ {m : 4 ∤ m}` gives `f(X)/X < 1.26981`. (The value at `X = 1` is
 `1 + (ζ(2)/ζ(4) - 1)/2 = 1.2599…`.) -/
-theorem fsq_le {X : ℝ} (hX : 0 ≤ X) : fsq X ≤ 1.27 * X := by
-  sorry
+axiom fsq_le {X : ℝ} (hX : 0 ≤ X) : fsq X ≤ 1.27 * X
 
 theorem summable_fsq_term (X : ℝ) :
     Summable (fun m : ℕ => if Squarefree m ∧ m ≠ 0 then

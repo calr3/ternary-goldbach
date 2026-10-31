@@ -46,9 +46,10 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   (`NumericsAsymp.lean`, `r₂ = ⌊y^{1/4}⌋`, `≈ 0.692`) beyond. `ternary_goldbach` now depends on
   28 explicitly labelled items (`scripts/sorry_deps.lean`): the 3 remaining `Helfgott/Inputs`
   items (major arcs (14.27), binary Goldbach ≤ 4·10¹⁸, prime ladder), the cited Part II results
-  `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, the trusted computation
-  `prop_12_2_4`, the trusted (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`,
-  and the literature bounds in `Prelim/` ([RS62] etc., Lemma C.2.2).
+  `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, and the literature bounds in
+  `Prelim/` ([RS62] etc., Lemma C.2.2): 21 `sorry`s. Plus 7 **numerical axioms** (Lean `axiom`s,
+  2026-10-31, at the user's request; listed in README "Numerical axioms"): `prop_12_2_4`, the
+  (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`, `fsq_le`.
 * ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
   minor_total`). Its dependency closure: the trusted inputs of Thm 3.1.1, Prop 12.2.4 (trusted
   computation), the **cited Part II results** `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7` (14.7),
@@ -126,7 +127,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   * Proved: the reduction (5.7)–(5.8) (`S1_eq`, bijection `(m,d₁,d₂) ↔ (s,r₁,r₂,l)`); Lemma 5.1.1
     for `v = 2` (`lemma_5_1_1`; main-term constant `(6/π²)P/σ(P)` from Mathlib's
     `L(χ₀μ, 2) = 1/L(χ₀, 2)`); (5.19) (`integral_g2`); **(5.34) `S1_bound`**.
-  * Trusted: `fsq_le` (`f(X) ≤ 1.27X`, [B p. 83]; provable: reduce to integers `n ≤ 37` using
+  * Numerical axioms: `fsq_le` (`f(X) ≤ 1.27X`, [B p. 83]; provable: reduce to integers `n ≤ 37` using
     `∑ μ²(m)/m² = 15/π²` — the extremal case `n = 2` needs `15/π² ≤ 1.52`, i.e. `π² ≥ 9.8684`);
     `T2_le` (`T₂(S) ≤ 0.37273` for `S ≥ 16`: Lemma 5.1.2 + the computations of [B pp. 90–92]);
     (5.36) `integral_H2_le`, (5.37) `H2_le`.

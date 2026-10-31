@@ -6,7 +6,7 @@ import TernaryGoldbach.MinorArcs.InnerSumsGen
 For `ρ ≥ 4`: continuity, compact support, `|η_(ρ)|₁ ≤ log ρ`, total variation
 `≤ log ρ · |η₂'|₁` ([B, Lemma B.2.1]), `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`, and
 `smoothData_eta2log`: [B, (4.38)].  The bound `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` ([B, Lemma B.2.3],
-a rigorous computation) is the trusted `sorry` `eta2log_fourier_bound`.
+a rigorous computation) is the numerical axiom `eta2log_fourier_bound`.
 -/
 
 open Real MeasureTheory FourierTransform
@@ -169,12 +169,12 @@ theorem eVariationOn_eta2log_le :
   nlinarith
 
 
-/-- **Trusted fact** [B, Lemma B.2.3]: `|η̂_(ρ)''|_∞ < 31.521 log ρ` for `ρ ≥ 4`, written as
+omit hρ in
+/-- **Numerical axiom** [B, Lemma B.2.3]: `|η̂_(ρ)''|_∞ < 31.521 log ρ` for `ρ ≥ 4`, written as
 `(2πt)² |η̂_(ρ)(t)| ≤ c₀ log ρ`.  In [B] this is a rigorous computation (interval arithmetic);
 it is not formalized here. -/
-theorem eta2log_fourier_bound (t : ℝ) :
-    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2log ρ u : ℂ)) t‖ ≤ c₀ * Real.log ρ := by
-  sorry
+axiom eta2log_fourier_bound {ρ : ℝ} (hρ : 4 ≤ ρ) (t : ℝ) :
+    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2log ρ u : ℂ)) t‖ ≤ c₀ * Real.log ρ
 
 /-- `η_(ρ)` satisfies [B, (4.38)]. -/
 theorem smoothData_eta2log : SmoothData (eta2log ρ) (Real.log ρ) (eta2'L1 * Real.log ρ)

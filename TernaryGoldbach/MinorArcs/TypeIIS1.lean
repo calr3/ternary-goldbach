@@ -12,9 +12,9 @@ import TernaryGoldbach.MinorArcs.S1Lemma
 * `S1_bound`: **[B, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
-Trusted inputs: `fsq_le` (via Lemma 5.1.1) and `T2_le` [B, (5.31) and the computation for
+Numerical axioms used: `fsq_le` (via Lemma 5.1.1) and `T2_le` [B, (5.31) and the computation for
 `16 ≤ S < 10⁵`], which rests on Lemma 5.1.2 and interval-arithmetic computations. (5.36) and (5.37)
-are numerical ([B, (5.32)]) and are stated as trusted facts.
+are numerical ([B, (5.32)]) and are stated as axioms.
 -/
 
 open Real Finset MeasureTheory
@@ -442,16 +442,14 @@ theorem H2_nonneg (S : ℝ) : 0 ≤ H2 S := by
   · have := le_max_right (T2 S) 0; positivity
   · norm_num
 
-/-- **Trusted** [B, (5.31) and p. 92]: `T₂(S) ≤ 0.37273` for `S ≥ 16`. For `S ≥ 10⁵` this follows
+/-- **Numerical axiom** [B, (5.31) and p. 92]: `T₂(S) ≤ 0.37273` for `S ≥ 16`. For `S ≥ 10⁵` this follows
 from Lemma 5.1.2 (whose range `x ≤ 10⁶` is an interval-arithmetic computation) and the numerics
 after (5.30); for `16 ≤ S < 10⁵` it is a direct computation. -/
-theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := by
-  sorry
+axiom T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273
 
-/-- **[B, (5.36)]** (trusted; numerical, from [B, (5.32)]). -/
-theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
-    ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T := by
-  sorry
+/-- **[B, (5.36)]** (numerical axiom, from [B, (5.32)]). -/
+axiom integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
+    ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T
 
 theorem measurable_g2 : Measurable g2 := by
   have : g2 = (fun N : ℕ => ∑ r₁ ∈ Finset.Icc 1 N, ∑ r₂ ∈ Finset.Icc 1 N,
@@ -485,9 +483,8 @@ theorem measurable_H2 : Measurable H2 := by
   exact Measurable.ite measurableSet_Iio
     ((measurable_T2.max measurable_const).const_mul _) measurable_const
 
-/-- **[B, (5.37)]** (trusted; numerical: `T₂(S) ≤ 1/2` for `S < 16`). -/
-theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
-  sorry
+/-- **[B, (5.37)]** (numerical axiom: `T₂(S) ≤ 1/2` for `S < 16`). -/
+axiom H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2
 
 theorem H2_eq_zero_of_lt_one {S : ℝ} (hS : S < 1) : H2 S = 0 := by
   have hT : T2 S = 0 := by

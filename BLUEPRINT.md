@@ -15,7 +15,7 @@ statements, each with its own `sorry`.
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
 | (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input` | ❌ `sorry` |
-| (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ❌ `sorry` |
+| (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
 | `N < 10²⁷`: [HP13] | `binary_goldbach_input`, `prime_ladder_input` | ❌ trusted computation |
@@ -64,7 +64,7 @@ statements, each with its own `sorry`.
      │    Prop 11.2.3 (corrected, with a majorant G) ✅ Prop1123.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   [Prop 12.1.2 ✅ MinorArcs/LargeSieveProof.lean (δ₀ ≥ 2; Bombieri's identity, arcs, Plancherel);
-     │    Prop 12.2.4 trusted computation (LargeSievePrimes.lean); Cor 12.2.5 ✅ from the two;
+     │    Prop 12.2.4 numerical axiom (LargeSievePrimes.lean); Cor 12.2.5 ✅ from the two;
      │    Gauss sums ✅ Prelim/GaussInduced.lean]
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)

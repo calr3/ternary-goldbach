@@ -5,8 +5,8 @@ import TernaryGoldbach.Helfgott.Eta2
 # The inner sums of the Type I estimates [B, §4.2]
 
 * `norm_fourier_comp_affine`: `‖𝓕[h(λ· + μ)](t)‖ = λ⁻¹ ‖𝓕h(t/λ)‖`.
-* `eta2_fourier_bound'`: **trusted fact** `|η̂₂''|_∞ ≤ c₀ = 31.521` [B, (B.6)] (a rigorous
-  computation in [B]; `sorry` here).
+* `eta2_fourier_bound'`: **numerical axiom** `|η̂₂''|_∞ ≤ c₀ = 31.521` [B, (B.6)] (a rigorous
+  computation in [B]; an `axiom` here).
 * `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [B, (4.35)], and `norm_Todd_le`: the three
   bounds of [B, (4.36)], from [B, (2.2)] and [B, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
 * `Todd_main`: the main term [B, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
@@ -65,12 +65,11 @@ noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
 theorem eta2'L1_pos : 0 < eta2'L1 := by
   unfold eta2'L1; have := Real.log_pos (by norm_num : (1 : ℝ) < 2); positivity
 
-/-- **Trusted fact** [B, (B.6), Lemma B.2.3]: `|η̂₂''|_∞ ≤ 31.521`, written as
+/-- **Numerical axiom** [B, (B.6), Lemma B.2.3]: `|η̂₂''|_∞ ≤ 31.521`, written as
 `(2πt)² |η̂₂(t)| ≤ c₀` (`η̂''(t) = (2πit)² η̂(t)`).  In [B] this is a rigorous computation
 (interval arithmetic); it is not formalized here. -/
-theorem eta2_fourier_bound' (t : ℝ) :
-    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ ≤ c₀ := by
-  sorry
+axiom eta2_fourier_bound' (t : ℝ) :
+    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ ≤ c₀
 
 /-- `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [B, (4.35)], with `n = 2r + 1`. -/
 noncomputable def Todd (α x : ℝ) (m : ℕ) : ℂ :=
