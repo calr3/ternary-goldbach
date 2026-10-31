@@ -3,7 +3,7 @@
 Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`. For the
 `sorry` policy, see `README.md`.
 
-## Status (2026-10-30)
+## Status (2026-10-31)
 
 * `ternary_goldbach` depends only on the 4 `sorry`s in `Helfgott/Inputs.lean`: the major arcs
   (14.27), the minor arcs (14.49), binary Goldbach up to 4·10¹⁸, and the prime ladder.
@@ -30,6 +30,16 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   the hypothesis on `G` is used with `s = 2Q₀/m_{Q₀}(β)`.
   **Change from [B]: `δ₀ ≥ 2` instead of `δ₀ ≥ 1`**. The proof needs primes `n > √x` to be coprime
   to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`. [B] uses `δ₀ = 8`.
+* ✅ **Thm 13.2.1, conditional** (`Thm1321.lean`, depends only on Prop 12.2.4):
+  `thm_13_2_1_conditional` instantiates Prop 13.1.2 with `M n = 𝔐_{8,n}` at scale `x`, the ℓ²
+  bound from Cor 12.2.5 (`Q₀ = n + 1`, `δ₀ = 8`) and Plancherel at the top level `r₁`. The ℓ∞ input
+  is a **hypothesis** `hv`: `|S_{η_*}(α,x)| ≤ g(n)` off `𝔐_{8,n}(x)`. `OffArcs.lean` proves the exact
+  arc criterion behind [B]'s ℓ∞ step: `2α = a/q + δ/y` with `q ≤ r`, `|δ|q < δ₀r` ⟹
+  `α ∈ 𝔐_{δ₀,r}(y)`, for every parity case (`mem_majorArcs_of_approx`). So off `𝔐_{δ₀,r}(y)`,
+  `r_α ≥ r` (`le_rAlpha_of_not_mem`), giving `norm_S_le_off_arcs`. `hv_of_split` reduces `hv` to that
+  plus a bound on the **gap `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`**, the one missing ingredient. (Also still
+  needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [B, §13.2], and the
+  numerics of §14.3 for an explicit `g`.)
 * **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
   "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale

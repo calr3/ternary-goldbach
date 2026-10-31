@@ -25,6 +25,9 @@ statements, each with its own `sorry`.
 ```
 (14.49)  [§14.3: numerics, M ≤ 0.80508x (14.48)]
  └─ Thm 13.2.1  (minor-arc total: ℓ² over arcs × ℓ∞ bounds)
+     │   [conditional on an ℓ∞ bound off the scale-x arcs ✅ MinorArcs/Thm1321.lean
+     │    `thm_13_2_1_conditional` (uses only Prop 12.2.4); off the scale-y arcs r_α ≥ r ✅
+     │    MinorArcs/OffArcs.lean; missing: the gap 𝔐_{8,n}(y) \ 𝔐_{8,n}(x) (`hv_of_split`)]
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds) ✅ MinorArcs/Prop1312.lean (discrete form)
      │   ⚠ Thm 13.2.1's proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ²
      │     input and (14.27); see NOTES "Ch. 13: scale erratum"

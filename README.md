@@ -83,6 +83,8 @@ which [B, App. B] obtains by rigorous numerics.
 | `MinorArcs/GMono.lean` | [B, Lemma 11.2.4] for one scale: `g_x(r)` non-increasing on `[670, x^{1/3}/6]` (by a different argument) | ✅ |
 | `MinorArcs/Prop1123.lean` | **[B, Prop 11.2.3] in corrected form** (`δ ↦ wδ`; general cut-offs `w₀`, `w₁` and majorant `G`); trivial bound `|S_{η₂}(α,z)| ≤ 17z` | ✅ (uses trusted bounds) |
 | `MinorArcs/Prop1312.lean` | [B, Lemma 13.1.1 (Abel summation, inequality form), Prop 13.1.2] in discrete, measure-space form: ℓ² over nested arcs + ℓ∞ off them | ✅ |
+| `MinorArcs/OffArcs.lean` | [B, §13.2] ℓ∞ step: `2α = a/q + δ/y`, `q ≤ r`, `\|δ\|q < δ₀r` ⟹ `α ∈ 𝔐_{δ₀,r}(y)`; off the arcs `r_α ≥ r`; arcs monotone in `r` | ✅ |
+| `MinorArcs/Thm1321.lean` | [B, Thm 13.2.1] conditional on an ℓ∞ bound off the scale-`x` arcs (ℓ² from Cor 12.2.5 + Plancherel + Prop 13.1.2); the gap `𝔐(y) \ 𝔐(x)` isolated (`hv_of_split`) | ✅ (uses trusted Prop 12.2.4) |
 | `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (trusted computation)** | 🟡 one trusted computation |
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the trusted 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |

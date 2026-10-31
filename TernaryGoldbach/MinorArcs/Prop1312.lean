@@ -51,14 +51,16 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 with `I(n) = ∫_{M n} u`. -/
 theorem layer_le {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable (fun ω => u ω * v ω) μ)
     (hu0 : ∀ ω, 0 ≤ u ω) {M : ℕ → Set Ω} (hM : ∀ n, MeasurableSet (M n)) (hmono : Monotone M)
-    {g : ℕ → ℝ} {r₀ : ℕ} (hv : ∀ n, r₀ ≤ n → ∀ ω ∉ M n, v ω ≤ g n) :
-    ∀ k, r₀ ≤ k → ∫ ω in (M r₀)ᶜ, u ω * v ω ∂μ ≤
+    {g : ℕ → ℝ} {r₀ K : ℕ} (hv : ∀ n, r₀ ≤ n → n < K → ∀ ω ∉ M n, v ω ≤ g n) :
+    ∀ k, r₀ ≤ k → k ≤ K → ∫ ω in (M r₀)ᶜ, u ω * v ω ∂μ ≤
       ∑ n ∈ Ico r₀ k, g n * ((∫ ω in M (n + 1), u ω ∂μ) - ∫ ω in M n, u ω ∂μ) +
         ∫ ω in (M k)ᶜ, u ω * v ω ∂μ := by
   intro k hk
   induction k, hk using Nat.le_induction with
   | base => simp
   | succ k hk ih =>
+    intro hkK
+    have ih := ih (by omega)
     rw [sum_Ico_succ_top hk]
     have hsplit : (M k)ᶜ = (M (k + 1) \ M k) ∪ (M (k + 1))ᶜ := by
       ext ω; simp only [mem_compl_iff, mem_union, mem_sdiff]
@@ -77,7 +79,7 @@ theorem layer_le {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable (fu
       refine setIntegral_mono_on huv.integrableOn (hu.integrableOn.const_mul _)
         ((hM _).diff (hM _)) fun ω hω => ?_
       rw [mul_comm (g k)]
-      exact mul_le_mul_of_nonneg_left (hv k hk ω hω.2) (hu0 ω)
+      exact mul_le_mul_of_nonneg_left (hv k hk (by omega) ω hω.2) (hu0 ω)
     rw [integral_const_mul] at h3
     have e4 : g k * ((∫ ω in M (k + 1), u ω ∂μ) - ∫ ω in M k, u ω ∂μ) =
         g k * ∫ ω in M (k + 1) \ M k, u ω ∂μ := by rw [e2]; ring
@@ -88,7 +90,7 @@ theorem prop_13_1_2 {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable 
     (hu0 : ∀ ω, 0 ≤ u ω) {M : ℕ → Set Ω} (hM : ∀ n, MeasurableSet (M n)) (hmono : Monotone M)
     {g H : ℕ → ℝ} {r₀ r₁ : ℕ} (h01 : r₀ ≤ r₁)
     (hg : ∀ n, r₀ ≤ n → n < r₁ → g (n + 1) ≤ g n) (hg0 : 0 ≤ g r₁)
-    (hv : ∀ n, r₀ ≤ n → ∀ ω ∉ M n, v ω ≤ g n)
+    (hv : ∀ n, r₀ ≤ n → n ≤ r₁ → ∀ ω ∉ M n, v ω ≤ g n)
     (hH : ∀ n, r₀ ≤ n → n < r₁ → ∫ ω in M (n + 1), u ω ∂μ ≤ H n) (hH₁ : ∫ ω, u ω ∂μ ≤ H r₁) :
     ∫ ω in (M r₀)ᶜ, u ω * v ω ∂μ ≤
       g r₀ * (H r₀ - ∫ ω in M r₀, u ω ∂μ) + ∑ n ∈ Ioc r₀ r₁, g n * (H n - H (n - 1)) := by
@@ -99,13 +101,13 @@ theorem prop_13_1_2 {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable 
       refine setIntegral_mono_on huv.integrableOn (hu.integrableOn.const_mul _)
         (hM _).compl fun ω hω => ?_
       rw [mul_comm (g r₁)]
-      exact mul_le_mul_of_nonneg_left (hv r₁ h01 ω hω) (hu0 ω)
+      exact mul_le_mul_of_nonneg_left (hv r₁ h01 le_rfl ω hω) (hu0 ω)
     rw [integral_const_mul] at h1
     have h2 : ∫ ω in (M r₁)ᶜ, u ω ∂μ = (∫ ω, u ω ∂μ) - I r₁ := by
       have := integral_add_compl (hM r₁) hu
       simp only [hI]; linarith
     rwa [h2] at h1
-  have hl := layer_le hu huv hu0 hM hmono hv r₁ h01
+  have hl := layer_le hu huv hu0 hM hmono (K := r₁) (fun n h1 h2 => hv n h1 h2.le) r₁ h01 le_rfl
   -- write it as `Σ_{n ∈ [r₀, r₁]} f(n) g(n)`
   set f : ℕ → ℝ := fun n => if n < r₁ then I (n + 1) - I n else (∫ ω, u ω ∂μ) - I r₁ with hf
   have hsum : ∑ n ∈ Ico r₀ r₁, g n * (I (n + 1) - I n) + g r₁ * ((∫ ω, u ω ∂μ) - I r₁) =
