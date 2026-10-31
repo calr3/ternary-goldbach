@@ -4,6 +4,7 @@ import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Reduction
+import TernaryGoldbach.MinorArcs.MinorTotal
 
 /-!
 # Unproved inputs
@@ -69,24 +70,27 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
 `∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
 (true for `x = xOf N` when `N ≥ 10²⁷`, [B, (14.15)]).
 
-*Proof in the literature:* [B, Part I (Chs. 3–6), Chs. 12–13, §14.3] (Theorem 13.2.1 there):
-Vaughan's identity, Type I and Type II sums, and the large sieve for primes.  (The paper
-version [H, (7.48)] had `0.97392`; the book has `1.00948`.)
+*Proved* (`MinorArcs/MinorTotal.lean: minor_total`) by "repair 3" of [B, Thm 13.2.1] (NOTES, "Ch. 13:
+scale erratum"): [B]'s proof derives its ℓ∞ input only off the arcs at scale `x/κ`; we run
+Prop 13.1.2 with the arcs at scale `x/κ` above the base level, take a fresh Dirichlet
+approximation at each scale in (11.9), extend the levels to `≈ x^{0.3}`, and bound the base gap
+with [B, Cor 7.1.3]. It depends on the trusted inputs of Theorem 3.1.1, the trusted computation
+Prop 12.2.4, the cited Part II results `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`
+(`MinorArcs/PartIICited.lean`), and the numerical lemma `numerics_M`.
 
-**Our constant `1.0376` is weaker than [B]'s `1.00948`.** [B]'s value rests on Theorem 3.1.1
-with `R log δ₀q + 0.5` and `3.36 x^{5/6}`.  The proved version (`MinorArcs/PointwiseBound.lean`)
-has `0.8103` and `3.8`: [B]'s `0.5` is an arithmetic slip in (6.77).  Re-running [B, §14.3] with
-these constants (`scripts/minor_arc_total_numerics.py`) gives `M ≤ 0.82744`, so the bound is
-`1.037499 x²/κ`.  The final margin drops from `0.048779` to `0.020659`, which is still enough.
-
-**Caveat (see `NOTES.md`, "Ch. 13: scale erratum").** [B]'s proof of Thm 13.2.1 derives its ℓ∞
-input only off the major arcs at scale `x/κ`, which are 49 times wider than the arcs here (scale
-`x`, as in (14.27)), while its ℓ² input uses scale `x`.  We have not found a repair that
-recovers this bound, so this input's proof in the literature has a gap. -/
+(Our constant `1.0376` is weaker than [B]'s `1.00948`: [B]'s Theorem 3.1.1 has `0.5` where the
+proof gives `0.8103`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by
-  sorry
+  refine MinorArcs.minor_total ?_
+  obtain ⟨h0, h1⟩ := xOf_denom_bounds
+  have hN : (1e27 : ℝ) ≤ N := by
+    have : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
+    norm_num at this ⊢; linarith
+  unfold xOf
+  rw [le_div_iff₀ h0]
+  nlinarith
 
 /-- **Non-prime and even terms**, a weaker form of [B, (14.51)]: the terms where some `nᵢ` is
 even or not prime contribute at most `6.7 · 10⁶ · N^{3/2} log N`.

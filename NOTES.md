@@ -40,6 +40,12 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   plus a bound on the **gap `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`**, the one missing ingredient. (Also still
   needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [B, §13.2], and the
   numerics of §14.3 for an explicit `g`.)
+* ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
+  minor_total`). Its dependency closure: the trusted inputs of Thm 3.1.1, Prop 12.2.4 (trusted
+  computation), the **cited Part II results** `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7` (14.7),
+  `E_le_14_28` (`MinorArcs/PartIICited.lean`), and **`numerics_M`** (the remaining numerical
+  lemma: ∃ level `r₂` with the size conditions and `Mexpr x r₂ ≤ 1.037`, all `x ≥ 4.9·10²⁶`;
+  checked by `scripts/minor_arc_cells_check.py`, to be formalized).
 * ✅ **The Ch. 13 scale erratum is fixable** ("repair 3" in the erratum section below:
   everything at scale `y`, a fresh Dirichlet approximation per scale `wy`, levels up to
   `x^{0.3}`, and Cor 7.1.3 on the base gap). `Z ≤ 0.866 x²/κ < 1.058259`. Formalizing it is the
