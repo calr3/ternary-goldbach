@@ -49,4 +49,11 @@ theorem l2_major_14_7 {x : ℝ} (hx : 4.9e26 ≤ x) :
     |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7052 * x| ≤ 0.0754 * x := by
   sorry
 
+/-- **[B, pp. 250–251 and (14.28)]** — *cited*. The terms of `S_{η₊}` with `n` non-prime or
+`n ≤ √x` have `Σ Λ(n)² η₊(n/x)² ≤ E ≤ 8.4029·10⁻¹² x` for `x ≥ 4.9·10²⁶` ([RS62, Thms 12, 13],
+partial summation, and the sup norms (14.3), (14.24) of `η₊`). -/
+theorem E_le_14_28 {x : ℝ} (hx : 4.9e26 ≤ x) :
+    ∑' n : ℕ, (if n.Prime ∧ √x < n then 0 else (Λ n * etaPlus (n / x)) ^ 2) ≤ 8.4029e-12 * x := by
+  sorry
+
 end TernaryGoldbach.MinorArcs

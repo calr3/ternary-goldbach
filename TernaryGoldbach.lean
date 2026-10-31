@@ -93,3 +93,4 @@ import TernaryGoldbach.MinorArcs.BaseGap
 import TernaryGoldbach.MinorArcs.EtaU
 import TernaryGoldbach.MinorArcs.PartIICited
 import TernaryGoldbach.MinorArcs.BaseGap2
+import TernaryGoldbach.MinorArcs.MinorTotal
