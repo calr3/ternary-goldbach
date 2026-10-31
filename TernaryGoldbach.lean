@@ -87,3 +87,5 @@ import TernaryGoldbach.MinorArcs.LargeSieveProof
 import TernaryGoldbach.MinorArcs.OffArcs
 import TernaryGoldbach.MinorArcs.Thm1321
 import TernaryGoldbach.MinorArcs.Prop1123b
+import TernaryGoldbach.MinorArcs.PhiIntegrals
+import TernaryGoldbach.MinorArcs.LinftyLevels

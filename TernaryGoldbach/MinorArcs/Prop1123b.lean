@@ -100,6 +100,45 @@ theorem norm_S_etaStar_le_of_pointwise {α x w₀ w₁ : ℝ} {G : ℝ → ℝ} 
     integral_const_mul, integral_const_mul, integral_const_mul]
   ring
 
+/-- The pointwise step of Prop 11.2.3′: a fresh approximation at scale `z = wy`. If
+`α ∉ 𝔐_{8,n}(y)`, `z ≥ 2.16·10²⁰`, `min(1, w) n ≥ 670`, then `|S_{η₂}(α, z)| ≤ G z` for any `G`
+with `G ≥ g_z(min(1, w) n)` (when `min(1, w) n ≤ z^{1/3}/6`) and `G z ≥` the second-case bound. -/
+theorem norm_S_eta2_le_of_not_mem {α y n w G : ℝ} (hy0 : 0 < y) (hα : α ∉ majorArcs 8 n y)
+    (hw0 : 0 < w) (hz : 2.16e20 ≤ w * y) (hlow : 670 ≤ min 1 w * n)
+    (hG1 : min 1 w * n ≤ (w * y) ^ (1 / 3 : ℝ) / 6 → gx (w * y) (min 1 w * n) ≤ G)
+    (hG2 : 0.276 * (w * y) ^ (5 / 6 : ℝ) * Real.log (w * y) ^ (3 / 2 : ℝ) +
+      1234 * (w * y) ^ (2 / 3 : ℝ) * Real.log (w * y) ≤ G * (w * y)) :
+    ‖S eta2 (w * y) α‖ ≤ G * (w * y) := by
+  set z := w * y with hz_def
+  have hz0 : 0 < z := by linarith
+  obtain ⟨hTz, -, hTz23, -⟩ := cube_root_facts hz
+  have hQ1 : (1 : ℝ) ≤ 3 / 4 * z ^ (2 / 3 : ℝ) := by rw [hTz23]; nlinarith
+  obtain ⟨δ, a, q, h⟩ := exists_approx2 α hz0 hQ1
+  have hy' : Approx2 α y (δ / w) a q (3 / 4 * z ^ (2 / 3 : ℝ)) := by
+    obtain ⟨h1, h2, ⟨k, hk⟩, h4, h5⟩ := h
+    have e : δ / w / y = δ / z := by rw [hz_def]; field_simp
+    exact ⟨h1, h2, ⟨k, by rw [e]; exact hk⟩, by rw [e]; exact h4, h5⟩
+  have hr := le_rAlpha_of_not_mem hy0 (by norm_num) hy' hα
+  have hq0 : (0 : ℝ) ≤ q := Nat.cast_nonneg q
+  have hmm := min_mul_max_le hw0 (div_nonneg (abs_nonneg δ) hw0.le)
+  have hrw : min 1 w * n ≤ max 1 (|δ| / 8) * q := by
+    have e : w * (|δ| / w) / 8 = |δ| / 8 := by field_simp
+    rw [e] at hmm
+    rw [abs_div, abs_of_pos hw0] at hr
+    calc min 1 w * n ≤ min 1 w * (max 1 (|δ| / w / 8) * q) :=
+          mul_le_mul_of_nonneg_left hr (le_min zero_le_one hw0.le)
+      _ = min 1 w * max 1 (|δ| / w / 8) * q := by ring
+      _ ≤ max 1 (|δ| / 8) * q := mul_le_mul_of_nonneg_right hmm hq0
+  rcases le_or_gt (q : ℝ) (z ^ (1 / 3 : ℝ) / 6) with hq | hq
+  · have key := norm_S_eta2_le_gx hz h hq (by linarith)
+    have hup := r_le_cube_root hz h hq
+    have hmono := gx_antitoneOn hz ⟨hlow, hrw.trans hup⟩ ⟨hlow.trans hrw, hup⟩ hrw
+    calc ‖S eta2 z α‖ ≤ gx z (max 1 (|δ| / 8) * q) * z := key
+      _ ≤ G * z := by
+          gcongr
+          exact hmono.trans (hG1 (hrw.trans hup))
+  · exact ((theorem_3_1_1 hz h).2 hq).trans hG2
+
 /-- **Prop 11.2.3′.** Let `y = x/κ`, `α ∉ 𝔐_{8,n}(y)`, `0 < w₀ ≤ 1 ≤ w₁`, `w₀y ≥ 2.16·10²⁰`,
 `w₀ n ≥ 670`. Let `G` be integrable against `φ` on `[w₀, w₁]` with, for `w ∈ [w₀, w₁]` and
 `z = wy`, `G(w) ≥ g_z(min(1, w) n)` whenever `min(1, w) n ≤ z^{1/3}/6`, and
@@ -122,39 +161,9 @@ theorem prop_11_2_3' {α x n w₀ w₁ : ℝ} {G : ℝ → ℝ} (hx : 0 < x)
     by_contra h; push Not at h; nlinarith
   refine norm_S_etaStar_le_of_pointwise hx hw₀ (by linarith) (fun w hw => ?_) hGi
   have hw0 : 0 < w := lt_of_lt_of_le hw₀ hw.1
-  set z := w * y with hz_def
-  have hz : 2.16e20 ≤ z := hy.trans (by rw [hz_def]; exact mul_le_mul_of_nonneg_right hw.1 hy0.le)
-  have hz0 : 0 < z := by linarith
-  obtain ⟨hTz, -, hTz23, -⟩ := cube_root_facts hz
-  have hQ1 : (1 : ℝ) ≤ 3 / 4 * z ^ (2 / 3 : ℝ) := by rw [hTz23]; nlinarith
-  obtain ⟨δ, a, q, h⟩ := exists_approx2 α hz0 hQ1
-  -- the same approximation, read at scale `y`
-  have hy' : Approx2 α y (δ / w) a q (3 / 4 * z ^ (2 / 3 : ℝ)) := by
-    obtain ⟨h1, h2, ⟨k, hk⟩, h4, h5⟩ := h
-    have e : δ / w / y = δ / z := by rw [hz_def]; field_simp
-    exact ⟨h1, h2, ⟨k, by rw [e]; exact hk⟩, by rw [e]; exact h4, h5⟩
-  have hr := le_rAlpha_of_not_mem hy0 (by norm_num) hy' hα
-  have hq0 : (0 : ℝ) ≤ q := Nat.cast_nonneg q
-  have hmm := min_mul_max_le hw0 (div_nonneg (abs_nonneg δ) hw0.le)
-  have hrw : min 1 w * n ≤ max 1 (|δ| / 8) * q := by
-    have e : w * (|δ| / w) / 8 = |δ| / 8 := by field_simp
-    rw [e] at hmm
-    rw [abs_div, abs_of_pos hw0] at hr
-    calc min 1 w * n ≤ min 1 w * (max 1 (|δ| / w / 8) * q) :=
-          mul_le_mul_of_nonneg_left hr (le_min zero_le_one hw0.le)
-      _ = min 1 w * max 1 (|δ| / w / 8) * q := by ring
-      _ ≤ max 1 (|δ| / 8) * q := mul_le_mul_of_nonneg_right hmm hq0
-  rcases le_or_gt (q : ℝ) (z ^ (1 / 3 : ℝ) / 6) with hq | hq
-  · have hlow : 670 ≤ min 1 w * n := by
-      have : w₀ ≤ min 1 w := le_min hw₀1 hw.1
-      nlinarith
-    have key := norm_S_eta2_le_gx hz h hq (by linarith)
-    have hup := r_le_cube_root hz h hq
-    have hmono := gx_antitoneOn hz ⟨hlow, hrw.trans hup⟩ ⟨hlow.trans hrw, hup⟩ hrw
-    calc ‖S eta2 z α‖ ≤ gx z (max 1 (|δ| / 8) * q) * z := key
-      _ ≤ G w * z := by
-          gcongr
-          exact hmono.trans (hG1 w hw (hrw.trans hup))
-  · exact ((theorem_3_1_1 hz h).2 hq).trans (hG2 w hw)
+  refine norm_S_eta2_le_of_not_mem hy0 hα hw0
+    (hy.trans (mul_le_mul_of_nonneg_right hw.1 hy0.le)) ?_ (hG1 w hw) (hG2 w hw)
+  have : w₀ ≤ min 1 w := le_min hw₀1 hw.1
+  nlinarith
 
 end TernaryGoldbach.MinorArcs
