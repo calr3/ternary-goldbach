@@ -1,9 +1,9 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **20 explicitly
-stated results from the literature**, which are still `sorry`, and **7 numerical axioms**
-(computations from [B], listed below). Everything that connects them to the theorem is proved.
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **18 explicitly
+stated results from the literature**, which are still `sorry`, and **9 numerical axioms**
+(finite computations, listed below). Everything that connects them to the theorem is proved.
 
 ```
 $ lake build
@@ -13,6 +13,8 @@ $ echo 'import TernaryGoldbach
  sorryAx,
  Classical.choice,
  Quot.sound,
+ TernaryGoldbach.Helfgott.binary_goldbach_input,
+ TernaryGoldbach.Helfgott.prime_ladder_input,
  TernaryGoldbach.MinorArcs.H2_le,
  TernaryGoldbach.MinorArcs.T2_le,
  TernaryGoldbach.MinorArcs.eta2_fourier_bound',
@@ -24,10 +26,10 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 20 `sorry`s that `ternary_goldbach` depends on are:
+The 18 `sorry`s that `ternary_goldbach` depends on are:
 
-* **three unproved inputs** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
-  `major_arcs_input`, `binary_goldbach_input`, `prime_ladder_input` (see "The inputs" below);
+* **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
+  `major_arcs_input` (see "The inputs" below);
 * **four cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
   [B, (14.7)], [B, (14.28)];
 * **thirteen literature bounds** in `Prelim/`:
@@ -38,8 +40,8 @@ The 20 `sorry`s that `ternary_goldbach` depends on are:
 
 ## Numerical axioms
 
-These are computations that Helfgott did by computer for [B]; the book describes the method
-but doesn't include the code or the output. They are stated as Lean `axiom`s, so `#print axioms`
+These are finite computer computations: seven from [B] (the book describes the method but
+doesn't include the code or the output), and the two computational inputs for small `N`. They are stated as Lean `axiom`s, so `#print axioms`
 lists each one by name. Most are interval-arithmetic computations.
 
 | Axiom | [B] | Statement | How [B] obtains it |
@@ -51,6 +53,8 @@ lists each one by name. Most are interval-arithmetic computations.
 | `MinorArcs.integral_H2_le` (`TypeIIS1.lean`) | (5.36) | `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T` | numerical, from (5.32) |
 | `MinorArcs.H2_le` (`TypeIIS1.lean`) | (5.37) | `H₂(S) ≤ 2/π²` | numerical: `T₂(S) ≤ 1/2` for `S < 16` |
 | `Prelim.fsq_le` (`SqfreeCount.lean`) | p. 83 | `f(X) ≤ 1.27 X` | `f(X)/X` has local maxima only at squarefree integers: check up to a constant, then a crude bound gives `< 1.26981` |
+| `Helfgott.binary_goldbach_input` (`Inputs.lean`) | [OeSHP] | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | exhaustive computer search |
+| `Helfgott.prime_ladder_input` (`Inputs.lean`) | [HP] | a chain of certified odd primes from 3 to `≥ 8.875694·10³⁰` with gaps `≤ 4·10¹⁸ − 4` | computer construction with primality certificates |
 
 `fsq_le` and `H2_le` look small enough to prove in Lean. `prop_12_2_4` and `T2_le` would need an
 external certificate.
@@ -126,8 +130,8 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (numerical axiom)** | ✅ (one numerical axiom) |
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
-| `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4, and **the three unproved inputs** (see below) | ❌ three inputs |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 20 `sorry`s and 7 axioms) |
+| `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 18 `sorry`s and 9 axioms) |
 
 ## The inputs
 
@@ -150,8 +154,8 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
    `7.3306`. Helfgott's sharp inputs (`|η₊| ≤ 1.079955`, `|η_*| ≤ 1.414`, and Rosser–Schoenfeld)
    are replaced by easy ones: `|η₊| ≤ 400`, `|η_*| ≤ 6.2`, `ψ(N) ≤ 1.387 N`,
    `ψ(N) − θ(N) ≤ 1.6√N`. The final inequality still has room.
-5. `binary_goldbach_input`: even Goldbach up to `4·10¹⁸` (Oliveira e Silva–Herzog–Pardi).
-6. `prime_ladder_input`: the Helfgott–Platt prime ladder up to `8.875694·10³⁰`.
+5. `binary_goldbach_input` (numerical axiom): even Goldbach up to `4·10¹⁸` (Oliveira e Silva–Herzog–Pardi).
+6. `prime_ladder_input` (numerical axiom): the Helfgott–Platt prime ladder up to `8.875694·10³⁰`.
 
 ## Caveats
 

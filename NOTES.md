@@ -217,6 +217,34 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
+## Removing the remaining `sorry`s (goal set 2026-10-31)
+
+Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
+Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
+
+**Large sieves (`Prelim/LargeSieveMV.lean`), plan in progress.** Sources: Yangjit, arXiv:2203.14950
+(Shan's proof of the spacing lemma, Prop 3.1, Preissmann's Cauchy–Schwarz argument);
+Preissmann–Lévêque, arXiv:1303.1085, Lemma 5(b) (the eigenvector identity).
+1. Shan's lemma: for `λ` strictly increasing (a finite set) with `δ_k` the distance to the nearest other
+   point, `∑_{k≠l} δ_k/|λ_k−λ_l|^σ ≤ 2ζ(σ)/δ_l^{σ−1}` (Yangjit Lemmas 2.3–2.5).
+2. Eigenvector identity: for `H = [c_m c_n/(λ_m−λ_n)]` and `Hu = iμu`,
+   `μ² = ∑_{m≠n} c_m²c_n²|u_n|²/Δ² + 2∑ c_m³c_n Re(u_m ū_n)/Δ²`. So `μ² ≤ S + 2T`.
+3. Our replacement for Preissmann's Lemme 6, which we could not obtain:
+   `∑_{k≠l,m} δ_k/(a_k² b_k²) ≤ (1/D²)[(π²/3)(1/δ_l+1/δ_m) − (δ_l+δ_m)/D² + (2/D)(F_l+F_m)]`. Here
+   `1/(a²b²) = D⁻²(1/a² + 1/b² − 2/(ab))`, the cross terms of the outside points are dropped, and
+   `F_l = ∑_{between} δ_k/|a_k| ≤ (1 − ½log 2) + log(D/δ_l)`. Each step of the last bound uses
+   `min(a_n,a_{n+1})/λ_n ≤ ½ log(λ_{n+1}/λ_{n−1})` (from `artanh t ≥ t`), and the sum telescopes.
+   Hence `κ = 1 + (3/π²) max_s [2(1 − ½log2 + log s)/s − 1/s²] = 1.3356`.
+   Then `C(½) ≤ K + √(K² + π⁴/45) = 9.028` with `K = κπ²/3` (≤ 9.458 is needed), and
+   `C₁ = √(π²/3 + 2C(½)) = 4.620 < 3π/2`. Checked numerically (`/tmp/test_l6.py`, ratio ≤ 0.68).
+4. Periodization to the circle: apply the real-line inequality to `x_r + k`, `|k| ≤ K`, with
+   `z_{r,k} = (−1)^k z_r`. The Cesàro kernel `(2K+1)⁻¹∑_{|j|≤2K}(2K+1−|j|)(−1)^j/(x+j) → π csc πx`
+   (the paired series is absolutely convergent; `csc y = cot(y/2) − cot y`). Csc constants: `C₁/π ≤ 1.4706 ≤ 3/2`
+   (weighted), `1` (unweighted, `μ² ≤ 3S`).
+5. Large sieve by duality: `N + δ⁻¹`, resp. weights `(N + (3/2)δ_r⁻¹)⁻¹`. **Dilation trick for
+   `N − 1 + δ⁻¹`**: apply the bound to `n ↦ kn` at the points `(α_r + j)/k`, `0 ≤ j < k`, which are
+   `δ/k`-separated. This gives `k∑|S(α_r)|² ≤ (k(N−1)+1 + kδ⁻¹)‖a‖²`; let `k → ∞`.
+
 ## Prelim sensitivity: which literature bounds can be weakened (2026-10-31)
 
 `scripts/prelim_sensitivity.py` (approximate models, not certified): it re-runs the Thm 3.1.1

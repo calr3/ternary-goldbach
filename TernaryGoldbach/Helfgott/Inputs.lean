@@ -9,8 +9,9 @@ import TernaryGoldbach.MinorArcs.NumericsFinal
 /-!
 # Unproved inputs
 
-**The three unproved top-level inputs.**  (Other `sorry`s, the cited and trusted results that
-`minor_arcs_input` uses, are listed in `README.md`.)  Each remaining one is a result from the literature,
+**The top-level inputs.**  `major_arcs_input` is still `sorry`; `binary_goldbach_input` and
+`prime_ladder_input` are numerical axioms (finite computer verifications).  (Other `sorry`s and
+axioms, used by `minor_arcs_input`, are listed in `README.md`.)  Each remaining one is a result from the literature,
 stated as precisely as we could, with a pointer to where it is proved.  Everything else (the
 way these inputs combine into the ternary Goldbach conjecture) is proved in Lean.
 
@@ -132,17 +133,18 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
-/-- **Binary Goldbach up to `4 · 10¹⁸`** [OeSHP]. -/
-theorem binary_goldbach_input : BinaryGoldbachUpTo (4 * 10 ^ 18) := by
-  sorry
+/-- **Numerical axiom: binary Goldbach up to `4 · 10¹⁸`** [OeSHP]. An exhaustive computer
+search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)): every even `4 ≤ n ≤ 4·10¹⁸` is
+a sum of two primes. -/
+axiom binary_goldbach_input : BinaryGoldbachUpTo (4 * 10 ^ 18)
 
-/-- **The Helfgott–Platt prime ladder** [HP]: certified primes starting at `3`, with
+/-- **Numerical axiom: the Helfgott–Platt prime ladder** [HP]. A computer construction of
+certified primes starting at `3`, with
 consecutive gaps `≤ 4 · 10¹⁸ - 4`, reaching `8.875694 · 10³⁰`.  (Building the ladder only up
 to `10²⁷` would suffice here; [H, §1] says that takes about 25 hours on one processor.) -/
-theorem prime_ladder_input :
+axiom prime_ladder_input :
     ∃ l : List ℕ, (∀ p ∈ 3 :: l, p.Prime ∧ Odd p) ∧
       List.IsChain (LadderStep (4 * 10 ^ 18 - 4)) (3 :: l) ∧
-      8875694 * 10 ^ 24 ≤ (3 :: l).getLast (List.cons_ne_nil _ _) := by
-  sorry
+      8875694 * 10 ^ 24 ≤ (3 :: l).getLast (List.cons_ne_nil _ _)
 
 end TernaryGoldbach.Helfgott
