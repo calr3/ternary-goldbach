@@ -236,6 +236,19 @@ Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵
 `G_H(z) = ∫_0^z sin(Hv)/(πv)dv`, `|G_H| ≤ 3/π` (bound `1/π` on `[0,1/H]`, integrate by parts beyond), integrate by
 parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε²) = (6/π)e^{1/2} + O(Hε²) ≤ 3.15`.
 
+**(2.22): plan (feasible, large).** Budget: Theorem 3.1.1 (first case) has `2x/(δ₀φ(q))(13/4 log t + 7.82)`;
+the δ₀φ constant used is `1 + 2C` (typeI1 `1 + C`, typeI2 `C`, `C` = the (2.22) constant), so `C ≤ 3.4` keeps
+the statement (and GBound/cells) unchanged. Route (Ram14 = hal-02572851, with our own q = 1 input):
+1. `m(x)(log x + c₀) = −∑_{n≤x} μ(n)/n · r(x/n)`, `r(y) = ψ̃(y) − log y − c₀`, `c₀ = lim(ψ̃(y) − log y)` (exists by
+   `E1_diff`; no need to identify `c₀ = −γ`). Numerically `∫_1^∞ |r(y)| dy/y ≈ 0.407`, so `|m(x)| ≲ 0.45/log x`
+   (uniformity in real `x`: step-function `|r|` on `[1, 10⁴]`, `E1_diff`/`psi_sqrt` beyond, `x ≥ 10¹⁰`).
+   (The Liouville analogue `ℓ(x)(log x − c′) = ∑ λ(n)/n r′(x/n)` gives only `≈ 3.70/log x`: too weak.)
+2. Ram14 Lemma 2.4: `ℓ(x) = ∑_{u²≤x} m(x/u²)/u²` ⇒ `|ℓ(x)| ≤ c_ℓ/log x` (`c_ℓ ≈ 0.55–0.9`), with a finite check of
+   `|ℓ(x)| log x` up to `1.1·10¹⁰` (Liouville sieve) and `|m(y)| ≤ √(2/y)` on a finite range (cf. (2.24)).
+3. Lemma 2.5: `ℓ_q(x) = ∑_{d|q} μ²(d)/d ℓ(x/d)` ⇒ `|ℓ_q(x)| ≤ c_ℓ (q/φ(q))/log(x/q)`; Lemma 3.1 `|ℓ_q| ≤ π²/6`.
+4. Lemma 3.2: `m_q(x) = ∑_{u²≤x,(u,q)=1} μ(u)/u² ℓ_q(x/u²)` and the `ρ(U, y)` optimisation ⇒ `C ≈ 2.4–3`.
+5. Refactor `muBound` (`4/5 → C`) through `TypeITotal`, `FirstChoiceTypeI1/I2`, `TypeI2Sum`, `TypeI2Large`.
+
 **(2.22), (2.23): open; sources located.** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
 functions involving the Moebius function*, Math. Comp. 84 (2015) 1359–1387, with a **corrigendum** in Math. Comp. 88
 (2019) 2383–2388 (check whether it touches `4/5` or `1.00303` before relying on them). Not on arXiv/HAL; the AMS PDF
