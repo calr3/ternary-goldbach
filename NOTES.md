@@ -47,7 +47,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   28 explicitly labelled items (`scripts/sorry_deps.lean`): the 3 remaining `Helfgott/Inputs`
   items (major arcs (14.27), binary Goldbach ≤ 4·10¹⁸, prime ladder), the cited Part II results
   `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, and the literature bounds in
-  `Prelim/` ([RS62] etc., Lemma C.2.2): 21 `sorry`s. Plus 7 **numerical axioms** (Lean `axiom`s,
+  `Prelim/` ([RS62] etc., Lemma C.2.2): 20 `sorry`s ((2.20) proved 2026-10-31, `Prelim/MoebiusCoprime.lean`). Plus 7 **numerical axioms** (Lean `axiom`s,
   2026-10-31, at the user's request; listed in README "Numerical axioms"): `prop_12_2_4`, the
   (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`, `fsq_le`.
 * ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
@@ -213,7 +213,7 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
     `scripts/gen_a1_pieces.py`, `scripts/gen_b_pieces.py` (exact rational checks first).
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
-* `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), (2.20)].
+* `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), …]; (2.20) is proved in `Prelim/MoebiusCoprime.lean`.
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
@@ -241,7 +241,7 @@ so the Lean numerics (FirstChoice*, Second* pieces, cells) would have to be rege
   Mertens (≈ 2.4) fails. Possible route: an exact primorial computation of `max_{q ≤ r} q/φ(q)` for
   the finite range of levels, plus an elementary Mertens bound for large `r`, where the asymptotic
   numerics have room.
-* Not modelled: (2.13) (only in TypeI2Large), [MV73, Lemma 8]'s `0.25068`, (2.20) (elementary
+* Not modelled: (2.13) (only in TypeI2Large), [MV73, Lemma 8]'s `0.25068`, (2.20) (now proved
   as stated).
 
 ## Ch. 13: scale erratum (the ℓ∞ and ℓ² inputs use arcs at different scales)

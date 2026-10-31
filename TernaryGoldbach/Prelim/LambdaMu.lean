@@ -1,4 +1,5 @@
 import Mathlib
+import TernaryGoldbach.Prelim.MoebiusCoprime
 
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [B, §2.5]
@@ -11,8 +12,7 @@ by the Type I estimates.  Only the bounds needed so far are listed; [B, §2.5] h
 Two remarks.
 * (2.16) is only claimed for `y > 663` (it fails, e.g., at `y = 3`), so results that use it need
   that hypothesis.
-* (2.20) has an elementary proof for `q = 1` (from `∑_{n ≤ x} μ(n)⌊x/n⌋ = 1`); the general case is
-  [GR96, Lemma 10.2].
+* (2.20) is **proved** (elementarily) in `Prelim/MoebiusCoprime.lean`.
 -/
 
 open Finset
@@ -71,12 +71,6 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 for `y > 0`. -/
 theorem sum_vonMangoldt_nonprime_lt {y : ℝ} (hy : 0 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (if n.Prime then 0 else (Λ n : ℝ)) < 1.4262 * √y := by
-  sorry
-
-/-- **[B, (2.20)]** (Granville–Ramaré [GR96, Lemma 10.2]):
-`|∑_{n ≤ x, (n, q) = 1} μ(n)/n| ≤ 1` for all `x` and all `q ≥ 1`. -/
-theorem abs_sum_moebius_div_coprime_le_one (x : ℝ) {q : ℕ} (hq : 1 ≤ q) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤ 1 := by
   sorry
 
 /-- **[B, (2.21)]** (Ramaré [Ram13]): `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. -/

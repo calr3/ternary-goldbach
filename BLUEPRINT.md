@@ -43,7 +43,7 @@ statements, each with its own `sorry`.
      │   │    §4.1: Lemmas 4.1.1–4.1.3 ✅ MinorArcs/TrigSums.lean (4.1.3: book's proof has a gap; fixed);
      │   │    §4.2: Lemma 4.2.2 ✅ MinorArcs/TypeIProof.lean; Lemma 4.2.3 ✅ MinorArcs/TypeILogProof.lean
      │   │          ((4.40) corrected; unused (4.42) omitted); Lemma 4.2.4 ✅ MinorArcs/TypeI2Rest.lean
-     │   │          ((4.50)–(4.52) corrected, see NOTES); trusted literature (2.12), (2.15), (2.20);
+     │   │          ((4.50)–(4.52) corrected, see NOTES); trusted literature (2.12), (2.15); (2.20) ✅;
      │   │    trusted (App. B): |η̂₂''|_∞ ≤ 31.521, |η̂_(ρ)''|_∞ ≤ 31.521 log ρ]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), trusted sharp large
