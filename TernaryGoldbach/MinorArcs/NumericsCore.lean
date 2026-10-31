@@ -453,4 +453,38 @@ theorem le_cL_pred {r : ℕ} (hr : 1 ≤ r) {c : ℝ} (h : c ≤ Real.log (2 * (
 
 theorem cL_le {n : ℕ} {c : ℝ} (h : Real.log (2 * ((n : ℝ) + 1)) + 1.36 ≤ c) : cL n ≤ c := h
 
+/-- The block chain, for any `y ≥ Y`. -/
+theorem chain_le {y Y : ℝ} {k : ℕ} (p : ℕ → ℕ) (G ℓ : ℕ → ℝ) (hY : 1e25 ≤ Y) (hYy : Y ≤ y)
+    (hp0 : 670 ≤ p 0) (hpm : ∀ i < k, p i ≤ p (i + 1)) (hpkY : (p k : ℝ) ≤ Y ^ (1 / 3 : ℝ) / 6)
+    (hG : ∀ i < k, ghatY Y (p i) ≤ G i) (hℓ : ∀ i < k, Real.log ((p (i + 1) : ℝ) / p i) ≤ ℓ i) :
+    ∑ n ∈ Finset.Ico (p 0) (p k), ghatY y n * Real.log (((n : ℝ) + 1) / n) ≤
+      ∑ i ∈ Finset.range k, G i * ℓ i := by
+  have hpmono : ∀ i j, i ≤ j → j ≤ k → p i ≤ p j := by
+    intro i j hij hjk
+    induction j, hij using Nat.le_induction with
+    | base => exact le_rfl
+    | succ m hm ih => exact (ih (by omega)).trans (hpm m (by omega))
+  have hYy' : Y ^ (1 / 3 : ℝ) ≤ y ^ (1 / 3 : ℝ) := Real.rpow_le_rpow (by linarith) hYy (by norm_num)
+  have hch := sum_Ico_chain_le (f := fun n => ghatY y n) p k (by omega) hpm
+    (fun i hi n hn1 hn2 => by
+      have h1 : (670 : ℝ) ≤ p i := by
+        have := hpmono 0 i (Nat.zero_le _) hi.le
+        exact_mod_cast hp0.trans this
+      have h2 : (p i : ℝ) ≤ n := by exact_mod_cast hn1
+      have h3 : (n : ℝ) ≤ p k := by
+        have := hpmono (i + 1) k (by omega) le_rfl; exact_mod_cast (le_of_lt hn2).trans this
+      exact ghatY_antitone (by linarith) h1 h2 (by linarith))
+  refine hch.trans (Finset.sum_le_sum fun i hi => ?_)
+  have hi' := Finset.mem_range.1 hi
+  have hp670 : (670 : ℝ) ≤ p i := by
+    have := hpmono 0 i (Nat.zero_le _) hi'.le; exact_mod_cast hp0.trans this
+  have hpY : (p i : ℝ) ≤ Y ^ (1 / 3 : ℝ) / 6 := by
+    have := hpmono i k hi'.le le_rfl
+    exact (by exact_mod_cast this : (p i : ℝ) ≤ p k).trans hpkY
+  have hg1 := (ghatY_mono_y hY hYy hp670 hpY).trans (hG i hi')
+  have hg0 := ghatY_nonneg (y := y) (by linarith) (show (0:ℝ) < p i by linarith)
+  have hl0 : 0 ≤ Real.log ((p (i + 1) : ℝ) / p i) := Real.log_nonneg (by
+    rw [le_div_iff₀ (by linarith)]; simp only [one_mul]; exact_mod_cast hpm i hi')
+  exact mul_le_mul hg1 (hℓ i hi') hl0 (hg0.trans hg1)
+
 end TernaryGoldbach.MinorArcs

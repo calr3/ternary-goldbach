@@ -3191,4 +3191,68 @@ theorem cell8 {x : ℝ} (hx1 : (490000000000000000000000000000000000000000000000
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
+/-- The block chain of cell 8, for every `y ≥ Y_8` (used for `y ≥ 10¹⁰⁰`). -/
+theorem chain8 {y : ℝ} (hy : (1e58 : ℝ) ≤ y) :
+    ∑ n ∈ Finset.Ico (150001 : ℕ) 82861350433499550, ghatY y n * Real.log (((n : ℝ) + 1) / n) ≤ 0.163876100375765093 := by
+  have h := chain_le (Y := 1e58) (k := 16) (fun i => [150001, 900007, 5400043, 32400259, 194401555, 1166409331, 6998455987, 41990735923, 251944415539, 1511666493235, 9069998959411, 54419993756467, 326519962538803, 1959119775232819, 11754718651396915, 70528311908381491, 82861350433499550].getD i 0)
+    (fun i => ([0.050614, 0.0223678, 0.0100978, 0.00458496, 0.00208083, 0.000941975, 0.000425238, 0.000191507, 0.0000860974, 0.0000386719, 0.0000173698, 0.00000780984, 0.00000351975, 0.00000159277, 0.000000725615, 0.000000334203] : List ℝ).getD i 0) (fun i => ([1.791781, 1.79178, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 0.161156] : List ℝ).getD i 0)
+    (by norm_num) hy (by decide) (by intro i hi; interval_cases i <;> decide)
+    ((by norm_num : ((82861350433499550 : ℕ) : ℝ) ≤ 21544320000000000000 / 6).trans (by
+      have := le_rpow_third (Y := (1e58 : ℝ)) (u := 21544320000000000000) (by norm_num) (by norm_num); linarith))
+    (by intro i hi; interval_cases i
+        · exact c8_p0
+        · exact c8_p1
+        · exact c8_p2
+        · exact c8_p3
+        · exact c8_p4
+        · exact c8_p5
+        · exact c8_p6
+        · exact c8_p7
+        · exact c8_p8
+        · exact c8_p9
+        · exact c8_p10
+        · exact c8_p11
+        · exact c8_p12
+        · exact c8_p13
+        · exact c8_p14
+        · exact c8_p15
+      )
+    (by intro i hi; interval_cases i
+        · show Real.log (((900007 : ℕ) : ℝ) / ((150001 : ℕ) : ℝ)) ≤ 1.791781
+          exact (log_le_num (z := ((900007 : ℕ) : ℝ) / ((150001 : ℕ) : ℝ)) 1 0.791781 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((5400043 : ℕ) : ℝ) / ((900007 : ℕ) : ℝ)) ≤ 1.79178
+          exact (log_le_num (z := ((5400043 : ℕ) : ℝ) / ((900007 : ℕ) : ℝ)) 1 0.79178 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((32400259 : ℕ) : ℝ) / ((5400043 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((32400259 : ℕ) : ℝ) / ((5400043 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((194401555 : ℕ) : ℝ) / ((32400259 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((194401555 : ℕ) : ℝ) / ((32400259 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((1166409331 : ℕ) : ℝ) / ((194401555 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((1166409331 : ℕ) : ℝ) / ((194401555 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((6998455987 : ℕ) : ℝ) / ((1166409331 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((6998455987 : ℕ) : ℝ) / ((1166409331 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((41990735923 : ℕ) : ℝ) / ((6998455987 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((41990735923 : ℕ) : ℝ) / ((6998455987 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((251944415539 : ℕ) : ℝ) / ((41990735923 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((251944415539 : ℕ) : ℝ) / ((41990735923 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((1511666493235 : ℕ) : ℝ) / ((251944415539 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((1511666493235 : ℕ) : ℝ) / ((251944415539 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((9069998959411 : ℕ) : ℝ) / ((1511666493235 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((9069998959411 : ℕ) : ℝ) / ((1511666493235 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((54419993756467 : ℕ) : ℝ) / ((9069998959411 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((54419993756467 : ℕ) : ℝ) / ((9069998959411 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((326519962538803 : ℕ) : ℝ) / ((54419993756467 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((326519962538803 : ℕ) : ℝ) / ((54419993756467 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((1959119775232819 : ℕ) : ℝ) / ((326519962538803 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((1959119775232819 : ℕ) : ℝ) / ((326519962538803 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((11754718651396915 : ℕ) : ℝ) / ((1959119775232819 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((11754718651396915 : ℕ) : ℝ) / ((1959119775232819 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((70528311908381491 : ℕ) : ℝ) / ((11754718651396915 : ℕ) : ℝ)) ≤ 1.791779
+          exact (log_le_num (z := ((70528311908381491 : ℕ) : ℝ) / ((11754718651396915 : ℕ) : ℝ)) 1 0.791779 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+        · show Real.log (((82861350433499550 : ℕ) : ℝ) / ((70528311908381491 : ℕ) : ℝ)) ≤ 0.161156
+          exact (log_le_num (z := ((82861350433499550 : ℕ) : ℝ) / ((70528311908381491 : ℕ) : ℝ)) 0 0.161156 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)
+      )
+  refine le_trans h (le_of_eq ?_)
+  simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ, List.getD_cons_zero]
+  norm_num
+
 end TernaryGoldbach.MinorArcs

@@ -200,6 +200,32 @@ def cell(k, Y, Ylit, Y2, Y2lit, rho):
     L.append(f"    (by norm_num) c5 (by norm_num) (by norm_num) (by norm_num) (by norm_num)")
     L.append(f"    (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,")
     L.append(f"      List.getD_cons_zero]; norm_num)")
+    if k == len(CELLS) - 1:
+        S = sum(Gs[i] * ells[i] for i in range(kk))
+        C = []
+        C.append(f"/-- The block chain of cell {k}, for every `y ≥ Y_{k}` (used for `y ≥ 10¹⁰⁰`). -/")
+        C.append(f"theorem chain{k} {{y : ℝ}} (hy : ({Ylit} : ℝ) ≤ y) :")
+        C.append(f"    ∑ n ∈ Finset.Ico (150001 : ℕ) {r2}, ghatY y n * Real.log (((n : ℝ) + 1) / n) ≤ {lit(S)} := by")
+        C.append(f"  have h := chain_le (Y := {Ylit}) (k := {kk}) (fun i => {plist}.getD i 0)")
+        C.append(f"    (fun i => ({glist} : List ℝ).getD i 0) (fun i => ({llist} : List ℝ).getD i 0)")
+        C.append(f"    (by norm_num) hy (by decide) (by intro i hi; interval_cases i <;> decide)")
+        C.append(f"    ((by norm_num : (({r2} : ℕ) : ℝ) ≤ {lit(cbrt_dn(Y))} / 6).trans (by")
+        C.append(f"      have := le_rpow_third (Y := ({Ylit} : ℝ)) (u := {lit(cbrt_dn(Y))}) (by norm_num) (by norm_num); linarith))")
+        C.append(f"    (by intro i hi; interval_cases i")
+        for i in range(kk):
+            C.append(f"        · exact c{k}_p{i}")
+        C.append(f"      )")
+        C.append(f"    (by intro i hi; interval_cases i")
+        for i in range(kk):
+            n, f = lproofs[i]
+            C.append(f"        · show Real.log ((({pts[i+1]} : ℕ) : ℝ) / (({pts[i]} : ℕ) : ℝ)) ≤ {lit(ells[i])}")
+            C.append(f"          exact {LEAN_LOG_UB.format(z=f'(({pts[i+1]} : ℕ) : ℝ) / (({pts[i]} : ℕ) : ℝ)', nf=nf(n,f))}.trans (by norm_num)")
+        C.append(f"      )")
+        C.append(f"  refine le_trans h (le_of_eq ?_)")
+        C.append(f"  simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ, List.getD_cons_zero]")
+        C.append(f"  norm_num")
+        print(f"-- chain{k}: S = {float(S):.6f}, r2 = {r2}, G0 = {float(G0):.6f}", file=sys.stderr)
+        return out + ["\n".join(L), "\n".join(C)]
     return out + ["\n".join(L)]
 
 CELLS = [(Fr(10)**25, "1e25", Fr(3)*Fr(10)**25, "3e25", 1.4),

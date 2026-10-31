@@ -9,7 +9,7 @@ Assembles (NOTES, "Ch. 13: scale erratum", repair 3):
 * the ℓ∞ inputs `norm_S_etaStar_le_ghat` (off `𝔐_{8,n}(y)`) and `norm_S_etaStar_le_gap` (base gap);
 * the split `S_{η₊} = S₁ + S₂` (`S₁`: primes `> √x`), with `|a + b|² ≤ (1+t)|a|² + (1+1/t)|b|²`;
 * the cited Part II inputs `l2_major_14_7` (J), `prop_7_1_5` (S), `E_le_14_28` (E);
-* the numerics `numerics_M`.
+* the numerics `NumericsGoal` (proved in `NumericsFinal.lean`).
 -/
 
 open Real Set MeasureTheory Filter
@@ -78,12 +78,11 @@ noncomputable def Mexpr (x : ℝ) (r₂ : ℕ) : ℝ :=
     ∑ n ∈ Finset.Ioo 150000 r₂, ghatY (x / κ) n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) +
     ghatY (x / κ) r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x)
 
-/-- **The numerics** (to be proved: `scripts/minor_arc_cells_check.py`). -/
-theorem numerics_M {x : ℝ} (hx : 4.9e26 ≤ x) :
-    ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
-      2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
-  sorry
+/-- **The numerical statement** (proved in `NumericsFinal.lean: numerics_M`). -/
+def NumericsGoal (x : ℝ) : Prop :=
+  ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
+    2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
+    2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037
 
 /-! ## The split `S_{η₊} = S₁ + S₂` -/
 
@@ -315,7 +314,7 @@ theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
 set_option maxHeartbeats 2000000 in
 /-- **(14.49), repaired**: for `x ≥ 4.9·10²⁶`,
 `∫_{(0,1] \ 𝔐_{8,r₀}} |S_{η_*}(α, x)| |S_{η₊}(α, x)|² dα ≤ 1.0376 x²/κ`. -/
-theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) :
+theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     ∫ α in Ioc (0:ℝ) 1 \ majorArcs 8 r₀ x, ‖S etaStar x α‖ * ‖S etaPlus x α‖ ^ 2 ≤
       1.0376 * x ^ 2 / κ := by
   have hκ : (κ : ℝ) = 49 := rfl
@@ -324,7 +323,7 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) :
   set y := x / κ with hy_def
   have hy : 1e25 ≤ y := by rw [hy_def, hκ, le_div_iff₀ (by norm_num)]; linarith
   have hy0 : 0 < y := by linarith
-  obtain ⟨r₂, h150, hx1, hρ, hry, hry', hcD, hM⟩ := numerics_M hx
+  obtain ⟨r₂, h150, hx1, hρ, hry, hry', hcD, hM⟩ := hnum
   set A := Ioc (0:ℝ) 1 \ majorArcs 8 r₀ x
   have hA : MeasurableSet A := measurableSet_Ioc.diff (Helfgott.measurableSet_majorArcs _ _ _)
   have hAsub : A ⊆ Ioc 0 1 := sdiff_subset

@@ -96,3 +96,5 @@ import TernaryGoldbach.MinorArcs.BaseGap2
 import TernaryGoldbach.MinorArcs.MinorTotal
 import TernaryGoldbach.MinorArcs.NumericsCore
 import TernaryGoldbach.MinorArcs.NumericsCells
+import TernaryGoldbach.MinorArcs.NumericsAsymp
+import TernaryGoldbach.MinorArcs.NumericsFinal

@@ -40,6 +40,15 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   plus a bound on the **gap `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`**, the one missing ingredient. (Also still
   needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [B, §13.2], and the
   numerics of §14.3 for an explicit `g`.)
+* ✅✅ **(14.49) fully assembled, including the numerics** (2026-10-31). `numerics_M`
+  (`MinorArcs/NumericsFinal.lean`) is proved: 9 generated cells for `x ∈ [4.9·10²⁶, 4.9·10¹⁰¹]`
+  (`scripts/gen_cells.py` → `NumericsCells.lean`, worst `Mexpr ≤ 0.960`), and `asymp_goal`
+  (`NumericsAsymp.lean`, `r₂ = ⌊y^{1/4}⌋`, `≈ 0.692`) beyond. `ternary_goldbach` now depends on
+  28 explicitly labelled items (`scripts/sorry_deps.lean`): the 3 remaining `Helfgott/Inputs`
+  items (major arcs (14.27), binary Goldbach ≤ 4·10¹⁸, prime ladder), the cited Part II results
+  `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, the trusted computation
+  `prop_12_2_4`, the trusted (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`,
+  and the literature bounds in `Prelim/` ([RS62] etc., Lemma C.2.2).
 * ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
   minor_total`). Its dependency closure: the trusted inputs of Thm 3.1.1, Prop 12.2.4 (trusted
   computation), the **cited Part II results** `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7` (14.7),

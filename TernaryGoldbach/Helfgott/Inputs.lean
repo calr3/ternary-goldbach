@@ -4,7 +4,7 @@ import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Reduction
-import TernaryGoldbach.MinorArcs.MinorTotal
+import TernaryGoldbach.MinorArcs.NumericsFinal
 
 /-!
 # Unproved inputs
@@ -76,14 +76,16 @@ Prop 13.1.2 with the arcs at scale `x/κ` above the base level, take a fresh Dir
 approximation at each scale in (11.9), extend the levels to `≈ x^{0.3}`, and bound the base gap
 with [B, Cor 7.1.3]. It depends on the trusted inputs of Theorem 3.1.1, the trusted computation
 Prop 12.2.4, the cited Part II results `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`
-(`MinorArcs/PartIICited.lean`), and the numerical lemma `numerics_M`.
+(`MinorArcs/PartIICited.lean`). The numerics (`numerics_M`) are proved: generated cells for
+`x ≤ 4.9·10¹⁰¹` (`scripts/gen_cells.py`) and an analytic argument beyond.
 
 (Our constant `1.0376` is weaker than [B]'s `1.00948`: [B]'s Theorem 3.1.1 has `0.5` where the
 proof gives `0.8103`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by
-  refine MinorArcs.minor_total ?_
+  have hx : (4.9e26 : ℝ) ≤ xOf N := ?_
+  · exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
   obtain ⟨h0, h1⟩ := xOf_denom_bounds
   have hN : (1e27 : ℝ) ≤ N := by
     have : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
