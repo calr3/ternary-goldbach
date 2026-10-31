@@ -5,6 +5,7 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.MoebiusLog
+import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV
