@@ -40,7 +40,11 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
   plus a bound on the **gap `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`**, the one missing ingredient. (Also still
   needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [B, §13.2], and the
   numerics of §14.3 for an explicit `g`.)
-* **⚠ Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
+* ✅ **The Ch. 13 scale erratum is fixable** ("repair 3" in the erratum section below:
+  everything at scale `y`, a fresh Dirichlet approximation per scale `wy`, levels up to
+  `x^{0.3}`, and Cor 7.1.3 on the base gap). `Z ≤ 0.866 x²/κ < 1.058259`. Formalizing it is the
+  current work.
+* (Superseded.) **Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
   "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale
   `x`. The obvious repairs fail numerically. Decide how to proceed before formalizing Ch. 13.
@@ -228,8 +232,36 @@ Repairs tried (`scripts/minor_arc_scale_check.py`; all at `x = 4.9·10²⁶`, ou
    `g(q) ≥ g(300000)` is available. The tail (14.43) needs `g(r₁)`; with `g(3·10⁵) ≈ 0.0317`
    instead of `g(r₁) ≈ 0.0156` it grows from `0.312` to `0.636`. **Fails** by a wide margin.
 
-So neither [B]'s argument as written nor these repairs establishes (14.49) over the complement of
-the scale-`x` arcs. `minor_arcs_input` remains a cited-but-unverified input. Possible ways forward:
+**Resolution (2026-10-31): repair 3 works, with room to spare** (`scripts/minor_arc_y_scale_repair.py`):
+* Prop 13.1.2 with the family `M_{r₀} = 𝔐_{8,r₀}(x)`, `M_n = 𝔐_{8,n}(y) = 𝔐_{392,n}(x)` for
+  `n > r₀` (nested). The base term keeps [B]'s `I₀ ≥ (√J − √E)² ≥ 8.6297x`.
+* ℓ² from (12.42) with `δ₀ = 392`.
+* ℓ∞ off `𝔐_{8,n}(y)` from a **fresh Dirichlet approximation at each scale `wy`** in (11.9). Since
+  `𝔐_{8,r}(wy) ⊆ 𝔐_{8,r}(y)` for `w ≥ 1` and `⊆ 𝔐_{8,r/w}(y)` for `w < 1`, this gives
+  `r_w ≥ min(1,w) n`. Thm 3.1.1 at scale `wy` then gives `max(g_{wy}(min(1,w)n), h(wy))`.
+  The first case always has `r_w ≤ (wy)^{1/3}/6`, so `gx_antitoneOn` applies. This
+  "Prop 11.2.3′" also sidesteps the `δ ↦ wδ` erratum.
+* **Levels up to `r₂ ≈ x^{0.3}`** (the range of (12.42)), not [B]'s `r₁ = (3/8)y^{4/15} ≈ 10⁶`.
+  The tail (14.43) shrinks from `0.30` to `0.12`.
+* The base gap `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)` (needed: `|S_{η_*}| ≤ |φ|₁ g(r₀) y ≈ 0.0555y`) is
+  covered by [B, Cor 7.1.3]. Its range `q ≤ 300000`, `|δ| ≤ 1.2·10⁶/q` is exactly
+  `𝔐_{8,r₀}(y)`. In the gap `|δ| ≥ 12245/q`, so `|S_{η_*}| ≤ (|η̂(δ)|/φ(q) + 1.3·10⁻⁷) y ≤ 0.02y`.
+
+Result: `Z ≤ 0.866 x²/κ` at `y = 10²⁵` (decreasing: `0.823` at `10²⁶`, `0.617` at `10⁸⁰`), against
+`1.058259`. That is better than [B]'s own `1.00948`, even with our corrected Thm 3.1.1. With
+`r₂ = 10⁶` the same scheme gives `1.10`; the book's `r₁` was too small once the scale is handled
+correctly. **So the flaw is fixable**; `minor_arcs_input` (`≤ 1.0376`) is true by this route.
+
+Formalization plan (repair 3):
+1. Prop 11.2.3′ in Lean (fresh approximations; `OffArcs.lean` + `theorem_3_1_1` + `gx_antitoneOn`).
+2. The base-gap bound from Cor 7.1.3 (a new cited Part II input) via the character expansion
+   (`Bombieri.lean` tools, `gauss_induced`) and a bound on `η̂_*`.
+3. Thm 13.2.1 assembly with the mixed family (generalize `thm_13_2_1_conditional`). Also the
+   `S_{η₊} = S₁ + S₂` split (14.29)–(14.32), with [B]'s cited Part II constants `J`, `E`, (7.1.5).
+4. Numerics for all `x ≥ 4.9·10²⁶`: closed-form majorants for `G`, then interval checks.
+
+Earlier conclusion, kept for the record: neither [B]'s argument as written nor repairs 1–2
+establishes (14.49) over the complement of the scale-`x` arcs. `minor_arcs_input` remains a cited-but-unverified input. Possible ways forward:
 a finer ℓ² accounting of the gap region (by `q` and `δ`), different parameters (`κ`, `r₁`), or
 checking whether a later version of [B] fixes this.
 
