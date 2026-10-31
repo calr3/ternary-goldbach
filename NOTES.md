@@ -236,7 +236,13 @@ Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵
 `G_H(z) = ∫_0^z sin(Hv)/(πv)dv`, `|G_H| ≤ 3/π` (bound `1/π` on `[0,1/H]`, integrate by parts beyond), integrate by
 parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε²) = (6/π)e^{1/2} + O(Hε²) ≤ 3.15`.
 
-**(2.22): plan (feasible, large).** Budget: Theorem 3.1.1 (first case) has `2x/(δ₀φ(q))(13/4 log t + 7.82)`;
+**(2.22): in progress.** Step 1 done (`Prelim/MoebiusBound.lean`): `|m(x)| ≤ 0.54/(log x − 0.7521)` for
+`x ≥ 10¹⁰`, with `K = ∑_{n≤x}|E(x/n) − E(x)|/n ≤ 0.4259 + 0.0755 + 0.0378` (parts A/B/C; numerical axioms
+`K_pieces ≤ 0.4035`, `K_blocks`, segmented sieve to `10⁹`). Next: λ = sq ∗ μ, μ = μ_sq ∗ λ, λ_q = (μ²·1_{·|q}) ∗ λ
+(multiplicativity), ℓ bound `|ℓ(z)| ≤ 0.95/log z` (needs `|m(y)| ≤ √(2/y)` for `y < 10¹⁰`, a Möbius sieve, and a
+direct Liouville check for `z ≤ 10⁵`; model sup ≈ 0.94 near `z ≈ 10¹⁵`), then Lemma 3.2 with `μ²(u)`: model
+`C ≈ 2.66` (`sup_y min(y, y∑_{u sq-free} min(π²/6, c_ℓ/(y − 2 log u))/u²)`, attained near `y ≈ 2.8`).
+**Original plan (feasible, large).** Budget: Theorem 3.1.1 (first case) has `2x/(δ₀φ(q))(13/4 log t + 7.82)`;
 the δ₀φ constant used is `1 + 2C` (typeI1 `1 + C`, typeI2 `C`, `C` = the (2.22) constant), so `C ≤ 3.4` keeps
 the statement (and GBound/cells) unchanged. Route (Ram14 = hal-02572851, with our own q = 1 input):
 1. `m(x)(log x + c₀) = −∑_{n≤x} μ(n)/n · r(x/n)`, `r(y) = ψ̃(y) − log y − c₀`, `c₀ = lim(ψ̃(y) − log y)` (exists by
