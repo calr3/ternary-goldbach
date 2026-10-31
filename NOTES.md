@@ -222,6 +222,17 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**(2.22), (2.23): open; sources located.** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
+functions involving the Moebius function*, Math. Comp. 84 (2015) 1359–1387, with a **corrigendum** in Math. Comp. 88
+(2019) 2383–2388 (check whether it touches `4/5` or `1.00303` before relying on them). Not on arXiv/HAL; the AMS PDF
+could not be fetched from this environment. Open-access relatives (HAL): Ram13 = hal-02572812 (Acta Arith. 157:
+`|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`, `x ≥ 11815`, from explicit `ψ` bounds — derivable from Dusart + finite checks);
+Ram14 = hal-02572851 (Acta Arith. 165: `log(x/q)|m_q(x)| ≤ 2 q/φ(q)` for `q < x`, `≤ (8/7) q/φ(q)` for
+`x/q ≥ 3310`, `≤ (5/7) q/φ(q)` for `x/q ≥ 9960`, via the Liouville function and `|ℓ(x)| ≤ √(2/x)` for
+`x ≤ 1.1·10¹⁰`); FA13 = hal-02573950 (`|∑ μ(d)/d log(x/d)| ≤ 1.4 + r/φ(r)` at `ε = 0`, weaker than 1.00303).
+Options: (a) obtain [Ramb] and formalize Ram13 → [Ramb] from Dusart; (b) formalize Ram13 + Ram14 and redo the Type I
+numerics (`TypeITotal.lean`, `muBound`, `c_{4,I} = 1.00303`) with the weaker constants.
+
 **Lemma C.2.2: DONE** (`Prelim/MertensProduct.lean`). Route: PNT+'s sorry-free Mertens file (ported to
 `Prelim/PNTMertens.lean`, same Mathlib commit) gives `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)`,
 `E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log²t)`. Since `∫_x^∞ dt/(t log²t) = 1/log x`, any constant can be
