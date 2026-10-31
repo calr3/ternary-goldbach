@@ -2,6 +2,8 @@ import TernaryGoldbach.Statement
 import TernaryGoldbach.Reduction
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
+import TernaryGoldbach.Prelim.PNTMertens
+import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV

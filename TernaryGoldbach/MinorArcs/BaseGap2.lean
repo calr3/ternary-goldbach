@@ -1,3 +1,4 @@
+import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.PartIICited
 import TernaryGoldbach.MinorArcs.BaseGap
 import TernaryGoldbach.MinorArcs.LinftyLevels

@@ -222,6 +222,15 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**Lemma C.2.2: DONE** (`Prelim/MertensProduct.lean`). Route: PNT+'s sorry-free Mertens file (ported to
+`Prelim/PNTMertens.lean`, same Mathlib commit) gives `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)`,
+`E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log²t)`. Since `∫_x^∞ dt/(t log²t) = 1/log x`, any constant can be
+subtracted from `E₁Λ`: `|E₂Λ(x)| ≤ 2 sup_{t≥x}|E₁Λ(t) − E₁Λ(x)|/log x`, and summation by parts with Dusart gives
+`sup ≤ 2/log²x + O(1/log³x + 1/√x)`. With `log ∏ p/(p−1) ≤ ∑Λ(d)/(d log d) + 3/⌊√x⌋` (log series, prime powers
+`p^k ≤ x` reindexed) this gives the bound for all `x ≥ 10⁸` with a factor ~1.4 to spare; primes `5 ≤ x ≤ 10⁸` by a
+finite check (tight only at `x = 23`, margin `2.4·10⁻⁷`). Then the exchange argument (`Finset.induction_on_max`,
+`Nat.nth_lt_of_lt_count`) and monotonicity of `t ↦ e^γ t + c/t` for `t ≥ log 4`.
+
 **(2.13), (2.14), (2.17), (2.19): DONE** (`Prelim/LambdaMu.lean`). All of [B]'s `ψ`/`θ` inputs now rest on one
 cited result, Dusart's `|θ(x) − x| < x/log³x` for `x ≥ 89 967 803` ([Dus18, Thm 4.2] = arXiv:1002.0442 Thm 5.2;
 the table there also has `η₁ = 0.001` from `x ≥ 908 994 923`), plus finite checks (`scripts/psi_mid_check.py`, a
