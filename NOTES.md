@@ -222,6 +222,13 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms.
 
+**(14.28): DONE** (`MinorArcs/EBound.lean`, `Helfgott/HHBound.lean`), constant `8·10⁻¹¹` instead of `8.4029·10⁻¹²`.
+[B]'s constant is exactly tight at `x₊ = 4.9·10²⁶` and needs Appendix A's `|η₊|_∞ ≤ 1.079955`, `|tη₊|_∞ ≤ 1.19073`.
+Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵`; `minor_total` with `t = 5·10⁻⁴`: total
+`1.0005·1.037 + 2001·22.75·8·10⁻¹¹ = 1.03752 ≤ 1.0376`). Sup norms: `h_H(t) = ∫_0^2 h(u)F_H(t/u)du/u`; with
+`G_H(z) = ∫_0^z sin(Hv)/(πv)dv`, `|G_H| ≤ 3/π` (bound `1/π` on `[0,1/H]`, integrate by parts beyond), integrate by
+parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε²) = (6/π)e^{1/2} + O(Hε²) ≤ 3.15`.
+
 **(2.22), (2.23): open; sources located.** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
 functions involving the Moebius function*, Math. Comp. 84 (2015) 1359–1387, with a **corrigendum** in Math. Comp. 88
 (2019) 2383–2388 (check whether it touches `4/5` or `1.00303` before relying on them). Not on arXiv/HAL; the AMS PDF

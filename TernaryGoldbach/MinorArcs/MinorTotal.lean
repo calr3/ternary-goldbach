@@ -1,4 +1,5 @@
 import TernaryGoldbach.MinorArcs.BaseGap2
+import TernaryGoldbach.MinorArcs.EBound
 import TernaryGoldbach.MinorArcs.Thm1321
 
 /-!
@@ -8,7 +9,8 @@ Assembles (NOTES, "Ch. 13: scale erratum", repair 3):
 * `thm_13_2_1_repaired` (mixed family, ℓ² from (12.42) with `δ₀ = 392`);
 * the ℓ∞ inputs `norm_S_etaStar_le_ghat` (off `𝔐_{8,n}(y)`) and `norm_S_etaStar_le_gap` (base gap);
 * the split `S_{η₊} = S₁ + S₂` (`S₁`: primes `> √x`), with `|a + b|² ≤ (1+t)|a|² + (1+1/t)|b|²`;
-* the cited Part II inputs `l2_major_14_7` (J), `prop_7_1_5` (S), `E_le_14_28` (E);
+* the cited Part II inputs `l2_major_14_7` (J), `prop_7_1_5` (S); `E_le_14_28` (E, proved in `EBound.lean`
+  with the constant `8·10⁻¹¹` in place of [B]'s `8.4029·10⁻¹²`);
 * the numerics `NumericsGoal` (proved in `NumericsFinal.lean`).
 -/
 
@@ -133,7 +135,7 @@ theorem norm_add_sq_le (u v : ℂ) {t : ℝ} (ht : 0 < t) :
   nlinarith
 
 theorem norm_sq_sum_a₂_le {x : ℝ} (hx : 4.9e26 ≤ x) :
-    ∑' n, ‖a₂ x n‖ ^ 2 ≤ 8.4029e-12 * x := by
+    ∑' n, ‖a₂ x n‖ ^ 2 ≤ 8e-11 * x := by
   refine le_trans (le_of_eq ?_) (E_le_14_28 hx)
   congr 1; ext n
   unfold a₂; split_ifs
@@ -295,17 +297,17 @@ theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
     exact setIntegral_mono_on (integrableOn_Ioc_of_continuous hcS B hBsub)
       (((integrableOn_Ioc_of_continuous c1 B hBsub).const_mul _).add
         ((integrableOn_Ioc_of_continuous c2 B hBsub).const_mul _)) hB fun α _ => hpt α
-  have h2 : ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 ≤ 8.4029e-12 * x := by
+  have h2 : ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 ≤ 8e-11 * x := by
     refine le_trans ?_ ((TernaryGoldbach.setIntegral_norm_sq_expTsum (summable_a₂ hx0)).le.trans
       (norm_sq_sum_a₂_le hx))
     exact setIntegral_mono_set (integrableOn_Ioc_of_continuous c2 _ le_rfl)
       (Eventually.of_forall fun α => by positivity) (Eventually.of_forall hBsub)
   have h3 : 0 ≤ ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 := setIntegral_nonneg hB fun α _ => by positivity
-  have : (1 + 1 / t) * ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 ≤ (1 + 1 / t) * (8.4029e-12 * x) :=
+  have : (1 + 1 / t) * ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 ≤ (1 + 1 / t) * (8e-11 * x) :=
     mul_le_mul_of_nonneg_left h2 (by positivity)
-  have h4 : 8.6298 * x - (1 + 1 / t) * (8.4029e-12 * x) ≤
+  have h4 : 8.6298 * x - (1 + 1 / t) * (8e-11 * x) ≤
       (1 + t) * ∫ α in B, ‖expTsum (a₁ x) α‖ ^ 2 := by linarith
-  have h5 : 8.6296 * x * (1 + t) ≤ 8.6298 * x - (1 + 1 / t) * (8.4029e-12 * x) := by
+  have h5 : 8.6296 * x * (1 + t) ≤ 8.6298 * x - (1 + 1 / t) * (8e-11 * x) := by
     simp only [t]; nlinarith
   have := le_trans h5 h4
   rw [mul_comm (1 + t)] at this
@@ -359,7 +361,7 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     simp only [v] at this ⊢
     nlinarith
   -- step 2: `S₂`
-  have hstep2 : ∫ α in A, v α * ‖expTsum (a₂ x) α‖ ^ 2 ≤ 22.75 * y * (8.4029e-12 * x) := by
+  have hstep2 : ∫ α in A, v α * ‖expTsum (a₂ x) α‖ ^ 2 ≤ 22.75 * y * (8e-11 * x) := by
     have i2 := integrableOn_Ioc_of_continuous c2 A hAsub
     calc ∫ α in A, v α * ‖expTsum (a₂ x) α‖ ^ 2
         ≤ ∫ α in A, 22.75 * y * ‖expTsum (a₂ x) α‖ ^ 2 := by
@@ -367,7 +369,7 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
             (i2.const_mul _) hA fun α _ => ?_
           exact mul_le_mul_of_nonneg_right (norm_S_etaStar_le_uniform hx0 α) (by positivity)
       _ = 22.75 * y * ∫ α in A, ‖expTsum (a₂ x) α‖ ^ 2 := integral_const_mul _ _
-      _ ≤ 22.75 * y * (8.4029e-12 * x) := by
+      _ ≤ 22.75 * y * (8e-11 * x) := by
           refine mul_le_mul_of_nonneg_left ?_ (by positivity)
           refine le_trans ?_ ((TernaryGoldbach.setIntegral_norm_sq_expTsum (summable_a₂ hx0)).le.trans
             (norm_sq_sum_a₂_le hx))
@@ -510,13 +512,13 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
   have hxy : 1.0376 * x ^ 2 / κ = 1.0376 * (x * y) := by rw [hy_def]; ring
   rw [hxy]
   have hM' : y * x * Mexpr x r₂ ≤ y * x * 1.037 := mul_le_mul_of_nonneg_left hM (by positivity)
-  have hfin : (1 + t) * (y * x * 1.037) + (1 + 1 / t) * (22.75 * y * (8.4029e-12 * x)) ≤
+  have hfin : (1 + t) * (y * x * 1.037) + (1 + 1 / t) * (22.75 * y * (8e-11 * x)) ≤
       1.0376 * (x * y) := by
     simp only [t]; nlinarith [mul_pos hx0 hy0]
   have h1 : (1 + t) * (∫ α in A, ‖expTsum (a₁ x) α‖ ^ 2 * v α) ≤ (1 + t) * (y * x * 1.037) :=
     mul_le_mul_of_nonneg_left (hZ1.trans hM') (by norm_num)
   have h2 : (1 + 1 / t) * (∫ α in A, v α * ‖expTsum (a₂ x) α‖ ^ 2) ≤
-      (1 + 1 / t) * (22.75 * y * (8.4029e-12 * x)) :=
+      (1 + 1 / t) * (22.75 * y * (8e-11 * x)) :=
     mul_le_mul_of_nonneg_left hstep2 (by norm_num)
   linarith [hstep1]
 

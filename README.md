@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **8 explicitly
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **7 explicitly
 stated results from the literature**, which are still `sorry`, and **24 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
@@ -41,12 +41,12 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 8 `sorry`s that `ternary_goldbach` depends on are:
+The 7 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
-* **four cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
-  [B, (14.7)], [B, (14.28)];
+* **three cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
+  [B, (14.7)] ([B, (14.28)] is proved, in a weaker form, in `MinorArcs/EBound.lean`);
 * **three literature results** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
   `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]), and Ramaré's (2.22) and (2.23).
   All the bounds on `ψ` and `θ` that [B] quotes — (2.12)–(2.15), (2.17), (2.19), (5.5) — and
@@ -126,6 +126,8 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/SumTools.lean` | sums vs antiderivatives (MVT); the log-weighted sums of [B, Lemma 4.2.3] | ✅ |
 | `MinorArcs/TypeILogProof.lean` | **[B, Lemma 4.2.3] proved** in the form [B, §6.2.1] uses ((4.40) corrected, (4.41) slightly weakened; the unused (4.42) omitted) | ✅ (uses the trusted bounds) |
 | `Prelim/LambdaMu.lean` | bounds on sums of `Λ` and `μ` [B, (2.12)–(2.24), (5.5)]. **Proved** from Dusart's `\|θ(x) − x\| < x/log³x` ([Dus18], cited) and finite checks: (2.14) and (2.15) (strong induction with `ψ − θ ≤ ψ(√n) + n^{1/3} log n`), (2.12) (Chebyshev's identity, summation by parts), (2.13) (summation by parts from `10⁶` with telescoping tails), (2.17) (`∑Λ(n)n = Nψ(N) − ∑_{m<N} ψ(m)`), (2.19) (split at `3N/4`), (5.5) | 🟡 Dusart + (2.22), (2.23) cited |
+| `Helfgott/HHBound.lean` | `\|h₂₀₀\| ≤ 3.15`, `\|η₊\| ≤ 1.94`, `t\|η₊(t)\| ≤ 2.32`: substitution `y = t/u`, integration by parts against `−G_H(log(t/u))` with `\|G_H\| ≤ 3/π` (sine integral), total variation `2e^{1/2}` of `h` | ✅ |
+| `MinorArcs/EBound.lean` | **[B, (14.28)] proved** with constant `8·10⁻¹¹` (B: `8.4029·10⁻¹²`): `E ≤ √x(24.12 log x + 18.01)` from the sup norms above, (2.15), (5.5) and dyadic blocks; the minor-arc total still closes (`1.0376`) | ✅ (Dusart via (2.15), (5.5)) |
 | `Prelim/PNTMertens.lean` | Mertens' second theorem `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with an integral formula for `E₂Λ`; **ported from PNT+** (Apache 2.0, `licenses/`) | ✅ |
 | `Prelim/MertensProduct.lean` | **[B, Lemma C.2.2] proved**: `\|E₂Λ(x)\| = O(1/log³x)` from Dusart, the log series, `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (finite check below), and the exchange argument `q/φ(q) ≤ ∏_{p≤p_{ω(q)}} p/(p−1)` | ✅ (Dusart, one numerical axiom) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
@@ -175,7 +177,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 8 `sorry`s and 24 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 7 `sorry`s and 24 axioms) |
 
 ## The inputs
 
