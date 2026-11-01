@@ -265,7 +265,7 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
 `C₀ C_{η◦,η_*} x² ≥ 1.0583 x²/κ`, so ~`0.013 x²/κ` is available for crude constants. Pieces:
 1. *Sharper `‖η₊ − η◦‖₂`* — **DONE** (`HHFourier2.lean`, `integral_sq_etaPlus_sub_etaO_le'`: `≤ 368/(2·200⁴)`): the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
    `HHFourier` with `g''` (`h` is `C²` on `(0,∞)`, `hP''(2) = 0`): `‖g − g_H‖₂ ≤ ‖g''‖₂/H²`, `‖g''‖₂² ≈ 142.6`.
-2. *`C_{η◦,η_*}` (Ch. 11)*: polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
+2. *`C_{η◦,η_*}` (Ch. 11)* — **DONE** (`CMain.lean`, `Cmain_ge`, constant `8.82`; moments `integral_pow_mul_etaU`): polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
    ½(2−ρ)²‖η◦'‖₂²` (better than [B]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
    `M(φ) = √(π/2), 2, 3√(π/2)`); `N/x = 2 + c₁/κ`, `c₁ = 9/(4√(2π))`; tail of `η_*` beyond `N/x` negligible.
 3. *Fourier identity (10.22)*: `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
