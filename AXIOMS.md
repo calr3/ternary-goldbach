@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 31 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 28 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -62,7 +62,7 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ## The axioms
 
-### Our own computations (16)
+### Our own computations (14)
 
 Scripts are in `scripts/`; all were re-run on 2026-11-01 and reproduce the stated values.
 "float64" means double precision. In those cases the rounding error is bounded in the script's
@@ -71,7 +71,6 @@ docstring and is orders of magnitude below the margin.
 | Axiom | Statement | Script | Arithmetic | Result (margin) |
 |---|---|---|---|---|
 | `Prelim.nonprime_small` | `ψ(n) − θ(n) < 1.4262 √n`, `1 ≤ n ≤ 10¹²` | `psi_checks.py` | float64 (checked at every prime power `p^k`, `k ≥ 2`) | max `1.4261933` at `n = 361` |
-| `Prelim.mertens_small` | `∑_{m≤n} Λ(m)/m ≤ log n`, `1 ≤ n ≤ 100` | `psi_checks.py` | mpmath, 30 digits | max of difference `0` (equality at `n = 1`) |
 | `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `0.0141` at `n = 6` |
 | `Prelim.mertens_point` | value at `X = 10⁶` `≥ −1.5776` | `psi_checks.py` | float64 | `−1.57721` |
 | `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `2.137` at `n = 117` |
@@ -81,7 +80,6 @@ docstring and is orders of magnitude below the margin.
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | float64 | equality at `k = 1`; otherwise max ratio `0.6124` at `k = 2` |
 | `Prelim.liouville_small` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `1 ≤ k ≤ 10⁵` | `liouville_small_check.py` | float64 | max `0.7831` at `k = 10` |
 | `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | float64 | max `2.7422` |
-| `Prelim.MV.prod_ap_le` | `∏_{p<10⁴} (1 + (p^{−2/3} + p^{−1/3})/(p−1)) ≤ 7.99` | `mv_lemma8_check.py` | mpmath, 30 digits | `7.98552` |
 | `Prelim.MV.lemma7_numeric` | `G(r) ≥ log(r+1) + 1.07`, `6 ≤ r < 3·10⁷` | `mv_lemma8_check.py` | float64 | min margin `0.0441` at `r = 9` |
 | `Prelim.MV.GS_N0` | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | `mv_lemma8_check.py` | float64 | `1.332583` |
 | `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | float64; exact rationals at `n = 4` | min margin `1.14·10⁻⁶` at `n = 4`; second sum max `0.638` |
@@ -106,7 +104,7 @@ All three come from `psi_extra_check.py`.
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
-### Results of Helfgott's book [B] (8)
+### Results of Helfgott's book [B] (7)
 
 The book obtains these by interval arithmetic or rigorous integration. Some of them also contain
 analytic arguments. The Lean definitions involved were compared with the book's:
@@ -122,7 +120,6 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 | `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | `scripts/t2_check.py` (float, grid, all of `[16, 10⁵]`): max `0.371249` at `S = 16` |
 | `MinorArcs.integral_H2_le` | (5.36), **corrected** | `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` | **rigorous** (`scripts/h2_integral_check.py`); [B]'s version without `+0.0231` is false (Finding 1) |
 | `MinorArcs.H2_le` | (5.37) | `H₂ ≤ 2/π²`, i.e. `T₂ ≤ 1/2` on `S < 16` | **rigorous** (`scripts/h2_integral_check.py`, exact): holds, with equality on `[2, 3)` |
-| `Prelim.fsq_le` | p. 83 | `f(X) ≤ 1.27 X` | **rigorous** (`scripts/fsq_check.py`, interval arithmetic and [B]'s reduction to `X ≤ 50`): max `f(2)/2 = 15/π² − 1/4 = 1.2698177…` |
 | `MinorArcs.eta2_fourier_bound'` | Lemma B.1.2, (B.6) | `\|(η₂'')^\|_∞ ≤ 31.521` | float, `t < 700`, step `5·10⁻⁴`: max `31.52065` at `t ≈ 17.415`; [B] covers `\|t\| ≥ 655` analytically |
 | `MinorArcs.eta2log_fourier_bound` | Lemma B.2.3, (B.11) | `\|(η_(ρ)'')^\|_∞ < 31.521 log ρ`, `ρ ≥ 4` | float, at `ρ = 4`: max `16.34 log 4`. For `ρ > 4` it follows from this and (B.6), because the bound is convex in `1/log ρ` |
 | `MajorArcs.integral_etaPlus_sq_log` | (9.94) | `∫ η₊² log(xt) dt` | `scripts/eta_plus_check.py` computes `η₊` itself (FFT band limit in `log t`, float): `∫ η₊² = 0.640205997…` and `∫ η₊² log t = −0.021094779…`, within `2.6·10⁻⁹` and `2.2·10⁻⁷` of (9.94)'s values (allowed: `1.95·10⁻⁶`, `5.3·10⁻⁷`); `‖η₊ − η◦‖₂² = 3.9·10⁻¹³` |
@@ -130,12 +127,12 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 ## Summary by kind
 
-* **Our own computations (16):** reproducible with the scripts in `scripts/`.
+* **Our own computations (14):** reproducible with the scripts in `scripts/`.
 * **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
   in the papers.
-* **Results of [B] (8):**
-  * `fsq_le`, `H2_le` and the corrected `integral_H2_le` are re-checked rigorously by our scripts.
+* **Results of [B] (7):**
+  * `H2_le` and the corrected `integral_H2_le` are re-checked rigorously by our scripts.
   * (B.6), (B.11), (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float
     computations.
   * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), (5.31) for
@@ -161,10 +158,25 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     `n/log³n`. Its only use below `10⁹`, the Mertens product bound, now switches from the finite
     check to the analytic bound at `2·10⁸` (`mertens_product_small` was re-run to `2·10⁸`).
 
+* `mertens_small`, `prod_ap_le` (our computations) and `fsq_le` ([B, p. 83]) are now proofs. The
+  numerics are checked by the kernel (`decide +kernel`, no `native_decide`):
+  * `Prelim/SmallMertens.lean`: `∑_{m ≤ n} Λ(m)/m ≤ log n` for `n ≤ 100`, from the prime-power
+    decomposition, upper bounds `log p < U(p)` (checked as `p < e_lo^{U(p)}`) and lower bounds
+    `V(n) ≤ log n` (checked as `e_hi^{V(n)} ≤ n`).
+  * `Prelim/SmallProdAp.lean`: the 1229 primes below `10⁴` from a table. Its entries are checked
+    prime, a chunked scan shows no prime is missing, `p k_p³ ≥ 10¹⁸` gives `p^{−1/3} ≤ k_p/10⁶`, and
+    the product of the upper bounds is `≤ 7.99` in exact rational arithmetic
+    (`scripts/gen_prod_ap.py`).
+  * `Prelim/SmallFsq.lean`: `f(X) = Q(⌊X⌋) + (X²/2) S(⌊X⌋)`.
+    * For `⌊X⌋ ≥ 200`: no multiple of `4` is squarefree, and the tail is at most `1/n`.
+    * For `⌊X⌋ < 200`: the bound is concave on each `[n, n+1]`, so both endpoints are checked by the
+      kernel; for `n = 2` the tail sum to `3000` is checked in blocks of 250.
+
 ## Candidates for proofs in Lean
 
 These axioms are finite, explicit and small:
-* `fsq_le` (squarefree `X ≤ 50` and a crude bound);
-* `H2_le` and the corrected `integral_H2_le` (piecewise `α + β/S` on `[1, 16)`);
-* `mertens_small` (`n ≤ 100`);
-* `prod_ap_le` (1229 primes).
+* `H2_le` and the corrected `integral_H2_le` (piecewise `α + β/S` on `[1, 16)`).
+
+The checks over large ranges (`10⁸`–`10¹⁰`) are beyond what the kernel can evaluate. A kernel
+check handles about `10⁵` simple steps per declaration, and `Nat.primesBelow 10⁴` already runs out
+of memory. They would need `native_decide`, which means trusting Lean's compiler.

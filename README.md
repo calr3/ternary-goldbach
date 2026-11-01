@@ -7,15 +7,14 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 31 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 28 explicitly stated
 axioms besides Lean's standard three. They are:
-* 16 finite computations of our own;
+* 14 finite computations of our own;
 * 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms);
-* 8 numerical results of [B]:
-  * three of them (`fsq_le`, `H2_le` and our corrected (5.36)) are re-checked rigorously by our
-    scripts;
+* 7 numerical results of [B]:
+  * two of them (`H2_le` and our corrected (5.36)) are re-checked rigorously by our scripts;
   * four ((B.6), (B.11), (9.94), and (5.31) on its computed range) are re-checked by float
     computations;
   * the rest rests on [B]: Prop 12.2.4, which uses Ramaré's explicit estimate, and the analytic
@@ -57,24 +56,23 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.K_pieces,
  TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.buthe_theta,
- TernaryGoldbach.Prelim.fsq_le,
  TernaryGoldbach.Prelim.liouville_small,
  TernaryGoldbach.Prelim.logsq_small,
  TernaryGoldbach.Prelim.mertens_lower_small,
  TernaryGoldbach.Prelim.mertens_point,
  TernaryGoldbach.Prelim.mertens_product_small,
- TernaryGoldbach.Prelim.mertens_small,
  TernaryGoldbach.Prelim.moebius_sqrt_small,
  TernaryGoldbach.Prelim.nonprime_small,
  TernaryGoldbach.Prelim.MV.GS_N0,
  TernaryGoldbach.Prelim.MV.lemma7_numeric,
- TernaryGoldbach.Prelim.MV.lemma8_numeric,
- TernaryGoldbach.Prelim.MV.prod_ap_le]
+ TernaryGoldbach.Prelim.MV.lemma8_numeric]
 ```
 
 Beyond these axioms, the trust base is the Lean kernel and Mathlib. The development uses no
-`native_decide`. The primality certificates in `PrattPrime.lean` and the small-range checks of `ψ`
-in `Prelim/SmallPsi.lean` are evaluated by the kernel.
+`native_decide`. The kernel itself evaluates the computations that replace former axioms:
+* the primality certificates in `PrattPrime.lean`;
+* the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean` and
+  `SmallFsq.lean`.
 
 ## How the proof is organized
 

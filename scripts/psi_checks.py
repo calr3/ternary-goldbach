@@ -14,6 +14,7 @@ Usage: python3 scripts/psi_checks.py   (needs numpy, mpmath; a few seconds, < 20
 
 NOTE (2026-11-01): psi_small is no longer an axiom (kernel-checked for n <= 586 in
 Prelim/SmallPsi.lean, Büthe's bound above); the other checks here still back axioms.
+mertens_small is no longer an axiom either (Prelim/SmallMertens.lean).
 """
 import math
 import numpy as np

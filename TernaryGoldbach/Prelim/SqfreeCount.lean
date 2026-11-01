@@ -1,4 +1,5 @@
 import Mathlib
+import TernaryGoldbach.Prelim.SmallFsq
 
 /-!
 # Squarefree integers coprime to `P` in an interval [B, proof of Lemma 5.1.1]
@@ -226,11 +227,9 @@ noncomputable def fsq (X : ℝ) : ℝ :=
   ∑' m : ℕ, if Squarefree m ∧ m ≠ 0 then (if (m : ℝ) ≤ X then 1 else X ^ 2 / (2 * (m : ℝ) ^ 2))
     else 0
 
-/-- **Numerical axiom** [B, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. The book: `f(X)/X` has local
-maxima only at squarefree integers, so it suffices to check `X` up to a constant, beyond which the
-crude bound via `{m sq-free} ⊂ {m : 4 ∤ m}` gives `f(X)/X < 1.26981`. (The value at `X = 1` is
-`1 + (ζ(2)/ζ(4) - 1)/2 = 1.2599…`.) -/
-axiom fsq_le {X : ℝ} (hX : 0 ≤ X) : fsq X ≤ 1.27 * X
+/-- [B, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. Proved in `Prelim/SmallFsq.lean` (kernel-checked
+numerics for `⌊X⌋ < 200`, an elementary bound above); the maximum is `f(2)/2 = 15/π² − 1/4 = 1.26982…`. -/
+theorem fsq_le {X : ℝ} (hX : 0 ≤ X) : fsq X ≤ 1.27 * X := Small.fsq_le' hX
 
 theorem summable_fsq_term (X : ℝ) :
     Summable (fun m : ℕ => if Squarefree m ∧ m ≠ 0 then

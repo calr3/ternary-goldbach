@@ -1,4 +1,5 @@
 import TernaryGoldbach.Prelim.MVLemma8
+import TernaryGoldbach.Prelim.SmallProdAp
 
 /-!
 # [MV73, Lemma 7]: `G(r) = ∑_{s ≤ r} μ(s)²/φ(s) ≥ log r + 1.07` for `r ≥ 6`
@@ -202,9 +203,10 @@ theorem tsum_fR_prime_pow {p : ℕ} (hp : p.Prime) : ∑' e, fR (p ^ e) = 1 + ap
   field_simp
   ring
 
-/-- **Numerical axiom** (`scripts/mv_lemma8_check.py`; value `7.98552`):
-`∏_{p < 10⁴} (1 + (p^{−2/3} + p^{−1/3})/(p − 1)) ≤ 7.99`. -/
-axiom prod_ap_le : ∏ p ∈ Nat.primesBelow 10000, (1 + ap p) ≤ 7.99
+/-- `∏_{p < 10⁴} (1 + (p^{−2/3} + p^{−1/3})/(p − 1)) ≤ 7.99` (value `7.98552`; kernel-checked,
+`Prelim/SmallProdAp.lean`). -/
+theorem prod_ap_le : ∏ p ∈ Nat.primesBelow 10000, (1 + ap p) ≤ 7.99 := by
+  unfold ap; exact Small.prod_ap_le'
 
 /-- `∑_{P₀ ≤ n < M} n^{−s} ≤ (P₀ − 1)^{1−s}/(s − 1)`. -/
 theorem sum_rpow_neg_le {s : ℝ} (hs : 1 < s) {P0 : ℕ} (hP0 : 2 ≤ P0) (M : ℕ) :

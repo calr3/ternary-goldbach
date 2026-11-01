@@ -192,6 +192,14 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     * the Type I hypotheses `V ≥ 2.5·10⁷` (the actual `V ≥ 2.7·10⁷`);
     * `F_large` from `2·10⁸`, with `mertens_product_small` re-run to `2·10⁸`.
   * The unused `LambdaMuExtra` axioms were re-checked on their extended ranges.
+* Step 3: `mertens_small`, `prod_ap_le` and `fsq_le` proved, with the kernel doing the numerics:
+  * `SmallMertens`: per-prime upper bounds on log p, per-`n` lower bounds on log n, and a rational
+    check for each `n ≤ 100`.
+  * `SmallProdAp`: a 1229-entry prime table checked in chunks of 100 entries; the completeness scan is
+    split into ten ranges of 1000.
+  * `SmallFsq`: endpoint checks in blocks of 4 values of `n`; for `n = 2` the 3000-term tail is checked
+    in 12 blocks.
+  ternary_goldbach now depends on 28 axioms (14 our own, 7 published, 7 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

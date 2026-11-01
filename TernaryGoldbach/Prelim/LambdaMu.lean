@@ -2,6 +2,7 @@ import Mathlib
 import TernaryGoldbach.Prelim.MoebiusCoprime
 import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.SmallPsi
+import TernaryGoldbach.Prelim.SmallMertens
 
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [B, §2.5]
@@ -38,9 +39,10 @@ namespace TernaryGoldbach.Prelim
 axiom nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 10 ^ 12) :
     ∑ m ∈ Icc 1 n, (if m.Prime then 0 else (Λ m : ℝ)) < 1.4262 * √n
 
-/-- **Numerical axiom** (`scripts/psi_checks.py`): `∑_{m ≤ n} Λ(m)/m ≤ log n` for `1 ≤ n ≤ 100`. -/
-axiom mertens_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 100) :
-    ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m ≤ Real.log n
+/-- `∑_{m ≤ n} Λ(m)/m ≤ log n` for `1 ≤ n ≤ 100` (kernel-checked, `Prelim/SmallMertens.lean`). -/
+theorem mertens_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 100) :
+    ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m ≤ Real.log n :=
+  Small.mertens_small' h1 h
 
 /-- **Numerical axiom** (`scripts/psi_checks.py`; minimum margin `0.0141` at `n = 6`):
 `∑_{m ≤ n} Λ(m)/m ≥ log(n+1) − log(3/√2)` for `3 ≤ n ≤ 10⁶` (at `n = 2` this is an equality,
