@@ -40,6 +40,15 @@ rotation bounds; `ρ = 0` contributes `|G(0)| ≤ 1`. (b) explicit bound for the
 `|z−ρ| ≥ 1/2`, now polynomial). (c) `‖S‖ ≤ E_new x`. (d) `q = 1` (ζ: pole at 1 gives `G(1)x = η̂(−δ)x`; needs
 ζ versions of LGrowth/Landau/explicit formula). (e) restate `prop_9_3_2` with `E_new`; redo `Cor933.err932_le_Er`,
 `Cor713` numerics, check `ArcCharsStar`, `BaseGap*`, (14.27). Then Props 9.4.2/9.5.1 (`η₊`) and Dusart.
+**Prop 9.3.2 for `q ≥ 2` DONE** (`Explicit/LineZeros`, `ZeroSumBound`, `ExplicitBound`, `MajorArcs/Prop932`):
+`|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [B]'s constants) for
+`q = 1`, proved for `q ≥ 2`. Cor 9.3.3 averages either error (`err933N`); Cor 7.1.3 restated as
+`|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)`, `y ≥ 10²⁵` (E₁ ≤ 3.42·10⁶/√q, E₂ ≤ 2·10⁻¹⁸, E₀ ≤ 15300, V ≤ 2.1·10¹⁶);
+ArcCharsStar `1.35e-7, 1.21e-7 → 1.49e-6`, resid_star `9.9e-14 → 1.34e-11`, MajorTotal `3.15e-7 → 3.67e-6`
+(14.27 still 1.049), BaseGap2 still `≤ 0.012 y` (0.01190). **Next**: `q = 1` (ζ): `f(s) = (s−1)ζ(s)` entire;
+growth (right: `ζ(s) = s/(s−1) − s∫{t}t^{−s−1}`; left: `riemannZeta_one_sub`), Landau/Jensen for `f`,
+rectangle identity with `∮ ζ'/ζ·h = ∮ f'/f·h − 2πi h(1)`, Mellin inversion (`LSeries_vonMangoldt_eq_deriv_
+riemannZeta_div`), the residue `G_δ(1)x = η̂(−δ)x`; zeros in the rectangle lie in `0 < ℜ < 1`. Then 9.4.2/9.5.1.
 *Constraint found:* the `|γ| ≤ T₀` zero sum must stay `O(√T₀ log qT₀)` (Lemma 9.1.4's Cauchy–Schwarz +
 Mellin–Plancherel `∫|G(1/2+it)|²dt = 2π|η|₂²`); the trivial `|G(1/2+it)| ≤ |η/√t|₁` gives `O(T₀ log)`, i.e.
 relative errors `~10⁻³` in Thm 7.1.4, which breaks (14.7) (needs `E ≲ 6·10⁻⁵`). Plan: windows of height 10

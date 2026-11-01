@@ -52,10 +52,14 @@ See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book 
 
 The 4 `sorry`s that `ternary_goldbach` depends on are:
 
-* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2], [B, Prop 9.4.2] and
-  [B, Prop 9.5.1] (`MajorArcs/GRH.lean`, `MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated
-  *conditionally* on GRH up to a height `T₀`. From them, Platt's GRH verification (numerical axioms
-  `platt_odd`, `platt_even`) and the value (9.94) (numerical axiom), [B, Cor 7.1.3], [B, Thm 7.1.4] and
+* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2] *for `q = 1`*
+  (`prop_9_3_2_one`, the case of `ζ`), [B, Prop 9.4.2] and [B, Prop 9.5.1] (`MajorArcs/GRH.lean`,
+  `MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated *conditionally* on GRH up to a height
+  `T₀`. [B, Prop 9.3.2] for primitive characters of modulus `q ≥ 2` is **proved**
+  (`MajorArcs/Prop932.lean`, from the explicit formula in `Explicit/`), with weaker constants than [B]'s:
+  zeros are counted with Jensen's formula in windows, not with an explicit `N(T)`. From these, Platt's GRH
+  verification (numerical axioms `platt_odd`, `platt_even`) and the value (9.94) (numerical axiom),
+  [B, Cor 7.1.3] (with `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)` for `y ≥ 10²⁵`), [B, Thm 7.1.4] and
   [B, Prop 7.1.5] are proved; [B, (14.7)] (the `ℓ²` norm over the major arcs, Lemma 10.3.1 + §14.1) is
   proved from Thm 7.1.4 in `MajorArcs/L2Major.lean`, with one more numerical axiom
   (`Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`); [B, (14.27)] (the major-arc total, Chs. 10–11 and
@@ -172,7 +176,8 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (Dusart, two numerical axioms) |
 | `Prelim/Liouville.lean` | Ramaré's identities (Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2): `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` by multiplicativity, and their `1/n`-weighted partial-sum forms | ✅ |
 | `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, Dusart) |
-| `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms, [B, Prop 9.3.2] and [B, Prop 9.5.1] cited *conditionally on GRH up to `T₀`*; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`, same constants), **[B, Prop 7.1.5] proved** (`T₀ = 440`); `Thm714.lean`: **[B, Thm 7.1.4] proved** from the cited [B, Prop 9.4.2] (`q = 1`: `4.78·10⁻¹¹ + 251400/√x`; odd/even `q`: `1.35·10⁻¹⁴ + 1.62·10⁻¹⁰/q + (499900/√q + 52)/√x`, [B]'s constants rounded up slightly) | ✅ (three cited, three numerical axioms) |
+| `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms, [B, Prop 9.3.2] for `q = 1` and [B, Prop 9.5.1] cited *conditionally on GRH up to `T₀`*; `Prop932.lean`: **[B, Prop 9.3.2] for `q ≥ 2` proved** from `Explicit/ExplicitBound.lean`; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`; `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)`, `y ≥ 10²⁵`), **[B, Prop 7.1.5] proved** (`T₀ = 440`); `Thm714.lean`: **[B, Thm 7.1.4] proved** from the cited [B, Prop 9.4.2] (`q = 1`: `4.78·10⁻¹¹ + 251400/√x`; odd/even `q`: `1.35·10⁻¹⁴ + 1.62·10⁻¹⁰/q + (499900/√q + 52)/√x`, [B]'s constants rounded up slightly) | ✅ (three cited, three numerical axioms) |
+| `Explicit/*.lean` | The explicit formula for `L(s, χ)`, `χ` primitive `≠ 1`, smoothing `t²e^{−t²/2}e(δt)`: Mellin rotation bounds ([B, Ch. 8], `MellinRotate`, `GMellin`), growth of `L` (`LGrowth`, `LGrowthLeft`, `LGrowthPoly`: polynomial on `ℜs ≤ 1/4` via `|Γ(x+iy)| ≤ e^{−φ|y|}Γ(x)/cos^xφ`, `GammaBounds`), Jensen and Landau (`ZeroCount`, `Landau`), the residue theorem on rectangles (`RectResidue`), `explicit_formula` (`ExplicitFormula`), Mellin–Plancherel for `G_δ` and `G_δ'` on `ℜs = 1/2` (`MellinPlancherel`), the sum over zeros (`LineZeros`: Sobolev windows; `ZeroSums`, `ZeroSumBound`), and `|S_χ(δ, x)| ≤ E₀ + E₁√x + E₂x + V/(2π√x)` (`ExplicitBound`) | ✅ (no `sorry`) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |

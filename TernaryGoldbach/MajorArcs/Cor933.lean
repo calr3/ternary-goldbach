@@ -1,4 +1,4 @@
-import TernaryGoldbach.MajorArcs.GRH
+import TernaryGoldbach.MajorArcs.Prop932
 import TernaryGoldbach.MajorArcs.Eta2Moments
 
 /-!
@@ -301,6 +301,105 @@ theorem integral_eta2_Er_le {q : ℕ} (hq : 1 ≤ q) {T0 : ℝ} (hT0 : 50 ≤ T0
   linarith
 
 
+/-! ## The error for `q ≥ 2` -/
+
+open TernaryGoldbach.Explicit (E0b E1b E2b Vb)
+
+/-- `err_new(q, T₀, δr, rx)` against the moments. -/
+noncomputable def ErNew (q : ℕ) (T0 δ x r : ℝ) : ℝ :=
+  E2b q T0 δ + E1b q T0 / √x * (1 / √r) + E0b q / x * (1 / r) +
+    Vb q δ / (2 * π * (x * √x)) * (1 / (r * √r))
+
+noncomputable def ErN (q : ℕ) (T0 δ x r : ℝ) : ℝ := if q = 1 then Er q T0 δ x r else ErNew q T0 δ x r
+
+theorem errNew_le_ErNew {q : ℕ} [NeZero q] {T0 δ : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {x r : ℝ}
+    (hx : 0 < x) (hr : 0 < r) (hr1 : r ≤ 1) : errNew q T0 (δ * r) (r * x) ≤ ErNew q T0 δ x r := by
+  unfold errNew ErNew
+  have hT00 : 0 < T0 := by linarith [le_max_right (10 * π * |δ|) 50]
+  have h10 : 10 * π * |δ| ≤ T0 := (le_max_left _ _).trans hT0
+  have hE2 := Explicit.E2b_mono (N := q) hT00 hr hr1 h10
+  have hV := Explicit.Vb_mono (N := q) (δ := δ) hr hr1
+  have hsr : √(r * x) = √r * √x := Real.sqrt_mul hr.le x
+  have hsr0 : 0 < √r := Real.sqrt_pos.2 hr
+  have hsx0 : 0 < √x := Real.sqrt_pos.2 hx
+  rw [hsr]
+  have e1 : E1b q T0 / (√r * √x) = E1b q T0 / √x * (1 / √r) := by field_simp
+  have e2 : E0b q / (r * x) = E0b q / x * (1 / r) := by field_simp
+  have e3 : Vb q (δ * r) / (2 * π * (r * x * (√r * √x))) ≤
+      Vb q δ / (2 * π * (x * √x)) * (1 / (r * √r)) := by
+    rw [show Vb q δ / (2 * π * (x * √x)) * (1 / (r * √r)) = Vb q δ / (2 * π * (r * x * (√r * √x))) by
+      field_simp]
+    exact div_le_div_of_nonneg_right hV (by positivity)
+  rw [e1, e2]; linarith
+
+theorem err932N_le_ErN {q : ℕ} [NeZero q] {T0 δ : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {x r : ℝ}
+    (hx : 0 < x) (hr : 0 < r) (hr1 : r ≤ 1) : err932N q T0 (δ * r) (r * x) ≤ ErN q T0 δ x r := by
+  unfold err932N ErN
+  split_ifs with h
+  · exact err932_le_Er (by omega) ((le_max_right _ _).trans hT0) hx hr hr1
+  · exact errNew_le_ErNew hT0 hx hr hr1
+
+theorem continuousOn_ErN (q : ℕ) (T0 δ x : ℝ) : ContinuousOn (ErN q T0 δ x) (Icc (1 / 4) 1) := by
+  unfold ErN
+  split_ifs
+  · exact continuousOn_Er q T0 δ x
+  · unfold ErNew
+    exact ((continuousOn_const.add (continuousOn_const.mul (contOn_inv_sqrt (by norm_num)))).add
+      (continuousOn_const.mul (contOn_inv (by norm_num)))).add
+      (continuousOn_const.mul (contOn_inv_mul_sqrt (by norm_num)))
+
+/-- The averaged error for `q ≥ 2`. -/
+noncomputable def err933New (q : ℕ) (T0 δ x : ℝ) : ℝ :=
+  E2b q T0 δ + 1.37259 * E1b q T0 / √x + 1.92182 * E0b q / x +
+    2.74517 * Vb q δ / (2 * π * (x * √x))
+
+/-- The error of `cor_9_3_3`: [B]'s for `q = 1`, ours for `q ≥ 2`. -/
+noncomputable def err933N (q : ℕ) (T0 δ x : ℝ) : ℝ :=
+  if q = 1 then err933 q T0 δ x else err933New q T0 δ x
+
+theorem integral_eta2_ErNew_le (q : ℕ) [NeZero q] (T0 δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    ∫ r in Ioi 0, eta2 r * ErNew q T0 δ x r ≤ err933New q T0 δ x := by
+  set c0 := E2b q T0 δ
+  set c1 := E1b q T0 / √x
+  set c2 := E0b q / x
+  set c3 := Vb q δ / (2 * π * (x * √x))
+  have hI0 := integrableOn_eta2_mul (g := fun _ => (1 : ℝ)) continuousOn_const
+  have hI1 := integrableOn_eta2_mul (g := fun r => 1 / √r) (contOn_inv_sqrt (by norm_num))
+  have hI2 := integrableOn_eta2_mul (g := fun r => 1 / r) (contOn_inv (by norm_num))
+  have hI3 := integrableOn_eta2_mul (g := fun r => 1 / (r * √r)) (contOn_inv_mul_sqrt (by norm_num))
+  have e : (fun r => eta2 r * ErNew q T0 δ x r) = fun r =>
+      ((c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r))) + c2 * (eta2 r * (1 / r))) +
+        c3 * (eta2 r * (1 / (r * √r))) := by
+    funext r; unfold ErNew; ring
+  have hA : IntegrableOn (fun r => c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r))) (Ioi 0) :=
+    (hI0.const_mul c0).add (hI1.const_mul c1)
+  have hB : IntegrableOn (fun r => c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r)) +
+      c2 * (eta2 r * (1 / r))) (Ioi 0) := hA.add (hI2.const_mul c2)
+  rw [e, integral_add hB (hI3.const_mul c3), integral_add hA (hI2.const_mul c2),
+    integral_add (hI0.const_mul c0) (hI1.const_mul c1), integral_const_mul, integral_const_mul,
+    integral_const_mul, integral_const_mul]
+  simp only [mul_one]
+  rw [moment0]
+  have m1 := moment_half
+  have m2 := moment_one
+  have m3 := moment_3half
+  have hc1 : 0 ≤ c1 := div_nonneg (Explicit.E1b_nonneg q T0) (Real.sqrt_nonneg _)
+  have hc2 : 0 ≤ c2 := div_nonneg (Explicit.E0b_nonneg q) hx.le
+  have hc3 : 0 ≤ c3 := div_nonneg (Explicit.Vb_nonneg q δ) (by positivity)
+  have := mul_le_mul_of_nonneg_left m1 hc1
+  have := mul_le_mul_of_nonneg_left m2 hc2
+  have := mul_le_mul_of_nonneg_left m3 hc3
+  have hfin : c0 * 1 + c1 * 1.37259 + c2 * 1.92182 + c3 * 2.74517 = err933New q T0 δ x := by
+    simp only [c0, c1, c2, c3]; unfold err933New; ring
+  linarith
+
+theorem integral_eta2_ErN_le {q : ℕ} [NeZero q] {T0 : ℝ} (hT0 : 50 ≤ T0) (δ : ℝ) {x : ℝ}
+    (hx : 0 < x) : ∫ r in Ioi 0, eta2 r * ErN q T0 δ x r ≤ err933N q T0 δ x := by
+  unfold ErN err933N
+  split_ifs with h
+  · exact integral_eta2_Er_le (by omega) hT0 hx
+  · exact integral_eta2_ErNew_le q T0 δ hx
+
 theorem continuous_phi : Continuous phi := by
   unfold TernaryGoldbach.Helfgott.phi; fun_prop
 
@@ -312,13 +411,14 @@ theorem eta2_div_nonneg (r : ℝ) : 0 ≤ eta2 r / r := by
 theorem mem_Ioo_of_eta2_ne {r : ℝ} (h : eta2 r ≠ 0) : r ∈ Ioo (1 / 4 : ℝ) 1 := by
   by_contra h'; exact h (TernaryGoldbach.Helfgott.eta2_eq_zero h')
 
-/-- **[B, Cor 9.3.3]**, from [B, Prop 9.3.2] by averaging over `η₂` (9.59). Let `η_* = η₂ *_M η`,
+/-- **[B, Cor 9.3.3]** (error `err933N`: [B]'s for `q = 1`, ours for `q ≥ 2`), from [B, Prop 9.3.2]
+by averaging over `η₂` (9.59). Let `η_* = η₂ *_M η`,
 `η(t) = t² e^{-t²/2}`, `x ≥ 4`, `χ` primitive mod `q`, GRH for `L(s, χ)` up to `T₀ ≥ max(10π|δ|, 50)`.
 Then `Σ Λ(n) χ(n) e(δn/x) η_*(n/x) = [q = 1] η̂_*(-δ) x + O*(err933) x`. -/
 theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hχ : χ.IsPrimitive) {T0 : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) (hG : GRHUpTo χ T0) :
     ‖Schar χ (fun n => ((Λ n * etaU (n / x) : ℝ) : ℂ)) (δ / x) -
-        (if q = 1 then 𝓕 (fun u => (etaU u : ℂ)) (-δ) * x else 0)‖ ≤ err933 q T0 δ x * x := by
+        (if q = 1 then 𝓕 (fun u => (etaU u : ℂ)) (-δ) * x else 0)‖ ≤ err933N q T0 δ x * x := by
   have hx0 : 0 < x := by linarith
   have hq1 : 1 ≤ q := Nat.pos_of_ne_zero (NeZero.ne q)
   have hT50 : 50 ≤ T0 := (le_max_right _ _).trans hT0
@@ -477,9 +577,9 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
     · rw [if_neg h1]
       simp only [hGdef, hM, if_neg h1, mul_zero, integral_zero]
   -- the bound
-  have hB : Integrable (fun r => x * (eta2 r * Er q T0 δ x r)) μ :=
-    (integrableOn_eta2_mul (continuousOn_Er q T0 δ x)).const_mul x
-  have hpt : ∀ᵐ r ∂μ, ‖f r‖ ≤ x * (eta2 r * Er q T0 δ x r) := by
+  have hB : Integrable (fun r => x * (eta2 r * ErN q T0 δ x r)) μ :=
+    (integrableOn_eta2_mul (continuousOn_ErN q T0 δ x)).const_mul x
+  have hpt : ∀ᵐ r ∂μ, ‖f r‖ ≤ x * (eta2 r * ErN q T0 δ x r) := by
     refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun r (hr : 0 < r) => ?_)
     by_cases hη : eta2 r = 0
     · simp [hf, hw, hη]
@@ -493,24 +593,24 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
           _ = 10 * π * |δ| := mul_one _
       have hp := prop_9_3_2 (x := r * x) (by nlinarith) (δ * r) χ hχ hT0' hG
       rw [show δ * r / (r * x) = δ / x by field_simp] at hp
-      have hE := err932_le_Er hq1 hT50 (δ := δ) hx0 hr hr1.le
+      have hE := err932N_le_ErN (q := q) hT0 hx0 hr hr1.le
       show ‖((eta2 r / r : ℝ) : ℂ) * (A r - M r)‖ ≤ _
       rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (eta2_div_nonneg r)]
       have hw0 := eta2_div_nonneg r
       have he0 := eta2_nonneg r
-      calc eta2 r / r * ‖A r - M r‖ ≤ eta2 r / r * (err932 q T0 (δ * r) (r * x) * (r * x)) :=
+      calc eta2 r / r * ‖A r - M r‖ ≤ eta2 r / r * (err932N q T0 (δ * r) (r * x) * (r * x)) :=
             mul_le_mul_of_nonneg_left hp hw0
-        _ = x * (eta2 r * err932 q T0 (δ * r) (r * x)) := by field_simp
-        _ ≤ x * (eta2 r * Er q T0 δ x r) := by gcongr
+        _ = x * (eta2 r * err932N q T0 (δ * r) (r * x)) := by field_simp
+        _ ≤ x * (eta2 r * ErN q T0 δ x r) := by gcongr
   have key : Schar χ (fun n => ((Λ n * etaU (n / x) : ℝ) : ℂ)) (δ / x) -
       (if q = 1 then 𝓕 (fun u => (etaU u : ℂ)) (-δ) * x else 0) = ∫ r, f r ∂μ := by
     rw [hSchar, hIG]; ring
   rw [key]
   calc ‖∫ r, f r ∂μ‖ ≤ ∫ r, ‖f r‖ ∂μ := norm_integral_le_integral_norm _
-    _ ≤ ∫ r, x * (eta2 r * Er q T0 δ x r) ∂μ :=
+    _ ≤ ∫ r, x * (eta2 r * ErN q T0 δ x r) ∂μ :=
         integral_mono_of_nonneg (Eventually.of_forall fun r => norm_nonneg _) hB hpt
-    _ = x * ∫ r, eta2 r * Er q T0 δ x r ∂μ := integral_const_mul _ _
-    _ ≤ x * err933 q T0 δ x := mul_le_mul_of_nonneg_left (integral_eta2_Er_le hq1 hT50 hx0) hx0.le
-    _ = err933 q T0 δ x * x := mul_comm _ _
+    _ = x * ∫ r, eta2 r * ErN q T0 δ x r ∂μ := integral_const_mul _ _
+    _ ≤ x * err933N q T0 δ x := mul_le_mul_of_nonneg_left (integral_eta2_ErN_le hT50 δ hx0) hx0.le
+    _ = err933N q T0 δ x * x := mul_comm _ _
 
 end TernaryGoldbach.MajorArcs

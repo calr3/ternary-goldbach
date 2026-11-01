@@ -277,7 +277,7 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
   rw [mul_one] at hper
   rw [S_etaStar_eq_expTsum hx0, ← hy_def, ← hc_def, hα, hper]
   -- the character bound
-  set E₁ : ℝ := 2.485e-19 + 381576 / √y
+  set E₁ : ℝ := 1e-17 + 4.7e6 / √y
   set K : ℕ := ⌈2 * Real.log y / Real.log 2⌉₊ + 1
   have hl2 : 0.693 < Real.log 2 := Real.log_two_gt_d9.trans' (by norm_num)
   have hK : y ^ 2 ≤ 2 ^ K := by
@@ -314,11 +314,10 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
     rw [hif]
     refine key.trans (mul_le_mul_of_nonneg_right ?_ hy0.le)
     have hsd : 1 ≤ √(d : ℝ) := by rw [Real.le_sqrt (by norm_num) hd0.le]; exact_mod_cast hd1
-    have : 381500 / √(d : ℝ) ≤ 381500 := div_le_self (by norm_num) hsd
+    have : 4.7e6 / √(d : ℝ) ≤ 4.7e6 := div_le_self (by norm_num) hsd
     have hsy : 0 < √y := Real.sqrt_pos.2 hy0
     simp only [E₁]
-    have : (381500 / √(d : ℝ) + 76) / √y ≤ 381576 / √y :=
-      div_le_div_of_nonneg_right (by linarith) hsy.le
+    have : 4.7e6 / √(d : ℝ) / √y ≤ 4.7e6 / √y := div_le_div_of_nonneg_right this hsy.le
     linarith
   refine (norm_expTsum_le_of_chars hcs (δ / y) hb hD hchar).trans ?_
   -- numerics
@@ -362,9 +361,9 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
     nlinarith
   have hsq : √(q : ℝ) ≤ 548 := by rw [Real.sqrt_le_left (by norm_num)]; linarith
   have hsy : 3.16e12 ≤ √y := by rw [Real.le_sqrt (by norm_num) hy0.le]; linarith
-  have hE₁ : E₁ ≤ 1.2077e-7 := by
+  have hE₁ : E₁ ≤ 1.4874e-6 := by
     simp only [E₁]
-    have : 381576 / √y ≤ 381576 / 3.16e12 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsy
+    have : 4.7e6 / √y ≤ 4.7e6 / 3.16e12 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsy
     norm_num at this ⊢; linarith
   -- `D = 6.2 K log q + 1` is negligible
   have hlogy : Real.log y ≤ 2 * √y := by
@@ -396,7 +395,7 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
     linarith [hlogy, hsyy, hy]
   have hE0 : 0 ≤ E₁ := by simp only [E₁]; positivity
   have hD0 : 0 ≤ 6.2 * K * Real.log q + 1 := by positivity
-  have h3 : √(q : ℝ) * (E₁ * y + (6.2 * K * Real.log q + 1)) ≤ 548 * (1.2077e-7 * y + 2e-9 * y) :=
+  have h3 : √(q : ℝ) * (E₁ * y + (6.2 * K * Real.log q + 1)) ≤ 548 * (1.4874e-6 * y + 2e-9 * y) :=
     mul_le_mul hsq (by linarith [mul_le_mul_of_nonneg_right hE₁ hy0.le]) (by positivity) (by norm_num)
   linarith
 

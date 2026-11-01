@@ -258,11 +258,11 @@ theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     linarith
   nlinarith
 
-/-- **`η_*`**: `|S_{η_*}(b/q + β) − μ(q)/φ(q) η̂(−βy) y|² ≤ 9.9·10⁻¹⁴ y²` (`y = x/κ`) for each `b`. -/
+/-- **`η_*`**: `|S_{η_*}(b/q + β) − μ(q)/φ(q) η̂(−βy) y|² ≤ 1.34·10⁻¹¹ y²` (`y = x/κ`) for each `b`. -/
 theorem resid_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
     (hβ : |β * x| ≤ 1200000 / qt q) {b : ℕ} (hb : b ∈ Bset q) :
     ‖S etaStar x ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient *
-        (𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ))‖ ^ 2 ≤ 9.9e-14 * (x / κ) ^ 2 := by
+        (𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ))‖ ^ 2 ≤ 1.34e-11 * (x / κ) ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
   haveI : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
@@ -275,7 +275,7 @@ theorem resid_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     by_contra h; exact hn (by simp [a, TernaryGoldbach.MinorArcs.coprimePart, h])
   obtain ⟨⟨-, hup⟩, hpr⟩ := arc_chars_star hx hq1 hqt' hβ
   have hE : ∑ b ∈ Bset q, ‖expTsum a ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient * expTsum a β‖ ^ 2 ≤
-      (1.35e-7 * y) ^ 2 := by
+      (1.49e-6 * y) ^ 2 := by
     rw [sum_Bset_sq_sub_principal ha hcop]; linarith
   have h := sum_residual_le (T := S etaStar x) (S' := expTsum a) (m := (μ q : ℂ) / q.totient)
     (A := 𝓕 (fun u => (etaU u : ℂ)) (-(β * y)) * ((y : ℝ) : ℂ)) (q := q) (β := β) (D := 1e-12 * y)
@@ -288,8 +288,8 @@ theorem resid_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
   refine hsingle.trans (h.trans ?_)
   have h1 : (q.totient : ℝ) * (1e-12 * y) ^ 2 ≤ 300000 * (1e-12 * y) ^ 2 :=
     mul_le_mul_of_nonneg_right hφ.2 (by positivity)
-  have h2 : (q.totient : ℝ) * ‖(μ q : ℂ) / q.totient‖ ^ 2 * (1.21e-7 * y) ^ 2 ≤ (1.21e-7 * y) ^ 2 := by
-    have := mul_le_mul_of_nonneg_right hm (by positivity : (0:ℝ) ≤ (1.21e-7 * y) ^ 2)
+  have h2 : (q.totient : ℝ) * ‖(μ q : ℂ) / q.totient‖ ^ 2 * (1.49e-6 * y) ^ 2 ≤ (1.49e-6 * y) ^ 2 := by
+    have := mul_le_mul_of_nonneg_right hm (by positivity : (0:ℝ) ≤ (1.49e-6 * y) ^ 2)
     linarith
   nlinarith
 
@@ -758,7 +758,7 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
     (hβ : |β * x| ≤ 1200000 / qt q) :
     ‖∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) -
         (coefN N q : ℂ) * ((𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β)))‖ ≤
-      (3.15e-7 * (x / κ) + 4.63e-8 * x / 9) * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
+      (3.67e-6 * (x / κ) + 4.63e-8 * x / 9) * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
         9 * 4.63e-8 * x / 2 * mPhi2 q * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 +
         4.63e-8 * x / 9 * mPhi q * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
@@ -771,10 +771,10 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
   have hAs : Au = 𝓕 etaSC (-(β * x)) * x := As_eq β
   have hρ : ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - m * Ap‖ ^ 2 ≤ (4.63e-8 * x) ^ 2 := by
     refine (resid_plus hx hq hβ).trans ?_; nlinarith
-  have hU : ∀ b ∈ Bset q, ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ≤ 3.15e-7 * (x / κ) := by
+  have hU : ∀ b ∈ Bset q, ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ≤ 3.67e-6 * (x / κ) := by
     intro b hb
     have h := resid_star hx hq hβ hb
-    have h2 : ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ^ 2 ≤ (3.15e-7 * (x / κ)) ^ 2 := by
+    have h2 : ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ^ 2 ≤ (3.67e-6 * (x / κ)) ^ 2 := by
       refine h.trans ?_; nlinarith
     exact (pow_le_pow_iff_left₀ (norm_nonneg _) (by positivity) two_ne_zero).1 h2
   have heb : ∀ b ∈ Bset q, ‖e (-(N * ((b : ℝ) / q + β)))‖ = 1 := fun b _ => TernaryGoldbach.norm_e _
@@ -804,7 +804,7 @@ set_option maxHeartbeats 1000000 in
 theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
     ‖(∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y) -
         (coefN N q : ℂ) * ((x : ℂ) ^ 2 * (Cmain (N / x) : ℂ))‖ ≤
-      (3.15e-7 * (x / κ) + 4.63e-8 * x / 9) * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+      (3.67e-6 * (x / κ) + 4.63e-8 * x / 9) * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
         9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
         4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2) := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
@@ -855,7 +855,7 @@ theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q �
       integrable_etaUC).comp (by fun_prop)).mul continuous_const).norm.pow 2
   have kP : Continuous fun β => ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 :=
     ((continuous_fourier_etaPC.comp (by fun_prop)).mul continuous_const).norm.pow 2
-  set k1 : ℝ := 3.15e-7 * (x / κ) + 4.63e-8 * x / 9
+  set k1 : ℝ := 3.67e-6 * (x / κ) + 4.63e-8 * x / 9
   set k2 : ℝ := 9 * 4.63e-8 * x / 2 * mPhi2 q
   set k3 : ℝ := 4.63e-8 * x / 9 * mPhi q
   have hInt : ‖∫ β in -w..w, (∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) - (coefN N q : ℂ) * Mn β)‖ ≤
@@ -985,7 +985,7 @@ theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
   rw [Complex.re_sum]
   -- each modulus
   have hlow : ∀ q ∈ Qset r₀, coefN N q * (x ^ 2 * Cmain (N / x)) -
-      ((3.15e-7 * (x / κ) + 4.63e-8 * x / 9) *
+      ((3.67e-6 * (x / κ) + 4.63e-8 * x / 9) *
           (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
         9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
         4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) ≤
@@ -1001,7 +1001,7 @@ theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
   refine le_trans ?_ (sum_le_sum hlow)
   rw [sum_sub_distrib, ← sum_mul]
   -- the error terms, summed
-  set k1 : ℝ := 3.15e-7 * (x / κ) + 4.63e-8 * x / 9
+  set k1 : ℝ := 3.67e-6 * (x / κ) + 4.63e-8 * x / 9
   set K2 : ℝ := 9 * 4.63e-8 * x / 2 * (7.78 * (x / κ)) + 2.03e-5 * x ^ 2
   set K3 : ℝ := 4.63e-8 * x / 9 * (0.640208 * x)
   have hEsum : ∑ q ∈ Qset r₀, (k1 * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +

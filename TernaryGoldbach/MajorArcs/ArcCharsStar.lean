@@ -109,9 +109,9 @@ theorem norm_S_star_sub_coprime_le {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 
   rw [S_etaStar_eq_cU hx0, ← expTsum_sub hc ha]
   exact (norm_expTsum_le_tsum (summable_sub_coprimePart_star hy0 q) α).trans (coprime_split_star hy hq1 hq)
 
-/-- `√c (err_{7.1.3}(c) y + 10⁻¹² y) ≤ 1.35·10⁻⁷ y` for `1 ≤ c ≤ 3·10⁵`, `y ≥ 10²⁵`. -/
+/-- `√c (err_{7.1.3}(c) y + 10⁻¹² y) ≤ 1.49·10⁻⁶ y` for `1 ≤ c ≤ 3·10⁵`, `y ≥ 10²⁵`. -/
 theorem err_scaled_le_star {y c : ℝ} (hy : 1e25 ≤ y) (hc1 : 1 ≤ c) (hc3 : c ≤ 300000) :
-    √c * ((2.485e-19 + (381500 / √c + 76) / √y) * y + 1e-12 * y) ≤ 1.35e-7 * y := by
+    √c * ((1e-17 + 4.7e6 / √c / √y) * y + 1e-12 * y) ≤ 1.49e-6 * y := by
   have hy0 : 0 < y := by linarith
   set s := √c with hs
   set r := √y with hr
@@ -123,19 +123,14 @@ theorem err_scaled_le_star {y c : ℝ} (hy : 1e25 ≤ y) (hc1 : 1 ≤ c) (hc3 : 
   have hr1 : 3.16e12 ≤ r := Real.le_sqrt_of_sq_le (by nlinarith)
   have hs0 : 0 < s := by linarith
   have hr0 : 0 < r := by linarith
-  have hsne : s ≠ 0 := hs0.ne'
-  have hrne : r ≠ 0 := hr0.ne'
-  have e : s * ((2.485e-19 + (381500 / s + 76) / r) * y + 1e-12 * y) =
-      r ^ 2 * (2.485e-19 * s + 1e-12 * s) + r * (381500 + 76 * s) := by
+  have e : s * ((1e-17 + 4.7e6 / s / r) * y + 1e-12 * y) = r ^ 2 * (s * (1e-17 + 1e-12)) + 4.7e6 * r := by
     rw [← hr2]; field_simp; ring
   rw [e, ← hr2]
-  have h2 : r * (381500 + 76 * s) ≤ r * 423148 := by
-    apply mul_le_mul_of_nonneg_left _ hr0.le; linarith
-  have h3 : r * 423148 ≤ r ^ 2 * (423148 / 3.16e12) := by
+  have h1 : 4.7e6 * r ≤ r ^ 2 * (4.7e6 / 3.16e12) := by
     rw [mul_div_assoc', le_div_iff₀ (by norm_num)]; nlinarith
-  have h4 : r ^ 2 * (2.485e-19 * s + 1e-12 * s) ≤ r ^ 2 * (2.485e-19 * 548 + 1e-12 * 548) := by
+  have h2 : r ^ 2 * (s * (1e-17 + 1e-12)) ≤ r ^ 2 * (548 * (1e-17 + 1e-12)) := by
     apply mul_le_mul_of_nonneg_left _ (by positivity); nlinarith
-  have h5 : (2.485e-19 * 548 + 1e-12 * 548 : ℝ) + 423148 / 3.16e12 ≤ 1.35e-7 := by norm_num
+  have h3 : (548 * (1e-17 + 1e-12) : ℝ) + 4.7e6 / 3.16e12 ≤ 1.49e-6 := by norm_num
   nlinarith [sq_nonneg r]
 
 set_option maxHeartbeats 1000000 in
@@ -146,16 +141,15 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
         ∑ b ∈ Bset q, ‖expTsum (coprimePart q (cU (x / κ))) ((b : ℝ) / q + β)‖ ^ 2 ∧
       ∑ b ∈ Bset q, ‖expTsum (coprimePart q (cU (x / κ))) ((b : ℝ) / q + β)‖ ^ 2 ≤
         (if Squarefree q then (1:ℝ) else 0) / q.totient * ‖expTsum (coprimePart q (cU (x / κ))) β‖ ^ 2 +
-          (1.35e-7 * (x / κ)) ^ 2) ∧
+          (1.49e-6 * (x / κ)) ^ 2) ∧
       ‖expTsum (coprimePart q (cU (x / κ))) β -
-        𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ≤ 1.21e-7 * (x / κ) := by
+        𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ≤ 1.49e-6 * (x / κ) := by
   haveI : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
   set y := x / κ with hy_def
   have hy : 1e25 ≤ y := by
     rw [hy_def, TernaryGoldbach.Helfgott.κ, le_div_iff₀ (by norm_num)]; linarith
   have hy0 : 0 < y := by linarith
-  have hy8 : (1e8 : ℝ) ≤ y := by linarith
   set a := coprimePart q (cU y) with ha_def
   have hc := summable_cU hy0
   have ha : Summable fun n => ‖a n‖ :=
@@ -183,7 +177,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
   have hδy : β * y / y = β := by field_simp
   -- the non-principal characters
   have hE : ∀ ψ : DirichletCharacter ℂ q, ψ ≠ 1 →
-      ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 1.35e-7 * y := by
+      ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 1.49e-6 * y := by
     intro ψ hψ
     set c' := ψ⁻¹.conductor with hc'
     haveI : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
@@ -212,14 +206,14 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
       rw [div_le_div_iff₀ hqt0 hc'pos]
       have : (c' : ℝ) ≤ qt q := hcr.trans (by exact_mod_cast hqq)
       nlinarith
-    have hT := cor_7_1_3' (y := y) hy8 (le_trans hc'le hq3) χ hχ hδ
+    have hT := cor_7_1_3' (y := y) hy (le_trans hc'le hq3) χ hχ hδ
     rw [if_neg hc'1, sub_zero, hδy] at hT
-    have hT' : ‖Schar χ (cU y) β‖ ≤ (2.485e-19 + (381500 / √(c' : ℝ) + 76) / √y) * y := hT
+    have hT' : ‖Schar χ (cU y) β‖ ≤ (1e-17 + 4.7e6 / √(c' : ℝ) / √y) * y := hT
     have hc'3r : (c' : ℝ) ≤ 300000 := hcr.trans (by exact_mod_cast hq3)
     calc ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖
-        ≤ √(c' : ℝ) * ((2.485e-19 + (381500 / √(c' : ℝ) + 76) / √y) * y + 1e-12 * y) :=
+        ≤ √(c' : ℝ) * ((1e-17 + 4.7e6 / √(c' : ℝ) / √y) * y + 1e-12 * y) :=
           mul_le_mul hτ (hS.trans (by linarith)) (norm_nonneg _) (Real.sqrt_nonneg _)
-      _ ≤ 1.35e-7 * y := err_scaled_le_star hy (by exact_mod_cast hc'0) hc'3r
+      _ ≤ 1.49e-6 * y := err_scaled_le_star hy (by exact_mod_cast hc'0) hc'3r
   refine ⟨?_, ?_⟩
   · have hsplit := sum_units_sq_bounds ha hcop β hE
     rw [sum_Bset_eq_units (fun t => ‖expTsum a t‖ ^ 2) β]
@@ -228,14 +222,14 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
     have hδ1 : |β * y| ≤ 4 * 300000 / (1 : ℕ) := by
       refine hβy.trans ?_
       rw [div_le_iff₀ hqt0]; push_cast; nlinarith
-    have h1 := cor_7_1_3' (y := y) hy8 (q := 1) (by norm_num) (1 : DirichletCharacter ℂ 1)
+    have h1 := cor_7_1_3' (y := y) hy (q := 1) (by norm_num) (1 : DirichletCharacter ℂ 1)
       DirichletCharacter.isPrimitive_one_level_one hδ1
     rw [if_pos rfl, hδy, Schar_level_one] at h1
     have h2 : expTsum a β = expTsum (cU y) β - expTsum (cU y - a) β := by
       rw [expTsum_sub hc ha]; ring
     have h3 := (norm_expTsum_le_tsum hca β).trans hDa
     have hsy : 3.16e12 ≤ √y := Real.le_sqrt_of_sq_le (by nlinarith)
-    have h4 : (381500 / √((1 : ℕ) : ℝ) + 76) / √y ≤ 381576 / 3.16e12 := by
+    have h4 : 4.7e6 / √((1 : ℕ) : ℝ) / √y ≤ 4.7e6 / 3.16e12 := by
       rw [Nat.cast_one, Real.sqrt_one, div_one, div_le_div_iff₀ (by linarith) (by norm_num)]
       nlinarith
     rw [h2]
@@ -246,7 +240,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
           calc _ = ‖expTsum (cU y) β - 𝓕 (fun u => (etaU u : ℂ)) (-(β * y)) * y - expTsum (cU y - a) β‖ := by
                 congr 1; ring
             _ ≤ _ := this
-      _ ≤ (2.485e-19 + (381500 / √((1 : ℕ) : ℝ) + 76) / √y) * y + 1e-12 * y := add_le_add h1 h3
-      _ ≤ 1.21e-7 * y := by nlinarith
+      _ ≤ (1e-17 + 4.7e6 / √((1 : ℕ) : ℝ) / √y) * y + 1e-12 * y := add_le_add h1 h3
+      _ ≤ 1.49e-6 * y := by nlinarith
 
 end TernaryGoldbach.MajorArcs

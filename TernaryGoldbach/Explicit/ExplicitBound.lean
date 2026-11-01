@@ -115,4 +115,128 @@ theorem norm_Ssum_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ :
   rw [e, norm_neg]
   exact (norm_add_le _ _).trans (by linarith)
 
+/-! ## Monotonicity in `|δ|` (for averaging over `δ ↦ δr`, `0 < r ≤ 1`) -/
+
+theorem gauss_sq_anti {u u' : ℝ} (hu : 10 ≤ u) (huu : u ≤ u') :
+    u' ^ 2 * Real.exp (-0.1065 * u' ^ 2) ≤ u ^ 2 * Real.exp (-0.1065 * u ^ 2) := by
+  have h1 : u' ^ 2 ≤ u ^ 2 * Real.exp ((u' ^ 2 - u ^ 2) / u ^ 2) :=
+    le_mul_exp_sub (by positivity) (by nlinarith)
+  have h2 : (u' ^ 2 - u ^ 2) / u ^ 2 ≤ 0.1065 * (u' ^ 2 - u ^ 2) := by
+    rw [div_le_iff₀ (by positivity)]
+    have hd : 0 ≤ u' ^ 2 - u ^ 2 := by nlinarith
+    have hu2 : 100 ≤ u ^ 2 := by nlinarith
+    nlinarith [mul_le_mul_of_nonneg_left hu2 hd]
+  calc u' ^ 2 * Real.exp (-0.1065 * u' ^ 2)
+      ≤ u ^ 2 * Real.exp (0.1065 * (u' ^ 2 - u ^ 2)) * Real.exp (-0.1065 * u' ^ 2) := by
+        gcongr; exact h1.trans (by gcongr)
+    _ = u ^ 2 * Real.exp (-0.1065 * u ^ 2) := by
+        rw [mul_assoc, ← Real.exp_add]; ring_nf
+
+theorem EA_mono {T0 δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) (hT : 10 * π * |δ| ≤ T0) :
+    EA T0 (δ * r) ≤ EA T0 δ := by
+  by_cases hδ : δ = 0
+  · simp [EA, hδ]
+  have hδr : δ * r ≠ 0 := mul_ne_zero hδ hr.ne'
+  have hδ0 : 0 < |δ| := abs_pos.2 hδ
+  unfold EA
+  rw [if_neg hδr, if_neg hδ]
+  have hP : 0 < π * |δ| := by positivity
+  have hu : 10 ≤ T0 / (π * |δ|) := by rw [le_div_iff₀ hP]; linarith
+  have huu : T0 / (π * |δ|) ≤ T0 / (π * |δ * r|) := by
+    rw [abs_mul, abs_of_pos hr]
+    have hT0 : 0 ≤ T0 := by have := Real.pi_pos; nlinarith
+    apply div_le_div_of_nonneg_left hT0 (by positivity)
+    nlinarith [Real.pi_pos]
+  have := gauss_sq_anti hu huu
+  rw [mul_assoc, mul_assoc]
+  exact mul_le_mul_of_nonneg_left this (by norm_num)
+
+theorem rhoA_mono {δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) : rhoA (δ * r) ≤ rhoA δ := by
+  unfold rhoA
+  apply Real.exp_le_exp.2
+  rw [neg_le_neg_iff, abs_mul, abs_of_pos hr]
+  apply div_le_div_of_nonneg_left (by norm_num) (by positivity)
+  have := Real.pi_pos
+  have : |δ| * r ≤ |δ| := mul_le_of_le_one_right (abs_nonneg δ) hr1
+  nlinarith
+
+theorem inv_one_sub_mono {a b : ℝ} (hab : a ≤ b) (hb : b < 1) : 1 / (1 - a) ≤ 1 / (1 - b) :=
+  one_div_le_one_div_of_le (by linarith) (by linarith)
+
+theorem E2b_mono {N : ℕ} [NeZero N] {T0 δ r : ℝ} (hT0 : 0 < T0) (hr : 0 < r) (hr1 : r ≤ 1)
+    (hT : 10 * π * |δ| ≤ T0) : E2b N T0 (δ * r) ≤ E2b N T0 δ := by
+  unfold E2b
+  have hZ := Z3_nonneg N T0
+  have hc := c3_nonneg hT0
+  have h1 := inv_one_sub_mono (rhoA_mono (δ := δ) hr hr1) (rhoA_lt_one δ)
+  have h0 : 0 ≤ 1 / (1 - rhoA (δ * r)) := by have := rhoA_lt_one (δ * r); rw [one_div]; exact inv_nonneg.2 (by linarith)
+  have h2 : 1 / (1 - rhoA (δ * r)) ^ 2 ≤ 1 / (1 - rhoA δ) ^ 2 := by
+    have := pow_le_pow_left₀ h0 h1 2
+    rwa [div_pow, div_pow, one_pow] at this
+  have hA := EA_mono (T0 := T0) hr hr1 hT
+  have hA0 := EA_nonneg T0 (δ * r)
+  have hX : 2 * Z3 N T0 / (1 - rhoA (δ * r)) + 2 * c3 T0 / (1 - rhoA (δ * r)) ^ 2 ≤
+      2 * Z3 N T0 / (1 - rhoA δ) + 2 * c3 T0 / (1 - rhoA δ) ^ 2 := by
+    rw [div_eq_mul_one_div (2 * Z3 N T0), div_eq_mul_one_div (2 * c3 T0),
+      div_eq_mul_one_div (2 * Z3 N T0) (1 - rhoA δ), div_eq_mul_one_div (2 * c3 T0) ((1 - rhoA δ) ^ 2)]
+    gcongr
+  have hX0 : 0 ≤ 2 * Z3 N T0 / (1 - rhoA (δ * r)) + 2 * c3 T0 / (1 - rhoA (δ * r)) ^ 2 := by
+    have := rhoA_lt_one (δ * r)
+    have : 0 < 1 - rhoA (δ * r) := by linarith
+    positivity
+  have := mul_le_mul hA hX hX0 (EA_nonneg T0 δ)
+  linarith
+
+theorem thetaD_anti {δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) : thetaD δ ≤ thetaD (δ * r) := by
+  unfold thetaD
+  apply div_le_div_of_nonneg_left (by norm_num) (by positivity)
+  rw [abs_mul, abs_of_pos hr]
+  have : |δ| * r ≤ |δ| := mul_le_of_le_one_right (abs_nonneg δ) hr1
+  linarith
+
+theorem Vb_nonneg (N : ℕ) [NeZero N] (δ : ℝ) : 0 ≤ Vb N δ := by
+  unfold Vb
+  have := DN_nonneg N
+  have := thetaD_pos δ
+  have := Real.log_pos (by norm_num : (1:ℝ) < 2)
+  positivity
+
+theorem Vb_mono {N : ℕ} [NeZero N] {δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) : Vb N (δ * r) ≤ Vb N δ := by
+  unfold Vb
+  have hθ := thetaD_anti (δ := δ) hr hr1
+  have hθ0 := thetaD_pos δ
+  have hD := DN_nonneg N
+  have hl := Real.log_pos (by norm_num : (1:ℝ) < 2)
+  gcongr
+
+theorem E0b_nonneg (N : ℕ) [NeZero N] : 0 ≤ E0b N := by
+  unfold E0b
+  exact mul_nonneg (by norm_num) (div_nonneg (log_BP_pos N _).le
+    (log_ratio_pos (by norm_num) (by norm_num)).le)
+
+theorem E1b_nonneg (N : ℕ) [NeZero N] (T0 : ℝ) : 0 ≤ E1b N T0 := by
+  unfold E1b; exact mul_nonneg (ZL_nonneg N T0) (by positivity)
+
+/-- `log(B'_T/0.355)` as a sum. -/
+theorem log_BP_eq (N : ℕ) [NeZero N] (T : ℝ) :
+    Real.log (BP N T / 0.355) = Real.log 1400 + 9 * Real.log N + Real.log (N + 1) +
+      Real.log (|T| + 22) + 10 * Real.log (1.25 * (|T| + 11)) - Real.log 0.355 := by
+  have hN : (0:ℝ) < N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
+  unfold BP
+  rw [Real.log_div (by positivity) (by norm_num), Real.log_mul (by positivity) (by positivity),
+    Real.log_mul (by positivity) (by positivity), Real.log_mul (by positivity) (by positivity),
+    Real.log_mul (by positivity) (by positivity), Real.log_pow, Real.log_rpow (by positivity)]
+  push_cast; ring
+
+theorem inv_one_sub_exp_neg_le {a : ℝ} (ha : 0 < a) : 1 / (1 - Real.exp (-a)) ≤ 1 + 1 / a := by
+  have h1 : Real.exp (-a) ≤ 1 / (1 + a) := by
+    rw [Real.exp_neg, one_div]
+    exact inv_anti₀ (by linarith) (by linarith [Real.add_one_le_exp a])
+  have h2 : a / (1 + a) ≤ 1 - Real.exp (-a) := by
+    have : 1 - 1 / (1 + a) = a / (1 + a) := by field_simp; ring
+    linarith
+  calc 1 / (1 - Real.exp (-a)) ≤ 1 / (a / (1 + a)) :=
+        one_div_le_one_div_of_le (by positivity) h2
+    _ = 1 + 1 / a := by field_simp; ring
+
 end TernaryGoldbach.Explicit
