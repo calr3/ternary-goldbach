@@ -244,6 +244,20 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * [B, Lemma 5.1.2] is the remaining axiom, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
     `|m(x)| ≤ 0.03/log x` ([B, (2.21)]): our Lean `0.55/(log x − 0.75)` is about 18 times too weak.
   ternary_goldbach now depends on 27 axioms (18 our own, 7 published, 2 from [B]).
+* [B, Lemma 5.1.2] proved (`MinorArcs/G2Moebius.lean` → `G2Euler.lean` → `G2Numerics.lean` →
+  `G2Bound.lean`): `|g₂(x)| ≤ 0.0215/(log x)² + 528(1 + log x)²/x`, from the new published axiom
+  `ramare_moebius` ([B, (2.21)], Ram13) and `moebius_sqrt_small`:
+  * one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`, `H_d = f·1_{(·,d)=1} ∗ (1/id) ≥ 0`, via
+    `ArithmeticFunction` ring identities and `sum_Ioc_mul_eq_sum_sum`;
+  * Rankin weight `u^{1/22}` (valid since `log(x/u) ≥ 22` when Ramaré is used);
+  * Euler products via `EulerProduct.summable_and_hasSum_smoothNumbers_prod_primesBelow_tsum`
+    (`sum_le_euler`);
+  * numerics use rational `p^s` bounds at small primes (`rpow_le_of_pow_le`) and
+    `MV.sum_rpow_neg_le` tails;
+  * the `d`-sum at `s = 1/2` is compared with `τ(d)/d` (multiplicative comparison on prime powers,
+    `(t−1)⁴ + 1 ≥ 0`);
+  * the tail integral in `T2Bound` is now `≤ 0.0036`.
+  ternary_goldbach now depends on 27 axioms (18 our own, 8 published, 1 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

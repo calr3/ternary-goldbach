@@ -11,12 +11,10 @@ The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 27
 axioms besides Lean's standard three. They are:
 * 18 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
-* 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
-  Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
-  `10¹⁹` (2 axioms);
-* 2 results of [B]: Prop 12.2.4, which uses Ramaré's explicit estimate and a computation, and the
-  analytic bound of Lemma 5.1.2 on `g₂(x)` for large `x`, which uses Ramaré's bound on
-  `∑ μ(n)/n` ([B, (2.21)]).
+* 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+  Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
+  `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` ([B, (2.21)]);
+* 1 result of [B]: Prop 12.2.4, which uses Ramaré's explicit estimate and a computation.
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 axioms.
@@ -74,7 +72,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`, `etaO_numerics`);
 [B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5). (5.31) `T2_le` is proved from
-`T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2.
+`T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2, which is
+proved from Ramaré's bound by Euler products (`MinorArcs/G2Bound.lean`).
 
 ## How the proof is organized
 

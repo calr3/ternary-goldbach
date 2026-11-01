@@ -1,4 +1,5 @@
 import TernaryGoldbach.MinorArcs.T2Defs
+import TernaryGoldbach.MinorArcs.G2Bound
 
 /-!
 # `T₂(S) ≈ ¼ ∫₁^S g₂(y) dy/y`
@@ -279,14 +280,6 @@ computed exactly at every integer `n ≤ 10⁸` by `g₂(n) = ∑_{d odd} μ(d) 
 axiom T2_mid : (∀ S : ℝ, 1e5 ≤ S → S ≤ 1e8 → 1 / 4 * (∫ y in (1 : ℝ)..S, g2 y / y) ≤ 0.3607) ∧
     ∫ y in (1 : ℝ)..1e8, |g2 y| ≤ 10.5
 
-/-- **[B, Lemma 5.1.2]** (`v = 2`, `x ≥ 10⁶`): `|g₂(x)| ≤ (1634.34 + 817.168 log x)/x` for `x < 10¹⁰`
-and `|g₂(x)| ≤ 0.038128/(log x)² + 0.2046/√x` for `x ≥ 10¹⁰`. The second bound rests on Ramaré's
-`|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` ([B, (2.21)]). Our computation (`t2_rig.c`) confirms the first
-bound on `[10⁶, 10⁸]`, where in fact `|g₂(x)| x ≤ 0.2`. -/
-axiom lemma_5_1_2 {x : ℝ} (hx : 1e6 ≤ x) :
-    (x < 1e10 → |g2 x| ≤ (1634.34 + 817.168 * Real.log x) / x) ∧
-    (1e10 ≤ x → |g2 x| ≤ 0.038128 / Real.log x ^ 2 + 0.2046 / √x)
-
 theorem log_1e8_le : Real.log 1e8 ≤ 19 := by
   rw [Real.log_le_iff_le_exp (by norm_num)]
   have h1 := Real.exp_one_gt_d9
@@ -295,13 +288,13 @@ theorem log_1e8_le : Real.log 1e8 ≤ 19 := by
   calc (1e8 : ℝ) ≤ (2.7182818283 : ℝ) ^ 19 := by norm_num
     _ ≤ Real.exp 1 ^ 19 := pow_le_pow_left₀ (by norm_num) h1.le 19
 
-theorem log_1e10_ge : 23 ≤ Real.log 1e10 := by
+theorem log_1e8_ge : 18 ≤ Real.log 1e8 := by
   rw [Real.le_log_iff_exp_le (by norm_num)]
   have h1 := Real.exp_one_lt_d9
-  have e : Real.exp 23 = Real.exp 1 ^ 23 := by rw [← Real.exp_nat_mul]; norm_num
+  have e : Real.exp 18 = Real.exp 1 ^ 18 := by rw [← Real.exp_nat_mul]; norm_num
   rw [e]
-  calc Real.exp 1 ^ 23 ≤ (2.7182818286 : ℝ) ^ 23 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 23
-    _ ≤ 1e10 := by norm_num
+  calc Real.exp 1 ^ 18 ≤ (2.7182818286 : ℝ) ^ 18 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 18
+    _ ≤ 1e8 := by norm_num
 
 theorem integrableOn_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) :
     IntervalIntegrable (fun y => |g2 y| / y) volume a b := by
@@ -313,83 +306,52 @@ theorem integrableOn_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) :
       rw [Real.norm_eq_abs, abs_of_pos (by positivity)]; exact inv_le_one_of_one_le₀ this.le))
   |>.congr (Filter.Eventually.of_forall fun y => by simp [div_eq_mul_inv])
 
-/-- The tail `∫_{10⁸}^S |g₂(y)|/y dy ≤ 0.0019`, from [B, Lemma 5.1.2]. -/
-theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| / y ≤ 0.0019 := by
-  set a : ℝ := 1634.34; set b : ℝ := 817.168; set c : ℝ := 0.038128; set c' : ℝ := 0.2046
-  -- the first piece, `[10⁸, min(S, 10¹⁰)]`
-  have piece1 : ∀ T, 1e8 ≤ T → T ≤ 1e10 →
-      ∫ y in (1e8 : ℝ)..T, |g2 y| / y ≤ (a + b + b * Real.log 1e8) / 1e8 := by
-    intro T h1 h2
-    have hF : ∀ y ∈ Set.uIcc (1e8 : ℝ) T, HasDerivAt (fun y => -((a + b + b * Real.log y) * y⁻¹))
-        ((a + b * Real.log y) / y / y) y := by
-      intro y hy; rw [Set.uIcc_of_le h1] at hy
-      have hy0 : 0 < y := by linarith [hy.1]
-      have := ((((Real.hasDerivAt_log hy0.ne').const_mul b).const_add (a + b)).mul
-        (hasDerivAt_inv hy0.ne')).neg
-      convert this using 1
-      field_simp; ring
-    have hcont : ContinuousOn (fun y => (a + b * Real.log y) / y / y) (Set.uIcc (1e8 : ℝ) T) := by
-      intro y hy; rw [Set.uIcc_of_le h1] at hy
-      have hy0 : y ≠ 0 := by linarith [hy.1]
-      exact ContinuousAt.continuousWithinAt (by fun_prop (disch := assumption))
-    calc ∫ y in (1e8 : ℝ)..T, |g2 y| / y ≤ ∫ y in (1e8 : ℝ)..T, (a + b * Real.log y) / y / y := by
-          refine intervalIntegral.integral_mono_on_of_le_Ioo h1
-            (integrableOn_abs_g2_div (by norm_num) h1) hcont.intervalIntegrable fun y hy => ?_
-          have hy0 : 0 < y := by linarith [hy.1]
-          exact div_le_div_of_nonneg_right ((lemma_5_1_2 (by linarith [hy.1])).1
-            (by linarith [hy.2])) hy0.le
-      _ = -((a + b + b * Real.log T) * T⁻¹) - -((a + b + b * Real.log 1e8) * (1e8 : ℝ)⁻¹) :=
-          intervalIntegral.integral_eq_sub_of_hasDerivAt hF hcont.intervalIntegrable
-      _ ≤ (a + b + b * Real.log 1e8) / 1e8 := by
-          have : 0 ≤ (a + b + b * Real.log T) * T⁻¹ := by
-            have := Real.log_nonneg (show (1 : ℝ) ≤ T by linarith); positivity
-          rw [div_eq_mul_inv]; linarith
-  have hlog8 := log_1e8_le
-  have hval1 : (a + b + b * Real.log 1e8) / 1e8 ≤ 0.00018 := by
-    rw [div_le_iff₀ (by norm_num)]; nlinarith
-  rcases le_or_gt S 1e10 with h | h
-  · linarith [piece1 S hS h]
-  · -- the second piece, `[10¹⁰, S]`
-    have hl10 := log_1e10_ge
-    have hF : ∀ y ∈ Set.uIcc (1e10 : ℝ) S, HasDerivAt (fun y => -c / Real.log y - 2 * c' / √y)
-        ((c / Real.log y ^ 2 + c' / √y) / y) y := by
-      intro y hy; rw [Set.uIcc_of_le h.le] at hy
-      have hy0 : 0 < y := by linarith [hy.1]
-      have hly : 0 < Real.log y := Real.log_pos (by linarith [hy.1])
-      have hsy : 0 < √y := Real.sqrt_pos.2 hy0
-      have h1 := ((Real.hasDerivAt_log hy0.ne').inv hly.ne').const_mul (-c)
-      have h2 := ((Real.hasDerivAt_sqrt hy0.ne').inv hsy.ne').const_mul (2 * c')
-      have := h1.sub h2
-      convert this using 1
-      · ext x; simp [div_eq_mul_inv]
-      · rw [Real.sq_sqrt hy0.le]; field_simp; ring
-    have hcont : ContinuousOn (fun y => (c / Real.log y ^ 2 + c' / √y) / y) (Set.uIcc (1e10 : ℝ) S) := by
-      intro y hy; rw [Set.uIcc_of_le h.le] at hy
-      have hy0 : y ≠ 0 := by linarith [hy.1]
-      have hly : Real.log y ^ 2 ≠ 0 := pow_ne_zero 2 (Real.log_pos (by linarith [hy.1])).ne'
-      have hsy : √y ≠ 0 := (Real.sqrt_pos.2 (by linarith [hy.1])).ne'
-      exact ContinuousAt.continuousWithinAt (by fun_prop (disch := assumption))
-    have hpiece2 : ∫ y in (1e10 : ℝ)..S, |g2 y| / y ≤ c / 23 + 2 * c' / 1e5 := by
-      calc ∫ y in (1e10 : ℝ)..S, |g2 y| / y ≤ ∫ y in (1e10 : ℝ)..S, (c / Real.log y ^ 2 + c' / √y) / y :=
-            intervalIntegral.integral_mono_on h.le (integrableOn_abs_g2_div (by norm_num) h.le)
-              hcont.intervalIntegrable fun y hy => div_le_div_of_nonneg_right
-                ((lemma_5_1_2 (by linarith [hy.1])).2 hy.1) (by linarith [hy.1])
-        _ = (-c / Real.log S - 2 * c' / √S) - (-c / Real.log 1e10 - 2 * c' / √1e10) :=
-            intervalIntegral.integral_eq_sub_of_hasDerivAt hF hcont.intervalIntegrable
-        _ ≤ c / 23 + 2 * c' / 1e5 := by
-            have h1 : 0 ≤ c / Real.log S := div_nonneg (by norm_num) (Real.log_nonneg (by linarith))
-            have h2 : 0 ≤ 2 * c' / √S := by positivity
-            have h3 : c / Real.log 1e10 ≤ c / 23 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hl10
-            have h4 : √(1e10 : ℝ) = 1e5 := by
-              rw [show (1e10 : ℝ) = 1e5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-            rw [h4, neg_div, neg_div]; linarith
-    have hsplit := intervalIntegral.integral_add_adjacent_intervals
-      (integrableOn_abs_g2_div (a := 1e8) (b := 1e10) (by norm_num) (by norm_num))
-      (integrableOn_abs_g2_div (a := 1e10) (b := S) (by norm_num) h.le)
-    have h1 := piece1 1e10 (by norm_num) le_rfl
-    rw [← hsplit]
-    have : c / 23 + 2 * c' / 1e5 ≤ 0.00167 := by simp only [c, c']; norm_num
-    linarith
+/-- The tail `∫_{10⁸}^S |g₂(y)|/y dy ≤ 0.0036`, from `abs_g2_le_large` ([B, Lemma 5.1.2]). The
+antiderivative of `(0.0215/(log y)² + 528 (1 + log y)²/y)/y` is
+`−0.0215/log y − 528 ((log y)² + 4 log y + 5)/y`. -/
+theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| / y ≤ 0.0036 := by
+  have hF : ∀ y ∈ Set.uIcc (1e8 : ℝ) S, HasDerivAt
+      (fun y => -0.0215 * (Real.log y)⁻¹ -
+        528 * (Real.log y * Real.log y + 4 * Real.log y + 5) / y)
+      ((0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y) y := by
+    intro y hy; rw [Set.uIcc_of_le hS] at hy
+    have hy0 : 0 < y := by linarith [hy.1]
+    have hly : 0 < Real.log y := Real.log_pos (by linarith [hy.1])
+    have hl := Real.hasDerivAt_log hy0.ne'
+    have h1 := (hl.inv hly.ne').const_mul (-0.0215)
+    have hq := (((hl.mul hl).add (hl.const_mul 4)).add_const 5).const_mul 528
+    have h2 := hq.div (hasDerivAt_id' y) hy0.ne'
+    have := h1.sub h2
+    convert this using 1
+    simp only [Pi.add_apply, Pi.mul_apply]
+    field_simp
+    ring
+  have hcont : ContinuousOn (fun y => (0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y)
+      (Set.uIcc (1e8 : ℝ) S) := by
+    intro y hy; rw [Set.uIcc_of_le hS] at hy
+    have hy0 : y ≠ 0 := by linarith [hy.1]
+    have hly : Real.log y ^ 2 ≠ 0 := pow_ne_zero 2 (Real.log_pos (by linarith [hy.1])).ne'
+    exact ContinuousAt.continuousWithinAt (by fun_prop (disch := assumption))
+  have hl8 := log_1e8_le
+  have hl8' := log_1e8_ge
+  calc ∫ y in (1e8 : ℝ)..S, |g2 y| / y
+      ≤ ∫ y in (1e8 : ℝ)..S, (0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y :=
+        intervalIntegral.integral_mono_on hS (integrableOn_abs_g2_div (by norm_num) hS)
+          hcont.intervalIntegrable fun y hy => div_le_div_of_nonneg_right
+            (abs_g2_le_large (by linarith [hy.1])) (by linarith [hy.1])
+    _ = (-0.0215 * (Real.log S)⁻¹ - 528 * (Real.log S * Real.log S + 4 * Real.log S + 5) / S) -
+        (-0.0215 * (Real.log 1e8)⁻¹ -
+          528 * (Real.log 1e8 * Real.log 1e8 + 4 * Real.log 1e8 + 5) / 1e8) :=
+        intervalIntegral.integral_eq_sub_of_hasDerivAt hF hcont.intervalIntegrable
+    _ ≤ 0.0036 := by
+        have hlS : 0 < Real.log S := Real.log_pos (by linarith)
+        have hS0 : 0 < S := by linarith
+        have h1 : 0 ≤ 0.0215 * (Real.log S)⁻¹ := by positivity
+        have h2 : 0 ≤ 528 * (Real.log S * Real.log S + 4 * Real.log S + 5) / S := by positivity
+        have h3 : (Real.log 1e8)⁻¹ ≤ 1 / 18 := by
+          rw [← one_div]; exact one_div_le_one_div_of_le (by norm_num) hl8'
+        have h4 : Real.log 1e8 * Real.log 1e8 + 4 * Real.log 1e8 + 5 ≤ 442 := by nlinarith
+        nlinarith
 
 /-- **[B, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16`. -/
 theorem T2_le' {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := by

@@ -125,7 +125,7 @@ Unused (in `Prelim/LambdaMuExtra.lean`, not on the path of `ternary_goldbach`):
 
 All three come from `psi_extra_check.py`.
 
-### Published computations (7)
+### Published results (8)
 
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
@@ -135,9 +135,10 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
+| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, *From explicit estimates for primes to explicit estimates for the Moebius function*, Acta Arith. 157 (2013) 365–379 | [B, (2.21)] cites it with this statement (its bibliography entry [Ram13] is this paper); open-access copy HAL hal-02572812. Analytic, from explicit bounds on `ψ`, plus a finite computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
-### Results of Helfgott's book [B] (2)
+### Results of Helfgott's book [B] (1)
 
 The book obtains these by interval arithmetic or rigorous integration. Some of them also contain
 analytic arguments. The Lean definitions involved were compared with the book's:
@@ -150,7 +151,6 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 | Axiom | [B] | Content | Independent check |
 |---|---|---|---|
-| `MinorArcs.lemma_5_1_2` | Lemma 5.1.2 (`v = 2`, `x ≥ 10⁶`) | `\|g₂(x)\| ≤ (1634.34 + 817.168 log x)/x` for `x < 10¹⁰`, `≤ 0.038128/(log x)² + 0.2046/√x` for `x ≥ 10¹⁰`; analytic, from Ramaré's `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` ([B, (2.21)]) and (2.24) | our rigorous computation of `g₂` confirms the first bound on `[10⁶, 10⁸]`; used only for `x ≥ 10⁸` |
 | `MinorArcs.prop_12_2_4` | Prop 12.2.4 | `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)` | hypotheses and conclusion match; our `c_E = 1.33258` is [B]'s `1.3325822…` rounded down, which makes the axiom weaker; the content is Ramaré's explicit (12.12) plus a computation for `q < 3.3·10⁹` |
 
 ## Summary by kind
@@ -160,13 +160,10 @@ analytic arguments. The Lean definitions involved were compared with the book's:
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
   [MV73, Lemma 8].
-* **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
-  `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
-  in the papers.
-* **Results of [B] (2):** Prop 12.2.4 (Ramaré's explicit estimate (12.12) and a computation), and
-  the analytic bound of Lemma 5.1.2 for `g₂(x)`, `x ≥ 10⁶` (which rests on Ramaré's (2.21)). Both
-  rest on [B]; we use Lemma 5.1.2 only for `x ≥ 10⁸`, and our computation confirms it on
-  `[10⁶, 10⁸]`.
+* **Published results (8):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
+  `4·10¹⁸`, the Helfgott–Platt ladder, Büthe's bounds for `θ` and `ψ` (2 axioms), and Ramaré's
+  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`. They are stated as in the papers.
+* **Results of [B] (1):** Prop 12.2.4 (Ramaré's explicit estimate (12.12) and a computation).
 
 ## Removed axioms
 
@@ -249,12 +246,33 @@ analytic arguments. The Lean definitions involved were compared with the book's:
   * So `|N(y) − S/(4y)| ≤ 1`, and `|T₂(S) − ¼ ∫₁^S g₂/y| ≤ S⁻¹ ∫₁^S |g₂|` (`abs_T2_sub_le`).
   * For `16 ≤ S < 10⁵` this is replaced by the exact computation `T2_small`.
   * For `10⁵ ≤ S ≤ 10⁸`: `T₂ ≤ 0.3607 + 10.5/10⁵` (`T2_mid`).
-  * For `S > 10⁸`: the extra terms are at most `1.25 ∫_{10⁸}^S |g₂|/y ≤ 1.25 · 0.0019`, by
-    [B, Lemma 5.1.2] (`lemma_5_1_2`, the explicit antiderivatives of its bounds).
-  * So `T₂ ≤ 0.3631` there, against `0.37273`.
-  * The [B] content is now only the analytic bound of Lemma 5.1.2. It replaces the bundle "(5.31) =
-    Lemma 5.1.2 + (5.29)–(5.30) + a computation on `[16, 10⁵]`". The axiom count goes up by two
-    because the computation is now our own (`T2_small`, `T2_mid`).
+  * For `S > 10⁸`: the extra terms are at most `1.25 ∫_{10⁸}^S |g₂|/y ≤ 1.25 · 0.0036`, by
+    Lemma 5.1.2 in the form below (explicit antiderivative of the bound).
+  * So `T₂ ≤ 0.3652` there, against `0.37273`.
+  * This replaces the bundle "(5.31) = Lemma 5.1.2 + (5.29)–(5.30) + a computation on `[16, 10⁵]`"
+    by our computations `T2_small`, `T2_mid` and Lemma 5.1.2.
+
+* [B, Lemma 5.1.2] (`v = 2`) is now a proof (`MinorArcs/G2Moebius.lean`, `G2Euler.lean`,
+  `G2Numerics.lean`, `G2Bound.lean`), with cruder constants than [B]:
+  `|g₂(x)| ≤ 0.0215/(log x)² + 528 (1 + log x)²/x` for `x > 1` (`abs_g2_le_large`). The only input
+  beyond our earlier axioms is Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` ([B, (2.21)], the published
+  axiom `ramare_moebius`). The proof:
+  * `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` with `f(r) = μ(r)/σ(r)` for odd `r` and
+    `S_d(M) = ∑_{r ≤ M, (r,d)=1} f(r)` ([B, (5.20)]).
+  * `f·1_{(·,d)=1} = H_d ∗ (μ/id)` with `H_d = f·1_{(·,d)=1} ∗ (1/id)`, which is multiplicative and
+    `≥ 0` (`H_d(p^k) = p^{−k}/(p+1)` for odd `p ∤ d`, `p^{−k}` otherwise). So
+    `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` with `m(y) = ∑_{n≤y} μ(n)/n`. This one convolution replaces
+    [B]'s two steps (5.21).
+  * `|m(x/u)| ≤ 0.03 u^{1/22}/log x + √(2u/x)`. If `x/u ≥ 10¹⁰`, use Ramaré and
+    `log x/log(x/u) ≤ 1 + log u/22 ≤ u^{1/22}`. Otherwise use `moebius_sqrt_small`.
+  * Euler products (Mathlib's `EulerProduct`): `∑_{a ≤ A} H_d(a) a^s ≤ c_s(2) ∏_{2<p≤A} ℓ_s(p)
+    ∏_{p∣d} ρ_s(p)`, `∑_d f(d)² d^{2s} ∏_{p∣d} ρ_s(p)² ≤ ∏_{p>2} (1 + (p^s/(p+1−p^s))²)` and
+    `∑_{d≤N} f(d)² d ∏_{p∣d} ρ_{1/2}(p)² ≤ ∑_{d≤N} τ(d)/d ≤ (1 + log N)²`.
+  * The products are evaluated at `s = 1/22` and `s = 1/2` with rational bounds for `p^s` at the
+    primes below `12` (resp. `30`) and the integral bound for the tails. There is no new numerical
+    axiom.
+  * [B]'s constants (`0.038128/(log x)² + 0.2046/√x`) are better; ours give
+    `∫_{10⁸}^∞ |g₂|/y ≤ 0.0036`, which (5.31) can afford (it allows `0.0096`).
 
 ## Candidates for proofs in Lean
 

@@ -14,7 +14,8 @@ import TernaryGoldbach.MinorArcs.T2Bound
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
 `T2_le` ([B, (5.31)]) is proved in `T2Bound.lean`, from our computations and [B, Lemma 5.1.2]
-(axiom `lemma_5_1_2`). (5.37) and the corrected (5.36) are proved in `H2Bound.lean`.
+(proved in `G2Bound.lean` from Ramaré's bound on `∑ μ(n)/n`). (5.37) and the corrected (5.36) are
+proved in `H2Bound.lean`.
 -/
 
 open Real Finset MeasureTheory
@@ -339,7 +340,7 @@ theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
     quads_eq_triples (div_pos hx hW) (by linarith)]
 
 /-- **[B, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, our
-computations, and [B, Lemma 5.1.2] for `g₂` beyond `10⁸`). -/
+computations, and [B, Lemma 5.1.2] for `g₂` beyond `10⁸`, `G2Bound.lean`). -/
 theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := T2_le' hS
 
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
