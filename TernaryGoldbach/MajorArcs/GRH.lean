@@ -13,9 +13,9 @@ height `T_q` for all primitive characters of conductor `q ≤ 4·10⁵` [B, §9.
   (Mathlib's `DirichletCharacter.LFunction`; for `q = 1` this is `ζ`).
 * **`platt_odd`, `platt_even`** (numerical axioms): [B, §9.6] — `T_q = 10⁸/q` for odd `q ≤ 3·10⁵`,
   `T_q = max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵`.
-* **`prop_9_3_2_one`** (cited, conditional on `GRHUpTo χ T₀`): [B, Prop 9.3.2] for `q = 1` (`ζ`), the
-  explicit-formula bound for `Σ Λ(n) e(δn/x) η(n/x)` with `η(t) = t² e^{-t²/2}`. For `q ≥ 2` the
-  analogous bound is proved (`MajorArcs/Prop932.lean`, from `Explicit/ExplicitBound.lean`).
+* [B, Prop 9.3.2] (the explicit-formula bound for `Σ Λ(n) χ(n) e(δn/x) η(n/x)`, `η(t) = t² e^{-t²/2}`,
+  conditional on `GRHUpTo χ T₀`) is proved in `MajorArcs/Prop932.lean` (from `Explicit/`), with our
+  constants.
 -/
 
 open Real MeasureTheory FourierTransform
@@ -64,16 +64,5 @@ noncomputable def err932 (q : ℕ) (T0 δ x : ℝ) : ℝ :=
   T0 * Real.log (q * T0 / (2 * π)) * (6.11 * Real.exp (-0.1598 * T0) + 1.578 * expδ T0 δ) +
     (1.22 * √T0 * Real.log (q * T0) + 5.056 * √T0 + 1.423 * Real.log q + 37.19) / √x +
     (3 + 11 * |δ|) / x + (Real.log q + 6) * (1 + 6 * |δ|) / (x * √x)
-
-/-- **[B, Prop 9.3.2] for `q = 1`** — *cited* (explicit formula for `ζ`, Lemmas 9.1.1, 9.1.4, 9.3.1).
-Let `η(t) = t² e^{-t²/2}`, `x ≥ 1`, `δ ∈ ℝ`. If RH holds up to height `T₀ ≥ max(10π|δ|, 50)`, then
-`Σ Λ(n) e(δn/x) η(n/x) = η̂(-δ) x + O*(err_{η,1}(δ, x)) x` with `err` as in (9.57). (For primitive
-characters of modulus `q ≥ 2` the corresponding bound is proved: `prop_9_3_2_ne`.) -/
-theorem prop_9_3_2_one {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (hq : q = 1)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {T0 : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0)
-    (hG : GRHUpTo χ T0) :
-    ‖Schar χ (fun n => ((Λ n * phi (n / x) : ℝ) : ℂ)) (δ / x) -
-        𝓕 (fun u => (phiPos u : ℂ)) (-δ) * x‖ ≤ err932 q T0 δ x * x := by
-  sorry
 
 end TernaryGoldbach.MajorArcs

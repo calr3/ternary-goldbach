@@ -40,6 +40,14 @@ rotation bounds; `ρ = 0` contributes `|G(0)| ≤ 1`. (b) explicit bound for the
 `|z−ρ| ≥ 1/2`, now polynomial). (c) `‖S‖ ≤ E_new x`. (d) `q = 1` (ζ: pole at 1 gives `G(1)x = η̂(−δ)x`; needs
 ζ versions of LGrowth/Landau/explicit formula). (e) restate `prop_9_3_2` with `E_new`; redo `Cor933.err932_le_Er`,
 `Cor713` numerics, check `ArcCharsStar`, `BaseGap*`, (14.27). Then Props 9.4.2/9.5.1 (`η₊`) and Dusart.
+**Prop 9.3.2 DONE for all q (2026-11-01, late)**: generic layers `Explicit/Datum` (`LDatum`: contour
+identity for any entire `f`), `GoodSmoothing` (any smoothing with exponentially decaying Mellin transform),
+`ZeroSumGen` (`PolyDatum` + Plancherel + geometric tail); ζ: `ZetaGrowth` (`zetaF = (s−1)ζ(s)` entire,
+Abel bound, functional equation), `ZetaDatum`, `ZetaExplicit` (main term `M(1)x` from the datum `s − 1`),
+`ZetaPoly` (`B''_ζ`, zeros in `0<ℜ<1`), `ZetaBound` (`errZ`). Cor 7.1.3 for `q = 1` at `T₀ = 10⁸`: E₁ ≤
+3.42e6 (actual ≈3.07e6). **Remaining sorries**: Props 9.4.2, 9.5.1 (η₊: need `GoodSmoothing` for
+`η₊(t)e(δt)` via `h_H` band-limited: `M(s) = (1/2π)∫_{−H}^{H} ĥ(r) G₁(s − ir) dr`, `G₁(s) = G₂(s−1)`; then
+`zero_sum_boundG` for χ (`ldatum_L` + a `PolyDatum` for `L`) and ζ; 9.5.1 needs `η₊²·log`) and Dusart.
 **Prop 9.3.2 for `q ≥ 2` DONE** (`Explicit/LineZeros`, `ZeroSumBound`, `ExplicitBound`, `MajorArcs/Prop932`):
 `|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [B]'s constants) for
 `q = 1`, proved for `q ≥ 2`. Cor 9.3.3 averages either error (`err933N`); Cor 7.1.3 restated as

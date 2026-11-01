@@ -86,9 +86,9 @@ explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1] and Dusart's bound (see 
      │    ‖η₊‖₂ from (9.94) (EtaPlusL2), per-modulus characters + Thm 7.1.4 (ArcChars),
      │    Σ_{q≤r odd} μ²/φ (numerical axiom, SumMuPhi); Plancherel for L¹∩L² (Prelim/PlancherelReal)]
      ├─ Thm 7.1.1, Thm 7.1.2, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5   ← Part II
-     │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 (q ≥ 2 ✅
-     │    MajorArcs/Prop932.lean from Explicit/ExplicitBound.lean, weaker constants; q = 1 cited,
-     │    conditional on RH up to T₀) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
+     │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 ✅
+     │    (MajorArcs/Prop932.lean: q ≥ 2 from Explicit/ExplicitBound, q = 1 from Explicit/ZetaBound;
+     │    weaker constants) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
      │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 (cited, conditional) + Platt (q = 1, T₀ = 440)
      │    + (9.94) (numerical axiom); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 (cited,
      │    conditional) + Platt]

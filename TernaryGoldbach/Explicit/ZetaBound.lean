@@ -187,4 +187,54 @@ theorem norm_SsumG_zeta_le (δ : ℝ) {x : ℝ} (hx : 1 ≤ x) {T0 : ℝ} (hT0 :
   field_simp
   ring
 
+/-! ## Monotonicity in `|δ|` -/
+
+theorem E2g_mono_A {B : ℝ → ℝ} {κ T0 EB' EA1 EA2 ρB ρ1 ρ2 : ℝ} (hZ : 0 ≤ Z3g B T0)
+    (hc : 0 ≤ c3g κ T0) (hEA1 : 0 ≤ EA1) (hEA : EA1 ≤ EA2) (hρ10 : 0 ≤ ρ1) (hρ : ρ1 ≤ ρ2)
+    (hρ2 : ρ2 < 1) : E2g B κ T0 EB' EA1 ρB ρ1 ≤ E2g B κ T0 EB' EA2 ρB ρ2 := by
+  unfold E2g
+  have h1 := inv_one_sub_mono hρ hρ2
+  have h0 : 0 ≤ 1 / (1 - ρ1) := by rw [one_div]; exact inv_nonneg.2 (by linarith)
+  have h2 : 1 / (1 - ρ1) ^ 2 ≤ 1 / (1 - ρ2) ^ 2 := by
+    have := pow_le_pow_left₀ h0 h1 2
+    rwa [div_pow, div_pow, one_pow] at this
+  have hX : 2 * Z3g B T0 / (1 - ρ1) + 2 * c3g κ T0 / (1 - ρ1) ^ 2 ≤
+      2 * Z3g B T0 / (1 - ρ2) + 2 * c3g κ T0 / (1 - ρ2) ^ 2 := by
+    rw [div_eq_mul_one_div (2 * Z3g B T0), div_eq_mul_one_div (2 * c3g κ T0),
+      div_eq_mul_one_div (2 * Z3g B T0) (1 - ρ2), div_eq_mul_one_div (2 * c3g κ T0) ((1 - ρ2) ^ 2)]
+    gcongr
+  have hX0 : 0 ≤ 2 * Z3g B T0 / (1 - ρ1) + 2 * c3g κ T0 / (1 - ρ1) ^ 2 := by
+    have : 0 < 1 - ρ1 := by linarith
+    positivity
+  have := mul_le_mul hEA hX hX0 (hEA1.trans hEA)
+  linarith
+
+theorem E2z_mono {T0 δ r : ℝ} (hT0 : 0 < T0) (hr : 0 < r) (hr1 : r ≤ 1) (hT : 10 * π * |δ| ≤ T0) :
+    E2g BPz2 10 T0 (EB T0) (EA T0 (δ * r)) rhoB (rhoA (δ * r)) ≤
+      E2g BPz2 10 T0 (EB T0) (EA T0 δ) rhoB (rhoA δ) :=
+  E2g_mono_A (div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le)
+    (div_nonneg (div_nonneg (by norm_num) hT0.le) (log_ratio_pos (by norm_num) (by norm_num)).le)
+    (EA_nonneg T0 _) (EA_mono hr hr1 hT) (Real.exp_pos _).le (rhoA_mono hr hr1) (rhoA_lt_one δ)
+
+theorem Vz_nonneg (δ : ℝ) : 0 ≤ Vz δ := by
+  unfold Vz
+  have := thetaD_pos δ
+  have := Real.log_pos (by norm_num : (1:ℝ) < 2)
+  positivity
+
+theorem Vz_mono {δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) : Vz (δ * r) ≤ Vz δ := by
+  unfold Vz
+  have hθ := thetaD_anti (δ := δ) hr hr1
+  have hθ0 := thetaD_pos δ
+  have hl := Real.log_pos (by norm_num : (1:ℝ) < 2)
+  gcongr
+
+theorem E1z_nonneg (T0 : ℝ) : 0 ≤ E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) := by
+  unfold E1g ZLg
+  exact mul_nonneg (div_nonneg (polyDatum_zeta2.log_pos _).le
+    (log_ratio_pos (by norm_num) (by norm_num)).le) (by positivity)
+
+theorem Z3z_nonneg : 0 ≤ Z3g BPz2 0 :=
+  div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le
+
 end TernaryGoldbach.Explicit

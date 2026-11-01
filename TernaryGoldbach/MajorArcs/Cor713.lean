@@ -588,11 +588,219 @@ theorem err933New_le {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq2 : 2 �
     nlinarith
   linarith
 
+/-! ## The error for `q = 1` (`ζ`) at `T₀ = 10⁸` -/
+
+open TernaryGoldbach.Explicit (BPz2 E1g E2g Z3g ZLg c3g Vz)
+
+theorem log9201_le : Real.log 9201 ≤ 9.2 := by
+  refine log_le_of_le_exp (by norm_num) ?_
+  have h := exp_split_ge 9 (u := 0.2) (by norm_num) 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_1e8p_le : Real.log (1e8 + 25.48) ≤ 18.43 := by
+  refine log_le_of_le_exp (by norm_num) ?_
+  have h := exp_split_ge 18 (u := 0.43) (by norm_num) 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_125e8p_le : Real.log (1.25 * (1e8 + 14.48)) ≤ 18.65 := by
+  refine log_le_of_le_exp (by norm_num) ?_
+  have h := exp_split_ge 18 (u := 0.65) (by norm_num) 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_BPz2_le : Real.log (BPz2 (1e8 + 3.48) / 0.355) ≤ 200 := by
+  have hT : BPz2 (1e8 + 3.48) ≤ 9201 * (1e8 + 25.48) * (1.25 * (1e8 + 14.48)) ^ 9 := by
+    unfold BPz2
+    rw [abs_of_pos (by norm_num : (0:ℝ) < 1e8 + 3.48)]
+    norm_num
+  have hpos : (0:ℝ) < 9201 * (1e8 + 25.48) * (1.25 * (1e8 + 14.48)) ^ 9 := by positivity
+  have hB0 : 0 < BPz2 (1e8 + 3.48) := by unfold BPz2; positivity
+  refine (Real.log_le_log (div_pos hB0 (by norm_num)) (div_le_div_of_nonneg_right hT (by norm_num))).trans ?_
+  rw [Real.log_div hpos.ne' (by norm_num), Real.log_mul (by positivity) (by positivity),
+    Real.log_mul (by norm_num) (by norm_num), Real.log_pow]
+  have := log9201_le
+  have := log_1e8p_le
+  have := log_125e8p_le
+  have := neg_log0355_le
+  push_cast
+  linarith
+
+theorem log_BPz2_zero_le : Real.log (BPz2 0 / 0.355) ≤ 40 := by
+  have hv : BPz2 0 = 9200 * 22 * (1.25 * 11) ^ 9 + 20 * 22 ^ 3 * (1.25 * 11) ^ 2 := by
+    unfold BPz2; norm_num
+  rw [hv]
+  refine log_le_of_le_exp (by norm_num) ?_
+  have h := exp_nat_ge 40
+  norm_num at h ⊢; linarith
+
+theorem ZLz_le : ZLg BPz2 1e8 ≤ 136.1 := by
+  unfold ZLg
+  have h := log_BPz2_le
+  have hl := log_ratio_23_ge
+  rw [div_le_iff₀ (by linarith)]
+  nlinarith [Explicit.polyDatum_zeta2.log_pos (1e8 + 3.48)]
+
+theorem Z3z_le : Z3g BPz2 1e8 ≤ 166.2 := by
+  unfold Z3g
+  have hm : Real.log (BPz2 1e8 / 0.355) ≤ Real.log (BPz2 (1e8 + 3.48) / 0.355) :=
+    Explicit.polyDatum_zeta2.log_mono (by rw [abs_of_pos (by norm_num), abs_of_pos (by norm_num)]; norm_num)
+  have h := hm.trans log_BPz2_le
+  have hl := log_ratio_3_ge
+  rw [div_le_iff₀ (by linarith)]
+  nlinarith [Explicit.polyDatum_zeta2.log_pos 1e8]
+
+theorem E1z_le : E1g BPz2 1e8 (2 * π * 0.6647) (2 * π * 0.1707) ≤ 3.42e6 := by
+  set A := (Explicit.Jl 1e8 : ℝ) * 3.48 with hA
+  have hA1 : A ≤ 1e8 + 3.48 := by
+    rw [hA]; unfold Explicit.Jl; push_cast
+    have := Nat.floor_le (show (0:ℝ) ≤ 1e8 / 3.48 by positivity)
+    rw [le_div_iff₀ (by norm_num)] at this
+    linarith
+  have hA0 : 0 ≤ A := by positivity
+  have hpi := Real.pi_lt_d4
+  have h1 : √(2 * π * 0.6647 * (2 * A)) ≤ 28902 := by
+    rw [Real.sqrt_le_left (by norm_num)]; nlinarith [Real.pi_pos]
+  have h2 : √(2 * π * 0.1707 * (2 * A)) ≤ 14647 := by
+    rw [Real.sqrt_le_left (by norm_num)]; nlinarith [Real.pi_pos]
+  have hZ := ZLz_le
+  have hZ0 : 0 ≤ ZLg BPz2 1e8 :=
+    div_nonneg (Explicit.polyDatum_zeta2.log_pos _).le (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le
+  unfold E1g
+  rw [← hA]
+  have hX : (1 / 3.48) * √(2 * π * 0.6647 * (2 * A)) + √(2 * π * 0.1707 * (2 * A)) ≤ 22952.3 := by
+    have := mul_le_mul_of_nonneg_left h1 (by norm_num : (0:ℝ) ≤ 1 / 3.48)
+    norm_num at this ⊢; linarith
+  have hX0 : 0 ≤ (1 / 3.48) * √(2 * π * 0.6647 * (2 * A)) + √(2 * π * 0.1707 * (2 * A)) := by positivity
+  calc ZLg BPz2 1e8 * ((1 / 3.48) * √(2 * π * 0.6647 * (2 * A)) + √(2 * π * 0.1707 * (2 * A)))
+      ≤ 136.1 * 22952.3 := mul_le_mul hZ hX hX0 (by norm_num)
+    _ ≤ 3.42e6 := by norm_num
+
+theorem E2z_le {δ : ℝ} (hδ : |δ| ≤ 1.2e6) :
+    E2g BPz2 10 1e8 (EB 1e8) (EA 1e8 δ) rhoB (rhoA δ) ≤ 2e-18 := by
+  have hpi := Real.pi_lt_d4
+  have hpi' := Real.pi_gt_three
+  have hEB : EB 1e8 ≤ 0.892 * (1000 / 3 * 7.3551e-24) := by
+    unfold EB
+    have hm := mul_exp_anti (c := 0.1598) (t₀ := 1000 / 3) (t := 1e8) (by norm_num) (by norm_num)
+      (by norm_num)
+    rw [show -0.1598 * (1e8 : ℝ) = -(0.1598 * 1e8) by ring, mul_assoc]
+    exact mul_le_mul_of_nonneg_left (hm.trans (mul_le_mul_of_nonneg_left exp_c_le (by norm_num)))
+      (by norm_num)
+  have hEB0 := Explicit.EB_nonneg (by norm_num : (0:ℝ) ≤ 1e8)
+  have hEA : EA 1e8 δ ≤ 4.13e-30 := by
+    unfold EA
+    split_ifs with hδ0
+    · norm_num
+    · have hd : 0 < |δ| := abs_pos.2 hδ0
+      have hu : 26.5 ≤ 1e8 / (π * |δ|) := by
+        rw [le_div_iff₀ (by positivity)]
+        have h1 : π * |δ| ≤ 3.1416 * 1.2e6 := mul_le_mul hpi.le hδ (abs_nonneg _) (by norm_num)
+        nlinarith
+      have hg := Explicit.gauss_sq_anti (by norm_num : (10:ℝ) ≤ 26.5) hu
+      have he : Real.exp (-0.1065 * (26.5:ℝ) ^ 2) ≤ 1e-32 :=
+        (Real.exp_le_exp.2 (by norm_num)).trans exp_neg74_le
+      calc 0.588 * (1e8 / (π * |δ|)) ^ 2 * Real.exp (-0.1065 * (1e8 / (π * |δ|)) ^ 2)
+          = 0.588 * ((1e8 / (π * |δ|)) ^ 2 * Real.exp (-0.1065 * (1e8 / (π * |δ|)) ^ 2)) := by ring
+        _ ≤ 0.588 * ((26.5:ℝ) ^ 2 * Real.exp (-0.1065 * (26.5:ℝ) ^ 2)) := by gcongr
+        _ ≤ 0.588 * ((26.5:ℝ) ^ 2 * 1e-32) := by gcongr
+        _ ≤ 4.13e-30 := by norm_num
+  have hEA0 := Explicit.EA_nonneg 1e8 δ
+  have hZ := Z3z_le
+  have hZ0 : 0 ≤ Z3g BPz2 1e8 :=
+    div_nonneg (Explicit.polyDatum_zeta2.log_pos _).le (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le
+  have hc : c3g 10 1e8 ≤ 3.66e-7 := by
+    unfold c3g
+    have hl := log_ratio_3_ge
+    rw [div_le_iff₀ (by linarith)]
+    nlinarith
+  have hc0 : 0 ≤ c3g 10 1e8 :=
+    div_nonneg (by norm_num) (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le
+  have hB := rhoB_le
+  have hB1 : 1 / (1 - rhoB) ≤ 2.1768 := by
+    rw [div_le_iff₀ (by linarith)]; nlinarith
+  have hB0 : 0 ≤ 1 / (1 - rhoB) := by rw [one_div]; exact inv_nonneg.2 (by linarith)
+  have hA1 : 1 / (1 - rhoA δ) ≤ 4.44e5 := by
+    unfold rhoA
+    refine (Explicit.inv_one_sub_exp_neg_le (by positivity)).trans ?_
+    rw [one_div_div]
+    have : π * (|δ| + 1) / (1.93 * 4.4) ≤ 3.1416 * (1.2e6 + 1) / (1.93 * 4.4) :=
+      div_le_div_of_nonneg_right (mul_le_mul hpi.le (by linarith) (by positivity) (by norm_num))
+        (by norm_num)
+    have h2 : 3.1416 * (1.2e6 + 1) / (1.93 * 4.4) ≤ (4.44e5 - 1 : ℝ) := by norm_num
+    linarith
+  have hA0 : 0 ≤ 1 / (1 - rhoA δ) := by
+    have := Explicit.rhoA_lt_one δ; rw [one_div]; exact inv_nonneg.2 (by linarith)
+  unfold E2g
+  rw [div_eq_mul_one_div (2 * Z3g BPz2 1e8) (1 - rhoB), div_eq_mul_one_div (2 * c3g 10 1e8) ((1 - rhoB) ^ 2),
+    div_eq_mul_one_div (2 * Z3g BPz2 1e8) (1 - rhoA δ),
+    div_eq_mul_one_div (2 * c3g 10 1e8) ((1 - rhoA δ) ^ 2), ← one_div_pow, ← one_div_pow]
+  have hX : 2 * Z3g BPz2 1e8 * (1 / (1 - rhoB)) + 2 * c3g 10 1e8 * (1 / (1 - rhoB)) ^ 2 ≤
+      2 * 166.2 * 2.1768 + 2 * 3.66e-7 * 2.1768 ^ 2 := by
+    have := pow_le_pow_left₀ hB0 hB1 2
+    gcongr
+  have hY : 2 * Z3g BPz2 1e8 * (1 / (1 - rhoA δ)) + 2 * c3g 10 1e8 * (1 / (1 - rhoA δ)) ^ 2 ≤
+      2 * 166.2 * 4.44e5 + 2 * 3.66e-7 * (4.44e5) ^ 2 := by
+    have := pow_le_pow_left₀ hA0 hA1 2
+    gcongr
+  have hX0 : 0 ≤ 2 * Z3g BPz2 1e8 * (1 / (1 - rhoB)) + 2 * c3g 10 1e8 * (1 / (1 - rhoB)) ^ 2 := by
+    positivity
+  have hY0 : 0 ≤ 2 * Z3g BPz2 1e8 * (1 / (1 - rhoA δ)) + 2 * c3g 10 1e8 * (1 / (1 - rhoA δ)) ^ 2 := by
+    positivity
+  have h1 := mul_le_mul hEB hX hX0 (by norm_num)
+  have h2 := mul_le_mul hEA hY hY0 (by norm_num)
+  norm_num at h1 h2 ⊢
+  linarith
+
+theorem Vz_le {δ : ℝ} (hδ : |δ| ≤ 1.2e6) : Vz δ ≤ 1e17 := by
+  have hθ1 : 2 / thetaD δ ≤ 8.5715e6 := by
+    unfold thetaD; rw [div_div_eq_mul_div, div_le_iff₀ (by norm_num)]; nlinarith
+  have hθ2 : 2 / thetaD δ ^ 2 ≤ 3.6735e13 := by
+    unfold thetaD; rw [div_pow, div_div_eq_mul_div, div_le_iff₀ (by norm_num)]
+    have : (1 + |δ|) ^ 2 ≤ (1 + 1.2e6) ^ 2 := pow_le_pow_left₀ (by positivity) (by linarith) 2
+    nlinarith
+  have hl2 : 2 / Real.log 2 + 4.8 ≤ 7.6855 := by
+    have := Real.log_two_gt_d9
+    rw [← le_sub_iff_add_le, div_le_iff₀ (by linarith)]; nlinarith
+  have hθ0 := Explicit.thetaD_pos δ
+  unfold Vz
+  have hl0 : 0 ≤ 2 / Real.log 2 + 4.8 := by
+    have := Real.log_pos (by norm_num : (1:ℝ) < 2); positivity
+  calc 112 * (2 / Real.log 2 + 4.8) * (40 * (2 / thetaD δ) + 2.6 * (2 / thetaD δ ^ 2))
+      ≤ 112 * 7.6855 * (40 * 8.5715e6 + 2.6 * 3.6735e13) := by gcongr
+    _ ≤ 1e17 := by norm_num
+
+/-- **The `q = 1` error at `T₀ = 10⁸`**: `err933Z ≤ 10⁻¹⁷ + 4.7·10⁶/√y` for `y ≥ 10²⁵`, `|δ| ≤ 1.2·10⁶`. -/
+theorem err933Z_le {y : ℝ} (hy : 1e25 ≤ y) {δ : ℝ} (hδ : |δ| ≤ 1.2e6) :
+    err933Z 1e8 δ y ≤ 1e-17 + 4.7e6 / √y := by
+  have hy0 : 0 < y := by linarith
+  have hsy : 3.16e12 ≤ √y := Real.le_sqrt_of_sq_le (by nlinarith)
+  have h2 := E2z_le hδ
+  have h1 := E1z_le
+  have hV := Vz_le hδ
+  have hZ0 : 112 * Z3g BPz2 0 ≤ 15300 := by
+    unfold Z3g
+    have h := log_BPz2_zero_le
+    have hl := log_ratio_3_ge
+    rw [mul_div_assoc', div_le_iff₀ (by linarith)]
+    nlinarith [Explicit.polyDatum_zeta2.log_pos 0]
+  have hpi := Real.pi_gt_three
+  unfold err933Z
+  have t1 : 1.37259 * E1g BPz2 1e8 (2 * π * 0.6647) (2 * π * 0.1707) / √y ≤ 4.7e6 / √y := by
+    apply div_le_div_of_nonneg_right _ (Real.sqrt_nonneg _)
+    nlinarith
+  have t2 : 1.92182 * (112 * Z3g BPz2 0) / y ≤ 1e-20 := by
+    rw [div_le_iff₀ hy0]; nlinarith
+  have t3 : 2.74517 * Vz δ / (2 * π * (y * √y)) ≤ 1e-20 := by
+    rw [div_le_iff₀ (by positivity)]
+    have : y * √y ≥ 1e25 * 3.16e12 := mul_le_mul hy hsy (by norm_num) hy0.le
+    have hV0 := Explicit.Vz_nonneg δ
+    nlinarith
+  linarith
+
 set_option maxHeartbeats 1000000 in
 /-- **[B, Cor 7.1.3]** (with our constants for `q ≥ 2`): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
 `|δ| ≤ 4·3·10⁵/q`, `Σ Λ(n) χ(n) e(δn/y) η_*(n/y) = [q = 1] η̂_*(-δ) y + E y` with
 `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [B, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (numerical
-axiom), at `T₀ = 10⁸/q`; for `q = 1` [B]'s constants `2.485·10⁻¹⁹ + 381576/√y` (cited Prop 9.3.2 for `ζ`). -/
+axiom), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
 theorem cor_7_1_3' {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 300000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 4 * 300000 / q) :
     ‖Schar χ (fun n => ((Λ n * etaU (n / y) : ℝ) : ℂ)) (δ / y) -
@@ -618,12 +826,10 @@ theorem cor_7_1_3' {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 
   have hsy : 0 < √y := Real.sqrt_pos.2 (by linarith)
   unfold err933N
   split_ifs with h1
-  · have hb := err933_le_book (y := y) (by linarith) hq1 hq hδ
-    refine hb.trans ?_
-    have hs : √(q : ℝ) = 1 := by rw [h1]; simp
-    rw [hs, div_one, div_one]
-    have : (381500 + 76) / √y ≤ 4.7e6 / √y := div_le_div_of_nonneg_right (by norm_num) hsy.le
-    linarith
+  · have hs : √(q : ℝ) = 1 := by rw [h1]; simp
+    have hq1' : (q : ℝ) = 1 := by exact_mod_cast h1
+    rw [hs, div_one, hq1', div_one]
+    exact err933Z_le hy (by rw [hq1'] at hd; simpa using hd)
   · exact err933New_le hy (by omega) hq hd
 
 end TernaryGoldbach.MajorArcs

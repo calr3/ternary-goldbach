@@ -303,14 +303,41 @@ theorem integral_eta2_Er_le {q : ℕ} (hq : 1 ≤ q) {T0 : ℝ} (hT0 : 50 ≤ T0
 
 /-! ## The error for `q ≥ 2` -/
 
-open TernaryGoldbach.Explicit (E0b E1b E2b Vb)
+open TernaryGoldbach.Explicit (E0b E1b E2b Vb errZ E2g E1g Z3g BPz2 Vz EB EA rhoB rhoA)
+
+/-- `errZ(T₀, δr, rx)` against the moments (`q = 1`). -/
+noncomputable def ErZ (T0 δ x r : ℝ) : ℝ :=
+  E2g BPz2 10 T0 (EB T0) (EA T0 δ) rhoB (rhoA δ) +
+    E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) / √x * (1 / √r) +
+    112 * Z3g BPz2 0 / x * (1 / r) + Vz δ / (2 * π * (x * √x)) * (1 / (r * √r))
+
+theorem errZ_le_ErZ {T0 δ : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {x r : ℝ} (hx : 0 < x) (hr : 0 < r)
+    (hr1 : r ≤ 1) : errZ T0 (δ * r) (r * x) ≤ ErZ T0 δ x r := by
+  unfold errZ ErZ
+  have hT00 : 0 < T0 := by linarith [le_max_right (10 * π * |δ|) 50]
+  have h10 : 10 * π * |δ| ≤ T0 := (le_max_left _ _).trans hT0
+  have hE2 := Explicit.E2z_mono hT00 hr hr1 h10
+  have hV := Explicit.Vz_mono (δ := δ) hr hr1
+  have hsr : √(r * x) = √r * √x := Real.sqrt_mul hr.le x
+  have hsr0 : 0 < √r := Real.sqrt_pos.2 hr
+  have hsx0 : 0 < √x := Real.sqrt_pos.2 hx
+  rw [hsr]
+  have e1 : E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) / (√r * √x) =
+      E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) / √x * (1 / √r) := by field_simp
+  have e2 : 112 * Z3g BPz2 0 / (r * x) = 112 * Z3g BPz2 0 / x * (1 / r) := by field_simp
+  have e3 : Vz (δ * r) / (2 * π * (r * x * (√r * √x))) ≤
+      Vz δ / (2 * π * (x * √x)) * (1 / (r * √r)) := by
+    rw [show Vz δ / (2 * π * (x * √x)) * (1 / (r * √r)) = Vz δ / (2 * π * (r * x * (√r * √x))) by
+      field_simp]
+    exact div_le_div_of_nonneg_right hV (by positivity)
+  rw [e1, e2]; linarith
 
 /-- `err_new(q, T₀, δr, rx)` against the moments. -/
 noncomputable def ErNew (q : ℕ) (T0 δ x r : ℝ) : ℝ :=
   E2b q T0 δ + E1b q T0 / √x * (1 / √r) + E0b q / x * (1 / r) +
     Vb q δ / (2 * π * (x * √x)) * (1 / (r * √r))
 
-noncomputable def ErN (q : ℕ) (T0 δ x r : ℝ) : ℝ := if q = 1 then Er q T0 δ x r else ErNew q T0 δ x r
+noncomputable def ErN (q : ℕ) (T0 δ x r : ℝ) : ℝ := if q = 1 then ErZ T0 δ x r else ErNew q T0 δ x r
 
 theorem errNew_le_ErNew {q : ℕ} [NeZero q] {T0 δ : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {x r : ℝ}
     (hx : 0 < x) (hr : 0 < r) (hr1 : r ≤ 1) : errNew q T0 (δ * r) (r * x) ≤ ErNew q T0 δ x r := by
@@ -336,13 +363,16 @@ theorem err932N_le_ErN {q : ℕ} [NeZero q] {T0 δ : ℝ} (hT0 : max (10 * π * 
     (hx : 0 < x) (hr : 0 < r) (hr1 : r ≤ 1) : err932N q T0 (δ * r) (r * x) ≤ ErN q T0 δ x r := by
   unfold err932N ErN
   split_ifs with h
-  · exact err932_le_Er (by omega) ((le_max_right _ _).trans hT0) hx hr hr1
+  · exact errZ_le_ErZ hT0 hx hr hr1
   · exact errNew_le_ErNew hT0 hx hr hr1
 
 theorem continuousOn_ErN (q : ℕ) (T0 δ x : ℝ) : ContinuousOn (ErN q T0 δ x) (Icc (1 / 4) 1) := by
   unfold ErN
   split_ifs
-  · exact continuousOn_Er q T0 δ x
+  · unfold ErZ
+    exact ((continuousOn_const.add (continuousOn_const.mul (contOn_inv_sqrt (by norm_num)))).add
+      (continuousOn_const.mul (contOn_inv (by norm_num)))).add
+      (continuousOn_const.mul (contOn_inv_mul_sqrt (by norm_num)))
   · unfold ErNew
     exact ((continuousOn_const.add (continuousOn_const.mul (contOn_inv_sqrt (by norm_num)))).add
       (continuousOn_const.mul (contOn_inv (by norm_num)))).add
@@ -353,9 +383,51 @@ noncomputable def err933New (q : ℕ) (T0 δ x : ℝ) : ℝ :=
   E2b q T0 δ + 1.37259 * E1b q T0 / √x + 1.92182 * E0b q / x +
     2.74517 * Vb q δ / (2 * π * (x * √x))
 
-/-- The error of `cor_9_3_3`: [B]'s for `q = 1`, ours for `q ≥ 2`. -/
+/-- The averaged error for `q = 1`. -/
+noncomputable def err933Z (T0 δ x : ℝ) : ℝ :=
+  E2g BPz2 10 T0 (EB T0) (EA T0 δ) rhoB (rhoA δ) +
+    1.37259 * E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) / √x +
+    1.92182 * (112 * Z3g BPz2 0) / x + 2.74517 * Vz δ / (2 * π * (x * √x))
+
+/-- The error of `cor_9_3_3`. -/
 noncomputable def err933N (q : ℕ) (T0 δ x : ℝ) : ℝ :=
-  if q = 1 then err933 q T0 δ x else err933New q T0 δ x
+  if q = 1 then err933Z T0 δ x else err933New q T0 δ x
+
+theorem integral_eta2_ErZ_le (T0 δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    ∫ r in Ioi 0, eta2 r * ErZ T0 δ x r ≤ err933Z T0 δ x := by
+  set c0 := E2g BPz2 10 T0 (EB T0) (EA T0 δ) rhoB (rhoA δ)
+  set c1 := E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) / √x
+  set c2 := 112 * Z3g BPz2 0 / x
+  set c3 := Vz δ / (2 * π * (x * √x))
+  have hI0 := integrableOn_eta2_mul (g := fun _ => (1 : ℝ)) continuousOn_const
+  have hI1 := integrableOn_eta2_mul (g := fun r => 1 / √r) (contOn_inv_sqrt (by norm_num))
+  have hI2 := integrableOn_eta2_mul (g := fun r => 1 / r) (contOn_inv (by norm_num))
+  have hI3 := integrableOn_eta2_mul (g := fun r => 1 / (r * √r)) (contOn_inv_mul_sqrt (by norm_num))
+  have e : (fun r => eta2 r * ErZ T0 δ x r) = fun r =>
+      ((c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r))) + c2 * (eta2 r * (1 / r))) +
+        c3 * (eta2 r * (1 / (r * √r))) := by
+    funext r; unfold ErZ; ring
+  have hA : IntegrableOn (fun r => c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r))) (Ioi 0) :=
+    (hI0.const_mul c0).add (hI1.const_mul c1)
+  have hB : IntegrableOn (fun r => c0 * (eta2 r * 1) + c1 * (eta2 r * (1 / √r)) +
+      c2 * (eta2 r * (1 / r))) (Ioi 0) := hA.add (hI2.const_mul c2)
+  rw [e, integral_add hB (hI3.const_mul c3), integral_add hA (hI2.const_mul c2),
+    integral_add (hI0.const_mul c0) (hI1.const_mul c1), integral_const_mul, integral_const_mul,
+    integral_const_mul, integral_const_mul]
+  simp only [mul_one]
+  rw [moment0]
+  have m1 := moment_half
+  have m2 := moment_one
+  have m3 := moment_3half
+  have hc1 : 0 ≤ c1 := div_nonneg (Explicit.E1z_nonneg T0) (Real.sqrt_nonneg _)
+  have hc2 : 0 ≤ c2 := div_nonneg (mul_nonneg (by norm_num) Explicit.Z3z_nonneg) hx.le
+  have hc3 : 0 ≤ c3 := div_nonneg (Explicit.Vz_nonneg δ) (by positivity)
+  have := mul_le_mul_of_nonneg_left m1 hc1
+  have := mul_le_mul_of_nonneg_left m2 hc2
+  have := mul_le_mul_of_nonneg_left m3 hc3
+  have hfin : c0 * 1 + c1 * 1.37259 + c2 * 1.92182 + c3 * 2.74517 = err933Z T0 δ x := by
+    simp only [c0, c1, c2, c3]; unfold err933Z; ring
+  linarith
 
 theorem integral_eta2_ErNew_le (q : ℕ) [NeZero q] (T0 δ : ℝ) {x : ℝ} (hx : 0 < x) :
     ∫ r in Ioi 0, eta2 r * ErNew q T0 δ x r ≤ err933New q T0 δ x := by
@@ -397,7 +469,7 @@ theorem integral_eta2_ErN_le {q : ℕ} [NeZero q] {T0 : ℝ} (hT0 : 50 ≤ T0) (
     (hx : 0 < x) : ∫ r in Ioi 0, eta2 r * ErN q T0 δ x r ≤ err933N q T0 δ x := by
   unfold ErN err933N
   split_ifs with h
-  · exact integral_eta2_Er_le (by omega) hT0 hx
+  · exact integral_eta2_ErZ_le T0 δ hx
   · exact integral_eta2_ErNew_le q T0 δ hx
 
 theorem continuous_phi : Continuous phi := by

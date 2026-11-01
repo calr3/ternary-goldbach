@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **4 explicitly
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **3 explicitly
 stated results from the literature**, which are still `sorry`, and **33 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
@@ -50,13 +50,12 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 4 `sorry`s that `ternary_goldbach` depends on are:
+The 3 `sorry`s that `ternary_goldbach` depends on are:
 
-* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2] *for `q = 1`*
-  (`prop_9_3_2_one`, the case of `ζ`), [B, Prop 9.4.2] and [B, Prop 9.5.1] (`MajorArcs/GRH.lean`,
-  `MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated *conditionally* on GRH up to a height
-  `T₀`. [B, Prop 9.3.2] for primitive characters of modulus `q ≥ 2` is **proved**
-  (`MajorArcs/Prop932.lean`, from the explicit formula in `Explicit/`), with weaker constants than [B]'s:
+* **two cited Part II results**: the explicit-formula estimates [B, Prop 9.4.2] and [B, Prop 9.5.1]
+  (`MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated *conditionally* on GRH up to a
+  height `T₀`. [B, Prop 9.3.2] is **proved** for all primitive characters, including `q = 1` (`ζ`)
+  (`MajorArcs/Prop932.lean`, from the explicit formulas in `Explicit/`), with weaker constants than [B]'s:
   zeros are counted with Jensen's formula in windows, not with an explicit `N(T)`. From these, Platt's GRH
   verification (numerical axioms `platt_odd`, `platt_even`) and the value (9.94) (numerical axiom),
   [B, Cor 7.1.3] (with `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)` for `y ≥ 10²⁵`), [B, Thm 7.1.4] and
