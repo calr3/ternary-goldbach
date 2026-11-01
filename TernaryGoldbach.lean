@@ -161,3 +161,6 @@ import TernaryGoldbach.Explicit.EtaPlusSqBound
 import TernaryGoldbach.Explicit.Digamma
 import TernaryGoldbach.Explicit.Xi
 import TernaryGoldbach.Explicit.RectResidue2
+import TernaryGoldbach.Explicit.XiPartial
+import TernaryGoldbach.Explicit.ZeroFree
+import TernaryGoldbach.Explicit.ZeroFreeRegion

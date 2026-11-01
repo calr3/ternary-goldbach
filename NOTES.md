@@ -147,6 +147,23 @@ Ramaré) beyond `x ≈ e^{4000}`; we do not formalize those. Instead:
    `MertensProduct` (`psi_err`, `F_large`), `MoebiusBound.K_partC` (the plateau costs
    `≈ ε·L₁²`; budget: `K ≤ 0.54` has slack `8·10⁻⁴`, `abs_ls_big` allows `K ≤ 0.543`).
 
+## Zero-free region DONE (2026-11-01)
+
+`Explicit/ZeroFreeRegion.lean` `zero_free`: every zero `ρ = β + iγ` of `ξ` with `|γ| ≥ 10⁹` has
+`β ≤ 1 − 1/(11 log|γ|)` (Stechkin-type; only the standard axioms). Route, without the Hadamard product:
+* `Explicit/XiPartial.lean`: `ξ(s) = s(s−1)Λ₀(s) + 1` (`xiF`), squares `[½−T, ½+T] × [−T, T]` at good heights
+  (polynomial datum `ldatum_zeta2`, `HkD` polylog), `|ξ'/ξ| ≤ MX(k) = O(log² k)` on their boundary
+  (digamma + `|ζ'/ζ| ≤ C₃` for `ℜ ≥ 3/2` + FE). Symmetry `w ↦ 1 − w` turns `∮ ξ'/ξ(w)(w−s)⁻¹` into
+  `½∮ ξ'/ξ(w)[(w−s)⁻¹ − (w−(1−s))⁻¹]` (kernel `O(|w|⁻²)`), so `xi_partial_approx`:
+  `ξ'/ξ(s) ≈ Σ_{ρ in square} m_ρ/(s − ρ)` uniformly on discs.
+* `Explicit/ZeroFree.lean`: Stechkin's lemma (an elementary inequality, proved algebraically):
+  `Φ_s(ρ) ≥ κ Φ_{s₁}(ρ)` for `Φ_s(ρ) = Re 1/(s−ρ) + Re 1/(s−(1−ρ̄))`, `κ = (σ−½)/(σ₁−½)` whenever
+  `(σ−½)² + (σ₁−½)² ≥ 3/2`; pairing `ρ ↔ 1 − ρ̄` via the identity at `1 − s̄` and `ξ(s̄) = conj ξ(s)`.
+* `Explicit/ZeroFreeRegion.lean`: `18 + 30cos θ + 17cos 2θ + 6cos 3θ + cos 4θ = 8(½ + (3/2)cos θ + cos²θ)² ≥ 0`,
+  `σ = 1 + 0.31/log t`, `σ₁ = 1.6181`; digamma via `ψ(z) = ψ(z+2) − 1/z − 1/(z+1)` and the Dirichlet integral.
+  The model (`zf/stech2.py` in the session scratchpad) gives `R ≈ 10.3` at `t = 3·10¹²`; `R = 11` is proved
+  for `t ≥ 10⁹` with margin.
+
 ## Status (2026-11-01, latest)
 
 * `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,
