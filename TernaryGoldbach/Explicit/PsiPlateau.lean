@@ -221,4 +221,80 @@ theorem Vg_plateau_le {a x : ℝ} (ha : |a| ≤ 64 / 3e12) (hx : 1e19 ≤ x) :
         gcongr
     _ ≤ 9.6e8 := by norm_num
 
+theorem exp_small_le2 {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) : Real.exp t ≤ 1 + t + t ^ 2 := by
+  have := Real.exp_bound' h0 h1 (n := 2) (by norm_num)
+  norm_num [Finset.sum_range_succ, Nat.factorial] at this
+  nlinarith [sq_nonneg t]
+
+theorem ErrG_plateau_le {a x : ℝ} (ha : |a| ≤ 64 / 3e12) (hx : 1e19 ≤ x) :
+    ErrG a (Real.log (1e10 / x)) (8 / 3e12) x ≤ 14990 * √x + 1e-13 * x + 9.6e8 := by
+  unfold ErrG
+  have h1 := LineB_plateau_le ha
+  have h2 := TailB_plateau_le ha
+  have h3 := Vg_plateau_le ha hx
+  have hx0 : 0 ≤ x := by linarith
+  have := mul_le_mul_of_nonneg_left h1 (Real.sqrt_nonneg x)
+  have := mul_le_mul_of_nonneg_left h2 hx0
+  nlinarith
+
+/-- **`|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 15000 √x + 4.2·10¹⁰`** for `x ≥ 10¹⁹`. -/
+theorem psi_plateau {x : ℝ} (hx : 1e19 ≤ x) : |psiR x - x| ≤ 2.15e-11 * x + 15000 * √x + 4.2e10 := by
+  have hx0 : 0 < x := by linarith
+  set δ : ℝ := 8 / 3e12 with hδ
+  have hδ0 : 0 < δ := by rw [hδ]; norm_num
+  have hKd : (8 : ℝ) * δ = 64 / 3e12 := by rw [hδ]; norm_num
+  have hK2 : -((8 : ℝ) ^ 2 / 2) = -32 := by norm_num
+  have he32 := exp_neg32_le
+  have he32' : 0 < Real.exp (-32) := Real.exp_pos _
+  have hsx := Real.sqrt_nonneg x
+  -- upper
+  have hK1 : 2 * Real.exp (-((8 : ℝ) ^ 2 / 2)) < 1 := by rw [hK2]; linarith
+  have hYx : 1e10 * Real.exp (8 * δ) ≤ x := by
+    rw [hKd]
+    have := exp_small_le (t := (64 / 3e12 : ℝ)) (by norm_num) (by norm_num)
+    nlinarith
+  have hU := psi_upper_explicit (δ := δ) (K := 8) (y0 := 1e10) (x := x) hδ0 (by norm_num)
+    hK1 (by norm_num) (by linarith) hYx
+  rw [hK2, hKd] at hU
+  have hEu := ErrG_plateau_le (a := 64 / 3e12) (by rw [abs_of_pos (by norm_num)]) hx
+  rw [← hKd] at hEu
+  rw [hKd] at hEu
+  have hexp1 : Real.exp (δ ^ 2 / 2 + 64 / 3e12) ≤ 1 + 2.1334e-11 := by
+    have h := exp_small_le2 (t := δ ^ 2 / 2 + 64 / 3e12) (by positivity) (by rw [hδ]; norm_num)
+    rw [hδ] at h ⊢; norm_num at h ⊢; linarith
+  have hexp2 : Real.exp (64 / 3e12) ≤ 1.0000001 := by
+    have := exp_small_le (t := (64 / 3e12 : ℝ)) (by norm_num) (by norm_num); norm_num at this ⊢; linarith
+  have hden : 1 / (1 - 2 * Real.exp (-32)) ≤ 1 + 3e-14 := by
+    rw [div_le_iff₀ (by linarith)]; nlinarith
+  have hup : psiR x ≤ x + 2.15e-11 * x + 15000 * √x + 4.2e10 := by
+    have hnum : Real.exp (δ ^ 2 / 2 + 64 / 3e12) * x + ErrG (64 / 3e12) (Real.log (1e10 / x)) δ x ≤
+        (1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8) := by
+      have := mul_le_mul_of_nonneg_right hexp1 hx0.le; linarith
+    have hnum0 : 0 ≤ (1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8) := by positivity
+    have hd0 : 0 < 1 - 2 * Real.exp (-32) := by linarith
+    have hq : (Real.exp (δ ^ 2 / 2 + 64 / 3e12) * x + ErrG (64 / 3e12) (Real.log (1e10 / x)) δ x) /
+        (1 - 2 * Real.exp (-32)) ≤ ((1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8)) * (1 + 3e-14) := by
+      rw [div_eq_mul_one_div]
+      exact mul_le_mul hnum hden (by positivity) hnum0
+    have h4 : 4 * (1e10 * Real.exp (64 / 3e12)) ≤ 4.0001e10 := by nlinarith
+    nlinarith
+  -- lower
+  have hb : Real.log (1e10 / x) ≤ -(8 * δ) := by
+    rw [hKd]
+    have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1e10 / x by positivity)
+    have : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
+    linarith
+  have hL := psi_lower_explicit (δ := δ) (K := 8) (y0 := 1e10) (x := x) hδ0 (by rw [hδ]; norm_num)
+    (by rw [hδ]; norm_num) (by norm_num) (by linarith) hb
+  rw [hK2, hKd] at hL
+  have hEl := ErrG_plateau_le (a := -(64 / 3e12)) (by rw [abs_neg, abs_of_pos (by norm_num)]) hx
+  have hexp3 : 1 - 64 / 3e12 ≤ Real.exp (-(64 / 3e12)) := by
+    have := Real.add_one_le_exp (-(64 / 3e12 : ℝ)); linarith
+  have hlo : x - 2.15e-11 * x - 15000 * √x - 4.2e10 ≤ psiR x := by
+    have := mul_le_mul_of_nonneg_right hexp3 hx0.le
+    have : 4 * x * Real.exp (-32) ≤ 4 * x * 1.3e-14 := by
+      have := mul_le_mul_of_nonneg_left he32 (by positivity : (0:ℝ) ≤ 4 * x); linarith
+    nlinarith
+  rw [abs_le]; constructor <;> linarith
+
 end TernaryGoldbach.Explicit
