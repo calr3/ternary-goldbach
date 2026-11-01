@@ -277,6 +277,13 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
    `Σ_a |R₊|² ≤ E₊²` (Bombieri without the principal character); `∫_𝔐 |S₊|² ≤ 8.709x` ((14.7), done); Cauchy–Schwarz.
 6. *Arcs for complex integrands*: `∫_{(0,1]∩𝔐} f = Σ_{q,b} ∫_{J_{q,b}} f` (equality via indicators + periodization).
 7. *Numerics*, then restate `major_arcs_input` with the constant obtained (≥ 1.045) and adjust `final_inequality`.
+   *Assembly plan* (`MajorTotal.lean`): at `α = b/q + β`, `S_η = M_η + R_η` with `M_η = μ(q)/φ(q) η̂(−βx)x`;
+   `Σ_b M₊²M_* e(−Nα) = coefN·η̂₊²η̂_* x³ e(−Nβ)` (`coef_eq`); error `R_* S₊² + M_* R₊ (S₊ + M₊)`, with
+   `Σ_b |S'(b/q+β) − μ/φ S'(β)|² = Σ_b |S'|² − μ²/φ |S'(β)|² ≤ (2.41·10⁻⁸x)²` (`arc_chars` + `Σ_b S'(b/q+β) = μ(q)S'(β)`),
+   pointwise `|R_*| ≤ max_{ψ≠1} |τ(ψ)||S_{ψ⁻¹}|` via orthogonality (Cor 7.1.3 for `η_*` at scale `x/κ`), AM–GM
+   instead of Cauchy–Schwarz for the `β`-integrals; main term: `η₊ → η◦` costs `≲ 2·10⁻³ x²/κ`, completing
+   `∫_{|β|<w}` to `ℝ` costs `≲ 10⁻³ x²/κ`; `x²·C_{η◦,η_*}(N/x)·1.314 ≥ 1.0521 x²/κ`. Target `(14.27)` with `1.045`.
+   *Book note*: (14.17) prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip; harmless).
 Next: Ch. 10
 (character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
