@@ -3,6 +3,34 @@
 Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`. For the
 `sorry` policy, see `README.md`.
 
+## Roadmap: the explicit-formula sorries (Props 9.3.2, 9.4.2, 9.5.1) and Dusart
+
+[B]'s proofs: Prop 9.x = Lemma 9.1.1 (explicit formula: shift `∫_{(3/2)} −L'/L G_δ x^s` to `ℜs = −1/2`) +
+Lemma 9.1.4 (zeros with `|γ| ≤ T₀`, on the line, Cauchy–Schwarz + Mellin–Plancherel) + Lemma 9.1.3 with
+Cor 8.0.2 (zeros with `|γ| > T₀`). Inputs [B] cites: `N(T,χ) = (T/π)log(qT/2πe) + O*(0.5 log qT + 17.7)`
+([Ros41], [McC84a], [Tru]), the functional equation (9.8), digamma bounds (9.10), `|ζ'/ζ(3/2)| ≤ 1.50524`.
+Erratum-ish: Lemma 9.1.3's `N⁺ = N/2` holds only for real `χ`; correct version sums over `χ` and `χ̄` (zeros
+of `L(χ)` with `γ < 0` are conjugates of zeros of `L(χ̄)` with `γ > 0`), which needs `f` to bound
+`|G_δ|` and `|G_{−δ}|` — Cor 8.0.2 (and our rotation bound) is symmetric in the sign of `δ`, so fine.
+1. **Cor 8.0.2 — DONE** (`Explicit/MellinRotate.lean`, no `sorry`): rotate `t = re^{iθ}`; same exponents
+   `0.1598`, `0.1065`, constants `0.892|τ|`, `0.588 y²` (per term; [B]: `5.13`, `1.99` for pairs).
+2. *A priori growth of `L(s,χ)`* (next): second-order partial summation (`S(u) = Σ_{n≤u} χ(n)` periodic,
+   subtract its mean, integrate twice) ⇒ `|L(σ+it, χ)| ≤ C q² (|t|+2)²` for `σ ≥ −1/2`, `χ ≠ 1`; identity
+   theorem from `LFunction_eq_LSeries` + `LSeries_eq_mul_integral` (SumCoeff). On `ℜs = −1/2` exactly:
+   `|L(s,χ)| = (q/π)|(κ − 1/2 + it)/2| |L(3/2 − it, χ̄)|` (functional equation, `Γ(w̄+1) = w̄Γ(w̄)`).
+3. *Zeros*: multiplicities (`analyticOrderAt`), local finiteness; crude local count by Jensen
+   (`MeromorphicOn.circleAverage_log_norm`): `#{ρ : |γ − T| ≤ 1} ≤ C log(q(|T|+2))`.
+4. *Landau's lemma* (partial fractions for `L'/L` near `s₀`): `MeromorphicOn.extract_zeros_poles` +
+   `Complex.borelCaratheodory` on `log g`.
+5. *Explicit formula* (Lemma 9.1.1): rectangles `[−1/2, 3/2] × [−T_k, T_k]` at good heights, residues of
+   `L'/L G x^s` (`∮ ds/(s−ρ) = 2πi` by hand), `T_k → ∞` using the decay of `G`.
+6. *Zero sums*: with a Jensen density the `√T₀ log qT₀ x^{−1/2}` terms get worse constants (≈5–25×); the
+   downstream uses (Cor 7.1.3 at `y ≥ 10²⁵`, Thm 7.1.4, Prop 7.1.5, (14.7), (14.27)) have room, but the
+   constants in Props 9.x / Cor 9.3.3 / Cor 7.1.3 / Thm 7.1.4 must then be restated and re-verified.
+   (Sharp alternative: Weil's explicit formula with a test function supported in `|log n| < log 2`.)
+7. *Dusart*: explicit formula for `ζ` + zero-free region (3-4-1 with step 4) + RH verification (numerical
+   axiom) + numerics; or weaken `dusart_theta` to what the uses need.
+
 ## Status (2026-11-01, later)
 
 * `ternary_goldbach` depends on 4 `sorry`s — `dusart_theta` and the three cited explicit formulas
