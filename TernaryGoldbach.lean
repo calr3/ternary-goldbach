@@ -135,3 +135,4 @@ import TernaryGoldbach.Explicit.LogDerivL
 import TernaryGoldbach.Explicit.RectResidue
 import TernaryGoldbach.Explicit.GMellin
 import TernaryGoldbach.Explicit.ExplicitFormula
+import TernaryGoldbach.Explicit.GammaBounds
