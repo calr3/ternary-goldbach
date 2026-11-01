@@ -53,9 +53,9 @@ theorem E2_le_of {x c D : ℝ} (hx : 2 ≤ x) (h : ∀ t, x < t → |E₁Λ t - 
   have e1 : (c + D) / Real.log x - (c - D) / Real.log x = 2 * D / Real.log x := by ring
   rw [abs_le]; constructor <;> linarith
 
-/-- `|ψ(n) − n| ≤ n/log³ n + 7.04 √n` for `n ≥ 89 967 803`. -/
+/-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 89 967 803`. -/
 theorem psi_err {n : ℕ} (hn : 89967803 ≤ n) :
-    |psiN n - n| ≤ n / Real.log n ^ 3 + 7.04 * √(n : ℝ) := by
+    |psiN n - n| ≤ n / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ) := by
   have h1 := psi_upper_of hn (psi_bounds _).1
   have h2 := (abs_lt.1 (thetaN_large hn)).1
   have h3 := thetaN_le_psiN n
@@ -86,7 +86,7 @@ theorem sum_inv_succ_le {a b : ℕ} (hab : a < b) :
 /-- The Abel summation term, centred: `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ …`. -/
 theorem abel_term_err {n : ℕ} (hn : 89967803 ≤ n) :
     |psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1)| ≤
-      1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) := by
+      1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) + epl n / ((n : ℝ) + 1) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
   have hs0 : 0 < √(n : ℝ) := Real.sqrt_pos.2 hn0
   have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0.le
@@ -96,17 +96,19 @@ theorem abel_term_err {n : ℕ} (hn : 89967803 ≤ n) :
     push_cast; field_simp; ring
   rw [e, abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / (n * (n + 1)))]
   have h := mul_le_mul_of_nonneg_right (psi_err hn) (by positivity : (0 : ℝ) ≤ 1 / (n * (n + 1)))
-  have e2 : ((n : ℝ) / Real.log n ^ 3 + 7.04 * √(n : ℝ)) * (1 / (n * (n + 1))) =
-      1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) := by
+  have e2 : ((n : ℝ) / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ)) * (1 / (n * (n + 1))) =
+      1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) + epl n / ((n : ℝ) + 1) := by
     have : √(n : ℝ) * (1 / (n * (n + 1))) = 1 / (√(n : ℝ) * (n + 1)) := by
       rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
-    rw [add_mul, mul_assoc, this]; field_simp
+    have e3 : epl n * n * (1 / (n * (n + 1))) = epl n / ((n : ℝ) + 1) := by field_simp
+    rw [add_mul, add_mul, mul_assoc (7.04 : ℝ), this, e3]; field_simp; ring
   linarith
 
 /-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 89 967 803`. -/
 theorem E1_diff {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
-      (2 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) := by
+      (2 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) + Pth M := by
+  have hPth := Pth_nonneg (M : ℝ)
   have hM0 : (0 : ℝ) < M := by exact_mod_cast (by omega : 0 < M)
   have hLM : 0 < Real.log M := Real.log_pos (by exact_mod_cast (by omega : 1 < M))
   have hsM : 0 < √(M : ℝ) := Real.sqrt_pos.2 hM0
@@ -149,12 +151,13 @@ theorem E1_diff {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t)
   -- `M < N`: summation by parts
   rw [hdiff, abel_Ioc _ M N hlt]
   -- interior
+  set Se := ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) with hSe
   have hint : |∑ n ∈ Ioo M N, (psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1))| ≤
-      2 / Real.log M ^ 2 + 14.08 / √(M : ℝ) := by
+      2 / Real.log M ^ 2 + 14.08 / √(M : ℝ) + Se := by
     refine (abs_sum_le_sum_abs _ _).trans ?_
     refine (sum_le_sum fun n hn => abel_term_err (n := n)
       (by have := (mem_Ioo.1 hn).1; omega)).trans ?_
-    rw [sum_add_distrib, ← mul_sum]
+    rw [sum_add_distrib, sum_add_distrib, ← mul_sum, ← hSe]
     have h1 := sum_inv_log_cube_le (a := M) (by omega) hlt
     have h2 := sum_inv_sqrt_le hlt
     have h1' : 2 / Real.log ((M : ℝ) + 1) ^ 2 ≤ 2 / Real.log M ^ 2 :=
@@ -172,38 +175,44 @@ theorem E1_diff {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t)
   -- boundary terms
   have heN := psi_err (n := N) (by omega)
   have heM := psi_err (n := M) hM
-  have hbN : |psiN N * (1 / (N : ℝ)) - 1| ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+  have hbN : |psiN N * (1 / (N : ℝ)) - 1| ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl N := by
     have e : psiN N * (1 / (N : ℝ)) - 1 = (psiN N - N) * (1 / (N : ℝ)) := by field_simp
     rw [e, abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / (N : ℝ))]
     have hsN : 0 < √(N : ℝ) := Real.sqrt_pos.2 hN0
     have hssN : √(N : ℝ) * √(N : ℝ) = N := Real.mul_self_sqrt hN0.le
     have hLN : Real.log M ≤ Real.log N := Real.log_le_log hM0 (by exact_mod_cast hMN)
-    calc |psiN N - N| * (1 / (N : ℝ)) ≤ (N / Real.log N ^ 3 + 7.04 * √(N : ℝ)) * (1 / (N : ℝ)) :=
+    calc |psiN N - N| * (1 / (N : ℝ)) ≤ (N / Real.log N ^ 3 + epl N * N + 7.04 * √(N : ℝ)) * (1 / (N : ℝ)) :=
           mul_le_mul_of_nonneg_right heN (by positivity)
-      _ = 1 / Real.log N ^ 3 + 7.04 / √(N : ℝ) := by
+      _ = 1 / Real.log N ^ 3 + 7.04 / √(N : ℝ) + epl N := by
           have a : (N : ℝ) / Real.log N ^ 3 * (1 / N) = 1 / Real.log N ^ 3 := by field_simp
           have b : √(N : ℝ) * (1 / N) = 1 / √(N : ℝ) := by
             rw [mul_one_div, div_eq_div_iff hN0.ne' hsN.ne', one_mul, hssN]
-          rw [add_mul, a, mul_assoc, b]; ring
-      _ ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+          have c : epl N * N * (1 / (N : ℝ)) = epl N := by field_simp
+          rw [add_mul, add_mul, a, mul_assoc (7.04 : ℝ), b, c]; ring
+      _ ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl N := by
           gcongr
   have hbM : |psiN M * (1 / ((M + 1 : ℕ) : ℝ)) - (1 - 1 / ((M : ℝ) + 1))| ≤
-      1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+      1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl M := by
     have e : psiN M * (1 / ((M + 1 : ℕ) : ℝ)) - (1 - 1 / ((M : ℝ) + 1)) =
         (psiN M - M) * (1 / ((M : ℝ) + 1)) := by push_cast; field_simp; ring
     rw [e, abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / ((M : ℝ) + 1))]
     have hssM : √(M : ℝ) * √(M : ℝ) = M := Real.mul_self_sqrt hM0.le
-    calc |psiN M - M| * (1 / ((M : ℝ) + 1)) ≤ (M / Real.log M ^ 3 + 7.04 * √(M : ℝ)) * (1 / (M : ℝ)) := by
+    have hepM := mul_nonneg (epl_nonneg (M : ℝ)) hM0.le
+    calc |psiN M - M| * (1 / ((M : ℝ) + 1)) ≤
+          (M / Real.log M ^ 3 + epl M * M + 7.04 * √(M : ℝ)) * (1 / (M : ℝ)) := by
           apply mul_le_mul heM (div_le_div_of_nonneg_left (by norm_num) hM0 (by linarith))
             (by positivity) (by positivity)
-      _ = 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+      _ = 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl M := by
           have a : (M : ℝ) / Real.log M ^ 3 * (1 / M) = 1 / Real.log M ^ 3 := by field_simp
           have b : √(M : ℝ) * (1 / M) = 1 / √(M : ℝ) := by
             rw [mul_one_div, div_eq_div_iff hM0.ne' hsM.ne', one_mul, hssM]
-          rw [add_mul, a, mul_assoc, b]; ring
+          have c : epl M * M * (1 / (M : ℝ)) = epl M := by field_simp
+          rw [add_mul, add_mul, a, mul_assoc (7.04 : ℝ), b, c]; ring
   have hM1 : 1 / ((M : ℝ) + 1) ≤ 1 / M := div_le_div_of_nonneg_left (by norm_num) hM0 (by linarith)
   have hM1' : 0 ≤ 1 / ((M : ℝ) + 1) := by positivity
   have hlN : Real.log (N + 1) - Real.log t ≥ 0 := by linarith
+  have hP := epl_total_le (M := M) (N := N) (by omega) hMN
+  rw [← hSe] at hP
   rw [abs_le] at hint hbN hbM ⊢
   have e3 : (3 : ℝ) / M = 1 / M + 2 / M := by ring
   constructor <;> linarith [hint.1, hint.2, hbN.1, hbN.2, hbM.1, hbM.2]
@@ -455,10 +464,14 @@ theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
     have : x < (s + 1) * (s + 1) := Nat.lt_succ_sqrt x
     have : (x : ℝ) < ((s : ℝ) + 1) * (s + 1) := by exact_mod_cast this
     nlinarith
-  set D := 3 / (x : ℝ) + 2 * (1 / L ^ 3 + 7.04 / sx) + (2 / L ^ 2 + 14.08 / sx) with hD
+  set D := 3 / (x : ℝ) + 2 * (1 / L ^ 3 + 7.04 / sx) + (2 / L ^ 2 + 14.08 / sx) + Pth x with hD
+  have hD0 : 0 ≤ D := by
+    have : 0 ≤ 3 / (x : ℝ) + 2 * (1 / L ^ 3 + 7.04 / sx) + (2 / L ^ 2 + 14.08 / sx) := by positivity
+    have := Pth_nonneg (x : ℝ)
+    rw [hD]; linarith
   have hE2 : |E₂Λ (x : ℝ)| ≤ 2 * D / L := by
     refine E2_le_of (c := E₁Λ (x : ℝ)) (by linarith) (fun t ht => E1_diff (by omega) ht.le) ?_
-    rw [sub_self, abs_zero]; positivity
+    rw [sub_self, abs_zero]; exact hD0
   have hmert := sum_mangoldt_div_log_eq (x : ℝ)
   rw [Nat.floor_natCast] at hmert
   have hlF := logF_le x (by omega)
@@ -466,7 +479,8 @@ theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
   have hlogle : Real.log (∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1))) ≤
       Real.log L + Real.eulerMascheroniConstant + η := by
     rw [hlogF]; linarith [(abs_le.1 hE2).2]
-  have hη0 : 0 ≤ η := by positivity
+  have hη0 : 0 ≤ η := by
+    rw [hη]; exact add_nonneg (div_nonneg (mul_nonneg (by norm_num : (0:ℝ) ≤ 2) hD0) hL0.le) (by positivity)
   -- bounds on the pieces of `η L²`
   have hLsx : L ≤ 0.0021 * sx := by nlinarith only [hL2, hL18, hL0]
   have hLL : (324 : ℝ) ≤ L ^ 2 := by nlinarith only [hL18]
@@ -488,11 +502,12 @@ theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
     rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
     have : L ^ 3 = L * L ^ 2 := by ring
     rw [this]; nlinarith only [hLL, hL0]
-  have hηL : η * L ^ 2 ≤ 0.2223 + 0.0124 + 0.1183 + 0.001 + 0.1084 := by
+  have k7 : Pth x * L ≤ 0.0074 := Pth_mul_log_le (by exact_mod_cast (by omega : 1 ≤ x))
+  have hηL : η * L ^ 2 ≤ 0.2223 + 0.0124 + 0.1183 + 0.001 + 0.1084 + 0.0148 := by
     have e : η * L ^ 2 = 6 / (x : ℝ) * L + 4 / L ^ 3 * L + 4 / L ^ 2 * L + 56.32 / sx * L +
-        3 / (s : ℝ) * L ^ 2 := by
+        3 / (s : ℝ) * L ^ 2 + 2 * (Pth x * L) := by
       rw [hη, hD]; field_simp; ring
-    rw [e]; linarith only [k1, k2, k3, k4, k5]
+    rw [e]; linarith only [k1, k2, k3, k4, k5, k7]
   have hη1 : η ≤ 1 / 2 := by
     have : η * L ^ 2 ≤ 1 / 2 * L ^ 2 := by linarith only [hηL, hLL]
     exact le_of_mul_le_mul_right this (by positivity)
@@ -519,13 +534,17 @@ theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
       _ = G * L + 2 * (G * η * L) := by ring
   -- `θ(x)` bounds
   have hθ := abs_lt.1 (thetaN_large (n := x) (by omega))
-  set u := 1 / L ^ 3 with hu
+  set u := 1 / L ^ 3 + epl x with hu
+  have hepl0 := epl_nonneg (x : ℝ)
   have hu0 : 0 < u := by positivity
-  have hu1 : u ≤ 1 / 5832 := by
-    rw [hu, div_le_div_iff₀ (by positivity) (by norm_num)]
-    have := pow_le_pow_left₀ (by norm_num) hL18 3
-    linarith
-  have hθx : (x : ℝ) / L ^ 3 = x * u := by rw [hu]; ring
+  have hu1 : u ≤ 1 / 5800 := by
+    have h1 : 1 / L ^ 3 ≤ 1 / 5832 := by
+      rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+      have := pow_le_pow_left₀ (by norm_num) hL18 3
+      linarith
+    have := epl_le (x : ℝ)
+    rw [hu]; linarith
+  have hθx : (x : ℝ) / L ^ 3 + epl x * x = x * u := by rw [hu]; ring
   rw [hθx] at hθ
   have hθ0 : 0 < thetaN x := by nlinarith only [hθ.1, hx0, hu1, hu0]
   have hlθ1 : L - 2 * u ≤ Real.log (thetaN x) := by
@@ -559,10 +578,13 @@ theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
     rw [lt_div_iff₀ hL0]
     have hk : (2 * (G * η * L) + 2 * (G * u)) * L = 2 * (G * (η * L ^ 2)) + 2 * (G * (u * L)) := by
       ring
-    have huL : u * L ≤ 0.0031 := by rw [hu]; exact k6
-    have a1 : G * (η * L ^ 2) ≤ 1.95 * 0.4624 :=
+    have huL : u * L ≤ 0.0032 := by
+      have := epl_mul_log_le (x : ℝ)
+      have e : u * L = 1 / L ^ 3 * L + epl x * L := by rw [hu]; ring
+      rw [e]; linarith [k6]
+    have a1 : G * (η * L ^ 2) ≤ 1.95 * 0.4772 :=
       mul_le_mul hG1.le (by linarith only [hηL]) (by positivity) (by norm_num)
-    have a2 : G * (u * L) ≤ 1.95 * 0.0031 :=
+    have a2 : G * (u * L) ≤ 1.95 * 0.0032 :=
       mul_le_mul hG1.le huL (by positivity) (by norm_num)
     rw [hk]; linarith only [a1, a2]
   linarith only [hF, hGL, hc, key]

@@ -492,4 +492,38 @@ theorem sum_epl_div_le (a b : ℕ) :
       exact_mod_cast hn
     rw [epl_eq_zero this, zero_div]
 
+/-- The plateau mass beyond `M`: `3.7·10⁻⁷` if `log M < 20000`, else `0`. -/
+noncomputable def Pth (M : ℝ) : ℝ := if Real.log M < 20000 then 3.7e-7 else 0
+
+theorem Pth_nonneg (M : ℝ) : 0 ≤ Pth M := by unfold Pth; split_ifs <;> norm_num
+
+theorem Pth_le (M : ℝ) : Pth M ≤ 3.7e-7 := by unfold Pth; split_ifs <;> norm_num
+
+theorem Pth_mul_log_le {M : ℝ} (hM : 1 ≤ M) : Pth M * Real.log M ≤ 0.0074 := by
+  unfold Pth; split_ifs with h
+  · have := Real.log_nonneg hM; nlinarith
+  · rw [zero_mul]; norm_num
+
+/-- `Σ_{M<n<N} ε_pl(n)/(n+1) + ε_pl(N) + ε_pl(M) ≤ P(M)`. -/
+theorem epl_total_le {M N : ℕ} (hM : 1 ≤ M) (hMN : M ≤ N) :
+    ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) + epl N + epl M ≤ Pth M := by
+  have hS := sum_epl_div_le M N
+  have hM0 : (0 : ℝ) < M := by exact_mod_cast hM
+  have hMN' : (M : ℝ) ≤ N := by exact_mod_cast hMN
+  by_cases h : Real.log (M : ℝ) < 20000
+  · have hS' : ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) ≤ 3.66e-7 := hS.trans (by split_ifs <;> norm_num)
+    have := epl_le (N : ℝ); have := epl_le (M : ℝ)
+    unfold Pth; rw [if_pos h]; linarith
+  · push Not at h
+    have h1 : ¬ Real.log ((M : ℝ) + 1) < 20000 := by
+      push Not; exact h.trans (Real.log_le_log hM0 (by linarith))
+    rw [if_neg h1] at hS
+    have hN : 20000 ≤ Real.log (N : ℝ) := h.trans (Real.log_le_log hM0 hMN')
+    unfold Pth; rw [if_neg (not_lt.2 h), epl_eq_zero hN, epl_eq_zero h]; linarith
+
+theorem epl_mul_log_le (x : ℝ) : epl x * Real.log x ≤ 4.4e-7 := by
+  unfold epl; split_ifs with h
+  · nlinarith [h.1, h.2]
+  · rw [zero_mul]; norm_num
+
 end TernaryGoldbach.Prelim
