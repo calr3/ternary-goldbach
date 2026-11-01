@@ -134,3 +134,4 @@ import TernaryGoldbach.Explicit.LGrowthLeft
 import TernaryGoldbach.Explicit.LogDerivL
 import TernaryGoldbach.Explicit.RectResidue
 import TernaryGoldbach.Explicit.GMellin
+import TernaryGoldbach.Explicit.ExplicitFormula
