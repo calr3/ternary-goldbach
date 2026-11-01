@@ -136,3 +136,4 @@ import TernaryGoldbach.Explicit.RectResidue
 import TernaryGoldbach.Explicit.GMellin
 import TernaryGoldbach.Explicit.ExplicitFormula
 import TernaryGoldbach.Explicit.GammaBounds
+import TernaryGoldbach.Explicit.LGrowthPoly
