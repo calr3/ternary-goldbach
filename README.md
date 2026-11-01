@@ -70,7 +70,9 @@ The 5 `sorry`s that `ternary_goldbach` depends on are:
   downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
   `Prelim/LargeSieveMV.lean` are also proved.)
 
-There are no other `sorry`s. Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
+One more cited `sorry` is not (yet) on the main path: [B, Prop 9.4.2] (`MajorArcs/Thm714.lean`, conditional on
+GRH up to `T₀`), from which [B, Thm 7.1.4] (the `η₊` twisted sums needed for Ch. 10) is proved with Platt's
+verification. Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
 (2.16) and (2.18) are proved in `Prelim/LambdaMuExtra.lean` (with three more finite checks, listed
 below but not in the `#print axioms` output), (2.24) is proved for `x < 10¹⁰` (our sieve; [B] cites
 Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated: our substitute is
@@ -166,7 +168,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (Dusart, two numerical axioms) |
 | `Prelim/Liouville.lean` | Ramaré's identities (Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2): `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` by multiplicativity, and their `1/n`-weighted partial-sum forms | ✅ |
 | `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, Dusart) |
-| `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms, [B, Prop 9.3.2] and [B, Prop 9.5.1] cited *conditionally on GRH up to `T₀`*; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`, same constants), **[B, Prop 7.1.5] proved** (`T₀ = 440`) | ✅ (two cited, three numerical axioms) |
+| `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms, [B, Prop 9.3.2] and [B, Prop 9.5.1] cited *conditionally on GRH up to `T₀`*; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`, same constants), **[B, Prop 7.1.5] proved** (`T₀ = 440`); `Thm714.lean`: **[B, Thm 7.1.4] proved** from the cited [B, Prop 9.4.2] (`q = 1`: `4.78·10⁻¹¹ + 251400/√x`; odd/even `q`: `1.35·10⁻¹⁴ + 1.62·10⁻¹⁰/q + (499900/√q + 52)/√x`, [B]'s constants rounded up slightly) | ✅ (three cited, three numerical axioms) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |

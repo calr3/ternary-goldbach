@@ -228,7 +228,11 @@ axiom pair `platt_odd`/`platt_even` on Mathlib's `DirichletCharacter.LFunction` 
 explicit-formula results are cited *conditionally* on GRH up to `T₀` ([B, Prop 9.3.2], [B, Prop 9.5.1]);
 Cor 9.3.3 → Cor 7.1.3 and Prop 7.1.5 are proved (`MajorArcs/`). [B]'s numerics check out:
 `(1000/3)·log(10⁸/2π)·6.11·e^{−0.1598·1000/3} = 2.48404·10⁻¹⁹ ≤ 2.485·10⁻¹⁹`; for Prop 7.1.5 we use `T₀ = 440`
-instead of `450` for margin. Next: state Thm 7.1.4 / Prop 9.4.2 (η₊ twisted sums) the same way, then Ch. 10
+instead of `450` for margin. Thm 7.1.4 is proved from the cited Prop 9.4.2 + Platt (`MajorArcs/Thm714.lean`; book typo: (9.70)'s second line
+has `x^{1/2}` for `x^{-1/2}`; [B]'s general-`q` constants `1.3482·10⁻¹⁴`, `1.617·10⁻¹⁰` are tight to ~10⁻⁵ relative,
+we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` — check (14.1), (14.2) margins when used).
+(14.7) needs the *lower* bound (MinorTotal uses `∫_𝔐 |S_{η₊}|² ≥ 8.6298x`), i.e. the full Lemma 10.3.1 with `η◦`.
+Next: Ch. 10
 (character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
