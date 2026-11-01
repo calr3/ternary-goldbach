@@ -392,4 +392,104 @@ theorem theta_explicit {n : ℕ} (hn : 89967803 ≤ n) :
       linarith
     linarith
 
+/-! ## Sums of the plateau term -/
+
+/-- `ε_pl(n) = 0` once `log n ≥ 20000`. -/
+theorem epl_eq_zero {x : ℝ} (h : 20000 ≤ Real.log x) : epl x = 0 := by
+  unfold epl; rw [if_neg]; push Not; intro _; exact h
+
+theorem epl_ne_zero {x : ℝ} (h : epl x ≠ 0) : 3400 < Real.log x ∧ Real.log x < 20000 := by
+  unfold epl at h; split_ifs at h with hh
+  · exact hh
+  · exact absurd rfl h
+
+/-- `Σ_{a<n<b} ε_pl(n)/(n+1) ≤ 3.66·10⁻⁷`, and `= 0` if `log(a+1) ≥ 20000`. -/
+theorem sum_epl_div_le (a b : ℕ) :
+    ∑ n ∈ Ioo a b, epl n / ((n : ℝ) + 1) ≤ if Real.log ((a : ℝ) + 1) < 20000 then 3.66e-7 else 0 := by
+  split_ifs with ha
+  · -- telescoping over `[e^{3400}, e^{20000}]`
+    set m1 := ⌈Real.exp 3400⌉₊ with hm1
+    set m2 := ⌊Real.exp 20000⌋₊ + 1 with hm2
+    have hterm : ∀ n ∈ Ioo a b, epl n / ((n : ℝ) + 1) ≤
+        if n ∈ Ico m1 m2 then 2.2e-11 * (Real.log ((n : ℝ) + 1) - Real.log n) else 0 := by
+      intro n _
+      by_cases h0 : epl (n : ℝ) = 0
+      · rw [h0, zero_div]; split_ifs
+        · have : Real.log (n : ℝ) ≤ Real.log ((n : ℝ) + 1) := by
+            rcases Nat.eq_zero_or_pos n with rfl | hn
+            · simp
+            · exact Real.log_le_log (by exact_mod_cast hn) (by linarith)
+          nlinarith
+        · exact le_rfl
+      obtain ⟨hl1, hl2⟩ := epl_ne_zero h0
+      have hn0 : (0 : ℝ) < n := by
+        by_contra hc; push Not at hc
+        have : (n : ℝ) = 0 := le_antisymm hc (Nat.cast_nonneg n)
+        rw [this, Real.log_zero] at hl1; linarith
+      have hmem : n ∈ Ico m1 m2 := by
+        rw [Finset.mem_Ico]; constructor
+        · rw [hm1, Nat.ceil_le]
+          have := (Real.lt_log_iff_exp_lt hn0).1 hl1; linarith
+        · rw [hm2, Nat.lt_succ_iff]
+          apply Nat.le_floor
+          have := (Real.log_lt_iff_lt_exp hn0).1 hl2; linarith
+      rw [if_pos hmem, epl, if_pos ⟨hl1, hl2⟩]
+      have h1 : 1 / ((n : ℝ) + 1) ≤ Real.log ((n : ℝ) + 1) - Real.log n := by
+        have := Real.one_sub_inv_le_log_of_pos (x := ((n : ℝ) + 1) / n) (by positivity)
+        rw [Real.log_div (by positivity) hn0.ne'] at this
+        have e : 1 - (((n : ℝ) + 1) / n)⁻¹ = 1 / (n + 1) := by field_simp; ring
+        linarith
+      rw [div_eq_mul_one_div]
+      exact mul_le_mul_of_nonneg_left h1 (by norm_num)
+    refine (sum_le_sum hterm).trans ?_
+    rw [← sum_filter]
+    have hsub : (Ioo a b).filter (· ∈ Ico m1 m2) ⊆ Ico m1 m2 := fun n hn => (mem_filter.1 hn).2
+    have hnn : ∀ n ∈ Ico m1 m2, 0 ≤ 2.2e-11 * (Real.log ((n : ℝ) + 1) - Real.log n) := by
+      intro n hn
+      have hn1 : 1 ≤ m1 := by rw [hm1, Nat.one_le_ceil_iff]; exact Real.exp_pos _
+      have hn0 : (0 : ℝ) < n := by
+        have := (Finset.mem_Ico.1 hn).1; exact_mod_cast (by omega : 0 < n)
+      have : Real.log (n : ℝ) ≤ Real.log ((n : ℝ) + 1) := Real.log_le_log hn0 (by linarith)
+      nlinarith
+    refine (sum_le_sum_of_subset_of_nonneg hsub fun n hn _ => hnn n hn).trans ?_
+    rw [← mul_sum]
+    have hm12 : m1 ≤ m2 := by
+      rw [hm1, hm2, Nat.ceil_le]
+      have := Nat.lt_floor_add_one (Real.exp 20000)
+      have : Real.exp 3400 ≤ Real.exp 20000 := Real.exp_le_exp.2 (by norm_num)
+      push_cast; linarith
+    have htel : ∑ n ∈ Ico m1 m2, (Real.log ((n : ℝ) + 1) - Real.log n) = Real.log m2 - Real.log m1 := by
+      rw [Finset.sum_Ico_eq_sum_range]
+      have := Finset.sum_range_sub (fun k : ℕ => Real.log ((m1 + k : ℕ) : ℝ)) (m2 - m1)
+      rw [show m1 + (m2 - m1) = m2 by omega, show m1 + 0 = m1 by omega] at this
+      rw [← this]
+      refine Finset.sum_congr rfl fun k _ => ?_
+      push_cast; ring_nf
+    rw [htel]
+    have hm1pos : (0 : ℝ) < m1 := by
+      have : 1 ≤ m1 := by rw [hm1, Nat.one_le_ceil_iff]; exact Real.exp_pos _
+      exact_mod_cast this
+    have h1 : 3400 ≤ Real.log m1 := by
+      rw [Real.le_log_iff_exp_le hm1pos]; exact Nat.le_ceil _
+    have h2 : Real.log m2 ≤ 20000.0001 := by
+      rw [Real.log_le_iff_le_exp (by positivity)]
+      rw [hm2]; push_cast
+      have := Nat.floor_le (Real.exp_pos 20000).le
+      have he : Real.exp 20000 + 1 ≤ Real.exp 20000.0001 := by
+        rw [show (20000.0001 : ℝ) = 20000 + 0.0001 by norm_num, Real.exp_add]
+        have h3 := Real.add_one_le_exp (0.0001 : ℝ)
+        have h4 : (1 : ℝ) ≤ 0.0001 * Real.exp 20000 := by
+          have := Real.add_one_le_exp (20000 : ℝ); nlinarith
+        nlinarith [Real.exp_pos (20000 : ℝ)]
+      linarith
+    nlinarith
+  · -- above `e^{20000}` the plateau is empty
+    refine (sum_eq_zero fun n hn => ?_).le
+    have hn := (Finset.mem_Ioo.1 hn).1
+    push Not at ha
+    have : 20000 ≤ Real.log (n : ℝ) := by
+      refine ha.trans (Real.log_le_log (by positivity) ?_)
+      exact_mod_cast hn
+    rw [epl_eq_zero this, zero_div]
+
 end TernaryGoldbach.Prelim
