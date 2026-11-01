@@ -268,7 +268,7 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
 2. *`C_{η◦,η_*}` (Ch. 11)* — **DONE** (`CMain.lean`, `Cmain_ge`, constant `8.82`; moments `integral_pow_mul_etaU`): polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
    ½(2−ρ)²‖η◦'‖₂²` (better than [B]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
    `M(φ) = √(π/2), 2, 3√(π/2)`); `N/x = 2 + c₁/κ`, `c₁ = 9/(4√(2π))`; tail of `η_*` beyond `N/x` negligible.
-3. *Fourier identity (10.22)*: `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
+3. *Fourier identity (10.22)* — **DONE** (`FourierMain.lean`, `fourier_identity`): `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
    `∫ η̂◦²η̂_* e(tM) dt = h(M)` (`Continuous.fourier_inversion`).
 4. *Main term (§10.2)*: per `(q, a)`, principal parts `M_η = μ(q)/φ(q) η̂(−βx)x`; Ramanujan sum
    `Σ_a e(−Na/q) = μ(q/(q,N))φ((q,N))`; complete `Σ_q` and `∫` (tails with crude `Σ_{q>Q} μ²/φ² ≤ C/Q`); Euler product
