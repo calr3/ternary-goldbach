@@ -46,31 +46,70 @@ theorem integrable_G_line (δ σ : ℝ) (h1 : -1 / 2 ≤ σ) (h2 : σ ≤ 3 / 2)
   have := norm_G_le_strip δ (s := (σ : ℂ) + t * I) (by simpa using h1) (by simpa using h2)
   simpa using this
 
-/-- Mellin inversion for `fδ` on `ℜs = 3/2`. -/
-theorem fδ_eq_mellinInv (δ : ℝ) {y : ℝ} (hy : 0 < y) :
-    fδ δ y = (1 / (2 * π)) • ∫ t : ℝ, (y : ℂ) ^ (-(((3 / 2 : ℝ) : ℂ) + t * I)) •
-      Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0 := by
-  have hconv : MellinConvergent (fδ δ) ((3 / 2 : ℝ) : ℂ) :=
-    mellinConvergent_of_isBigO_rpow_exp (a := 1) (b := -2) one_pos
+/-- **Admissible smoothings**: `φ` continuous, Mellin-convergent at `3/2`, `M = mellin φ` holomorphic on
+`ℜs > −1`, and `|M(s)| ≤ K e^{−c|ℑs|}` (`c > 0`) on `−1/2 ≤ ℜs ≤ 3/2`. -/
+structure GoodSmoothing (φ : ℝ → ℂ) (K c : ℝ) : Prop where
+  continuous : Continuous φ
+  conv : MellinConvergent φ ((3 / 2 : ℝ) : ℂ)
+  diff : ∀ s : ℂ, -1 < s.re → DifferentiableAt ℂ (mellin φ) s
+  c_pos : 0 < c
+  strip : ∀ s : ℂ, -1 / 2 ≤ s.re → s.re ≤ 3 / 2 → ‖mellin φ s‖ ≤ K * Real.exp (-(c * |s.im|))
+
+theorem GoodSmoothing.K_nonneg {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) : 0 ≤ K := by
+  have := hφ.strip 0 (by norm_num) (by norm_num)
+  have hp : 0 < Real.exp (-(c * |(0:ℂ).im|)) := Real.exp_pos _
+  by_contra hneg; push Not at hneg
+  have : K * Real.exp (-(c * |(0:ℂ).im|)) < 0 := mul_neg_of_neg_of_pos hneg hp
+  linarith [norm_nonneg (mellin φ 0)]
+
+theorem GoodSmoothing.continuous_line {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {σ : ℝ}
+    (hσ : -1 < σ) : Continuous fun t : ℝ => mellin φ ((σ : ℂ) + t * I) :=
+  continuous_iff_continuousAt.2 fun t =>
+    ((hφ.diff _ (by simpa using hσ)).continuousAt).comp (by fun_prop)
+
+theorem GoodSmoothing.integrable_line {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {σ : ℝ}
+    (h1 : -1 / 2 ≤ σ) (h2 : σ ≤ 3 / 2) : Integrable fun t : ℝ => mellin φ ((σ : ℂ) + t * I) := by
+  refine ((integrable_exp_neg_abs hφ.c_pos).const_mul K).mono'
+    (hφ.continuous_line (by linarith)).aestronglyMeasurable (Eventually.of_forall fun t => ?_)
+  have := hφ.strip ((σ : ℂ) + t * I) (by simpa using h1) (by simpa using h2)
+  simpa using this
+
+theorem goodSmoothing_fδ (δ : ℝ) : GoodSmoothing (fδ δ) (Kδ δ) 0.28 where
+  continuous := continuous_fδ δ
+  conv := mellinConvergent_of_isBigO_rpow_exp (a := 1) (b := -2) one_pos
       ((continuous_fδ δ).locallyIntegrable.locallyIntegrableOn _) (fδ_isBigO_top δ) (fδ_isBigO_bot δ)
       (by norm_num)
-  have hvert : Complex.VerticalIntegrable (mellin (fδ δ)) (3 / 2) := by
+  diff := fun s hs => by
     have e : mellin (fδ δ) = fun s => Gr s δ 0 := funext (mellin_fδ δ)
-    rw [Complex.VerticalIntegrable, e]
-    exact integrable_G_line δ (3 / 2) (by norm_num) le_rfl
-  have h := mellinInv_mellin_eq (3 / 2) (fδ δ) hy hconv hvert (continuous_fδ δ).continuousAt
+    rw [e]; exact differentiableAt_G δ (by linarith)
+  c_pos := by norm_num
+  strip := fun s h1 h2 => by rw [mellin_fδ]; exact norm_G_le_strip δ h1 h2
+
+/-- Mellin inversion on `ℜs = 3/2`. -/
+theorem GoodSmoothing.eq_mellinInv {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {y : ℝ}
+    (hy : 0 < y) :
+    φ y = (1 / (2 * π)) • ∫ t : ℝ, (y : ℂ) ^ (-(((3 / 2 : ℝ) : ℂ) + t * I)) •
+      mellin φ (((3 / 2 : ℝ) : ℂ) + t * I) := by
+  have hvert : Complex.VerticalIntegrable (mellin φ) (3 / 2) := by
+    rw [Complex.VerticalIntegrable]
+    exact hφ.integrable_line (σ := 3 / 2) (by norm_num) le_rfl
+  have h := mellinInv_mellin_eq (3 / 2) φ hy hφ.conv hvert hφ.continuous.continuousAt
   rw [← h, mellinInv]
-  congr 1
-  refine integral_congr_ae (Eventually.of_forall fun t => ?_)
-  simp only [mellin_fδ]
+
+/-- `S_χ(φ, x) = Σ_n Λ(n) χ(n) φ(n/x)`. -/
+noncomputable def SsumG {N : ℕ} (χ : DirichletCharacter ℂ N) (φ : ℝ → ℂ) (x : ℝ) : ℂ :=
+  ∑' n : ℕ, (Λ n : ℂ) * χ n * φ (n / x)
 
 /-- `S_χ(δ, x) = Σ_n Λ(n) χ(n) e(δn/x) η(n/x)`, `η(t) = t² e^{−t²/2}`. -/
 noncomputable def Ssum {N : ℕ} (χ : DirichletCharacter ℂ N) (δ x : ℝ) : ℂ :=
   ∑' n : ℕ, (Λ n : ℂ) * χ n * fδ δ (n / x)
 
-/-- `−L'/L(s) G_δ(s) x^s`. -/
-noncomputable def Fline {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) : ℂ :=
-  -(deriv χ.LFunction s / χ.LFunction s) * Gr s δ 0 * (x : ℂ) ^ s
+theorem Ssum_eq_SsumG {N : ℕ} (χ : DirichletCharacter ℂ N) (δ x : ℝ) :
+    Ssum χ δ x = SsumG χ (fδ δ) x := rfl
+
+/-- `−L'/L(s) M(s) x^s`. -/
+noncomputable def Fline {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (φ : ℝ → ℂ) (x : ℝ) (s : ℂ) : ℂ :=
+  -(deriv χ.LFunction s / χ.LFunction s) * mellin φ s * (x : ℂ) ^ s
 
 theorem norm_ratio_cpow {n : ℕ} (hn : 0 < n) {x : ℝ} (hx : 0 < x) (t : ℝ) :
     ‖(((n : ℝ) / x : ℝ) : ℂ) ^ (-(((3 / 2 : ℝ) : ℂ) + t * I))‖ = ((n : ℝ) / x) ^ (-(3 / 2 : ℝ)) := by
@@ -78,19 +117,19 @@ theorem norm_ratio_cpow {n : ℕ} (hn : 0 < n) {x : ℝ} (hx : 0 < x) (t : ℝ) 
   simp
 
 /-- The integrand of the `n`-th term on `ℜs = 3/2`. -/
-noncomputable def Fterm (δ x : ℝ) (n : ℕ) (t : ℝ) : ℂ :=
-  (((n : ℝ) / x : ℝ) : ℂ) ^ (-(((3 / 2 : ℝ) : ℂ) + t * I)) * Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0
+noncomputable def Fterm (φ : ℝ → ℂ) (x : ℝ) (n : ℕ) (t : ℝ) : ℂ :=
+  (((n : ℝ) / x : ℝ) : ℂ) ^ (-(((3 / 2 : ℝ) : ℂ) + t * I)) * mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)
 
-theorem fδ_eq_integral_Fterm (δ : ℝ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 < n) :
-    fδ δ (n / x) = (1 / (2 * π) : ℂ) * ∫ t, Fterm δ x n t := by
-  rw [fδ_eq_mellinInv δ (by positivity : (0:ℝ) < n / x), Complex.real_smul]
+theorem eq_integral_Fterm {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x)
+    {n : ℕ} (hn : 0 < n) : φ (n / x) = (1 / (2 * π) : ℂ) * ∫ t, Fterm φ x n t := by
+  rw [hφ.eq_mellinInv (by positivity : (0:ℝ) < n / x), Complex.real_smul]
   congr 1
   push_cast; ring
 
-theorem integrable_Fterm (δ : ℝ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 < n) :
-    Integrable (Fterm δ x n) := by
-  have hGi := integrable_G_line δ (3 / 2) (by norm_num) le_rfl
-  have hGc := continuous_G_line δ (3 / 2) (by norm_num)
+theorem integrable_Fterm {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x)
+    {n : ℕ} (hn : 0 < n) : Integrable (Fterm φ x n) := by
+  have hGi := hφ.integrable_line (σ := 3 / 2) (by norm_num) le_rfl
+  have hGc := hφ.continuous_line (σ := 3 / 2) (by norm_num)
   refine (hGi.norm.const_mul (((n : ℝ) / x) ^ (-(3 / 2 : ℝ)))).mono' ?_ (Eventually.of_forall fun t => ?_)
   · refine (Continuous.mul ?_ hGc).aestronglyMeasurable
     refine continuous_iff_continuousAt.2 fun t => ?_
@@ -98,11 +137,11 @@ theorem integrable_Fterm (δ : ℝ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 < n
       (by positivity : (0:ℝ) < n / x).ne')).comp (by fun_prop)
   · rw [Fterm, norm_mul, norm_ratio_cpow hn hx]
 
-theorem integral_norm_Fterm (δ : ℝ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 < n) :
-    ∫ t, ‖Fterm δ x n t‖ = ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ)) *
-      ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖ := by
-  have e : ∀ t, ‖Fterm δ x n t‖ = ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ)) *
-      ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖ := by
+theorem integral_norm_Fterm (φ : ℝ → ℂ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 < n) :
+    ∫ t, ‖Fterm φ x n t‖ = ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ)) *
+      ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖ := by
+  have e : ∀ t, ‖Fterm φ x n t‖ = ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ)) *
+      ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖ := by
     intro t
     rw [Fterm, norm_mul, norm_ratio_cpow hn hx, Real.div_rpow (Nat.cast_nonneg n) hx.le,
       Real.rpow_neg hx.le, div_inv_eq_mul]
@@ -110,9 +149,9 @@ theorem integral_norm_Fterm (δ : ℝ) {x : ℝ} (hx : 0 < x) {n : ℕ} (hn : 0 
   rw [integral_const_mul]
 
 /-- `Σ_n Λ(n)χ(n) (n/x)^{−s} = x^s (−L'/L)(s)` on `ℜs = 3/2`. -/
-theorem tsum_Fterm_eq {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ : ℝ) {x : ℝ} (hx : 0 < x)
-    (t : ℝ) : ∑' n : ℕ, (Λ n : ℂ) * χ n * Fterm δ x n t =
-      Fline χ δ x (((3 / 2 : ℝ) : ℂ) + t * I) := by
+theorem tsum_Fterm_eq {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (φ : ℝ → ℂ) {x : ℝ}
+    (hx : 0 < x) (t : ℝ) : ∑' n : ℕ, (Λ n : ℂ) * χ n * Fterm φ x n t =
+      Fline χ φ x (((3 / 2 : ℝ) : ℂ) + t * I) := by
   set s : ℂ := ((3 / 2 : ℝ) : ℂ) + t * I with hs
   have hs1 : 1 < s.re := by simp [hs]; norm_num
   have hL := DirichletCharacter.LSeries_twist_vonMangoldt_eq χ hs1
@@ -133,15 +172,16 @@ theorem tsum_Fterm_eq {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ :
     simp only [Pi.mul_apply, Complex.ofReal_natCast] at hn0 ⊢
     field_simp
 
-/-- **Part A**: `S = (1/2π) ∫ (−L'/L)(3/2+it) G_δ(3/2+it) x^{3/2+it} dt`. -/
-theorem Ssum_eq_line {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
-    Ssum χ δ x = (1 / (2 * π) : ℂ) * ∫ t : ℝ, Fline χ δ x (((3 / 2 : ℝ) : ℂ) + t * I) := by
-  set F : ℕ → ℝ → ℂ := fun n t => (Λ n : ℂ) * χ n * Fterm δ x n t with hF
-  have hterm : ∀ n : ℕ, (Λ n : ℂ) * χ n * fδ δ (n / x) = (1 / (2 * π) : ℂ) * ∫ t, F n t := by
+/-- **Part A**: `S = (1/2π) ∫ (−L'/L)(3/2+it) M(3/2+it) x^{3/2+it} dt`. -/
+theorem SsumG_eq_line {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {φ : ℝ → ℂ} {K c : ℝ}
+    (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+    SsumG χ φ x = (1 / (2 * π) : ℂ) * ∫ t : ℝ, Fline χ φ x (((3 / 2 : ℝ) : ℂ) + t * I) := by
+  set F : ℕ → ℝ → ℂ := fun n t => (Λ n : ℂ) * χ n * Fterm φ x n t with hF
+  have hterm : ∀ n : ℕ, (Λ n : ℂ) * χ n * φ (n / x) = (1 / (2 * π) : ℂ) * ∫ t, F n t := by
     intro n
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [hF]
-    · rw [fδ_eq_integral_Fterm δ hx hn, hF]
+    · rw [eq_integral_Fterm hφ hx hn, hF]
       simp only
       rw [integral_const_mul]; ring
   have hFi : ∀ n, Integrable (F n) := by
@@ -149,7 +189,7 @@ theorem Ssum_eq_line {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ : 
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · have : F 0 = fun _ => 0 := by ext t; simp [hF]
       rw [this]; exact integrable_zero _ _ _
-    · exact (integrable_Fterm δ hx hn).const_mul _
+    · exact (integrable_Fterm hφ hx hn).const_mul _
   have hFs : Summable fun n => ∫ t, ‖F n t‖ := by
     have hΛ := ArithmeticFunction.LSeriesSummable_vonMangoldt (s := ((3 / 2 : ℝ) : ℂ)) (by norm_num)
     have hΛ' : Summable fun n : ℕ => Λ n * (n : ℝ) ^ (-(3 / 2 : ℝ)) := by
@@ -160,30 +200,31 @@ theorem Ssum_eq_line {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ : 
       · rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg,
           Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
         simp
-    refine (hΛ'.mul_right (x ^ (3 / 2 : ℝ) * ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖)).of_nonneg_of_le
+    refine (hΛ'.mul_right (x ^ (3 / 2 : ℝ) * ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖)).of_nonneg_of_le
       (fun n => integral_nonneg fun t => norm_nonneg _) fun n => ?_
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [hF]
-    · have e : ∀ t, ‖F n t‖ = (Λ n * ‖χ n‖) * ‖Fterm δ x n t‖ := by
+    · have e : ∀ t, ‖F n t‖ = (Λ n * ‖χ n‖) * ‖Fterm φ x n t‖ := by
         intro t
         rw [hF]; simp only [norm_mul, Complex.norm_real, Real.norm_eq_abs,
           abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
       simp_rw [e]
-      rw [integral_const_mul, integral_norm_Fterm δ hx hn]
+      rw [integral_const_mul, integral_norm_Fterm φ hx hn]
       have hχ : ‖χ n‖ ≤ 1 := DirichletCharacter.norm_le_one _ _
-      have hG0 : 0 ≤ ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖ := integral_nonneg fun t => norm_nonneg _
+      have hG0 : 0 ≤ ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖ :=
+        integral_nonneg fun t => norm_nonneg _
       have hΛ0 := ArithmeticFunction.vonMangoldt_nonneg (n := n)
       have hn0 : 0 ≤ (n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ) := by positivity
       calc Λ n * ‖χ n‖ * ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ) *
-            ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖)
+            ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖)
           ≤ Λ n * 1 * ((n : ℝ) ^ (-(3 / 2 : ℝ)) * x ^ (3 / 2 : ℝ) *
-            ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖) := by gcongr
+            ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖) := by gcongr
         _ = Λ n * (n : ℝ) ^ (-(3 / 2 : ℝ)) * (x ^ (3 / 2 : ℝ) *
-            ∫ t : ℝ, ‖Gr (((3 / 2 : ℝ) : ℂ) + t * I) δ 0‖) := by ring
-  rw [Ssum, tsum_congr hterm, tsum_mul_left, integral_tsum_of_summable_integral_norm hFi hFs]
+            ∫ t : ℝ, ‖mellin φ (((3 / 2 : ℝ) : ℂ) + t * I)‖) := by ring
+  rw [SsumG, tsum_congr hterm, tsum_mul_left, integral_tsum_of_summable_integral_norm hFi hFs]
   congr 1
   refine integral_congr_ae (Eventually.of_forall fun t => ?_)
-  exact tsum_Fterm_eq χ δ hx t
+  exact tsum_Fterm_eq χ φ hx t
 
 /-! ## Part B: no zeros in `−1 < ℜs < 0`, and the rectangle identity -/
 
@@ -264,11 +305,12 @@ noncomputable def multRect {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) 
 /-- **Part B**: the residue theorem on `[−1/2, 3/2] × [−T, T]`, if `L` has no zeros on the horizontal
 sides. -/
 theorem rect_identity {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) {T : ℝ} (hT : 0 < T)
+    (hχ1 : χ ≠ 1) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) {T : ℝ}
+    (hT : 0 < T)
     (hbot : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]], χ.LFunction ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) ≠ 0)
     (htop : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]], χ.LFunction ((σ : ℂ) + ((T : ℝ) : ℂ) * I) ≠ 0) :
-    rectInt (fun s => logDeriv χ.LFunction s * (Gr s δ 0 * (x : ℂ) ^ s)) (zT T) (wT T) =
-      2 * π * I * ∑ u ∈ zerosRect χ T, (multRect χ T u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u) := by
+    rectInt (fun s => logDeriv χ.LFunction s * (mellin φ s * (x : ℂ) ^ s)) (zT T) (wT T) =
+      2 * π * I * ∑ u ∈ zerosRect χ T, (multRect χ T u : ℂ) * (mellin φ u * (x : ℂ) ^ u) := by
   have hf : Differentiable ℂ χ.LFunction := DirichletCharacter.differentiable_LFunction hχ1
   have hf2 : χ.LFunction 2 ≠ 0 :=
     DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by norm_num)
@@ -289,16 +331,16 @@ theorem rect_identity {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ 
     · rw [zT_re, wT_re] at hσ; simpa using htop σ hσ
     · exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by simp; norm_num)
     · exact LFunction_ne_zero_strip hχ hχ1 (by simp; norm_num) (by simp; norm_num)
-  set U : Set ℂ := {s | -2 < s.re} with hU
+  set U : Set ℂ := {s | -1 < s.re} with hU
   have hUo : IsOpen U := isOpen_lt continuous_const Complex.continuous_re
   have hsubU : [[(zT T).re, (wT T).re]] ×ℂ [[(zT T).im, (wT T).im]] ⊆ U := by
     intro s hs
     rw [mem_reProdIm, zT_re, wT_re, Set.uIcc_of_le (by norm_num)] at hs
-    show -2 < s.re; linarith [hs.1.1]
-  have hh : DifferentiableOn ℂ (fun s => Gr s δ 0 * (x : ℂ) ^ s) U := by
+    show -1 < s.re; linarith [hs.1.1]
+  have hh : DifferentiableOn ℂ (fun s => mellin φ s * (x : ℂ) ^ s) U := by
     intro s hs
     have hx0 : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
-    exact ((differentiableAt_G δ hs).mul
+    exact ((hφ.diff s hs).mul
       (differentiableAt_id.const_cpow (Or.inl hx0))).differentiableWithinAt
   exact rectInt_logDeriv_mul hf hR hf2 (by simp; norm_num) (by simp; linarith) hrect hbd hUo hsubU hh
 
@@ -664,13 +706,21 @@ theorem good_height {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : 
 
 /-! ## Part C: the two vertical lines -/
 
-/-- `h(s) = L'/L(s) G_δ(s) x^s` (the integrand of the residue theorem). -/
+/-- `h(s) = L'/L(s) M(s) x^s` (the integrand of the residue theorem). -/
+noncomputable def hIntG {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (φ : ℝ → ℂ) (x : ℝ) (s : ℂ) : ℂ :=
+  logDeriv χ.LFunction s * (mellin φ s * (x : ℂ) ^ s)
+
+/-- `h(s) = L'/L(s) G_δ(s) x^s` for `η(t) = t² e^{−t²/2}`. -/
 noncomputable def hInt {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) : ℂ :=
   logDeriv χ.LFunction s * (Gr s δ 0 * (x : ℂ) ^ s)
 
-theorem hInt_eq_neg_Fline {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) :
-    hInt χ δ x s = -Fline χ δ x s := by
-  rw [hInt, Fline, logDeriv_apply]; ring
+theorem hInt_eq_hIntG {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) :
+    hInt χ δ x s = hIntG χ (fδ δ) x s := by
+  rw [hInt, hIntG, mellin_fδ]
+
+theorem hIntG_eq_neg_Fline {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (φ : ℝ → ℂ) (x : ℝ) (s : ℂ) :
+    hIntG χ φ x s = -Fline χ φ x s := by
+  rw [hIntG, Fline, logDeriv_apply]; ring
 
 /-- `C₃ = Σ Λ(n) n^{−3/2}`. -/
 noncomputable def C3 : ℝ := ∑' n : ℕ, Λ n * (n : ℝ) ^ (-(3 / 2 : ℝ))
@@ -729,27 +779,27 @@ theorem continuous_logDeriv_L_line {N : ℕ} [NeZero N] {χ : DirichletCharacter
 
 /-- `h` is integrable on `ℜs = 3/2`. -/
 theorem integrable_hInt_right {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ1 : χ ≠ 1)
-    (δ : ℝ) {x : ℝ} (hx : 0 < x) :
-    Integrable fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
-  have hGi := integrable_G_line δ (3 / 2) (by norm_num) le_rfl
-  have hc : Continuous fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
-    unfold hInt
+    {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+    Integrable fun y : ℝ => hIntG χ φ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
+  have hGi := hφ.integrable_line (σ := 3 / 2) (by norm_num) le_rfl
+  have hc : Continuous fun y : ℝ => hIntG χ φ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
+    unfold hIntG
     refine (continuous_logDeriv_L_line hχ1 (3 / 2) fun y =>
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by simp; norm_num)).mul
-      ((continuous_G_line δ (3 / 2) (by norm_num)).mul ?_)
+      ((hφ.continuous_line (σ := 3 / 2) (by norm_num)).mul ?_)
     exact continuous_iff_continuousAt.2 fun y =>
       (continuousAt_const_cpow (Complex.ofReal_ne_zero.2 hx.ne')).comp (by fun_prop)
   refine (hGi.norm.const_mul (C3 * x ^ (3 / 2 : ℝ))).mono' hc.aestronglyMeasurable
     (Eventually.of_forall fun y => ?_)
-  rw [hInt, norm_mul, norm_mul, norm_cpow_x hx]
+  rw [hIntG, norm_mul, norm_mul, norm_cpow_x hx]
   have h1 := norm_logDeriv_L_right χ y
   have hre : (((3 / 2 : ℝ) : ℂ) + y * I).re = 3 / 2 := by simp
   rw [hre]
   have hx0 : 0 ≤ x ^ (3 / 2 : ℝ) := by positivity
   calc ‖logDeriv χ.LFunction (((3 / 2 : ℝ) : ℂ) + y * I)‖ *
-        (‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (3 / 2 : ℝ))
-      ≤ C3 * (‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (3 / 2 : ℝ)) := by gcongr
-    _ = C3 * x ^ (3 / 2 : ℝ) * ‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ := by ring
+        (‖mellin φ (((3 / 2 : ℝ) : ℂ) + y * I)‖ * x ^ (3 / 2 : ℝ))
+      ≤ C3 * (‖mellin φ (((3 / 2 : ℝ) : ℂ) + y * I)‖ * x ^ (3 / 2 : ℝ)) := by gcongr
+    _ = C3 * x ^ (3 / 2 : ℝ) * ‖mellin φ (((3 / 2 : ℝ) : ℂ) + y * I)‖ := by ring
 
 /-- `D_N = log(512 q⁹ (q + 1)/0.355)`. -/
 noncomputable def DN (N : ℕ) : ℝ := Real.log (512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) / 0.355)
@@ -772,36 +822,32 @@ theorem LB_le_linear {N : ℕ} [NeZero N] (T : ℝ) :
 
 /-- `h` is integrable on `ℜs = −1/2`. -/
 theorem integrable_hInt_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
-    Integrable fun y : ℝ => hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
-  have hc : Continuous fun y : ℝ => hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
-    unfold hInt
+    (hχ1 : χ ≠ 1) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+    Integrable fun y : ℝ => hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
+  have hc : Continuous fun y : ℝ => hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
+    unfold hIntG
     refine (continuous_logDeriv_L_line hχ1 (-1 / 2) fun y =>
       LFunction_ne_zero_strip hχ hχ1 (by simp; norm_num) (by simp; norm_num)).mul
-      ((continuous_G_line δ (-1 / 2) (by norm_num)).mul ?_)
+      ((hφ.continuous_line (σ := -1 / 2) (by norm_num)).mul ?_)
     exact continuous_iff_continuousAt.2 fun y =>
       (continuousAt_const_cpow (Complex.ofReal_ne_zero.2 hx.ne')).comp (by fun_prop)
   set c1 : ℝ := 2 / Real.log 2 + 4.8 with hc1
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
-  set A : ℝ := c1 * (|DN N| + 37) * Kδ δ * x ^ (-1 / 2 : ℝ) with hA
-  set B : ℝ := c1 * 2.6 / 0.14 * Kδ δ * x ^ (-1 / 2 : ℝ) with hB
-  have hK : 0 ≤ Kδ δ := by
-    have := norm_G_le_strip δ (s := (0 : ℂ)) (by norm_num) (by norm_num)
-    have hp : 0 < Real.exp (-(0.28 * |(0:ℂ).im|)) := Real.exp_pos _
-    by_contra hneg; push Not at hneg
-    have : Kδ δ * Real.exp (-(0.28 * |(0:ℂ).im|)) < 0 := mul_neg_of_neg_of_pos hneg hp
-    linarith [norm_nonneg (Gr 0 δ 0)]
-  have hint : Integrable fun y : ℝ => A * Real.exp (-(0.28 * |y|)) + B * Real.exp (-(0.14 * |y|)) :=
-    ((integrable_exp_neg_abs (by norm_num)).const_mul A).add
-      ((integrable_exp_neg_abs (by norm_num)).const_mul B)
+  have hc0 := hφ.c_pos
+  set A : ℝ := c1 * (|DN N| + 37) * K * x ^ (-1 / 2 : ℝ) with hA
+  set B : ℝ := c1 * 2.6 / (c / 2) * K * x ^ (-1 / 2 : ℝ) with hB
+  have hK : 0 ≤ K := hφ.K_nonneg
+  have hint : Integrable fun y : ℝ => A * Real.exp (-(c * |y|)) + B * Real.exp (-(c / 2 * |y|)) :=
+    ((integrable_exp_neg_abs hc0).const_mul A).add
+      ((integrable_exp_neg_abs (by linarith)).const_mul B)
   refine hint.mono' hc.aestronglyMeasurable (Eventually.of_forall fun y => ?_)
-  rw [hInt, norm_mul, norm_mul, norm_cpow_x hx]
+  rw [hIntG, norm_mul, norm_mul, norm_cpow_x hx]
   have hre : (((-1 / 2 : ℝ) : ℂ) + y * I).re = -1 / 2 := by simp
   have him : (((-1 / 2 : ℝ) : ℂ) + y * I).im = y := by simp
   rw [hre]
   have h1 := norm_logDeriv_L_left hχ hχ1 y
   have hLB := LB_le_linear (N := N) y
-  have hG := norm_G_le_strip δ (s := ((-1 / 2 : ℝ) : ℂ) + y * I) (by rw [hre]) (by rw [hre]; norm_num)
+  have hG := hφ.strip (((-1 / 2 : ℝ) : ℂ) + y * I) (by rw [hre]) (by rw [hre]; norm_num)
   rw [him] at hG
   have hLB0 : 0 ≤ Real.log (BT N y / 0.355) := by
     have := one_le_BT (N := N) y
@@ -814,22 +860,22 @@ theorem integrable_hInt_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N
     have hc10 : 0 ≤ c1 := by rw [hc1]; have := div_nonneg (by norm_num : (0:ℝ) ≤ 2) hlog2.le; linarith
     exact mul_le_mul_of_nonneg_left (by linarith [le_abs_self (DN N)]) hc10
   have hxp : 0 ≤ x ^ (-1 / 2 : ℝ) := by positivity
-  have hy : |y| ≤ Real.exp (0.14 * |y|) / 0.14 := by
-    rw [le_div_iff₀ (by norm_num)]
-    have := Real.add_one_le_exp (0.14 * |y|); nlinarith [abs_nonneg y]
-  have hexp : Real.exp (0.14 * |y|) * Real.exp (-(0.28 * |y|)) = Real.exp (-(0.14 * |y|)) := by
+  have hy : |y| ≤ Real.exp (c / 2 * |y|) / (c / 2) := by
+    rw [le_div_iff₀ (by linarith)]
+    have := Real.add_one_le_exp (c / 2 * |y|); nlinarith [abs_nonneg y]
+  have hexp : Real.exp (c / 2 * |y|) * Real.exp (-(c * |y|)) = Real.exp (-(c / 2 * |y|)) := by
     rw [← Real.exp_add]; congr 1; ring
   have hc10 : 0 ≤ c1 := by rw [hc1]; have := div_nonneg (by norm_num : (0:ℝ) ≤ 2) hlog2.le; linarith
   calc ‖logDeriv χ.LFunction (((-1 / 2 : ℝ) : ℂ) + y * I)‖ *
-        (‖Gr (((-1 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (-1 / 2 : ℝ))
-      ≤ c1 * (|DN N| + 37 + 2.6 * |y|) * (Kδ δ * Real.exp (-(0.28 * |y|)) * x ^ (-1 / 2 : ℝ)) := by
+        (‖mellin φ (((-1 / 2 : ℝ) : ℂ) + y * I)‖ * x ^ (-1 / 2 : ℝ))
+      ≤ c1 * (|DN N| + 37 + 2.6 * |y|) * (K * Real.exp (-(c * |y|)) * x ^ (-1 / 2 : ℝ)) := by
         gcongr
-    _ = A * Real.exp (-(0.28 * |y|)) + c1 * 2.6 * Kδ δ * x ^ (-1 / 2 : ℝ) *
-          (|y| * Real.exp (-(0.28 * |y|))) := by rw [hA]; ring
-    _ ≤ A * Real.exp (-(0.28 * |y|)) + c1 * 2.6 * Kδ δ * x ^ (-1 / 2 : ℝ) *
-          (Real.exp (0.14 * |y|) / 0.14 * Real.exp (-(0.28 * |y|))) := by
+    _ = A * Real.exp (-(c * |y|)) + c1 * 2.6 * K * x ^ (-1 / 2 : ℝ) *
+          (|y| * Real.exp (-(c * |y|))) := by rw [hA]; ring
+    _ ≤ A * Real.exp (-(c * |y|)) + c1 * 2.6 * K * x ^ (-1 / 2 : ℝ) *
+          (Real.exp (c / 2 * |y|) / (c / 2) * Real.exp (-(c * |y|))) := by
         gcongr
-    _ = A * Real.exp (-(0.28 * |y|)) + B * Real.exp (-(0.14 * |y|)) := by
+    _ = A * Real.exp (-(c * |y|)) + B * Real.exp (-(c / 2 * |y|)) := by
         rw [hB, ← hexp]; ring
 
 /-! ## Part C: the limit -/
@@ -887,13 +933,13 @@ theorem Hk_le (N : ℕ) [NeZero N] (k : ℕ) :
         mul_le_mul_of_nonneg_right hPle h3
     _ ≤ _ := by gcongr
 
-theorem tendsto_Hk_exp (N : ℕ) [NeZero N] :
-    Tendsto (fun k : ℕ => Hk N k * Real.exp (-(0.28 * k))) atTop (𝓝 0) := by
+theorem tendsto_Hk_exp (N : ℕ) [NeZero N] {c : ℝ} (hc : 0 < c) :
+    Tendsto (fun k : ℕ => Hk N k * Real.exp (-(c * k))) atTop (𝓝 0) := by
   set a := DN N + 40 with ha
-  have hpoly : ∀ k : ℕ, Hk N k * Real.exp (-(0.28 * k)) ≤
-      ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(0.28 * k)) :=
+  have hpoly : ∀ k : ℕ, Hk N k * Real.exp (-(c * k)) ≤
+      ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(c * k)) :=
     fun k => mul_le_mul_of_nonneg_right (Hk_le N k) (Real.exp_pos _).le
-  have hnn : ∀ k : ℕ, 0 ≤ Hk N k * Real.exp (-(0.28 * k)) := by
+  have hnn : ∀ k : ℕ, 0 ≤ Hk N k * Real.exp (-(c * k)) := by
     intro k
     refine mul_nonneg ?_ (Real.exp_pos _).le
     unfold Hk
@@ -905,20 +951,20 @@ theorem tendsto_Hk_exp (N : ℕ) [NeZero N] :
     positivity
   refine squeeze_zero hnn hpoly ?_
   -- polynomial × exponential decay
-  have hlim : ∀ n : ℕ, Tendsto (fun k : ℕ => (k : ℝ) ^ n * Real.exp (-(0.28 * k))) atTop (𝓝 0) := by
+  have hlim : ∀ n : ℕ, Tendsto (fun k : ℕ => (k : ℝ) ^ n * Real.exp (-(c * k))) atTop (𝓝 0) := by
     intro n
     have h := (Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero n).comp
-      ((tendsto_natCast_atTop_atTop).const_mul_atTop (show (0:ℝ) < 0.28 by norm_num))
-    have h' := h.const_mul ((1 / 0.28) ^ n)
+      ((tendsto_natCast_atTop_atTop).const_mul_atTop hc)
+    have h' := h.const_mul ((1 / c) ^ n)
     rw [mul_zero] at h'
     refine h'.congr fun k => ?_
     simp only [Function.comp]
-    rw [← mul_assoc, ← mul_pow, show (1 / 0.28 : ℝ) * (0.28 * (k : ℝ)) = k by ring]
-  have e : ∀ k : ℕ, ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(0.28 * k)) =
-      (a * ((4 * a / 0.51 + 2) / 0.69 + 4.8)) * ((k : ℝ) ^ 0 * Real.exp (-(0.28 * k))) +
+    rw [← mul_assoc, ← mul_pow, show (1 / c : ℝ) * (c * (k : ℝ)) = k by field_simp]
+  have e : ∀ k : ℕ, ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(c * k)) =
+      (a * ((4 * a / 0.51 + 2) / 0.69 + 4.8)) * ((k : ℝ) ^ 0 * Real.exp (-(c * k))) +
       (2.6 * ((4 * a / 0.51 + 2) / 0.69 + 4.8) + a * (4 * 2.6 / 0.51 / 0.69)) *
-        ((k : ℝ) ^ 1 * Real.exp (-(0.28 * k))) +
-      (2.6 * (4 * 2.6 / 0.51 / 0.69)) * ((k : ℝ) ^ 2 * Real.exp (-(0.28 * k))) := by
+        ((k : ℝ) ^ 1 * Real.exp (-(c * k))) +
+      (2.6 * (4 * 2.6 / 0.51 / 0.69)) * ((k : ℝ) ^ 2 * Real.exp (-(c * k))) := by
     intro k; ring
   simp_rw [e]
   have := (((hlim 0).const_mul (a * ((4 * a / 0.51 + 2) / 0.69 + 4.8))).add
@@ -939,28 +985,28 @@ set_option maxHeartbeats 1000000 in
 along heights `T_k ∈ [k+1, k+2]`,
 `Σ_{ρ ∈ (−1/2, 3/2) × (−T_k, T_k)} m_ρ G_δ(ρ) x^ρ → −S − (1/2π) ∫ (L'/L)(−1/2+iy) G_δ(−1/2+iy) x^{−1/2+iy} dy`,
 where `S = Σ Λ(n) χ(n) e(δn/x) η(n/x)`. (The sum includes the trivial zero `s = 0` when `χ` is even.) -/
-theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
+theorem explicit_formula_gen {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
     ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
-      Tendsto (fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u))
-        atTop (𝓝 (-Ssum χ δ x - (1 / (2 * π) : ℂ) *
-          ∫ y : ℝ, hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I))) := by
+      Tendsto (fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u))
+        atTop (𝓝 (-SsumG χ φ x - (1 / (2 * π) : ℂ) *
+          ∫ y : ℝ, hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I))) := by
   choose T hT hgood using fun k : ℕ => good_height hχ hχ1 (k + 1)
   have hT' : ∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2) := fun k => by
     have := hT k; push_cast at this; constructor <;> linarith [this.1, this.2]
   refine ⟨T, hT', ?_⟩
   have hTpos : ∀ k, 0 < T k := fun k => by linarith [(hT' k).1, (Nat.cast_nonneg k : (0:ℝ) ≤ k)]
-  set Rinf := ∫ y : ℝ, hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) with hRinf
-  set Linf := ∫ y : ℝ, hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hLinf
-  set Sk := fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u)
-  set Bot := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + ((-T k : ℝ) : ℂ) * I)
-  set Top := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + ((T k : ℝ) : ℂ) * I)
-  set Right := fun k => ∫ y in (-T k)..(T k), hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I)
-  set Left := fun k => ∫ y in (-T k)..(T k), hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I)
+  set Rinf := ∫ y : ℝ, hIntG χ φ x (((3 / 2 : ℝ) : ℂ) + y * I) with hRinf
+  set Linf := ∫ y : ℝ, hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hLinf
+  set Sk := fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u)
+  set Bot := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hIntG χ φ x ((σ : ℂ) + ((-T k : ℝ) : ℂ) * I)
+  set Top := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hIntG χ φ x ((σ : ℂ) + ((T k : ℝ) : ℂ) * I)
+  set Right := fun k => ∫ y in (-T k)..(T k), hIntG χ φ x (((3 / 2 : ℝ) : ℂ) + y * I)
+  set Left := fun k => ∫ y in (-T k)..(T k), hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I)
   -- the rectangle identity, expanded
   have hrect : ∀ k, Bot k - Top k + I * Right k - I * Left k = 2 * π * I * Sk k := by
     intro k
-    have h := rect_identity hχ hχ1 δ hx (hTpos k) (fun σ hσ => ((hgood k σ hσ).1).2)
+    have h := rect_identity hχ hχ1 hφ hx (hTpos k) (fun σ hσ => ((hgood k σ hσ).1).2)
       (fun σ hσ => ((hgood k σ hσ).1).1)
     rw [← h]
     unfold rectInt
@@ -968,8 +1014,8 @@ theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h
     rfl
   -- the horizontal sides
   have hside : ∀ k, ∀ S : ℝ, (S = T k ∨ S = -T k) →
-      ‖∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + (S : ℂ) * I)‖ ≤
-        Hk N (k + 1) * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) * (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) *
+      ‖∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hIntG χ φ x ((σ : ℂ) + (S : ℂ) * I)‖ ≤
+        Hk N (k + 1) * Real.exp (-(c * ((k + 1 : ℕ) : ℝ))) * (K * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) *
           |(3 / 2 : ℝ) - (-1 / 2)| := by
     intro k S hS
     refine intervalIntegral.norm_integral_le_of_norm_le_const fun σ hσ => ?_
@@ -984,33 +1030,28 @@ theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h
       rcases hS with rfl | rfl
       · exact abs_of_pos (hTpos k)
       · rw [abs_neg]; exact abs_of_pos (hTpos k)
-    have hG := norm_G_le_strip δ (s := (σ : ℂ) + (S : ℂ) * I) (by simp; linarith) (by simp; linarith)
+    have hG := hφ.strip ((σ : ℂ) + (S : ℂ) * I) (by simp; linarith) (by simp; linarith)
     have him : ((σ : ℂ) + (S : ℂ) * I).im = S := by simp
     have hre : ((σ : ℂ) + (S : ℂ) * I).re = σ := by simp
     rw [him, hS'] at hG
-    have hexp : Real.exp (-(0.28 * T k)) ≤ Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) := by
+    have hexp : Real.exp (-(c * T k)) ≤ Real.exp (-(c * ((k + 1 : ℕ) : ℝ))) := by
       refine Real.exp_le_exp.2 ?_
-      have := (hT' k).1; push_cast; linarith
-    have hK : 0 ≤ Kδ δ := by
-      have := norm_G_le_strip δ (s := (0 : ℂ)) (by norm_num) (by norm_num)
-      have hp : 0 < Real.exp (-(0.28 * |(0:ℂ).im|)) := Real.exp_pos _
-      by_contra hneg; push Not at hneg
-      have : Kδ δ * Real.exp (-(0.28 * |(0:ℂ).im|)) < 0 := mul_neg_of_neg_of_pos hneg hp
-      linarith [norm_nonneg (Gr 0 δ 0)]
+      have := (hT' k).1; push_cast; nlinarith [hφ.c_pos]
+    have hK : 0 ≤ K := hφ.K_nonneg
     have hxσ := rpow_le_of_mem hx hσ2.1 hσ2.2
     have hHk0 : 0 ≤ Hk N (k + 1) := le_trans (norm_nonneg _) hb
-    rw [hInt, norm_mul, norm_mul, norm_cpow_x hx, hre]
+    rw [hIntG, norm_mul, norm_mul, norm_cpow_x hx, hre]
     calc ‖logDeriv χ.LFunction ((σ : ℂ) + (S : ℂ) * I)‖ *
-          (‖Gr ((σ : ℂ) + (S : ℂ) * I) δ 0‖ * x ^ σ)
-        ≤ Hk N (k + 1) * (Kδ δ * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) *
+          (‖mellin φ ((σ : ℂ) + (S : ℂ) * I)‖ * x ^ σ)
+        ≤ Hk N (k + 1) * (K * Real.exp (-(c * ((k + 1 : ℕ) : ℝ))) *
           (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) := by
           gcongr
           exact hG.trans (mul_le_mul_of_nonneg_left hexp hK)
       _ = _ := by ring
-  have hdecay : Tendsto (fun k : ℕ => Hk N (k + 1) * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) *
-      (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) * |(3 / 2 : ℝ) - (-1 / 2)|) atTop (𝓝 0) := by
-    have h := ((tendsto_Hk_exp N).comp (tendsto_add_atTop_nat 1)).mul_const
-      (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ)))
+  have hdecay : Tendsto (fun k : ℕ => Hk N (k + 1) * Real.exp (-(c * ((k + 1 : ℕ) : ℝ))) *
+      (K * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) * |(3 / 2 : ℝ) - (-1 / 2)|) atTop (𝓝 0) := by
+    have h := ((tendsto_Hk_exp N hφ.c_pos).comp (tendsto_add_atTop_nat 1)).mul_const
+      (K * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ)))
     rw [zero_mul] at h
     have h2 := h.mul_const |(3 / 2 : ℝ) - (-1 / 2)|
     rw [zero_mul] at h2
@@ -1024,16 +1065,16 @@ theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h
   have hTtop : Tendsto T atTop atTop :=
     tendsto_atTop_mono (fun k => (hT' k).1) (tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds)
   have hRight : Tendsto Right atTop (𝓝 Rinf) :=
-    intervalIntegral_tendsto_integral (integrable_hInt_right hχ1 δ hx)
+    intervalIntegral_tendsto_integral (integrable_hInt_right hχ1 hφ hx)
       (tendsto_neg_atTop_atBot.comp hTtop) hTtop
   have hLeft : Tendsto Left atTop (𝓝 Linf) :=
-    intervalIntegral_tendsto_integral (integrable_hInt_left hχ hχ1 δ hx)
+    intervalIntegral_tendsto_integral (integrable_hInt_left hχ hχ1 hφ hx)
       (tendsto_neg_atTop_atBot.comp hTtop) hTtop
   -- `R∞ = −2π S`
-  have hR : Rinf = -(2 * π * Ssum χ δ x) := by
-    rw [hRinf, Ssum_eq_line χ δ hx]
-    have : (fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I)) =
-        fun y : ℝ => -Fline χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := funext fun y => hInt_eq_neg_Fline χ δ x _
+  have hR : Rinf = -(2 * π * SsumG χ φ x) := by
+    rw [hRinf, SsumG_eq_line χ hφ hx]
+    have : (fun y : ℝ => hIntG χ φ x (((3 / 2 : ℝ) : ℂ) + y * I)) =
+        fun y : ℝ => -Fline χ φ x (((3 / 2 : ℝ) : ℂ) + y * I) := funext fun y => hIntG_eq_neg_Fline χ φ x _
     rw [this, integral_neg]
     have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
     rw [← mul_assoc, show (2 * (π : ℂ)) * (1 / (2 * π)) = 1 by field_simp, one_mul]
@@ -1050,5 +1091,18 @@ theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h
   have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
   field_simp
   ring
+
+/-- **The explicit formula** for `η(t) = t² e^{−t²/2}`: `explicit_formula_gen` with `φ = fδ δ`. -/
+theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
+      Tendsto (fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u))
+        atTop (𝓝 (-Ssum χ δ x - (1 / (2 * π) : ℂ) *
+          ∫ y : ℝ, hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I))) := by
+  obtain ⟨T, hT, h⟩ := explicit_formula_gen hχ hχ1 (goodSmoothing_fδ δ) hx
+  refine ⟨T, hT, ?_⟩
+  simp_rw [mellin_fδ, ← Ssum_eq_SsumG] at h
+  simp_rw [hInt_eq_hIntG]
+  exact h
 
 end TernaryGoldbach.Explicit
