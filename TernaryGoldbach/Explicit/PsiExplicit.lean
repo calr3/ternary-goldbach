@@ -10,7 +10,7 @@ import TernaryGoldbach.Explicit.ExplicitBoundGen
 -/
 
 open Complex Set Filter MeasureTheory Finset
-open scoped Real Interval Topology
+open scoped Real Interval Topology ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.Explicit
 
@@ -172,5 +172,97 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
         (1 / (2 * π) : ℂ) * I0) := by rw [hM]; ring
   rw [e, norm_neg]
   exact (norm_add_le _ _).trans (add_le_add h1 h2)
+
+/-! ## Two-sided bounds for `ψ(x)` -/
+
+/-- The total explicit-formula error. -/
+noncomputable def ErrG (a b δ x : ℝ) : ℝ :=
+  √x * LineB a δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)
+
+theorem summable_gsm {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hx : 0 < x) :
+    Summable fun n : ℕ => Λ n * gsm a b δ (n / x) := by
+  have h := summable_SsumG (1 : DirichletCharacter ℂ 1) (goodSmoothing_gsm hδ hab) hx
+  have h2 := Complex.reCLM.summable h
+  refine h2.congr fun n => ?_
+  simp only [Complex.reCLM_apply]
+  rw [MulChar.one_apply (isUnit_of_subsingleton _)]
+  simp
+
+theorem tsum_gsm_le {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 ≤ x) :
+    |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤ ErrG a b δ x := by
+  have h := SsumG_gsm_err hδ hab hb hx
+  rw [SsumG_one_ofReal, Mg_one] at h
+  rw [show ((∑' n : ℕ, Λ n * gsm a b δ (n / x) : ℝ) : ℂ) -
+      ((Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) : ℝ) : ℂ) * (x : ℂ) =
+      ((∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x : ℝ) : ℂ) by
+      push_cast; ring, Complex.norm_real, Real.norm_eq_abs] at h
+  exact h
+
+/-- **Upper bound for `ψ`.** -/
+theorem psi_upper_explicit {δ K y0 x : ℝ} (hδ : 0 < δ) (hK : 0 ≤ K) (hK1 : 2 * Real.exp (-(K ^ 2 / 2)) < 1)
+    (hy0 : 0 < y0) (hx : 1 ≤ x) (hYx : y0 * Real.exp (K * δ) ≤ x) :
+    psiR x ≤ 4 * (y0 * Real.exp (K * δ)) +
+      (Real.exp (δ ^ 2 / 2 + K * δ) * x + ErrG (K * δ) (Real.log (y0 / x)) δ x) /
+        (1 - 2 * Real.exp (-(K ^ 2 / 2))) := by
+  have hx0 : 0 < x := by linarith
+  have hb : Real.log (y0 / x) ≤ 0 := Real.log_nonpos (by positivity) ((div_le_one hx0).2
+    (le_trans (le_mul_of_one_le_right hy0.le (Real.one_le_exp (by positivity))) hYx))
+  have hab : Real.log (y0 / x) ≤ K * δ := hb.trans (by positivity)
+  have hS := sandwich_upper hδ hK hy0 hx0 hYx (summable_gsm hδ hab hx0)
+  have hT := tsum_gsm_le hδ hab hb hx
+  have hc : 0 < 1 - 2 * Real.exp (-(K ^ 2 / 2)) := by linarith
+  have hmain : Real.exp (δ ^ 2 / 2) * (Real.exp (K * δ) - Real.exp (Real.log (y0 / x))) * x ≤
+      Real.exp (δ ^ 2 / 2 + K * δ) * x := by
+    rw [Real.exp_add]
+    have hp : 0 < Real.exp (δ ^ 2 / 2) * Real.exp (Real.log (y0 / x)) * x :=
+      mul_pos (mul_pos (Real.exp_pos _) (Real.exp_pos _)) hx0
+    have e : Real.exp (δ ^ 2 / 2) * (Real.exp (K * δ) - Real.exp (Real.log (y0 / x))) * x =
+        Real.exp (δ ^ 2 / 2) * Real.exp (K * δ) * x - Real.exp (δ ^ 2 / 2) * Real.exp (Real.log (y0 / x)) * x := by
+      ring
+    rw [e]; linarith
+  have hsum : ∑' n : ℕ, Λ n * gsm (K * δ) (Real.log (y0 / x)) δ (n / x) ≤
+      Real.exp (δ ^ 2 / 2 + K * δ) * x + ErrG (K * δ) (Real.log (y0 / x)) δ x := by
+    have := (abs_le.1 hT).2; linarith
+  have hY := psiR_le (y := y0 * Real.exp (K * δ)) (by positivity)
+  have h1 : psiR x - psiR (y0 * Real.exp (K * δ)) ≤
+      (Real.exp (δ ^ 2 / 2 + K * δ) * x + ErrG (K * δ) (Real.log (y0 / x)) δ x) / (1 - 2 * Real.exp (-(K ^ 2 / 2))) := by
+    rw [le_div_iff₀ hc]; nlinarith
+  linarith
+
+/-- **Lower bound for `ψ`.** -/
+theorem psi_lower_explicit {δ K y0 x : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1) (hKδ : δ ≤ K) (hy0 : 0 < y0)
+    (hx : 1 ≤ x) (hb : Real.log (y0 / x) ≤ -(K * δ)) :
+    Real.exp (-(K * δ)) * x - 2 * y0 - ErrG (-(K * δ)) (Real.log (y0 / x)) δ x -
+      4 * x * Real.exp (-(K ^ 2 / 2)) ≤ psiR x := by
+  have hx0 : 0 < x := by linarith
+  have hb0 : Real.log (y0 / x) ≤ 0 := hb.trans (by have : 0 ≤ K * δ := by nlinarith
+                                                   linarith)
+  have hS := sandwich_lower hδ hKδ hx0 hb
+  have hT := tsum_gsm_le hδ hb hb0 hx
+  have he : Real.exp (Real.log (y0 / x)) = y0 / x := Real.exp_log (by positivity)
+  rw [he] at hT
+  have hd : Real.exp (δ ^ 2 / 2) ≤ 2 := by
+    have : Real.exp (δ ^ 2 / 2) ≤ Real.exp (1 / 2) := Real.exp_le_exp.2 (by nlinarith)
+    have h2 : Real.exp (1 / 2) ≤ 2 := by
+      have := Real.exp_one_lt_d9
+      have : Real.exp (1 / 2) ^ 2 = Real.exp 1 := by rw [← Real.exp_nat_mul]; norm_num
+      nlinarith [Real.exp_pos (1 / 2)]
+    linarith
+  have hd1 : 1 ≤ Real.exp (δ ^ 2 / 2) := Real.one_le_exp (by positivity)
+  have hmain : Real.exp (-(K * δ)) * x - 2 * y0 ≤
+      Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) - y0 / x) * x := by
+    have e : Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) - y0 / x) * x =
+        Real.exp (δ ^ 2 / 2) * Real.exp (-(K * δ)) * x - Real.exp (δ ^ 2 / 2) * y0 := by
+      field_simp
+    rw [e]
+    have hq : 0 ≤ Real.exp (-(K * δ)) * x := (mul_pos (Real.exp_pos _) hx0).le
+    have h1 : 1 * (Real.exp (-(K * δ)) * x) ≤ Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) * x) :=
+      mul_le_mul_of_nonneg_right hd1 hq
+    have h2 : Real.exp (δ ^ 2 / 2) * y0 ≤ 2 * y0 := mul_le_mul_of_nonneg_right hd hy0.le
+    have e2 : Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) * x) = Real.exp (δ ^ 2 / 2) * Real.exp (-(K * δ)) * x := by ring
+    rw [e2, one_mul] at h1
+    linarith
+  have := (abs_le.1 hT).1
+  linarith
 
 end TernaryGoldbach.Explicit
