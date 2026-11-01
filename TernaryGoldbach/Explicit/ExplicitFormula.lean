@@ -926,4 +926,129 @@ theorem tendsto_Hk_exp (N : ℕ) [NeZero N] :
     ((hlim 2).const_mul (2.6 * (4 * 2.6 / 0.51 / 0.69)))
   simpa using this
 
+theorem rpow_le_of_mem {x σ : ℝ} (hx : 0 < x) (h1 : -1 / 2 ≤ σ) (h2 : σ ≤ 3 / 2) :
+    x ^ σ ≤ x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ) := by
+  rcases le_total 1 x with h | h
+  · have := Real.rpow_le_rpow_of_exponent_le h h2
+    have := Real.rpow_nonneg hx.le (-1 / 2 : ℝ); linarith
+  · have := Real.rpow_le_rpow_of_exponent_ge hx h h1
+    have := Real.rpow_nonneg hx.le (3 / 2 : ℝ); linarith
+
+set_option maxHeartbeats 1000000 in
+/-- **The explicit formula** ([B, Lemma 9.1.1] for `η(t) = t² e^{−t²/2}`, `χ` primitive, `χ ≠ 1`):
+along heights `T_k ∈ [k+1, k+2]`,
+`Σ_{ρ ∈ (−1/2, 3/2) × (−T_k, T_k)} m_ρ G_δ(ρ) x^ρ → −S − (1/2π) ∫ (L'/L)(−1/2+iy) G_δ(−1/2+iy) x^{−1/2+iy} dy`,
+where `S = Σ Λ(n) χ(n) e(δn/x) η(n/x)`. (The sum includes the trivial zero `s = 0` when `χ` is even.) -/
+theorem explicit_formula {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
+      Tendsto (fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u))
+        atTop (𝓝 (-Ssum χ δ x - (1 / (2 * π) : ℂ) *
+          ∫ y : ℝ, hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I))) := by
+  choose T hT hgood using fun k : ℕ => good_height hχ hχ1 (k + 1)
+  have hT' : ∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2) := fun k => by
+    have := hT k; push_cast at this; constructor <;> linarith [this.1, this.2]
+  refine ⟨T, hT', ?_⟩
+  have hTpos : ∀ k, 0 < T k := fun k => by linarith [(hT' k).1, (Nat.cast_nonneg k : (0:ℝ) ≤ k)]
+  set Rinf := ∫ y : ℝ, hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) with hRinf
+  set Linf := ∫ y : ℝ, hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hLinf
+  set Sk := fun k => ∑ u ∈ zerosRect χ (T k), (multRect χ (T k) u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u)
+  set Bot := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + ((-T k : ℝ) : ℂ) * I)
+  set Top := fun k => ∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + ((T k : ℝ) : ℂ) * I)
+  set Right := fun k => ∫ y in (-T k)..(T k), hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I)
+  set Left := fun k => ∫ y in (-T k)..(T k), hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I)
+  -- the rectangle identity, expanded
+  have hrect : ∀ k, Bot k - Top k + I * Right k - I * Left k = 2 * π * I * Sk k := by
+    intro k
+    have h := rect_identity hχ hχ1 δ hx (hTpos k) (fun σ hσ => ((hgood k σ hσ).1).2)
+      (fun σ hσ => ((hgood k σ hσ).1).1)
+    rw [← h]
+    unfold rectInt
+    simp only [zT_re, zT_im, wT_re, wT_im, smul_eq_mul]
+    rfl
+  -- the horizontal sides
+  have hside : ∀ k, ∀ S : ℝ, (S = T k ∨ S = -T k) →
+      ‖∫ σ in (-1 / 2 : ℝ)..(3 / 2 : ℝ), hInt χ δ x ((σ : ℂ) + (S : ℂ) * I)‖ ≤
+        Hk N (k + 1) * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) * (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) *
+          |(3 / 2 : ℝ) - (-1 / 2)| := by
+    intro k S hS
+    refine intervalIntegral.norm_integral_le_of_norm_le_const fun σ hσ => ?_
+    have hσ' : σ ∈ [[(-1 / 2 : ℝ), 3 / 2]] := Set.uIoc_subset_uIcc hσ
+    have hσ2 : -1 / 2 ≤ σ ∧ σ ≤ 3 / 2 := by
+      rw [Set.uIcc_of_le (by norm_num)] at hσ'; exact hσ'
+    have hb : ‖logDeriv χ.LFunction ((σ : ℂ) + (S : ℂ) * I)‖ ≤ Hk N (k + 1) := by
+      rcases hS with rfl | rfl
+      · exact ((hgood k σ hσ').2).1
+      · exact ((hgood k σ hσ').2).2
+    have hS' : |S| = T k := by
+      rcases hS with rfl | rfl
+      · exact abs_of_pos (hTpos k)
+      · rw [abs_neg]; exact abs_of_pos (hTpos k)
+    have hG := norm_G_le_strip δ (s := (σ : ℂ) + (S : ℂ) * I) (by simp; linarith) (by simp; linarith)
+    have him : ((σ : ℂ) + (S : ℂ) * I).im = S := by simp
+    have hre : ((σ : ℂ) + (S : ℂ) * I).re = σ := by simp
+    rw [him, hS'] at hG
+    have hexp : Real.exp (-(0.28 * T k)) ≤ Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) := by
+      refine Real.exp_le_exp.2 ?_
+      have := (hT' k).1; push_cast; linarith
+    have hK : 0 ≤ Kδ δ := by
+      have := norm_G_le_strip δ (s := (0 : ℂ)) (by norm_num) (by norm_num)
+      have hp : 0 < Real.exp (-(0.28 * |(0:ℂ).im|)) := Real.exp_pos _
+      by_contra hneg; push Not at hneg
+      have : Kδ δ * Real.exp (-(0.28 * |(0:ℂ).im|)) < 0 := mul_neg_of_neg_of_pos hneg hp
+      linarith [norm_nonneg (Gr 0 δ 0)]
+    have hxσ := rpow_le_of_mem hx hσ2.1 hσ2.2
+    have hHk0 : 0 ≤ Hk N (k + 1) := le_trans (norm_nonneg _) hb
+    rw [hInt, norm_mul, norm_mul, norm_cpow_x hx, hre]
+    calc ‖logDeriv χ.LFunction ((σ : ℂ) + (S : ℂ) * I)‖ *
+          (‖Gr ((σ : ℂ) + (S : ℂ) * I) δ 0‖ * x ^ σ)
+        ≤ Hk N (k + 1) * (Kδ δ * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) *
+          (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) := by
+          gcongr
+          exact hG.trans (mul_le_mul_of_nonneg_left hexp hK)
+      _ = _ := by ring
+  have hdecay : Tendsto (fun k : ℕ => Hk N (k + 1) * Real.exp (-(0.28 * ((k + 1 : ℕ) : ℝ))) *
+      (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ))) * |(3 / 2 : ℝ) - (-1 / 2)|) atTop (𝓝 0) := by
+    have h := ((tendsto_Hk_exp N).comp (tendsto_add_atTop_nat 1)).mul_const
+      (Kδ δ * (x ^ (3 / 2 : ℝ) + x ^ (-1 / 2 : ℝ)))
+    rw [zero_mul] at h
+    have h2 := h.mul_const |(3 / 2 : ℝ) - (-1 / 2)|
+    rw [zero_mul] at h2
+    exact h2
+  have hBot : Tendsto Bot atTop (𝓝 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    exact squeeze_zero (fun _ => norm_nonneg _) (fun k => hside k (-T k) (Or.inr rfl)) hdecay
+  have hTop : Tendsto Top atTop (𝓝 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    exact squeeze_zero (fun _ => norm_nonneg _) (fun k => hside k (T k) (Or.inl rfl)) hdecay
+  have hTtop : Tendsto T atTop atTop :=
+    tendsto_atTop_mono (fun k => (hT' k).1) (tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds)
+  have hRight : Tendsto Right atTop (𝓝 Rinf) :=
+    intervalIntegral_tendsto_integral (integrable_hInt_right hχ1 δ hx)
+      (tendsto_neg_atTop_atBot.comp hTtop) hTtop
+  have hLeft : Tendsto Left atTop (𝓝 Linf) :=
+    intervalIntegral_tendsto_integral (integrable_hInt_left hχ hχ1 δ hx)
+      (tendsto_neg_atTop_atBot.comp hTtop) hTtop
+  -- `R∞ = −2π S`
+  have hR : Rinf = -(2 * π * Ssum χ δ x) := by
+    rw [hRinf, Ssum_eq_line χ δ hx]
+    have : (fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I)) =
+        fun y : ℝ => -Fline χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := funext fun y => hInt_eq_neg_Fline χ δ x _
+    rw [this, integral_neg]
+    have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+    rw [← mul_assoc, show (2 * (π : ℂ)) * (1 / (2 * π)) = 1 by field_simp, one_mul]
+  have hSk : ∀ k, Sk k = (Bot k - Top k + I * Right k - I * Left k) / (2 * π * I) := by
+    intro k
+    have hne : (2 * π * I : ℂ) ≠ 0 := by
+      refine mul_ne_zero (mul_ne_zero two_ne_zero (by exact_mod_cast Real.pi_ne_zero)) I_ne_zero
+    rw [hrect k]; field_simp
+  have hlim := ((((hBot.sub hTop).add (hRight.const_mul I)).sub (hLeft.const_mul I)).div_const
+    (2 * π * I))
+  rw [show Sk = fun k => (Bot k - Top k + I * Right k - I * Left k) / (2 * π * I) from funext hSk]
+  convert hlim using 2
+  rw [hR]
+  have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+  field_simp
+  ring
+
 end TernaryGoldbach.Explicit
