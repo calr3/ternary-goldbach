@@ -14,7 +14,20 @@ of `L(χ)` with `γ < 0` are conjugates of zeros of `L(χ̄)` with `γ > 0`), wh
 `|G_δ|` and `|G_{−δ}|` — Cor 8.0.2 (and our rotation bound) is symmetric in the sign of `δ`, so fine.
 1. **Cor 8.0.2 — DONE** (`Explicit/MellinRotate.lean`, no `sorry`): rotate `t = re^{iθ}`; same exponents
    `0.1598`, `0.1065`, constants `0.892|τ|`, `0.588 y²` (per term; [B]: `5.13`, `1.99` for pairs).
-2. *A priori growth of `L(s,χ)`* (next): second-order partial summation (`S(u) = Σ_{n≤u} χ(n)` periodic,
+**Progress (2026-11-01):** `Explicit/MellinRotate` (Cor 8.0.2), `Explicit/LGrowth` (`L = s∫S(t)t^{-s-1}` and
+`|L| ≤ (q+1)|s|/σ` for `σ > 0`), `Explicit/ZeroCount` (Jensen: zeros in `|s−(2+iT)| ≤ 1.6`),
+`Explicit/Landau` (`|f'/f − Σ_{|ρ−c|<R/2} m/(z−ρ)| ≤ 48 log(B/|f(c)|)/R` on `|z−c| ≤ R/4`) — all sorry-free.
+*Refined plan:* (i) growth for `σ ≤ 1/4` from `completedLFunction_one_sub` (`Λ = Γℝ(s+κ) L`, no `q^{s/2}`):
+`|L(1−s,χ)| = q^{σ−1/2} π^{1/2−σ} |Γ((s+κ)/2)/Γ((1−s+κ)/2)| |L(s,χ⁻¹)|`, numerator `≤ Γ(ℜ)` (integral),
+denominator `≥ π e^{−π|t|/2}/(|Γ(1−w)|)` (reflection) ⇒ `|L| ≲ q^{O(1)} e^{π|t|/2}` — exponential growth is
+fine: Landau then gives `|L'/L| ≲ |t|` and Jensen `≲ |t|` zeros per window, and `G_δ` decays like
+`e^{−0.16|t|}`. (ii) Landau at `c = 2+iT`, `R = 10` covers `σ ∈ [−1/2, 3/2]` (horizontal sides at heights
+chosen `≥ 1/(2N+2)` from all ordinates, by a measure argument) and the line `σ = −1/2` (there
+`|s−ρ| ≥ 1/2`). No digamma bounds needed. (iii) The only constant that matters downstream is the
+`√T₀ log qT₀ x^{−1/2}` term of Lemma 9.1.4; a Jensen density (`≈ 30–40×` worse) makes Cor 7.1.3's
+`381500/√q` about `1.5·10⁷/√q`; estimated effect: (14.27) `1.0493 → ≈ 1.0488` (state `1.048`), minor arcs and
+(14.7) unaffected in substance. Props 9.x, Cor 9.3.3, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5 constants get restated.
+2. *A priori growth of `L(s,χ)`* (σ > 0 done): second-order partial summation (`S(u) = Σ_{n≤u} χ(n)` periodic,
    subtract its mean, integrate twice) ⇒ `|L(σ+it, χ)| ≤ C q² (|t|+2)²` for `σ ≥ −1/2`, `χ ≠ 1`; identity
    theorem from `LFunction_eq_LSeries` + `LSeries_eq_mul_integral` (SumCoeff). On `ℜs = −1/2` exactly:
    `|L(s,χ)| = (q/π)|(κ − 1/2 + it)/2| |L(3/2 − it, χ̄)|` (functional equation, `Γ(w̄+1) = w̄Γ(w̄)`).
