@@ -480,4 +480,186 @@ theorem norm_logDeriv_L_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N
   · rw [abs_of_nonneg (by linarith)] at this; linarith
   · rw [abs_of_nonpos (by linarith)] at this; linarith
 
+/-- Jensen with radii `r < 10`: at most `log(B_T/0.355)/log(10/r)` zeros in `|ρ − (2 + iT)| ≤ r`. -/
+theorem zero_count_r {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (T : ℝ) {r : ℝ} (hr : 0 < r) (hr10 : r < 10) :
+    ((∑ᶠ u, MeromorphicOn.divisor χ.LFunction (Metric.closedBall (2 + T * I) |r|) u : ℤ) : ℝ) ≤
+      Real.log (BT N T / 0.355) / Real.log (10 / r) := by
+  have hc := norm_L_center_ge χ T
+  have hc0 : χ.LFunction (2 + T * I) ≠ 0 := by
+    intro h; rw [h, norm_zero] at hc; norm_num at hc
+  have hB := one_le_BT (N := N) T
+  have hf : AnalyticOnNhd ℂ χ.LFunction (Metric.closedBall (2 + T * I) |(10 : ℝ)|) := fun z _ =>
+    (DirichletCharacter.differentiable_LFunction hχ1).analyticAt z
+  have h := hf.sum_divisor_le (r := r) (R := 10) (by rw [abs_of_pos hr]; exact hr)
+    (by rw [abs_of_pos hr, abs_of_pos (by norm_num : (0:ℝ) < 10)]; exact hr10) (by linarith) hc0
+    (fun w hw => norm_L_le_BT hχ hχ1 (Metric.sphere_subset_closedBall (by
+      rwa [abs_of_pos (by norm_num : (0:ℝ) < 10)] at hw)))
+  refine h.trans ?_
+  have hpos : 0 < BT N T / ‖χ.LFunction (2 + T * I)‖ := div_pos (by linarith) (by linarith)
+  have hle : Real.log (BT N T / ‖χ.LFunction (2 + T * I)‖) ≤ Real.log (BT N T / 0.355) :=
+    Real.log_le_log hpos (div_le_div_of_nonneg_left (by linarith) (by norm_num) hc)
+  exact div_le_div_of_nonneg_right hle (Real.log_nonneg (by rw [le_div_iff₀ hr]; linarith))
+
+theorem BT_mono {N : ℕ} [NeZero N] {T T' : ℝ} (h : |T| ≤ |T'|) : BT N T ≤ BT N T' := by
+  unfold BT
+  have hN : (0:ℝ) ≤ 512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) := by positivity
+  refine mul_le_mul (mul_le_mul_of_nonneg_left (by linarith) hN)
+    (Real.exp_le_exp.2 (by nlinarith [Real.pi_pos])) (Real.exp_pos _).le (by positivity)
+
+theorem LB_mono {N : ℕ} [NeZero N] {T T' : ℝ} (h : |T| ≤ |T'|) :
+    Real.log (BT N T / 0.355) ≤ Real.log (BT N T' / 0.355) := by
+  have hB := one_le_BT (N := N) T
+  exact Real.log_le_log (by positivity) (div_le_div_of_nonneg_right (BT_mono h) (by norm_num))
+
+theorem card_zerosIn_le {f : ℂ → ℂ} {c : ℂ} {R r : ℝ} (hf : Differentiable ℂ f) :
+    ((zerosIn f c R r).card : ℝ) ≤ ((∑ u ∈ zerosIn f c R r, (divB f c R u).toNat : ℕ) : ℝ) := by
+  have hfa : AnalyticOnNhd ℂ f (Metric.closedBall c R) := fun z _ => hf.analyticAt z
+  have hDnn := MeromorphicOn.AnalyticOnNhd.divisor_nonneg hfa
+  rw [Finset.card_eq_sum_ones]
+  push_cast
+  refine Finset.sum_le_sum fun u hu => ?_
+  have h0 := (mem_zerosIn hu).2
+  have hnn : 0 ≤ divB f c R u := hDnn u
+  have : 1 ≤ (divB f c R u).toNat := by omega
+  exact_mod_cast this
+
+/-- The height bound: `H_k = log(B_{k+1}/0.355)·((2A_k + 2)/log 2 + 4.8)`,
+`A_k = 2 log(B_{k+1}/0.355)/log(10/6)`. -/
+noncomputable def Hk (N : ℕ) (k : ℕ) : ℝ :=
+  Real.log (BT N (k + 1) / 0.355) *
+    ((2 * (2 * Real.log (BT N (k + 1) / 0.355) / Real.log (10 / 6)) + 2) / Real.log 2 + 4.8)
+
+/-- **Good heights**: in `[k, k+1]` there is `T` such that `L` has no zeros on the horizontal sides
+`ℑs = ±T`, `−1/2 ≤ ℜs ≤ 3/2`, and `|L'/L| ≤ H_k` there. -/
+theorem good_height {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (k : ℕ) :
+    ∃ T ∈ Icc (k : ℝ) (k + 1), ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]],
+      (χ.LFunction ((σ : ℂ) + ((T : ℝ) : ℂ) * I) ≠ 0 ∧
+        χ.LFunction ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) ≠ 0) ∧
+      (‖logDeriv χ.LFunction ((σ : ℂ) + ((T : ℝ) : ℂ) * I)‖ ≤ Hk N k ∧
+        ‖logDeriv χ.LFunction ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)‖ ≤ Hk N k) := by
+  have hf := DirichletCharacter.differentiable_LFunction hχ1
+  set k' : ℝ := k + 1 / 2 with hk'
+  set Wp := zerosIn χ.LFunction (2 + (k' : ℂ) * I) 12 6 with hWp
+  set Wm := zerosIn χ.LFunction (2 + ((-k' : ℝ) : ℂ) * I) 12 6 with hWm
+  set A : Finset ℝ := Wp.image Complex.im ∪ Wm.image (fun u => -u.im) with hA
+  set LBk := Real.log (BT N (k + 1) / 0.355) with hLBk
+  have hLB0 : 0 < LBk := by
+    have := one_le_BT (N := N) ((k : ℝ) + 1)
+    exact Real.log_pos (by rw [lt_div_iff₀ (by norm_num)]; linarith)
+  have hlog106 : 0 < Real.log (10 / 6) := Real.log_pos (by norm_num)
+  -- `|A| ≤ A_k`
+  have hcardW : ∀ (T0 : ℝ), |T0| ≤ (k : ℝ) + 1 →
+      ((zerosIn χ.LFunction (2 + (T0 : ℂ) * I) 12 6).card : ℝ) ≤ LBk / Real.log (10 / 6) := by
+    intro T0 hT0
+    refine (card_zerosIn_le hf).trans ?_
+    refine (sum_zerosIn_le hf (by norm_num) (by norm_num)).trans ?_
+    refine (zero_count_r hχ hχ1 T0 (by norm_num) (by norm_num)).trans ?_
+    exact div_le_div_of_nonneg_right (LB_mono (by rw [abs_of_nonneg (by positivity : (0:ℝ) ≤ k + 1)]; exact hT0))
+      hlog106.le
+  have hk'abs : |k'| ≤ (k : ℝ) + 1 := by rw [hk', abs_of_nonneg (by positivity)]; linarith
+  have hAcard : (A.card : ℝ) ≤ 2 * LBk / Real.log (10 / 6) := by
+    have h1 : (A.card : ℝ) ≤ Wp.card + Wm.card := by
+      have := Finset.card_union_le (Wp.image Complex.im) (Wm.image (fun u => -u.im))
+      have h2 := Finset.card_image_le (s := Wp) (f := Complex.im)
+      have h3 := Finset.card_image_le (s := Wm) (f := fun u : ℂ => -u.im)
+      exact_mod_cast this.trans (add_le_add h2 h3)
+    have hp : (Wp.card : ℝ) ≤ LBk / Real.log (10 / 6) := hcardW k' hk'abs
+    have hm : (Wm.card : ℝ) ≤ LBk / Real.log (10 / 6) := hcardW (-k') (by rw [abs_neg]; exact hk'abs)
+    have : (2 * LBk / Real.log (10 / 6)) = LBk / Real.log (10 / 6) + LBk / Real.log (10 / 6) := by ring
+    linarith
+  obtain ⟨T, hT, hfar⟩ := exists_far_point A k
+  set δ := 1 / (2 * (A.card : ℝ) + 2) with hδ
+  have hδ0 : 0 < δ := by positivity
+  set δk := 1 / (2 * (2 * LBk / Real.log (10 / 6)) + 2) with hδk
+  have hδkδ : δk ≤ δ := by
+    rw [hδk, hδ]
+    exact one_div_le_one_div_of_le (by positivity) (by linarith)
+  have hδk0 : 0 < δk := by positivity
+  have hTabs : |T| ≤ (k : ℝ) + 1 := by rw [abs_of_nonneg (by linarith [hT.1])]; exact hT.2
+  refine ⟨T, hT, fun σ hσ => ?_⟩
+  rw [Set.uIcc_of_le (by norm_num)] at hσ
+  -- the two points
+  have key : ∀ (S : ℝ), (S = T ∨ S = -T) →
+      (∀ u ∈ zerosIn χ.LFunction (2 + (S : ℂ) * I) 10 (10 / 2), δ ≤ ‖((σ : ℂ) + (S : ℂ) * I) - u‖) := by
+    intro S hS u hu
+    have hLu : χ.LFunction u = 0 := by
+      obtain ⟨hur, hu0⟩ := mem_zerosIn hu
+      have huR : u ∈ Metric.closedBall (2 + (S : ℂ) * I) 10 := by
+        rw [Metric.mem_closedBall, dist_eq_norm]; linarith
+      rw [divB, MeromorphicOn.AnalyticOnNhd.divisor_apply
+        (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ χ.LFunction (Metric.closedBall _ 10)) huR] at hu0
+      by_contra hne
+      exact hu0 (by rw [(hf.analyticAt u).analyticOrderAt_eq_zero.2 hne]; simp)
+    have hur := (mem_zerosIn hu).1
+    have him := Complex.abs_im_le_norm (((σ : ℂ) + (S : ℂ) * I) - u)
+    simp only [Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
+      Complex.I_re, mul_zero, Complex.I_im, mul_one, zero_add, add_zero] at him
+    rcases hS with hS | hS <;> subst S
+    · -- `u ∈ Wp`, so `u.im ∈ A`
+      have huW : u ∈ Wp := by
+        refine mem_zerosIn_of_zero hχ1 (by norm_num) ?_ hLu
+        have : ‖u - (2 + (k' : ℂ) * I)‖ ≤ ‖u - (2 + (T : ℂ) * I)‖ + ‖((T - k' : ℝ) : ℂ) * I‖ := by
+          calc ‖u - (2 + (k' : ℂ) * I)‖ = ‖(u - (2 + (T : ℂ) * I)) + ((T - k' : ℝ) : ℂ) * I‖ := by
+                congr 1; push_cast; ring
+            _ ≤ _ := norm_add_le _ _
+        rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Real.norm_eq_abs] at this
+        have hTk : |T - k'| ≤ 1 / 2 := by rw [abs_le]; constructor <;> linarith [hT.1, hT.2]
+        rw [show (10:ℝ) / 2 = 5 by norm_num] at hur
+        linarith
+      have := hfar u.im (Finset.mem_union_left _ (Finset.mem_image_of_mem _ huW))
+      linarith
+    · have huW : u ∈ Wm := by
+        refine mem_zerosIn_of_zero hχ1 (by norm_num) ?_ hLu
+        have : ‖u - (2 + ((-k' : ℝ) : ℂ) * I)‖ ≤ ‖u - (2 + ((-T : ℝ) : ℂ) * I)‖ +
+            ‖((k' - T : ℝ) : ℂ) * I‖ := by
+          calc ‖u - (2 + ((-k' : ℝ) : ℂ) * I)‖ =
+              ‖(u - (2 + ((-T : ℝ) : ℂ) * I)) + ((k' - T : ℝ) : ℂ) * I‖ := by
+                congr 1; push_cast; ring
+            _ ≤ _ := norm_add_le _ _
+        rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real, Real.norm_eq_abs] at this
+        have hTk : |k' - T| ≤ 1 / 2 := by rw [abs_le]; constructor <;> linarith [hT.1, hT.2]
+        rw [show (10:ℝ) / 2 = 5 by norm_num] at hur
+        linarith
+      have := hfar (-u.im) (Finset.mem_union_right _ (Finset.mem_image_of_mem _ huW))
+      rw [show T - -u.im = -(-T - u.im) by ring, abs_neg] at this
+      linarith
+  have hz : ∀ (S : ℝ), (S = T ∨ S = -T) →
+      ((σ : ℂ) + (S : ℂ) * I) ∈ Metric.closedBall (2 + (S : ℂ) * I) (10 / 4) := by
+    intro S _
+    rw [Metric.mem_closedBall, dist_eq_norm]
+    have : (σ : ℂ) + (S : ℂ) * I - (2 + (S : ℂ) * I) = ((σ - 2 : ℝ) : ℂ) := by push_cast; ring
+    rw [this, Complex.norm_real, Real.norm_eq_abs, abs_le]
+    constructor <;> linarith [hσ.1, hσ.2]
+  have hne : ∀ (S : ℝ), (S = T ∨ S = -T) → χ.LFunction ((σ : ℂ) + (S : ℂ) * I) ≠ 0 := by
+    intro S hS h0
+    have hmem : ((σ : ℂ) + (S : ℂ) * I) ∈ zerosIn χ.LFunction (2 + (S : ℂ) * I) 10 (10 / 2) := by
+      refine mem_zerosIn_of_zero hχ1 (by norm_num) ?_ h0
+      have := hz S hS
+      rw [Metric.mem_closedBall, dist_eq_norm] at this
+      linarith
+    have := key S hS _ hmem
+    rw [sub_self, norm_zero] at this
+    linarith
+  have hbound : ∀ (S : ℝ), (S = T ∨ S = -T) →
+      ‖logDeriv χ.LFunction ((σ : ℂ) + (S : ℂ) * I)‖ ≤ Hk N k := by
+    intro S hS
+    have habs : |S| ≤ (k : ℝ) + 1 := by rcases hS with hS | hS <;> subst S <;> simp [hTabs]
+    refine (norm_logDeriv_L_le hχ hχ1 (hz S hS) hδ0 (key S hS) (hne S hS)).trans ?_
+    have hLB := LB_mono (N := N) (T := S) (T' := (k : ℝ) + 1)
+      (by rw [abs_of_nonneg (by positivity : (0:ℝ) ≤ k + 1)]; exact habs)
+    have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    have hLBS0 : 0 ≤ Real.log (BT N S / 0.355) := by
+      have := one_le_BT (N := N) S
+      exact Real.log_nonneg (by rw [le_div_iff₀ (by norm_num)]; linarith)
+    unfold Hk
+    rw [← hLBk] at hLB ⊢
+    have h1 : Real.log (BT N S / 0.355) / Real.log 2 / δ ≤ LBk / Real.log 2 / δk := by
+      gcongr
+    have h2 : LBk / Real.log 2 / δk = LBk * ((2 * (2 * LBk / Real.log (10 / 6)) + 2) / Real.log 2) := by
+      rw [hδk]; field_simp
+    nlinarith
+  exact ⟨⟨hne T (Or.inl rfl), hne (-T) (Or.inr rfl)⟩, hbound T (Or.inl rfl), hbound (-T) (Or.inr rfl)⟩
+
 end TernaryGoldbach.Explicit
