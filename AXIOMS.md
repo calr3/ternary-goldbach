@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 36 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 35 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -62,7 +62,7 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ## The axioms
 
-### Our own computations (22)
+### Our own computations (21)
 
 Scripts are in `scripts/`; all were re-run on 2026-11-01 and reproduce the stated values.
 "float64" means double precision. In those cases the rounding error is bounded in the script's
@@ -78,7 +78,6 @@ docstring and is orders of magnitude below the margin.
 | `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `2.137` at `n = 117` |
 | `Prelim.psi_mid` | `ψ(n) ≤ 1.0004 n`, `2·10⁶ ≤ n ≤ 10⁹` | `psi_mid_check.py` | float64 | max `1.0003639` at `n = 3 445 943` |
 | `Prelim.psi_sqrt` | `\|ψ(n) − n\| ≤ 0.95 √n`, `11 ≤ n ≤ 10¹⁰` | `psi_mid_check.py` | float64 | max `0.7906` |
-| `Prelim.theta_sqrt` | `\|θ(n) − n\| ≤ 1.95 √n`, `5·10⁵ ≤ n ≤ 10¹⁰` | `psi_mid_check.py` | float64 | `θ(n) < n`; max `1.8071` |
 | `Prelim.psi_mul_mid` | `∑_{m≤n} Λ(m) m < 1.0008 n²/2`, `1.6·10⁶ ≤ n ≤ 10⁸` | `psi_mid_check.py` | long double | min margin `4.3·10⁻⁵ n²` |
 | `Prelim.theta_cube_small` | `\|θ(n) − n\| < n/log³n`, `89 967 803 ≤ n ≤ 10¹⁰` | `theta_cube_check.py` | float64 | max ratio `0.999336` at `n = 89 967 810` (absolute margin `≈ 9.7`) |
 | `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 10⁸` | `mertens_product_check.py` | mpmath, 40 digits, below `10⁴`; float64 above | min margin `2.44·10⁻⁷` at `x = 23`; `≥ 0.1357` above `10⁴` |
@@ -135,7 +134,7 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 ## Summary by kind
 
-* **Our own computations (22):** reproducible with the scripts in `scripts/`.
+* **Our own computations (21):** reproducible with the scripts in `scripts/`.
 * **Published computations (6):** RH to `3·10¹²`, Platt's GRH check, binary Goldbach to `4·10¹⁸`,
   the Helfgott–Platt ladder, and Büthe's bound. They are stated as in the papers.
 * **Results of [B] (8):**
@@ -144,6 +143,11 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     computations.
   * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), (5.31) for
     `S ≥ 10⁵` (Lemma 5.1.2), and the `|t| ≥ 655` part of (B.6).
+
+## Removed axioms
+
+* `theta_sqrt` (`|θ(n) − n| ≤ 1.95 √n`, `5·10⁵ ≤ n ≤ 10¹⁰`, our computation) was a special case of
+  `buthe_theta` (same bound, `1423 ≤ n ≤ 10¹⁹`); it is now derived from it.
 
 ## Candidates for proofs in Lean
 

@@ -44,11 +44,6 @@ axiom psi_mid (n : ℕ) (h1 : 2000000 ≤ n) (h : n ≤ 1000000000) :
 axiom psi_sqrt (n : ℕ) (h1 : 11 ≤ n) (h2 : n ≤ 10 ^ 10) :
     |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.95 * √(n : ℝ)
 
-/-- **Numerical axiom** (`scripts/psi_mid_check.py`; `θ(n) < n` throughout, and the maximum of
-`(n − θ(n))/√n` is `1.8071` at `n = 36 917 098`): `|θ(n) − n| ≤ 1.95 √n` for `5·10⁵ ≤ n ≤ 10¹⁰`. -/
-axiom theta_sqrt (n : ℕ) (h1 : 500000 ≤ n) (h2 : n ≤ 10 ^ 10) :
-    |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| ≤ 1.95 * √(n : ℝ)
-
 /-- **Numerical axiom** (`scripts/psi_checks.py`; maximum `1.4261933` at `n = 361`):
 `ψ(n) − θ(n) < 1.4262 √n` for `1 ≤ n ≤ 10¹²` (checked at every prime power `p^k`, `k ≥ 2`). -/
 axiom nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 10 ^ 12) :
@@ -952,7 +947,8 @@ theorem thetaN_close {n : ℕ} (hn : 500000 ≤ n) :
     positivity
   have hs := Real.sqrt_nonneg (n : ℝ)
   rcases le_or_gt n (10 ^ 10) with h | h
-  · have := theta_sqrt n hn h
+  · -- [Büthe 2018, Thm 2] (`buthe_theta`, `1423 ≤ n ≤ 10¹⁹`)
+    have := buthe_theta n (by omega) (h.trans (by norm_num))
     unfold thetaN; linarith
   · have := thetaN_large (n := n) (by omega)
     linarith
