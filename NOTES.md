@@ -240,9 +240,9 @@ we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` —
 3. *Bombieri*: `φ(q) Σ_b |S'(b/q + β)|² = Σ_ψ |τ(ψ)|² |S'_{ψ⁻¹}(β)|²` (`totient_mul_sum_units`,
    `norm_sq_gaussSum`: `|τ(ψ)|² = c·[q/c squarefree, coprime to c]`); primitive `ψ*` gives Thm 7.1.4.
 4. *Error terms*: `ET`, `E_{η₊,r,δ₀}` from Thm 7.1.4 (`Thm714.lean`); `Σ_{q≤r} μ²(q)/φ(q)`-weighted sums.
-5. *Main term*: `Σ_{q odd ≤ r} μ²(q)/φ(q) ∫_{|δ|≤δ₀r/2q} |η̂₊(−δ)|²`; needs **Plancherel for L¹∩L² on ℝ** (Mathlib has
-   only `Lp.norm_fourier_eq` on `L²`; bridge via `Lp.fourier_toTemperedDistribution_eq`, duality against Schwartz
-   functions and `ae_eq_of_integral_smooth_smul_eq`), `|η̂◦(t)| ≤ |η◦'''|₁/(2πt)³` (by parts) and
+5. *Main term*: `Σ_{q odd ≤ r} μ²(q)/φ(q) ∫_{|δ|≤δ₀r/2q} |η̂₊(−δ)|²`; **Plancherel for L¹∩L² on ℝ: DONE**
+   (`Prelim/PlancherelReal.lean`, `integral_norm_sq_fourier`; via `Lp.fourier_toTemperedDistribution_eq`, Schwartz
+   duality and `ae_eq_zero_of_integral_contDiff_smul_eq_zero`); still needed: `|η̂◦(t)| ≤ |η◦'''|₁/(2πt)³` (by parts) and
    `|η₊ − η◦|₂ ≤ 274.86/H^{7/2}` ([B, (A.23)], cited) for the lower bound.
 6. *Numerics* (§14.1): `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…` (numerical axiom, finite sum), `|η◦|₂ ∈ [0.8001287,
    0.8001288]`, `|η◦'''|₁ ≤ 32.5023`, `|η₊|₁ ≤ 1.062319`, `|η₊|_∞ ≤ 1.079955` (Appendix A; numerical/cited).
