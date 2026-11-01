@@ -148,3 +148,4 @@ import TernaryGoldbach.Explicit.ZetaGrowth
 import TernaryGoldbach.Explicit.ZetaDatum
 import TernaryGoldbach.Explicit.ZetaExplicit
 import TernaryGoldbach.Explicit.ZeroSumGen
+import TernaryGoldbach.Explicit.ZetaPoly
