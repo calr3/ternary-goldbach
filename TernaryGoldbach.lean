@@ -84,6 +84,7 @@ import TernaryGoldbach.MinorArcs.TypeII
 import TernaryGoldbach.MinorArcs.S1Lemma
 import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.MinorArcs.H2Bound
+import TernaryGoldbach.MinorArcs.T2Bound
 import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.MinorArcs.TypeIIReduction
 import TernaryGoldbach.MinorArcs.TypeIITools

@@ -82,3 +82,28 @@ cross-check [B, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1
 real	5m27.744s
 user	5m28.954s
 sys	0m0.038s
+
+### scripts/rigorous/eta2_fourier_rig.py
+closed form agrees with direct integration at 5 points
+137334 steps cover [0, 655.025] ⊇ [0, 655]; max of |DD(t0)| <= 31.52065207 at t0 = 17.414782
+eta2DD_small: OK (rigorous): |DD(t)| <= 31.521 for 0 <= t <= 655
+
+### scripts/rigorous/eta_circ_rig.py
+int P0^2          = [0.6402059973663522278716768173763972 +/- 7.83e-35]
+int P0^2 log t    = [-0.0210947786988671553261772303738369 +/- 4.84e-35]  (+/- [2.5106823815582846057148158759617776e-40 +/- 4.39e-75] from [0, eps])
+int W0''^2        = [35.7900077550410361103578288474551 +/- 3.62e-32]
+int W1''^2        = [8.38942169863092112477163365220316 +/- 7.29e-33]  (+ [1.8928517866431047743894180348613651e-54 +/- 3.08e-89] from [0, eps])
+etaO_numerics: OK (rigorous)
+
+### scripts/rigorous/t2_rig (Z = 10^8)
+g2(100000000) in [-8.977082920278e-11, -8.977070375040e-11]
+(3) sum_{j<Z} |g2(j)| <= 10.418693   (need <= 10.5)
+(2) max_{10^5 <= m <= Z} A(m) <= 0.360582066 at m = 4801323   (need <= 0.3607)
+(4) max_{33<=n<=Z} |g2(n)|(n+1) <= 2.0895071 at n = 110;  [B, Lemma 5.1.2] bound on [10^6, Z]: holds
+(1) max_{16 <= S <= 10^5} T2(S) <= 0.3712486 at S = 16   (need <= 0.37273)
+T2_small: OK (rigorous)
+T2_mid: OK (rigorous)
+
+real	7m35.946s
+user	7m25.182s
+sys	0m11.554s
