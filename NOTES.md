@@ -232,20 +232,25 @@ instead of `450` for margin. Thm 7.1.4 is proved from the cited Prop 9.4.2 + Pla
 has `x^{1/2}` for `x^{-1/2}`; [B]'s general-`q` constants `1.3482·10⁻¹⁴`, `1.617·10⁻¹⁰` are tight to ~10⁻⁵ relative,
 we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` — check (14.1), (14.2) margins when used).
 (14.7) needs the *lower* bound (MinorTotal uses `∫_𝔐 |S_{η₊}|² ≥ 8.6298x`), i.e. the full Lemma 10.3.1 with `η◦`.
-**Roadmap for (14.7)** (Lemma 10.3.1 + §14.1), reusing the minor-arc infrastructure:
-1. *Arcs*: `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g` — **DONE**: `≤` is `integral_majorArcs_le`, `≥` is
-   `sum_arcs_le_integral_majorArcs` (`MajorArcs/ArcsEq.lean`).
-2. *Coprime reduction*: `S = S' + S''`, `S'` over `n` coprime to `L = lcm(q ≤ 2r)` (as in BaseGap2's
-   `sum_noncoprime_le`); `∫|S|² − ∫|S'|²` tiny (`K_{r,2}`).
-3. *Bombieri*: `φ(q) Σ_b |S'(b/q + β)|² = Σ_ψ |τ(ψ)|² |S'_{ψ⁻¹}(β)|²` (`totient_mul_sum_units`,
-   `norm_sq_gaussSum`: `|τ(ψ)|² = c·[q/c squarefree, coprime to c]`); primitive `ψ*` gives Thm 7.1.4.
-4. *Error terms*: `ET`, `E_{η₊,r,δ₀}` from Thm 7.1.4 (`Thm714.lean`); `Σ_{q≤r} μ²(q)/φ(q)`-weighted sums.
-5. *Main term*: `Σ_{q odd ≤ r} μ²(q)/φ(q) ∫_{|δ|≤δ₀r/2q} |η̂₊(−δ)|²`; **Plancherel for L¹∩L² on ℝ: DONE**
-   (`Prelim/PlancherelReal.lean`, `integral_norm_sq_fourier`; via `Lp.fourier_toTemperedDistribution_eq`, Schwartz
-   duality and `ae_eq_zero_of_integral_contDiff_smul_eq_zero`); still needed: `|η̂◦(t)| ≤ |η◦'''|₁/(2πt)³` (by parts) and
-   `|η₊ − η◦|₂ ≤ 274.86/H^{7/2}` ([B, (A.23)], cited) for the lower bound.
-6. *Numerics* (§14.1): `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…` (numerical axiom, finite sum), `|η◦|₂ ∈ [0.8001287,
-   0.8001288]`, `|η◦'''|₁ ≤ 32.5023`, `|η₊|₁ ≤ 1.062319`, `|η₊|_∞ ≤ 1.079955` (Appendix A; numerical/cited).
+**Roadmap for (14.7)** (Lemma 10.3.1 + §14.1), *revised 2026-11-01*: Cauchy–Schwarz on the principal-character
+cross term (`∫_{|β|<w} 2|a||e| ≤ 2 sup|e| · √(2w) · (∫|a|²)^{1/2}` instead of [B]'s `sup|e| · 2w|η|₁`) makes that
+error `≈ 3·10⁻⁴ x` instead of [B]'s `0.0755 x` (`scripts`-style check: lower `8.7029 x`, upper `8.7053 x`), so crude
+constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under `MajorArcs/`):
+1. *Arcs* — **DONE** (`ArcsEq.lean`): `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g`.
+2. *`η◦` tail* (`EtaCirc.lean`): `η◦(t) = h(t) t e^{-t²/2} = (1−u²)³e^{−u²/2}` (`u = t − 1`, `|u| ≤ 1`); two integrations
+   by parts on `[0,2]` and Plancherel for `η◦''·1_{[0,2]}` (`|η◦''| ≤ 7`): `∫_{|δ|>T} |η̂◦|² ≤ 98/(2πT)⁴`.
+3. *`η₊ − η◦`* (`HHFourier.lean`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
+   (Fubini, `sin(Hv)/(πv) = ∫_{|ξ|≤H/2π} e(ξv)dξ`); L² Fourier (`fourierL2_ae_eq`) gives `|g − g_H|₂² = ∫_{|ξ|>H/2π}|ĝ|²
+   ≤ |g'|₂²/H²`; then `|η₊ − η◦|₂ ≤ sup(s^{3/2}e^{−s²/2}) |g'|₂/H` (`|g'|₂² = ∫₀² t h'(t)² dt ≈ 6.92`).
+4. *Main term* (`EtaPlusL2.lean`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);
+   for `T ≥ 4`, `|η₊|₂² − tail ≤ ∫_{|δ|<T}|η̂₊|² ≤ |η₊|₂²`, `tail ≤ 2·98/(8π)⁴ + 2|η₊−η◦|₂²` (Plancherel, done).
+5. *Coprime split* (`CoprimeSplit.lean`): `|S − S'_q| ≤ B ≪ log x` (prime powers of `p ≤ 2r`), `S'_q` over `(n, q) = 1`;
+   `|S|² ≤ (1+t)|S'|² + (1+1/t)B²` both ways.
+6. *Characters per `q`* (`ArcChars.lean`): `totient_mul_sum_units`, `norm_sq_gaussSum`, `cond ψ⁻¹ = cond ψ`,
+   `S'_ψ = S'_{ψ*}` and `|S'_{ψ*} − S_{ψ*}| ≤ B`; Thm 7.1.4 (`thm_7_1_4_one/odd/even`) on `ψ*`: principal part
+   `μ²(q)/φ(q) |S'(β)|²`, non-principal `≤ (E x + √(2r) B)²`, `E ≤ 2.3992·10⁻⁸`.
+7. *Assembly* (`L2Major.lean`): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
+   2 Σ_{q odd ≤ r} μ²/φ`; **numerical axiom** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
 Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
 Next: Ch. 10
 (character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
