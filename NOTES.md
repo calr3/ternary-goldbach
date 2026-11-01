@@ -22,7 +22,16 @@ Also done (sorry-free): `Explicit/LGrowthLeft` (`|L(z,χ)| ≤ 512 q⁹(q+1)(|�
 `|L'/L(z) − Σ_{|ρ−c|<5} m/(z−ρ)| ≤ 4.8 log(B_T/0.355)` on `|z−c| ≤ 5/2`; `≤ log(B_T/0.355)/log 2` zeros in
 `|ρ−c| ≤ 5`), `Explicit/RectResidue` (`rectInt`; `∮ ds/(s−ρ) = 2πi`; Cauchy's formula; residue theorem
 `∮ (f'/f) h = 2πi Σ_{ρ inside} m_ρ h(ρ)` for entire `f`, rectangle in `ball c (R/2)`, no zeros on sides).
-*Next:* explicit formula = Mellin inversion on `ℜs = 3/2` (Mathlib `mellin_inversion`) + `Σ Λχ n^{-s} = −L'/L`
+**Explicit formula DONE (2026-11-01)**: `Explicit/ExplicitFormula.explicit_formula` (no sorry; axioms only
+propext/choice/Quot.sound): for `χ` primitive `≠ 1`, `η = t²e^{−t²/2}`, along `T_k ∈ [k+1, k+2]`,
+`Σ_{ρ ∈ (−1/2,3/2)×(−T_k,T_k)} m_ρ G_δ(ρ)x^ρ → −S − (1/2π)∫ (L'/L)(−1/2+iy)G_δ(−1/2+iy)x^{−1/2+iy}dy`.
+Also `Explicit/GMellin` (`G_δ` holomorphic on `ℜs > −2`, `|G_δ| ≤ K_δ e^{−0.28|t|}` on `−1/2 ≤ σ ≤ 3/2`).
+*Next:* (a) zero sums: `‖S‖ ≤ sup_k Σ_{zerosRect} m|G(ρ)|x^{ℜρ} + (1/2π)x^{−1/2}∫|L'/L||G|`; bound the zero sum
+by windows (Jensen counts `log(B_T/0.355)/log(10/r)` per window) × rotation bounds; under GRH up to `T₀`
+(`GRHUpTo`) zeros with `|γ| ≤ T₀` have `ℜρ = 1/2` (plus `ρ = 0` for even `χ`). (b) restate Prop 9.3.2 with
+the resulting (weaker) constants and redo Cor 9.3.3 → Cor 7.1.3 → uses. (c) `q = 1` (ζ, pole at `s = 1`),
+`η₊` (Props 9.4.2, 9.5.1), Dusart.
+*Old plan:* explicit formula = Mellin inversion on `ℜs = 3/2` (Mathlib `mellin_inversion`) + `Σ Λχ n^{-s} = −L'/L`
 (+ interchange) + residue theorem on `[−1/2, 3/2] × [−T_k, T_k]` (heights `T_k ∈ [k, k+1]` at distance
 `≥ 1/(2N+2)` from all ordinates) + `T_k → ∞` (horizontal sides: `|L'/L| ≤ N/δ + 4.8 log B` vs `|G| ≲ e^{−0.16T}`).
 The trivial zero `s = 0` (even `χ`) is just one of the zeros inside the rectangle.
