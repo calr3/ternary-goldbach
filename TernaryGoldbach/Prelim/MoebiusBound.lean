@@ -1,19 +1,20 @@
 import TernaryGoldbach.Prelim.MoebiusDecay
 
 /-!
-# `|∑_{n≤x} μ(n)/n| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`
+# `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
 
 The `q = 1` input for [B, (2.22)] (Ramaré's route, hal-02572851).  From `MoebiusDecay.mlog_identity`
 with `c = E(x)`, `m(x)(log x + E(x)) = −∑_{n≤x} μ(n)/n (E(x/n) − E(x))`, where `E(y) = ∑_{n≤y} Λ(n)/n − log y`,
-so it suffices to bound `K(x) = ∑_{n≤x} |E(x/n) − E(x)|/n ≤ 0.54` (`K_bound`).  Splitting by `y = x/n`:
+so it suffices to bound `K(x) = ∑_{n≤x} |E(x/n) − E(x)|/n ≤ 0.55` (`K_bound`).  Splitting by `y = x/n`:
 
 * **A** (`y < 1000`, `K_partA`): `[k, k+1)` cut into `⌈400/k⌉` pieces; on each piece `|E(y) − E(10⁹)|` is at
   most its value at an endpoint (`E_piece_le`), and the piecewise sum is the numerical axiom `K_pieces`
-  (`≤ 0.4035`); `|E(x) − E(10⁹)| ≤ 0.00231` (`E1_diff'`, from Dusart); `≤ 0.4259` in total.
+  (`≤ 0.4035`); `|E(x) − E(10⁹)| ≤ 0.00231` (`E1_diff'`, from `theta_explicit`); `≤ 0.4259` in total.
 * **B** (`1000 ≤ y < 10⁹`, `K_partB`): dyadic blocks with the block maxima of the numerical axiom `K_blocks`;
   `≤ 0.0755`.
 * **C** (`y ≥ 10⁹`, `K_partC`): `|E(y) − E(x)| ≤ 1/⌊y⌋ + D'(⌊y⌋)` (`E1_diff'`) on dyadic blocks, summed by
-  telescoping (`tele_part`) and geometric series; `≤ 0.0378`.
+  telescoping (`tele_part`) and geometric series; the plateau term `P(M)` of `theta_explicit` (`3.7·10⁻⁷`
+  for `log M < 20000`) adds `≤ 0.0074` (`partC_pth`); `≤ 0.0452`.
 
 Each block uses `∑_{a ≤ x/n < b} 1/n ≤ log(b/a) + b/x` (`harm_piece`).  Finally
 `log x + E(x) ≥ log x − log(3/√2)` ((2.13)) gives `abs_sum_moebius_div_le`.
@@ -92,7 +93,8 @@ theorem sum_inv_log_cube_le' {a b : ℕ} (ha : 100 ≤ a) (hab : a < b) :
 /-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)` (sharpened tail constant `0.51`). -/
 theorem E1_diff' {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
-      (0.51 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) := by
+      (0.51 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) + Pth M := by
+  have hPth := Pth_nonneg (M : ℝ)
   have hM0 : (0 : ℝ) < M := by exact_mod_cast (by omega : 0 < M)
   have hLM : 0 < Real.log M := Real.log_pos (by exact_mod_cast (by omega : 1 < M))
   have hsM : 0 < √(M : ℝ) := Real.sqrt_pos.2 hM0
@@ -135,12 +137,13 @@ theorem E1_diff' {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t
   -- `M < N`: summation by parts
   rw [hdiff, abel_Ioc _ M N hlt]
   -- interior
+  set Se := ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) with hSe
   have hint : |∑ n ∈ Ioo M N, (psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1))| ≤
-      0.51 / Real.log M ^ 2 + 14.08 / √(M : ℝ) := by
+      0.51 / Real.log M ^ 2 + 14.08 / √(M : ℝ) + Se := by
     refine (abs_sum_le_sum_abs _ _).trans ?_
     refine (sum_le_sum fun n hn => abel_term_err (n := n)
       (by have := (mem_Ioo.1 hn).1; omega)).trans ?_
-    rw [sum_add_distrib, ← mul_sum]
+    rw [sum_add_distrib, sum_add_distrib, ← mul_sum, ← hSe]
     have h1 := sum_inv_log_cube_le' (a := M) (by omega) hlt
     have h2 := sum_inv_sqrt_le hlt
     have h1' : 0.51 / Real.log ((M : ℝ) + 1) ^ 2 ≤ 0.51 / Real.log M ^ 2 :=
@@ -158,38 +161,44 @@ theorem E1_diff' {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t
   -- boundary terms
   have heN := psi_err (n := N) (by omega)
   have heM := psi_err (n := M) hM
-  have hbN : |psiN N * (1 / (N : ℝ)) - 1| ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+  have hbN : |psiN N * (1 / (N : ℝ)) - 1| ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl N := by
     have e : psiN N * (1 / (N : ℝ)) - 1 = (psiN N - N) * (1 / (N : ℝ)) := by field_simp
     rw [e, abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / (N : ℝ))]
     have hsN : 0 < √(N : ℝ) := Real.sqrt_pos.2 hN0
     have hssN : √(N : ℝ) * √(N : ℝ) = N := Real.mul_self_sqrt hN0.le
     have hLN : Real.log M ≤ Real.log N := Real.log_le_log hM0 (by exact_mod_cast hMN)
-    calc |psiN N - N| * (1 / (N : ℝ)) ≤ (N / Real.log N ^ 3 + 7.04 * √(N : ℝ)) * (1 / (N : ℝ)) :=
+    calc |psiN N - N| * (1 / (N : ℝ)) ≤ (N / Real.log N ^ 3 + epl N * N + 7.04 * √(N : ℝ)) * (1 / (N : ℝ)) :=
           mul_le_mul_of_nonneg_right heN (by positivity)
-      _ = 1 / Real.log N ^ 3 + 7.04 / √(N : ℝ) := by
+      _ = 1 / Real.log N ^ 3 + 7.04 / √(N : ℝ) + epl N := by
           have a : (N : ℝ) / Real.log N ^ 3 * (1 / N) = 1 / Real.log N ^ 3 := by field_simp
           have b : √(N : ℝ) * (1 / N) = 1 / √(N : ℝ) := by
             rw [mul_one_div, div_eq_div_iff hN0.ne' hsN.ne', one_mul, hssN]
-          rw [add_mul, a, mul_assoc, b]; ring
-      _ ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+          have c : epl N * N * (1 / (N : ℝ)) = epl N := by field_simp
+          rw [add_mul, add_mul, a, mul_assoc (7.04 : ℝ), b, c]; ring
+      _ ≤ 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl N := by
           gcongr
   have hbM : |psiN M * (1 / ((M + 1 : ℕ) : ℝ)) - (1 - 1 / ((M : ℝ) + 1))| ≤
-      1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+      1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl M := by
     have e : psiN M * (1 / ((M + 1 : ℕ) : ℝ)) - (1 - 1 / ((M : ℝ) + 1)) =
         (psiN M - M) * (1 / ((M : ℝ) + 1)) := by push_cast; field_simp; ring
     rw [e, abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 1 / ((M : ℝ) + 1))]
     have hssM : √(M : ℝ) * √(M : ℝ) = M := Real.mul_self_sqrt hM0.le
-    calc |psiN M - M| * (1 / ((M : ℝ) + 1)) ≤ (M / Real.log M ^ 3 + 7.04 * √(M : ℝ)) * (1 / (M : ℝ)) := by
+    have hepM := mul_nonneg (epl_nonneg (M : ℝ)) hM0.le
+    calc |psiN M - M| * (1 / ((M : ℝ) + 1)) ≤
+          (M / Real.log M ^ 3 + epl M * M + 7.04 * √(M : ℝ)) * (1 / (M : ℝ)) := by
           apply mul_le_mul heM (div_le_div_of_nonneg_left (by norm_num) hM0 (by linarith))
             (by positivity) (by positivity)
-      _ = 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) := by
+      _ = 1 / Real.log M ^ 3 + 7.04 / √(M : ℝ) + epl M := by
           have a : (M : ℝ) / Real.log M ^ 3 * (1 / M) = 1 / Real.log M ^ 3 := by field_simp
           have b : √(M : ℝ) * (1 / M) = 1 / √(M : ℝ) := by
             rw [mul_one_div, div_eq_div_iff hM0.ne' hsM.ne', one_mul, hssM]
-          rw [add_mul, a, mul_assoc, b]; ring
+          have c : epl M * M * (1 / (M : ℝ)) = epl M := by field_simp
+          rw [add_mul, add_mul, a, mul_assoc (7.04 : ℝ), b, c]; ring
   have hM1 : 1 / ((M : ℝ) + 1) ≤ 1 / M := div_le_div_of_nonneg_left (by norm_num) hM0 (by linarith)
   have hM1' : 0 ≤ 1 / ((M : ℝ) + 1) := by positivity
   have hlN : Real.log (N + 1) - Real.log t ≥ 0 := by linarith
+  have hP := epl_total_le (M := M) (N := N) (by omega) hMN
+  rw [← hSe] at hP
   rw [abs_le] at hint hbN hbM ⊢
   have e3 : (3 : ℝ) / M = 1 / M + 2 / M := by ring
   constructor <;> linarith [hint.1, hint.2, hbN.1, hbN.2, hbM.1, hbM.2]
@@ -307,7 +316,7 @@ theorem E_piece_le {k : ℕ} {y a b c : ℝ} (hk : ⌊y⌋₊ = k) (ha0 : 0 < a)
 
 /-- `D'(M)` from `E1_diff'`. -/
 noncomputable def Dp (M : ℝ) : ℝ :=
-  3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √M) + (0.51 / Real.log M ^ 2 + 14.08 / √M)
+  3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √M) + (0.51 / Real.log M ^ 2 + 14.08 / √M) + Pth M
 
 theorem Dp_anti {M M' : ℝ} (hM : 3 ≤ M) (h : M ≤ M') : Dp M' ≤ Dp M := by
   have hM0 : 0 < M := by linarith
@@ -324,6 +333,9 @@ theorem Dp_anti {M M' : ℝ} (hM : 3 ≤ M) (h : M ≤ M') : Dp M' ≤ Dp M := b
   have a4 : 0.51 / Real.log M' ^ 2 ≤ 0.51 / Real.log M ^ 2 :=
     div_le_div_of_nonneg_left (by norm_num) (by positivity) (pow_le_pow_left₀ (by linarith) hL' 2)
   have a5 : 14.08 / √M' ≤ 14.08 / √M := div_le_div_of_nonneg_left (by norm_num) hs0 hs
+  have a6 : Pth M' ≤ Pth M := by
+    unfold Pth; split_ifs with h1 h2 h2 <;> try norm_num
+    exact h2 (lt_of_le_of_lt hL' h1)
   linarith
 
 /-- `|E(y) − E(x)| ≤ 1/⌊y⌋ + D'(⌊y⌋)` for `89 967 803 ≤ y ≤ x`. -/
@@ -371,7 +383,8 @@ theorem Dp_1e9_le : Dp (10 ^ 9) ≤ 0.00231 := by
   have a3 : 0.51 / Real.log (10 ^ 9) ^ 2 ≤ 0.51 / 20.7 ^ 2 :=
     div_le_div_of_nonneg_left (by norm_num) (by norm_num) (pow_le_pow_left₀ (by norm_num) hL 2)
   have a4 : 14.08 / √(10 ^ 9 : ℝ) ≤ 14.08 / 31622 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs
-  norm_num at a1 a2 a3 a4 ⊢
+  have a5 := Pth_le (10 ^ 9 : ℝ)
+  norm_num at a1 a2 a3 a4 a5 ⊢
   linarith
 
 theorem log_1000_le : Real.log 1000 ≤ 6.932 := by
@@ -820,7 +833,8 @@ theorem termC_eq {M x : ℝ} (hM : 0 < M) (hx : 0 < x) :
     (1 / M + Dp M) * (Real.log 2 + 2 * M / x) =
       Real.log 2 * (4 / M + 28.16 / √M) +
         Real.log 2 * (0.51 / Real.log M ^ 2 + 2 / Real.log M ^ 3) +
-        2 * M / x * (2 / Real.log M ^ 3 + 0.51 / Real.log M ^ 2) + (8 / x + 56.32 * √M / x) := by
+        2 * M / x * (2 / Real.log M ^ 3 + 0.51 / Real.log M ^ 2) + (8 / x + 56.32 * √M / x) +
+        Pth M * (Real.log 2 + 2 * M / x) := by
   unfold Dp
   have hs : 0 < √M := Real.sqrt_pos.2 hM
   have key : 2 * M / x * (28.16 / √M) = 56.32 * √M / x := by
@@ -1026,6 +1040,51 @@ theorem partC_err {x : ℝ} (hx : 1e10 ≤ x) (J : ℕ) (hJ : (10 : ℝ) ^ 9 * 2
     linarith
   linarith
 
+/-- Part C sum, the plateau term of `theta_explicit`: only the blocks with `log M_j < 20000` count. -/
+theorem partC_pth {x : ℝ} (hx : 1e10 ≤ x) (J : ℕ) (hJ : (10 : ℝ) ^ 9 * 2 ^ J ≤ 2 * x) :
+    ∑ j ∈ range J, Pth (Mj j) * (Real.log 2 + 2 * Mj j / x) ≤ 0.0074 := by
+  have hx0 : 0 < x := by linarith
+  obtain ⟨hl1, hl2⟩ := log2_bounds
+  have hpt : ∀ j, Pth (Mj j) ≤ if j < 28827 then 3.7e-7 else 0 := by
+    intro j
+    split_ifs with hj
+    · exact Pth_le _
+    · unfold Pth
+      rw [if_neg]
+      push Not at hj ⊢
+      have hj' : (28827 : ℝ) ≤ j := by exact_mod_cast hj
+      have hm : (28827 : ℝ) * 0.6931 ≤ j * Real.log 2 := mul_le_mul hj' hl1 (by norm_num) (by positivity)
+      have h9 := log_1e9_ge
+      rw [log_Mj]; norm_num at hm h9 ⊢; linarith
+  simp_rw [mul_add]
+  rw [sum_add_distrib]
+  have h1 : ∑ j ∈ range J, Pth (Mj j) * Real.log 2 ≤ 3.7e-7 * 28827 * 0.6932 := by
+    calc ∑ j ∈ range J, Pth (Mj j) * Real.log 2
+          ≤ ∑ j ∈ range J, (if j < 28827 then (3.7e-7 : ℝ) else 0) * 0.6932 :=
+          sum_le_sum fun j _ => mul_le_mul (hpt j) hl2 (by linarith)
+            (by split_ifs <;> norm_num)
+      _ = (∑ j ∈ range J, if j < 28827 then (3.7e-7 : ℝ) else 0) * 0.6932 := by rw [sum_mul]
+      _ ≤ (3.7e-7 * 28827) * 0.6932 := by
+          apply mul_le_mul_of_nonneg_right _ (by norm_num)
+          rw [← sum_filter, sum_const, nsmul_eq_mul, mul_comm]
+          apply mul_le_mul_of_nonneg_left _ (by norm_num)
+          have : ((range J).filter (fun j => j < 28827)).card ≤ 28827 := by
+            calc _ ≤ (range 28827).card :=
+                  card_le_card fun j hj => mem_range.2 (mem_filter.1 hj).2
+              _ = 28827 := card_range _
+          exact_mod_cast this
+  have h2 : ∑ j ∈ range J, Pth (Mj j) * (2 * Mj j / x) ≤ 1.48e-6 := by
+    calc ∑ j ∈ range J, Pth (Mj j) * (2 * Mj j / x) ≤ ∑ j ∈ range J, 3.7e-7 * (2 * Mj j / x) :=
+          sum_le_sum fun j _ => mul_le_mul_of_nonneg_right (Pth_le _)
+            (by have := Mj_pos j; positivity)
+      _ = 3.7e-7 * (2 / x) * ∑ j ∈ range J, Mj j := by
+          rw [mul_sum]; exact sum_congr rfl fun j _ => by ring
+      _ ≤ 3.7e-7 * (2 / x) * (2 * x) :=
+          mul_le_mul_of_nonneg_left ((sum_Mj_le J).trans hJ) (by positivity)
+      _ = 1.48e-6 := by field_simp; norm_num
+  norm_num at h1
+  linarith
+
 /-- Block index of `y ≥ 10⁹`. -/
 noncomputable def gC (y : ℝ) : ℕ := Nat.log 2 (⌊y⌋₊ / 10 ^ 9)
 
@@ -1059,7 +1118,7 @@ theorem E_blockC {x y : ℝ} (h1 : 10 ^ 9 ≤ y) (hyx : y ≤ x) :
 
 /-- **Part C** of the `K` bound (`x/n ≥ 10⁹`). -/
 theorem K_partC {x : ℝ} (hx : 1e10 ≤ x) :
-    ∑ n ∈ (Icc 1 ⌊x⌋₊).filter (fun n : ℕ => 10 ^ 9 ≤ x / n), |E₁Λ (x / n) - E₁Λ x| / n ≤ 0.0378 := by
+    ∑ n ∈ (Icc 1 ⌊x⌋₊).filter (fun n : ℕ => 10 ^ 9 ≤ x / n), |E₁Λ (x / n) - E₁Λ x| / n ≤ 0.0452 := by
   have hx0 : 0 < x := by linarith
   set J := Nat.log 2 (⌊x⌋₊ / 10 ^ 9) + 1 with hJdef
   have hJ : (10 : ℝ) ^ 9 * 2 ^ J ≤ 2 * x := by
@@ -1089,7 +1148,11 @@ theorem K_partC {x : ℝ} (hx : 1e10 ≤ x) :
     have hM0 := Mj_pos j
     have h0 : 0 ≤ 1 / Mj j + Dp (Mj j) := by
       have : 0 < Real.log (Mj j) := by have := log_Mj_ge j; linarith
-      unfold Dp; positivity
+      have := Pth_nonneg (Mj j)
+      have : 0 ≤ 3 / Mj j + 2 * (1 / Real.log (Mj j) ^ 3 + 7.04 / √(Mj j)) +
+          (0.51 / Real.log (Mj j) ^ 2 + 14.08 / √(Mj j)) := by positivity
+      have : 0 ≤ 1 / Mj j := by positivity
+      unfold Dp; linarith
     have hsub : ((Icc 1 ⌊x⌋₊).filter (fun n : ℕ => 10 ^ 9 ≤ x / n)).filter
         (fun n : ℕ => gC (x / n) = j) ⊆ (Icc 1 ⌊x⌋₊).filter
         (fun n : ℕ => Mj j ≤ x / n ∧ x / n < Mj (j + 1)) := by
@@ -1132,19 +1195,21 @@ theorem K_partC {x : ℝ} (hx : 1e10 ≤ x) :
       Real.log 2 * (4 / Mj j + 28.16 / √(Mj j)) +
         Real.log 2 * (0.51 / Real.log (Mj j) ^ 2 + 2 / Real.log (Mj j) ^ 3) +
         2 * Mj j / x * (2 / Real.log (Mj j) ^ 3 + 0.51 / Real.log (Mj j) ^ 2) +
-        (8 / x + 56.32 * √(Mj j) / x) =
-      (Real.log 2 * (4 / Mj j + 28.16 / √(Mj j)) +
+        (8 / x + 56.32 * √(Mj j) / x) + Pth (Mj j) * (Real.log 2 + 2 * Mj j / x) =
+      ((Real.log 2 * (4 / Mj j + 28.16 / √(Mj j)) +
         Real.log 2 * (0.51 / Real.log (Mj j) ^ 2 + 2 / Real.log (Mj j) ^ 3)) +
       (2 * Mj j / x * (2 / Real.log (Mj j) ^ 3 + 0.51 / Real.log (Mj j) ^ 2) +
-        (8 / x + 56.32 * √(Mj j) / x)) := fun j _ => by ring
-  rw [sum_congr rfl e, sum_add_distrib]
+        (8 / x + 56.32 * √(Mj j) / x))) + Pth (Mj j) * (Real.log 2 + 2 * Mj j / x) :=
+    fun j _ => by ring
+  rw [sum_congr rfl e, sum_add_distrib, sum_add_distrib]
   have := partC_main J
   have := partC_err hx J hJ
+  have := partC_pth hx J hJ
   linarith
 
-/-- **The `K` bound**: `∑_{n ≤ x} |E(x/n) − E(x)|/n ≤ 0.54` for `x ≥ 10¹⁰`. -/
+/-- **The `K` bound**: `∑_{n ≤ x} |E(x/n) − E(x)|/n ≤ 0.55` for `x ≥ 10¹⁰`. -/
 theorem K_bound {x : ℝ} (hx : 1e10 ≤ x) :
-    ∑ n ∈ Icc 1 ⌊x⌋₊, |E₁Λ (x / n) - E₁Λ x| / n ≤ 0.54 := by
+    ∑ n ∈ Icc 1 ⌊x⌋₊, |E₁Λ (x / n) - E₁Λ x| / n ≤ 0.55 := by
   rw [← sum_filter_add_sum_filter_not _ (fun n : ℕ => x / n < 1000)]
   rw [← sum_filter_add_sum_filter_not ((Icc 1 ⌊x⌋₊).filter (fun n : ℕ => ¬ x / n < 1000))
     (fun n : ℕ => x / n < 10 ^ 9), filter_filter, filter_filter]
@@ -1177,10 +1242,10 @@ theorem E1_ge {x : ℝ} (hx : 1 ≤ x) : -0.7521 ≤ E₁Λ x := by
   have := log_three_div_sqrt_two_le
   rw [E1_eq, PsiT]; linarith
 
-/-- **Uniform Möbius bound** (Ramaré's route, `q = 1`): `|∑_{n ≤ x} μ(n)/n| ≤ 0.54/(log x − 0.7521)`
+/-- **Uniform Möbius bound** (Ramaré's route, `q = 1`): `|∑_{n ≤ x} μ(n)/n| ≤ 0.55/(log x − 0.7521)`
 for `x ≥ 10¹⁰`. -/
 theorem abs_sum_moebius_div_le {x : ℝ} (hx : 1e10 ≤ x) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.54 / (Real.log x - 0.7521) := by
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.55 / (Real.log x - 0.7521) := by
   have hx1 : 1 ≤ x := by linarith
   have hid := mlog_identity hx1 (E₁Λ x)
   have hE := E1_ge hx1
@@ -1194,7 +1259,7 @@ theorem abs_sum_moebius_div_le {x : ℝ} (hx : 1e10 ≤ x) :
         _ ≤ 1e10 := by norm_num
     exact this.trans (Real.log_le_log (by norm_num) hx)
   have hpos : 0 < Real.log x - 0.7521 := by linarith
-  have hR : |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n * (E₁Λ (x / n) - E₁Λ x)| ≤ 0.54 := by
+  have hR : |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n * (E₁Λ (x / n) - E₁Λ x)| ≤ 0.55 := by
     refine (abs_sum_le_sum_abs _ _).trans ((sum_le_sum fun n hn => ?_).trans (K_bound hx))
     have hn0 : (0 : ℝ) < n := by exact_mod_cast (mem_Icc.1 hn).1
     have hμ : |(μ n : ℝ)| ≤ 1 := by exact_mod_cast ArithmeticFunction.abs_moebius_le_one
@@ -1211,6 +1276,6 @@ theorem abs_sum_moebius_div_le {x : ℝ} (hx : 1e10 ≤ x) :
     _ = |(∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n) * (Real.log x + E₁Λ x)| := by
         rw [abs_mul, abs_of_pos (by linarith : 0 < Real.log x + E₁Λ x)]
     _ = |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n * (E₁Λ (x / n) - E₁Λ x)| := by rw [hid, abs_neg]
-    _ ≤ 0.54 := hR
+    _ ≤ 0.55 := hR
 
 end TernaryGoldbach.Prelim

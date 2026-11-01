@@ -288,11 +288,22 @@ theorem log_le_sqrt_big {z : ℝ} (hz : 1e10 ≤ z) : Real.log z ≤ 2.4e-4 * �
   have e : Real.log z = 2 * Real.log √z := by rw [Real.log_sqrt hz0.le]; ring
   rw [e]; norm_num at h5 hl ⊢; linarith
 
+/-- `∑_{u ≤ N} 1/u² ≤ π²/6 < 1.64495` (`hasSum_zeta_two`). -/
+theorem sum_inv_sq_le_pi (N : ℕ) : ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) ≤ 1.64495 := by
+  have h := sum_le_hasSum (Icc 1 N) (fun i _ => by positivity) hasSum_zeta_two
+  have hpi := Real.pi_lt_d4
+  have hpi0 := Real.pi_pos
+  have e : ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) = ∑ u ∈ Icc 1 N, (1 : ℝ) / (u : ℝ) ^ 2 :=
+    sum_congr rfl fun u _ => by push_cast; ring
+  rw [e]
+  have : Real.pi ^ 2 / 6 ≤ 1.64495 := by nlinarith
+  linarith
+
 /-- The term bound for `z/u² ≥ 10¹⁰`. -/
 theorem term_big_le {z : ℝ} (hz : 1e10 ≤ z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     (hge : 1e10 ≤ z / (u * u : ℕ)) :
     |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) ≤
-      0.54 / Real.log z * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
+      0.55 / Real.log z * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
   have hz0 : 0 < z := by linarith
   have hu1 : (1 : ℝ) ≤ u := by exact_mod_cast (mem_Icc.1 hu).1
   have hpos : (0 : ℝ) < (u * u : ℕ) := by push_cast; positivity
@@ -308,9 +319,9 @@ theorem term_big_le {z : ℝ} (hz : 1e10 ≤ z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     rw [div_le_div_iff₀ (by linarith) hLpos, hL]
     nlinarith [mul_nonneg hlu (by linarith : (0 : ℝ) ≤ w - 23)]
   calc |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ)
-      ≤ 0.54 / (w - 0.7521) / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
-    _ = 0.54 * (1 / (w - 0.7521)) * (1 / (u * u : ℕ)) := by ring
-    _ ≤ 0.54 * ((1.034 + 0.09 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
+      ≤ 0.55 / (w - 0.7521) / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
+    _ = 0.55 * (1 / (w - 0.7521)) * (1 / (u * u : ℕ)) := by ring
+    _ ≤ 0.55 * ((1.034 + 0.09 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
     _ = _ := by ring
 
 /-- Large range: `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10¹⁰`. -/
@@ -328,21 +339,21 @@ theorem abs_ls_big {z : ℝ} (hz : 1e10 ≤ z) : |ls z| * Real.log z ≤ 0.99 :=
   rw [← sum_filter_add_sum_filter_not _ (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ))] at h0
   -- first part
   have hA : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ)), t u ≤
-      0.54 / L * (1.034 * (5 / 3) + 0.09 * 1.0117) := by
+      0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) := by
     calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ)),
-          0.54 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) :=
+          0.55 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) :=
           sum_le_sum fun u hu => term_big_le hz (mem_filter.1 hu).1 (mem_filter.1 hu).2
-      _ ≤ ∑ u ∈ Icc 1 N, 0.54 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
+      _ ≤ ∑ u ∈ Icc 1 N, 0.55 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
           refine sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun u hu _ => ?_
           have : 0 ≤ Real.log u := Real.log_nonneg (by exact_mod_cast (mem_Icc.1 hu).1)
           have : 0 < L := by linarith
           positivity
-      _ = 0.54 / L * (1.034 * ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
+      _ = 0.55 / L * (1.034 * ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
             0.09 * ∑ u ∈ Icc 1 N, Real.log u / (u * u : ℕ)) := by
           rw [mul_sum, mul_sum, ← sum_add_distrib, mul_sum]
           exact sum_congr rfl fun u _ => by ring
-      _ ≤ 0.54 / L * (1.034 * (5 / 3) + 0.09 * 1.0117) := by
-          have := sum_inv_sq_le N
+      _ ≤ 0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) := by
+          have := sum_inv_sq_le_pi N
           have := sum_log_div_sq_le N
           have : 0 < L := by linarith
           gcongr
@@ -392,18 +403,18 @@ theorem abs_ls_big {z : ℝ} (hz : 1e10 ≤ z) : |ls z| * Real.log z ≤ 0.99 :=
           have h4 := log_le_of_le_two_pow (y := 4e10) (k := 36) (by norm_num) (by norm_num)
           norm_num at h4
           linarith
-  have hsum : |ls z| ≤ 0.54 / L * (1.034 * (5 / 3) + 0.09 * 1.0117) + √2 / √z * 12.48 := by
+  have hsum : |ls z| ≤ 0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 / √z * 12.48 := by
     refine h0.trans ?_
     exact add_le_add hA hB
   have hLpos : 0 < L := by linarith
   have hsz : 0 < √z := Real.sqrt_pos.2 hz0
   have hlz := log_le_sqrt_big hz
   obtain ⟨-, hs2⟩ := sqrt2_bounds
-  calc |ls z| * L ≤ (0.54 / L * (1.034 * (5 / 3) + 0.09 * 1.0117) + √2 / √z * 12.48) * L :=
+  calc |ls z| * L ≤ (0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 / √z * 12.48) * L :=
         mul_le_mul_of_nonneg_right hsum hLpos.le
-    _ = 0.54 * (1.034 * (5 / 3) + 0.09 * 1.0117) + √2 * 12.48 * (L / √z) := by
+    _ = 0.55 * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 * 12.48 * (L / √z) := by
         field_simp
-    _ ≤ 0.54 * (1.034 * (5 / 3) + 0.09 * 1.0117) + 1.414214 * 12.48 * 2.4e-4 := by
+    _ ≤ 0.55 * (1.034 * 1.64495 + 0.09 * 1.0117) + 1.414214 * 12.48 * 2.4e-4 := by
         gcongr
         rw [div_le_iff₀ hsz]; exact hlz
     _ ≤ 0.99 := by norm_num

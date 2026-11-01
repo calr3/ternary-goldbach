@@ -4,8 +4,10 @@ Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015
 This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
 
 This is a chapter-level map from [B] to the Lean files. All four inputs of
-`TernaryGoldbach/Helfgott/Inputs.lean` are now proved; the remaining `sorry`s are the cited
-Dusart's bound (see the README); the explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1] are proved.
+`TernaryGoldbach/Helfgott/Inputs.lean` are proved, and there is no `sorry` left: Dusart's bound is
+replaced by our explicit PNT `theta_explicit` (`Prelim/ThetaExplicit.lean`, from `Explicit/` with a
+zero-free region and RH to `3·10¹²`), and the explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1]
+are proved. `ternary_goldbach` depends on 36 numerical axioms (see the README).
 
 ## Top level ([B, §14.4]) — done
 
@@ -44,7 +46,7 @@ Dusart's bound (see the README); the explicit-formula results [B, Props 9.3.2, 9
      │   │    §4.1: Lemmas 4.1.1–4.1.3 ✅ MinorArcs/TrigSums.lean (4.1.3: book's proof has a gap; fixed);
      │   │    §4.2: Lemma 4.2.2 ✅ MinorArcs/TypeIProof.lean; Lemma 4.2.3 ✅ MinorArcs/TypeILogProof.lean
      │   │          ((4.40) corrected; unused (4.42) omitted); Lemma 4.2.4 ✅ MinorArcs/TypeI2Rest.lean
-     │   │          ((4.50)–(4.52) corrected, see NOTES); (2.12), (2.15) ✅ (Dusart + finite checks); (2.20) ✅;
+     │   │          ((4.50)–(4.52) corrected, see NOTES); (2.12), (2.15) ✅ (`theta_explicit` + finite checks); (2.20) ✅;
      │   │    trusted (App. B): |η̂₂''|_∞ ≤ 31.521, |η̂_(ρ)''|_∞ ≤ 31.521 log ρ]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), sharp large

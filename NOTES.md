@@ -178,6 +178,40 @@ relax `K ≤ 0.54` to `0.55` — `abs_ls_big` still gives `≤ 0.99` if `Σ 1/u�
 (`0.55·(1.034·π²/6 + 0.09·1.0117) + 0.0042 = 0.990`, check exactly) or a tighter partial sum.
 Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` — absolute size `≈ 10¹⁰`, negligible.
 
+## Dusart replaced: no `sorry` left (2026-11-01)
+
+`dusart_theta` is gone. `Prelim/ThetaExplicit.lean` `theta_explicit`:
+`|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 89 967 803`, `ε_pl = 2.2·10⁻¹¹` for `3400 < log n < 20000`
+(`epl`), else `0`. Ranges:
+* `n ≤ 10¹⁰`: `theta_cube_small` (numerical axiom, `scripts/theta_cube_check.py`, max ratio `0.99934`).
+* `10¹⁰ < n ≤ 10¹⁹`: `buthe_theta` ([Büthe 2018, Thm 2], `|θ − n| ≤ 1.95√n`, numerical axiom).
+* `10¹⁹ ≤ x < e²⁰⁰⁰⁰`: `Explicit/PsiPlateau.lean` `psi_plateau` (`|ψ − x| ≤ 2.15·10⁻¹¹x + 15000√x + 4.2·10¹⁰`;
+  `δ = 8/H`, `K = 8`, `H = 3·10¹²`, RH to `H` = `rh_upto` [Platt–Trudgian 2021], numerical axiom).
+* `e²⁰⁰⁰⁰ ≤ x < e³⁵⁰⁰⁰`: `Explicit/PsiRange1.lean` `psi_range1` (`2.1·10⁻¹⁴x`; `δ = 1.4·10⁻¹⁵`, `K = 9`,
+  zero-free region up to `Γ = 6.43·10¹⁵`).
+* `x ≥ e³⁵⁰⁰⁰`: `Explicit/PsiAsymp.lean` `psi_asymp` (`0.2x/log³x`; `K = ℓ+4`, `Γ = L⁴/5`, `δ = 5(ℓ+5)/L⁴`).
+Machinery: `Explicit/GaussSmooth.lean` (Gaussian smoothing `gsm`, entire Mellin transform `Mg`),
+`Explicit/PsiSandwich.lean` (`ψ` between two smoothed sums), `Explicit/ZetaZeroSums.lean` (line zeros by
+`3.48`-windows, Gaussian tail), `Explicit/PsiExplicit.lean`, `Explicit/PsiLarge.lean` (zeros above `H` by
+`zero_free`).
+
+Consumers absorb `ε_pl`:
+* `LambdaMu`: pointwise uses have slack (`psi_bounds` key `0.00039 + 2.2·10⁻¹¹`, `psi_lower_all`,
+  `psi_upper_all` `0.000159`); `mertens_lower_nat` uses `sum_epl_div_le` (`Σ ε_pl(n)/(n+1) ≤ 3.66·10⁻⁷`);
+  `logsq_large` ((2.19)) pays `log N · 2.2·10⁻¹¹ N ≤ 4.41·10⁻⁷N` (slack `≈ 0.0031N`).
+* `MertensProduct`: `E1_diff` gains `Pth M` (`3.7·10⁻⁷` if `log M < 20000`, `epl_total_le`); `F_large`
+  (`ηL² ≤ 0.4772`, `uL ≤ 0.0032`) still closes against `2.5/L`.
+* `MoebiusBound`: `Dp` gains `Pth M`; `partC_pth` (`≤ 0.0074`: only blocks with `log M_j < 20000`, i.e.
+  `j < 28827`); `K_partC ≤ 0.0452`, `K_bound ≤ 0.55` (`0.4259 + 0.0755 + 0.0452 = 0.5466`), so
+  `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)`.
+* `LiouvilleBound`: `Σ_{u≤N} 1/u² ≤ π²/6 < 1.64495` (`sum_inv_sq_le_pi`, Mathlib `hasSum_zeta_two`) in
+  `abs_ls_big`: `0.55(1.034·1.64495 + 0.09·1.0117) + 0.0042359 = 0.98980 ≤ 0.99`.
+
+## Status (2026-11-01, final)
+
+* `ternary_goldbach` depends on **no `sorry`** and 36 numerical axioms (`#print axioms`: the 33 before plus
+  `rh_upto`, `buthe_theta`, `theta_cube_small`).
+
 ## Status (2026-11-01, latest)
 
 * `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,

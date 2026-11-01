@@ -2,6 +2,7 @@ import TernaryGoldbach.Statement
 import TernaryGoldbach.Reduction
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
+import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.MoebiusLog
@@ -169,3 +170,7 @@ import TernaryGoldbach.Explicit.GaussSmooth
 import TernaryGoldbach.Explicit.PsiSandwich
 import TernaryGoldbach.Explicit.ZetaZeroSums
 import TernaryGoldbach.Explicit.PsiExplicit
+import TernaryGoldbach.Explicit.PsiAsymp
+import TernaryGoldbach.Explicit.PsiRange1
+import TernaryGoldbach.Explicit.PsiLarge
+import TernaryGoldbach.Explicit.PsiPlateau

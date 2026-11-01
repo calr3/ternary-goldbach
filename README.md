@@ -1,18 +1,18 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
-**Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **3 explicitly
-stated results from the literature**, which are still `sorry`, and **33 numerical axioms**
-(finite computations, listed below). Everything that connects them to the theorem is proved.
+**Status: proved modulo numerical axioms.** `TernaryGoldbach.ternary_goldbach` states that every
+odd integer greater than 5 is a sum of three primes. It is proved in Lean with **no `sorry`**, from
+**36 numerical axioms** (finite computations, listed below). Everything that connects them to the
+theorem is proved.
 
 ```
 $ lake build
 $ echo 'import TernaryGoldbach
 #print axioms TernaryGoldbach.ternary_goldbach' > /tmp/ax.lean && lake env lean /tmp/ax.lean
 'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext,
- sorryAx,
  Classical.choice,
  Quot.sound,
+ TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.Helfgott.prime_ladder_input,
  TernaryGoldbach.MajorArcs.integral_etaPlus_sq_log,
@@ -28,6 +28,7 @@ $ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.C_grid,
  TernaryGoldbach.Prelim.K_blocks,
  TernaryGoldbach.Prelim.K_pieces,
+ TernaryGoldbach.Prelim.buthe_theta,
  TernaryGoldbach.Prelim.fsq_le,
  TernaryGoldbach.Prelim.liouville_small,
  TernaryGoldbach.Prelim.logsq_small,
@@ -41,6 +42,7 @@ $ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.psi_mul_mid,
  TernaryGoldbach.Prelim.psi_small,
  TernaryGoldbach.Prelim.psi_sqrt,
+ TernaryGoldbach.Prelim.theta_cube_small,
  TernaryGoldbach.Prelim.theta_sqrt,
  TernaryGoldbach.Prelim.MV.GS_N0,
  TernaryGoldbach.Prelim.MV.lemma7_numeric,
@@ -50,8 +52,7 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The one `sorry` that `ternary_goldbach` depends on is Dusart's bound (below). The Part II explicit
-formulas are all proved:
+The Part II explicit formulas and the explicit prime number theorem are all proved:
 
 * **[B, Props 9.3.2, 9.4.2, 9.5.1]** (`η`, all primitive characters including `q = 1`, i.e. `ζ`; `η₊`;
   `η₊²` and `η₊² log`) are **proved** (`MajorArcs/Prop932.lean`, `MajorArcs/Prop942.lean`,
@@ -67,14 +68,23 @@ formulas are all proved:
   §14.2) is proved from Cor 7.1.3, Prop 7.1.5 and (14.7) in `MajorArcs/MajorTotal.lean`, with constant
   `1.049` in place of [B]'s `1.058259`; [B, (14.28)] is proved, in a weaker form, in
   `MinorArcs/EBound.lean`;
-* **one literature result** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
-  `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]).
+* **the explicit prime number theorem** `theta_explicit` (`Prelim/ThetaExplicit.lean`), in place of
+  Dusart's `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2], which [B] uses):
+  `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 89 967 803`, with `ε_pl(n) = 2.2·10⁻¹¹` for
+  `3400 < log n < 20000` and `0` otherwise. It comes from a finite check up to `10¹⁰`, Büthe's
+  `|θ(x) − x| ≤ 1.95√x` up to `10¹⁹` and Platt–Trudgian's RH verification up to `3·10¹²` (numerical
+  axioms), and a proof in `Explicit/` above `10¹⁹`: a Gaussian-smoothed explicit formula for `ψ`
+  (`GaussSmooth`, `PsiSandwich`, `ZetaZeroSums`, `PsiExplicit`, `PsiLarge`, `PsiPlateau`, `PsiRange1`,
+  `PsiAsymp`) with the zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹` (`XiPartial`,
+  `ZeroFree`, `ZeroFreeRegion`: partial fractions for `ξ'/ξ` and Stechkin's trick, without the
+  Hadamard product). Dusart's proof also uses zero-density estimates; without them, our route
+  leaves the plateau term `ε_pl`, which the consumers absorb.
   All the bounds on `ψ` and `θ` that [B] quotes — (2.12)–(2.15), (2.17), (2.19), (5.5) — and
-  Lemma C.2.2 ([RS62, Thm. 15], in `Prelim/MertensProduct.lean`) are proved from Dusart's bound
+  Lemma C.2.2 ([RS62, Thm. 15], in `Prelim/MertensProduct.lean`) are proved from `theta_explicit`
   plus finite checks; C.2.2 also uses Mertens' theorem with Euler's constant, ported from PNT+.
   (2.23) is proved elementarily with the weaker constant `q/φ(q) + 2.67` (`Prelim/MoebiusLog.lean`;
   [B]: `1.00303 q/φ(q)`), absorbed downstream. (2.22) is proved with constant `2.8` (for [B]'s `4/5`)
-  by Ramaré's Liouville route from our own `|∑_{n≤x} μ(n)/n| ≤ 0.54/(log x − 0.7521)`, `x ≥ 10¹⁰`
+  by Ramaré's Liouville route from our own `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)`, `x ≥ 10¹⁰`
   (`Prelim/MoebiusBound.lean`, `Prelim/Liouville.lean`, `Prelim/LiouvilleBound.lean`), also absorbed
   downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
   `Prelim/LargeSieveMV.lean` are also proved.)
@@ -83,18 +93,19 @@ Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
 (2.16) and (2.18) are proved in `Prelim/LambdaMuExtra.lean` (with three more finite checks, listed
 below but not in the `#print axioms` output), (2.24) is proved for `x < 10¹⁰` (our sieve; [B] cites
 Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated: our substitute is
-`|∑_{n≤x} μ(n)/n| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`.
+`|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`.
 
 ## Numerical axioms
 
-These are finite computer computations: seven from [B] (the book describes the method but
+These are finite computer computations: the RH verification to `3·10¹²` [Platt–Trudgian 2021],
+Büthe's `θ` bound to `10¹⁹` [Büthe 2018], seven from [B] (the book describes the method but
 doesn't include the code or the output), the two computational inputs for small `N`, four finite
-checks behind [MV73, Lemmas 7, 8], eleven checks of `ψ`, `θ` and Mertens products over finite ranges, and five
+checks behind [MV73, Lemmas 7, 8], twelve checks of `ψ`, `θ` and Mertens products over finite ranges, and five
 checks behind (2.22), plus Platt's GRH verification [B, §9.6], the value [B, (9.94)] and the sum
 `Σ μ²(q)/φ(q)` of [B, §14.1] (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
 `scripts/psi_checks.py`, `scripts/psi_mid_check.py`, `scripts/mertens_product_check.py`,
 `scripts/moebius_K_check.py`, `scripts/moebius_sqrt_check.py`, `scripts/liouville_small_check.py`,
-`scripts/moebius_C_grid.py`, `scripts/check_sum_mu2_phi.py`). They are stated as Lean `axiom`s, so `#print axioms`
+`scripts/moebius_C_grid.py`, `scripts/check_sum_mu2_phi.py`, `scripts/theta_cube_check.py`). They are stated as Lean `axiom`s, so `#print axioms`
 lists each one by name. Most are interval-arithmetic computations.
 
 | Axiom | [B] | Statement | How [B] obtains it |
@@ -134,13 +145,16 @@ lists each one by name. Most are interval-arithmetic computations.
 | `Prelim.lambda_mul_small` (`LambdaMuExtra.lean`, unused) | (2.16) range | `∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 1.6·10⁶` | sieve (`scripts/psi_extra_check.py`; max ratio `1.03583` at `k = 663`) |
 | `Prelim.lambda_sqrt_small` (`LambdaMuExtra.lean`, unused) | (2.18) range | `∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 2·10⁶` | same script (max ratio `1.99838`) |
 | `Prelim.lambda_sqrt_point` (`LambdaMuExtra.lean`, unused) | (2.18) | `∑_{n≤K} Λ(n)/√n − ψ(K)/√(K+1) − 1.0004√(K+1) ≤ −2`, `K = 2·10⁶` | same script (value `−3.2553`) |
+| `Explicit.rh_upto` (`Explicit/ZetaZeroSums.lean`) | — ([B] uses Platt's GRH check, §9.6) | every zero of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` has `ℜρ = 1/2` | [Platt–Trudgian 2021], rigorous computation (arXiv:2004.09765) |
+| `Prelim.buthe_theta` (`ThetaExplicit.lean`) | — | `\|θ(n) − n\| ≤ 1.95 √n` for `1423 ≤ n ≤ 10¹⁹` | [Büthe 2018, Thm 2] (Math. Comp. 87; analytic method with a zero computation) |
+| `Prelim.theta_cube_small` (`ThetaExplicit.lean`) | Dusart's bound, range | `\|θ(n) − n\| < n/log³ n` for `89 967 803 ≤ n ≤ 10¹⁰` | segmented sieve (`scripts/theta_cube_check.py`; max ratio `0.99934` at `n = 89 967 810`) |
 | `Prelim.mertens_product_small` (`MertensProduct.lean`) | Lemma C.2.2 range | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for primes `5 ≤ x ≤ 10⁸` | direct (`scripts/mertens_product_check.py`; tightest at `x = 23`, margin `2.4·10⁻⁷`, checked to 40 digits) |
 
 `fsq_le` and `H2_le` look small enough to prove in Lean. `prop_12_2_4` and `T2_le` would need an
 external certificate.
 
 In the table below, "uses trusted bounds" means that the file's main theorems depend on some of
-these `sorry`s or numerical axioms (through `#print axioms`); the file itself contains neither.
+these numerical axioms (through `#print axioms`); the file itself contains none.
 
 ## Layout
 
@@ -168,16 +182,19 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Eta2Log.lean` | `η_(ρ)(t) = log(ρt) η₂(t)`: [B, (4.38)], Lemma B.2.1; Lemma B.2.3 as a numerical axiom | ✅ (one numerical axiom) |
 | `MinorArcs/SumTools.lean` | sums vs antiderivatives (MVT); the log-weighted sums of [B, Lemma 4.2.3] | ✅ |
 | `MinorArcs/TypeILogProof.lean` | **[B, Lemma 4.2.3] proved** in the form [B, §6.2.1] uses ((4.40) corrected, (4.41) slightly weakened; the unused (4.42) omitted) | ✅ (uses the trusted bounds) |
-| `Prelim/LambdaMu.lean` | bounds on sums of `Λ` and `μ` [B, (2.12)–(2.24), (5.5)]. **Proved** from Dusart's `\|θ(x) − x\| < x/log³x` ([Dus18], cited) and finite checks: (2.14) and (2.15) (strong induction with `ψ − θ ≤ ψ(√n) + n^{1/3} log n`), (2.12) (Chebyshev's identity, summation by parts), (2.13) (summation by parts from `10⁶` with telescoping tails), (2.17) (`∑Λ(n)n = Nψ(N) − ∑_{m<N} ψ(m)`), (2.19) (split at `3N/4`), (5.5) | 🟡 Dusart + (2.22), (2.23) cited |
+| `Prelim/LambdaMu.lean` | bounds on sums of `Λ` and `μ` [B, (2.12)–(2.24), (5.5)]. **Proved** from `theta_explicit` (`\|θ(n) − n\| < n/log³n + ε_pl(n) n`, `Prelim/ThetaExplicit.lean`) and finite checks: (2.14) and (2.15) (strong induction with `ψ − θ ≤ ψ(√n) + n^{1/3} log n`), (2.12) (Chebyshev's identity, summation by parts), (2.13) (summation by parts from `10⁶` with telescoping tails), (2.17) (`∑Λ(n)n = Nψ(N) − ∑_{m<N} ψ(m)`), (2.19) (split at `3N/4`), (5.5) | ✅ (numerical axioms) |
 | `Helfgott/HHBound.lean` | `\|h₂₀₀\| ≤ 3.15`, `\|η₊\| ≤ 1.94`, `t\|η₊(t)\| ≤ 2.32`: substitution `y = t/u`, integration by parts against `−G_H(log(t/u))` with `\|G_H\| ≤ 3/π` (sine integral), total variation `2e^{1/2}` of `h` | ✅ |
-| `MinorArcs/EBound.lean` | **[B, (14.28)] proved** with constant `8·10⁻¹¹` (B: `8.4029·10⁻¹²`): `E ≤ √x(24.12 log x + 18.01)` from the sup norms above, (2.15), (5.5) and dyadic blocks; the minor-arc total still closes (`1.0376`) | ✅ (Dusart via (2.15), (5.5)) |
+| `MinorArcs/EBound.lean` | **[B, (14.28)] proved** with constant `8·10⁻¹¹` (B: `8.4029·10⁻¹²`): `E ≤ √x(24.12 log x + 18.01)` from the sup norms above, (2.15), (5.5) and dyadic blocks; the minor-arc total still closes (`1.0376`) | ✅ (`theta_explicit` via (2.15), (5.5)) |
 | `Prelim/MoebiusLog.lean` | **(2.23), elementary form**: `\|∑_{n≤x,(n,q)=1} μ(n)/n log(x/n)\| ≤ q/φ(q) + 2.67` via `∑ μ_q(n)/n · H(x/n) = ∑_{k≤x, rad k ∣ q} 1/k ∈ [0, q/φ(q)]` (multiplicativity, Euler product over `q`-factored numbers), `H(M) = log y + γ + O*(1/M)` and (2.20); the Type I constants change accordingly (`log t + 1.63 → 2.96` in `typeI1_first`, `7.7 → 15.7` in `typeI1_second`) and still close | ✅ |
 | `Prelim/PNTMertens.lean` | Mertens' second theorem `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with an integral formula for `E₂Λ`; **ported from PNT+** (Apache 2.0, `licenses/`) | ✅ |
-| `Prelim/MertensProduct.lean` | **[B, Lemma C.2.2] proved**: `\|E₂Λ(x)\| = O(1/log³x)` from Dusart, the log series, `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (finite check below), and the exchange argument `q/φ(q) ≤ ∏_{p≤p_{ω(q)}} p/(p−1)` | ✅ (Dusart, one numerical axiom) |
-| `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (Dusart, two numerical axioms) |
+| `Prelim/MertensProduct.lean` | **[B, Lemma C.2.2] proved**: `\|E₂Λ(x)\| = O(1/log³x)` from `theta_explicit` (plus the plateau `P(M)`), the log series, `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (finite check below), and the exchange argument `q/φ(q) ≤ ∏_{p≤p_{ω(q)}} p/(p−1)` | ✅ (`theta_explicit`, one numerical axiom) |
+| `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.55` (pieces below `1000`, dyadic blocks to `10⁹`, `theta_explicit` beyond; its plateau costs `≤ 0.0074`); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (`theta_explicit`, two numerical axioms) |
 | `Prelim/Liouville.lean` | Ramaré's identities (Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2): `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` by multiplicativity, and their `1/n`-weighted partial-sum forms | ✅ |
-| `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, Dusart) |
+| `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, `theta_explicit`) |
 | `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms; `Prop715.lean`: **[B, Prop 9.5.1] proved** (`η₊²`, `η₊² log`, from `Explicit/EtaPlusSqBound.lean`, RH up to `500`); `Prop932.lean`: **[B, Prop 9.3.2] for `q ≥ 2` proved** from `Explicit/ExplicitBound.lean`; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`; `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)`, `y ≥ 10²⁵`), **[B, Prop 7.1.5] proved** (`x ≥ 4.9·10²⁶`); `Prop942.lean`: **[B, Prop 9.4.2] proved** (`η₊`, from `Explicit/EtaPlusBound.lean`); `Thm714.lean`: **[B, Thm 7.1.4] proved** from it (`x ≥ 4.9·10²⁶`; `q = 1`: `10⁻¹⁸ + 6.24·10⁶/√x`; `q ≥ 2`: `(7.5·10⁻⁸ + 7.7·10⁶/√x)/√q`) | ✅ (three numerical axioms) |
+| `Explicit/XiPartial.lean`, `ZeroFree.lean`, `ZeroFreeRegion.lean`, `LogNumerics.lean` | **zero-free region** `β ≤ 1 − 1/(11 log\|γ\|)` for zeros of `ζ` with `\|γ\| ≥ 10⁹` (`zero_free`): partial fractions for `ξ'/ξ` on symmetric squares (no Hadamard product), Stechkin's lemma, the trigonometric polynomial `8(½ + (3/2)cos θ + cos²θ)²` | ✅ (standard axioms only) |
+| `Explicit/GaussSmooth.lean`, `PsiSandwich.lean`, `ZetaZeroSums.lean`, `PsiExplicit.lean`, `PsiLarge.lean`, `PsiPlateau.lean`, `PsiRange1.lean`, `PsiAsymp.lean` | **explicit PNT for `ψ`** above `10¹⁹`: Gaussian smoothing with entire Mellin transform, a sandwich for `ψ`, zeros on the line (RH to `3·10¹²`) by windows and above by the zero-free region; `\|ψ(x) − x\| ≤ 2.15·10⁻¹¹x + 15000√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`), `≤ 2.1·10⁻¹⁴x` (`x ≥ e²⁰⁰⁰⁰`), `≤ 0.2x/log³x` (`x ≥ e³⁵⁰⁰⁰`) | ✅ (axiom `rh_upto`) |
+| `Prelim/ThetaExplicit.lean` | `theta_explicit`: `\|θ(n) − n\| < n/log³n + ε_pl(n) n` for `n ≥ 89 967 803` (replaces [Dus18]); plateau sums `sum_epl_div_le`, `epl_total_le` | ✅ (axioms `rh_upto`, `buthe_theta`, `theta_cube_small`) |
 | `Explicit/*.lean` | The explicit formula for `L(s, χ)`, `χ` primitive `≠ 1`, smoothing `t²e^{−t²/2}e(δt)`: Mellin rotation bounds ([B, Ch. 8], `MellinRotate`, `GMellin`), growth of `L` (`LGrowth`, `LGrowthLeft`, `LGrowthPoly`: polynomial on `ℜs ≤ 1/4` via `|Γ(x+iy)| ≤ e^{−φ|y|}Γ(x)/cos^xφ`, `GammaBounds`), Jensen and Landau (`ZeroCount`, `Landau`), the residue theorem on rectangles (`RectResidue`), `explicit_formula` (`ExplicitFormula`), Mellin–Plancherel for `G_δ` and `G_δ'` on `ℜs = 1/2` (`MellinPlancherel`), the sum over zeros (`LineZeros`: Sobolev windows; `ZeroSums`, `ZeroSumBound`), and `|S_χ(δ, x)| ≤ E₀ + E₁√x + E₂x + V/(2π√x)` (`ExplicitBound`) | ✅ (no `sorry`) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
@@ -229,7 +246,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1–4; numerical axioms 5 and 6 (see below) | ✅ (uses trusted bounds) |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 4 `sorry`s and 33 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses the 36 numerical axioms) |
 
 ## The inputs
 
