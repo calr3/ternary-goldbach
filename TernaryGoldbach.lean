@@ -118,6 +118,12 @@ import TernaryGoldbach.MinorArcs.GMono
 import TernaryGoldbach.MinorArcs.Prop1123
 import TernaryGoldbach.MinorArcs.Prop1312
 import TernaryGoldbach.MinorArcs.LargeSievePrimes
+import TernaryGoldbach.MinorArcs.LSQuot1
+import TernaryGoldbach.MinorArcs.LSQuot2
+import TernaryGoldbach.MinorArcs.LSQuot3
+import TernaryGoldbach.MinorArcs.LSQuot4
+import TernaryGoldbach.MinorArcs.LSQuot5
+import TernaryGoldbach.MinorArcs.LSQuot6
 import TernaryGoldbach.Prelim.GaussInduced
 import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MinorArcs.LargeSieveWeights

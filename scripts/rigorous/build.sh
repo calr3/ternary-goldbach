@@ -9,3 +9,4 @@ gcc -O2 -Wall -I"$INC" rig_checks.c -o rig_checks "$LIB/libmpfr.so.6" "$LIB/libg
 gcc -O2 -Wall -frounding-math -ffp-contract=off moebius_sqrt_rig.c -o moebius_sqrt_rig -lm
 gcc -O2 -Wall -I"$INC" t2_rig.c -o t2_rig "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm
 gcc -O2 -Wall -I"$INC" g2_rig.c -o g2_rig "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm
+gcc -O2 -Wall -fopenmp p1224_check.c -o p1224_check -lm

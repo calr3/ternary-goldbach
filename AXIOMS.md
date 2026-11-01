@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 27 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 28 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -69,12 +69,20 @@ as in the README.
      constants. The proof bounds the cross terms by Parseval in `u = log t` instead of Cauchy–Schwarz
      on all of `L²`. It needs only our Lean bound `‖g''‖₂² ≤ 368` and four elementary integrals
      (`etaO_numerics`, see "Removed axioms").
-6. **Binary Goldbach was double-checked only to `4·10¹⁷`.** [OeSHP14] verified binary Goldbach up to
+6. **Two slips in [B]'s proof of Prop 12.2.4 (neither affects the result; it is now proved).**
+   * Lemma 12.2.3 bounds the quotient by `(log Q₀ + σ)/(log Q + 1.312)`, and the proof of Prop 12.2.4
+     uses it with `σ = c₊ = 1.36` for the range (12.29) of small `R`. But (12.23) has
+     `log Q + c_E` in the denominator, with `c_E = 1.33258 > 1.312`. So with `σ = c₊` the lemma does not give
+     (12.23). Taking `σ ≈ 1.347` would, at a cost of about `0.5 %` in `ϖ(q)`. Our proof (`regionS`) bounds
+     the quotient against `log Q + c_E` directly.
+   * (12.15) claims `G(R) ≥ log R + 1.312` from (12.12) for `R ≥ 4·10⁷`. But (12.12) gives
+     `c_E − 7.284 R^{−1/3} ≥ 1.312` only from `R ≈ 4.42·10⁷` on. We do not use (12.15).
+7. **Binary Goldbach was double-checked only to `4·10¹⁷`.** [OeSHP14] verified binary Goldbach up to
    `4·10¹⁸`; according to the project page, the independent double-check reaches `4·10¹⁷`.
 
 ## The axioms
 
-### Our own computations (18)
+### Our own computations (19)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -107,6 +115,7 @@ contain the axiom.
 | `MajorArcs.etaO_numerics` | `∫₀² η◦² ∈ [0.640205997, 0.640205998]`, `∫₀² η◦² log t ∈ [−0.0210947787, −0.0210947786]`, `‖W₀''‖₂² ≤ 36`, `‖W₁''‖₂² ≤ 8.4` (elementary integrals) | — | `0.64020599736635…`, `−0.02109477869887…`, `35.790`, `8.389` (`scripts/rigorous/eta_circ_rig.py`, Arb integration) | first two: [B, p. 197] (VNODE-LP) |
 | `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`scripts/rigorous/t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
 | `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
+| `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | — | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`scripts/rigorous/p1224_check.c`, long double with margins, 22 min) | replaces [B]'s computation for Prop 12.2.4 (`q < 3.3·10⁹`, two weeks single-core) |
 | `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
 
 Cross-checks:
@@ -125,7 +134,7 @@ Unused (in `Prelim/LambdaMuExtra.lean`, not on the path of `ternary_goldbach`):
 
 All three come from `psi_extra_check.py`.
 
-### Published results (8)
+### Published results (9)
 
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
@@ -135,35 +144,29 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
+| `MinorArcs.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 | [B, (12.12)–(12.14)] cites it in this form, with `c = c_E = γ + ∑_p log p/(p(p−1)) = 1.3325822…` ([RS62, (2.11)]) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, *From explicit estimates for primes to explicit estimates for the Moebius function*, Acta Arith. 157 (2013) 365–379 | [B, (2.21)] cites it with this statement (its bibliography entry [Ram13] is this paper); open-access copy HAL hal-02572812. Analytic, from explicit bounds on `ψ`, plus a finite computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
-### Results of Helfgott's book [B] (1)
+### Results of Helfgott's book [B] (0)
 
-The book obtains these by interval arithmetic or rigorous integration. Some of them also contain
-analytic arguments. The Lean definitions involved were compared with the book's:
+None: the last ones, (5.31), Lemma 5.1.2 and Prop 12.2.4, are now proved (see "Removed axioms").
+The Lean definitions that the axioms above refer to were compared with the book's:
 * `T2` and `g2` with (5.19) and Lemma 5.1.2;
-* `H2` with (5.35);
-* `fsq` with the definition on p. 83;
-* `Gq` and `cE` with (12.2) and (12.14);
-* `etaPlus`, `hBase` and `F` with (7.3)–(7.6);
-* `eta2log` with Lemma B.2.3.
-
-| Axiom | [B] | Content | Independent check |
-|---|---|---|---|
-| `MinorArcs.prop_12_2_4` | Prop 12.2.4 | `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)` | hypotheses and conclusion match; our `c_E = 1.33258` is [B]'s `1.3325822…` rounded down, which makes the axiom weaker; the content is Ramaré's explicit (12.12) plus a computation for `q < 3.3·10⁹` |
+* `Gq`, `Sq`, `f1q` and `cE` with (12.2), (12.12)–(12.14).
 
 ## Summary by kind
 
-* **Our own computations (18):** all are checked rigorously (interval arithmetic with directed
-  rounding, `scripts/rigorous/`), besides the float scripts in `scripts/`. Four are also contained in
+* **Our own computations (19):** all are checked rigorously in `scripts/rigorous/`: interval
+  arithmetic with directed rounding, except `prop1224_check`, which uses long double with margins far
+  above the rounding error (see that README). Most also have a float script in `scripts/`. Four are also contained in
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
   [MV73, Lemma 8].
-* **Published results (8):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
+* **Published results (9):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, Büthe's bounds for `θ` and `ψ` (2 axioms), and Ramaré's
-  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`. They are stated as in the papers.
-* **Results of [B] (1):** Prop 12.2.4 (Ramaré's explicit estimate (12.12) and a computation).
+  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` and his estimate for `G_d(R)`. They are stated as in the papers.
+* **Results of [B]:** none.
 
 ## Removed axioms
 
@@ -273,6 +276,24 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     axiom.
   * [B]'s constants (`0.038128/(log x)² + 0.2046/√x`) are better; ours give
     `∫_{10⁸}^∞ |g₂|/y ≤ 0.0036`, which (5.31) can afford (it allows `0.0096`).
+
+* `prop_12_2_4` ([B, Prop 12.2.4]) is now a proof (`MinorArcs/LSQuot1.lean`–`LSQuot6.lean`). Its
+  inputs are Ramaré's (12.12) (published axiom `ramare_Gq`) and our computation `prop1224_check`.
+  With `R = Q₀/sq`, `t = Q/Q₀`:
+  * The reduction [B, (12.25)–(12.26)] (`star_suffices`) uses
+    `θ = (log Q₀ + 1.36)/(log Q + c_E) ≤ 0.6274`.
+  * `R ≥ λ(q)`: (12.12) suffices (`regionL`).
+  * Small `R` (`regionS`, in place of [B, Lemmas 12.2.1–12.2.3]): `G_q(R) G_P(t) ≤ G_q(tR)` with
+    `P = ∏_{p ≤ R or p ∣ q} p`, `G(t) ≤ (P/φ(P)) G_P(t)`, `G(t) ≥ log t + 1.064` from (12.12), and
+    Lemma C.2.2 (`div_totient_lt`) for `P/φ(P)`. This applies when
+    `log q + 1.039 R ≤ c′ (qR)^{2/9}`.
+  * `q ≥ 2.2·10¹⁰` (in place of [B, (12.34)–(12.40)]): `λ(q)⁷ ≤ (103/120)⁹ q²`. The proof replaces
+    the primes of `q` by the first `k` primes (an antitone majorant of `(p/(p−1)) f₁(p)`), checks
+    `k ≤ 10` at `q = 2.2·10¹⁰`, and inducts over primorials for `k ≥ 11`. Then `regionS` covers
+    every `R < λ(q)`.
+  * `q < 2.2·10¹⁰`: the computation decides, for each integer `n < λ(q)`, between `regionS` and
+    the explicit check (12.31).
+  * See Finding 6 for two slips in [B]'s argument.
 
 ## Candidates for proofs in Lean
 

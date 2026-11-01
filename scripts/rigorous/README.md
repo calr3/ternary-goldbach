@@ -12,6 +12,13 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 * `moebius_sqrt_rig.c` (`moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
   rounding mode set to round-down; upper bounds are computed as `−((−a) ∘ b)`. Each operation is a
   correctly rounded IEEE operation (compiled with `-frounding-math`, no contraction to FMA).
+* `p1224_check.c` (`prop1224_check`, `2.2·10¹⁰` values of `q`) uses x87 long double (64-bit
+  mantissa) without directed rounding. Instead, every inequality must hold with a margin of at
+  least `10⁻⁹` absolute, or `10⁻¹²` relative where noted. The largest possible accumulated rounding
+  error is about `10⁻¹¹`: `G_q(n)` is a sum of at most `3·10⁷` positive terms `≤ 1`. The other
+  quantities are short products and sums of glibc's `logl`, `cbrtl`, `expl`, `powl`, whose
+  documented errors are a few ulps. The margins found are `0.0236` for the explicit check (C) and
+  `1.3·10⁻⁷` for (S).
 
 | Check | Axiom | Range | Time |
 |---|---|---|---|
@@ -28,6 +35,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | `etaO_numerics` (input of [B, (9.94)]) | four integrals over `[0, 2]` | < 1 s |
 | `t2_rig.c` | `T2_small`, `T2_mid` (inputs of [B, (5.31)]) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
+| `p1224_check.c` | `prop1224_check` (the finite part of [B, Prop 12.2.4]) | every `q < 2.2·10¹⁰`, every `n < λ(q)`: 87 972 745 explicit checks for 2 102 258 values of `q` | 22 min on 22 threads |
 | `g2_rig.c` | (exploration: `g₂` and `max \|g₂(n)\| n`) | `n ≤ N` | seconds |
 
 The reference output is `output.txt`.

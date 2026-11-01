@@ -258,6 +258,22 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `(t−1)⁴ + 1 ≥ 0`);
   * the tail integral in `T2Bound` is now `≤ 0.0036`.
   ternary_goldbach now depends on 27 axioms (18 our own, 8 published, 1 from [B]).
+* [B, Prop 12.2.4] proved (`MinorArcs/LSQuot1.lean` … `LSQuot6.lean`); no [B] axiom remains:
+  * inputs: Ramaré's (12.12) (published axiom `ramare_Gq`, stated with an existential
+    `c ∈ [1.3325822, 1.3325823]` since `c_E` is not computed in Lean) and the computation
+    `prop1224_check` (`scripts/rigorous/p1224_check.c`, 22 min on 22 threads for `q < 2.2·10¹⁰`;
+    [B] needed two weeks single-core, mostly because it recomputed more);
+  * structure: `star_suffices` (θ ≤ 0.6274), `regionL` (`R ≥ λ(q)`), `checkC_suffices`, `regionS`
+    (`G_q(R) G_P(t) ≤ G_q(tR)`, `G(t) ≤ (P/φ(P)) G_P(t)`, `div_totient_lt`, `G(t) ≥ log t + 1.064`),
+    `large_q_hS` (`λ⁷ ≤ (103/120)⁹ q²` by exchange + primorial induction, `ĝ(p)^{21} ≤ p²` for
+    `p ≥ 37`);
+  * the computation's (S)-branch uses the monotone form `log q + 1.039(n+1) ≤ 0.826 (qn)^{2/9}`, so
+    Lean needs no concavity; τ = 2/9 makes the large-`q` condition polynomial;
+  * [B] slips found (AXIOMS.md Finding 6): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
+    analytic range starts at `4.42·10⁷`, not `4·10⁷`;
+  * name clashes to watch: `kap`, `Gq_nonneg`, `ghat`, `sum_moebius_divisors` already exist in
+    `MinorArcs`.
+  ternary_goldbach now depends on 28 axioms (19 our own, 9 published, 0 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

@@ -7,14 +7,18 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 27 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 28 explicitly stated
 axioms besides Lean's standard three. They are:
-* 18 finite computations of our own, each checked in rigorous interval arithmetic
+* 19 finite computations of our own, each re-checked by an independent rigorous program (interval
+  arithmetic, except `prop1224_check`: long double with error margins far above the rounding error)
   (`scripts/rigorous/`); four of them are also contained in published results;
-* 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+* 9 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
-  `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` ([B, (2.21)]);
-* 1 result of [B]: Prop 12.2.4, which uses Ramaré's explicit estimate and a computation.
+  `10¹⁹` (2 axioms), and two explicit estimates of Ramaré: `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
+  ([B, (2.21)]) and his asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)]).
+
+None of the axioms is a result of [B]: every step taken from the book is proved from them (some
+with weaker constants; see "Differences from [B]").
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 axioms.
@@ -133,6 +137,7 @@ The top level is [B, §14.4] (`Helfgott/Main.lean`).
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` |
 | Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker (Jensen windows) |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
+| Lemma 5.1.2 | `\|g₂(x)\|`, `x ≥ 10¹⁰` | `0.038128/(log x)² + 0.2046/√x` | `0.0215/(log x)² + 528 (1 + log x)²/x` (all `x > 1`) |
 
 The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 
@@ -160,6 +165,9 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
   * This adds `0.0924` to the Type II factor and raises the first-case constant of Thm 3.1.1 to
     `0.8764`.
   * (14.49) stays `1.0376`, because repair 3 below has room.
+* The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
+  where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
+  (`AXIOMS.md`, Finding 6).
 * The prime ladder's gaps are at most `4·10¹⁸`, as [HP13] and [B, §1.6] state. The case
   `n − p = 4·10¹⁸ + 2` uses [B]'s explicit decomposition.
 

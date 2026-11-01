@@ -1,5 +1,6 @@
 import TernaryGoldbach.MinorArcs.LargeSieveArcs
 import TernaryGoldbach.MinorArcs.Plancherel
+import TernaryGoldbach.MinorArcs.LSQuot6
 
 /-!
 # Proof of [B, Prop. 12.1.2] and [B, Cor. 12.2.5]

@@ -107,3 +107,8 @@ T2_mid: OK (rigorous)
 real	7m35.946s
 user	7m25.182s
 sys	0m11.554s
+
+### scripts/rigorous/p1224_check 2.2e10 22   (22 threads; 1298 s)
+Q1 = 2.2000e+10: q with explicit checks: 2102258, checks: 87972745, failures: 0, nmax > RMAX: 0
+max lam = 20083891.117409 at q = 1; min margin (S) = 1.2646e-07; min margin (C) = 2.360402e-02 at q = 1, n = 101535
+prop1224_check: OK

@@ -7,9 +7,8 @@ import TernaryGoldbach.CircleMethod
 For `aₙ` supported on primes `> √x`, `S(α) = Σ aₙ e(αn)`:
 
 * **Prop 12.1.2** (`prop_12_1_2`, proved in `LargeSieveProof.lean`).
-* **Prop 12.2.4** (`prop_12_2_4`, **numerical axiom**): the quotient bound
-  `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)`.  [B]'s proof ends in a large interval-
-  arithmetic computation ("about two weeks of computing", [B, p. 242, fn. 2]).
+* **Prop 12.2.4** (`prop_12_2_4`, proved in `LSQuot1.lean`–`LSQuot6.lean`): the quotient bound
+  `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)`.
 * **Cor 12.2.5, (12.42)** (`cor_12_2_5`, `LargeSieveProof.lean`): proved from the two.
 
 `c_E = γ + Σ_p log p/(p(p − 1)) = 1.3325822…` [B, (12.14)]; we state everything with the smaller
@@ -37,14 +36,5 @@ def cE : ℝ := 1.33258
 def PrimeSupported (x : ℝ) (a : ℕ → ℂ) : Prop :=
   (∀ n, a n ≠ 0 → n.Prime ∧ √x < n) ∧ Summable fun n => ‖a n‖
 
-/-- **[B, Prop. 12.2.4]** — **numerical axiom**.  Let `Q ≥ 20000 Q₀`, `Q₀ ≥ 10⁵`,
-`log Q₀ / log Q ≤ 0.6`.  Then for `1 ≤ q ≤ Q₀` and `1 ≤ s ≤ Q₀/q`,
-`G_q(Q₀/sq) / G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)`.  [B]'s proof reduces this, via
-Ramaré's (12.12) and explicit estimates, to a finite check of all `R ∈ [ϖ(q), λ(q))` for
-`q < 3.3·10⁹` (and `q < 2.2·10¹⁰`, `210 ∣ q`) by interval arithmetic. -/
-axiom prop_12_2_4 {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
-    (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) (hqQ : (q : ℝ) ≤ Q₀) {s : ℝ}
-    (hs : 1 ≤ s) (hsQ : s ≤ Q₀ / q) :
-    Gq q (Q₀ / (s * q)) ≤ (Real.log Q₀ + 1.36) / (Real.log Q + cE) * Gq q (Q / (s * q))
 
 end TernaryGoldbach.MinorArcs
