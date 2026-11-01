@@ -152,6 +152,70 @@ theorem norm_Gammaℝ_ge {w : ℂ} (h1 : -8 ≤ w.re) (h2 : w.re ≤ 5 / 4) (him
     _ ≤ π ^ (-w / 2).re * ‖Complex.Gamma (w / 2)‖ :=
         mul_le_mul hpi hG (by positivity) (by positivity)
 
+/-- `|1/Γ(w)| ≤ (24/π) e^{π|ℑw|}` for `−4 ≤ ℜw ≤ 5/8` (reflection; also at the poles). -/
+theorem norm_inv_Gamma_le {w : ℂ} (h1 : -4 ≤ w.re) (h2 : w.re ≤ 5 / 8) :
+    ‖(Complex.Gamma w)⁻¹‖ ≤ 24 / π * Real.exp (π * |w.im|) := by
+  by_cases hΓ : Complex.Gamma w = 0
+  · rw [hΓ, inv_zero, norm_zero]; positivity
+  have hre1 : 0 < (1 - w).re := by simp; linarith
+  have hΓ1 : Complex.Gamma (1 - w) ≠ 0 := Complex.Gamma_ne_zero_of_re_pos hre1
+  have hrefl := Complex.Gamma_mul_Gamma_one_sub w
+  have hsin : Complex.sin (π * w) ≠ 0 := by
+    intro h; rw [h, div_zero] at hrefl; exact mul_ne_zero hΓ hΓ1 hrefl
+  have e : (Complex.Gamma w)⁻¹ = Complex.Gamma (1 - w) * Complex.sin (π * w) / π := by
+    have hpi : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
+    field_simp
+    rw [show Complex.Gamma w * Complex.Gamma (1 - w) * Complex.sin (w * π) =
+      (Complex.Gamma w * Complex.Gamma (1 - w)) * Complex.sin (π * w) by ring, hrefl]
+    field_simp
+  have hG1 : ‖Complex.Gamma (1 - w)‖ ≤ 24 :=
+    (norm_Gamma_le_Gamma_re hre1).trans (Gamma_le_24 (by simp; linarith) (by simp; linarith))
+  have hsinb : ‖Complex.sin (π * w)‖ ≤ Real.exp (π * |w.im|) := by
+    refine (norm_sin_le_exp _).trans (le_of_eq ?_)
+    congr 1
+    simp [abs_mul, abs_of_pos Real.pi_pos]
+  rw [e, norm_div, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+  rw [div_le_iff₀ Real.pi_pos]
+  calc ‖Complex.Gamma (1 - w)‖ * ‖Complex.sin (π * w)‖ ≤ 24 * Real.exp (π * |w.im|) :=
+        mul_le_mul hG1 hsinb (norm_nonneg _) (by norm_num)
+    _ = 24 / π * Real.exp (π * |w.im|) * π := by field_simp
+
+/-- `|1/Γℝ(w)| ≤ 16 e^{π|ℑw|/2}` for `−8 ≤ ℜw ≤ 5/4`. -/
+theorem norm_inv_Gammaℝ_le {w : ℂ} (h1 : -8 ≤ w.re) (h2 : w.re ≤ 5 / 4) :
+    ‖(Gammaℝ w)⁻¹‖ ≤ 16 * Real.exp (π * |w.im| / 2) := by
+  rw [Gammaℝ_def, mul_inv, norm_mul, ← Complex.cpow_neg, norm_cpow_pi]
+  have hre : (w / 2).re = w.re / 2 := by simp
+  have him2 : (w / 2).im = w.im / 2 := by simp
+  have hG := norm_inv_Gamma_le (w := w / 2) (by rw [hre]; linarith) (by rw [hre]; linarith)
+  rw [him2, abs_div, abs_two] at hG
+  have hpi : π ^ (-(-w / 2)).re ≤ 0.48⁻¹ := by
+    have he : (-(-w / 2)).re = w.re / 2 := by simp; ring
+    rw [he]
+    have : π ^ (w.re / 2) ≤ π ^ (5 / 8 : ℝ) :=
+      Real.rpow_le_rpow_of_exponent_le (by linarith [Real.pi_gt_three]) (by linarith)
+    refine this.trans ?_
+    have hx : 0 ≤ π ^ (5 / 8 : ℝ) := by positivity
+    have h8 : (π ^ (5 / 8 : ℝ)) ^ 8 = π ^ 5 := by
+      rw [← Real.rpow_natCast, ← Real.rpow_mul Real.pi_pos.le]; norm_num
+    have h5 : π ^ 5 ≤ (0.48⁻¹ : ℝ) ^ 8 := by
+      have := Real.pi_lt_d2
+      calc π ^ 5 ≤ 3.15 ^ 5 := pow_le_pow_left₀ Real.pi_pos.le this.le 5
+        _ ≤ (0.48⁻¹ : ℝ) ^ 8 := by norm_num
+    rw [← h8] at h5
+    exact (pow_le_pow_iff_left₀ hx (by norm_num) (by norm_num : (8:ℕ) ≠ 0)).1 h5
+  have hpi3 := Real.pi_gt_d2
+  have e : π * |w.im| / 2 = π * (|w.im| / 2) := by ring
+  rw [e]
+  calc π ^ (-(-w / 2)).re * ‖(Complex.Gamma (w / 2))⁻¹‖
+      ≤ 0.48⁻¹ * (24 / π * Real.exp (π * (|w.im| / 2))) :=
+        mul_le_mul hpi hG (norm_nonneg _) (by norm_num)
+    _ ≤ 16 * Real.exp (π * (|w.im| / 2)) := by
+        have hE := Real.exp_pos (π * (|w.im| / 2))
+        have : 0.48⁻¹ * (24 / π) ≤ 16 := by
+          rw [show (0.48⁻¹ : ℝ) * (24 / π) = 50 / π by norm_num; ring, div_le_iff₀ Real.pi_pos]
+          linarith
+        nlinarith
+
 /-! ## The bound -/
 
 theorem norm_rootNumber {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive) :
@@ -164,11 +228,11 @@ theorem norm_rootNumber {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h�
   have : ((1 / 2 : ℂ)).re = 1 / 2 := by norm_num
   rw [this, ← Real.sqrt_eq_rpow, div_self (Real.sqrt_pos.2 hN).ne']
 
-/-- **Growth on the left**: for `χ` primitive, `χ ≠ 1`, `−8 ≤ ℜz ≤ 1/4`, `ℑz ≠ 0`:
-`|L(z, χ)| ≤ 510 q⁹ (q + 1)(|ℑz| + 9) e^{π|ℑz|/2}`. -/
+/-- **Growth on the left**: for `χ` primitive, `χ ≠ 1`, `−8 ≤ ℜz ≤ 1/4`:
+`|L(z, χ)| ≤ 512 q⁹ (q + 1)(|ℑz| + 9) e^{π|ℑz|/2}`. -/
 theorem norm_LFunction_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) {z : ℂ} (h1 : -8 ≤ z.re) (h2 : z.re ≤ 1 / 4) (him : z.im ≠ 0) :
-    ‖χ.LFunction z‖ ≤ 510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) *
+    (hχ1 : χ ≠ 1) {z : ℂ} (h1 : -8 ≤ z.re) (h2 : z.re ≤ 1 / 4) :
+    ‖χ.LFunction z‖ ≤ 512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) *
       Real.exp (π * |z.im| / 2) := by
   have hN : N ≠ 1 := by
     rintro rfl; exact hχ1 (Subsingleton.elim _ _)
@@ -180,35 +244,30 @@ theorem norm_LFunction_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
   have hσ1 : 3 / 4 ≤ s.re := by rw [hsre]; linarith
   have hσ2 : s.re ≤ 9 := by rw [hsre]; linarith
   have hχi : χ⁻¹ ≠ 1 := fun h => hχ1 (inv_eq_one.1 h)
-  -- `Λ(s, χ⁻¹) = Γ(s) L(s, χ⁻¹)` and `|Γ(s)| ≤ 24`
   have hGs : ‖DirichletCharacter.gammaFactor χ⁻¹ s‖ ≤ 24 := by
     rcases χ⁻¹.even_or_odd with he | ho
     · rw [he.gammaFactor_def]; exact norm_Gammaℝ_le hσ1 (by linarith)
     · rw [ho.gammaFactor_def]; exact norm_Gammaℝ_le (by simp; linarith) (by simp; linarith)
-  have hGs0 : DirichletCharacter.gammaFactor χ⁻¹ s ≠ 0 := by
-    rcases χ⁻¹.even_or_odd with he | ho
-    · rw [he.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by linarith)
-    · rw [ho.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by simp; linarith)
   have hΛ : DirichletCharacter.completedLFunction χ⁻¹ s =
       DirichletCharacter.gammaFactor χ⁻¹ s * χ⁻¹.LFunction s := by
+    have hGs0 : DirichletCharacter.gammaFactor χ⁻¹ s ≠ 0 := by
+      rcases χ⁻¹.even_or_odd with he | ho
+      · rw [he.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by linarith)
+      · rw [ho.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by simp; linarith)
     rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ⁻¹ s (Or.inr hN)]
     field_simp
-  -- `|Γ(1 − s)| ≥ 0.0628 e^{−π|t|/2}`
-  have hG1 : 0.0628 * Real.exp (-(π * |z.im| / 2)) ≤ ‖DirichletCharacter.gammaFactor χ (1 - s)‖ := by
+  have hG1 : ‖(DirichletCharacter.gammaFactor χ (1 - s))⁻¹‖ ≤ 16 * Real.exp (π * |z.im| / 2) := by
     rcases χ.even_or_odd with he | ho
-    · rw [he.gammaFactor_def, ← hz]; exact norm_Gammaℝ_ge h1 (by linarith) him
+    · rw [he.gammaFactor_def, ← hz]; exact norm_inv_Gammaℝ_le h1 (by linarith)
     · rw [ho.gammaFactor_def, ← hz]
-      have := norm_Gammaℝ_ge (w := z + 1) (by simp; linarith) (by simp; linarith) (by simpa using him)
+      have := norm_inv_Gammaℝ_le (w := z + 1) (by simp; linarith) (by simp; linarith)
       simpa using this
-  have hG10 : 0 < ‖DirichletCharacter.gammaFactor χ (1 - s)‖ :=
-    lt_of_lt_of_le (by positivity) hG1
-  -- the functional equation
   have hL : χ.LFunction z = (N : ℂ) ^ (s - 1 / 2) * DirichletCharacter.rootNumber χ *
-      (DirichletCharacter.gammaFactor χ⁻¹ s * χ⁻¹.LFunction s) /
-        DirichletCharacter.gammaFactor χ (1 - s) := by
+      (DirichletCharacter.gammaFactor χ⁻¹ s * χ⁻¹.LFunction s) *
+        (DirichletCharacter.gammaFactor χ (1 - s))⁻¹ := by
     rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ z (Or.inr hN), hz,
-      hχ.completedLFunction_one_sub s, hΛ]
-  rw [hL, norm_div, norm_mul, norm_mul, norm_mul, norm_rootNumber hχ, mul_one,
+      hχ.completedLFunction_one_sub s, hΛ, div_eq_mul_inv]
+  rw [hL, norm_mul, norm_mul, norm_mul, norm_mul, norm_rootNumber hχ, mul_one,
     Complex.norm_natCast_cpow_of_pos (Nat.pos_of_ne_zero (NeZero.ne N))]
   have hNp : (N : ℝ) ^ (s - 1 / 2).re ≤ (N : ℝ) ^ 9 := by
     rw [← Real.rpow_natCast]
@@ -219,22 +278,11 @@ theorem norm_LFunction_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
       refine (Complex.norm_le_abs_re_add_abs_im s).trans ?_
       rw [hsim, abs_neg, abs_of_pos (by linarith : (0:ℝ) < s.re)]; linarith
     exact div_le_div₀ (by positivity) (mul_le_mul_of_nonneg_left hsn (by positivity)) (by norm_num) hσ1
-  rw [div_le_iff₀ hG10]
-  have hexp : Real.exp (π * |z.im| / 2) * Real.exp (-(π * |z.im| / 2)) = 1 := by
-    rw [← Real.exp_add]; simp
-  calc (N : ℝ) ^ (s - 1 / 2).re * (‖DirichletCharacter.gammaFactor χ⁻¹ s‖ * ‖χ⁻¹.LFunction s‖)
-      ≤ (N : ℝ) ^ 9 * (24 * (((N : ℝ) + 1) * (|z.im| + 9) / (3 / 4))) := by
+  calc (N : ℝ) ^ (s - 1 / 2).re * (‖DirichletCharacter.gammaFactor χ⁻¹ s‖ * ‖χ⁻¹.LFunction s‖) *
+        ‖(DirichletCharacter.gammaFactor χ (1 - s))⁻¹‖
+      ≤ (N : ℝ) ^ 9 * (24 * (((N : ℝ) + 1) * (|z.im| + 9) / (3 / 4))) *
+          (16 * Real.exp (π * |z.im| / 2)) := by
         gcongr
-    _ = 510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) * Real.exp (π * |z.im| / 2) *
-          ((32 / 510) * Real.exp (-(π * |z.im| / 2))) := by
-        rw [show 510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) * Real.exp (π * |z.im| / 2) *
-          ((32 / 510) * Real.exp (-(π * |z.im| / 2))) =
-          510 * (32 / 510) * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) *
-            (Real.exp (π * |z.im| / 2) * Real.exp (-(π * |z.im| / 2))) by ring, hexp]
-        norm_num; ring
-    _ ≤ 510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) * Real.exp (π * |z.im| / 2) *
-          ‖DirichletCharacter.gammaFactor χ (1 - s)‖ := by
-        gcongr
-        exact le_trans (by gcongr; norm_num) hG1
+    _ = 512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|z.im| + 9) * Real.exp (π * |z.im| / 2) := by ring
 
 end TernaryGoldbach.Explicit

@@ -5,8 +5,8 @@ import TernaryGoldbach.Explicit.Landau
 /-!
 # `L'/L(z, χ)` near height `T`: Landau's lemma for `L(s, χ)`
 
-For `χ` primitive, `χ ≠ 1`, `|T| ≥ 12`, `c = 2 + iT`: `|L| ≤ B_T` on `|z − c| ≤ 10`, with
-`B_T = 510 q⁹ (q + 1)(|T| + 22) e^{π(|T|+10)/2}` (`LGrowth` for `ℜz ≥ 1/4`, `LGrowthLeft` for
+For `χ` primitive, `χ ≠ 1`, `T ∈ ℝ`, `c = 2 + iT`: `|L| ≤ B_T` on `|z − c| ≤ 10`, with
+`B_T = 512 q⁹ (q + 1)(|T| + 22) e^{π(|T|+10)/2}` (`LGrowth` for `ℜz ≥ 1/4`, `LGrowthLeft` for
 `ℜz ≤ 1/4`), and `|L(c)| ≥ 0.355`. Hence, for `|z − c| ≤ 5/2` (`ℜz ∈ [−1/2, 9/2]` on the line
 `ℑz = T`), `|L'/L(z) − Σ_{|ρ − c| < 5} m_ρ/(z − ρ)| ≤ 4.8 log(B_T/0.355)`, and there are at most
 `log(B_T/0.355)/log 2` zeros in `|ρ − c| ≤ 5`.
@@ -17,11 +17,11 @@ open scoped Real
 
 namespace TernaryGoldbach.Explicit
 
-/-- `B_T = 510 q⁹ (q + 1)(|T| + 22) e^{π(|T|+10)/2}`. -/
+/-- `B_T = 512 q⁹ (q + 1)(|T| + 22) e^{π(|T|+10)/2}`. -/
 noncomputable def BT (N : ℕ) (T : ℝ) : ℝ :=
-  510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|T| + 22) * Real.exp (π * (|T| + 10) / 2)
+  512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) * (|T| + 22) * Real.exp (π * (|T| + 10) / 2)
 
-theorem one_le_BT {N : ℕ} [NeZero N] (T : ℝ) : 510 ≤ BT N T := by
+theorem one_le_BT {N : ℕ} [NeZero N] (T : ℝ) : 512 ≤ BT N T := by
   have hN1 : (1:ℝ) ≤ N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
   have h9 : (1:ℝ) ≤ (N : ℝ) ^ 9 := one_le_pow₀ hN1
   have he : (1:ℝ) ≤ Real.exp (π * (|T| + 10) / 2) := Real.one_le_exp (by positivity)
@@ -33,7 +33,7 @@ theorem one_le_BT {N : ℕ} [NeZero N] (T : ℝ) : 510 ≤ BT N T := by
   nlinarith
 
 theorem norm_L_le_BT {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) {T : ℝ} (hT : 12 ≤ |T|) {w : ℂ} (hw : w ∈ closedBall (2 + T * I) 10) :
+    (hχ1 : χ ≠ 1) {T : ℝ} {w : ℂ} (hw : w ∈ closedBall (2 + T * I) 10) :
     ‖χ.LFunction w‖ ≤ BT N T := by
   have hN1 : (1:ℝ) ≤ N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
   rw [mem_closedBall, dist_eq_norm] at hw
@@ -44,20 +44,16 @@ theorem norm_L_le_BT {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ :
     Complex.add_im, Complex.im_ofNat, Complex.mul_im, zero_add, add_zero] at hre him
   have hwim1 : |w.im| ≤ |T| + 10 := by
     have := abs_sub_abs_le_abs_sub w.im T; linarith [abs_sub_comm w.im T]
-  have hwim2 : |T| - 10 ≤ |w.im| := by
-    have := abs_sub_abs_le_abs_sub T w.im; rw [abs_sub_comm] at this; linarith
-  have hwim0 : w.im ≠ 0 := by
-    intro h; rw [h, abs_zero] at hwim2; linarith
   have hre1 : -8 ≤ w.re := by linarith [neg_abs_le (w.re - 2)]
   have hre2 : w.re ≤ 12 := by linarith [le_abs_self (w.re - 2)]
   have he1 : Real.exp (π * |w.im| / 2) ≤ Real.exp (π * (|T| + 10) / 2) := by
     refine Real.exp_le_exp.2 ?_
     have := mul_le_mul_of_nonneg_left hwim1 Real.pi_pos.le; linarith
   rcases le_total w.re (1 / 4) with h | h
-  · refine (norm_LFunction_left hχ hχ1 hre1 h hwim0).trans ?_
+  · refine (norm_LFunction_left hχ hχ1 hre1 h).trans ?_
     unfold BT
     have h1 : |w.im| + 9 ≤ |T| + 22 := by linarith
-    have hA : 0 ≤ 510 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) := by positivity
+    have hA : 0 ≤ 512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) := by positivity
     exact mul_le_mul (mul_le_mul_of_nonneg_left h1 hA) he1 (by positivity) (by positivity)
   · refine (norm_LFunction_le hχ1 (by linarith)).trans ?_
     have hwn : ‖w‖ ≤ |T| + 22 := by
@@ -75,8 +71,8 @@ theorem norm_L_le_BT {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ :
     unfold BT
     have hp : 0 ≤ ((N : ℝ) + 1) * (|T| + 22) := by positivity
     calc 4 * ((N : ℝ) + 1) * (|T| + 22) = 4 * (((N : ℝ) + 1) * (|T| + 22)) := by ring
-      _ ≤ 510 * (N : ℝ) ^ 9 * (((N : ℝ) + 1) * (|T| + 22)) * Real.exp (π * (|T| + 10) / 2) := by
-        have : (4:ℝ) ≤ 510 * (N : ℝ) ^ 9 * Real.exp (π * (|T| + 10) / 2) := by nlinarith
+      _ ≤ 512 * (N : ℝ) ^ 9 * (((N : ℝ) + 1) * (|T| + 22)) * Real.exp (π * (|T| + 10) / 2) := by
+        have : (4:ℝ) ≤ 512 * (N : ℝ) ^ 9 * Real.exp (π * (|T| + 10) / 2) := by nlinarith
         nlinarith
       _ = _ := by ring
 
@@ -98,7 +94,7 @@ theorem norm_L_center_ge {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (T
 
 /-- **Landau for `L(s, χ)`** at `c = 2 + iT`, `R = 10`. -/
 theorem logDeriv_L_near {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) {T : ℝ} (hT : 12 ≤ |T|) {z : ℂ} (hz : z ∈ closedBall (2 + T * I) (10 / 4))
+    (hχ1 : χ ≠ 1) {T : ℝ} {z : ℂ} (hz : z ∈ closedBall (2 + T * I) (10 / 4))
     (hLz : χ.LFunction z ≠ 0) :
     ‖logDeriv χ.LFunction z - ∑ u ∈ zerosIn χ.LFunction (2 + T * I) 10 (10 / 2),
         ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u)‖ ≤
@@ -112,7 +108,7 @@ theorem logDeriv_L_near {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h�
     have hpi := Real.pi_lt_d2
     nlinarith [Real.pi_pos]
   have h := landau (DirichletCharacter.differentiable_LFunction hχ1) hc0 (by norm_num : (0:ℝ) < 10)
-    (fun w hw => norm_L_le_BT hχ hχ1 hT hw) hcB hz hLz
+    (fun w hw => norm_L_le_BT hχ hχ1 hw) hcB hz hLz
   refine h.trans ?_
   have hpos : 0 < BT N T / ‖χ.LFunction (2 + T * I)‖ := div_pos (by linarith) (by linarith)
   have hle : Real.log (BT N T / ‖χ.LFunction (2 + T * I)‖) ≤ Real.log (BT N T / 0.355) :=
@@ -123,7 +119,7 @@ theorem logDeriv_L_near {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (h�
 
 /-- **Zero count** in `|ρ − (2 + iT)| ≤ 5`: at most `log(B_T/0.355)/log 2`. -/
 theorem zero_count_5 {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) {T : ℝ} (hT : 12 ≤ |T|) :
+    (hχ1 : χ ≠ 1) (T : ℝ) :
     ((∑ᶠ u, MeromorphicOn.divisor χ.LFunction (closedBall (2 + T * I) |(5 : ℝ)|) u : ℤ) : ℝ) ≤
       Real.log (BT N T / 0.355) / Real.log 2 := by
   have hc := norm_L_center_ge χ T
@@ -133,7 +129,7 @@ theorem zero_count_5 {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ :
   have hf : AnalyticOnNhd ℂ χ.LFunction (closedBall (2 + T * I) |(10 : ℝ)|) := fun z _ =>
     (DirichletCharacter.differentiable_LFunction hχ1).analyticAt z
   have h := hf.sum_divisor_le (r := 5) (R := 10) (by norm_num) (by norm_num) (by linarith) hc0
-    (fun w hw => norm_L_le_BT hχ hχ1 hT (sphere_subset_closedBall (by
+    (fun w hw => norm_L_le_BT hχ hχ1 (sphere_subset_closedBall (by
       rwa [abs_of_pos (by norm_num : (0:ℝ) < 10)] at hw)))
   refine h.trans ?_
   have hpos : 0 < BT N T / ‖χ.LFunction (2 + T * I)‖ := div_pos (by linarith) (by linarith)
