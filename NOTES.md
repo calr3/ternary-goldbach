@@ -123,6 +123,30 @@ chosen `≥ 1/(2N+2)` from all ordinates, by a measure argument) and the line `�
 7. *Dusart*: explicit formula for `ζ` + zero-free region (3-4-1 with step 4) + RH verification (numerical
    axiom) + numerics; or weaken `dusart_theta` to what the uses need.
 
+## Plan: replacing `dusart_theta` (2026-11-01)
+
+Dusart's `|θ(x) − x| < x/log³x` for all `x ≥ 89 967 803` needs zero-density estimates (Faber–Kadiri /
+Ramaré) beyond `x ≈ e^{4000}`; we do not formalize those. Instead:
+1. **Numerical axioms** (computer-verified, finite range): [Büthe 2018, Thm 2] (arXiv:1511.02032, zeros to
+   `10¹¹`): `0.05√x < x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; [Platt–Trudgian 2021] (arXiv:2004.09765):
+   RH up to `3·10¹²`.
+2. **Digamma**: `ψ(s) = ∫₀^∞ (e^{−u} − (1+u)^{−s}) du/u` (Fubini + Frullani), so
+   `Re ψ(σ+it) − ψ(σ) = ∫₀^∞ e^{−(σ−1)v}(1 − cos tv)/(e^v − 1) dv ≤ log|t| + O(1)`.
+3. **Hadamard-type identity** without the product theorem: for `ξ = ½s(s−1)π^{−s/2}Γ(s/2)ζ(s)` and squares
+   `R_k` symmetric about `ℜs = 1/2` at good heights, `ξ'/ξ(s) − ξ'/ξ(s₀) = lim Σ_{ρ∈R_k} (1/(s−ρ) − 1/(s₀−ρ))`
+   (kernel `O(|w|^{−2})`, `|ξ'/ξ| ≪ log² T` on the squares: polynomial `B''_ζ` + FE). With `s₀` on the critical
+   line, `Re ξ'/ξ(s₀) = 0` and the `R_k` sums of `Re 1/(s₀−ρ)` vanish (pairing `ρ ↔ 1 − ρ̄`), so
+   `Re ξ'/ξ(s) = lim Σ_{R_k} Re 1/(s−ρ) ≥ Σ_{ρ∈S} Re 1/(s−ρ)` for `ℜs > 1`.
+4. **Zero-free region** (3-4-1 + Stechkin's trick, target `R ≈ 10`) for `|t| ≥ 3·10¹²`.
+5. **ψ via a Gaussian-smoothed sandwich** (`φ± = Φ((±Aδ − log t)/δ)` minus the part near 0) in
+   `explicit_formula_zeta`; zeros on the line by windows (sup per window, not Sobolev), tails by Gaussian
+   decay, off-line zeros above `3·10¹²` by the zero-free region.
+6. **The new interface** (Python model `zf.py` in the session scratchpad): relative error `1/log³x` for
+   `10^{10} ≤ x ≤ e^{3900}`, a plateau `≈ 1.5·10⁻¹¹` up to `e^{L₁}` (`L₁ ≈ 10⁴` for `R ≈ 10`), then fast decay.
+7. **Consumers**: `LambdaMu` (`psi_upper_of`, `psi_lower2`, `psi_lower_all`, `thetaN_close`, …),
+   `MertensProduct` (`psi_err`, `F_large`), `MoebiusBound.K_partC` (the plateau costs
+   `≈ ε·L₁²`; budget: `K ≤ 0.54` has slack `8·10⁻⁴`, `abs_ls_big` allows `K ≤ 0.543`).
+
 ## Status (2026-11-01, latest)
 
 * `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,
