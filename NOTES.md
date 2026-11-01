@@ -244,9 +244,9 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
    ≤ |g'|₂²/H²`; then `|η₊ − η◦|₂ ≤ sup(s^{3/2}e^{−s²/2}) |g'|₂/H` (`|g'|₂² = ∫₀² t h'(t)² dt ≈ 6.92`).
 4. *Main term* — **DONE** (`EtaPlusL2.lean`, `integral_fourier_etaPlus_Ioo_bounds`: `[0.6392, 0.640208]` for `T ≥ 4`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);
    for `T ≥ 4`, `|η₊|₂² − tail ≤ ∫_{|δ|<T}|η̂₊|² ≤ |η₊|₂²`, `tail ≤ 2·98/(8π)⁴ + 2|η₊−η◦|₂²` (Plancherel, done).
-5. *Coprime split* (`CoprimeSplit.lean`): `|S − S'_q| ≤ B ≪ log x` (prime powers of `p ≤ 2r`), `S'_q` over `(n, q) = 1`;
+5. *Coprime split* — **DONE** (`ArcChars.lean`, per modulus: `norm_S_sub_coprime_le`, `≤ 10⁻¹⁵x`): `|S − S'_q| ≤ B ≪ log x` (prime powers of `p ≤ 2r`), `S'_q` over `(n, q) = 1`;
    `|S|² ≤ (1+t)|S'|² + (1+1/t)B²` both ways.
-6. *Characters per `q`* (`ArcChars.lean`): `totient_mul_sum_units`, `norm_sq_gaussSum`, `cond ψ⁻¹ = cond ψ`,
+6. *Characters per `q`* — **DONE** (`ArcChars.lean`, `arc_chars`): `totient_mul_sum_units`, `norm_sq_gaussSum`, `cond ψ⁻¹ = cond ψ`,
    `S'_ψ = S'_{ψ*}` and `|S'_{ψ*} − S_{ψ*}| ≤ B`; Thm 7.1.4 (`thm_7_1_4_one/odd/even`) on `ψ*`: principal part
    `μ²(q)/φ(q) |S'(β)|²`, non-principal `≤ (E x + √(2r) B)²`, `E ≤ 2.3992·10⁻⁸`.
 7. *Assembly* (`L2Major.lean`): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
