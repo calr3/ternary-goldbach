@@ -350,4 +350,177 @@ theorem sum_cubic_error {s : Finset ℕ} (Sp Ss eb : ℕ → ℂ) (Mp Ms : ℂ) 
   rw [e3] at hA
   nlinarith
 
+/-! ## The main term -/
+
+/-- `η = η₂ *_M φ` (`etaU`) as a complex function. -/
+noncomputable def etaUC (u : ℝ) : ℂ := (etaU u : ℂ)
+
+theorem fourier_etaSC (ξ : ℝ) : 𝓕 etaSC ξ = (κ⁻¹ : ℂ) * 𝓕 etaUC (ξ / κ) := by
+  have h := TernaryGoldbach.fourier_comp_affine etaUC kappa_pos 0 ξ
+  simp only [add_zero, zero_mul, zero_div, TernaryGoldbach.e_zero, one_mul] at h
+  push_cast at h
+  rw [← h]; rfl
+
+/-- `η̂(−βy) y = η̂_*(−βx) x` (`y = x/κ`). -/
+theorem As_eq {x : ℝ} (β : ℝ) :
+    𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ) = 𝓕 etaSC (-(β * x)) * x := by
+  rw [fourier_etaSC]
+  have hκ : (κ : ℂ) ≠ 0 := by exact_mod_cast kappa_pos.ne'
+  have e1 : -(β * x) / κ = -(β * (x / κ)) := by ring
+  rw [e1]; push_cast; field_simp; rw [mul_comm]; rfl
+
+theorem e_eq_cexp (N β x : ℝ) (hx : x ≠ 0) :
+    e (-(N * β)) = Complex.exp (↑(2 * π * (-(β * x)) * (N / x)) * Complex.I) := by
+  have hx' : (x : ℂ) ≠ 0 := by exact_mod_cast hx
+  unfold TernaryGoldbach.e; congr 1; push_cast; field_simp
+
+/-- **The completed main term**: `∫_ℝ (η̂◦(−βx)x)² η̂_*(−βx)x e(−Nβ) dβ = x² C_{η◦,η_*}(N/x)`. -/
+theorem integral_full_main {x : ℝ} (hx : 0 < x) (N : ℝ) :
+    ∫ β, (𝓕 etaOC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β)) =
+      (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ) := by
+  set g : ℝ → ℂ := fun ξ => Complex.exp (↑(2 * π * ξ * (N / x)) * Complex.I) *
+    (𝓕 etaOC ξ * 𝓕 etaOC ξ * 𝓕 etaSC ξ) with hg
+  have hid := fourier_identity (N / x)
+  have hpt : ∀ β : ℝ, (𝓕 etaOC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β)) =
+      (x : ℂ) ^ 3 * g ((-x) * β) := by
+    intro β
+    simp only [hg]
+    rw [e_eq_cexp N β x hx.ne', show (-x) * β = -(β * x) by ring]
+    ring
+  simp_rw [hpt]
+  have hid' : ∫ ξ, g ξ = (Cmain (N / x) : ℂ) := hid
+  rw [integral_const_mul, Measure.integral_comp_mul_left g (-x), hid']
+  rw [abs_inv, abs_neg, abs_of_pos hx, Complex.real_smul]
+  have hx' : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
+  push_cast; field_simp
+
+/-! ## `‖η◦‖₂` and `‖η₊ − η◦‖₂` -/
+
+theorem integral_sq_etaO_bounds :
+    0.63965 ≤ ∫ t, etaO t ^ 2 ∧ ∫ t, etaO t ^ 2 ≤ 0.6408 := by
+  have hP := integral_sq_etaPlus_bounds
+  have hD := integral_sq_etaPlus_sub_etaO_le'
+  have iP : Integrable fun t => etaPlus t ^ 2 :=
+    ((memLp_two_iff_integrable_sq_norm measurable_etaPlus.aestronglyMeasurable).1 memLp_etaPlus).congr
+      (Filter.Eventually.of_forall fun t => by simp [Real.norm_eq_abs, sq_abs])
+  have iD : Integrable fun t => (etaPlus t - etaO t) ^ 2 := by
+    have h := memLp_etaPlus.sub memLp_etaO
+    exact ((memLp_two_iff_integrable_sq_norm h.aestronglyMeasurable).1 h).congr
+      (Filter.Eventually.of_forall fun t => by simp [Real.norm_eq_abs, sq_abs])
+  constructor
+  · -- `η◦² ≥ (1 − t) η₊² − (1/t)(η₊ − η◦)²`, `t = 5·10⁻⁴`
+    have hpt : ∀ t, (1 - 5e-4) * etaPlus t ^ 2 - 2000 * (etaPlus t - etaO t) ^ 2 ≤ etaO t ^ 2 := by
+      intro t; nlinarith [sq_nonneg (5e-4 * etaPlus t - (etaPlus t - etaO t)), sq_nonneg (etaPlus t)]
+    have iL : Integrable fun t => (1 - 5e-4) * etaPlus t ^ 2 - 2000 * (etaPlus t - etaO t) ^ 2 :=
+      (iP.const_mul _).sub (iD.const_mul _)
+    have := integral_mono iL integrable_etaO_sq hpt
+    rw [integral_sub (iP.const_mul _) (iD.const_mul _), integral_const_mul, integral_const_mul] at this
+    linarith [hP.1]
+  · have hpt : ∀ t, etaO t ^ 2 ≤ (1 + 5e-4) * etaPlus t ^ 2 + 2001 * (etaPlus t - etaO t) ^ 2 := by
+      intro t; nlinarith [sq_nonneg (5e-4 * etaPlus t + (etaPlus t - etaO t)), sq_nonneg (etaPlus t)]
+    have iU : Integrable fun t => (1 + 5e-4) * etaPlus t ^ 2 + 2001 * (etaPlus t - etaO t) ^ 2 :=
+      (iP.const_mul _).add (iD.const_mul _)
+    have := integral_mono integrable_etaO_sq iU hpt
+    rw [integral_add (iP.const_mul _) (iD.const_mul _), integral_const_mul, integral_const_mul] at this
+    norm_num at hD
+    linarith [hP.2]
+
+/-! ## `L²` facts for the main term -/
+
+theorem etaU_le_six (u : ℝ) : etaU u ≤ 6.2 := by
+  rcases le_or_gt u 0 with h | h
+  · rw [etaU_of_nonpos h]; norm_num
+  · exact (le_abs_self _).trans (TernaryGoldbach.MinorArcs.abs_etaU_le_const h)
+
+theorem measurable_etaU : Measurable etaU := by
+  have : etaU = fun u => ∫ w in Ioi (0:ℝ), TernaryGoldbach.Helfgott.eta2 (u / w) *
+      TernaryGoldbach.Helfgott.phi w / w := rfl
+  rw [this]
+  have h : Measurable (Function.uncurry fun u w : ℝ => TernaryGoldbach.Helfgott.eta2 (u / w) *
+      TernaryGoldbach.Helfgott.phi w / w) :=
+    ((TernaryGoldbach.Helfgott.continuous_eta2.measurable.comp (measurable_fst.div measurable_snd)).mul
+      (continuous_phi.measurable.comp measurable_snd)).div measurable_snd
+  exact (h.stronglyMeasurable.integral_prod_right' (ν := (volume : Measure ℝ).restrict (Ioi 0))).measurable
+
+theorem integrable_etaU_sq : Integrable fun u => etaU u ^ 2 := by
+  refine Integrable.mono' (integrable_etaU.const_mul 6.2) (measurable_etaU.pow_const 2).aestronglyMeasurable
+    (Filter.Eventually.of_forall fun u => ?_)
+  rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), sq]
+  exact mul_le_mul_of_nonneg_right (etaU_le_six u) (etaU_nonneg u)
+
+theorem integral_etaU_sq_le : ∫ u, etaU u ^ 2 ≤ 7.78 := by
+  have h1 : ∫ u, etaU u ^ 2 ≤ ∫ u, 6.2 * etaU u :=
+    integral_mono integrable_etaU_sq (integrable_etaU.const_mul 6.2) fun u => by
+      rw [sq]; exact mul_le_mul_of_nonneg_right (etaU_le_six u) (etaU_nonneg u)
+  rw [integral_const_mul, integral_etaU] at h1
+  have : √(π / 2) ≤ 1.2534 := by
+    rw [Real.sqrt_le_left (by norm_num)]; have := Real.pi_lt_d4; linarith
+  linarith
+
+theorem integrable_etaUC : Integrable etaUC := integrable_etaU.ofReal
+
+theorem memLp_etaUC : MemLp etaUC 2 := by
+  refine (memLp_two_iff_integrable_sq_norm integrable_etaUC.aestronglyMeasurable).2 ?_
+  refine integrable_etaU_sq.congr (Filter.Eventually.of_forall fun u => ?_)
+  simp [etaUC, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+
+theorem integral_norm_sq_fourier_etaUC_le : ∫ ξ, ‖𝓕 etaUC ξ‖ ^ 2 ≤ 7.78 := by
+  rw [TernaryGoldbach.integral_norm_sq_fourier integrable_etaUC memLp_etaUC]
+  have : (fun u => ‖etaUC u‖ ^ 2) = fun u => etaU u ^ 2 := by
+    ext u; simp [etaUC, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+  rw [this]; exact integral_etaU_sq_le
+
+theorem norm_fourier_etaUC_le (ξ : ℝ) : ‖𝓕 etaUC ξ‖ ≤ 1.2534 := by
+  refine (Real.norm_fourier_le_integral_norm etaUC ξ).trans ?_
+  have : (fun u => ‖etaUC u‖) = etaU := by
+    ext u; simp [etaUC, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (etaU_nonneg u)]
+  rw [this, integral_etaU, Real.sqrt_le_left (by norm_num)]
+  have := Real.pi_lt_d4; linarith
+
+/-- `∫_ℝ |f((−c)β)|² dβ = (1/c) ∫ |f|²` for `c > 0`. -/
+theorem integral_norm_sq_comp_mul {f : ℝ → ℂ} {c : ℝ} (hc : 0 < c) :
+    ∫ β, ‖f (-(β * c))‖ ^ 2 = c⁻¹ * ∫ ξ, ‖f ξ‖ ^ 2 := by
+  have h := Measure.integral_comp_mul_left (fun ξ => ‖f ξ‖ ^ 2) (-c)
+  rw [show (fun β => ‖f (-(β * c))‖ ^ 2) = fun β => ‖f (-c * β)‖ ^ 2 by ext β; ring_nf, h,
+    abs_inv, abs_neg, abs_of_pos hc, smul_eq_mul]
+
+theorem integral_sq_fourier_sub_le :
+    ∫ ξ, ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2 ≤ 1.15e-7 := by
+  set D : ℝ → ℂ := fun t => etaPC t - etaOC t
+  have hD1 : Integrable D := integrable_etaPC.sub integrable_etaOC
+  have hD2 : MemLp D 2 := memLp_etaPC.sub memLp_etaOC
+  have e : (fun ξ => ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2) = fun ξ => ‖𝓕 D ξ‖ ^ 2 := by
+    ext ξ; rw [fourier_sub_of_integrable integrable_etaPC integrable_etaOC]
+  rw [e, TernaryGoldbach.integral_norm_sq_fourier hD1 hD2]
+  have : (fun t => ‖D t‖ ^ 2) = fun t => (etaPlus t - etaO t) ^ 2 := by
+    ext t; simp only [D, etaPC, etaOC]
+    rw [← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+  rw [this]
+  have := integral_sq_etaPlus_sub_etaO_le'
+  norm_num at this ⊢; linarith
+
+theorem integral_sq_fourier_add_le :
+    ∫ ξ, ‖𝓕 etaPC ξ + 𝓕 etaOC ξ‖ ^ 2 ≤ 2.5621 := by
+  have iP := integrable_norm_sq_fourier integrable_etaPC memLp_etaPC
+  have iO := integrable_norm_sq_fourier integrable_etaOC memLp_etaOC
+  have hpt : ∀ ξ, ‖𝓕 etaPC ξ + 𝓕 etaOC ξ‖ ^ 2 ≤ 2 * ‖𝓕 etaPC ξ‖ ^ 2 + 2 * ‖𝓕 etaOC ξ‖ ^ 2 := by
+    intro ξ
+    have := norm_add_le (𝓕 etaPC ξ) (𝓕 etaOC ξ)
+    nlinarith [norm_nonneg (𝓕 etaPC ξ + 𝓕 etaOC ξ), norm_nonneg (𝓕 etaPC ξ), norm_nonneg (𝓕 etaOC ξ),
+      sq_nonneg (‖𝓕 etaPC ξ‖ - ‖𝓕 etaOC ξ‖)]
+  have i2 : Integrable fun ξ => 2 * ‖𝓕 etaPC ξ‖ ^ 2 + 2 * ‖𝓕 etaOC ξ‖ ^ 2 :=
+    (iP.const_mul 2).add (iO.const_mul 2)
+  have hint : Integrable fun ξ => ‖𝓕 etaPC ξ + 𝓕 etaOC ξ‖ ^ 2 :=
+    i2.mono' (((continuous_fourier_etaPC.add (VectorFourier.fourierIntegral_continuous
+      Real.continuous_fourierChar (by fun_prop) integrable_etaOC)).norm.pow 2).aestronglyMeasurable)
+      (Filter.Eventually.of_forall fun ξ => by
+        rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]; exact hpt ξ)
+  have h := integral_mono hint i2 hpt
+  rw [integral_add (iP.const_mul 2) (iO.const_mul 2), integral_const_mul, integral_const_mul,
+    integral_norm_sq_fourier_etaPC, TernaryGoldbach.integral_norm_sq_fourier integrable_etaOC memLp_etaOC] at h
+  have e : (fun t => ‖etaOC t‖ ^ 2) = fun t => etaO t ^ 2 := by
+    ext t; simp [etaOC, Complex.norm_real, Real.norm_eq_abs, sq_abs]
+  rw [e] at h
+  linarith [integral_sq_etaPlus_bounds.2, integral_sq_etaO_bounds.2]
+
 end TernaryGoldbach.MajorArcs
