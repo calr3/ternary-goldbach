@@ -1,6 +1,7 @@
 import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Explicit.EtaPlusSqBound
 import TernaryGoldbach.Explicit.EtaPlusCg
+import TernaryGoldbach.MajorArcs.EtaPlusSqLog
 
 /-!
 # [B, Prop 9.5.1] (proved, our constants) and [B, Prop 7.1.5]
@@ -8,7 +9,7 @@ import TernaryGoldbach.Explicit.EtaPlusCg
 `Σ Λ(n) (log n) η₊²(n/x) = x ∫ η₊²(t) log(xt) dt + O*(10⁻⁸) x log x` for `x ≥ 4.9·10²⁶`, under RH up to
 `500` (from `platt_odd`, `q = 1`): `log n = log x + log(n/x)` splits the sum into the `ζ` explicit formulas
 for `η₊²` and `η₊² log` (`Explicit/EtaPlusSqBound.lean`, `T₀ = 500`). With the value of the integral
-([B, (9.94)], numerical axiom) this gives [B, Prop 7.1.5].
+([B, (9.94)], `EtaPlusSqLog.lean`) this gives [B, Prop 7.1.5].
 -/
 
 open Real Set MeasureTheory
@@ -18,14 +19,6 @@ namespace TernaryGoldbach.MajorArcs
 
 open TernaryGoldbach.Helfgott (etaPlus)
 open TernaryGoldbach.Explicit (Cg aH Z3g ZLg E1g E2g c3g BPz2 VgL Jl SsumG phi1 phi2 cA_sq_le)
-
-/-- **Numerical axiom** ([B, (9.94)]): `∫_0^∞ η₊²(t) log(xt) dt = (0.640206 + O*(1.95·10⁻⁶)) log x −
-0.021095 + O*(5.3·10⁻⁷)` for `x ≥ 1`. [B] obtains it from rigorous numerical integration (VNODE-LP) of
-`η◦` (`∫ η◦² = 0.64020599736635…`, `∫ η◦² log t = −0.021094778698867…`) and the bounds (A.23), (A.24) on
-`η₊ − η◦`. -/
-axiom integral_etaPlus_sq_log {x : ℝ} (hx : 1 ≤ x) :
-    |(∫ t in Ioi 0, etaPlus t ^ 2 * Real.log (x * t)) - (0.640206 * Real.log x - 0.021095)| ≤
-      1.95e-6 * Real.log x + 5.3e-7
 
 theorem log_ge_1e12 {x : ℝ} (hx : 1e12 ≤ x) : 27 ≤ Real.log x := by
   have h : (27 : ℝ) ≤ Real.log 1e12 := by

@@ -227,6 +227,14 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
   Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 5).
   ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [B]).
+* (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s constants; new axiom `etaO_numerics`:
+  * expand `(g + D)²` in `u = log t`;
+  * cross terms by Parseval (`integral_conj_mul_fourier` via `Lp.inner_fourier_eq`, and Fubini for
+    `g_H`), with the general tail bound `tail_fourier_le_deriv2`;
+  * weights in the form `W(u) = eᵘ 1_{[0,2]}(eᵘ) k(eᵘ)` (`IF`) for integrability, with `t log t`
+    continuous for the `log` weight;
+  * computation: `scripts/rigorous/eta_circ_rig.py` (Arb, under a second).
+  ternary_goldbach now depends on 25 axioms (16 our own, 7 published, 2 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

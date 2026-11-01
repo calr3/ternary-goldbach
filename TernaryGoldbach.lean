@@ -23,6 +23,7 @@ import TernaryGoldbach.MajorArcs.ArcsEq
 import TernaryGoldbach.MajorArcs.EtaCirc
 import TernaryGoldbach.MajorArcs.HHFourier
 import TernaryGoldbach.MajorArcs.HHFourier2
+import TernaryGoldbach.MajorArcs.EtaPlusSqLog
 import TernaryGoldbach.MajorArcs.CMain
 import TernaryGoldbach.MajorArcs.FourierMain
 import TernaryGoldbach.MajorArcs.Singular

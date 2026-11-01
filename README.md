@@ -9,14 +9,13 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 25 explicitly stated
 axioms besides Lean's standard three. They are:
-* 15 finite computations of our own, each checked in rigorous interval arithmetic
+* 16 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
 * 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms);
-* 3 numerical results of [B]:
-  * (9.94) and (5.31) on its computed range are re-checked by float computations; (9.94)'s stated
-    error terms are not proved by [B]'s argument, which drops a factor 2 (see `AXIOMS.md`);
+* 2 numerical results of [B]:
+  * (5.31) on its computed range is re-checked by a float computation;
   * the rest rests on [B]: Prop 12.2.4, which uses Ramaré's explicit estimate, and the analytic
     range of (5.31).
 
@@ -41,7 +40,7 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.Helfgott.prime_ladder_input,
- TernaryGoldbach.MajorArcs.integral_etaPlus_sq_log,
+ TernaryGoldbach.MajorArcs.etaO_numerics,
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
  TernaryGoldbach.MajorArcs.sum_odd_mu_sq_div_totient,
@@ -73,7 +72,9 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 * the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`.
 
 (B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
-range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`).
+range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
+proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`, `etaO_numerics`);
+[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5).
 
 ## How the proof is organized
 
