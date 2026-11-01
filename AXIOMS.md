@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 28 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 26 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -14,17 +14,17 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ## Findings
 
-1. **[B, (5.36)] is false as stated. Fixed: `integral_H2_le` is now its corrected form.**
+1. **[B, (5.36)] is false as stated. Fixed: we use, and now prove, a corrected form (`integral_H2_le`).**
    * The book's (5.36) inherits an error in [B, (5.32)] for `v = 2`.
    * Our `T2` is exactly the sum in [B, (5.19)]. Its values agree with [B]'s stated
      `G₂(S) = 1 − 1/S` on `[1, 2)`, and `T₂(S) = 1/2` exactly on `[2, 3)`.
    * Exactly, `∫₁⁴ T₂(S) dS/S = (log 2 − 1/2) + ½ log(3/2) + ⅓ log(4/3) + 1/24 = 0.53344`. This is
      more than `0.37273 log 4 = 0.51671`, and (5.32) claims the bound for `G₂ ≥ T₂`.
    * Hence `∫₁⁴ H₂(S)/S dS = 0.21619 > 0.15107 log 4 = 0.20943`.
-   * The axiom now states `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for all `T ≥ 1`. This is checked
-     rigorously by `scripts/h2_integral_check.py` (exact rationals and interval logs; the supremum
-     of the excess is `0.023059`). Because `H₂ = 0.15107` for `S ≥ 16`, the excess is constant from
-     `T = 16` on.
+   * `integral_H2_le` states `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for all `T ≥ 1`. The
+     supremum of the excess is `0.023059`. Because `H₂ = 0.15107` for `S ≥ 16`, the excess is
+     constant from `T = 16` on. It is now a theorem (`MinorArcs/H2Bound.lean`; see "Removed
+     axioms"); `scripts/h2_integral_check.py` is an independent check in interval arithmetic.
    * Propagation:
      * The Type II totals (`typeII_637`, `typeII_640`, `typeII_gen`, `typeII_split_gen`) have
        `0.60428 Λ₀ + 0.0924 + 8ζ³√(x/V)/U` in place of `0.60428 Λ₀ + 8ζ³√(x/V)/U`.
@@ -104,7 +104,7 @@ All three come from `psi_extra_check.py`.
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
-### Results of Helfgott's book [B] (7)
+### Results of Helfgott's book [B] (5)
 
 The book obtains these by interval arithmetic or rigorous integration. Some of them also contain
 analytic arguments. The Lean definitions involved were compared with the book's:
@@ -118,8 +118,6 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 | Axiom | [B] | Content | Independent check |
 |---|---|---|---|
 | `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | `scripts/t2_check.py` (float, grid, all of `[16, 10⁵]`): max `0.371249` at `S = 16` |
-| `MinorArcs.integral_H2_le` | (5.36), **corrected** | `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` | **rigorous** (`scripts/h2_integral_check.py`); [B]'s version without `+0.0231` is false (Finding 1) |
-| `MinorArcs.H2_le` | (5.37) | `H₂ ≤ 2/π²`, i.e. `T₂ ≤ 1/2` on `S < 16` | **rigorous** (`scripts/h2_integral_check.py`, exact): holds, with equality on `[2, 3)` |
 | `MinorArcs.eta2_fourier_bound'` | Lemma B.1.2, (B.6) | `\|(η₂'')^\|_∞ ≤ 31.521` | float, `t < 700`, step `5·10⁻⁴`: max `31.52065` at `t ≈ 17.415`; [B] covers `\|t\| ≥ 655` analytically |
 | `MinorArcs.eta2log_fourier_bound` | Lemma B.2.3, (B.11) | `\|(η_(ρ)'')^\|_∞ < 31.521 log ρ`, `ρ ≥ 4` | float, at `ρ = 4`: max `16.34 log 4`. For `ρ > 4` it follows from this and (B.6), because the bound is convex in `1/log ρ` |
 | `MajorArcs.integral_etaPlus_sq_log` | (9.94) | `∫ η₊² log(xt) dt` | `scripts/eta_plus_check.py` computes `η₊` itself (FFT band limit in `log t`, float): `∫ η₊² = 0.640205997…` and `∫ η₊² log t = −0.021094779…`, within `2.6·10⁻⁹` and `2.2·10⁻⁷` of (9.94)'s values (allowed: `1.95·10⁻⁶`, `5.3·10⁻⁷`); `‖η₊ − η◦‖₂² = 3.9·10⁻¹³` |
@@ -131,8 +129,7 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 * **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
   in the papers.
-* **Results of [B] (7):**
-  * `H2_le` and the corrected `integral_H2_le` are re-checked rigorously by our scripts.
+* **Results of [B] (5):**
   * (B.6), (B.11), (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float
     computations.
   * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), (5.31) for
@@ -172,10 +169,20 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     * For `⌊X⌋ < 200`: the bound is concave on each `[n, n+1]`, so both endpoints are checked by the
       kernel; for `n = 2` the tail sum to `3000` is checked in blocks of 250.
 
+* `H2_le` ([B, (5.37)]) and the corrected (5.36) `integral_H2_le` are now proofs
+  (`MinorArcs/H2Bound.lean`):
+  * By [B, (5.19)] (`integral_g2`), `T₂(S) = α_n + β_n/S` on `[n, n+1)`. `α_n` and `β_n` are
+    rationals; the kernel evaluates them for `n ≤ 15` from tables of `μ` and `σ`, which it also checks.
+  * `H2_le`: `T₂ ≤ 1/2` on `[1, 16)` follows from the endpoints of each piece.
+  * `integral_H2_le`: each piece integrates to `(4/π²)(α_n log(b/a) + β_n(1/a − 1/b))`. The bound at
+    the integers uses `log j` to `10⁻⁹` (checked as in `SmallMertens`) and `π` to `10⁻²⁰`
+    (Mathlib). On `[2, 15]`, `H₂ ≥ 0.15107`, so the excess is largest at the right end of each
+    piece. On `[1, 2]` and `[15, 16]`, `log x ≤ x − 1` and `log x ≥ 1 − 1/x` are used.
+  * The tightest bound is `0.0230978 ≤ 0.0231`, on `[15, 16]` (the true supremum is `0.023059`).
+
 ## Candidates for proofs in Lean
 
-These axioms are finite, explicit and small:
-* `H2_le` and the corrected `integral_H2_le` (piecewise `α + β/S` on `[1, 16)`).
+No finite axiom small enough for the kernel remains.
 
 The checks over large ranges (`10⁸`–`10¹⁰`) are beyond what the kernel can evaluate. A kernel
 check handles about `10⁵` simple steps per declaration, and `Nat.primesBelow 10⁴` already runs out

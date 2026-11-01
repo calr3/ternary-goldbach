@@ -1,5 +1,5 @@
 import TernaryGoldbach.MinorArcs.TypeII
-import TernaryGoldbach.MinorArcs.S1Lemma
+import TernaryGoldbach.MinorArcs.H2Bound
 
 /-!
 # Type II sums [B, §5.1]: the sum `S₁`
@@ -8,13 +8,13 @@ import TernaryGoldbach.MinorArcs.S1Lemma
 
 * `S1_eq`: the reduction [B, (5.7)–(5.8)]: `S₁ = ∑_{s odd} ∑_{r₁, r₂} μ(r₁)μ(r₂) #{l}` via the
   change of variables `(m, d₁, d₂) ↔ (s, r₁, r₂, l)`, `d_i = r_i l`, `l = (d₁, d₂)`, `m = s r₁ r₂ l`;
-* `integral_g2`: [B, (5.19)], `∫_{1/2}^1 g₂(uy) du = ∑ μ(r₁)μ(r₂)/(σ(r₁)σ(r₂)) (1 - max(1/2, r_i/y))`;
+* `integral_g2` (in `T2Defs.lean`): [B, (5.19)];
 * `S1_bound`: **[B, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
-Numerical axioms used: `fsq_le` (via Lemma 5.1.1) and `T2_le` [B, (5.31) and the computation for
-`16 ≤ S < 10⁵`], which rests on Lemma 5.1.2 and interval-arithmetic computations. (5.36) and (5.37)
-are numerical ([B, (5.32)]) and are stated as axioms.
+Numerical axiom used: `T2_le` [B, (5.31) and the computation for `16 ≤ S < 10⁵`], which rests on
+Lemma 5.1.2 and interval-arithmetic computations. (5.37) and the corrected (5.36) are proved in
+`H2Bound.lean`.
 -/
 
 open Real Finset MeasureTheory
@@ -338,183 +338,10 @@ theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
   rw [S1_eq_triples hx hW (by linarith), sum_innerS_eq (div_pos hx hW) hU,
     quads_eq_triples (div_pos hx hW) (by linarith)]
 
-/-! ### The main term (5.19) -/
-
-theorem integral_ite_le {M : ℝ} (hM : M ≤ 1) :
-    ∫ u in (1 / 2 : ℝ)..1, (if M ≤ u then (1 : ℝ) else 0) = 1 - max (1 / 2) M := by
-  have : (fun u : ℝ => if M ≤ u then (1 : ℝ) else 0) = (Set.Ici M).indicator 1 := by
-    ext u; simp [Set.indicator, Set.mem_Ici]
-  rw [this, intervalIntegral.integral_of_le (by norm_num), integral_indicator measurableSet_Ici,
-    Measure.restrict_restrict measurableSet_Ici]
-  simp only [Pi.one_apply, integral_const, smul_eq_mul, mul_one]
-  rcases le_or_gt M (1 / 2) with h | h
-  · rw [max_eq_left h, measureReal_def, Measure.restrict_apply_univ,
-      show Set.Ici M ∩ Set.Ioc (1 / 2 : ℝ) 1 = Set.Ioc (1 / 2 : ℝ) 1 from
-        Set.inter_eq_right.2 (fun u (hu : u ∈ Set.Ioc (1 / 2 : ℝ) 1) => le_trans h hu.1.le),
-      Real.volume_Ioc, ENNReal.toReal_ofReal (by norm_num)]
-  · rw [max_eq_right h.le, show Set.Ici M ∩ Set.Ioc (1 / 2 : ℝ) 1 = Set.Icc M 1 by
-      ext u; simp only [Set.mem_inter_iff, Set.mem_Ici, Set.mem_Ioc, Set.mem_Icc]
-      constructor
-      · rintro ⟨h1, -, h3⟩; exact ⟨h1, h3⟩
-      · rintro ⟨h1, h3⟩; exact ⟨h1, by linarith, h3⟩,
-      measureReal_def, Measure.restrict_apply_univ, Real.volume_Icc,
-      ENNReal.toReal_ofReal (by linarith)]
-
-/-- `g₂(t)` [B, Lemma 5.1.2]. -/
-noncomputable def g2 (t : ℝ) : ℝ :=
-  ∑ r₁ ∈ Icc 1 ⌊t⌋₊, ∑ r₂ ∈ Icc 1 ⌊t⌋₊,
-    if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
-      (μ r₁ : ℝ) * μ r₂ / ((σ 1 r₁ : ℝ) * σ 1 r₂) else 0
-
-theorem monotone_ite_le (M : ℝ) : Monotone fun u : ℝ => if M ≤ u then (1 : ℝ) else 0 := by
-  intro u v huv
-  simp only
-  split_ifs with h1 h2 <;> first | exact absurd (h1.trans huv) h2 | rfl | norm_num
-
-/-- [B, (5.19)]: `∫_{1/2}^1 g₂(uy) du = ∑_{r₁,r₂ ≤ y} … (1 - max(1/2, r₁/y, r₂/y))`. -/
-theorem integral_g2 {y : ℝ} (hy : 0 < y) :
-    ∫ u in (1 / 2 : ℝ)..1, g2 (u * y) =
-      ∑ r₁ ∈ Icc 1 ⌊y⌋₊, ∑ r₂ ∈ Icc 1 ⌊y⌋₊,
-        (if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
-          (μ r₁ : ℝ) * μ r₂ / ((σ 1 r₁ : ℝ) * σ 1 r₂) else 0) * wM y r₁ r₂ := by
-  set c : ℕ → ℕ → ℝ := fun r₁ r₂ => if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
-    (μ r₁ : ℝ) * μ r₂ / ((σ 1 r₁ : ℝ) * σ 1 r₂) else 0
-  have hpt : ∀ u ∈ Set.uIcc (1 / 2 : ℝ) 1, g2 (u * y) = ∑ r₁ ∈ Icc 1 ⌊y⌋₊, ∑ r₂ ∈ Icc 1 ⌊y⌋₊,
-      c r₁ r₂ * (if max ((r₁ : ℝ) / y) (r₂ / y) ≤ u then 1 else 0) := by
-    intro u hu
-    rw [Set.uIcc_of_le (by norm_num)] at hu
-    have hfilt : Icc 1 ⌊u * y⌋₊ = (Icc 1 ⌊y⌋₊).filter (fun r : ℕ => (r : ℝ) ≤ u * y) := by
-      ext r
-      simp only [mem_Icc, mem_filter]
-      constructor
-      · rintro ⟨h1, h2⟩
-        have h3 : (r : ℝ) ≤ u * y := (Nat.cast_le.2 h2).trans (Nat.floor_le (by nlinarith [hu.1]))
-        exact ⟨⟨h1, Nat.le_floor (h3.trans (by nlinarith [hu.2]))⟩, h3⟩
-      · rintro ⟨⟨h1, _⟩, h3⟩; exact ⟨h1, Nat.le_floor h3⟩
-    have hmax : ∀ r₁ r₂ : ℕ, max ((r₁ : ℝ) / y) (r₂ / y) ≤ u ↔
-        (r₁ : ℝ) ≤ u * y ∧ (r₂ : ℝ) ≤ u * y := by
-      intro r₁ r₂; rw [max_le_iff, div_le_iff₀ hy, div_le_iff₀ hy]
-    rw [g2, hfilt, sum_filter]
-    refine sum_congr rfl fun r₁ _ => ?_
-    rw [sum_filter]
-    simp only [hmax]
-    by_cases h1 : (r₁ : ℝ) ≤ u * y
-    · rw [if_pos h1]
-      refine sum_congr rfl fun r₂ _ => ?_
-      by_cases h2 : (r₂ : ℝ) ≤ u * y
-      · simp [h1, h2, c]
-      · simp [h2]
-    · rw [if_neg h1]; symm
-      exact sum_eq_zero fun r₂ _ => by simp [h1]
-  have hint : ∀ r₁ r₂, IntervalIntegrable
-      (fun u : ℝ => c r₁ r₂ * (if max ((r₁ : ℝ) / y) (r₂ / y) ≤ u then 1 else 0))
-      volume (1 / 2) 1 := fun r₁ r₂ =>
-    ((monotone_ite_le _).intervalIntegrable).const_mul _
-  have hint2 : ∀ r₁, IntervalIntegrable (fun u : ℝ => ∑ r₂ ∈ Icc 1 ⌊y⌋₊,
-      c r₁ r₂ * (if max ((r₁ : ℝ) / y) (r₂ / y) ≤ u then 1 else 0)) volume (1 / 2) 1 := by
-    intro r₁
-    have := IntervalIntegrable.sum (Icc 1 ⌊y⌋₊) (fun r₂ _ => hint r₁ r₂)
-    convert this using 1; ext u; simp [Finset.sum_apply]
-  rw [intervalIntegral.integral_congr hpt, intervalIntegral.integral_finset_sum
-    (fun r₁ _ => hint2 r₁)]
-  refine sum_congr rfl fun r₁ hr₁ => ?_
-  rw [intervalIntegral.integral_finset_sum (fun r₂ _ => hint r₁ r₂)]
-  refine sum_congr rfl fun r₂ hr₂ => ?_
-  rw [intervalIntegral.integral_const_mul, integral_ite_le, wM]
-  have h1 : (r₁ : ℝ) ≤ y := (Nat.cast_le.2 (mem_Icc.1 hr₁).2).trans (Nat.floor_le hy.le)
-  have h2 : (r₂ : ℝ) ≤ y := (Nat.cast_le.2 (mem_Icc.1 hr₂).2).trans (Nat.floor_le hy.le)
-  exact max_le ((div_le_one hy).2 h1) ((div_le_one hy).2 h2)
-
-
-/-! ### The triple sum and `H₂` -/
-
-/-- The triple sum `T₂(S) = ∑_{s ≤ S odd} (1/s) ∫_{1/2}^1 g₂(uS/s) du` [B, (5.28)]. -/
-noncomputable def T2 (S : ℝ) : ℝ :=
-  ∑ s ∈ Icc 1 ⌊S⌋₊, if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * S / s) else 0
-
-/-- `H₂(S)` [B, (5.35)]: `(4/π²) max(T₂(S), 0)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses
-its computable upper bound `G₂(S)` in place of `T₂(S)`; `G₂ ≥ T₂` and `G₂ ≥ 0`, so `G₂ ≥ max(T₂, 0)`,
-and the book's (5.37) about `H₂` remains valid for ours. Its (5.36) is false and is used here
-in corrected form; see `integral_H2_le`.) -/
-noncomputable def H2 (S : ℝ) : ℝ := if S < 16 then 4 / π ^ 2 * max (T2 S) 0 else 0.15107
-
-theorem H2_nonneg (S : ℝ) : 0 ≤ H2 S := by
-  unfold H2; split_ifs
-  · have := le_max_right (T2 S) 0; positivity
-  · norm_num
-
 /-- **Numerical axiom** [B, (5.31) and p. 92]: `T₂(S) ≤ 0.37273` for `S ≥ 16`. For `S ≥ 10⁵` this follows
 from Lemma 5.1.2 (whose range `x ≤ 10⁶` is an interval-arithmetic computation) and the numerics
 after (5.30); for `16 ≤ S < 10⁵` it is a direct computation. -/
 axiom T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273
-
-/-- **[B, (5.36)], corrected** (numerical axiom): `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231`.
-
-[B, (5.36)] states this without the `+ 0.0231`. That is false: it inherits an error in [B, (5.32)]
-for `v = 2`, where `∫₁⁴ T₂(S)/S dS = 0.53344 > 0.37273 log 4` (see `AXIOMS.md`). For `S ≥ 16`,
-`H₂ = 0.15107` by definition, so the excess `∫₁ᵀ H₂/S − 0.15107 log T` is constant from `T = 16`
-on. Its supremum over `T ≥ 1` is `0.023059…`, attained at `T ≤ 16`, where `T₂` is an explicit
-piecewise function `α + β/S`. `scripts/h2_integral_check.py` computes it with exact rational
-coefficients and logarithms in interval arithmetic. -/
-axiom integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
-    ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T + 0.0231
-
-theorem measurable_g2 : Measurable g2 := by
-  have : g2 = (fun N : ℕ => ∑ r₁ ∈ Finset.Icc 1 N, ∑ r₂ ∈ Finset.Icc 1 N,
-      if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
-        (μ r₁ : ℝ) * μ r₂ / ((σ 1 r₁ : ℝ) * σ 1 r₂) else 0) ∘ Nat.floor := rfl
-  rw [this]
-  exact measurable_from_nat.comp Nat.measurable_floor
-
-theorem measurable_T2 : Measurable T2 := by
-  set F : ℕ × ℝ → ℝ := fun p => ∑ s ∈ Finset.Icc 1 p.1,
-    if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * p.2 / s) else 0
-  have hF : Measurable F := by
-    refine measurable_from_prod_countable_right fun n => ?_
-    simp only [F]
-    apply Finset.measurable_sum
-    intro s _
-    by_cases hs : Odd s
-    · simp only [hs, if_true]
-      refine Measurable.const_mul ?_ _
-      simp_rw [intervalIntegral.integral_of_le (show (1 / 2 : ℝ) ≤ 1 by norm_num)]
-      have hf : MeasureTheory.StronglyMeasurable (fun p : ℝ × ℝ => g2 (p.2 * p.1 / s)) :=
-        (measurable_g2.comp (by fun_prop)).stronglyMeasurable
-      exact (hf.integral_prod_right' (ν := MeasureTheory.volume.restrict (Set.Ioc (1 / 2 : ℝ) 1))).measurable
-    · simp only [hs, if_false]; exact measurable_const
-  have : T2 = F ∘ fun S => (⌊S⌋₊, S) := rfl
-  rw [this]
-  exact hF.comp (Nat.measurable_floor.prodMk measurable_id)
-
-theorem measurable_H2 : Measurable H2 := by
-  unfold H2
-  exact Measurable.ite measurableSet_Iio
-    ((measurable_T2.max measurable_const).const_mul _) measurable_const
-
-/-- **[B, (5.37)]** (numerical axiom: `T₂(S) ≤ 1/2` for `S < 16`). -/
-axiom H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2
-
-theorem H2_eq_zero_of_lt_one {S : ℝ} (hS : S < 1) : H2 S = 0 := by
-  have hT : T2 S = 0 := by
-    unfold T2
-    rw [Nat.floor_eq_zero.2 hS]; simp
-  unfold H2; rw [if_pos (by linarith), hT]; simp
-
-/-- `S ↦ H₂(S)/S` is interval integrable (`H₂` is measurable, `0 ≤ H₂ ≤ 2/π²`, `H₂ = 0` on
-`(-∞, 1)`). -/
-theorem intervalIntegrable_H2_div (T : ℝ) :
-    IntervalIntegrable (fun S => H2 S / S) MeasureTheory.volume 1 T := by
-  rw [intervalIntegrable_iff]
-  refine MeasureTheory.IntegrableOn.of_bound measure_Ioc_lt_top
-    ((measurable_H2.div measurable_id).aestronglyMeasurable) (2 / π ^ 2) ?_
-  refine Filter.Eventually.of_forall fun S => ?_
-  rw [Real.norm_eq_abs]
-  rcases lt_or_ge S 1 with hS | hS
-  · rw [H2_eq_zero_of_lt_one hS, zero_div, abs_zero]; positivity
-  · rw [abs_div, abs_of_nonneg (H2_nonneg S), abs_of_pos (by linarith)]
-    calc H2 S / S ≤ H2 S / 1 := div_le_div_of_nonneg_left (H2_nonneg S) one_pos hS
-      _ = H2 S := div_one _
-      _ ≤ _ := H2_le S
 
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
   unfold H2

@@ -200,6 +200,13 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `SmallFsq`: endpoint checks in blocks of 4 values of `n`; for `n = 2` the 3000-term tail is checked
     in 12 blocks.
   ternary_goldbach now depends on 28 axioms (14 our own, 7 published, 7 from [B]).
+* `H2_le` ((5.37)) and the corrected (5.36) `integral_H2_le` proved (`MinorArcs/H2Bound.lean`):
+  * `T₂ = α_n + β_n/S` on `[n, n+1)` from `integral_g2`; the case split is `2 s max(r₁, r₂) ≤ n`;
+  * kernel tables of `μ`, `σ` (`r ≤ 15`), `α_n`, `β_n` (`n ≤ 15`) and `log j` (`j ≤ 16`, `10⁻⁹`);
+  * the integral by FTC with antiderivative `k(α log S − β/S)`; the excess at integers from these
+    tables; `[2, 15]` by monotonicity (`H₂ ≥ 0.15107`), `[1, 2]` and `[15, 16]` by hand;
+  * `g2`, `T2`, `H2` moved to `MinorArcs/T2Defs.lean` so that `TypeIIS1` can import the proofs.
+  ternary_goldbach now depends on 26 axioms (14 our own, 7 published, 5 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

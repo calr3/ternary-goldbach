@@ -7,14 +7,13 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 28 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 26 explicitly stated
 axioms besides Lean's standard three. They are:
 * 14 finite computations of our own;
 * 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms);
-* 7 numerical results of [B]:
-  * two of them (`H2_le` and our corrected (5.36)) are re-checked rigorously by our scripts;
+* 5 numerical results of [B]:
   * four ((B.6), (B.11), (9.94), and (5.31) on its computed range) are re-checked by float
     computations;
   * the rest rests on [B]: Prop 12.2.4, which uses Ramaré's explicit estimate, and the analytic
@@ -45,11 +44,9 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
  TernaryGoldbach.MajorArcs.sum_odd_mu_sq_div_totient,
- TernaryGoldbach.MinorArcs.H2_le,
  TernaryGoldbach.MinorArcs.T2_le,
  TernaryGoldbach.MinorArcs.eta2_fourier_bound',
  TernaryGoldbach.MinorArcs.eta2log_fourier_bound,
- TernaryGoldbach.MinorArcs.integral_H2_le,
  TernaryGoldbach.MinorArcs.prop_12_2_4,
  TernaryGoldbach.Prelim.C_grid,
  TernaryGoldbach.Prelim.K_blocks,
@@ -72,7 +69,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 `native_decide`. The kernel itself evaluates the computations that replace former axioms:
 * the primality certificates in `PrattPrime.lean`;
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean` and
-  `SmallFsq.lean`.
+  `SmallFsq.lean`;
+* the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`.
 
 ## How the proof is organized
 
@@ -154,7 +152,8 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 * (14.7) has an arithmetic slip (`0.0754`); our error analysis avoids it.
 * (5.32) is false for `v = 2`, and so is (5.36), which depends on it: `∫₁⁴ T₂(S)/S dS = 0.53344 >
   0.37273 log 4` (`AXIOMS.md`, Finding 1).
-  * We use (5.36) with `+0.0231`, checked by `scripts/h2_integral_check.py`.
+  * We use (5.36) with `+0.0231`. This form, and (5.37), are proved in Lean
+    (`MinorArcs/H2Bound.lean`).
   * This adds `0.0924` to the Type II factor and raises the first-case constant of Thm 3.1.1 to
     `0.8764`.
   * (14.49) stays `1.0376`, because repair 3 below has room.
