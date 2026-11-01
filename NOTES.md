@@ -233,8 +233,8 @@ has `x^{1/2}` for `x^{-1/2}`; [B]'s general-`q` constants `1.3482·10⁻¹⁴`, 
 we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` — check (14.1), (14.2) margins when used).
 (14.7) needs the *lower* bound (MinorTotal uses `∫_𝔐 |S_{η₊}|² ≥ 8.6298x`), i.e. the full Lemma 10.3.1 with `η◦`.
 **Roadmap for (14.7)** (Lemma 10.3.1 + §14.1), reusing the minor-arc infrastructure:
-1. *Arcs*: `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g` — `≤` is `integral_majorArcs_le`; `≥` from disjointness
-   (`arcs_unique`, `sum_arc_indicator_le_one`) as in `sum_arcs_le_integral`, but restricted to `𝔐`.
+1. *Arcs*: `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g` — **DONE**: `≤` is `integral_majorArcs_le`, `≥` is
+   `sum_arcs_le_integral_majorArcs` (`MajorArcs/ArcsEq.lean`).
 2. *Coprime reduction*: `S = S' + S''`, `S'` over `n` coprime to `L = lcm(q ≤ 2r)` (as in BaseGap2's
    `sum_noncoprime_le`); `∫|S|² − ∫|S'|²` tiny (`K_{r,2}`).
 3. *Bombieri*: `φ(q) Σ_b |S'(b/q + β)|² = Σ_ψ |τ(ψ)|² |S'_{ψ⁻¹}(β)|²` (`totient_mul_sum_units`,
