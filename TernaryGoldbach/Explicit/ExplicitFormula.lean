@@ -10,7 +10,7 @@ Part A: `S = Σ_n Λ(n) χ(n) e(δn/x) η(n/x) = (1/2π) ∫ (−L'/L)(3/2 + it)
 -/
 
 open Complex MeasureTheory Set Filter Asymptotics
-open scoped Real Topology ArithmeticFunction.vonMangoldt
+open scoped Real Topology ArithmeticFunction.vonMangoldt Interval
 
 namespace TernaryGoldbach.Explicit
 
@@ -184,5 +184,122 @@ theorem Ssum_eq_line {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ : 
   congr 1
   refine integral_congr_ae (Eventually.of_forall fun t => ?_)
   exact tsum_Fterm_eq χ δ hx t
+
+/-! ## Part B: no zeros in `−1 < ℜs < 0`, and the rectangle identity -/
+
+theorem gammaFactor_ne_zero_strip {N : ℕ} (χ : DirichletCharacter ℂ N) {z : ℂ} (h1 : -1 < z.re)
+    (h2 : z.re < 0) : DirichletCharacter.gammaFactor χ z ≠ 0 := by
+  rcases χ.even_or_odd with he | ho
+  · rw [he.gammaFactor_def, Ne, Gammaℝ_eq_zero_iff]
+    rintro ⟨n, hn⟩
+    have := congrArg Complex.re hn
+    simp at this
+    rcases Nat.eq_zero_or_pos n with rfl | hpos
+    · simp at this; linarith
+    · have : (1:ℝ) ≤ n := by exact_mod_cast hpos
+      linarith
+  · rw [ho.gammaFactor_def, Ne, Gammaℝ_eq_zero_iff]
+    rintro ⟨n, hn⟩
+    have := congrArg Complex.re hn
+    simp at this
+    rcases Nat.eq_zero_or_pos n with rfl | hpos
+    · simp at this; linarith
+    · have : (1:ℝ) ≤ n := by exact_mod_cast hpos
+      linarith
+
+/-- **`L(z, χ) ≠ 0` for `−1 < ℜz < 0`** (`χ` primitive, `≠ 1`): the functional equation, with no
+pole of the gamma factor there. -/
+theorem LFunction_ne_zero_strip {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) {z : ℂ} (h1 : -1 < z.re) (h2 : z.re < 0) : χ.LFunction z ≠ 0 := by
+  have hN : N ≠ 1 := by
+    rintro rfl; exact hχ1 (Subsingleton.elim _ _)
+  set s := 1 - z with hs
+  have hz : z = 1 - s := by rw [hs]; ring
+  have hsre : 1 < s.re := by simp [hs]; linarith
+  have hχi : χ⁻¹ ≠ 1 := fun h => hχ1 (inv_eq_one.1 h)
+  have hGs0 : DirichletCharacter.gammaFactor χ⁻¹ s ≠ 0 := by
+    rcases χ⁻¹.even_or_odd with he | ho
+    · rw [he.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by linarith)
+    · rw [ho.gammaFactor_def]; exact Gammaℝ_ne_zero_of_re_pos (by simp; linarith)
+  have hΛ : DirichletCharacter.completedLFunction χ⁻¹ s =
+      DirichletCharacter.gammaFactor χ⁻¹ s * χ⁻¹.LFunction s := by
+    rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ⁻¹ s (Or.inr hN)]
+    field_simp
+  have hL : χ.LFunction z = (N : ℂ) ^ (s - 1 / 2) * DirichletCharacter.rootNumber χ *
+      (DirichletCharacter.gammaFactor χ⁻¹ s * χ⁻¹.LFunction s) /
+        DirichletCharacter.gammaFactor χ (1 - s) := by
+    rw [DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ z (Or.inr hN), hz,
+      hχ.completedLFunction_one_sub s, hΛ]
+  rw [hL]
+  have hNp : (N : ℂ) ^ (s - 1 / 2) ≠ 0 := by
+    rw [Complex.cpow_ne_zero_iff]; left; exact_mod_cast NeZero.ne N
+  have hε : DirichletCharacter.rootNumber χ ≠ 0 := by
+    intro h; have := norm_rootNumber hχ; rw [h, norm_zero] at this; exact zero_ne_one this
+  have hLs : χ⁻¹.LFunction s ≠ 0 :=
+    DirichletCharacter.LFunction_ne_zero_of_one_le_re χ⁻¹ (Or.inl hχi) hsre.le
+  have hG1 : DirichletCharacter.gammaFactor χ (1 - s) ≠ 0 := by
+    rw [← hz]; exact gammaFactor_ne_zero_strip χ h1 h2
+  exact div_ne_zero (mul_ne_zero (mul_ne_zero hNp hε) (mul_ne_zero hGs0 hLs)) hG1
+
+/-- The rectangle `[−1/2, 3/2] × [−T, T]`: corners. -/
+noncomputable def zT (T : ℝ) : ℂ := ((-1 / 2 : ℝ) : ℂ) + (-T : ℝ) * I
+noncomputable def wT (T : ℝ) : ℂ := ((3 / 2 : ℝ) : ℂ) + (T : ℝ) * I
+
+@[simp] theorem zT_re (T : ℝ) : (zT T).re = -1 / 2 := by simp [zT]
+@[simp] theorem zT_im (T : ℝ) : (zT T).im = -T := by simp [zT]
+@[simp] theorem wT_re (T : ℝ) : (wT T).re = 3 / 2 := by simp [wT]
+@[simp] theorem wT_im (T : ℝ) : (wT T).im = T := by simp [wT]
+
+/-- The radius used for the factorization: `R_T = 2(T + 3)`. -/
+noncomputable def RT (T : ℝ) : ℝ := 2 * (T + 3)
+
+/-- The zeros strictly inside the rectangle `[−1/2, 3/2] × [−T, T]`, with multiplicity. -/
+noncomputable def zerosRect {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (T : ℝ) : Finset ℂ :=
+  (zerosIn χ.LFunction 2 (RT T) (RT T / 2)).filter
+    (fun u => (zT T).re < u.re ∧ u.re < (wT T).re ∧ (zT T).im < u.im ∧ u.im < (wT T).im)
+
+noncomputable def multRect {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (T : ℝ) (u : ℂ) : ℕ :=
+  (divB χ.LFunction 2 (RT T) u).toNat
+
+/-- **Part B**: the residue theorem on `[−1/2, 3/2] × [−T, T]`, if `L` has no zeros on the horizontal
+sides. -/
+theorem rect_identity {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) {T : ℝ} (hT : 0 < T)
+    (hbot : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]], χ.LFunction ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) ≠ 0)
+    (htop : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]], χ.LFunction ((σ : ℂ) + ((T : ℝ) : ℂ) * I) ≠ 0) :
+    rectInt (fun s => logDeriv χ.LFunction s * (Gr s δ 0 * (x : ℂ) ^ s)) (zT T) (wT T) =
+      2 * π * I * ∑ u ∈ zerosRect χ T, (multRect χ T u : ℂ) * (Gr u δ 0 * (x : ℂ) ^ u) := by
+  have hf : Differentiable ℂ χ.LFunction := DirichletCharacter.differentiable_LFunction hχ1
+  have hf2 : χ.LFunction 2 ≠ 0 :=
+    DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by norm_num)
+  have hR : 0 < RT T := by unfold RT; linarith
+  have hrect : [[(zT T).re, (wT T).re]] ×ℂ [[(zT T).im, (wT T).im]] ⊆ Metric.ball 2 (RT T / 2) := by
+    intro s hs
+    rw [mem_reProdIm, zT_re, wT_re, zT_im, wT_im, Set.uIcc_of_le (by norm_num),
+      Set.uIcc_of_le (by linarith)] at hs
+    rw [Metric.mem_ball, dist_eq_norm, RT]
+    refine lt_of_le_of_lt (Complex.norm_le_abs_re_add_abs_im _) ?_
+    simp only [Complex.sub_re, Complex.sub_im, Complex.re_ofNat, Complex.im_ofNat, sub_zero]
+    have h1 : |s.re - 2| ≤ 5 / 2 := by rw [abs_le]; constructor <;> linarith [hs.1.1, hs.1.2]
+    have h2 : |s.im| ≤ T := by rw [abs_le]; constructor <;> linarith [hs.2.1, hs.2.2]
+    linarith
+  have hbd : NoZerosOnSides χ.LFunction (zT T) (wT T) := by
+    refine ⟨fun σ hσ => ?_, fun σ hσ => ?_, fun y _ => ?_, fun y _ => ?_⟩
+    · rw [zT_re, wT_re] at hσ; simpa using hbot σ hσ
+    · rw [zT_re, wT_re] at hσ; simpa using htop σ hσ
+    · exact DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by simp; norm_num)
+    · exact LFunction_ne_zero_strip hχ hχ1 (by simp; norm_num) (by simp; norm_num)
+  set U : Set ℂ := {s | -2 < s.re} with hU
+  have hUo : IsOpen U := isOpen_lt continuous_const Complex.continuous_re
+  have hsubU : [[(zT T).re, (wT T).re]] ×ℂ [[(zT T).im, (wT T).im]] ⊆ U := by
+    intro s hs
+    rw [mem_reProdIm, zT_re, wT_re, Set.uIcc_of_le (by norm_num)] at hs
+    show -2 < s.re; linarith [hs.1.1]
+  have hh : DifferentiableOn ℂ (fun s => Gr s δ 0 * (x : ℂ) ^ s) U := by
+    intro s hs
+    have hx0 : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
+    exact ((differentiableAt_G δ hs).mul
+      (differentiableAt_id.const_cpow (Or.inl hx0))).differentiableWithinAt
+  exact rectInt_logDeriv_mul hf hR hf2 (by simp; norm_num) (by simp; linarith) hrect hbd hUo hsubU hh
 
 end TernaryGoldbach.Explicit
