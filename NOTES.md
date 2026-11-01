@@ -17,6 +17,15 @@ of `L(χ)` with `γ < 0` are conjugates of zeros of `L(χ̄)` with `γ > 0`), wh
 **Progress (2026-11-01):** `Explicit/MellinRotate` (Cor 8.0.2), `Explicit/LGrowth` (`L = s∫S(t)t^{-s-1}` and
 `|L| ≤ (q+1)|s|/σ` for `σ > 0`), `Explicit/ZeroCount` (Jensen: zeros in `|s−(2+iT)| ≤ 1.6`),
 `Explicit/Landau` (`|f'/f − Σ_{|ρ−c|<R/2} m/(z−ρ)| ≤ 48 log(B/|f(c)|)/R` on `|z−c| ≤ R/4`) — all sorry-free.
+Also done (sorry-free): `Explicit/LGrowthLeft` (`|L(z,χ)| ≤ 512 q⁹(q+1)(|ℑz|+9)e^{π|ℑz|/2}` for
+`−8 ≤ ℜz ≤ 1/4`, any `ℑz`), `Explicit/LogDerivL` (Landau for `L` at `c = 2+iT`, `R = 10`, every `T`:
+`|L'/L(z) − Σ_{|ρ−c|<5} m/(z−ρ)| ≤ 4.8 log(B_T/0.355)` on `|z−c| ≤ 5/2`; `≤ log(B_T/0.355)/log 2` zeros in
+`|ρ−c| ≤ 5`), `Explicit/RectResidue` (`rectInt`; `∮ ds/(s−ρ) = 2πi`; Cauchy's formula; residue theorem
+`∮ (f'/f) h = 2πi Σ_{ρ inside} m_ρ h(ρ)` for entire `f`, rectangle in `ball c (R/2)`, no zeros on sides).
+*Next:* explicit formula = Mellin inversion on `ℜs = 3/2` (Mathlib `mellin_inversion`) + `Σ Λχ n^{-s} = −L'/L`
+(+ interchange) + residue theorem on `[−1/2, 3/2] × [−T_k, T_k]` (heights `T_k ∈ [k, k+1]` at distance
+`≥ 1/(2N+2)` from all ordinates) + `T_k → ∞` (horizontal sides: `|L'/L| ≤ N/δ + 4.8 log B` vs `|G| ≲ e^{−0.16T}`).
+The trivial zero `s = 0` (even `χ`) is just one of the zeros inside the rectangle.
 *Refined plan:* (i) growth for `σ ≤ 1/4` from `completedLFunction_one_sub` (`Λ = Γℝ(s+κ) L`, no `q^{s/2}`):
 `|L(1−s,χ)| = q^{σ−1/2} π^{1/2−σ} |Γ((s+κ)/2)/Γ((1−s+κ)/2)| |L(s,χ⁻¹)|`, numerator `≤ Γ(ℜ)` (integral),
 denominator `≥ π e^{−π|t|/2}/(|Γ(1−w)|)` (reflection) ⇒ `|L| ≲ q^{O(1)} e^{π|t|/2}` — exponential growth is
