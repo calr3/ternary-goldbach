@@ -205,4 +205,176 @@ theorem re_vM_eq {s : ℂ} (hs : 1 < s.re) :
   rw [neg_div, Complex.neg_re]
   ring
 
+/-! ## Assembling the zero-free region -/
+
+/-- Stechkin's inequality without a distinguished zero. -/
+theorem stechkin_xi_nonneg {s s1 : ℂ} (hs : 1 < s.re) (hss : s.re < s1.re) (him : s1.im = s.im)
+    (h32 : 3 / 2 ≤ (s.re - 1 / 2) ^ 2 + (s1.re - 1 / 2) ^ 2) :
+    0 ≤ (logDeriv xiF s).re - (s.re - 1 / 2) / (s1.re - 1 / 2) * (logDeriv xiF s1).re := by
+  set κ := (s.re - 1 / 2) / (s1.re - 1 / 2) with hκ
+  have hκ0 : 0 ≤ κ := div_nonneg (by linarith) (by linarith)
+  have hs1 : 1 < s1.re := by linarith
+  refine le_of_forall_pos_lt_add fun ε hε => ?_
+  set M := max ‖s - 1 / 2‖ ‖s1 - 1 / 2‖ with hM
+  have hM0 : 0 ≤ M := le_max_of_le_right (norm_nonneg _)
+  set ε' := ε / (2 * (1 + κ)) with hε'
+  have hε'0 : 0 < ε' := by positivity
+  obtain ⟨T, -, happrox, -, hzero⟩ := xi_partial_approx hM0 hε'0
+  have hp := pair_approx happrox hs (le_max_left _ _)
+  have hp1 := pair_approx happrox hs1 (le_max_right _ _)
+  set S := ∑ u ∈ sqZeros T, (mult T u : ℝ) * Phi s u
+  set S1 := ∑ u ∈ sqZeros T, (mult T u : ℝ) * Phi s1 u
+  have hF : 0 ≤ S - κ * S1 := by
+    have : S - κ * S1 = ∑ u ∈ sqZeros T, (mult T u : ℝ) * (Phi s u - κ * Phi s1 u) := by
+      rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
+      refine Finset.sum_congr rfl fun u _ => ?_
+      ring
+    rw [this]
+    refine Finset.sum_nonneg fun u hu => ?_
+    have := xiF_zero_re (hzero u hu)
+    have := Phi_stechkin hs hss him h32 this.1 this.2
+    exact mul_nonneg (Nat.cast_nonneg _) (by linarith)
+  have a := (abs_le.1 hp).2
+  have b := (abs_le.1 hp1).1
+  have hκε : 2 * ε' + κ * (2 * ε') = ε := by rw [hε']; field_simp
+  have hk := mul_nonneg hκ0 (by linarith : 0 ≤ S1 + 2 * ε' - 2 * (logDeriv xiF s1).re)
+  nlinarith
+
+theorem log_pi_ge : 1.1447 ≤ Real.log π := by
+  rw [Real.le_log_iff_exp_le Real.pi_pos]
+  have h1 := Real.exp_one_lt_d9
+  have h2 := Real.exp_bound' (x := 0.1447) (by norm_num) (by norm_num) (n := 5) (by norm_num)
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h2
+  have e : Real.exp 1.1447 = Real.exp 1 * Real.exp 0.1447 := by rw [← Real.exp_add]; norm_num
+  have hπ := Real.pi_gt_d6
+  rw [e]
+  nlinarith [Real.exp_pos 1, Real.exp_pos 0.1447]
+
+theorem log_le_of_le_exp' {x c : ℝ} (hx : 0 < x) (h : x ≤ Real.exp c) : Real.log x ≤ c :=
+  (Real.log_le_iff_le_exp hx).2 h
+
+theorem log2508_le : Real.log 2.508 ≤ 0.9197 := by
+  refine log_le_of_le_exp' (by norm_num) ?_
+  have h := TernaryGoldbach.MajorArcs.exp_split_ge 0 (u := 0.9197) (by norm_num) 8
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log280905_le : Real.log 2.80905 ≤ 1.0329 := by
+  refine log_le_of_le_exp' (by norm_num) ?_
+  have h := TernaryGoldbach.MajorArcs.exp_split_ge 1 (u := 0.0329) (by norm_num) 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log2_le' : Real.log 2 ≤ 0.6932 := by have := Real.log_two_lt_d9; linarith
+
+theorem log3_le' : Real.log 3 ≤ 1.0987 := by
+  refine log_le_of_le_exp' (by norm_num) ?_
+  have h := TernaryGoldbach.MajorArcs.exp_split_ge 1 (u := 0.0987) (by norm_num) 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_1e9_ge : 20 ≤ Real.log 1e9 := by
+  rw [Real.le_log_iff_exp_le (by norm_num)]
+  have h1 := Real.exp_one_lt_d9
+  have h2 : Real.exp 20 = Real.exp 1 ^ 20 := by rw [← Real.exp_nat_mul]; norm_num
+  rw [h2]
+  calc Real.exp 1 ^ 20 ≤ 2.7182818286 ^ 20 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 20
+    _ ≤ 1e9 := by norm_num
+
+/-- `ℜ(−ζ'/ζ)(σ) ≤ 1/σ + 1/(σ−1) − ½ log π + ½(log(σ/2 + 2) − 2/σ − 1/(σ/2 + 1))` for `σ > 1`. -/
+theorem vM_real_le {σ : ℝ} (hσ : 1 < σ) :
+    (LSeries (fun n => (Λ n : ℂ)) ((σ : ℂ) + ((0 : ℝ) : ℂ) * I)).re ≤
+      1 / σ + 1 / (σ - 1) - 1 / 2 * Real.log π + 1 / 2 * (Real.log (σ / 2 + 2) - 2 / σ - 1 / (σ / 2 + 1)) := by
+  have hs : 1 < ((σ : ℂ) + ((0 : ℝ) : ℂ) * I).re := by simpa using hσ
+  rw [re_vM_eq hs]
+  have hX := re_logDeriv_xiF_nonneg hs
+  have e0 : (σ : ℂ) + ((0 : ℝ) : ℂ) * I = ((σ : ℝ) : ℂ) := by simp
+  rw [e0] at hX ⊢
+  have e1 : (1 / (σ : ℂ)).re = 1 / σ := by rw [← ofReal_one, ← ofReal_div, ofReal_re]
+  have e2 : (1 / ((σ : ℂ) - 1)).re = 1 / (σ - 1) := by
+    rw [← ofReal_one, ← ofReal_sub, ← ofReal_div, ofReal_re]
+  have e3 : (σ : ℂ) / 2 = ((σ / 2 : ℝ) : ℂ) := by push_cast; ring
+  rw [e1, e2, e3]
+  have hψ := re_digamma_real_le (x := σ / 2) (by linarith)
+  have : 1 / (σ / 2) = 2 / σ := by field_simp
+  rw [this] at hψ
+  linarith
+
+/-- The terms `j ≥ 1`: `ℜ(−ζ'/ζ)(σ + iτ) ≤ 2/τ² + (1−κ)(½ log τ + 0.36 − ½ log π) + ½κ(0.20604 + 11/τ²)
++ κ E₁ − Z` where `Z ≤ Re ξ'/ξ(s) − κ Re ξ'/ξ(s₁)`, `s₁ = 1.6181 + iτ`. -/
+theorem vM_term_le {σ τ : ℝ} (hσ1 : 1 < σ) (hσ2 : σ ≤ 1.02) (hτ : 10 ≤ τ) {Z : ℝ}
+    (hZ : Z ≤ (logDeriv xiF ((σ : ℂ) + τ * I)).re -
+      (σ - 1 / 2) / (1.6181 - 1 / 2) * (logDeriv xiF ((1.6181 : ℝ) + τ * I)).re) :
+    (LSeries (fun n => (Λ n : ℂ)) ((σ : ℂ) + τ * I)).re ≤
+      2 / τ ^ 2 + (1 - (σ - 1 / 2) / (1.6181 - 1 / 2)) * (1 / 2 * Real.log τ + 0.36 - 1 / 2 * Real.log π) +
+        1 / 2 * ((σ - 1 / 2) / (1.6181 - 1 / 2)) * (0.20604 + 11 / τ ^ 2) +
+        (σ - 1 / 2) / (1.6181 - 1 / 2) *
+          (1 / 1.6181 + 1 / (1.6181 - 1) - 1 / 2 * Real.log π +
+            1 / 2 * (Real.log (1.6181 / 2 + 2) - 2 / 1.6181 - 1 / (1.6181 / 2 + 1))) - Z := by
+  set κ := (σ - 1 / 2) / (1.6181 - 1 / 2) with hκ
+  have hκ0 : 0 ≤ κ := div_nonneg (by linarith) (by norm_num)
+  have hκ1 : κ ≤ 1 := by rw [hκ, div_le_one (by norm_num)]; linarith
+  have hs : 1 < ((σ : ℂ) + τ * I).re := by simpa using hσ1
+  have hs1 : 1 < (((1.6181 : ℝ) : ℂ) + τ * I).re := by simp; norm_num
+  have hL := re_vM_eq hs
+  have hL1 := re_vM_eq hs1
+  -- `ℜ(−ζ'/ζ)(s₁) ≤ E₁`
+  have hE1 := (re_vM_le (σ := 1.6181) (by norm_num) τ).trans (vM_real_le (by norm_num))
+  -- small terms
+  have hτ0 : 0 < τ := by linarith
+  have r1 : (1 / ((σ : ℂ) + τ * I)).re ≤ 1.02 / τ ^ 2 := by
+    rw [one_div, Complex.inv_re, Complex.normSq_apply]
+    simp only [add_re, ofReal_re, mul_re, I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self, add_zero,
+      add_im, mul_im, zero_add]
+    rw [div_le_div_iff₀ (by positivity) (by positivity)]
+    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ 1.02 - σ) (sq_nonneg τ), sq_nonneg σ]
+  have r2 : (1 / ((σ : ℂ) + τ * I - 1)).re ≤ 0.02 / τ ^ 2 := by
+    rw [one_div, Complex.inv_re, Complex.normSq_apply]
+    simp only [sub_re, add_re, ofReal_re, mul_re, I_re, mul_zero, ofReal_im, I_im, mul_one, sub_self,
+      add_zero, one_re, sub_im, add_im, mul_im, zero_add, one_im, sub_zero]
+    rw [div_le_div_iff₀ (by positivity) (by positivity)]
+    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ 0.02 - (σ - 1)) (sq_nonneg τ), sq_nonneg (σ - 1)]
+  have r3 : 0 ≤ (1 / (((1.6181 : ℝ) : ℂ) + τ * I)).re := by
+    rw [one_div, Complex.inv_re]; apply div_nonneg _ (Complex.normSq_nonneg _); simp; norm_num
+  have r4 : 0 ≤ (1 / (((1.6181 : ℝ) : ℂ) + τ * I - 1)).re := by
+    rw [one_div, Complex.inv_re]; apply div_nonneg _ (Complex.normSq_nonneg _); simp; norm_num
+  -- digamma
+  have ed : ((σ : ℂ) + τ * I) / 2 = ((σ / 2 : ℝ) : ℂ) + ((τ / 2 : ℝ) : ℂ) * I := by push_cast; ring
+  have ed1 : (((1.6181 : ℝ) : ℂ) + τ * I) / 2 = ((1.6181 / 2 : ℝ) : ℂ) + ((τ / 2 : ℝ) : ℂ) * I := by
+    push_cast; ring
+  have hψ1 := half_re_digamma_half_le hσ1 (by linarith) (by rw [abs_of_pos hτ0]; exact hτ)
+  rw [abs_of_pos hτ0] at hψ1
+  have hD := re_digamma_sub_le (a := σ / 2) (b := 1.6181 / 2) (y := τ / 2) (by linarith) (by linarith)
+  rw [← ed, ← ed1] at hD
+  have hD1 : (1.6181 / 2 - σ / 2) / (σ / 2 + 1) ≤ 0.20604 := by
+    rw [div_le_iff₀ (by linarith)]; nlinarith
+  have hD2 : 1.6181 / 2 / ((1.6181 / 2) ^ 2 + (τ / 2) ^ 2) + (1.6181 / 2 + 1) / ((1.6181 / 2 + 1) ^ 2 + (τ / 2) ^ 2)
+      ≤ 11 / τ ^ 2 := by
+    have a1 : 1.6181 / 2 / ((1.6181 / 2) ^ 2 + (τ / 2) ^ 2) ≤ 1.6181 / 2 / ((τ / 2) ^ 2) :=
+      div_le_div_of_nonneg_left (by norm_num) (by positivity) (by nlinarith)
+    have a2 : (1.6181 / 2 + 1) / ((1.6181 / 2 + 1) ^ 2 + (τ / 2) ^ 2) ≤ (1.6181 / 2 + 1) / ((τ / 2) ^ 2) :=
+      div_le_div_of_nonneg_left (by norm_num) (by positivity) (by nlinarith)
+    have e : 1.6181 / 2 / ((τ / 2) ^ 2) + (1.6181 / 2 + 1) / ((τ / 2) ^ 2) = 10.4724 / τ ^ 2 := by
+      field_simp; ring
+    have : 10.4724 / τ ^ 2 ≤ 11 / τ ^ 2 := div_le_div_of_nonneg_right (by norm_num) (by positivity)
+    linarith
+  -- combine
+  set X := (logDeriv xiF ((σ : ℂ) + τ * I)).re
+  set X1 := (logDeriv xiF (((1.6181 : ℝ) : ℂ) + τ * I)).re
+  set P := (Complex.digamma (((σ : ℂ) + τ * I) / 2)).re
+  set P1 := (Complex.digamma ((((1.6181 : ℝ) : ℂ) + τ * I) / 2)).re
+  set E1 := 1 / 1.6181 + 1 / (1.6181 - 1) - 1 / 2 * Real.log π +
+      1 / 2 * (Real.log (1.6181 / 2 + 2) - 2 / 1.6181 - 1 / (1.6181 / 2 + 1))
+  set L1 := (LSeries (fun n => (Λ n : ℂ)) (((1.6181 : ℝ) : ℂ) + τ * I)).re
+  have hZ' : Z ≤ X - κ * X1 := hZ
+  have hPP : P - P1 ≤ 0.20604 + 11 / τ ^ 2 := by linarith
+  have k1 : κ * L1 ≤ κ * E1 := mul_le_mul_of_nonneg_left hE1 hκ0
+  have k2 : κ * (P - P1) ≤ κ * (0.20604 + 11 / τ ^ 2) := mul_le_mul_of_nonneg_left hPP hκ0
+  have k3 : (1 - κ) * (1 / 2 * P) ≤ (1 - κ) * (1 / 2 * Real.log τ + 0.36) :=
+    mul_le_mul_of_nonneg_left hψ1 (by linarith)
+  have k4 : 0 ≤ κ * ((1 / (((1.6181 : ℝ) : ℂ) + τ * I)).re + (1 / (((1.6181 : ℝ) : ℂ) + τ * I - 1)).re) :=
+    mul_nonneg hκ0 (by linarith)
+  have hsplit : (1.02 / τ ^ 2) + 0.02 / τ ^ 2 ≤ 2 / τ ^ 2 := by
+    rw [← add_div]; exact div_le_div_of_nonneg_right (by norm_num) (by positivity)
+  rw [hL]
+  rw [hL1] at k1
+  linear_combination hZ' + k1 + (1 / 2 : ℝ) * k2 + k3 + k4 + r1 + r2 + hsplit
+
 end TernaryGoldbach.Explicit
