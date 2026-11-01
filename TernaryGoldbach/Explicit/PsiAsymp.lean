@@ -279,4 +279,225 @@ theorem TailBG_asymp_le {a x : ℝ} (hx : Real.exp 35000 ≤ x)
         have : (1 : ℝ) ≤ L ^ 2 := by nlinarith
         nlinarith [pow_pos hL0 3]
 
+theorem sqrt_big {x : ℝ} (hx : Real.exp 35000 ≤ x) : 1e20 * Real.log x ^ 7 ≤ √x := by
+  have hx0 : 0 < x := lt_of_lt_of_le (Real.exp_pos _) hx
+  set L := Real.log x with hLdef
+  have hL : 35000 ≤ L := by rw [hLdef, Real.le_log_iff_exp_le hx0]; exact hx
+  have hsx : √x = Real.exp (L / 2) := by
+    rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos hx0]; congr 1; ring
+  rw [hsx]
+  have h := Real.pow_div_factorial_le_exp (x := L / 2) (by linarith) 20
+  have h2 : 1e20 * L ^ 7 ≤ (L / 2) ^ 20 / (Nat.factorial 20) := by
+    rw [le_div_iff₀ (by positivity)]
+    have hL13 : (35000 : ℝ) ^ 13 ≤ L ^ 13 := pow_le_pow_left₀ (by norm_num) hL 13
+    have e : (L / 2) ^ 20 = L ^ 7 * L ^ 13 / 2 ^ 20 := by ring
+    rw [e]
+    have hL7 : 0 < L ^ 7 := by positivity
+    have : (1e20 : ℝ) * (Nat.factorial 20) * 2 ^ 20 ≤ 35000 ^ 13 := by norm_num [Nat.factorial]
+    rw [le_div_iff₀ (by norm_num)]
+    nlinarith
+  linarith
+
+set_option maxHeartbeats 1000000 in
+/-- **`|ψ(x) − x| ≤ 0.2 x/log³x`** for `x ≥ e^{35000}`. -/
+theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 * x / Real.log x ^ 3 := by
+  have hx0 : 0 < x := lt_of_lt_of_le (Real.exp_pos _) hx
+  have hx1 : 1 < x := lt_of_lt_of_le (by have := Real.add_one_le_exp (35000 : ℝ); linarith) hx
+  have hℓ := log_log_ge hx
+  have hsb := sqrt_big hx
+  obtain ⟨L, hLdef⟩ : ∃ L, L = Real.log x := ⟨_, rfl⟩
+  obtain ⟨ℓ, hℓdef⟩ : ∃ ℓ, ℓ = Real.log L := ⟨_, rfl⟩
+  rw [← hLdef] at hsb hℓ ⊢
+  rw [← hℓdef] at hℓ
+  have hL : 35000 ≤ L := by rw [hLdef, Real.le_log_iff_exp_le hx0]; exact hx
+  have hL0 : 0 < L := by linarith
+  have hL3 : 0 < L ^ 3 := by positivity
+  have h105 := asymp_ineq1 hL
+  rw [← hℓdef] at h105
+  obtain ⟨δ, hδ⟩ : ∃ δ, δ = 5 * (ℓ + 5) / L ^ 4 := ⟨_, rfl⟩
+  obtain ⟨K, hK⟩ : ∃ K, K = ℓ + 4 := ⟨_, rfl⟩
+  have hδ0 : 0 < δ := by rw [hδ]; have : 0 < ℓ + 5 := by linarith
+                         positivity
+  have hL4 : (1.5e18 : ℝ) ≤ L ^ 4 := by
+    have := pow_le_pow_left₀ (by norm_num) hL 4; norm_num at this ⊢; linarith
+  -- `Kδ ≤ 0.0477/L³`
+  have hKδ : K * δ ≤ 0.0477 / L ^ 3 := by
+    rw [hK, hδ]
+    have h1 : (ℓ + 4) * (5 * (ℓ + 5) / L ^ 4) ≤ 5 * (ℓ + 5) ^ 2 / L ^ 4 := by
+      rw [mul_div_assoc', div_le_div_iff_of_pos_right (by positivity)]; nlinarith
+    refine h1.trans ?_
+    rw [div_le_div_iff₀ (by positivity) hL3]
+    have : L ^ 4 = L * L ^ 3 := by ring
+    rw [this]
+    have : 5 * (ℓ + 5) ^ 2 ≤ 0.0477 * L := by linarith
+    nlinarith
+  have hKδ0 : 0 ≤ K * δ := by rw [hK]; have : 0 ≤ ℓ + 4 := by linarith
+                              positivity
+  have hL3' : (4.2e13 : ℝ) ≤ L ^ 3 := by
+    have := pow_le_pow_left₀ (by norm_num) hL 3; norm_num at this ⊢; linarith
+  have hLL4 : 1e11 * L ≤ L ^ 4 := by
+    have : L ^ 4 = L * L ^ 3 := by ring
+    rw [this]; nlinarith
+  have h5L : 5 * (ℓ + 5) ≤ L := by
+    have : 5 * (ℓ + 5) ≤ (ℓ + 5) ^ 2 := by nlinarith
+    nlinarith
+  have hδK : δ ≤ K := by
+    have : δ ≤ 1 := by
+      rw [hδ, div_le_one (by positivity)]; nlinarith
+    rw [hK]; linarith
+  have hδsmall : δ ≤ 1e-11 := by
+    rw [hδ, div_le_iff₀ (by positivity)]
+    nlinarith
+  have hKδsmall : K * δ ≤ 1e-12 := by
+    refine hKδ.trans ?_
+    rw [div_le_iff₀ hL3]
+    have := pow_le_pow_left₀ (by norm_num) hL 3
+    norm_num at this ⊢; linarith
+  have hδ2 : δ ^ 2 / 2 ≤ 0.001 * (K * δ) := by
+    have h1 : δ ≤ 0.002 * K := by rw [hK]; linarith
+    have := mul_le_mul_of_nonneg_right h1 hδ0.le
+    nlinarith
+  have hδΓ : δ * (L ^ 4 / 5) = ℓ + 5 := by rw [hδ]; field_simp
+  -- `e^{−K²/2} ≤ 3.4·10⁻⁴/L⁴`
+  have hKt : Real.exp (-(K ^ 2 / 2)) ≤ 3.4e-4 / L ^ 4 := by
+    have h1 : -(K ^ 2 / 2) ≤ -8 - 4 * ℓ := by rw [hK]; nlinarith [sq_nonneg ℓ]
+    refine (Real.exp_le_exp.2 h1).trans ?_
+    rw [Real.exp_sub, show (4 : ℝ) * ℓ = ((4 : ℕ) : ℝ) * ℓ by norm_num, Real.exp_nat_mul, hℓdef,
+      Real.exp_log hL0]
+    apply div_le_div_of_nonneg_right _ (by positivity)
+    rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by norm_num)]
+    have h := exp_split_ge' 8 (u := 0) le_rfl 1
+    norm_num at h ⊢; linarith
+  have hKt0 : 0 < Real.exp (-(K ^ 2 / 2)) := Real.exp_pos _
+  have hKt' : Real.exp (-(K ^ 2 / 2)) ≤ 1e-8 / L ^ 3 := by
+    refine hKt.trans ?_
+    rw [div_le_div_iff₀ (by positivity) hL3]
+    have : L ^ 4 = L * L ^ 3 := by ring
+    rw [this]; nlinarith
+  have hΓ : (3e12 : ℝ) ≤ L ^ 4 / 5 := by linarith
+  have hsx := Real.sqrt_nonneg x
+  -- the absolute terms
+  have hss : √x * √x = x := Real.mul_self_sqrt hx0.le
+  have hL7 : 0 < L ^ 7 := by positivity
+  have habs : 15000 * √x + 2.54e-3 * L ^ 4 + 1e11 ≤ 1e-6 * x / L ^ 3 := by
+    have h1 : 1e20 * L ^ 7 * √x ≤ x := by
+      have := mul_le_mul_of_nonneg_right hsb hsx; rwa [hss] at this
+    have h2 : 1 ≤ L ^ 4 := by nlinarith
+    have h3 : 1 ≤ √x := by nlinarith
+    rw [le_div_iff₀ hL3]
+    have e1 : L ^ 7 = L ^ 4 * L ^ 3 := by ring
+    have h4 : (15000 * √x + 2.54e-3 * L ^ 4 + 1e11) * L ^ 3 ≤ 1e14 * (L ^ 7 * √x) := by
+      have : L ^ 4 * L ^ 3 ≤ L ^ 7 * √x := by rw [← e1]; nlinarith
+      have : L ^ 3 ≤ L ^ 7 * √x := by nlinarith
+      have : √x * L ^ 3 ≤ L ^ 7 * √x := by nlinarith
+      nlinarith
+    nlinarith
+  have hx19 : (1e19 : ℝ) ≤ x := by
+    have h := exp_nat_ge' 44
+    have h2 : Real.exp ((44 : ℕ) : ℝ) ≤ Real.exp 35000 := Real.exp_le_exp.2 (by norm_num)
+    have : (1e19 : ℝ) ≤ (2.7182818283 : ℝ) ^ 44 := by norm_num
+    exact this.trans (h.trans (h2.trans hx))
+  -- the explicit-formula errors
+  have hErr : ∀ a : ℝ, |a| ≤ K * δ → Real.log (1e10 / x) ≤ a →
+      |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) δ (n / x) -
+        Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
+        14990 * √x + 0.0101 * x / L ^ 3 + 2.54e-3 * L ^ 4 := by
+    intro a ha hab
+    have hb0 : Real.log (1e10 / x) ≤ 0 := Real.log_nonpos (by positivity)
+      ((div_le_one hx0).2 (by linarith))
+    have hT := tsum_gsm_le_zf (a := a) (Γ := L ^ 4 / 5) hδ0 hab hb0 hx1 hΓ
+    have hδa : δ ^ 2 / 2 + |a| ≤ 1e-6 := by linarith
+    have h1 := LineB_le_gen (a := a) (δ := δ) (by linarith)
+    have h2 : MidB a δ (L ^ 4 / 5) x ≤ 0.01 / L ^ 3 := by
+      have := MidB_asymp_le (a := a) (δ := δ) hx hδa; rwa [← hLdef] at this
+    have h3 : TailBG a δ (L ^ 4 / 5) ≤ 1e-4 / L ^ 3 := by
+      have := TailBG_asymp_le (a := a) hx (by rw [← hLdef, ← hℓdef, ← hδ]; exact hδa)
+      rwa [← hLdef, ← hℓdef, ← hδ] at this
+    have h4 := Vg_le_gen (a := a) (δ := δ) (x := x) hδ0 hδsmall (by linarith) hx19
+    have h4' : 2.54e-3 / δ ≤ 2.54e-3 * L ^ 4 := by
+      rw [div_le_iff₀ hδ0, hδ]
+      have : 1 ≤ 5 * (ℓ + 5) := by linarith
+      rw [mul_assoc, mul_div_assoc', mul_div_cancel_left₀ _ (by positivity)]; nlinarith
+    refine hT.trans ?_
+    have e1 := mul_le_mul_of_nonneg_left h1 hsx
+    have e2 := mul_le_mul_of_nonneg_left h2 hx0.le
+    have e3 := mul_le_mul_of_nonneg_left h3 hx0.le
+    have e4 := h4.trans h4'
+    have hsum := add_le_add (add_le_add (add_le_add e1 e2) e3) e4
+    refine hsum.trans ?_
+    have : x * (0.01 / L ^ 3) + x * (1e-4 / L ^ 3) ≤ 0.0101 * x / L ^ 3 := by
+      rw [show x * (0.01 / L ^ 3) + x * (1e-4 / L ^ 3) = 0.0101 * x / L ^ 3 by ring]
+    linarith
+  -- the combination
+  set q := x / L ^ 3 with hq
+  have hq0 : 0 < q := by positivity
+  have hqx : q ≤ x := div_le_self hx0.le (by nlinarith)
+  have hxq : ∀ c : ℝ, c * x / L ^ 3 = c * q := fun c => by rw [hq]; ring
+  have hb0 : Real.log (1e10 / x) ≤ -(K * δ) := by
+    have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1e10 / x by positivity)
+    have : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
+    linarith
+  rw [hxq] at habs
+  have hKt'' : Real.exp (-(K ^ 2 / 2)) ≤ 1e-8 := by
+    refine hKt'.trans ?_; rw [div_le_iff₀ hL3]; nlinarith
+  -- upper
+  have hK1 : 2 * Real.exp (-(K ^ 2 / 2)) < 1 := by linarith
+  have hexp1 : Real.exp (K * δ) ≤ 2 := by
+    have := exp_small_le (t := K * δ) hKδ0 (by linarith); linarith
+  have hYx : 1e10 * Real.exp (K * δ) ≤ x := by nlinarith
+  have hEu := hErr (K * δ) (by rw [abs_of_nonneg hKδ0]) (by linarith)
+  have hU := psi_upper_of_err (δ := δ) (K := K) (y0 := 1e10) (x := x) hδ0 (by rw [hK]; linarith) hK1
+    (by norm_num) hx1.le hYx hEu
+  rw [hxq] at hEu hU
+  have hexp2 : Real.exp (δ ^ 2 / 2 + K * δ) ≤ 1 + 0.0956 / L ^ 3 := by
+    have h := exp_small_le (t := δ ^ 2 / 2 + K * δ) (by positivity) (by linarith)
+    have : 2 * (δ ^ 2 / 2 + K * δ) ≤ 2.002 * (0.0477 / L ^ 3) := by nlinarith
+    have : 2.002 * (0.0477 / L ^ 3) ≤ 0.0956 / L ^ 3 := by
+      rw [show 2.002 * (0.0477 / L ^ 3) = 0.0954954 / L ^ 3 by ring]
+      exact div_le_div_of_nonneg_right (by norm_num) hL3.le
+    linarith
+  set ε := Real.exp (-(K ^ 2 / 2)) with hε
+  have hε0 : 0 ≤ ε := hKt0.le
+  have hden : 1 / (1 - 2 * ε) ≤ 1 + 4 * ε := by
+    rw [div_le_iff₀ (by linarith only [hKt''])]; nlinarith only [hε0, hKt'']
+  set N := Real.exp (δ ^ 2 / 2 + K * δ) * x + (14990 * √x + 0.0101 * q + 2.54e-3 * L ^ 4) with hNdef
+  have hN : N ≤ x + 0.1058 * q - 1e11 := by
+    have h1 := mul_le_mul_of_nonneg_right hexp2 hx0.le
+    have e : (1 + 0.0956 / L ^ 3) * x = x + 0.0956 * q := by rw [hq]; ring
+    have h2 : 14990 * √x ≤ 15000 * √x := by linarith only [hsx]
+    rw [hNdef]
+    linarith only [h1, e, h2, habs, hq0, hsx, pow_nonneg hL0.le 4]
+  have hN2 : N ≤ 2 * x := by linarith only [hN, hqx, hq0]
+  have hN0 : 0 ≤ N := by rw [hNdef]; positivity
+  have hεx : ε * x ≤ 1e-8 * q := by
+    have := mul_le_mul_of_nonneg_right hKt' hx0.le
+    rw [show 1e-8 / L ^ 3 * x = 1e-8 * q by rw [hq]; ring] at this; exact this
+  have hup : psiR x ≤ x + 0.2 * q := by
+    have h1 : N / (1 - 2 * ε) ≤ N + 4 * (ε * N) := by
+      rw [div_eq_mul_one_div]
+      calc N * (1 / (1 - 2 * ε)) ≤ N * (1 + 4 * ε) := mul_le_mul_of_nonneg_left hden hN0
+        _ = N + 4 * (ε * N) := by ring
+    have h2 : ε * N ≤ ε * (2 * x) := mul_le_mul_of_nonneg_left hN2 hε0
+    have h3 : 4 * (1e10 * Real.exp (K * δ)) ≤ 8e10 := by linarith only [hexp1]
+    have h4 : (8e10 : ℝ) ≤ 1e-6 * q := by linarith only [habs, hsx, pow_nonneg hL0.le 4]
+    have h5 : ε * (2 * x) = 2 * (ε * x) := by ring
+    have : psiR x ≤ 4 * (1e10 * Real.exp (K * δ)) + N / (1 - 2 * ε) := hU
+    linarith only [this, h1, h2, h3, h4, h5, hεx, hN]
+  -- lower
+  have hEl := hErr (-(K * δ)) (by rw [abs_neg, abs_of_nonneg hKδ0]) hb0
+  have hL' := psi_lower_of_err (δ := δ) (K := K) (y0 := 1e10) (x := x) hδ0 (by linarith) hδK
+    (by norm_num) hx1.le hb0 hEl
+  rw [hxq] at hEl hL'
+  have hexp3 : 1 - 0.0477 / L ^ 3 ≤ Real.exp (-(K * δ)) := by
+    have := Real.add_one_le_exp (-(K * δ)); linarith
+  have hlo : x - 0.2 * q ≤ psiR x := by
+    have h1 := mul_le_mul_of_nonneg_right hexp3 hx0.le
+    have e : (1 - 0.0477 / L ^ 3) * x = x - 0.0477 * q := by rw [hq]; ring
+    have h2 : 4 * x * ε ≤ 4e-8 * q := by linarith only [hεx]
+    have h4 : 14990 * √x ≤ 15000 * √x := by linarith only [hsx]
+    linarith only [hL', h1, e, h2, h4, habs, hq0, hsx, pow_nonneg hL0.le 4]
+  rw [abs_le]; constructor
+  · rw [hxq]; linarith
+  · rw [hxq]; linarith
+
 end TernaryGoldbach.Explicit
