@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 35 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 31 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -62,7 +62,7 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ## The axioms
 
-### Our own computations (21)
+### Our own computations (16)
 
 Scripts are in `scripts/`; all were re-run on 2026-11-01 and reproduce the stated values.
 "float64" means double precision. In those cases the rounding error is bounded in the script's
@@ -70,17 +70,12 @@ docstring and is orders of magnitude below the margin.
 
 | Axiom | Statement | Script | Arithmetic | Result (margin) |
 |---|---|---|---|---|
-| `Prelim.psi_small` | `ψ(n) < 1.03883 n`, `1 ≤ n < 2·10⁶` | `psi_checks.py` | float64 | max `1.0388206` at `n = 113` |
 | `Prelim.nonprime_small` | `ψ(n) − θ(n) < 1.4262 √n`, `1 ≤ n ≤ 10¹²` | `psi_checks.py` | float64 (checked at every prime power `p^k`, `k ≥ 2`) | max `1.4261933` at `n = 361` |
 | `Prelim.mertens_small` | `∑_{m≤n} Λ(m)/m ≤ log n`, `1 ≤ n ≤ 100` | `psi_checks.py` | mpmath, 30 digits | max of difference `0` (equality at `n = 1`) |
 | `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `0.0141` at `n = 6` |
 | `Prelim.mertens_point` | value at `X = 10⁶` `≥ −1.5776` | `psi_checks.py` | float64 | `−1.57721` |
 | `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `2.137` at `n = 117` |
-| `Prelim.psi_mid` | `ψ(n) ≤ 1.0004 n`, `2·10⁶ ≤ n ≤ 10⁹` | `psi_mid_check.py` | float64 | max `1.0003639` at `n = 3 445 943` |
-| `Prelim.psi_sqrt` | `\|ψ(n) − n\| ≤ 0.95 √n`, `11 ≤ n ≤ 10¹⁰` | `psi_mid_check.py` | float64 | max `0.7906` |
-| `Prelim.psi_mul_mid` | `∑_{m≤n} Λ(m) m < 1.0008 n²/2`, `1.6·10⁶ ≤ n ≤ 10⁸` | `psi_mid_check.py` | long double | min margin `4.3·10⁻⁵ n²` |
-| `Prelim.theta_cube_small` | `\|θ(n) − n\| < n/log³n`, `89 967 803 ≤ n ≤ 10¹⁰` | `theta_cube_check.py` | float64 | max ratio `0.999336` at `n = 89 967 810` (absolute margin `≈ 9.7`) |
-| `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 10⁸` | `mertens_product_check.py` | mpmath, 40 digits, below `10⁴`; float64 above | min margin `2.44·10⁻⁷` at `x = 23`; `≥ 0.1357` above `10⁴` |
+| `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 2·10⁸` | `mertens_product_check.py` | mpmath, 40 digits, below `10⁴`; float64 above | min margin `2.44·10⁻⁷` at `x = 23`; `≥ 0.1309` above `10⁴` |
 | `Prelim.K_pieces` | piecewise sum `≤ 0.4035` | `moebius_K_check.py` | float64 | `0.403420` |
 | `Prelim.K_blocks` | block bounds `hblk j`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | float64 (block maxima `+10⁻⁷`, rounded up) | the 20 Lean constants equal the script's list |
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | float64 | equality at `k = 1`; otherwise max ratio `0.6124` at `k = 2` |
@@ -93,13 +88,13 @@ docstring and is orders of magnitude below the margin.
 | `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` | directed rounding, 40 digits (rigorous) | `6.7987791731…` |
 
 Unused (in `Prelim/LambdaMuExtra.lean`, not on the path of `ternary_goldbach`):
-* `lambda_mul_small`: max ratio `1.03583`.
-* `lambda_sqrt_small`: max ratio `1.99838`.
-* `lambda_sqrt_point`: value `−3.2553`.
+* `lambda_mul_small` (`k ≤ 2.5·10⁷`): max ratio `1.03583`.
+* `lambda_sqrt_small` (`k ≤ 6·10⁶`): max ratio `1.99906`.
+* `lambda_sqrt_point` (at `6·10⁶`): value `−3.6619`.
 
 All three come from `psi_extra_check.py`.
 
-### Published computations (6)
+### Published computations (7)
 
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
@@ -109,6 +104,7 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
+| `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
 ### Results of Helfgott's book [B] (8)
 
@@ -134,9 +130,10 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 ## Summary by kind
 
-* **Our own computations (21):** reproducible with the scripts in `scripts/`.
-* **Published computations (6):** RH to `3·10¹²`, Platt's GRH check, binary Goldbach to `4·10¹⁸`,
-  the Helfgott–Platt ladder, and Büthe's bound. They are stated as in the papers.
+* **Our own computations (16):** reproducible with the scripts in `scripts/`.
+* **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
+  `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
+  in the papers.
 * **Results of [B] (8):**
   * `fsq_le`, `H2_le` and the corrected `integral_H2_le` are re-checked rigorously by our scripts.
   * (B.6), (B.11), (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float
@@ -148,6 +145,21 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 * `theta_sqrt` (`|θ(n) − n| ≤ 1.95 √n`, `5·10⁵ ≤ n ≤ 10¹⁰`, our computation) was a special case of
   `buthe_theta` (same bound, `1423 ≤ n ≤ 10¹⁹`); it is now derived from it.
+* `psi_sqrt`, `psi_small`, `psi_mid`, `psi_mul_mid` and `theta_cube_small` (our computations) are
+  now proofs. They use Büthe's bounds (`buthe_theta`, and the new `buthe_psi` from the same Theorem 2),
+  together with a kernel-checked computation for small `n`:
+  * `psi_sqrt`: Büthe for `n ≥ 12` (`0.94 ≤ 0.95`); the uses at `n = 11` are covered by `ψ ≥ 0` and
+    `ψ(11) ≤ 1.03883·11`.
+  * `psi_small` (`ψ(n) < 1.03883 n`): Büthe for `n ≥ 587`; for `n ≤ 586`,
+    `Prelim/SmallPsi.lean` checks `lcm(1, …, n) < e_lo^a T(f)` for every `n` with `decide +kernel`
+    (`ψ(n) = log lcm(1, …, n)`).
+  * `psi_mid` (`ψ ≤ 1.0004 n`): Büthe for `n ≥ 6·10⁶`. [B, (2.14)] is now stated for `y ≥ 6·10⁶`
+    (the proof uses it only at `y ≥ 2.7·10⁷`).
+  * `psi_mul_mid`: [B, (2.17)] for `2.5·10⁷ ≤ N ≤ 10¹⁹` by partial summation from Büthe's bounds; it
+    is now stated for `y ≥ 2.5·10⁷` (used only at `y ≥ 2.7·10⁷`).
+  * `theta_cube_small`: `theta_explicit` now starts at `2·10⁸`, where Büthe's `1.95 √n` is below
+    `n/log³n`. Its only use below `10⁹`, the Mertens product bound, now switches from the finite
+    check to the analytic bound at `2·10⁸` (`mertens_product_small` was re-run to `2·10⁸`).
 
 ## Candidates for proofs in Lean
 

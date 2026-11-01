@@ -91,7 +91,7 @@ theorem sum_inv_log_cube_le' {a b : ℕ} (ha : 100 ≤ a) (hab : a < b) :
       push_cast; simp
 
 /-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)` (sharpened tail constant `0.51`). -/
-theorem E1_diff' {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
+theorem E1_diff' {M : ℕ} (hM : 200000000 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
       (0.51 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) + Pth M := by
   have hPth := Pth_nonneg (M : ℝ)
@@ -338,11 +338,11 @@ theorem Dp_anti {M M' : ℝ} (hM : 3 ≤ M) (h : M ≤ M') : Dp M' ≤ Dp M := b
     exact h2 (lt_of_le_of_lt hL' h1)
   linarith
 
-/-- `|E(y) − E(x)| ≤ 1/⌊y⌋ + D'(⌊y⌋)` for `89 967 803 ≤ y ≤ x`. -/
-theorem E_far {x y : ℝ} (hy : 89967803 ≤ y) (hyx : y ≤ x) :
+/-- `|E(y) − E(x)| ≤ 1/⌊y⌋ + D'(⌊y⌋)` for `2·10⁸ ≤ y ≤ x`. -/
+theorem E_far {x y : ℝ} (hy : 200000000 ≤ y) (hyx : y ≤ x) :
     |E₁Λ y - E₁Λ x| ≤ 1 / ⌊y⌋₊ + Dp ⌊y⌋₊ := by
   set M := ⌊y⌋₊ with hM
-  have hM1 : 89967803 ≤ M := Nat.le_floor (by exact_mod_cast hy)
+  have hM1 : 200000000 ≤ M := Nat.le_floor (by exact_mod_cast hy)
   have hM0 : (0 : ℝ) < M := by exact_mod_cast (by omega : 0 < M)
   have hMy : (M : ℝ) ≤ y := Nat.floor_le (by linarith)
   have hyM : y < M + 1 := Nat.lt_floor_add_one y

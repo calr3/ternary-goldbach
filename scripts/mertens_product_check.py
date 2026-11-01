@@ -1,6 +1,6 @@
 """Finite check behind the numerical axiom `mertens_product_small` (Prelim/MertensProduct.lean):
 
-  for every prime 5 <= x <= 10^8,
+  for every prime 5 <= x <= 2*10^8,
       prod_{p <= x} p/(p-1) < e^gamma log theta(x) + 2.50637 / log theta(x),
   where theta(x) = sum_{p <= x} log p.
 
@@ -14,7 +14,7 @@ import math
 import numpy as np
 from mpmath import mp, mpf, log as mlog, exp as mexp, euler
 
-X = 10 ** 8
+X = 2 * 10 ** 8
 isp = np.ones(X + 1, dtype=bool); isp[:2] = False
 for p in range(2, math.isqrt(X) + 1):
     if isp[p]:

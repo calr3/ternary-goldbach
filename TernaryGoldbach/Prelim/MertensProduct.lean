@@ -11,8 +11,8 @@ Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
   by summation by parts from `theta_explicit` (`|θ(n) − n| < n/log³ n + ε_pl(n) n`, `Prelim/ThetaExplicit.lean`;
   the plateau adds `P(M) = 3.7·10⁻⁷` to `D` while `log M < 20000`);
 * `log ∏_{p ≤ x} p/(p−1) ≤ ∑_{d ≤ x} Λ(d)/(d log d) + 3/⌊√x⌋` (the log series);
-* hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (`F_large`), and for
-  primes `5 ≤ x ≤ 10⁸` by a finite check (`mertens_product_small`);
+* hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 2·10⁸` (`F_large`), and for
+  primes `5 ≤ x ≤ 2·10⁸` by a finite check (`mertens_product_small`);
 * the exchange argument: `q/φ(q) ≤ ∏_{p ≤ p_k} p/(p−1)` and `p_1 ⋯ p_k ≤ q` for `k = ω(q)`.
 -/
 
@@ -54,8 +54,8 @@ theorem E2_le_of {x c D : ℝ} (hx : 2 ≤ x) (h : ∀ t, x < t → |E₁Λ t - 
   have e1 : (c + D) / Real.log x - (c - D) / Real.log x = 2 * D / Real.log x := by ring
   rw [abs_le]; constructor <;> linarith
 
-/-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 89 967 803`. -/
-theorem psi_err {n : ℕ} (hn : 89967803 ≤ n) :
+/-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 2·10⁸`. -/
+theorem psi_err {n : ℕ} (hn : 200000000 ≤ n) :
     |psiN n - n| ≤ n / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ) := by
   have h1 := psi_upper_of hn (psi_bounds _).1
   have h2 := (abs_lt.1 (thetaN_large hn)).1
@@ -85,7 +85,7 @@ theorem sum_inv_succ_le {a b : ℕ} (hab : a < b) :
       push_cast; simp
 
 /-- The Abel summation term, centred: `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ …`. -/
-theorem abel_term_err {n : ℕ} (hn : 89967803 ≤ n) :
+theorem abel_term_err {n : ℕ} (hn : 200000000 ≤ n) :
     |psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1)| ≤
       1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) + epl n / ((n : ℝ) + 1) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
@@ -105,8 +105,8 @@ theorem abel_term_err {n : ℕ} (hn : 89967803 ≤ n) :
     rw [add_mul, add_mul, mul_assoc (7.04 : ℝ), this, e3]; field_simp; ring
   linarith
 
-/-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 89 967 803`. -/
-theorem E1_diff {M : ℕ} (hM : 89967803 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
+/-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 2·10⁸`. -/
+theorem E1_diff {M : ℕ} (hM : 200000000 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
       (2 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) + Pth M := by
   have hPth := Pth_nonneg (M : ℝ)
@@ -433,11 +433,11 @@ theorem log_sq_le_sqrt {x : ℝ} (hx : 10 ^ 8 ≤ x) : Real.log x ^ 2 ≤ 0.0361
     _ = 0.0361 * √x := by rw [mul_pow, hq2]; norm_num
 
 /-- **[B, Lemma C.2.2]** for `x ≥ 10⁸`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
-theorem F_large {x : ℕ} (hx : 10 ^ 8 ≤ x) :
+theorem F_large {x : ℕ} (hx : 2 * 10 ^ 8 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) + 2.50637 / Real.log (thetaN x) := by
   have hx0 : (0 : ℝ) < x := by exact_mod_cast (by omega : 0 < x)
-  have hxr : (10 : ℝ) ^ 8 ≤ x := by exact_mod_cast hx
+  have hxr : (10 : ℝ) ^ 8 ≤ x := by exact_mod_cast (le_trans (by norm_num) hx : 10 ^ 8 ≤ x)
   set L := Real.log x with hLdef
   have hL18 : (18 : ℝ) ≤ L := by
     have := nat_le_log (N := (x : ℝ)) (k := 18) (le_trans (by norm_num) hxr)
@@ -682,10 +682,10 @@ theorem image_nth (k : ℕ) (hk : 1 ≤ k) :
     omega
 
 /-- **Numerical axiom** (`scripts/mertens_product_check.py`; tightest at `x = 23`, i.e. at the primorial
-`223 092 870` as in [RS62, Thm. 15], with margin `2.4·10⁻⁷`, checked to 40 digits; margin `≥ 0.135`
-for `x > 10⁴`): for primes `5 ≤ x ≤ 10⁸`,
+`223 092 870` as in [RS62, Thm. 15], with margin `2.4·10⁻⁷`, checked to 40 digits; margin `≥ 0.130`
+for `x > 10⁴`): for primes `5 ≤ x ≤ 2·10⁸`,
 `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
-axiom mertens_product_small (x : ℕ) (hx : x.Prime) (h5 : 5 ≤ x) (h : x ≤ 10 ^ 8) :
+axiom mertens_product_small (x : ℕ) (hx : x.Prime) (h5 : 5 ≤ x) (h : x ≤ 2 * 10 ^ 8) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant *
           Real.log (∑ p ∈ (Icc 1 x).filter Nat.Prime, Real.log p) +
@@ -695,7 +695,7 @@ theorem F_all {x : ℕ} (hx : x.Prime) (h5 : 5 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) +
         2.50637 / Real.log (thetaN x) := by
-  rcases le_or_gt x (10 ^ 8) with h | h
+  rcases le_or_gt x (2 * 10 ^ 8) with h | h
   · exact mertens_product_small x hx h5 h
   · exact F_large h.le
 

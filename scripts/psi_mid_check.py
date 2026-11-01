@@ -12,6 +12,10 @@ Rounding: within a segment psi and theta are cumulative float64 sums of < 10^7 t
 margins exceed these errors by orders of magnitude.
 
 Usage: python3 scripts/psi_mid_check.py   (a few minutes)
+
+NOTE (2026-11-01): the corresponding axioms are no longer used; they are proved from Büthe's
+bounds (`buthe_theta`, `buthe_psi`) and kernel-checked computations (see AXIOMS.md, "Removed axioms").
+This script is kept for reference.
 """
 import bisect
 import math

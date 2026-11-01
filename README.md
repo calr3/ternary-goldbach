@@ -7,11 +7,12 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 35 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 31 explicitly stated
 axioms besides Lean's standard three. They are:
-* 21 finite computations of our own;
-* 6 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
-  Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bound on `θ` up to `10¹⁹`;
+* 16 finite computations of our own;
+* 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+  Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
+  `10¹⁹` (2 axioms);
 * 8 numerical results of [B]:
   * three of them (`fsq_le`, `H2_le` and our corrected (5.36)) are re-checked rigorously by our
     scripts;
@@ -54,6 +55,7 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.C_grid,
  TernaryGoldbach.Prelim.K_blocks,
  TernaryGoldbach.Prelim.K_pieces,
+ TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.buthe_theta,
  TernaryGoldbach.Prelim.fsq_le,
  TernaryGoldbach.Prelim.liouville_small,
@@ -64,11 +66,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.mertens_small,
  TernaryGoldbach.Prelim.moebius_sqrt_small,
  TernaryGoldbach.Prelim.nonprime_small,
- TernaryGoldbach.Prelim.psi_mid,
- TernaryGoldbach.Prelim.psi_mul_mid,
- TernaryGoldbach.Prelim.psi_small,
- TernaryGoldbach.Prelim.psi_sqrt,
- TernaryGoldbach.Prelim.theta_cube_small,
  TernaryGoldbach.Prelim.MV.GS_N0,
  TernaryGoldbach.Prelim.MV.lemma7_numeric,
  TernaryGoldbach.Prelim.MV.lemma8_numeric,
@@ -76,7 +73,8 @@ echo 'import TernaryGoldbach
 ```
 
 Beyond these axioms, the trust base is the Lean kernel and Mathlib. The development uses no
-`native_decide`. The primality certificates in `PrattPrime.lean` are evaluated by the kernel.
+`native_decide`. The primality certificates in `PrattPrime.lean` and the small-range checks of `ψ`
+in `Prelim/SmallPsi.lean` are evaluated by the kernel.
 
 ## How the proof is organized
 
@@ -112,9 +110,8 @@ The top level is [B, §14.4] (`Helfgott/Main.lean`).
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
-  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 89 967 803`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
+  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 2·10⁸`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
   `3400 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [B] uses. It comes from:
-  * a finite check up to `10¹⁰`;
   * Büthe's bound up to `10¹⁹`;
   * above `10¹⁹`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹²` and the
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with

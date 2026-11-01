@@ -178,6 +178,24 @@ relax `K ≤ 0.54` to `0.55` — `abs_ls_big` still gives `≤ 0.99` if `Σ 1/u�
 (`0.55·(1.034·π²/6 + 0.09·1.0117) + 0.0042 = 0.990`, check exactly) or a tighter partial sum.
 Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` — absolute size `≈ 10¹⁰`, negligible.
 
+## Fewer axioms (2026-11-01, after the audit)
+
+* Step 1: `theta_sqrt` removed; it is a special case of `buthe_theta`.
+* Step 2: `psi_sqrt`, `psi_small`, `psi_mid`, `psi_mul_mid`, `theta_cube_small` removed, and
+  `buthe_psi` added (Büthe 2018, Thm 2, (1.5), same paper as `buthe_theta`):
+  * `ψ < 1.03883 n` for `n ≤ 586` by `Prelim/SmallPsi.lean`: `ψ(n) = log lcm(1..n)`, and a verified
+    loop that carries the lcm is checked with `decide +kernel` in about 15 s.
+  * Thresholds moved up to where Büthe applies:
+    * (2.14) for `y ≥ 6·10⁶`;
+    * (2.17) for `y ≥ 2.5·10⁷`, with a new Büthe-based proof `psi_mul_buthe`;
+    * `theta_explicit` from `2·10⁸`, using `1.95√n < n/log³n` there;
+    * the Type I hypotheses `V ≥ 2.5·10⁷` (the actual `V ≥ 2.7·10⁷`);
+    * `F_large` from `2·10⁸`, with `mertens_product_small` re-run to `2·10⁸`.
+  * The unused `LambdaMuExtra` axioms were re-checked on their extended ranges.
+* Kernel limits measured (no `native_decide`):
+  * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
+  * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
+
 ## Axiom audit (2026-11-01): `AXIOMS.md`
 
 Every axiom has been checked against its source or script, and all scripts were re-run. Findings:

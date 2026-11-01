@@ -13,7 +13,7 @@ namespace TernaryGoldbach.MinorArcs
 /-- [B, p. 106]: `∑_{v ≤ V} Λ(v) min(⌊x/v/|δ|q_v⌋ + 1, 2U)`
 `≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0004 V`. -/
 theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)
-    (hU : 0 < U) (hV : 2e6 ≤ V) :
+    (hU : 0 < U) (hV : 2.5e7 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (Λ v : ℝ) *
         min ((⌊x / v / (|δ| * ((q / Nat.gcd q v : ℕ) : ℝ))⌋₊ : ℝ) + 1) (2 * U) ≤
       x / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x))) +
@@ -217,7 +217,7 @@ theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0
 Compared with [B]: the `U/e` term carries a factor `1 + V/Q` (since (4.32) has
 `log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). -/
 theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q)
-    (hx : 0 < x) (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2e6 ≤ V)
+    (hx : 0 < x) (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V)
     (hUV : U * V ≤ x) (hδ : 1 / (2 * c₂) ≤ |δ|) (hε : 0 < ε) (hε1 : ε ≤ 1) :
     ‖typeI2 α x U V‖ ≤
       x / (2 * q) * minInv c₀ (π * δ) * muBound (min (Q / (2 * V)) U) q * Real.log (V * q) +

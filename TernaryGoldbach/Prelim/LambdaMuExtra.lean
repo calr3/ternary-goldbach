@@ -12,30 +12,30 @@ open Finset ArithmeticFunction
 namespace TernaryGoldbach.Prelim
 
 /-- **Numerical axiom** (`scripts/psi_extra_check.py`; max ratio `1.03583` at `k = 663`):
-`∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 1.6·10⁶`. -/
-axiom lambda_mul_small (k : ℕ) (h1 : 663 ≤ k) (h2 : k ≤ 1600000) :
+`∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 2.5·10⁷`. -/
+axiom lambda_mul_small (k : ℕ) (h1 : 663 ≤ k) (h2 : k ≤ 25000000) :
     ∑ n ∈ Icc 1 k, (Λ n : ℝ) * n < 1.03884 * (k : ℝ) ^ 2 / 2
 
-/-- **Numerical axiom** (same script; max ratio `1.99838` at `k = 1 948 801`):
-`∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 2·10⁶`. -/
-axiom lambda_sqrt_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ 2000000) :
+/-- **Numerical axiom** (same script; max ratio `1.99906` at `k = 5 465 627`):
+`∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 6·10⁶`. -/
+axiom lambda_sqrt_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ 6000000) :
     ∑ n ∈ Icc 1 k, (Λ n : ℝ) / √n < 2.0008 * √(k : ℝ)
 
-/-- **Numerical axiom** (same script; value `−3.2553`): at `K = 2·10⁶`,
+/-- **Numerical axiom** (same script; value `−3.6619`): at `K = 6·10⁶`,
 `∑_{n≤K} Λ(n)/√n − ψ(K)/√(K+1) − 1.0004 √(K+1) ≤ −2`. -/
 axiom lambda_sqrt_point :
-    ∑ n ∈ Icc 1 2000000, (Λ n : ℝ) / √n - psiN 2000000 / √(2000001 : ℝ) -
-      1.0004 * √(2000001 : ℝ) ≤ -2
+    ∑ n ∈ Icc 1 6000000, (Λ n : ℝ) / √n - psiN 6000000 / √(6000001 : ℝ) -
+      1.0004 * √(6000001 : ℝ) ≤ -2
 
 /-- **[B, (2.16)]**: `∑_{n ≤ y} Λ(n) n < 1.03884 y²/2` for `y > 663`. -/
 theorem sum_vonMangoldt_mul_lt {y : ℝ} (hy : 663 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.03884 * y ^ 2 / 2 := by
-  rcases lt_or_ge 1.6e6 y with h | h
+  rcases le_or_gt 2.5e7 y with h | h
   · have := sum_vonMangoldt_mul_lt' h
     have : (0 : ℝ) ≤ y ^ 2 := sq_nonneg y
     linarith
   · have hk1 : 663 ≤ ⌊y⌋₊ := Nat.le_floor (by norm_num; linarith)
-    have hk2 : ⌊y⌋₊ ≤ 1600000 := Nat.floor_le_of_le (by norm_num; linarith)
+    have hk2 : ⌊y⌋₊ ≤ 25000000 := Nat.floor_le_of_le (by norm_num; linarith)
     have hax := lambda_mul_small _ hk1 hk2
     have hky : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le (by linarith)
     have : (⌊y⌋₊ : ℝ) ^ 2 ≤ y ^ 2 := pow_le_pow_left₀ (Nat.cast_nonneg _) hky 2
@@ -74,9 +74,9 @@ theorem sum_vonMangoldt_div_sqrt_lt {y : ℝ} (hy : 1 ≤ y) :
   have hk1 : 1 ≤ k := Nat.le_floor (by exact_mod_cast hy)
   have hky : (k : ℝ) ≤ y := Nat.floor_le (by linarith)
   have hsk : √(k : ℝ) ≤ √y := Real.sqrt_le_sqrt hky
-  rcases le_or_gt k 2000000 with h | h
+  rcases le_or_gt k 6000000 with h | h
   · have := lambda_sqrt_small k hk1 h; linarith
-  set K := 2000000
+  set K := 6000000
   have hsplit : ∑ n ∈ Icc 1 k, (Λ n : ℝ) / √n =
       ∑ n ∈ Icc 1 K, (Λ n : ℝ) / √n + ∑ n ∈ Ioc K k, (Λ n : ℝ) * (1 / √n) := by
     have e1 : Icc 1 k = Ioc 0 k := Finset.Icc_add_one_left_eq_Ioc 0 k
@@ -90,7 +90,7 @@ theorem sum_vonMangoldt_div_sqrt_lt {y : ℝ} (hy : 1 ≤ y) :
       1.0004 * (√(k : ℝ) - √((K + 1 : ℕ) : ℝ)) := by
     calc _ ≤ ∑ n ∈ Ioo K k, 1.0004 * (√((n + 1 : ℕ) : ℝ) - √(n : ℝ)) := by
           refine sum_le_sum fun n hn => ?_
-          have hn2 : 2000000 ≤ n := by have := (mem_Ioo.1 hn).1; omega
+          have hn2 : 6000000 ≤ n := by have := (mem_Ioo.1 hn).1; omega
           have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
           have hψ := (psi_bounds n).2 hn2
           have hw : 0 ≤ 1 / √(n : ℝ) - 1 / √((n + 1 : ℕ) : ℝ) := by
@@ -114,10 +114,10 @@ theorem sum_vonMangoldt_div_sqrt_lt {y : ℝ} (hy : 1 ≤ y) :
       _ = 1.0004 * √(k : ℝ) := by
           field_simp; rw [Real.sq_sqrt hk0.le]
   have hpt := lambda_sqrt_point
-  have e1 : ((K + 1 : ℕ) : ℝ) = 2000001 := by norm_num
+  have e1 : ((K + 1 : ℕ) : ℝ) = 6000001 := by norm_num
   rw [e1] at hmid habel
   rw [hsplit, habel]
-  have : psiN K * (1 / √(2000001 : ℝ)) = psiN 2000000 / √(2000001 : ℝ) := by ring
+  have : psiN K * (1 / √(6000001 : ℝ)) = psiN 6000000 / √(6000001 : ℝ) := by ring
   linarith
 
 end TernaryGoldbach.Prelim

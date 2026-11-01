@@ -296,7 +296,7 @@ with `μ = min(1, (4/5)(2q/φ(2q))/log(M₀/2q²))` (`muBound`), `M₀ = min(Q/2
 is replaced by `U²V log q`, and `√(c₀c₊)/π · Q log(U/(q/2))` becomes
 `√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). -/
 theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q) (hx : 0 < x)
-    (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2e6 ≤ V) (hUV : U * V ≤ x)
+    (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V) (hUV : U * V ≤ x)
     (hδ : |δ| ≤ 1 / (2 * c₂)) :
     ‖typeI2 α x U V‖ ≤
       x / (2 * q) * minInv c₀ (π * δ) * muBound (min (Q / (2 * V)) U) q * Real.log (V * q) +

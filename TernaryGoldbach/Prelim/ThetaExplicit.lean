@@ -3,11 +3,12 @@ import TernaryGoldbach.Explicit.PsiAsymp
 /-!
 # An explicit prime number theorem for `θ` (replacing Dusart's bound)
 
-`|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 89 967 803`, where `ε_pl(n) = 2.2·10⁻¹¹` if
+`|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 2·10⁸`, where `ε_pl(n) = 2.2·10⁻¹¹` if
 `3400 < log n < 20000` and `0` otherwise.
 
-Inputs: the finite check `theta_cube_small` (`n ≤ 10¹⁰`, `scripts/theta_cube_check.py`), [Büthe 2018] for
-`n ≤ 10¹⁹` (numerical axiom), and the explicit formula with the zero-free region (`Explicit/Psi*`) above.
+Inputs: [Büthe 2018] for `n ≤ 10¹⁹` (numerical axioms `buthe_theta`, `buthe_psi`), where
+`1.95 √n < n/log³n` for `n ≥ 2·10⁸`, and the explicit formula with the zero-free region
+(`Explicit/Psi*`) above.
 -/
 
 open Finset Real
@@ -18,16 +19,16 @@ namespace TernaryGoldbach.Prelim
 open TernaryGoldbach.Explicit (psiR psi_plateau psi_range1 psi_asymp)
 open TernaryGoldbach.Helfgott (psi theta psi_sub_theta_le_sum sum_pow_le_theta)
 
-/-- **Numerical axiom** (`scripts/theta_cube_check.py`; maximum of `|θ(n) − n| log³ n/n` is `0.99934` at
-`n = 89 967 810`): `|θ(n) − n| < n/log³ n` for `89 967 803 ≤ n ≤ 10¹⁰`. -/
-axiom theta_cube_small (n : ℕ) (h1 : 89967803 ≤ n) (h2 : n ≤ 10 ^ 10) :
-    |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3
-
 /-- **Numerical axiom** ([Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018),
 1991–2009, arXiv:1511.02032, Thm 2): `0.05 √x < x − θ(x) ≤ 1.95 √x` for `1423 ≤ x ≤ 10¹⁹`; we use
 `|θ(n) − n| ≤ 1.95 √n`. -/
 axiom buthe_theta (n : ℕ) (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 19) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| ≤ 1.95 * √(n : ℝ)
+
+/-- **Numerical axiom** ([Büthe 2018], Thm 2, (1.5)): `|x − ψ(x)| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`;
+we use it at integers `12 ≤ n ≤ 10¹⁹`. -/
+axiom buthe_psi (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
+    |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ)
 
 /-- The plateau. -/
 noncomputable def epl (x : ℝ) : ℝ := if 3400 < Real.log x ∧ Real.log x < 20000 then 2.2e-11 else 0
@@ -155,6 +156,13 @@ theorem log_1e10_le : Real.log 1e10 ≤ 23.03 := by
   rw [e] at h; refine le_trans ?_ h
   norm_num [Finset.sum_range_succ, Nat.factorial]
 
+theorem log_2e8_le : Real.log 2e8 ≤ 19.12 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 19 (u := 0.12) (by norm_num) 5
+  have e : ((19 : ℕ) : ℝ) + 0.12 = 19.12 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
 theorem log_1e19_le : Real.log 1e19 ≤ 43.75 := by
   refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
   have h := TernaryGoldbach.Explicit.exp_split_ge' 43 (u := 0.75) (by norm_num) 8
@@ -166,8 +174,8 @@ theorem log_ge_of_le {x c : ℝ} (hx : 0 < x) (h : Real.exp c ≤ x) : c ≤ Rea
   (Real.le_log_iff_exp_le hx).2 h
 
 set_option maxHeartbeats 1000000 in
-/-- **Explicit PNT for `θ`** (replaces Dusart): `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 89 967 803`. -/
-theorem theta_explicit {n : ℕ} (hn : 89967803 ≤ n) :
+/-- **Explicit PNT for `θ`** (replaces Dusart): `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 2·10⁸`. -/
+theorem theta_explicit {n : ℕ} (hn : 200000000 ≤ n) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3 + epl n * n := by
   obtain ⟨x, hxdef⟩ : ∃ x : ℝ, x = n := ⟨_, rfl⟩
   rw [← hxdef]
@@ -175,9 +183,6 @@ theorem theta_explicit {n : ℕ} (hn : 89967803 ≤ n) :
   have hepl : 0 ≤ epl x * x := mul_nonneg (epl_nonneg x) hx0.le
   have hlx : 0 < Real.log x := Real.log_pos (by rw [hxdef]; exact_mod_cast (by omega : 1 < n))
   have hL3 : 0 < Real.log x ^ 3 := by positivity
-  rcases le_or_gt n (10 ^ 10) with h1 | h1
-  · have := theta_cube_small n hn h1
-    rw [← hxdef] at this; linarith
   set θ := ∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p with hθ
   have hs0 : 0 < √x := Real.sqrt_pos.2 hx0
   have hss : √x * √x = x := Real.mul_self_sqrt hx0.le
@@ -188,30 +193,33 @@ theorem theta_explicit {n : ℕ} (hn : 89967803 ≤ n) :
   · -- Büthe
     have hB := buthe_theta n (by omega) h2
     rw [← hxdef] at hB
-    have hx10 : (1e10 : ℝ) ≤ x := by
+    have hx8 : (2e8 : ℝ) ≤ x := by
       rw [hxdef]
-      have : ((10 ^ 10 : ℕ) : ℝ) ≤ n := by exact_mod_cast h1.le
+      have : ((200000000 : ℕ) : ℝ) ≤ n := by exact_mod_cast hn
       norm_num at this ⊢; linarith
-    have hL0 : Real.log 1e10 ≤ Real.log x := Real.log_le_log (by norm_num) hx10
-    have h6 : 6 ≤ Real.log 1e10 := log_ge_of_le (by norm_num) (by
-      have := TernaryGoldbach.Explicit.exp_split_ge' 6 (u := 0) le_rfl 1
+    have hL0 : Real.log 2e8 ≤ Real.log x := Real.log_le_log (by norm_num) hx8
+    have h6 : 6 ≤ Real.log 2e8 := log_ge_of_le (by norm_num) (by
       have h := Real.exp_one_lt_d9
       have : Real.exp 6 = Real.exp 1 ^ 6 := by rw [← Real.exp_nat_mul]; norm_num
       rw [this]
       calc Real.exp 1 ^ 6 ≤ 2.7182818286 ^ 6 := pow_le_pow_left₀ (Real.exp_pos 1).le h.le 6
-        _ ≤ 1e10 := by norm_num)
+        _ ≤ 2e8 := by norm_num)
     have hc := cube_div_sqrt_le hx0 h6 hL0
-    rw [exp_neg_half_log (by norm_num), show √(1e10 : ℝ) = 1e5 by
-      rw [show (1e10 : ℝ) = 1e5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]] at hc
-    have hl10 := log_1e10_le
-    have hl0 : 0 ≤ Real.log 1e10 := by linarith
-    have hc' : Real.log x ^ 3 * (√x)⁻¹ ≤ 0.1222 := by
+    rw [exp_neg_half_log (by norm_num)] at hc
+    have hs8 : (14142 : ℝ) ≤ √(2e8 : ℝ) := Real.le_sqrt_of_sq_le (by norm_num)
+    have hl8 := log_2e8_le
+    have hl0 : 0 ≤ Real.log 2e8 := by linarith
+    have hc' : Real.log x ^ 3 * (√x)⁻¹ ≤ 0.4943 := by
       refine hc.trans ?_
-      have : Real.log 1e10 ^ 3 ≤ 23.03 ^ 3 := pow_le_pow_left₀ hl0 hl10 3
-      norm_num at this ⊢; linarith
+      have h3 : Real.log 2e8 ^ 3 ≤ 19.12 ^ 3 := pow_le_pow_left₀ hl0 hl8 3
+      have h4 : (√(2e8 : ℝ))⁻¹ ≤ 1 / 14142 := by
+        rw [inv_eq_one_div]; exact one_div_le_one_div_of_le (by norm_num) hs8
+      calc Real.log 2e8 ^ 3 * (√(2e8 : ℝ))⁻¹ ≤ 19.12 ^ 3 * (1 / 14142) :=
+            mul_le_mul h3 h4 (by positivity) (by norm_num)
+        _ ≤ 0.4943 := by norm_num
     -- `1.95 √x < x/L³`
     have hkey : 1.95 * √x * Real.log x ^ 3 < x := by
-      have : Real.log x ^ 3 ≤ 0.1222 * √x := by
+      have : Real.log x ^ 3 ≤ 0.4943 * √x := by
         have := mul_le_mul_of_nonneg_right hc' hs0.le
         rwa [mul_assoc, inv_mul_cancel₀ hs0.ne', mul_one] at this
       nlinarith

@@ -4,6 +4,7 @@ import TernaryGoldbach.PrattPrime
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.ThetaExplicit
+import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.MoebiusLog

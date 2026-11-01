@@ -35,7 +35,7 @@ theorem typeI2_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     linarith
   have hqV : (q : ℝ) * V1 T ≤ 3 / 4 * T ^ 2 := by nlinarith
   have hQV : 16 * (V1 T : ℝ) ≤ 3 / 4 * T ^ 2 := by nlinarith
-  have hV2e6 : (2e6 : ℝ) ≤ V1 T := by linarith
+  have hV2e6 : (2.5e7 : ℝ) ≤ V1 T := by linarith
   have hmu := typeI2_mu_first (δ := δ) hT hq ht2 htT
   have hc0 := typeI2_c0_first hT hq hqT ht2 htT
   rw [← ht] at hmu

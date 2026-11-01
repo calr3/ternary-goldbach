@@ -9,6 +9,10 @@
 against the margin.
 
 Usage: python3 scripts/theta_cube_check.py   (a few minutes)
+
+NOTE (2026-11-01): the corresponding axioms are no longer used; they are proved from Büthe's
+bounds (`buthe_theta`, `buthe_psi`) and kernel-checked computations (see AXIOMS.md, "Removed axioms").
+This script is kept for reference.
 """
 import math
 import numpy as np
