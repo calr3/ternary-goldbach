@@ -236,4 +236,72 @@ theorem line_sum_le {T H : ℝ} (hH : 0 ≤ H) (S : Finset ℂ) (hS : S ⊆ zero
           rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun m _ => by ring
         rw [e]; linarith
 
+/-! ## Zeros above `H`: Gaussian windows -/
+
+/-- `EB = 2e^{δ²/2 + |a|} e^{−δ²H²/2}/H`, `ρ = e^{−4.4δ²H}`. -/
+noncomputable def EBg (a δ H : ℝ) : ℝ :=
+  2 * Real.exp (δ ^ 2 / 2 + |a|) * Real.exp (-(δ ^ 2 * H ^ 2 / 2)) / H
+noncomputable def rhoG (δ H : ℝ) : ℝ := Real.exp (-(4.4 * δ ^ 2 * H))
+
+theorem tail_sum_gauss {T H δ a b x : ℝ} (hH : 0 < H) (hδ : 0 < δ) (hb : b ≤ 0) (hx : 1 ≤ x)
+    (S : Finset ℂ) (hS : S ⊆ zerosRectD zetaF T) (him : ∀ u ∈ S, H < |u.im|) :
+    ∑ u ∈ S, (multRectD zetaF T u : ℝ) * (‖Mg a b δ u‖ * x ^ u.re) ≤
+      x * (EBg a δ H * (2 * Z3g BPz2 H / (1 - rhoG δ H) + 2 * c3g 10 H / (1 - rhoG δ H) ^ 2)) := by
+  have hx0 : 0 < x := by linarith
+  have hre : ∀ u ∈ S, 0 < u.re ∧ u.re < 1 := fun u hu =>
+    ⟨(zerosRectD_zetaF_strip (hS hu)).2.1, (zerosRectD_zetaF_strip (hS hu)).2.2.1⟩
+  set idx : ℂ → ℕ := fun u => ⌊(|u.im| - H) / 4.4⌋₊ with hidx
+  set m : ℂ → ℝ := fun u => (multRectD zetaF T u : ℝ) with hm
+  have hρ0 : 0 ≤ rhoG δ H := (Real.exp_pos _).le
+  have hρ1 : rhoG δ H < 1 := by
+    rw [rhoG, Real.exp_lt_one_iff]; have : 0 < 4.4 * δ ^ 2 * H := by positivity
+    linarith
+  have hEB : 0 ≤ EBg a δ H := by unfold EBg; positivity
+  have hpt : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) ≤ x * (m u * (EBg a δ H * rhoG δ H ^ idx u)) := by
+    intro u hu
+    obtain ⟨h1, h2⟩ := hre u hu
+    have hHu := him u hu
+    have hγ0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hHu; linarith
+    have hM := norm_Mg_strip_le (a := a) (δ := δ) hb h1 h2 hγ0
+    have hk : H + 4.4 * idx u ≤ |u.im| := by
+      have := Nat.floor_le (show 0 ≤ (|u.im| - H) / 4.4 from div_nonneg (by linarith) (by norm_num))
+      rw [le_div_iff₀ (by norm_num)] at this; simp only [hidx]; linarith
+    have hsq : H ^ 2 + 8.8 * H * idx u ≤ u.im ^ 2 := by
+      have hk0 : (0:ℝ) ≤ idx u := Nat.cast_nonneg _
+      have : (H + 4.4 * idx u) ^ 2 ≤ |u.im| ^ 2 := pow_le_pow_left₀ (by positivity) hk 2
+      rw [sq_abs] at this; nlinarith
+    have hgauss : Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) ≤
+        Real.exp (-(δ ^ 2 * H ^ 2 / 2)) * rhoG δ H ^ idx u := by
+      rw [rhoG, ← Real.exp_nat_mul, ← Real.exp_add]
+      apply Real.exp_le_exp.2
+      nlinarith [sq_nonneg δ]
+    have hMb : ‖Mg a b δ u‖ ≤ EBg a δ H * rhoG δ H ^ idx u := by
+      have hγ : 0 < |u.im| := abs_pos.2 hγ0
+      rw [EBg]
+      calc ‖Mg a b δ u‖ = ‖Mg a b δ u‖ * |u.im| / |u.im| := by field_simp
+        _ ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) * Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) / H := by
+            rw [div_le_div_iff₀ hγ hH]
+            calc ‖Mg a b δ u‖ * |u.im| * H ≤
+                (2 * Real.exp (δ ^ 2 / 2 + |a|) * Real.exp (-(δ ^ 2 * u.im ^ 2 / 2))) * |u.im| :=
+                  mul_le_mul hM hHu.le hH.le (by positivity)
+              _ = _ := by ring
+        _ ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) * (Real.exp (-(δ ^ 2 * H ^ 2 / 2)) * rhoG δ H ^ idx u) / H := by
+            gcongr
+        _ = _ := by ring
+    have hxr : x ^ u.re ≤ x := by
+      calc x ^ u.re ≤ x ^ (1:ℝ) := Real.rpow_le_rpow_of_exponent_le hx h2.le
+        _ = x := Real.rpow_one x
+    have hm0 : 0 ≤ m u := Nat.cast_nonneg _
+    calc m u * (‖Mg a b δ u‖ * x ^ u.re) ≤ m u * ((EBg a δ H * rhoG δ H ^ idx u) * x) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul hMb hxr (by positivity) (by positivity)) hm0
+      _ = _ := by ring
+  refine (Finset.sum_le_sum hpt).trans ?_
+  rw [← Finset.mul_sum]
+  refine mul_le_mul_of_nonneg_left ?_ hx0.le
+  exact sum_geom_windows m (fun u _ => Nat.cast_nonneg _) idx
+    (by have := (polyDatum_zeta2.log_pos H).le
+        unfold Z3g; have := (log_ratio_pos (r := 3) (by norm_num) (by norm_num)).le; positivity)
+    (by unfold c3g; have := (log_ratio_pos (r := 3) (by norm_num) (by norm_num)).le; positivity)
+    hEB hρ0 hρ1 (fun k => count_tail_windowG polyDatum_zeta2 hH S hS hre him k)
+
 end TernaryGoldbach.Explicit
