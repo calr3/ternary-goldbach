@@ -7,6 +7,8 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
   mantissa). Each operation rounds `lo` down and `hi` up. MPFR is correctly rounded, including
   `log`, `exp`, `sqrt` and Euler's constant, so the enclosures are rigorous. Sieves, `φ`, `μ` and
   `λ` are exact integer computations. A check passes only if it holds for the whole interval.
+* `eta2_fourier_rig.py` (python-flint/Arb ball arithmetic) checks `eta2DD_small` with the
+  closed form in Si/Ci and a rigorous Lipschitz bound (see its docstring).
 * `moebius_sqrt_rig.c` (`moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
   rounding mode set to round-down; upper bounds are computed as `−((−a) ∘ b)`. Each operation is a
   correctly rounded IEEE operation (compiled with `-frounding-math`, no contraction to FMA).
@@ -23,6 +25,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `lemma7` | `lemma7_numeric`, `GS_N0` | `r ≤ 3·10⁷` | 20 s |
 | `lemma8` | `lemma8_numeric` | `n ≤ 10⁴` | 10 s |
 | `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
+| `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 
 The reference output is `output.txt`.
 

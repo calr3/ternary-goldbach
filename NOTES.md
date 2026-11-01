@@ -216,6 +216,17 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `moebius_sqrt_small`: [B, (2.24)];
   * `lemma8_numeric` (first sum, `R ≥ 100`): [MV73, Lemma 8].
   Building needs only `gcc`, `gmpy2` (for the MPFR headers) and the system MPFR.
+* (B.6) and (B.11) proved (`MinorArcs/Eta2Fourier.lean`); new axiom `eta2DD_small` for
+  `0 ≤ t ≤ 655`:
+  * `ibp2`: two integrations by parts against `e(−ut)` for a `C²` piece;
+  * `eta2DD_eq`: `(2πt)² η̂₂ = eta2DD`;
+  * `norm_trig_le`: the cubic `512c³ − 256c² − 896c + 656 ≤ 991.1226`, by `nlinarith` with the hint
+    `(c + 0.61507)²(1.7302 − c) ≥ 0`;
+  * `norm_Jq_le`: one more integration by parts;
+  * `norm_eta2log4_le`: `48 log 2` with no numerics, from FTC for `∫|h''|` (constant sign).
+  The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
+  Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 5).
+  ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

@@ -5,8 +5,9 @@ import TernaryGoldbach.MinorArcs.InnerSumsGen
 
 For `ρ ≥ 4`: continuity, compact support, `|η_(ρ)|₁ ≤ log ρ`, total variation
 `≤ log ρ · |η₂'|₁` ([B, Lemma B.2.1]), `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`, and
-`smoothData_eta2log`: [B, (4.38)].  The bound `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` ([B, Lemma B.2.3],
-a rigorous computation) is the numerical axiom `eta2log_fourier_bound`.
+`smoothData_eta2log`: [B, (4.38)].  The bound `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` ([B, Lemma B.2.3]) is
+`eta2log_fourier_bound`: the case `ρ = 4` is analytic (`norm_eta2log4_le`), and `ρ > 4` follows
+from it and (B.6).
 -/
 
 open Real MeasureTheory FourierTransform
@@ -169,20 +170,6 @@ theorem eVariationOn_eta2log_le :
   nlinarith
 
 
-omit hρ in
-/-- **Numerical axiom** [B, Lemma B.2.3]: `|η̂_(ρ)''|_∞ < 31.521 log ρ` for `ρ ≥ 4`, written as
-`(2πt)² |η̂_(ρ)(t)| ≤ c₀ log ρ`.  In [B] this is a rigorous computation (interval arithmetic);
-it is not formalized here. -/
-axiom eta2log_fourier_bound {ρ : ℝ} (hρ : 4 ≤ ρ) (t : ℝ) :
-    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2log ρ u : ℂ)) t‖ ≤ c₀ * Real.log ρ
-
-/-- `η_(ρ)` satisfies [B, (4.38)]. -/
-theorem smoothData_eta2log : SmoothData (eta2log ρ) (Real.log ρ) (eta2'L1 * Real.log ρ)
-    (c₀ * Real.log ρ) :=
-  ⟨continuous_eta2log hρ, hasCompactSupport_eta2log, integral_abs_eta2log_le hρ,
-    by have := eta2'L1_pos; have := Real.log_nonneg (show (1 : ℝ) ≤ ρ by linarith); positivity,
-    eVariationOn_eta2log_le hρ, eta2log_fourier_bound hρ⟩
-
 theorem eta2log_eq_add (u : ℝ) : eta2log ρ u = Real.log u * eta2 u + Real.log ρ * eta2 u := by
   unfold eta2log
   by_cases hu : u ∈ Set.Ioo (1 / 4 : ℝ) 1
@@ -206,5 +193,54 @@ theorem ghat_eta2log (t : ℝ) :
   rw [ghat, ghat, eta2hat, fourier_eq_integral_e, fourier_eq_integral_e, fourier_eq_integral_e, hfun,
     integral_sub hint1 (hint2.const_mul _), integral_const_mul]
   ring
+
+/-- **[B, Lemma B.2.3, (B.11)]**: `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` for `ρ ≥ 4`, written as
+`(2πt)² |η̂_(ρ)(t)| ≤ c₀ log ρ`. By `ghat_eta2log`, `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`. For `ρ = 4`,
+`(2πt)² |η̂_(4)| ≤ 48 log 2 = 24 log 4` (`norm_eta2log4_le`, two integrations by parts, no numerics).
+For `ρ > 4`, the extra `(log ρ − log 4) η̂₂` is bounded by (B.6) (`eta2_fourier_bound'`). -/
+theorem eta2log_fourier_bound (t : ℝ) :
+    (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2log ρ u : ℂ)) t‖ ≤ c₀ * Real.log ρ := by
+  have h4 := ghat_eta2log (ρ := 4) le_rfl t
+  have hρt := ghat_eta2log hρ t
+  set A := eta2hat t
+  set B := ghat (fun u => Real.log u * eta2 u) t
+  have hA : (2 * π * t) ^ 2 * ‖A‖ ≤ c₀ := eta2_fourier_bound' t
+  have hk : ‖((2 * π * t) ^ 2 : ℂ)‖ = (2 * π * t) ^ 2 := by
+    rw [show ((2 * π * t) ^ 2 : ℂ) = (((2 * π * t) ^ 2 : ℝ) : ℂ) by push_cast; ring,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+  have h48 : (2 * π * t) ^ 2 * ‖B + (Real.log 4 : ℂ) * A‖ ≤ 48 * Real.log 2 := by
+    have h := norm_eta2log4_le t
+    have e : 𝓕 (fun u => ((Real.log (4 * u) * eta2 u : ℝ) : ℂ)) t = ghat (eta2log 4) t := rfl
+    rw [e, h4, norm_mul, hk] at h
+    exact h
+  have hL : Real.log 4 ≤ Real.log ρ := Real.log_le_log (by norm_num) hρ
+  have hL4 : Real.log 4 = 2 * Real.log 2 := by
+    rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]; norm_num
+  have hl2 := Real.log_pos (by norm_num : (1 : ℝ) < 2)
+  have hsplit : B + (Real.log ρ : ℂ) * A = (B + (Real.log 4 : ℂ) * A) +
+      ((Real.log ρ - Real.log 4 : ℝ) : ℂ) * A := by push_cast; ring
+  have hn : ‖B + (Real.log ρ : ℂ) * A‖ ≤ ‖B + (Real.log 4 : ℂ) * A‖ +
+      (Real.log ρ - Real.log 4) * ‖A‖ := by
+    rw [hsplit]
+    refine (norm_add_le _ _).trans (le_of_eq ?_)
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by linarith)]
+  show (2 * π * t) ^ 2 * ‖ghat (eta2log ρ) t‖ ≤ c₀ * Real.log ρ
+  rw [hρt]
+  have hk0 : 0 ≤ (2 * π * t) ^ 2 := by positivity
+  calc (2 * π * t) ^ 2 * ‖B + (Real.log ρ : ℂ) * A‖
+      ≤ (2 * π * t) ^ 2 * ‖B + (Real.log 4 : ℂ) * A‖ +
+          (Real.log ρ - Real.log 4) * ((2 * π * t) ^ 2 * ‖A‖) := by
+        have := mul_le_mul_of_nonneg_left hn hk0; nlinarith
+    _ ≤ 48 * Real.log 2 + (Real.log ρ - Real.log 4) * c₀ := by
+        have := mul_le_mul_of_nonneg_left hA (by linarith : 0 ≤ Real.log ρ - Real.log 4)
+        linarith
+    _ ≤ c₀ * Real.log ρ := by unfold c₀; nlinarith
+
+/-- `η_(ρ)` satisfies [B, (4.38)]. -/
+theorem smoothData_eta2log : SmoothData (eta2log ρ) (Real.log ρ) (eta2'L1 * Real.log ρ)
+    (c₀ * Real.log ρ) :=
+  ⟨continuous_eta2log hρ, hasCompactSupport_eta2log, integral_abs_eta2log_le hρ,
+    by have := eta2'L1_pos; have := Real.log_nonneg (show (1 : ℝ) ≤ ρ by linarith); positivity,
+    eVariationOn_eta2log_le hρ, eta2log_fourier_bound hρ⟩
 
 end TernaryGoldbach.MinorArcs

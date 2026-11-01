@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 26 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 25 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -54,16 +54,24 @@ as in the README.
      * `γ = 0` holds because `ζ(σ) < 0` on `(0, 1)`, a classical fact.
 4. **[B] is inconsistent about Platt's range.** [B, §1.6] says odd conductors up to `2·10⁵`; [B, §9.6]
    says `3·10⁵`. Platt's paper covers all `q ≤ 4·10⁵`, so `platt_odd` is covered either way.
-5. **(9.94) contains analysis.** `integral_etaPlus_sq_log` rests on [B]'s rigorous integration of `η◦`
-   and also on the bounds (A.23), (A.24) on `η₊ − η◦`. Our own Lean bound on `‖η₊ − η◦‖₂` is far
-   too weak to replace them. A direct float computation of `η₊` (`scripts/eta_plus_check.py`)
-   confirms the values.
+5. **(9.94) contains analysis, and its error terms drop a factor 2.**
+   * `integral_etaPlus_sq_log` rests on [B]'s rigorous integration of `η◦` and also on the bounds
+     (A.23), (A.24) on `η₊ − η◦`.
+   * [B, p. 197] writes `∫η₊² log xt = ∫η◦² log xt + 2∫(η₊ − η◦)η◦ log xt + ∫(η₊ − η◦)² log xt`,
+     and bounds `|∫(η₊ − η◦)η◦ log xt| ≤ 1.944·10⁻⁶ log x + 5.2·10⁻⁷`. It then concludes (9.94)
+     with `O*(1.95·10⁻⁶) log x` and `O*(5.3·10⁻⁷)`, without the factor 2 of the cross term. With
+     it, the same argument gives about `3.9·10⁻⁶ log x + 1.27·10⁻⁶`.
+   * The stated constants are still probably true: a direct float computation of `η₊`
+     (`scripts/eta_plus_check.py`) puts both integrals within `2.6·10⁻⁹` and `2.2·10⁻⁷` of the
+     centres, because the actual `‖η₊ − η◦‖₂ ≈ 6.2·10⁻⁷` is well below (A.23)'s `2.43·10⁻⁶`. But
+     [B]'s argument does not prove them.
+   * Our own Lean bound on `‖η₊ − η◦‖₂` (`3.4·10⁻⁴`) is far too weak to replace (A.23).
 6. **Binary Goldbach was double-checked only to `4·10¹⁷`.** [OeSHP14] verified binary Goldbach up to
    `4·10¹⁸`; according to the project page, the independent double-check reaches `4·10¹⁷`.
 
 ## The axioms
 
-### Our own computations (14)
+### Our own computations (15)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -92,6 +100,7 @@ contain the axiom.
 | `Prelim.MV.lemma7_numeric` | `G(r) ≥ log(r+1) + 1.07`, `6 ≤ r < 3·10⁷` | `mv_lemma8_check.py` | min margin `0.044082` at `r = 9` | |
 | `Prelim.MV.GS_N0` | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | `mv_lemma8_check.py` | `1.3325830` | |
 | `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | min margin `1.1352·10⁻⁶` at `n = 4`; second sum max `0.638395` | first sum: [MV73, Lemma 8] for `R ≥ 100`, as cited in [B, p. 97] |
+| `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`scripts/rigorous/eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
 | `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
 
 Cross-checks:
@@ -122,7 +131,7 @@ All three come from `psi_extra_check.py`.
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
-### Results of Helfgott's book [B] (5)
+### Results of Helfgott's book [B] (3)
 
 The book obtains these by interval arithmetic or rigorous integration. Some of them also contain
 analytic arguments. The Lean definitions involved were compared with the book's:
@@ -136,14 +145,12 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 | Axiom | [B] | Content | Independent check |
 |---|---|---|---|
 | `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | `scripts/t2_check.py` (float, grid, all of `[16, 10⁵]`): max `0.371249` at `S = 16` |
-| `MinorArcs.eta2_fourier_bound'` | Lemma B.1.2, (B.6) | `\|(η₂'')^\|_∞ ≤ 31.521` | float, `t < 700`, step `5·10⁻⁴`: max `31.52065` at `t ≈ 17.415`; [B] covers `\|t\| ≥ 655` analytically |
-| `MinorArcs.eta2log_fourier_bound` | Lemma B.2.3, (B.11) | `\|(η_(ρ)'')^\|_∞ < 31.521 log ρ`, `ρ ≥ 4` | float, at `ρ = 4`: max `16.34 log 4`. For `ρ > 4` it follows from this and (B.6), because the bound is convex in `1/log ρ` |
 | `MajorArcs.integral_etaPlus_sq_log` | (9.94) | `∫ η₊² log(xt) dt` | `scripts/eta_plus_check.py` computes `η₊` itself (FFT band limit in `log t`, float): `∫ η₊² = 0.640205997…` and `∫ η₊² log t = −0.021094779…`, within `2.6·10⁻⁹` and `2.2·10⁻⁷` of (9.94)'s values (allowed: `1.95·10⁻⁶`, `5.3·10⁻⁷`); `‖η₊ − η◦‖₂² = 3.9·10⁻¹³` |
 | `MinorArcs.prop_12_2_4` | Prop 12.2.4 | `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)` | hypotheses and conclusion match; our `c_E = 1.33258` is [B]'s `1.3325822…` rounded down, which makes the axiom weaker; the content is Ramaré's explicit (12.12) plus a computation for `q < 3.3·10⁹` |
 
 ## Summary by kind
 
-* **Our own computations (14):** all are checked rigorously (interval arithmetic with directed
+* **Our own computations (15):** all are checked rigorously (interval arithmetic with directed
   rounding, `scripts/rigorous/`), besides the float scripts in `scripts/`. Four are also contained in
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
@@ -151,11 +158,11 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 * **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
   in the papers.
-* **Results of [B] (5):**
-  * (B.6), (B.11), (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float
-    computations.
-  * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), (5.31) for
-    `S ≥ 10⁵` (Lemma 5.1.2), and the `|t| ≥ 655` part of (B.6).
+* **Results of [B] (3):**
+  * (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float computations.
+    (9.94) as stated is not proved by [B]'s argument (Finding 5).
+  * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), and
+    (5.31) for `S ≥ 10⁵` (Lemma 5.1.2).
 
 ## Removed axioms
 
@@ -201,6 +208,22 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     (Mathlib). On `[2, 15]`, `H₂ ≥ 0.15107`, so the excess is largest at the right end of each
     piece. On `[1, 2]` and `[15, 16]`, `log x ≤ x − 1` and `log x ≥ 1 − 1/x` are used.
   * The tightest bound is `0.0230978 ≤ 0.0231`, on `[15, 16]` (the true supremum is `0.023059`).
+
+* (B.6) `eta2_fourier_bound'` and (B.11) `eta2log_fourier_bound` are now proofs
+  (`MinorArcs/Eta2Fourier.lean`), except for the finite range `0 ≤ t ≤ 655` of (B.6), which is the
+  new computation axiom `eta2DD_small`:
+  * Two integrations by parts on `[1/4, 1/2]` and `[1/2, 1]` give `(2πt)² η̂₂(t) = eta2DD t`, with
+    `eta2DD t = 16 e(−t/2) − 16 e(−t/4) − 4 e(−t) + 4 ∫_{1/4}^{1/2} e(−ut)/u² − 4 ∫_{1/2}^1 e(−ut)/u²`.
+  * With `z = e(−t/4)`, the first three terms are `−z(4z³ − 16z + 16)`. Here
+    `|4z³ − 16z + 16|² = 512c³ − 256c² − 896c + 656` (`c = ℜz`), so `|4z³ − 16z + 16| ≤ 31.4821`.
+  * One more integration by parts gives `|∫_a^b e(−ut)/u²| ≤ 1/(π|t|a²)`. So
+    `‖eta2DD t‖ ≤ 31.4821 + 80/(π|t|) ≤ 31.521` for `|t| ≥ 655`; this is [B]'s argument.
+  * The range `0 ≤ t ≤ 655` is `eta2DD_small` (computation in ball arithmetic); negative `t` follow by
+    conjugation.
+  * (B.11): `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`. For `ρ = 4`, the same integration by parts gives
+    `‖(2πt)² η̂_(4)(t)‖ ≤ 48 log 2 = 24 log 4`, with no numerics: the derivative jumps are
+    `16 log 2` and `8 log 2`, and `∫|h''|` is `16 log 2` and `8 log 2`. For `ρ > 4`, the extra
+    `(log ρ − log 4) η̂₂` is bounded by (B.6). Since `24 ≤ 31.521`, (B.11) follows.
 
 ## Candidates for proofs in Lean
 
