@@ -664,4 +664,161 @@ theorem xi_partial_frac {k : ℕ} (hk : 8 ≤ k) {T : ℝ} (hT : T ∈ Icc (k : 
   rw [show 6 * MX k * ‖s - 1 / 2‖ / T = 6 * (MX k * ‖s - 1 / 2‖ / T) by ring]
   nlinarith
 
+/-! ## Letting `T → ∞` -/
+
+theorem xiF_conj (s : ℂ) : xiF (starRingEnd ℂ s) = starRingEnd ℂ (xiF s) := by
+  rcases eq_or_ne s 0 with rfl | h0
+  · simp [xiF_zero]
+  rcases eq_or_ne s 1 with rfl | h1
+  · simp [xiF_one]
+  have h0' : starRingEnd ℂ s ≠ 0 := by simpa using h0
+  have h1' : starRingEnd ℂ s ≠ 1 := by
+    intro h; apply h1; simpa using congrArg (starRingEnd ℂ) h
+  have e : ∀ w : ℂ, w ≠ 0 → w ≠ 1 → xiF w = w * (w - 1) * (completedRiemannZeta w + 1 / w + 1 / (1 - w)) + 1 := by
+    intro w _ _
+    rw [completedRiemannZeta_eq]; unfold xiF; ring
+  rw [e _ h0' h1', e _ h0 h1, completedRiemannZeta_conj]
+  simp [map_add, map_mul, map_sub, map_div₀, map_one]
+
+theorem logDeriv_xiF_conj (s : ℂ) : logDeriv xiF (starRingEnd ℂ s) = starRingEnd ℂ (logDeriv xiF s) := by
+  have hf : (starRingEnd ℂ ∘ xiF ∘ starRingEnd ℂ) = xiF := by
+    funext w; simp [Function.comp, xiF_conj]
+  have hd := deriv_conj_conj (f := xiF)
+  rw [hf] at hd
+  have h2 : deriv xiF (starRingEnd ℂ s) = starRingEnd ℂ (deriv xiF s) := by
+    rw [congrFun hd (starRingEnd ℂ s)]; simp [Function.comp]
+  rw [logDeriv_apply, logDeriv_apply, h2, xiF_conj, map_div₀]
+
+theorem mem_sqZeros_iff {T : ℝ} {u : ℂ} (hu : u ∈ sqZeros T) :
+    xiF u = 0 ∧ |u.re - 1 / 2| < T ∧ |u.im| < T := by
+  rw [sqZeros, Finset.mem_filter] at hu
+  obtain ⟨hz, h1, h2, h3, h4⟩ := hu
+  simp only [sqZ_re, sqZ_im, sqW_re, sqW_im] at h1 h2 h3 h4
+  refine ⟨?_, abs_lt.2 ⟨by linarith, by linarith⟩, abs_lt.2 ⟨by linarith, by linarith⟩⟩
+  have hu' := (mem_zerosIn hz).2
+  have hucR : u ∈ closedBall (1 / 2 : ℂ) (6 * T) := by
+    rw [mem_closedBall, dist_eq_norm]; linarith [(mem_zerosIn hz).1]
+  rw [divB, MeromorphicOn.AnalyticOnNhd.divisor_apply
+    (fun z _ => differentiable_xiF.analyticAt z : AnalyticOnNhd ℂ xiF (closedBall (1 / 2) (6 * T))) hucR] at hu'
+  by_contra hne
+  exact hu' (by rw [(differentiable_xiF.analyticAt u).analyticOrderAt_eq_zero.2 hne]; simp)
+
+theorem mem_sqZeros_of_zero {T : ℝ} (hT : 0 < T) {ρ : ℂ} (hρ : xiF ρ = 0) (h1 : |ρ.re - 1 / 2| < T)
+    (h2 : |ρ.im| < T) : ρ ∈ sqZeros T ∧ 1 ≤ mult T ρ := by
+  have hf := differentiable_xiF
+  have hnorm : ‖ρ - 1 / 2‖ < 6 * T / 2 := by
+    refine lt_of_le_of_lt (Complex.norm_le_abs_re_add_abs_im _) ?_
+    simp only [sub_re, sub_im, show ((1 / 2 : ℂ)).re = 1 / 2 by norm_num,
+      show ((1 / 2 : ℂ)).im = 0 by norm_num, sub_zero]
+    linarith
+  have huR : ρ ∈ closedBall (1 / 2 : ℂ) (6 * T) := by
+    rw [mem_closedBall, dist_eq_norm]; linarith
+  have han : AnalyticOnNhd ℂ xiF (closedBall (1 / 2) (6 * T)) := fun z _ => hf.analyticAt z
+  have hne : divB xiF (1 / 2) (6 * T) ρ ≠ 0 := by
+    rw [divB, MeromorphicOn.AnalyticOnNhd.divisor_apply han huR]
+    intro h
+    have hord : analyticOrderAt xiF ρ ≠ 0 := by
+      rw [Ne, (hf.analyticAt ρ).analyticOrderAt_eq_zero]; exact not_not.2 hρ
+    have hfin : analyticOrderAt xiF ρ ≠ ⊤ := by
+      have h2 : xiF 2 ≠ 0 := xiF_ne_zero_of_one_le_re (by norm_num)
+      have hc0 : analyticOrderAt xiF 2 ≠ ⊤ := by
+        rw [(hf.analyticAt 2).analyticOrderAt_eq_zero.2 h2]; simp
+      exact AnalyticOnNhd.analyticOrderAt_ne_top_of_isPreconnected
+        (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ xiF Set.univ)
+        isPreconnected_univ (Set.mem_univ 2) (Set.mem_univ ρ) hc0
+    apply hord
+    revert h
+    cases hk : analyticOrderAt xiF ρ with
+    | top => exact absurd hk hfin
+    | coe n => simp
+  refine ⟨?_, ?_⟩
+  · rw [sqZeros, Finset.mem_filter, zerosIn, Finset.mem_filter, Set.Finite.mem_toFinset,
+      Function.mem_support]
+    simp only [sqZ_re, sqZ_im, sqW_re, sqW_im]
+    have := abs_lt.1 h1
+    have := abs_lt.1 h2
+    exact ⟨⟨hne, hnorm⟩, by linarith, by linarith, by linarith, by linarith⟩
+  · have h0 : 0 ≤ divB xiF (1 / 2) (6 * T) ρ := MeromorphicOn.AnalyticOnNhd.divisor_nonneg han ρ
+    unfold mult
+    omega
+
+/-- `MX k ≤ (C₃ + 14) + 2700 log²(k + 23)`. -/
+theorem MX_le (k : ℕ) : MX k ≤ (C3 + 14) + 2700 * Real.log (k + 23) ^ 2 := by
+  have hk0 : (0:ℝ) ≤ k := Nat.cast_nonneg k
+  set ℓ := Real.log ((k : ℝ) + 23) with hℓ
+  have hℓ3 : 3 ≤ ℓ := by
+    rw [hℓ, Real.le_log_iff_exp_le (by positivity)]
+    have h1 := Real.exp_one_lt_d9
+    have h3 : Real.exp 3 = Real.exp 1 ^ 3 := by rw [← Real.exp_nat_mul]; norm_num
+    have h4 : Real.exp 1 ^ 3 ≤ 2.7182818286 ^ 3 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 3
+    rw [h3]; linarith [show (2.7182818286 : ℝ) ^ 3 ≤ 23 by norm_num]
+  have hl2 : Real.log (2 * (k : ℝ) + 5) ≤ 1 + ℓ := by
+    have : Real.log (2 * (k : ℝ) + 5) ≤ Real.log (2 * ((k : ℝ) + 23)) := Real.log_le_log (by positivity) (by linarith)
+    rw [Real.log_mul (by norm_num) (by positivity)] at this
+    have := Real.log_two_lt_d9
+    linarith
+  have hP : 10.24 + 10 * Real.log (1.25 * ((k : ℝ) + 23)) ≤ 15 * ℓ := by
+    rw [Real.log_mul (by norm_num) (by positivity)]
+    have : Real.log 1.25 ≤ 0.25 := by
+      have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1.25 by norm_num); linarith
+    linarith
+  have hP0 : 0 ≤ 10.24 + 10 * Real.log (1.25 * ((k : ℝ) + 23)) := by
+    have : 0 ≤ Real.log (1.25 * ((k : ℝ) + 23)) := Real.log_nonneg (by linarith)
+    linarith
+  have hH := HkD_BPz2_le k
+  have hsq : (10.24 + 10 * Real.log (1.25 * ((k : ℝ) + 23))) ^ 2 ≤ (15 * ℓ) ^ 2 := pow_le_pow_left₀ hP0 hP 2
+  unfold MX
+  nlinarith
+
+/-- **Uniform approximation**: for `M ≥ 0`, `ε > 0` there is a square on which
+`‖ξ'/ξ(s) + Σ_u m_u (u − s)^{-1}‖ ≤ ε` for all `‖s − 1/2‖ ≤ M` (with `ξ(s) ≠ 0`), which contains all zeros with
+`‖ρ − 1/2‖ ≤ M` (with multiplicity `≥ 1`), and whose sum runs over zeros only. -/
+theorem xi_partial_approx {M ε : ℝ} (hM : 0 ≤ M) (hε : 0 < ε) :
+    ∃ T : ℝ, 0 < T ∧
+      (∀ s : ℂ, ‖s - 1 / 2‖ ≤ M → xiF s ≠ 0 →
+        ‖logDeriv xiF s + ∑ u ∈ sqZeros T, (mult T u : ℂ) * (u - s)⁻¹‖ ≤ ε) ∧
+      (∀ ρ : ℂ, xiF ρ = 0 → ‖ρ - 1 / 2‖ ≤ M → ρ ∈ sqZeros T ∧ 1 ≤ mult T ρ) ∧
+      (∀ u ∈ sqZeros T, xiF u = 0) := by
+  set δ := ε / (6 * (M + 1) * 5401) with hδ
+  have hδ0 : 0 < δ := by positivity
+  have t1 : ∀ᶠ k : ℕ in atTop, (C3 + 14) / (k : ℝ) < δ :=
+    (tendsto_order.1 (tendsto_const_div_atTop_nhds_zero_nat (C3 + 14))).2 δ hδ0
+  have hlim : Tendsto (fun k : ℕ => Real.log ((k : ℝ) + 23) ^ 2 / (1 * ((k : ℝ) + 23) + 0)) atTop (𝓝 0) :=
+    (Real.tendsto_pow_log_div_mul_add_atTop 1 0 2 one_ne_zero).comp
+      (tendsto_atTop_add_const_right _ 23 tendsto_natCast_atTop_atTop)
+  have t2 : ∀ᶠ k : ℕ in atTop, Real.log ((k : ℝ) + 23) ^ 2 / (1 * ((k : ℝ) + 23) + 0) < δ :=
+    (tendsto_order.1 hlim).2 δ hδ0
+  obtain ⟨k, hk1, hk2, hk3, hk4⟩ := (t1.and (t2.and ((eventually_ge_atTop 23).and
+    (eventually_ge_atTop ⌈2 * M⌉₊)))).exists
+  have hk23 : (23 : ℝ) ≤ k := by exact_mod_cast hk3
+  have hkM : 2 * M ≤ k := (Nat.le_ceil _).trans (by exact_mod_cast hk4)
+  obtain ⟨T, hT, hgood⟩ := good_heightD ldatum_zeta2 k
+  have hT0 : 0 < T := by linarith [hT.1]
+  have hk0 : (0:ℝ) < k := by linarith
+  refine ⟨T, hT0, fun s hs hξ => ?_, fun ρ hρ hρM => ?_, fun u hu => (mem_sqZeros_iff hu).1⟩
+  · have hs' : ‖s - 1 / 2‖ ≤ T / 2 := by linarith [hT.1]
+    refine (xi_partial_frac (by omega) hT hgood hs' hξ).trans ?_
+    have hMX := MX_le k
+    have hMX0 := MX_nonneg k
+    simp only [one_mul, add_zero] at hk2
+    have e1 : MX k / k ≤ 5401 * δ := by
+      rw [div_le_iff₀ hk0]
+      have a1 : C3 + 14 ≤ δ * k := by rw [div_lt_iff₀ hk0] at hk1; linarith
+      have a2 : Real.log ((k : ℝ) + 23) ^ 2 ≤ δ * ((k : ℝ) + 23) := by
+        rw [div_lt_iff₀ (by linarith)] at hk2; linarith
+      nlinarith
+    have hsn := norm_nonneg (s - 1 / 2)
+    calc 6 * MX k * ‖s - 1 / 2‖ / T ≤ 6 * MX k * M / k := by
+          apply div_le_div₀ (by positivity) (by gcongr) hk0 hT.1
+      _ = 6 * M * (MX k / k) := by ring
+      _ ≤ 6 * M * (5401 * δ) := by gcongr
+      _ = ε * (M / (M + 1)) := by rw [hδ]; field_simp
+      _ ≤ ε * 1 := by gcongr; rw [div_le_one (by linarith)]; linarith
+      _ = ε := mul_one ε
+  · have h1 : |ρ.re - 1 / 2| < T := by
+      have := Complex.abs_re_le_norm (ρ - 1 / 2); simp at this; linarith [hT.1]
+    have h2 : |ρ.im| < T := by
+      have := Complex.abs_im_le_norm (ρ - 1 / 2); simp at this; linarith [hT.1]
+    exact mem_sqZeros_of_zero hT0 hρ h1 h2
+
 end TernaryGoldbach.Explicit
