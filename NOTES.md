@@ -31,6 +31,15 @@ by windows (Jensen counts `log(B_T/0.355)/log(10/r)` per window) × rotation bou
 (`GRHUpTo`) zeros with `|γ| ≤ T₀` have `ℜρ = 1/2` (plus `ρ = 0` for even `χ`). (b) restate Prop 9.3.2 with
 the resulting (weaker) constants and redo Cor 9.3.3 → Cor 7.1.3 → uses. (c) `q = 1` (ζ, pole at `s = 1`),
 `η₊` (Props 9.4.2, 9.5.1), Dusart.
+**Done since:** `Explicit/GammaBounds` (`|Γ(x+iy)| ≤ e^{−φ|y|}Γ(x)/cos^xφ`), `Explicit/LGrowthPoly`
+(`|L(z,χ)| ≤ 1400 q⁹(q+1)(|ℑz|+9)(1.25(|ℑz|+1))^{10}` on `−8 ≤ ℜz ≤ 1/4`). **Remaining for Prop 9.3.2**
+(in order): (a) `ZeroSums`: `B'_T = 1400q⁹(q+1)(|T|+22)(1.25(|T|+11))^{10}` on `|z−(2+iT)| ≤ 10`; Jensen windows
+(radius 6 in 10: height ≈ 10.9, `≤ log(B'/0.355)/log(10/6)` zeros, ≈ 2 log T per unit height vs true 0.16);
+uniform bound for `Σ_{zerosRect} m|G(ρ)|x^{ℜρ}`: zeros with `|γ| ≤ T₀` on the line (GRH), the rest via the
+rotation bounds; `ρ = 0` contributes `|G(0)| ≤ 1`. (b) explicit bound for the `ℜs = −1/2` integral (Landau +
+`|z−ρ| ≥ 1/2`, now polynomial). (c) `‖S‖ ≤ E_new x`. (d) `q = 1` (ζ: pole at 1 gives `G(1)x = η̂(−δ)x`; needs
+ζ versions of LGrowth/Landau/explicit formula). (e) restate `prop_9_3_2` with `E_new`; redo `Cor933.err932_le_Er`,
+`Cor713` numerics, check `ArcCharsStar`, `BaseGap*`, (14.27). Then Props 9.4.2/9.5.1 (`η₊`) and Dusart.
 *Zero density problem:* `LGrowthLeft`'s bound grows like `e^{π|t|/2}` (Gamma decay dropped), so Jensen gives
 `O(T)` zeros per window — fine for convergence, useless for Lemma 9.1.4. Fix (in progress): polynomial growth
 of `L` on `σ ≤ 1/4` via the exact ratio `Γ((s+κ)/2)/Γ((1−s+κ)/2) = 2^{1−s} π^{−1/2} Γ(s) sin(π(1−s+κ)/2)`
