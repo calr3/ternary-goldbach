@@ -232,6 +232,21 @@ instead of `450` for margin. Thm 7.1.4 is proved from the cited Prop 9.4.2 + Pla
 has `x^{1/2}` for `x^{-1/2}`; [B]'s general-`q` constants `1.3482·10⁻¹⁴`, `1.617·10⁻¹⁰` are tight to ~10⁻⁵ relative,
 we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` — check (14.1), (14.2) margins when used).
 (14.7) needs the *lower* bound (MinorTotal uses `∫_𝔐 |S_{η₊}|² ≥ 8.6298x`), i.e. the full Lemma 10.3.1 with `η◦`.
+**Roadmap for (14.7)** (Lemma 10.3.1 + §14.1), reusing the minor-arc infrastructure:
+1. *Arcs*: `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g` — `≤` is `integral_majorArcs_le`; `≥` from disjointness
+   (`arcs_unique`, `sum_arc_indicator_le_one`) as in `sum_arcs_le_integral`, but restricted to `𝔐`.
+2. *Coprime reduction*: `S = S' + S''`, `S'` over `n` coprime to `L = lcm(q ≤ 2r)` (as in BaseGap2's
+   `sum_noncoprime_le`); `∫|S|² − ∫|S'|²` tiny (`K_{r,2}`).
+3. *Bombieri*: `φ(q) Σ_b |S'(b/q + β)|² = Σ_ψ |τ(ψ)|² |S'_{ψ⁻¹}(β)|²` (`totient_mul_sum_units`,
+   `norm_sq_gaussSum`: `|τ(ψ)|² = c·[q/c squarefree, coprime to c]`); primitive `ψ*` gives Thm 7.1.4.
+4. *Error terms*: `ET`, `E_{η₊,r,δ₀}` from Thm 7.1.4 (`Thm714.lean`); `Σ_{q≤r} μ²(q)/φ(q)`-weighted sums.
+5. *Main term*: `Σ_{q odd ≤ r} μ²(q)/φ(q) ∫_{|δ|≤δ₀r/2q} |η̂₊(−δ)|²`; needs **Plancherel for L¹∩L² on ℝ** (Mathlib has
+   only `Lp.norm_fourier_eq` on `L²`; bridge via `Lp.fourier_toTemperedDistribution_eq`, duality against Schwartz
+   functions and `ae_eq_of_integral_smooth_smul_eq`), `|η̂◦(t)| ≤ |η◦'''|₁/(2πt)³` (by parts) and
+   `|η₊ − η◦|₂ ≤ 274.86/H^{7/2}` ([B, (A.23)], cited) for the lower bound.
+6. *Numerics* (§14.1): `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…` (numerical axiom, finite sum), `|η◦|₂ ∈ [0.8001287,
+   0.8001288]`, `|η◦'''|₁ ≤ 32.5023`, `|η₊|₁ ≤ 1.062319`, `|η₊|_∞ ≤ 1.079955` (Appendix A; numerical/cited).
+Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
 Next: Ch. 10
 (character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
