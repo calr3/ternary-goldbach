@@ -4,9 +4,8 @@ Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015
 This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
 
 This is a chapter-level map from [B] to the Lean files. There is no `sorry`. `ternary_goldbach`
-depends on 36 axioms, which are listed and audited in `AXIOMS.md`. One of them, [B, (5.36)], is false
-as stated because of an error in [B, (5.32)]; its correction is in progress. The current status is in
-the README.
+depends on 36 axioms, which are listed and audited in `AXIOMS.md`. [B, (5.36)] is used in corrected
+form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status is in the README.
 
 ## Top level ([B, §14.4]) — done
 

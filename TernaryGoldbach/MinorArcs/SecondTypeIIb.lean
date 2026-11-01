@@ -197,7 +197,7 @@ theorem log_99_le : Real.log 99.68 ≤ 4.603 := by
 
 noncomputable def bG (L : ℝ) : ℝ := Real.log (L - 6.1452) - 1.2037
 noncomputable def bX0 (L : ℝ) : ℝ := (L - 9.4778) + (L - 0.9654) * bG L
-noncomputable def bB0 (L : ℝ) : ℝ := 0.15107 * (L - 9.4778) + 0.0135
+noncomputable def bB0 (L : ℝ) : ℝ := 0.15107 * (L - 9.4778) + 0.0366
 
 /-- The secondary terms of case (b), divided by `T^{5/2}`. -/
 noncomputable def bSEC (L : ℝ) : ℝ :=
@@ -271,7 +271,7 @@ theorem b_M1_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
         Real.log (|δ| * q * (1 + T ^ 3 / (2 * U2 T * Q2 T)) / 4) *
           (Real.log (Real.log (T ^ 3 / U2 T / (|δ| * q * (1 + T ^ 3 / (2 * U2 T * Q2 T)) / 4))) -
             Real.log (Real.log (8 * |δ| * q / (|δ| * q * (1 + T ^ 3 / (2 * U2 T * Q2 T)) / 4))))) *
-        (0.15107 * Real.log (T ^ 3 / (U2 T * (8 * |δ| * q))) +
+        (0.15107 * Real.log (T ^ 3 / (U2 T * (8 * |δ| * q))) + 0.0231 +
           2 * zeta3 * √(T ^ 3 / (8 * |δ| * q)) / U2 T)) ≤
     √(12 * a1F0 (Real.log T) * bX0 (Real.log T) * bB0 (Real.log T)) * (T ^ 2 * √T) := by
   obtain ⟨hD1, hD2⟩ := b_facts hT h hδq
@@ -386,8 +386,8 @@ theorem b_M1_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     rw [div_le_iff₀ hU0]
     have := mul_le_mul hz h1 (Real.sqrt_nonneg _) (by norm_num)
     nlinarith
-  set B := 0.15107 * Λ + 2 * zeta3 * √(T ^ 3 / (8 * |δ| * q)) / U2 T
-  have hB0def : bB0 L = 0.15107 * (L - 9.4778) + 0.0135 := rfl
+  set B := 0.15107 * Λ + 0.0231 + 2 * zeta3 * √(T ^ 3 / (8 * |δ| * q)) / U2 T
+  have hB0def : bB0 L = 0.15107 * (L - 9.4778) + 0.0366 := rfl
   have hB0 : 0 ≤ B := by simp only [B]; positivity
   have hB : B ≤ bB0 L := by simp only [B]; rw [hB0def]; nlinarith
   have hBB0 : 0 ≤ bB0 L := hB0.trans hB

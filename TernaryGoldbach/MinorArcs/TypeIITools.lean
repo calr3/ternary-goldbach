@@ -8,11 +8,11 @@ open Real Finset MeasureTheory
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- `∫_V^{x/U} H₂(x/WU) dW/W = ∫_1^{x/UV} H₂(s) ds/s ≤ 0.15107 log(x/UV)` [B, (6.25)], and the
-integrand is integrable. -/
+/-- `∫_V^{x/U} H₂(x/WU) dW/W = ∫_1^{x/UV} H₂(s) ds/s ≤ 0.15107 log(x/UV) + 0.0231` ([B, (6.25)],
+with the corrected (5.36)), and the integrand is integrable. -/
 theorem integral_H2_comp {x U V : ℝ} (hx : 0 < x) (hU : 0 < U) (hV : 0 < V) (hVU : V ≤ x / U) :
     IntervalIntegrable (fun W => H2 (x / (W * U)) / W) volume V (x / U) ∧
-    ∫ W in V..x / U, H2 (x / (W * U)) / W ≤ 0.15107 * Real.log (x / (U * V)) := by
+    ∫ W in V..x / U, H2 (x / (W * U)) / W ≤ 0.15107 * Real.log (x / (U * V)) + 0.0231 := by
   set φ : ℝ → ℝ := fun W => x / (W * U)
   set φ' : ℝ → ℝ := fun W => -(x / (U * W ^ 2))
   set G : ℝ → ℝ := fun s => H2 s / s

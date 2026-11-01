@@ -433,8 +433,9 @@ noncomputable def T2 (S : ℝ) : ℝ :=
   ∑ s ∈ Icc 1 ⌊S⌋₊, if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * S / s) else 0
 
 /-- `H₂(S)` [B, (5.35)]: `(4/π²) max(T₂(S), 0)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses
-its computable upper bound `G₂(S)` in place of `T₂(S)`; `G₂ ≥ T₂` and `G₂ ≥ 0`, so `G₂ ≥ max(T₂, 0)`
-and the book's statements (5.36), (5.37) about `H₂` remain valid for ours.) -/
+its computable upper bound `G₂(S)` in place of `T₂(S)`; `G₂ ≥ T₂` and `G₂ ≥ 0`, so `G₂ ≥ max(T₂, 0)`,
+and the book's (5.37) about `H₂` remains valid for ours. Its (5.36) is false and is used here
+in corrected form; see `integral_H2_le`.) -/
 noncomputable def H2 (S : ℝ) : ℝ := if S < 16 then 4 / π ^ 2 * max (T2 S) 0 else 0.15107
 
 theorem H2_nonneg (S : ℝ) : 0 ≤ H2 S := by
@@ -447,9 +448,16 @@ from Lemma 5.1.2 (whose range `x ≤ 10⁶` is an interval-arithmetic computatio
 after (5.30); for `16 ≤ S < 10⁵` it is a direct computation. -/
 axiom T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273
 
-/-- **[B, (5.36)]** (numerical axiom, from [B, (5.32)]). -/
+/-- **[B, (5.36)], corrected** (numerical axiom): `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231`.
+
+[B, (5.36)] states this without the `+ 0.0231`. That is false: it inherits an error in [B, (5.32)]
+for `v = 2`, where `∫₁⁴ T₂(S)/S dS = 0.53344 > 0.37273 log 4` (see `AXIOMS.md`). For `S ≥ 16`,
+`H₂ = 0.15107` by definition, so the excess `∫₁ᵀ H₂/S − 0.15107 log T` is constant from `T = 16`
+on. Its supremum over `T ≥ 1` is `0.023059…`, attained at `T ≤ 16`, where `T₂` is an explicit
+piecewise function `α + β/S`. `scripts/h2_integral_check.py` computes it with exact rational
+coefficients and logarithms in interval arithmetic. -/
 axiom integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
-    ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T
+    ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T + 0.0231
 
 theorem measurable_g2 : Measurable g2 := by
   have : g2 = (fun N : ℕ => ∑ r₁ ∈ Finset.Icc 1 N, ∑ r₂ ∈ Finset.Icc 1 N,

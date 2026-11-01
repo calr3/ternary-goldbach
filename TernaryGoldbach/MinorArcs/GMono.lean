@@ -9,7 +9,7 @@ import TernaryGoldbach.MinorArcs.SecondNumerics
 We do not follow [B]'s derivative test (11.23)–(11.25).  Instead, writing `s = log r`, each
 term of `g_x(r)` has the form `Q(s) e^{-ps}` (`p = 1/2` or `1`), and such a function is
 antitone wherever `Q' ≤ pQ` (`antitoneOn_mul_exp_neg`).  For the main term
-`Q = (R log 2r + 0.8103) √Ϝ`, the elasticities are `≤ 0.27125/ℓ` for `R` (`ℓ = log(9x^{1/3}/4.008r)
+`Q = (R log 2r + 0.8764) √Ϝ`, the elasticities are `≤ 0.27125/ℓ` for `R` (`ℓ = log(9x^{1/3}/4.008r)
 ≥ 2.5` because `r ≤ x^{1/3}/6`), `1/log 2r` for `log 2r`, and `≤ e^γ/(2·3.8 log r)` for `√Ϝ`.
 Since `R ≥ 0.41415`, the total stays below `1/2` with room to spare.
 
@@ -157,8 +157,8 @@ theorem exp_two_point_five_le : rexp 2.5 ≤ 13.4 := by
 
 /-! ## The three pieces of `g_x(r)` -/
 
-/-- The main term `(R_{x,2r} log 2r + 0.8103) √Ϝ(r)` as a function of `s = log r`. -/
-noncomputable def QA (B s : ℝ) : ℝ := (Rs B s * (Real.log 2 + s) + 0.8103) * √(Fs s)
+/-- The main term `(R_{x,2r} log 2r + 0.8764) √Ϝ(r)` as a function of `s = log r`. -/
+noncomputable def QA (B s : ℝ) : ℝ := (Rs B s * (Real.log 2 + s) + 0.8764) * √(Fs s)
 
 theorem QA_antitoneOn {B : ℝ} (hB : 8.5 ≤ B) :
     AntitoneOn (fun s => QA B s * rexp (-(1 / 2) * s)) (Icc 6 (B - 2.5)) := by
@@ -166,7 +166,7 @@ theorem QA_antitoneOn {B : ℝ} (hB : 8.5 ≤ B) :
   have hl8 : 0 ≤ Real.log 8 := Real.log_nonneg (by norm_num)
   refine antitoneOn_mul_exp_neg (Q' := fun s =>
       (0.27125 * ((B + Real.log 8) / ((B - s) * (2 * B - s + Real.log 8))) * (Real.log 2 + s) +
-        Rs B s) * √(Fs s) + (Rs B s * (Real.log 2 + s) + 0.8103) *
+        Rs B s) * √(Fs s) + (Rs B s * (Real.log 2 + s) + 0.8764) *
         ((rexp eulerMascheroniConstant / s - 2.50637 / (s * Real.log s ^ 2)) / (2 * √(Fs s))))
     (fun s hs => ?_) (fun s hs => ?_)
   · obtain ⟨hs1, hs2⟩ := hs
@@ -176,7 +176,7 @@ theorem QA_antitoneOn {B : ℝ} (hB : 8.5 ≤ B) :
     have hFd := (Fs_hasDerivAt (show (1:ℝ) < s by linarith)).sqrt (by linarith)
     have hlin : HasDerivAt (fun s => Real.log 2 + s) 1 s := (hasDerivAt_id s).const_add _
     unfold QA
-    exact (((hRd.mul hlin).add_const 0.8103).mul hFd).congr_deriv (by simp only [Pi.mul_apply]; ring)
+    exact (((hRd.mul hlin).add_const 0.8764).mul hFd).congr_deriv (by simp only [Pi.mul_apply]; ring)
   · obtain ⟨hs1, hs2⟩ := hs
     simp only [QA]
     have hsB : s < B := by linarith
@@ -198,7 +198,7 @@ theorem QA_antitoneOn {B : ℝ} (hB : 8.5 ≤ B) :
       rw [div_le_iff₀ (by positivity)]; nlinarith
     set L := Real.log 2 + s
     have hL : 6.69 ≤ L := by simp only [L]; linarith
-    set N := Rs B s * L + 0.8103
+    set N := Rs B s * L + 0.8764
     have hN : 0 ≤ N := by positivity
     set a := √(Fs s)
     have hRL : 0 ≤ 0.27125 * ((B + Real.log 8) / ((B - s) * (2 * B - s + Real.log 8))) := by

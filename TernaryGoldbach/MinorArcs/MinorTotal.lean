@@ -188,12 +188,12 @@ theorem gx_r0_ge {y : ℝ} (hy : 1e25 ≤ y) : 0.01 ≤ gx y 150000 := by
     have : 3.8 * (13 / 4 * 12.6 + 7.82) ≤ Fr (2 * 150000 / 2) * (13 / 4 * Real.log (2 * 150000) + 7.82) :=
       mul_le_mul hFl (by linarith) (by norm_num) (by linarith)
     linarith
-  have h1 : (0.8103 * 1.949 + 2.5) / 548 ≤
-      ((R y (2 * 150000) * Real.log (2 * 150000) + 0.8103) * √(Fr 150000) + 2.5) / √(2 * 150000) := by
+  have h1 : (0.8764 * 1.949 + 2.5) / 548 ≤
+      ((R y (2 * 150000) * Real.log (2 * 150000) + 0.8764) * √(Fr 150000) + 2.5) / √(2 * 150000) := by
     apply div_le_div₀ (by positivity) _ (by positivity) hs
     have hl0 : (0:ℝ) ≤ Real.log (2 * 150000) := le_trans (by norm_num) hl
     have hRl : 0 ≤ R y (2 * 150000) * Real.log (2 * 150000) := mul_nonneg hR hl0
-    have : 0.8103 * 1.949 ≤ (R y (2 * 150000) * Real.log (2 * 150000) + 0.8103) * √(Fr 150000) :=
+    have : 0.8764 * 1.949 ≤ (R y (2 * 150000) * Real.log (2 * 150000) + 0.8764) * √(Fr 150000) :=
       mul_le_mul (le_add_of_nonneg_left hRl) hsF (by norm_num) (by positivity)
     linarith
   have h2 : 394 / 150000 ≤ Lg (2 * 150000) / 150000 := div_le_div_of_nonneg_right hLg (by norm_num)

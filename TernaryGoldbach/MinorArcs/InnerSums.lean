@@ -65,7 +65,7 @@ noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
 theorem eta2'L1_pos : 0 < eta2'L1 := by
   unfold eta2'L1; have := Real.log_pos (by norm_num : (1 : ℝ) < 2); positivity
 
-/-- **Numerical axiom** [B, (B.6), Lemma B.2.3]: `|η̂₂''|_∞ ≤ 31.521`, written as
+/-- **Numerical axiom** [B, Lemma B.1.2, (B.6)]: `|η̂₂''|_∞ ≤ 31.521`, written as
 `(2πt)² |η̂₂(t)| ≤ c₀` (`η̂''(t) = (2πit)² η̂(t)`).  In [B] this is a rigorous computation
 (interval arithmetic); it is not formalized here. -/
 axiom eta2_fourier_bound' (t : ℝ) :

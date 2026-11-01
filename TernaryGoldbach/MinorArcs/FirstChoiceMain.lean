@@ -3,8 +3,8 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 /-!
 # [B, §6.4, (6.76)–(6.77)]: the main term
 
-`√(C(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.67506) ≤ 0.27125 C log t + 0.41415 log t
-+ 0.8103` (AM–GM with `√ρ = 1.84332`), using `C = C_{x,t} ≤ 0.1 log t + 0.14`.
+`√(C(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468) ≤ 0.27125 C log t + 0.41415 log t
++ 0.8764` (AM–GM with `√ρ = 1.84332`), using `C = C_{x,t} ≤ 0.1 log t + 0.14`.
 [B] writes `0.49911` for the constant; the correct value is `0.81019…` (see `PointwiseBound.lean`).
 -/
 
@@ -102,11 +102,11 @@ theorem sqrt_mul_sqrt_le {a b s : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hs : 0 < s
   have : (a / s + s * b) ^ 2 - 4 * (a * b) = (a / s - s * b) ^ 2 := by field_simp; ring
   nlinarith [sq_nonneg (a / s - s * b)]
 
-/-- **[B, (6.77)], corrected**: the main term is at most `R_{x,t} log t + 0.8103`. -/
+/-- **[B, (6.77)], corrected**: the main term is at most `R_{x,t} log t + 0.8764`. -/
 theorem main_amgm {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ T / 3) (hC0 : 0 ≤ Cxt T t) :
     √(Cxt T t * (Real.log t + 0.002) + Real.log (4 * t) / 2) *
-        √(0.30214 * Real.log t + 0.67506) ≤
-      (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8103 := by
+        √(0.30214 * Real.log t + 0.7468) ≤
+      (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8764 := by
   have ht0 : 0 < t := by linarith
   have hu0 : 0 ≤ Real.log t := Real.log_nonneg (by linarith)
   have hl4 : Real.log (4 * t) = 2 * Real.log 2 + Real.log t := by
@@ -116,13 +116,13 @@ theorem main_amgm {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ T / 
   have hlog2' := Real.log_two_gt_d9
   have hC := Cxt_le hT ht2 htT
   have h := sqrt_mul_sqrt_le (s := 1.84332) (a := Cxt T t * (Real.log t + 0.002) + Real.log (4 * t) / 2)
-    (b := 0.30214 * Real.log t + 0.67506) (by rw [hl4]; positivity) (by positivity) (by norm_num)
+    (b := 0.30214 * Real.log t + 0.7468) (by rw [hl4]; positivity) (by positivity) (by norm_num)
   refine h.trans ?_
   rw [hl4]
   have e : ((Cxt T t * (Real.log t + 0.002) + (2 * Real.log 2 + Real.log t) / 2) / 1.84332 +
-      1.84332 * (0.30214 * Real.log t + 0.67506)) / 2 =
+      1.84332 * (0.30214 * Real.log t + 0.7468)) / 2 =
       Cxt T t * Real.log t / 3.68664 + 0.002 * Cxt T t / 3.68664 + Real.log 2 / 3.68664 +
-      (1 / 7.37328 + 1.84332 * 0.30214 / 2) * Real.log t + 1.84332 * 0.67506 / 2 := by
+      (1 / 7.37328 + 1.84332 * 0.30214 / 2) * Real.log t + 1.84332 * 0.7468 / 2 := by
     field_simp; ring
   rw [e]
   have h1 : Cxt T t * Real.log t / 3.68664 ≤ 0.27125 * Cxt T t * Real.log t := by
@@ -131,14 +131,14 @@ theorem main_amgm {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ T / 
     rw [div_le_iff₀ (by norm_num)]; nlinarith
   have h3 : Real.log 2 / 3.68664 ≤ 0.6931471808 / 3.68664 :=
     div_le_div_of_nonneg_right hlog2.le (by norm_num)
-  have e2 : (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8103 =
-      0.27125 * Cxt T t * Real.log t + 0.41415 * Real.log t + 0.8103 := by ring
+  have e2 : (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8764 =
+      0.27125 * Cxt T t * Real.log t + 0.41415 * Real.log t + 0.8764 := by ring
   rw [e2]
   have h4 : (1 / 7.37328 + 1.84332 * 0.30214 / 2) * Real.log t + 0.0005425 * (0.1 * Real.log t) ≤
       0.41415 * Real.log t := by
     have : ((1 / 7.37328 + 1.84332 * 0.30214 / 2) + 0.0005425 * 0.1 : ℝ) ≤ 0.41415 := by norm_num
     nlinarith
-  have h5 : (0.6931471808 / 3.68664 + 1.84332 * 0.67506 / 2 + 0.0005425 * 0.14 : ℝ) ≤ 0.8103 := by
+  have h5 : (0.6931471808 / 3.68664 + 1.84332 * 0.7468 / 2 + 0.0005425 * 0.14 : ℝ) ≤ 0.8764 := by
     norm_num
   linarith
 

@@ -1,7 +1,7 @@
 """Re-run [B, §14.3] (the minor-arc total (14.49)) with our corrected Theorem 3.1.1.
 
 [B]'s Theorem 3.1.1 has `R log(δ₀q) + 0.5` and `3.36 x^{5/6}`; what we prove
-(`MinorArcs/PointwiseBound.lean`) has `0.8103` and `3.8`.  Both constants enter
+(`MinorArcs/PointwiseBound.lean`) has `0.8764` and `3.8`.  Both constants enter
 g_{y,φ}(r) (11.19)/(13.10), and through it the three parts of M (13.13):
 
 * (14.37)  g(r0) · (… S − (√J − √E)²) ≤ g(r0) · 9.2598 x,
@@ -97,7 +97,7 @@ def lemma_11_2_1(c, c56):
 if __name__ == "__main__":
     Zb = report(mpf("0.5"), mpf("3.36"))
     print("  ([B] (14.49): 1.00948)\n")
-    Zc = report(mpf("0.8103"), mpf("3.8"))
-    for c, c56 in [(mpf("0.5"), mpf("3.36")), (mpf("0.8103"), mpf("3.8"))]:
+    Zc = report(mpf("0.8764"), mpf("3.8"))
+    for c, c56 in [(mpf("0.5"), mpf("3.36")), (mpf("0.8764"), mpf("3.8"))]:
         w, lx = lemma_11_2_1(c, c56)
         print(f"Lemma 11.2.1 (c = {c}, {c56}): max g_(x_r)(r)/h(x_r) = {float(w):.4f} at log x_r = {float(lx):.2f}")

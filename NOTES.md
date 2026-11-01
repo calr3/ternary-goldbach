@@ -186,18 +186,24 @@ Every axiom has been checked against its source or script, and all scripts were 
   * Exactly, `∫₁⁴ T₂/S = 0.53344 > 0.37273 log 4`.
   * True version: `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` (`scripts/h2_integral_check.py`; the supremum
     of the excess is `0.023059`, constant from `T = 16` on).
-  * Next: replace the axiom and carry `+0.0231` through `integral_H2_comp`. It becomes `+0.0924` in
-    the factor `0.60428 Λ₀ + …` of `typeII_637`, `typeII_640`, `typeII_gen`, `typeII_split_gen` and
-    the `SecondTypeIIa/b` bounds (`a1B0`, `bB0`), then through the numerics (FirstChoice*,
-    Second*Num, Thm 3.1.1, the cells). The Type II main term grows by about `0.4%`.
+  * **Done.** The axiom is replaced by the corrected bound. `integral_H2_comp` gives
+    `0.15107 log(x/UV) + 0.0231`, and the Type II totals have `0.60428 Λ₀ + 0.0924 + 8ζ³…`.
+  * First case: our `ζ³` bound (`≤ 0.2355`) had room, so `B ≤ 0.30214 log t + 0.7468` (was
+    `0.67506`). By AM–GM with the same `√ρ = 1.84332`, Thm 3.1.1's constant becomes `0.8764` (was
+    `0.8103`); `R` is unchanged.
+  * Second case: `a1B0 = 0.15107(L − 8.09) + 0.0501` (shift `7.7583`) and
+    `bB0 = 0.15107(L − 9.4778) + 0.0366` (shift `9.2355`). The regenerated pieces stay below
+    `1.413` (worst `1.3991` and `1.2789`).
+  * The cells (`gen_cells.py`) have a worst total of `0.965`, so (14.49) stays `1.0376`.
+  * New checks: `scripts/t2_check.py` ((5.31) on `[16, 10⁵]`, float, max `0.371249`),
+    `scripts/eta_plus_check.py` ((9.94) via FFT, float), and `H2_le` exactly in
+    `h2_integral_check.py`.
 * **`prime_ladder_input` restated with gaps `≤ 4·10¹⁸`**, as in [HP13] and [B, §1.6]; before, it
   said `≤ 4·10¹⁸ − 4`. `ternaryUpTo_of_ladder_two` uses binary Goldbach up to `N`, `N + 2` as a sum
   of two primes, and gaps `≤ N`. `PrattPrime.lean` proves the two primes by kernel-checked Pratt
   certificates (`powModAux` and `lucas_primality`, with `decide +kernel`).
-* Docstring fixes still to make with the next rebuild of `MinorArcs/`:
-  * `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)];
-  * `integral_H2_le` is false as stated;
-  * `rh_upto`: `γ ≤ 0` is classical.
+* Docstrings fixed: `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)], and `rh_upto` notes that
+  `γ ≤ 0` is classical.
 
 ## Dusart replaced: no `sorry` left (2026-11-01)
 

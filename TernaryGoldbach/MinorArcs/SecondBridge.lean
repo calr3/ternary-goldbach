@@ -102,7 +102,7 @@ theorem Cxt_le_loglog {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ 
 
 /-- The final numerical inequality of the bridge case (main part), in `L = log T ≥ 15.6`. -/
 theorem bridge_numeric_main {L : ℝ} (hL : 15.6 ≤ L) :
-    ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8103) *
+    ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) *
         √(3.0001 * (1.948 * Real.log L + 1)) + (4.331 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := by
   have hsq := sqrt_ge_of_log hL
   have h39 := sqrt_fifteen_six_ge
@@ -129,26 +129,26 @@ theorem bridge_numeric_main {L : ℝ} (hL : 15.6 ≤ L) :
   have hsB : √B ≤ B * (100 / 874) + 2.185 := by
     have h : 8.74 * √B ≤ B + 19.0969 := by nlinarith [Real.sq_sqrt hB, sq_nonneg (√B - 4.37)]
     linarith
-  set A := 0.27125 * (s - 1.06) + 0.41415 + 0.0520
+  set A := 0.27125 * (s - 1.06) + 0.41415 + 0.0562
   have hA : 0 ≤ 0.27125 * (s - 1.06) + 0.41415 := by nlinarith
-  have hN : ((0.27125 * (s - 1.06) + 0.41415) * L + 0.8103) * √B ≤
+  have hN : ((0.27125 * (s - 1.06) + 0.41415) * L + 0.8764) * √B ≤
       L * (A * (B * (100 / 874) + 2.185)) := by
-    have h1 : 0.8103 ≤ 0.0520 * L := by linarith
+    have h1 : 0.8764 ≤ 0.0562 * L := by linarith
     have h2 : 0 ≤ √B := Real.sqrt_nonneg _
     have hA' : 0 ≤ A := by simp only [A]; linarith
-    calc ((0.27125 * (s - 1.06) + 0.41415) * L + 0.8103) * √B
-        ≤ ((0.27125 * (s - 1.06) + 0.41415) * L + 0.0520 * L) * √B := by gcongr
+    calc ((0.27125 * (s - 1.06) + 0.41415) * L + 0.8764) * √B
+        ≤ ((0.27125 * (s - 1.06) + 0.41415) * L + 0.0562 * L) * √B := by gcongr
       _ = L * (A * √B) := by simp only [A]; ring
       _ ≤ _ := by gcongr
   have hc : 4.331 + 2.5 + 3.8 ≤ L * 0.6815 := by linarith
   -- Monotonicity in `s`, then a polynomial inequality in `d`.
-  have hmon : A * (B * (100 / 874) + 2.185) ≤ (0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0520) *
+  have hmon : A * (B * (100 / 874) + 2.185) ≤ (0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0562) *
       (3.0001 * (1.948 * (2.75 + d) + 1) * (100 / 874) + 2.185) := by
-    have h1 : A ≤ 0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0520 := by simp only [A]; linarith
+    have h1 : A ≤ 0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0562 := by simp only [A]; linarith
     have h2 : B * (100 / 874) + 2.185 ≤ 3.0001 * (1.948 * (2.75 + d) + 1) * (100 / 874) + 2.185 := by
       simp only [B]; nlinarith
     exact mul_le_mul h1 h2 (by positivity) (by nlinarith)
-  have hpoly : (0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0520) *
+  have hpoly : (0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0562) *
       (3.0001 * (1.948 * (2.75 + d) + 1) * (100 / 874) + 2.185) + 0.6815 ≤
       1.434 * (3.9496 * (1 + d / 2 + d ^ 2 / 8)) := by
     nlinarith [mul_nonneg hd hd]
@@ -256,8 +256,8 @@ theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
   -- The coefficient of the main term.
   have hC := Cxt_le_loglog hT ht2 htT
   have hC0 := Cxt_nonneg ht2 htT
-  set N := (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8103
-  have hN : N ≤ (0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8103 := by
+  set N := (0.27125 * Cxt T t + 0.41415) * Real.log t + 0.8764
+  have hN : N ≤ (0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764 := by
     simp only [N]
     have h1 : 0.27125 * Cxt T t + 0.41415 ≤ 0.27125 * (Real.log L - 1.06) + 0.41415 := by linarith
     have h2 : 0 ≤ 0.27125 * Cxt T t + 0.41415 := by positivity
@@ -315,11 +315,11 @@ theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
       _ = T ^ 2 * (6.0002 * (Fb * (13 / 4 * L + 7.82) + 13.66 * L + 37.55)) := by ring
       _ ≤ T ^ 2 * (2.5 * √T) := by gcongr
       _ = _ := by ring
-  have hmain : ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8103) * √(3.0001 * Fb) +
+  have hmain : ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) * √(3.0001 * Fb) +
       (4.331 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := bridge_numeric_main hL
   have hP : 0 < T ^ 2 * √T := by positivity
   have hfin : N * √(3.0001 * Fb) ≤ 1.434 * (L * √L) - (4.331 + 2.5 + 3.8) := by
-    have : N * √(3.0001 * Fb) ≤ ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8103) *
+    have : N * √(3.0001 * Fb) ≤ ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) *
         √(3.0001 * Fb) := mul_le_mul_of_nonneg_right hN (Real.sqrt_nonneg _)
     linarith
   refine key.trans ?_

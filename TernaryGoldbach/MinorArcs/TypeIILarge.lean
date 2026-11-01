@@ -386,7 +386,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
     ‖typeII α x U V‖ ≤
       4 * x * √(m / (2 * Nat.totient q)) * √((Real.log (x / (U * A)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (A / c)))) *
-        (0.15107 * Real.log (x / (U * A)) + 2 * zeta3 * √(x / A) / U)) +
+        (0.15107 * Real.log (x / (U * A)) + 0.0231 + 2 * zeta3 * √(x / A) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       4 * (√(kap1 x U V) * (√M * (2 / 3 *
@@ -407,7 +407,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
   set φ := (Nat.totient q : ℝ)
   set Λ₀ := Real.log (x / (U * A))
   set Φ := Real.log c * (Real.log (Real.log (x / U / c)) - Real.log (Real.log (A / c)))
-  set B := 0.15107 * Λ₀ + 2 * zeta3 * √(x / A) / U
+  set B := 0.15107 * Λ₀ + 0.0231 + 2 * zeta3 * √(x / A) / U
   set c4 := 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U))
   set R53 := √(kap1 x U V) * (√M * (2 / 3 *
     (Real.log A * √(Real.log A) - Real.log V * √(Real.log V))) +
@@ -562,7 +562,7 @@ theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
       4 * x * √(1 / 4 / (2 * Nat.totient q)) * √((Real.log (x / (U * (2 * θ * q))) +
         Real.log (2 * q) * (Real.log (Real.log (x / U / (2 * q))) -
           Real.log (Real.log (2 * θ * q / (2 * q))))) *
-        (0.15107 * Real.log (x / (U * (2 * θ * q))) + 2 * zeta3 * √(x / (2 * θ * q)) / U)) +
+        (0.15107 * Real.log (x / (U * (2 * θ * q))) + 0.0231 + 2 * zeta3 * √(x / (2 * θ * q)) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log (2 * q)) *
         (2 * rexp 1 * √(2 * q) + 4 * √(x / U / Real.log (x / U / (2 * q))))) +
       4 * (√(kap1 x U V) * (√(x ^ 2 / (16 * q) + q * x) * (2 / 3 *
@@ -618,7 +618,7 @@ theorem typeII_641 {α x δ Q ρ θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) 
       4 * x * √(2 / |δ| / (2 * Nat.totient q)) * √((Real.log (x / (U * (θ * |δ| * q))) +
         Real.log c * (Real.log (Real.log (x / U / c)) -
           Real.log (Real.log (θ * |δ| * q / c)))) *
-        (0.15107 * Real.log (x / (U * (θ * |δ| * q))) + 2 * zeta3 * √(x / (θ * |δ| * q)) / U)) +
+        (0.15107 * Real.log (x / (U * (θ * |δ| * q))) + 0.0231 + 2 * zeta3 * √(x / (θ * |δ| * q)) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       4 * (√(kap1 x U V) * (√(x ^ 2 / (2 * |δ| * q) + x ^ 2 / (16 * (1 - ρ) * Q)) * (2 / 3 *

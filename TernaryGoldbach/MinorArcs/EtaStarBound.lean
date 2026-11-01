@@ -41,7 +41,7 @@ theorem theorem_3_1_1_scaled_le_one {α y δ w : ℝ} {a : ℤ} {q : ℕ}
     (hz : 2.16e20 ≤ w * y) (hq : (q : ℝ) ≤ (w * y) ^ (1 / 3 : ℝ) / 6) :
     let δ₀ := max 2 (w * |δ| / 4)
     ‖S eta2 (w * y) α‖ ≤
-      (R (w * y) (δ₀ * q) * Real.log (δ₀ * q) + 0.8103) / √(δ₀ * Nat.totient q) * (w * y) +
+      (R (w * y) (δ₀ * q) * Real.log (δ₀ * q) + 0.8764) / √(δ₀ * Nat.totient q) * (w * y) +
         2.5 * (w * y) / √(δ₀ * q) + 2 * (w * y) / (δ₀ * q) * L (δ₀ * q) q +
         3.8 * (w * y) ^ (5 / 6 : ℝ) := by
   intro δ₀
@@ -71,7 +71,7 @@ theorem theorem_3_1_1_scaled {α y δ w Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     (hδ : |δ / y| ≤ 1 / (q * (3 / 4 * (w * y) ^ (2 / 3 : ℝ)))) :
     let δ₀ := max 2 (w * |δ| / 4)
     ‖S eta2 (w * y) α‖ ≤
-      (R (w * y) (δ₀ * q) * Real.log (δ₀ * q) + 0.8103) / √(δ₀ * Nat.totient q) * (w * y) +
+      (R (w * y) (δ₀ * q) * Real.log (δ₀ * q) + 0.8764) / √(δ₀ * Nat.totient q) * (w * y) +
         2.5 * (w * y) / √(δ₀ * q) + 2 * (w * y) / (δ₀ * q) * L (δ₀ * q) q +
         3.8 * (w * y) ^ (5 / 6 : ℝ) := by
   intro δ₀

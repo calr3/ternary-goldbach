@@ -7,10 +7,10 @@ import TernaryGoldbach.MinorArcs.EtaStarBound
 [B, §11.2] restates the first case of Theorem 3.1.1 as `|S_{η₂}(α, x)| ≤ g_x(r) x` with
 `r = max(1, |δ|/8) q` (so `δ₀q = 2r`), bounding `q/φ(q)` by `Ϝ(r)` (Lemma C.2.2, trusted):
 
-`g_x(r) = ((R_{x,2r} log 2r + 0.8103) √Ϝ(r) + 2.5)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
+`g_x(r) = ((R_{x,2r} log 2r + 0.8764) √Ϝ(r) + 2.5)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
 `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55`.
 
-The constants `0.8103`, `3.8` are those of our corrected Theorem 3.1.1 ([B]: `0.5`, `3.36`).
+The constants `0.8764`, `3.8` are those of our corrected Theorem 3.1.1 ([B]: `0.5`, `3.36`).
 
 Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
@@ -29,9 +29,9 @@ noncomputable def Fr (r : ℝ) : ℝ :=
 noncomputable def Lg (t : ℝ) : ℝ :=
   Fr (t / 2) * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
-/-- `g_x(r)` [B, (11.12)], with our constants `0.8103` and `3.8`. -/
+/-- `g_x(r)` [B, (11.12)], with our constants `0.8764` and `3.8`. -/
 noncomputable def gx (x r : ℝ) : ℝ :=
-  ((R x (2 * r) * Real.log (2 * r) + 0.8103) * √(Fr r) + 2.5) / √(2 * r) + Lg (2 * r) / r +
+  ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √(Fr r) + 2.5) / √(2 * r) + Lg (2 * r) / r +
     3.8 * x ^ (-1 / 6 : ℝ)
 
 /-- `R_{x,t} ≥ 0` for `1 ≤ t ≤ x^{1/3}/3` (both logarithms in (11.13) are positive). -/
@@ -82,7 +82,7 @@ theorem norm_S_eta2_le_gx {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ 
     · rw [max_eq_left hm]; linarith
   have hR := R_nonneg (x := x) (t := 2 * r) (by linarith) h2r
   have hlog : 0 ≤ Real.log (2 * r) := Real.log_nonneg (by linarith)
-  have hA : 0 ≤ R x (2 * r) * Real.log (2 * r) + 0.8103 := by positivity
+  have hA : 0 ≤ R x (2 * r) * Real.log (2 * r) + 0.8764 := by positivity
   -- `q/φ(q) < Ϝ(r)`
   have hφ0 : (0 : ℝ) < Nat.totient q := by exact_mod_cast Nat.totient_pos.2 (by exact_mod_cast hq0)
   have hF := TernaryGoldbach.Prelim.div_totient_lt h.1 hr3 hqr
@@ -93,8 +93,8 @@ theorem norm_S_eta2_le_gx {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ 
     by_contra hc; push Not at hc; nlinarith
   -- term 1
   have hδ₀' : max 2 (|δ| / 4) = 2 * r / q := by rw [← hδ₀]; field_simp
-  have t1 : (R x (2 * r) * Real.log (2 * r) + 0.8103) / √(max 2 (|δ| / 4) * Nat.totient q) * x ≤
-      (R x (2 * r) * Real.log (2 * r) + 0.8103) * √F / √(2 * r) * x := by
+  have t1 : (R x (2 * r) * Real.log (2 * r) + 0.8764) / √(max 2 (|δ| / 4) * Nat.totient q) * x ≤
+      (R x (2 * r) * Real.log (2 * r) + 0.8764) * √F / √(2 * r) * x := by
     gcongr ?_ * x
     rw [div_le_div_iff₀ (by rw [hδ₀']; positivity) (by positivity), mul_assoc, ← Real.sqrt_mul hF0.le]
     refine mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt ?_) hA
@@ -121,8 +121,8 @@ theorem norm_S_eta2_le_gx {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ 
   rw [t4, ← hFdef]
   have e2 : 2.5 * x / √(2 * r) = 2.5 / √(2 * r) * x := by ring
   rw [e2]
-  have : (R x (2 * r) * Real.log (2 * r) + 0.8103) * √F / √(2 * r) * x + 2.5 / √(2 * r) * x =
-      ((R x (2 * r) * Real.log (2 * r) + 0.8103) * √F + 2.5) / √(2 * r) * x := by ring
+  have : (R x (2 * r) * Real.log (2 * r) + 0.8764) * √F / √(2 * r) * x + 2.5 / √(2 * r) * x =
+      ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √F + 2.5) / √(2 * r) * x := by ring
   nlinarith [t1, t3]
 
 end TernaryGoldbach.MinorArcs

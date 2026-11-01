@@ -6,7 +6,7 @@ of the Lean statements (not certified):
 
 Layer 2 (Theorem 3.1.1, first case, q <= x^{1/3}/6).  The model of `thm_3_1_1_numerics.py`
 (the right-hand sides of typeI1_le, typeI2_le_*, typeII_637/640 + 3 log x) with every Prelim
-constant as a parameter.  We bisect for the smallest constant C (0.8103 in Lean) such that the
+constant as a parameter.  We bisect for the smallest constant C (0.8764 in Lean) such that the
 model stays below Theorem 3.1.1's form `(R log t + C)/sqrt(d0 phi) x + ...` on the same grid.
 
 Second case (q > x^{1/3}/6): 0.276 x^{5/6} log^{3/2} x comes from the Type II main term
@@ -199,8 +199,8 @@ def run(name, changes):
     h1 = mpf('0.276') * sqrt(S2f * P['Fc1'] / BASE['Fc1'])
     psi_ratio = max(P['a14'] / BASE['a14'], P['a15'] / BASE['a15'], P['a17'] / BASE['a17'])
     h2 = 1234 * psi_ratio
-    # Lean's 0.8103 is the baseline; shift it by the model's increase.
-    Cl = mpf('0.8103') + max(0, C - C0)
+    # Lean's 0.8764 is the baseline; shift it by the model's increase.
+    Cl = mpf('0.8764') + max(0, C - C0)
     Z = Ztot_worst(Cl, mpf('3.8'), h1, h2, P['Fc1'], P['Fc2'], Rs)
     ok = 'OK (<= 1.037)' if Z <= mpf('1.037') else ('tight (<= 1.05)' if Z <= mpf('1.05') else 'FAILS')
     print(f"{name:52s} R x{float(Rs):.3f} C={float(Cl):7.4f}  h1={float(h1):.3f} h2={float(h2):6.0f}  worst Z={float(Z):.4f}  {ok}")
@@ -208,8 +208,8 @@ def run(name, changes):
 
 if __name__ == "__main__":
     BASE_C = min_const(BASE)
-    print(f"baseline: model needs C >= {float(BASE_C):.4f} (Lean: 0.8103); "
-          f"cell model with Lean constants: Z = {float(Ztot_worst(mpf('0.8103'), mpf('3.8'), mpf('0.276'), 1234, BASE['Fc1'], BASE['Fc2'])):.4f}")
+    print(f"baseline: model needs C >= {float(BASE_C):.4f} (Lean: 0.8764); "
+          f"cell model with Lean constants: Z = {float(Ztot_worst(mpf('0.8764'), mpf('3.8'), mpf('0.276'), 1234, BASE['Fc1'], BASE['Fc2'])):.4f}")
     print()
     print("One bound at a time, replaced by an elementary (or easier) version:")
     run("(2.14)/(2.17) psi <= 1.0004y -> 1.04y", dict(a14=mpf('1.04'), a17=mpf('1.04')))
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     def Zof(changes):
         P = dict(BASE); P.update(changes)
         Rs = sqrt(P['lam'] * P['a19'] / mpf('0.5'))
-        Cl = mpf('0.8103') + max(0, min_const(P, Rs) - BASE_C)
+        Cl = mpf('0.8764') + max(0, min_const(P, Rs) - BASE_C)
         h1 = mpf('0.276') * sqrt(Rs ** 2 * P['Fc1'] / BASE['Fc1'])
         psi_ratio = max(P['a14'] / BASE['a14'], P['a15'] / BASE['a15'], P['a17'] / BASE['a17'])
         return Ztot_worst(Cl, mpf('3.8'), h1, 1234 * psi_ratio, P['Fc1'], P['Fc2'], Rs)

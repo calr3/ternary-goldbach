@@ -15,6 +15,9 @@ a step function, so int_0^y g2 is piecewise linear); the integrals are exact rat
 evaluated in interval arithmetic.  Within a piece the integrand H2(S) - 0.15107 changes sign at most once, so the maximum of d on
 the piece is at an endpoint or at that sign change; all three are evaluated.
 
+Also checks `H2_le` ([B, (5.37)]): T2(S) <= 1/2 on [1, 16) (exact; equality on [2, 3)), so
+H2 <= (4/pi^2)(1/2) = 2/pi^2 there, and H2 = 0.15107 < 2/pi^2 for S >= 16.
+
 Usage: python3 scripts/h2_integral_check.py   (seconds; needs sympy, mpmath)
 """
 from fractions import Fraction as Fr
@@ -62,10 +65,12 @@ c = iv.mpf('0.15107')
 def J(al, be, x, y):
     """int_x^y (c4 (al + be/S) - c)/S dS, x, y intervals."""
     return c4 * (I(al) * (iv.log(y) - iv.log(x)) + I(be) * (1 / x - 1 / y)) - c * (iv.log(y) - iv.log(x))
-d = iv.mpf(0); best = iv.mpf(0)
+d = iv.mpf(0); best = iv.mpf(0); T2max = Fr(0)
 for a, b in zip(bp, bp[1:]):
     al, be = coeffs(a, b)
     assert al + be / b >= 0 and al + be / a >= 0          # T2 >= 0 on [1, 16]
+    # H2_le ([B, (5.37)]): T2 <= 1/2 on [1, 16); T2 = al + be/S is monotone on the piece.
+    T2max = max(T2max, al + be / a, al + be / b)
     # on (a, b) the integrand c4(al + be/S) - c changes sign at most once, at S* = c4 be/(c - c4 al);
     # so max_{[a,b]} d is attained at a, b or S*.
     den = c - c4 * I(al)
@@ -81,6 +86,9 @@ for a, b in zip(bp, bp[1:]):
         best = d
     if b == 4:
         print("d(4) =", d, " (> 0: [B, (5.32)] fails at T = 4)")
+print("max T2 on [1, 16] =", T2max, "=", float(T2max))
+assert T2max <= Fr(1, 2)
+print("OK (H2_le): T2(S) <= 1/2 on [1, 16), so H2(S) <= 2/pi^2 everywhere")
 print("d(16) =", d)
 print("sup_{T >= 1} d(T) <=", best.b)
 assert best.b < 0.0231

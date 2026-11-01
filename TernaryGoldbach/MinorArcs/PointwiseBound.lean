@@ -55,13 +55,17 @@ bounds `√A·√B` by `A/(2√ρ) + (√ρ/2)B` with `B = 0.30214 log δ₀q + 
 whose constant term is `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020…`; [B] writes
 `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911` (the `0.67506` term is halved twice). With `0.5`
 the bound does not follow from [B]'s own (6.63) (which exceeds it by up to ~2.6%, e.g. at
-`x = 10²⁵`, `δ₀q ≈ 1.9·10⁵`, `q` prime). We state it with `0.8103`. -/
+`x = 10²⁵`, `δ₀q ≈ 1.9·10⁵`, `q` prime).
+
+**Second correction.** [B, (5.36)] is false. Its corrected form (`integral_H2_le`, `+0.0231`) adds
+`0.0924` to the Type II factor, and our `B` is `0.30214 log δ₀q + 0.7468`. That gives the constant
+`log 2/(2√ρ) + (√ρ/2)·0.7468 + 0.0000760 = 0.87639`, so we state it with `0.8764`. -/
 theorem theorem_3_1_1 {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)
     (h : Approx2 α x δ a q (3 / 4 * x ^ (2 / 3 : ℝ))) :
     let δ₀ := max 2 (|δ| / 4)
     ((q : ℝ) ≤ x ^ (1 / 3 : ℝ) / 6 →
       ‖S eta2 x α‖ ≤
-        (R x (δ₀ * q) * Real.log (δ₀ * q) + 0.8103) / √(δ₀ * Nat.totient q) * x +
+        (R x (δ₀ * q) * Real.log (δ₀ * q) + 0.8764) / √(δ₀ * Nat.totient q) * x +
           2.5 * x / √(δ₀ * q) + 2 * x / (δ₀ * q) * L (δ₀ * q) q + 3.8 * x ^ (5 / 6 : ℝ)) ∧
     (x ^ (1 / 3 : ℝ) / 6 < q →
       ‖S eta2 x α‖ ≤

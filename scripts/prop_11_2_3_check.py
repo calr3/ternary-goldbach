@@ -9,7 +9,7 @@ holds for w ≤ ((4/3) x^{1/3} / (8r))^{3/2}, which is ≥ 94 for r ≤ r₁ = (
 
 For |δ| ≤ 8, r_w = q = r and nothing changes.  For |δ| > 8, r_w ≥ w r, so the honest integral
 is A(r) = ∫ g_{wy,1}(w r) φ(w) dw, versus [B]'s C(r) = ∫ g_{wy,1}(r) φ(w) dw.  This script
-checks A ≤ C (with our corrected constants 0.8103, 3.8), so [B]'s statement survives.
+checks A ≤ C (with our corrected constants 0.8764, 3.8), so [B]'s statement survives.
 Result: A/C ≈ 0.87–0.89 for r₀ ≤ r ≤ r₁, y ∈ [10²⁵, 10¹⁰⁰].
 
 Usage: python3 scripts/prop_11_2_3_check.py
@@ -20,7 +20,7 @@ EG=exp(euler)
 def F(r): return EG*log(log(r))+mpf('2.50637')/log(log(r))
 def R(z,t): return mpf('0.27125')*log(1+log(4*t)/(2*log(9*z**(mpf(1)/3)/(mpf('2.004')*t))))+mpf('0.41415')
 def L(t): return F(t/2)*(mpf(13)/4*log(t)+mpf('7.82'))+mpf('13.66')*log(t)+mpf('37.55')
-def g1(z,r,c=mpf('0.8103'),c56=mpf('3.8')):
+def g1(z,r,c=mpf('0.8764'),c56=mpf('3.8')):
     return ((R(z,2*r)*log(2*r)+c)*sqrt(F(r))+mpf('2.5'))/sqrt(2*r)+L(2*r)/r+c56*z**(-mpf(1)/6)
 phi=lambda w: w**2*exp(-w**2/2)
 for y in [mpf(10)**25, mpf(10)**40, mpf(10)**100]:

@@ -37,17 +37,17 @@ def typeI2(x,d,q,Q,U,V,phi2q,eps=mpf('0.07')):
 def kap1(x,U,V): return 2/pi**2+zeta3*sqrt(x/V)/U
 def typeII637(x,q,U,V,phi):
     L0=log(x/(U*V))
-    return (x/sqrt(2*phi)*sqrt((L0+log(2*q)*(log(log(x/U/(2*q)))-log(log(V/(2*q)))))*(mpf('0.60428')*L0+8*zeta3*sqrt(x/V)/U))
+    return (x/sqrt(2*phi)*sqrt((L0+log(2*q)*(log(log(x/U/(2*q)))-log(log(V/(2*q)))))*(mpf('0.60428')*L0+mpf('0.0924')+8*zeta3*sqrt(x/V)/U))
       + 4*sqrt(kap1(x,U,V)*q*x/(2*phi))*(2*sqrt(x/U)+sqrt(log(2*q))*(2*e*sqrt(2*q)+4*sqrt(x/U/log(x/U/(2*q)))))
       + 8*mpf('1.4262')*x*sqrt(kap1(x,U,V)*(0.5+1/U))/sqrt(V))
 def typeII640(x,d,q,Q,U,V,phi):
     ad=abs(d); c=ad*q*(1+x/(2*U*Q))/4; L0=log(x/(U*V))
-    return (2*x/sqrt(ad*phi)*sqrt((L0+log(c)*(log(log(x/U/c))-log(log(V/c))))*(mpf('0.60428')*L0+8*zeta3*sqrt(x/V)/U))
+    return (2*x/sqrt(ad*phi)*sqrt((L0+log(c)*(log(log(x/U/c))-log(log(V/c))))*(mpf('0.60428')*L0+mpf('0.0924')+8*zeta3*sqrt(x/V)/U))
       + 4*sqrt(kap1(x,U,V)*q*x/(2*phi))*(2*sqrt(x/U)+sqrt(log(c))*(2*e*sqrt(c)+4*sqrt(x/U/log(x/U/c))))
       + 8*mpf('1.4262')*x*sqrt(kap1(x,U,V)*(0.5+1/U))/sqrt(V))
 def R(x,t): return mpf('0.27125')*log(1+log(4*t)/(2*log(9*x**(mpf(1)/3)/(mpf('2.004')*t))))+mpf('0.41415')
 def Lf(t,q,phi): return q/phi*(mpf(13)/4*log(t)+mpf('7.82'))+mpf('13.66')*log(t)+mpf('37.55')
-CONST=mpf("0.8103")
+CONST=mpf("0.8764")
 def thm(x,d,q,phi):
     d0=max(2,abs(d)/4); t=d0*q
     return ((R(x,t)*log(t)+CONST)/sqrt(d0*phi)*x + 2.5*x/sqrt(t) + 2*x/t*Lf(t,q,phi) + mpf('3.36')*x**(mpf(5)/6))
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     from sympy import totient
     import random
     random.seed(1)
-    CONST = mpf(sys.argv[1]) if len(sys.argv) > 1 else mpf("0.8103")
+    CONST = mpf(sys.argv[1]) if len(sys.argv) > 1 else mpf("0.8764")
     globals()["CONST"] = CONST
     for x in [mpf('2.16e20'), mpf('1e22'), mpf('1e27'), mpf('1e40'), mpf('1e60')]:
         y = x**(mpf(1)/3)/6

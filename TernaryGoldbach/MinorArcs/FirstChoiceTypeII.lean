@@ -322,7 +322,7 @@ theorem first_choice_t {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
 
 set_option maxHeartbeats 1600000 in
 /-- **[B, (6.60), (6.61)]**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
-`|S_{II}| ≤ x/√(δ₀φ(q)) · √(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.67506)`
+`|S_{II}| ≤ x/√(δ₀φ(q)) · √(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)`
 `+ 3.2 x^{5/6}`, `t = δ₀q`. -/
 theorem typeII_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
@@ -330,7 +330,7 @@ theorem typeII_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
       T ^ 3 / √(delta0 δ * Nat.totient q) *
           (√(Cxt T (delta0 δ * q) * (Real.log (delta0 δ * q) + 0.002) +
               Real.log (4 * (delta0 δ * q)) / 2) *
-            √(0.30214 * Real.log (delta0 δ * q) + 0.67506)) +
+            √(0.30214 * Real.log (delta0 δ * q) + 0.7468)) +
         3.2 * (T ^ 2 * √T) := by
   obtain ⟨hδq, ht2, htT⟩ := first_choice_t hT h hqT
   have h' := h

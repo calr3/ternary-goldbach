@@ -93,7 +93,7 @@ theorem bSEC_le {L : ℝ} (hL : 15.6 ≤ L) : bSEC L ≤ bE L * (L * √L) := by
 /-- The main term of case (b) on a piece `[a, b]`. -/
 theorem bM1_piece {L a b u1 u2 Bb m : ℝ} (ha : 15.6 ≤ a) (haL : a ≤ L) (hLb : L ≤ b)
     (h1 : Real.log (b - 1.7917) ≤ u1) (h2 : Real.log (b - 6.1452) ≤ u2)
-    (hB : 0.15107 * ((L - 9.3884) / L ^ 2) ≤ Bb) (hm0 : 0 ≤ m)
+    (hB : 0.15107 * ((L - 9.2355) / L ^ 2) ≤ Bb) (hm0 : 0 ≤ m)
     (hm : 12 * (1.7882 * u1 + 0.9549) * (1 - 9.4778 / b + (1 - 0.9654 / b) * (u2 - 1.2037)) * Bb ≤
       m ^ 2) :
     √(12 * a1F0 L * bX0 L * bB0 L) ≤ m * (L * √L) := by
@@ -138,7 +138,7 @@ theorem bM1_piece {L a b u1 u2 Bb m : ℝ} (ha : 15.6 ≤ a) (haL : a ≤ L) (hL
     unfold bX0; nlinarith [mul_nonneg (show (0 : ℝ) ≤ L - 0.9654 by linarith) hG0]
   have hB0 : bB0 L ≤ Bb * L ^ 2 := by
     unfold bB0
-    have h' : 0.15107 * (L - 9.3884) ≤ Bb * L ^ 2 := by
+    have h' : 0.15107 * (L - 9.2355) ≤ Bb * L ^ 2 := by
       rw [mul_div_assoc', div_le_iff₀ (by positivity)] at hB; linarith
     nlinarith
   have hB00 : 0 ≤ bB0 L := by unfold bB0; nlinarith

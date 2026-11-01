@@ -18,9 +18,9 @@ arcs 𝔐_{8,r}(y), but uses the ℓ² bound and the major arcs at scale x.  The
   [B, Cor 7.1.3] (q ≤ 300000, |δ| ≤ 1.2·10⁶/q: exactly the y-arcs at level r₀) gives
   |S_{η_*}| ≤ (|η̂(δ)|/φ(q) + 1.3·10⁻⁷) y with |δ| ≥ 12245/q in the gap: ≤ 0.02 y.
 
-Result (our corrected constants 0.8103, 3.8): Z ≤ 0.866 x²/κ at y = 10²⁵, decreasing in y,
+Result (our corrected constants 0.8764, 3.8): Z ≤ 0.871 x²/κ at y = 10²⁵, decreasing in y,
 vs the major arcs' 1.058259 (and vs [B]'s own 1.00948).  With r₂ = r₁ ≈ 10⁶ the same scheme
-gives Z ≈ 1.10, so extending the levels is essential.
+gives Z ≈ 1.11, so extending the levels is essential.
 
 Usage: python3 scripts/minor_arc_y_scale_repair.py   (a few minutes)
 """
@@ -32,7 +32,7 @@ PHI1 = sqrt(pi / 2)
 def F(r): return EG * log(log(r)) + mpf('2.50637') / log(log(r))
 def R(z, t): return mpf('0.27125') * log(1 + log(4*t) / (2*log(9*z**(mpf(1)/3) / (mpf('2.004')*t)))) + mpf('0.41415')
 def L(t): return F(t/2) * (mpf(13)/4*log(t) + mpf('7.82')) + mpf('13.66')*log(t) + mpf('37.55')
-def g1(z, r, c=mpf('0.8103'), c56=mpf('3.8')):
+def g1(z, r, c=mpf('0.8764'), c56=mpf('3.8')):
     """g_z(r) of (11.11)/GBound.lean: |S_{η₂}(α, z)| ≤ z g_z(r) (first case of Thm 3.1.1)."""
     return ((R(z, 2*r)*log(2*r) + c)*sqrt(F(r)) + mpf('2.5'))/sqrt(2*r) + L(2*r)/r + c56*z**(-mpf(1)/6)
 def h(z):

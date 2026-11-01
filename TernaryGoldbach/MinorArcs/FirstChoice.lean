@@ -6,7 +6,7 @@ import TernaryGoldbach.MinorArcs.S1Lemma
 
 * `zeta_three_halves_le`: `ζ(3/2) ≤ 2.77` (so `zeta3 ≤ 27`);
 * `typeII_main_le`: the main term of (6.37)/(6.40) at the parameters of (6.49) is at most
-  `√(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.67506)` ([B, (6.60), (6.61)]),
+  `√(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)` ([B, (6.60), (6.61)]),
   where `C_{x,t} = log(1 + log 4t/(2 log(9x^{1/3}/(2.004 t))))`.
 
 We write `T = x^{1/3}`.
@@ -233,9 +233,9 @@ theorem typeII_main_le {x T t c U V : ℝ} (hT : 6e6 ≤ T) (hx : x = T ^ 3) (ht
     (hζ : 8 * zeta3 * √(x / V) / U ≤ 0.2355) :
     √((Real.log (x / (U * V)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) *
-        (0.60428 * Real.log (x / (U * V)) + 8 * zeta3 * √(x / V) / U)) ≤
+        (0.60428 * Real.log (x / (U * V)) + 0.0924 + 8 * zeta3 * √(x / V) / U)) ≤
       √(Cxt T t * (Real.log t + 0.002) + Real.log (4 * t) / 2) *
-        √(0.30214 * Real.log t + 0.67506) := by
+        √(0.30214 * Real.log t + 0.7468) := by
   have hT0 : 0 < T := by linarith
   have ht0 : 0 < t := by linarith
   have hc0 : 0 < c := by linarith
@@ -300,14 +300,14 @@ theorem typeII_main_le {x T t c U V : ℝ} (hT : 6e6 ≤ T) (hx : x = T ^ 3) (ht
     have h1 : Real.log c * Real.log (1 + Λ₀ / Real.log (V / c)) ≤ (Real.log t + 0.0015) * Cxt T t :=
       mul_le_mul hlogc hC hC0 (by linarith)
     nlinarith
-  have hB : 0.60428 * Λ₀ + 8 * zeta3 * √(x / V) / U ≤ 0.30214 * Real.log t + 0.67506 := by
+  have hB : 0.60428 * Λ₀ + 0.0924 + 8 * zeta3 * √(x / V) / U ≤ 0.30214 * Real.log t + 0.7468 := by
     have hl4 : Real.log (4 * t) = 2 * Real.log 2 + Real.log t := by
       rw [Real.log_mul (by norm_num) ht0.ne', show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
       push_cast; ring
     have := Real.log_two_lt_d9
     have : 2 / T ≤ 1e-6 := by rw [div_le_iff₀ hT0]; linarith
     nlinarith
-  have hB0 : 0 ≤ 0.60428 * Λ₀ + 8 * zeta3 * √(x / V) / U := by
+  have hB0 : 0 ≤ 0.60428 * Λ₀ + 0.0924 + 8 * zeta3 * √(x / V) / U := by
     have := zeta3_nonneg; positivity
   rw [← Real.sqrt_mul (by positivity)]
   refine Real.sqrt_le_sqrt (mul_le_mul hA hB hB0 (by positivity))

@@ -98,7 +98,7 @@ theorem div_sq_le_max {L c : ℝ} (hc : 0 < c) (hL : 0 < L) : (L - c) / L ^ 2 �
 /-- The main term on a piece `[a, b]`. -/
 theorem a1M1_piece {L a b u1 u2 Bb m : ℝ} (ha : 15.6 ≤ a) (haL : a ≤ L) (hLb : L ≤ b)
     (h1 : Real.log (b - 1.7917) ≤ u1) (h2 : Real.log (b - 6.0119) ≤ u2)
-    (hB : 0.15107 * ((L - 7.91127) / L ^ 2) ≤ Bb) (hm0 : 0 ≤ m)
+    (hB : 0.15107 * ((L - 7.7583) / L ^ 2) ≤ Bb) (hm0 : 0 ≤ m)
     (hm : 12 * (1.7882 * u1 + 0.9549) * (1 - 8.09 / b + (1 - 1.0986 / b) * (u2 - 0.732)) * Bb ≤
       m ^ 2) :
     √(12 * a1F0 L * a1X0 L * a1B0 L) ≤ m * (L * √L) := by
@@ -139,11 +139,11 @@ theorem a1M1_piece {L a b u1 u2 Bb m : ℝ} (ha : 15.6 ≤ a) (haL : a ≤ L) (h
     exact mul_le_mul_of_nonneg_left (by linarith) hL0.le
   have hX0 : 0 ≤ a1X0 L := by
     unfold a1X0; nlinarith [mul_nonneg (show (0 : ℝ) ≤ L - 1.0986 by linarith) hG0]
-  -- `B₀ = 0.15107 (L - 7.91127) + 0.0000…`: `B₀/L² ≤ Bb`.
+  -- `B₀ ≤ 0.15107 (L - 7.7583)`: `B₀/L² ≤ Bb`.
   have hB0 : a1B0 L ≤ Bb * L ^ 2 := by
     unfold a1B0
-    have : 0.15107 * (L - 7.91127) = Bb * L ^ 2 - (Bb * L ^ 2 - 0.15107 * (L - 7.91127)) := by ring
-    have h' : 0.15107 * (L - 7.91127) ≤ Bb * L ^ 2 := by
+    have : 0.15107 * (L - 7.7583) = Bb * L ^ 2 - (Bb * L ^ 2 - 0.15107 * (L - 7.7583)) := by ring
+    have h' : 0.15107 * (L - 7.7583) ≤ Bb * L ^ 2 := by
       rw [mul_div_assoc', div_le_iff₀ (by positivity)] at hB; linarith
     nlinarith
   have hB00 : 0 ≤ a1B0 L := by unfold a1B0; nlinarith

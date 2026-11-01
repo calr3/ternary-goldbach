@@ -38,7 +38,7 @@ def fstr(x):
     assert Fd(s) == x, (x, s)
     return s
 
-c = Fd('9.3884')
+c = Fd('9.2355')
 pts = ['15.6','17','18.78','21','25','30','40','55']
 out = []
 names = []
@@ -68,10 +68,10 @@ for i, (a, bb) in enumerate(zip(pts, pts[1:])):
     assert ee >= ev
     assert m + ee <= Fd('1.413'), (a, bb, float(m + ee))
     if A < Fd('18.78'):
-        hB = """(mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.3884) (by norm_num) (by linarith))
+        hB = """(mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.2355) (by norm_num) (by linarith))
         (by norm_num)).trans (by norm_num)"""
     else:
-        hB = """(mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+        hB = """(mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)"""
     name = f"b_piece_{i}"
     names.append((a, bb, name))

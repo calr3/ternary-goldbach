@@ -11,10 +11,10 @@ namespace TernaryGoldbach.MinorArcs
 theorem b_piece_0 {L : ℝ} (haL : (15.6 : ℝ) ≤ L) (hLb : L ≤ 17) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 15.6) (b := 17) (u1 := 2 + 0.7219) (u2 := 2 + 0.3847)
-    (Bb := 0.0040228) (m := 0.6614) (by norm_num) haL hLb
+    (Bb := 0.0040894) (m := 0.66685) (by norm_num) haL hLb
     (log_le_num 2 0.7219 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 2 0.3847 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.3884) (by norm_num) (by linarith))
+    ((mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.2355) (by norm_num) (by linarith))
         (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 15.6) (b := 17) (sa := 3.94968) (u1 := 2 + 0.7219)
     (w := 0.83731) (e := 0.59426) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -27,10 +27,10 @@ theorem b_piece_0 {L : ℝ} (haL : (15.6 : ℝ) ≤ L) (hLb : L ≤ 17) :
 theorem b_piece_1 {L : ℝ} (haL : (17 : ℝ) ≤ L) (hLb : L ≤ 18.78) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 17) (b := 18.78) (u1 := 2 + 0.8326) (u2 := 2 + 0.5365)
-    (Bb := 0.0040228) (m := 0.71511) (by norm_num) haL hLb
+    (Bb := 0.0040894) (m := 0.721) (by norm_num) haL hLb
     (log_le_num 2 0.8326 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 2 0.5365 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.3884) (by norm_num) (by linarith))
+    ((mul_le_mul_of_nonneg_left (div_sq_le_max (c := 9.2355) (by norm_num) (by linarith))
         (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 17) (b := 18.78) (sa := 4.1231) (u1 := 2 + 0.8326)
     (w := 0.85143) (e := 0.53922) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -43,10 +43,10 @@ theorem b_piece_1 {L : ℝ} (haL : (17 : ℝ) ≤ L) (hLb : L ≤ 18.78) :
 theorem b_piece_2 {L : ℝ} (haL : (18.78 : ℝ) ≤ L) (hLb : L ≤ 21) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 18.78) (b := 21) (u1 := 2 + 0.9555) (u2 := 2 + 0.6984)
-    (Bb := 0.0040228) (m := 0.77125) (by norm_num) haL hLb
+    (Bb := 0.0040883) (m := 0.7775) (by norm_num) haL hLb
     (log_le_num 2 0.9555 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 2 0.6984 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 18.78) (b := 21) (sa := 4.33358) (u1 := 2 + 0.9555)
     (w := 0.86683) (e := 0.48216) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -59,10 +59,10 @@ theorem b_piece_2 {L : ℝ} (haL : (18.78 : ℝ) ≤ L) (hLb : L ≤ 21) :
 theorem b_piece_3 {L : ℝ} (haL : (21 : ℝ) ≤ L) (hLb : L ≤ 25) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 21) (b := 25) (u1 := 3 + 0.1446) (u2 := 2 + 0.9369)
-    (Bb := 0.0039777) (m := 0.84744) (by norm_num) haL hLb
+    (Bb := 0.0040301) (m := 0.853) (by norm_num) haL hLb
     (log_le_num 3 0.1446 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 2 0.9369 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 21) (b := 25) (sa := 4.58257) (u1 := 3 + 0.1446)
     (w := 0.89) (e := 0.42592) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -75,10 +75,10 @@ theorem b_piece_3 {L : ℝ} (haL : (21 : ℝ) ≤ L) (hLb : L ≤ 25) :
 theorem b_piece_4 {L : ℝ} (haL : (25 : ℝ) ≤ L) (hLb : L ≤ 30) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 25) (b := 30) (u1 := 3 + 0.3397) (u2 := 3 + 0.172)
-    (Bb := 0.0037736) (m := 0.90118) (by norm_num) haL hLb
+    (Bb := 0.0038105) (m := 0.90557) (by norm_num) haL hLb
     (log_le_num 3 0.3397 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 3 0.172 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 25) (b := 30) (sa := 5.0) (u1 := 3 + 0.3397)
     (w := 0.9133) (e := 0.3514) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -91,10 +91,10 @@ theorem b_piece_4 {L : ℝ} (haL : (25 : ℝ) ≤ L) (hLb : L ≤ 30) :
 theorem b_piece_5 {L : ℝ} (haL : (30 : ℝ) ≤ L) (hLb : L ≤ 40) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 30) (b := 40) (u1 := 3 + 0.6431) (u2 := 3 + 0.5221)
-    (Bb := 0.0034598) (m := 0.96864) (by norm_num) haL hLb
+    (Bb := 0.0034855) (m := 0.97223) (by norm_num) haL hLb
     (log_le_num 3 0.6431 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 3 0.5221 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 30) (b := 40) (sa := 5.47722) (u1 := 3 + 0.6431)
     (w := 0.94839) (e := 0.28837) (by norm_num) haL hLb (by norm_num) (by norm_num)
@@ -107,10 +107,10 @@ theorem b_piece_5 {L : ℝ} (haL : (30 : ℝ) ≤ L) (hLb : L ≤ 40) :
 theorem b_piece_6 {L : ℝ} (haL : (40 : ℝ) ≤ L) (hLb : L ≤ 55) :
     √(12 * a1F0 L * bX0 L * bB0 L) + bSEC L ≤ 1.413 * (L * √L) := by
   have hm := bM1_piece (a := 40) (b := 55) (u1 := 3 + 0.9743) (u2 := 3 + 0.8889)
-    (Bb := 0.0028904) (m := 0.98443) (by norm_num) haL hLb
+    (Bb := 0.0029048) (m := 0.98688) (by norm_num) haL hLb
     (log_le_num 3 0.9743 (by norm_num) (by norm_num) (by norm_num [taylor6]))
     (log_le_num 3 0.8889 (by norm_num) (by norm_num) (by norm_num [taylor6]))
-    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.3884) (by norm_num) (by norm_num)
+    ((mul_le_mul_of_nonneg_left (div_sq_anti (c := 9.2355) (by norm_num) (by norm_num)
         (by norm_num) haL) (by norm_num)).trans (by norm_num)) (by norm_num) (by norm_num)
   have he := bE_piece (a := 40) (b := 55) (sa := 6.32455) (u1 := 3 + 0.9743)
     (w := 0.98527) (e := 0.21195) (by norm_num) haL hLb (by norm_num) (by norm_num)

@@ -104,8 +104,8 @@ Prop 12.2.4, the cited Part II results `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7
 (`MinorArcs/PartIICited.lean`). The numerics (`numerics_M`) are proved: generated cells for
 `x ≤ 4.9·10¹⁰¹` (`scripts/gen_cells.py`) and an analytic argument beyond.
 
-(Our constant `1.0376` is weaker than [B]'s `1.00948`: [B]'s Theorem 3.1.1 has `0.5` where the
-proof gives `0.8103`.) -/
+(Our constant `1.0376` is weaker than [B]'s `1.00948`. [B]'s Theorem 3.1.1 has `0.5` where its
+proof gives `0.8102`; with the corrected [B, (5.36)] our Theorem 3.1.1 has `0.8764`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by

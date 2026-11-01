@@ -211,7 +211,7 @@ theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
       x / √(8 * Nat.totient q) * β / 2 * (Real.log (x / (U * V)) + Real.log (2 * q) *
         (Real.log (Real.log (x / U / (2 * q))) - Real.log (Real.log (V / (2 * q))))) +
       x / √(8 * Nat.totient q) / (2 * β) *
-        (0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U) +
+        (0.15107 * Real.log (x / (U * V)) + 0.0231 + 2 * zeta3 * √(x / V) / U) +
       √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log (2 * q)) *
         (2 * rexp 1 * √(2 * q) + 4 * √(x / U / Real.log (x / U / (2 * q))))) +
       1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √V) := by
@@ -258,7 +258,7 @@ theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
       c2 * (zeta3 * √x / U) * f4 W + c3 * f5 W + c3 * √(Real.log (2 * q)) * f6 W + c4 * f4 W := by
     ext W; rfl
   have i3' : IntervalIntegrable f3 volume V (x / U) := i3
-  have I3' : ∫ W in (V : ℝ)..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * V)) := I3
+  have I3' : ∫ W in (V : ℝ)..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * V)) + 0.0231 := I3
   have p1 := (i1.const_mul c1).add (i2.const_mul (c1 * Real.log (2 * q)))
   have p2 := p1.add (i3'.const_mul c2)
   have p3 := p2.add (i4.const_mul (c2 * (zeta3 * √x / U)))
@@ -329,7 +329,7 @@ theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
     ‖typeII α x U V‖ ≤
       x / √(2 * Nat.totient q) * √((Real.log (x / (U * V)) + Real.log (2 * q) *
         (Real.log (Real.log (x / U / (2 * q))) - Real.log (Real.log (V / (2 * q))))) *
-        (0.60428 * Real.log (x / (U * V)) + 8 * zeta3 * √(x / V) / U)) +
+        (0.60428 * Real.log (x / (U * V)) + 0.0924 + 8 * zeta3 * √(x / V) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log (2 * q)) *
         (2 * rexp 1 * √(2 * q) + 4 * √(x / U / Real.log (x / U / (2 * q))))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
@@ -347,12 +347,12 @@ theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
   set Λ₀ := Real.log (x / (U * V))
   set Φ := Real.log (2 * q) * (Real.log (Real.log (x / U / (2 * q))) -
     Real.log (Real.log (V / (2 * q))))
-  set B := 0.15107 * Λ₀ + 2 * zeta3 * √(x / V) / U
+  set B := 0.15107 * Λ₀ + 0.0231 + 2 * zeta3 * √(x / V) / U
   have hRHS3 : 0 ≤ 8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by positivity
   have hl2q : 0 < Real.log (2 * q) := Real.log_pos (by linarith)
   have hRHS2 : 0 ≤ 4 * √(kap1 x U V * q * x / (2 * φ)) * (2 * √(x / U) + √(Real.log (2 * q)) *
       (2 * rexp 1 * √(2 * q) + 4 * √(x / U / Real.log (x / U / (2 * q))))) := by positivity
-  have hRHS1 : 0 ≤ x / √(2 * φ) * √((Λ₀ + Φ) * (0.60428 * Λ₀ + 8 * zeta3 * √(x / V) / U)) := by
+  have hRHS1 : 0 ≤ x / √(2 * φ) * √((Λ₀ + Φ) * (0.60428 * Λ₀ + 0.0924 + 8 * zeta3 * √(x / V) / U)) := by
     positivity
   rcases hVU.lt_or_eq with hlt | heq
   swap
@@ -386,8 +386,8 @@ theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
   have hβe : β = √B / √A := Real.sqrt_div' _ hA.le
   have h8 : √(8 * φ) = 2 * √(2 * φ) := by
     rw [show 8 * φ = 2 ^ 2 * (2 * φ) by ring, Real.sqrt_mul (by positivity), Real.sqrt_sq (by norm_num)]
-  have h4 : √(A * (0.60428 * Λ₀ + 8 * zeta3 * √(x / V) / U)) = 2 * (√A * √B) := by
-    rw [show A * (0.60428 * Λ₀ + 8 * zeta3 * √(x / V) / U) = 2 ^ 2 * (A * B) by simp only [B]; ring,
+  have h4 : √(A * (0.60428 * Λ₀ + 0.0924 + 8 * zeta3 * √(x / V) / U)) = 2 * (√A * √B) := by
+    rw [show A * (0.60428 * Λ₀ + 0.0924 + 8 * zeta3 * √(x / V) / U) = 2 ^ 2 * (A * B) by simp only [B]; ring,
       Real.sqrt_mul (by positivity), Real.sqrt_sq (by norm_num), Real.sqrt_mul hA.le]
   rw [h4, hβe, h8]
   have h2φ : 0 < √(2 * φ) := Real.sqrt_pos.2 (by positivity)

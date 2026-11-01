@@ -174,7 +174,7 @@ theorem integral_Ggen_le' {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
       x * √(m / (2 * Nat.totient q)) * β / 2 * (Real.log (x / (U * A)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (A / c)))) +
       x * √(m / (2 * Nat.totient q)) / (2 * β) *
-        (0.15107 * Real.log (x / (U * A)) + 2 * zeta3 * √(x / A) / U) +
+        (0.15107 * Real.log (x / (U * A)) + 0.0231 + 2 * zeta3 * √(x / A) / U) +
       √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √A) := by
@@ -222,7 +222,7 @@ theorem integral_Ggen_le' {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
       c2 * (zeta3 * √x / U) * f4 W + c3 * f5 W + c3 * √(Real.log c) * f6 W + c4 * f4 W := by
     ext W; rfl
   have i3' : IntervalIntegrable f3 volume A (x / U) := i3
-  have I3' : ∫ W in A..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * A)) := I3
+  have I3' : ∫ W in A..x / U, f3 W ≤ 0.15107 * Real.log (x / (U * A)) + 0.0231 := I3
   have p1 := (i1.const_mul c1).add (i2.const_mul (c1 * Real.log c))
   have p2 := p1.add (i3'.const_mul c2)
   have p3 := p2.add (i4.const_mul (c2 * (zeta3 * √x / U)))
@@ -287,7 +287,7 @@ theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
       x * √(m / (2 * Nat.totient q)) * β / 2 * (Real.log (x / (U * V)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) +
       x * √(m / (2 * Nat.totient q)) / (2 * β) *
-        (0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U) +
+        (0.15107 * Real.log (x / (U * V)) + 0.0231 + 2 * zeta3 * √(x / V) / U) +
       √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (2 / √V) :=
@@ -315,7 +315,7 @@ theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
     ‖typeII α x U V‖ ≤
       4 * x * √(m / (2 * Nat.totient q)) * √((Real.log (x / (U * V)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) *
-        (0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U)) +
+        (0.15107 * Real.log (x / (U * V)) + 0.0231 + 2 * zeta3 * √(x / V) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
@@ -332,7 +332,7 @@ theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
   set φ := (Nat.totient q : ℝ)
   set Λ₀ := Real.log (x / (U * V))
   set Φ := Real.log c * (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))
-  set B := 0.15107 * Λ₀ + 2 * zeta3 * √(x / V) / U
+  set B := 0.15107 * Λ₀ + 0.0231 + 2 * zeta3 * √(x / V) / U
   have hRHS3 : 0 ≤ 8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by positivity
   have hRHS2 : 0 ≤ 4 * √(kap1 x U V * q * x / (2 * φ)) * (2 * √(x / U) + √(Real.log c) *
       (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) := by positivity
@@ -503,7 +503,7 @@ theorem typeII_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
     ‖typeII α x U V‖ ≤
       2 * x / √(|δ| * Nat.totient q) * √((Real.log (x / (U * V)) + Real.log c *
         (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))) *
-        (0.60428 * Real.log (x / (U * V)) + 8 * zeta3 * √(x / V) / U)) +
+        (0.60428 * Real.log (x / (U * V)) + 0.0924 + 8 * zeta3 * √(x / V) / U)) +
       4 * √(kap1 x U V * q * x / (2 * Nat.totient q)) * (2 * √(x / U) + √(Real.log c) *
         (2 * rexp 1 * √c + 4 * √(x / U / Real.log (x / U / c)))) +
       8 * 1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) / √V := by
@@ -538,8 +538,8 @@ theorem typeII_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
   rw [e1]
   set A := Real.log (x / (U * V)) + Real.log c *
     (Real.log (Real.log (x / U / c)) - Real.log (Real.log (V / c)))
-  set B := 0.15107 * Real.log (x / (U * V)) + 2 * zeta3 * √(x / V) / U
-  rw [show A * (0.60428 * Real.log (x / (U * V)) + 8 * zeta3 * √(x / V) / U) = 2 ^ 2 * (A * B) by
+  set B := 0.15107 * Real.log (x / (U * V)) + 0.0231 + 2 * zeta3 * √(x / V) / U
+  rw [show A * (0.60428 * Real.log (x / (U * V)) + 0.0924 + 8 * zeta3 * √(x / V) / U) = 2 ^ 2 * (A * B) by
     simp only [B]; ring, Real.sqrt_mul (show (0 : ℝ) ≤ 2 ^ 2 by norm_num) (A * B),
     Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 2)]
   ring

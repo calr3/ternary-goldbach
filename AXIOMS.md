@@ -14,20 +14,28 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ## Findings
 
-1. **`integral_H2_le` ([B, (5.36)]) is false as stated.** This is an error in [B, (5.32)] for `v = 2`,
-   which (5.36) inherits.
+1. **[B, (5.36)] is false as stated. Fixed: `integral_H2_le` is now its corrected form.**
+   * The book's (5.36) inherits an error in [B, (5.32)] for `v = 2`.
    * Our `T2` is exactly the sum in [B, (5.19)]. Its values agree with [B]'s stated
      `G₂(S) = 1 − 1/S` on `[1, 2)`, and `T₂(S) = 1/2` exactly on `[2, 3)`.
    * Exactly, `∫₁⁴ T₂(S) dS/S = (log 2 − 1/2) + ½ log(3/2) + ⅓ log(4/3) + 1/24 = 0.53344`. This is
      more than `0.37273 log 4 = 0.51671`, and (5.32) claims the bound for `G₂ ≥ T₂`.
    * Hence `∫₁⁴ H₂(S)/S dS = 0.21619 > 0.15107 log 4 = 0.20943`.
-   * The correct statement is `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for all `T ≥ 1`
-     (`scripts/h2_integral_check.py`: exact rationals and interval logs; the supremum of the excess is
-     `0.023059`). Because `H₂ = 0.15107` for `S ≥ 16`, the excess is constant from `T = 16` on.
-   * **Status: open.** The correction adds `0.0924` to the factor `0.60428 Λ₀ + 8ζ³√(x/V)/U` of the
-     Type II totals (`TypeIITotal`, `TypeIITotalGen`, `TypeIILarge`, `SecondTypeIIa/b`). That is about
-     `+0.4%` on the Type II main term, and it has to be carried through the minor-arc numerics.
-     Until then, the axiom set is inconsistent.
+   * The axiom now states `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for all `T ≥ 1`. This is checked
+     rigorously by `scripts/h2_integral_check.py` (exact rationals and interval logs; the supremum
+     of the excess is `0.023059`). Because `H₂ = 0.15107` for `S ≥ 16`, the excess is constant from
+     `T = 16` on.
+   * Propagation:
+     * The Type II totals (`typeII_637`, `typeII_640`, `typeII_gen`, `typeII_split_gen`) have
+       `0.60428 Λ₀ + 0.0924 + 8ζ³√(x/V)/U` in place of `0.60428 Λ₀ + 8ζ³√(x/V)/U`.
+     * In the first case of Thm 3.1.1 the factor is `≤ 0.30214 log t + 0.7468`; our bound
+       `≤ 0.2355` on the `ζ³` term leaves room for most of the `0.0924`. The constant
+       `log 2/(2√ρ) + (√ρ/2)·0.7468 + 0.000076 = 0.87639` replaces `0.8103`; Thm 3.1.1 is now stated
+       with `0.8764`.
+     * In the second case, `B₀ᵃ` and `B₀ᵇ` gain `+0.0231`. The generated piece inequalities still
+       hold: the worst pieces are `1.3991` and `1.2789`, against `1.413`.
+     * The minor-arc cells were regenerated (`scripts/gen_cells.py`); the worst cell is `0.965`.
+     * So (14.49) is still `1.0376` and the final margin is still `0.0114 x²/κ`.
 2. **`prime_ladder_input` was stronger than its sources. Fixed.**
    * It stated gaps `≤ 4·10¹⁸ − 4`. [HP13, §4] says "no gap between primes exceeded `4·10¹⁸`", and
      [B, §1.6] says "at most `4·10¹⁸`".
@@ -36,17 +44,19 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
    * Both primes are proved prime in Lean (`PrattPrime.lean`), by Lucas's test with Pratt
      certificates. The kernel evaluates the certificates; there is no `native_decide`, and the proof
      uses only the standard axioms.
-3. **Citations.**
-   * `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)] in arXiv v2. Its docstring says
+3. **Citations (fixed).**
+   * `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)] in arXiv v2. Its docstring used to say
      "Lemma B.2.3", which is the source of `eta2log_fourier_bound`.
-   * `rh_upto` also covers `γ ≤ 0`, which is not part of the cited computation:
+   * `rh_upto` also covers `γ ≤ 0`, which is not part of the cited computation; the docstring now
+     says so:
      * `γ < 0` follows by `ζ(s̄) = conj ζ(s)`;
      * `γ = 0` holds because `ζ(σ) < 0` on `(0, 1)`, a classical fact.
 4. **[B] is inconsistent about Platt's range.** [B, §1.6] says odd conductors up to `2·10⁵`; [B, §9.6]
    says `3·10⁵`. Platt's paper covers all `q ≤ 4·10⁵`, so `platt_odd` is covered either way.
 5. **(9.94) contains analysis.** `integral_etaPlus_sq_log` rests on [B]'s rigorous integration of `η◦`
    and also on the bounds (A.23), (A.24) on `η₊ − η◦`. Our own Lean bound on `‖η₊ − η◦‖₂` is far
-   too weak to replace them.
+   too weak to replace them. A direct float computation of `η₊` (`scripts/eta_plus_check.py`)
+   confirms the values.
 6. **Binary Goldbach was double-checked only to `4·10¹⁷`.** [OeSHP14] verified binary Goldbach up to
    `4·10¹⁸`; according to the project page, the independent double-check reaches `4·10¹⁷`.
 
@@ -114,21 +124,31 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 | Axiom | [B] | Content | Independent check |
 |---|---|---|---|
-| `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | float: max `0.371249` on `[16, 4000)` |
-| `MinorArcs.integral_H2_le` | (5.36) | **false as stated** (Finding 1) | `scripts/h2_integral_check.py` |
-| `MinorArcs.H2_le` | (5.37) | `H₂ ≤ 2/π²`, i.e. `T₂ ≤ 1/2` on `S < 16` | exact: holds, with equality on `[2, 3)` |
+| `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | `scripts/t2_check.py` (float, grid, all of `[16, 10⁵]`): max `0.371249` at `S = 16` |
+| `MinorArcs.integral_H2_le` | (5.36), **corrected** | `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` | **rigorous** (`scripts/h2_integral_check.py`); [B]'s version without `+0.0231` is false (Finding 1) |
+| `MinorArcs.H2_le` | (5.37) | `H₂ ≤ 2/π²`, i.e. `T₂ ≤ 1/2` on `S < 16` | **rigorous** (`scripts/h2_integral_check.py`, exact): holds, with equality on `[2, 3)` |
 | `Prelim.fsq_le` | p. 83 | `f(X) ≤ 1.27 X` | **rigorous** (`scripts/fsq_check.py`, interval arithmetic and [B]'s reduction to `X ≤ 50`): max `f(2)/2 = 15/π² − 1/4 = 1.2698177…` |
 | `MinorArcs.eta2_fourier_bound'` | Lemma B.1.2, (B.6) | `\|(η₂'')^\|_∞ ≤ 31.521` | float, `t < 700`, step `5·10⁻⁴`: max `31.52065` at `t ≈ 17.415`; [B] covers `\|t\| ≥ 655` analytically |
 | `MinorArcs.eta2log_fourier_bound` | Lemma B.2.3, (B.11) | `\|(η_(ρ)'')^\|_∞ < 31.521 log ρ`, `ρ ≥ 4` | float, at `ρ = 4`: max `16.34 log 4`. For `ρ > 4` it follows from this and (B.6), because the bound is convex in `1/log ρ` |
-| `MajorArcs.integral_etaPlus_sq_log` | (9.94) | `∫ η₊² log(xt) dt` | `∫ η◦² = 0.640205997366352…` and `∫ η◦² log t = −0.0210947786988671…` match [B]'s values (mpmath); the `η₊ − η◦` part relies on [B, (A.23), (A.24)] (Finding 5) |
+| `MajorArcs.integral_etaPlus_sq_log` | (9.94) | `∫ η₊² log(xt) dt` | `scripts/eta_plus_check.py` computes `η₊` itself (FFT band limit in `log t`, float): `∫ η₊² = 0.640205997…` and `∫ η₊² log t = −0.021094779…`, within `2.6·10⁻⁹` and `2.2·10⁻⁷` of (9.94)'s values (allowed: `1.95·10⁻⁶`, `5.3·10⁻⁷`); `‖η₊ − η◦‖₂² = 3.9·10⁻¹³` |
 | `MinorArcs.prop_12_2_4` | Prop 12.2.4 | `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)` | hypotheses and conclusion match; our `c_E = 1.33258` is [B]'s `1.3325822…` rounded down, which makes the axiom weaker; the content is Ramaré's explicit (12.12) plus a computation for `q < 3.3·10⁹` |
+
+## Summary by kind
+
+* **Our own computations (22):** reproducible with the scripts in `scripts/`.
+* **Published computations (6):** RH to `3·10¹²`, Platt's GRH check, binary Goldbach to `4·10¹⁸`,
+  the Helfgott–Platt ladder, and Büthe's bound. They are stated as in the papers.
+* **Results of [B] (8):**
+  * `fsq_le`, `H2_le` and the corrected `integral_H2_le` are re-checked rigorously by our scripts.
+  * (B.6), (B.11), (9.94) and (5.31) on its computed range `[16, 10⁵]` are re-checked by float
+    computations.
+  * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), (5.31) for
+    `S ≥ 10⁵` (Lemma 5.1.2), and the `|t| ≥ 655` part of (B.6).
 
 ## Candidates for proofs in Lean
 
 These axioms are finite, explicit and small:
 * `fsq_le` (squarefree `X ≤ 50` and a crude bound);
-* `H2_le` (piecewise `α + β/S` on `[1, 16)`);
+* `H2_le` and the corrected `integral_H2_le` (piecewise `α + β/S` on `[1, 16)`);
 * `mertens_small` (`n ≤ 100`);
 * `prod_ap_le` (1229 primes).
-
-The corrected `integral_H2_le` is of the same kind.

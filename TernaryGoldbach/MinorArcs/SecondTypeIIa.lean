@@ -12,7 +12,7 @@ Case (a1) of [B, §6.3.2]: `T/6 < q`, `16q ≤ x/U` (our `θ = 8`), via `typeII_
 `|S_{II}| ≤ (√(12 F₀ X₀ B₀) + SEC(L)) T^{5/2}` (`typeII_a1`), where
 `F₀ = 1.7882 log(L - 1.7917) + 0.9549` bounds `q/φ(q)` (Lemma C.2.2, `e^γ ≤ 1.7882`),
 `X₀ = (L - 8.09) + (L - 1.0986)(log(L - 6.0119) - 0.732)` bounds `log(x/UW₀) + Φ` and
-`B₀ = 0.15107(L - 8.09) + 0.027` bounds `κ₆/4 · log(x/UW₀) + κ₀ζ³-term`.
+`B₀ = 0.15107(L - 8.09) + 0.0501` bounds `κ₆/4 · log(x/UW₀) + κ₀ζ³-term`.
 -/
 
 open Real
@@ -152,7 +152,7 @@ theorem three_halves_sub_le {a b : ℝ} (hb : 0 ≤ b) (hab : b ≤ a) :
 noncomputable def a1F0 (L : ℝ) : ℝ := 1.7882 * Real.log (L - 1.7917) + 0.9549
 noncomputable def a1G (L : ℝ) : ℝ := Real.log (L - 6.0119) - 0.732
 noncomputable def a1X0 (L : ℝ) : ℝ := (L - 8.09) + (L - 1.0986) * a1G L
-noncomputable def a1B0 (L : ℝ) : ℝ := 0.15107 * (L - 8.09) + 0.027
+noncomputable def a1B0 (L : ℝ) : ℝ := 0.15107 * (L - 8.09) + 0.0501
 noncomputable def a1F2 (L : ℝ) : ℝ := 1.7882 * Real.log (2 * L) + 0.9549
 
 /-- The secondary terms of case (a1), divided by `T^{5/2}`. -/
@@ -189,7 +189,7 @@ theorem a1_M1_le {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
       √((Real.log (T ^ 3 / (U2 T * (2 * 8 * q))) + Real.log (2 * q) *
         (Real.log (Real.log (T ^ 3 / U2 T / (2 * q))) -
           Real.log (Real.log (2 * 8 * q / (2 * q))))) *
-        (0.15107 * Real.log (T ^ 3 / (U2 T * (2 * 8 * q))) +
+        (0.15107 * Real.log (T ^ 3 / (U2 T * (2 * 8 * q))) + 0.0231 +
           2 * zeta3 * √(T ^ 3 / (2 * 8 * q)) / U2 T)) ≤
     √(12 * a1F0 (Real.log T) * a1X0 (Real.log T) * a1B0 (Real.log T)) * (T ^ 2 * √T) := by
   have hT0 : 0 < T := by linarith
@@ -287,9 +287,9 @@ theorem a1_M1_le {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
     rw [div_le_iff₀ hU0]
     have := mul_le_mul hz h1 (Real.sqrt_nonneg _) (by norm_num)
     nlinarith
-  set B := 0.15107 * Λ + 2 * zeta3 * √(T ^ 3 / (2 * 8 * q)) / U2 T
+  set B := 0.15107 * Λ + 0.0231 + 2 * zeta3 * √(T ^ 3 / (2 * 8 * q)) / U2 T
   set B0 := a1B0 L
-  have hB0def : B0 = 0.15107 * (L - 8.09) + 0.027 := rfl
+  have hB0def : B0 = 0.15107 * (L - 8.09) + 0.0501 := rfl
   have hB0 : 0 ≤ B := by simp only [B]; positivity
   have hB : B ≤ B0 := by simp only [B]; rw [hB0def]; nlinarith
   -- `F`.
