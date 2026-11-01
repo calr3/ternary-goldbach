@@ -115,7 +115,7 @@ contain the axiom.
 | `MajorArcs.etaO_numerics` | `∫₀² η◦² ∈ [0.640205997, 0.640205998]`, `∫₀² η◦² log t ∈ [−0.0210947787, −0.0210947786]`, `‖W₀''‖₂² ≤ 36`, `‖W₁''‖₂² ≤ 8.4` (elementary integrals) | — | `0.64020599736635…`, `−0.02109477869887…`, `35.790`, `8.389` (`scripts/rigorous/eta_circ_rig.py`, Arb integration) | first two: [B, p. 197] (VNODE-LP) |
 | `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`scripts/rigorous/t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
 | `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
-| `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | — | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`scripts/rigorous/p1224_check.c`, long double with margins, 22 min) | replaces [B]'s computation for Prop 12.2.4 (`q < 3.3·10⁹`, two weeks single-core) |
+| `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`scripts/rigorous/p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | replaces [B]'s computation for Prop 12.2.4 (`q < 3.3·10⁹`, two weeks single-core) |
 | `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
 
 Cross-checks:
@@ -144,8 +144,8 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
-| `MinorArcs.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 | [B, (12.12)–(12.14)] cites it in this form, with `c = c_E = γ + ∑_p log p/(p(p−1)) = 1.3325822…` ([RS62, (2.11)]) |
-| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, *From explicit estimates for primes to explicit estimates for the Moebius function*, Acta Arith. 157 (2013) 365–379 | [B, (2.21)] cites it with this statement (its bibliography entry [Ram13] is this paper); open-access copy HAL hal-02572812. Analytic, from explicit bounds on `ψ`, plus a finite computation |
+| `MinorArcs.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 (open access: numdam ASNSP_1995_4_22_4_645_0) | checked against the paper: Lemma 3.4 states this for all `X > 0`, `d ≥ 1`, with this `f₁`; (3.6) gives `c = γ + ∑_p log p/(p(p−1)) = 1.332582275332…`. `scripts/rigorous/ramare_check.c`: `c ∈ [1.332582274733, 1.332582276813]` (MPFR, primes `≤ 10⁹`, tail via our `ψ(t) ≤ 1.03883 t`); the estimate holds for all `d ≤ 2000`, three primorials and all `X ≤ 2·10⁶` (interval arithmetic), using at most `0.18` of the error bound |
+| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 10¹⁰` (the range used) | Ramaré, Acta Arith. 157 (2013) 365–379, for `x ≥ 11815` ([B, (2.21)]) | implied by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969. That paper also proves `≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2). |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
 ### Results of Helfgott's book [B] (0)
@@ -157,15 +157,17 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (19):** all are checked rigorously in `scripts/rigorous/`: interval
-  arithmetic with directed rounding, except `prop1224_check`, which uses long double with margins far
-  above the rounding error (see that README). Most also have a float script in `scripts/`. Four are also contained in
+* **Our own computations (19):** all are checked rigorously in `scripts/rigorous/` (interval
+  arithmetic with directed rounding); most also have a float script in `scripts/`. Four are also contained in
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
   [MV73, Lemma 8].
 * **Published results (9):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, Büthe's bounds for `θ` and `ψ` (2 axioms), and Ramaré's
-  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` and his estimate for `G_d(R)`. They are stated as in the papers.
+  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` and his estimate for `G_d(R)`. They are stated as in the papers
+  (or weaker). The two Ramaré axioms are also checked independently: (12.12) against the original
+  paper and numerically on a finite range, with `c_E` recomputed; the Möbius bound is implied by a
+  later published bound that is re-derived on arXiv.
 * **Results of [B]:** none.
 
 ## Removed axioms

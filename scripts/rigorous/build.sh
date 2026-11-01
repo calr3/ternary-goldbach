@@ -10,3 +10,5 @@ gcc -O2 -Wall -frounding-math -ffp-contract=off moebius_sqrt_rig.c -o moebius_sq
 gcc -O2 -Wall -I"$INC" t2_rig.c -o t2_rig "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm
 gcc -O2 -Wall -I"$INC" g2_rig.c -o g2_rig "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm
 gcc -O2 -Wall -fopenmp p1224_check.c -o p1224_check -lm
+gcc -O2 -Wall -frounding-math -ffp-contract=off -fopenmp -I"$INC" p1224_rig.c -o p1224_rig "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm
+gcc -O2 -Wall -frounding-math -ffp-contract=off -fopenmp -I"$INC" ramare_check.c -o ramare_check "$LIB/libmpfr.so.6" "$LIB/libgmp.so.10" -lm

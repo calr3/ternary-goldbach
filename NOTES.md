@@ -274,6 +274,12 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * name clashes to watch: `kap`, `Gq_nonneg`, `ghat`, `sum_moebius_divisors` already exist in
     `MinorArcs`.
   ternary_goldbach now depends on 28 axioms (19 our own, 9 published, 0 from [B]).
+* Independent checks of the inputs:
+  * `prop1224_check` was re-run in interval arithmetic (`scripts/rigorous/p1224_rig.c`).
+  * `ramare_Gq` was checked against Ramaré's 1995 paper (numdam, open access: Lemma 3.4 and (3.6)).
+    `ramare_check.c` recomputes `c_E` and tests (12.12) on `d ≤ 2000`, `X ≤ 2·10⁶`.
+  * `ramare_moebius` is now stated only for `x ≥ 10¹⁰`. It is implied by Ramaré 2015 Thm 1.2, which
+    arXiv:2408.05969 re-derives (that paper also proves `0.010032/log X` for `X ≥ 617 990`).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

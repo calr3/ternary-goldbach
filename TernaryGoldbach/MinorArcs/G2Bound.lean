@@ -21,10 +21,14 @@ open scoped ArithmeticFunction.Moebius ArithmeticFunction.sigma
 
 namespace TernaryGoldbach.Prelim
 
-/-- **Published result** (O. Ramaré, *From explicit estimates for primes to explicit estimates for
-the Moebius function*, Acta Arith. 157 (2013), 365–379; [B, (2.21)]):
-`|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. -/
-axiom ramare_moebius {x : ℝ} (hx : 11815 ≤ x) :
+/-- **Published result**: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 10¹⁰` (the only range used).
+* O. Ramaré, *From explicit estimates for primes to explicit estimates for the Moebius function*,
+  Acta Arith. 157 (2013), 365–379: this bound for `x ≥ 11815`, as cited in [B, (2.21)];
+* O. Ramaré, *Explicit estimates on several summatory functions involving the Moebius function*,
+  Math. Comp. 84 (2015), Thm 1.2: `|m(X)| ≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`,
+  re-derived in O. Ramaré, S. Zuniga-Alterman, arXiv:2408.05969, which also proves
+  `|m(X)| ≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2). -/
+axiom ramare_moebius {x : ℝ} (hx : 1e10 ≤ x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.03 / Real.log x
 
 end TernaryGoldbach.Prelim
@@ -50,7 +54,7 @@ theorem abs_m_le {x : ℝ} (hx : 1 < x) {u : ℕ} (hu : 1 ≤ u) (hux : (u : ℝ
   have hA0 : 0 ≤ 0.03 * (u : ℝ) ^ ((1 : ℝ) / 22) / Real.log x := by positivity
   have hB0 : 0 ≤ √2 * √(u : ℝ) / √x := by positivity
   by_cases h : 1e10 ≤ x / u
-  · have hR := TernaryGoldbach.Prelim.ramare_moebius (by linarith : (11815 : ℝ) ≤ x / u)
+  · have hR := TernaryGoldbach.Prelim.ramare_moebius h
     have hw : 22 ≤ Real.log (x / u) := le_trans log_1e10_ge22 (Real.log_le_log (by norm_num) h)
     have hv : 0 ≤ Real.log u := Real.log_natCast_nonneg u
     have hsplit : Real.log x = Real.log u + Real.log (x / u) := by

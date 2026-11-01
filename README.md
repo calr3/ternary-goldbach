@@ -9,13 +9,13 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 28 explicitly stated
 axioms besides Lean's standard three. They are:
-* 19 finite computations of our own, each re-checked by an independent rigorous program (interval
-  arithmetic, except `prop1224_check`: long double with error margins far above the rounding error)
+* 19 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
 * 9 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
-  `10¹⁹` (2 axioms), and two explicit estimates of Ramaré: `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
-  ([B, (2.21)]) and his asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)]).
+  `10¹⁹` (2 axioms), and two explicit estimates of Ramaré: `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for
+  `x ≥ 10¹⁰` ([B, (2.21)]) and his asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)]);
+  both are checked independently (`AXIOMS.md`).
 
 None of the axioms is a result of [B]: every step taken from the book is proved from them (some
 with weaker constants; see "Differences from [B]").

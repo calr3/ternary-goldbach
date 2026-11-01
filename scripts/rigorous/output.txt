@@ -112,3 +112,14 @@ sys	0m11.554s
 Q1 = 2.2000e+10: q with explicit checks: 2102258, checks: 87972745, failures: 0, nmax > RMAX: 0
 max lam = 20083891.117409 at q = 1; min margin (S) = 1.2646e-07; min margin (C) = 2.360402e-02 at q = 1, n = 101535
 prop1224_check: OK
+
+### scripts/rigorous/p1224_rig 2.2e10 22   (interval arithmetic; 22 threads, 1728 s)
+Q1 = 2.2000e+10: q covered by (S) alone: 18718460549; q with explicit checks: 2102258, checks (C): 87972745, failures: 0, nmax > RMAX: 0
+max lam (upper bound) = 20083891.117410 at q = 1; min margin (S) = 1.2647e-07; min margin (C) = 2.360402e-02 at q = 1, n = 101535
+prop1224_check: OK (interval arithmetic)
+
+### scripts/rigorous/ramare_check 12   (106 s)
+(a) c_E in [1.332582274733, 1.332582276813]  (Ramare (3.6): 1.332582275332...)
+(a) OK
+(b) 2003 values of d, X <= 2000000: failures 0; max |error| / (7.284 X^(-1/3) f1(d)) <= 0.1775 at d = 1, n = 1
+(b) OK
