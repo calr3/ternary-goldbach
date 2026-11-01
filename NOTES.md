@@ -239,7 +239,7 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 1. *Arcs* — **DONE** (`ArcsEq.lean`): `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g`.
 2. *`η◦` tail* — **DONE** (`EtaCirc.lean`, `tail_etaO_le`): `η◦(t) = h(t) t e^{-t²/2} = (1−u²)³e^{−u²/2}` (`u = t − 1`, `|u| ≤ 1`); two integrations
    by parts on `[0,2]` and Plancherel for `η◦''·1_{[0,2]}` (`|η◦''| ≤ 7`): `∫_{|δ|>T} |η̂◦|² ≤ 98/(2πT)⁴`.
-3. *`η₊ − η◦`* (`HHFourier.lean`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
+3. *`η₊ − η◦`* — **DONE** (`HHFourier.lean`, `integral_sq_etaPlus_sub_etaO_le`: `≤ 19.5/(2·200²)`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
    (Fubini, `sin(Hv)/(πv) = ∫_{|ξ|≤H/2π} e(ξv)dξ`); L² Fourier (`fourierL2_ae_eq`) gives `|g − g_H|₂² = ∫_{|ξ|>H/2π}|ĝ|²
    ≤ |g'|₂²/H²`; then `|η₊ − η◦|₂ ≤ sup(s^{3/2}e^{−s²/2}) |g'|₂/H` (`|g'|₂² = ∫₀² t h'(t)² dt ≈ 6.92`).
 4. *Main term* (`EtaPlusL2.lean`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);

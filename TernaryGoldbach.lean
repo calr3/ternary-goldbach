@@ -15,6 +15,7 @@ import TernaryGoldbach.MajorArcs.Thm714
 import TernaryGoldbach.Prelim.PlancherelReal
 import TernaryGoldbach.MajorArcs.ArcsEq
 import TernaryGoldbach.MajorArcs.EtaCirc
+import TernaryGoldbach.MajorArcs.HHFourier
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV
