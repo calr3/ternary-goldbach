@@ -2,7 +2,7 @@
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
 odd integer greater than 5 is a sum of three primes. It is derived in Lean from **5 explicitly
-stated results from the literature**, which are still `sorry`, and **29 numerical axioms**
+stated results from the literature**, which are still `sorry`, and **32 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
 ```
@@ -15,6 +15,9 @@ $ echo 'import TernaryGoldbach
  Quot.sound,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.Helfgott.prime_ladder_input,
+ TernaryGoldbach.MajorArcs.integral_etaPlus_sq_log,
+ TernaryGoldbach.MajorArcs.platt_even,
+ TernaryGoldbach.MajorArcs.platt_odd,
  TernaryGoldbach.MinorArcs.H2_le,
  TernaryGoldbach.MinorArcs.T2_le,
  TernaryGoldbach.MinorArcs.eta2_fourier_bound',
@@ -50,8 +53,11 @@ The 5 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
-* **three cited Part II results** in `MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5],
-  [B, (14.7)] ([B, (14.28)] is proved, in a weaker form, in `MinorArcs/EBound.lean`);
+* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2] and [B, Prop 9.5.1]
+  (`MajorArcs/GRH.lean`, `MajorArcs/Prop715.lean`), stated *conditionally* on GRH up to a height `T₀`, and
+  [B, (14.7)] (`MinorArcs/PartIICited.lean`). [B, Cor 7.1.3] and [B, Prop 7.1.5] are proved from the first
+  two, Platt's GRH verification (numerical axioms `platt_odd`, `platt_even`) and the value (9.94)
+  (numerical axiom); [B, (14.28)] is proved, in a weaker form, in `MinorArcs/EBound.lean`;
 * **one literature result** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
   `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]).
   All the bounds on `ψ` and `θ` that [B] quotes — (2.12)–(2.15), (2.17), (2.19), (5.5) — and
@@ -75,7 +81,7 @@ Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated
 These are finite computer computations: seven from [B] (the book describes the method but
 doesn't include the code or the output), the two computational inputs for small `N`, four finite
 checks behind [MV73, Lemmas 7, 8], eleven checks of `ψ`, `θ` and Mertens products over finite ranges, and five
-checks behind (2.22) (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
+checks behind (2.22), plus Platt's GRH verification [B, §9.6] and the value [B, (9.94)] (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
 `scripts/psi_checks.py`, `scripts/psi_mid_check.py`, `scripts/mertens_product_check.py`,
 `scripts/moebius_K_check.py`, `scripts/moebius_sqrt_check.py`, `scripts/liouville_small_check.py`,
 `scripts/moebius_C_grid.py`). They are stated as Lean `axiom`s, so `#print axioms`
@@ -111,6 +117,9 @@ lists each one by name. Most are interval-arithmetic computations.
 | `Prelim.moebius_sqrt_small` (`LiouvilleBound.lean`) | (2.24) range | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))` for `1 ≤ k < 10¹⁰` | segmented Möbius sieve (`scripts/moebius_sqrt_check.py`; equality at `k = 1`, otherwise max ratio `0.612` at `k = 2`; [B] cites Helfgott's check to `10¹²`) |
 | `Prelim.liouville_small` (`LiouvilleBound.lean`) | — | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵` | direct (`scripts/liouville_small_check.py`; max `0.7831` at `k = 10`) |
 | `Prelim.C_grid` (`LiouvilleBound.lean`) | (2.22) optimisation | `(2.8 + (i+1)/100)·G(2.8 + i/100) ≤ 2.8` for `i < 7720`, `G(a) = ∑_{u≤3000} \|μ(u)\|/u² min(5/3, 0.99/(a − 2 log u)) + (5/3)/3000.5` | direct (`scripts/moebius_C_grid.py`; max `2.7422`) |
+| `MajorArcs.platt_odd` (`MajorArcs/GRH.lean`) | §9.6, [Plab] | GRH for `L(s, χ)` up to height `10⁸/q`, every primitive `χ` of odd conductor `q ≤ 3·10⁵` | D. Platt's rigorous (interval-arithmetic) computation |
+| `MajorArcs.platt_even` (`MajorArcs/GRH.lean`) | §9.6, [Plab] | the same for even `q ≤ 4·10⁵`, up to `max(10⁸/q, 200 + 7.5·10⁷/q)` | the same |
+| `MajorArcs.integral_etaPlus_sq_log` (`MajorArcs/Prop715.lean`) | (9.94) | `∫₀^∞ η₊²(t) log(xt) dt = (0.640206 + O*(1.95·10⁻⁶)) log x − 0.021095 + O*(5.3·10⁻⁷)` | rigorous integration (VNODE-LP) of `η◦` and the bounds (A.23), (A.24) on `η₊ − η◦` |
 | `Prelim.lambda_mul_small` (`LambdaMuExtra.lean`, unused) | (2.16) range | `∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 1.6·10⁶` | sieve (`scripts/psi_extra_check.py`; max ratio `1.03583` at `k = 663`) |
 | `Prelim.lambda_sqrt_small` (`LambdaMuExtra.lean`, unused) | (2.18) range | `∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 2·10⁶` | same script (max ratio `1.99838`) |
 | `Prelim.lambda_sqrt_point` (`LambdaMuExtra.lean`, unused) | (2.18) | `∑_{n≤K} Λ(n)/√n − ψ(K)/√(K+1) − 1.0004√(K+1) ≤ −2`, `K = 2·10⁶` | same script (value `−3.2553`) |
@@ -157,6 +166,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Prelim/MoebiusDecay.lean`, `Prelim/MoebiusBound.lean` | toward (2.22): `m(x)(log x + c) = −∑_{n≤x} μ(n)/n (E(x/n) − c)` (from `μ log = −Λ ∗ μ`), and **`\|∑_{n≤x} μ(n)/n\| ≤ 0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`** via `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54` (pieces below `1000`, dyadic blocks to `10⁹`, Dusart beyond); two numerical axioms `K_pieces`, `K_blocks` (`scripts/moebius_K_check.py`) | ✅ (Dusart, two numerical axioms) |
 | `Prelim/Liouville.lean` | Ramaré's identities (Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2): `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` by multiplicativity, and their `1/n`-weighted partial-sum forms | ✅ |
 | `Prelim/LiouvilleBound.lean` | **[B, (2.22)] proved with constant `2.8`** (for `4/5`): `\|ℓ(z)\| ≤ 0.99/log z` (`z > 1`), `\|ℓ_q(x)\| ≤ 0.99(q/φ(q))/log(x/q)`, and `\|∑_{n≤x,(n,q)=1} μ(n)/n\| ≤ 2.8(q/φ(q))/log(x/q)` for `q < x`; downstream `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, Theorem 3.1.1 unchanged | ✅ (three numerical axioms, Dusart) |
+| `MajorArcs/GRH.lean`, `Eta2Moments.lean`, `Cor933.lean`, `Cor713.lean`, `Prop715.lean` | Part II split into analysis and computation: `GRHUpTo χ T` (Mathlib's `DirichletCharacter.LFunction`), Platt's verification as numerical axioms, [B, Prop 9.3.2] and [B, Prop 9.5.1] cited *conditionally on GRH up to `T₀`*; **[B, Cor 9.3.3] proved** from 9.3.2 by averaging over `η₂` (dominated convergence, `η̂_* (s) = ∫ η₂(r) η̂(rs) dr`, the moments `∫ w^{-k/2} η₂`), **[B, Cor 7.1.3] proved** (`T₀ = 10⁸/q`, same constants), **[B, Prop 7.1.5] proved** (`T₀ = 440`) | ✅ (two cited, three numerical axioms) |
 | `Prelim/MoebiusCoprime.lean` | **[B, (2.20)] proved**: `\|∑_{n ≤ x, (n,q)=1} μ(n)/n\| ≤ 1` (elementary: `g = μ·1_{(·,q)=1} ∗ 1 ∈ {0, 1}`) | ✅ |
 | `MinorArcs/TypeI2Proof.lean` | [B, Lemma 4.2.4]: regrouping by `a = uv`, the main term (4.50) (factor `3/2` added) | ✅ (uses trusted bounds) |
 | `MinorArcs/TypeI2Rest.lean` | **[B, Lemma 4.2.4] proved** (both cases): log-weighted range sums, (4.51)/(4.52) in our form (corrected `c₁`, cruder lower-order terms) | ✅ (uses trusted bounds) |
@@ -204,7 +214,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 29 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 32 axioms) |
 
 ## The inputs
 

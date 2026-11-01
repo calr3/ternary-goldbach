@@ -221,8 +221,15 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 
 Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
 Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms. Status 2026-10-31:
-`ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `cor_7_1_3`, `prop_7_1_5`,
-`l2_major_14_7`) and 29 numerical axioms. No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
+`ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `l2_major_14_7`,
+`MajorArcs.prop_9_3_2`, `MajorArcs.prop_9_5_1`) and 32 numerical axioms.
+*Part II split (2026-11-01, user's choice "work on Part II"):* Platt's verification is now the numerical
+axiom pair `platt_odd`/`platt_even` on Mathlib's `DirichletCharacter.LFunction` (`GRHUpTo χ T`); the analytic
+explicit-formula results are cited *conditionally* on GRH up to `T₀` ([B, Prop 9.3.2], [B, Prop 9.5.1]);
+Cor 9.3.3 → Cor 7.1.3 and Prop 7.1.5 are proved (`MajorArcs/`). [B]'s numerics check out:
+`(1000/3)·log(10⁸/2π)·6.11·e^{−0.1598·1000/3} = 2.48404·10⁻¹⁹ ≤ 2.485·10⁻¹⁹`; for Prop 7.1.5 we use `T₀ = 440`
+instead of `450` for margin. Next: state Thm 7.1.4 / Prop 9.4.2 (η₊ twisted sums) the same way, then Ch. 10
+(character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
 (Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is

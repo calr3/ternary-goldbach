@@ -77,12 +77,16 @@ statements, each with its own `sorry`.
 (14.27)  [§§14.1–14.2: numerics]
  └─ Prop 10.4.1  (+ §10.1 character decomposition, §10.2 main term, §10.3 ℓ² over major arcs)
      ├─ Thm 7.1.1, Thm 7.1.2, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5   ← Part II
+     │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 (cited, conditional
+     │    on GRH up to T₀) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
+     │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 (cited, conditional) + Platt (q = 1, T₀ = 440)
+     │    + (9.94) (numerical axiom); Thm 7.1.4 not yet stated (needed for Ch. 10)]
      │   (explicit bounds on Sη(δ/x, x) twisted by primitive χ, for η = Gaussian, t²e^{-t²/2},
      │    η_*, η₊)
      │   ├─ Ch 8  Mellin transform of the twisted Gaussian: Thm 8.0.1, Cor 8.0.2 (saddle point)
      │   └─ Ch 9  explicit formulas: §9.1 general explicit formula; Props 9.2.2, 9.3.2,
      │            Cor 9.3.3, Props 9.4.2, 9.5.1
-     │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← trusted
+     │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← numerical axioms ✅
      ├─ Ch 11  the smoothing functions η◦, η_* (§11.1 η◦(t)η◦(ρ−t))
      └─ Appendix A  norms of η₊ (A.3–A.5: |η₊|_∞ ≤ 1.079955, …)
          (✅ crude bounds in Helfgott/Decay.lean, Helfgott/SupNorms.lean)
