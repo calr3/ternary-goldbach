@@ -153,3 +153,4 @@ import TernaryGoldbach.Explicit.ZetaBound
 import TernaryGoldbach.Explicit.GrExtend
 import TernaryGoldbach.Explicit.EtaPlusMellin
 import TernaryGoldbach.Explicit.ExplicitBoundGen
+import TernaryGoldbach.Explicit.MellinPlancherelGen
