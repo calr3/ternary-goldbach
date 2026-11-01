@@ -255,19 +255,19 @@ theorem log_le_of_le_exp' {x c : ℝ} (hx : 0 < x) (h : x ≤ Real.exp c) : Real
 
 theorem log2508_le : Real.log 2.508 ≤ 0.9197 := by
   refine log_le_of_le_exp' (by norm_num) ?_
-  have h := TernaryGoldbach.MajorArcs.exp_split_ge 0 (u := 0.9197) (by norm_num) 8
+  have h := exp_split_ge' 0 (u := 0.9197) (by norm_num) 8
   norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
 
 theorem log280905_le : Real.log 2.80905 ≤ 1.0329 := by
   refine log_le_of_le_exp' (by norm_num) ?_
-  have h := TernaryGoldbach.MajorArcs.exp_split_ge 1 (u := 0.0329) (by norm_num) 6
+  have h := exp_split_ge' 1 (u := 0.0329) (by norm_num) 6
   norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
 
 theorem log2_le' : Real.log 2 ≤ 0.6932 := by have := Real.log_two_lt_d9; linarith
 
 theorem log3_le' : Real.log 3 ≤ 1.0987 := by
   refine log_le_of_le_exp' (by norm_num) ?_
-  have h := TernaryGoldbach.MajorArcs.exp_split_ge 1 (u := 0.0987) (by norm_num) 6
+  have h := exp_split_ge' 1 (u := 0.0987) (by norm_num) 6
   norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
 
 theorem log_1e9_ge : 20 ≤ Real.log 1e9 := by

@@ -164,3 +164,8 @@ import TernaryGoldbach.Explicit.RectResidue2
 import TernaryGoldbach.Explicit.XiPartial
 import TernaryGoldbach.Explicit.ZeroFree
 import TernaryGoldbach.Explicit.ZeroFreeRegion
+import TernaryGoldbach.Explicit.LogNumerics
+import TernaryGoldbach.Explicit.GaussSmooth
+import TernaryGoldbach.Explicit.PsiSandwich
+import TernaryGoldbach.Explicit.ZetaZeroSums
+import TernaryGoldbach.Explicit.PsiExplicit

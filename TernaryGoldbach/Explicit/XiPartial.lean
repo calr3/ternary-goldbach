@@ -1,6 +1,7 @@
 import TernaryGoldbach.Explicit.Xi
 import TernaryGoldbach.Explicit.RectResidue2
-import TernaryGoldbach.MajorArcs.Cor713
+import TernaryGoldbach.Explicit.ZetaPoly
+import TernaryGoldbach.Explicit.LogNumerics
 
 /-!
 # The Hadamard-type inequality `Re ξ'/ξ(s) ≥ Σ_{ρ ∈ S} Re 1/(s − ρ)` (`ℜs > 1`)
@@ -16,7 +17,6 @@ open scoped Real Interval Topology ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.Explicit
 
-open TernaryGoldbach.MajorArcs (log9201_le log22_le log1375_le neg_log0355_le)
 
 /-! ## A datum for `zetaF` with the polynomial bound `B''_ζ` -/
 
@@ -54,8 +54,8 @@ theorem log_BPz2_le' (T : ℝ) :
     (by norm_num))).trans ?_
   rw [Real.log_div hpos.ne' (by norm_num), Real.log_mul (by positivity) (by positivity),
     Real.log_mul (by norm_num) (by positivity), Real.log_pow]
-  have := log9201_le
-  have := neg_log0355_le
+  have := log9201_le'
+  have := neg_log0355_le'
   push_cast
   linarith
 
@@ -67,8 +67,8 @@ theorem log_BPz2_lin (T : ℝ) : Real.log (BPz2 T / 0.355) ≤ 0 + 37 + 2.6 * |T
     have := log_le_log_add 13.75 (1.25 * |T|) (by norm_num) (by positivity)
     rw [show (1.25 : ℝ) * (|T| + 11) = 13.75 + 1.25 * |T| by ring]
     refine this.trans (le_of_eq ?_); ring
-  have := log22_le
-  have := log1375_le
+  have := log22_le'
+  have := log1375_le'
   have hT := abs_nonneg T
   linarith
 
