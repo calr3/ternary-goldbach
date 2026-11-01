@@ -237,7 +237,7 @@ cross term (`∫_{|β|<w} 2|a||e| ≤ 2 sup|e| · √(2w) · (∫|a|²)^{1/2}` i
 error `≈ 3·10⁻⁴ x` instead of [B]'s `0.0755 x` (`scripts`-style check: lower `8.7029 x`, upper `8.7053 x`), so crude
 constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under `MajorArcs/`):
 1. *Arcs* — **DONE** (`ArcsEq.lean`): `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g`.
-2. *`η◦` tail* (`EtaCirc.lean`): `η◦(t) = h(t) t e^{-t²/2} = (1−u²)³e^{−u²/2}` (`u = t − 1`, `|u| ≤ 1`); two integrations
+2. *`η◦` tail* — **DONE** (`EtaCirc.lean`, `tail_etaO_le`): `η◦(t) = h(t) t e^{-t²/2} = (1−u²)³e^{−u²/2}` (`u = t − 1`, `|u| ≤ 1`); two integrations
    by parts on `[0,2]` and Plancherel for `η◦''·1_{[0,2]}` (`|η◦''| ≤ 7`): `∫_{|δ|>T} |η̂◦|² ≤ 98/(2πT)⁴`.
 3. *`η₊ − η◦`* (`HHFourier.lean`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
    (Fubini, `sin(Hv)/(πv) = ∫_{|ξ|≤H/2π} e(ξv)dξ`); L² Fourier (`fourierL2_ae_eq`) gives `|g − g_H|₂² = ∫_{|ξ|>H/2π}|ĝ|²
