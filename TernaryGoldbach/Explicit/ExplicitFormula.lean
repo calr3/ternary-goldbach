@@ -751,4 +751,85 @@ theorem integrable_hInt_right {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ 
       ≤ C3 * (‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (3 / 2 : ℝ)) := by gcongr
     _ = C3 * x ^ (3 / 2 : ℝ) * ‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ := by ring
 
+/-- `D_N = log(512 q⁹ (q + 1)/0.355)`. -/
+noncomputable def DN (N : ℕ) : ℝ := Real.log (512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) / 0.355)
+
+/-- `log(B_T/0.355) ≤ D_N + 37 + 2.6|T|`. -/
+theorem LB_le_linear {N : ℕ} [NeZero N] (T : ℝ) :
+    Real.log (BT N T / 0.355) ≤ DN N + 37 + 2.6 * |T| := by
+  have hN1 : (1:ℝ) ≤ N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
+  have hC : 0 < 512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) / 0.355 := by positivity
+  have e : BT N T / 0.355 = (512 * (N : ℝ) ^ 9 * ((N : ℝ) + 1) / 0.355) * (|T| + 22) *
+      Real.exp (π * (|T| + 10) / 2) := by
+    unfold BT; ring
+  rw [e, Real.log_mul (by positivity) (Real.exp_pos _).ne', Real.log_mul hC.ne' (by positivity),
+    Real.log_exp, ← DN]
+  have h1 : Real.log (|T| + 22) ≤ |T| + 21 := by
+    have := Real.log_le_sub_one_of_pos (show 0 < |T| + 22 by positivity); linarith
+  have h2 : π * (|T| + 10) / 2 ≤ 1.6 * (|T| + 10) := by
+    have := Real.pi_lt_d2; nlinarith [abs_nonneg T]
+  linarith
+
+/-- `h` is integrable on `ℜs = −1/2`. -/
+theorem integrable_hInt_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    Integrable fun y : ℝ => hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
+  have hc : Continuous fun y : ℝ => hInt χ δ x (((-1 / 2 : ℝ) : ℂ) + y * I) := by
+    unfold hInt
+    refine (continuous_logDeriv_L_line hχ1 (-1 / 2) fun y =>
+      LFunction_ne_zero_strip hχ hχ1 (by simp; norm_num) (by simp; norm_num)).mul
+      ((continuous_G_line δ (-1 / 2) (by norm_num)).mul ?_)
+    exact continuous_iff_continuousAt.2 fun y =>
+      (continuousAt_const_cpow (Complex.ofReal_ne_zero.2 hx.ne')).comp (by fun_prop)
+  set c1 : ℝ := 2 / Real.log 2 + 4.8 with hc1
+  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  set A : ℝ := c1 * (|DN N| + 37) * Kδ δ * x ^ (-1 / 2 : ℝ) with hA
+  set B : ℝ := c1 * 2.6 / 0.14 * Kδ δ * x ^ (-1 / 2 : ℝ) with hB
+  have hK : 0 ≤ Kδ δ := by
+    have := norm_G_le_strip δ (s := (0 : ℂ)) (by norm_num) (by norm_num)
+    have hp : 0 < Real.exp (-(0.28 * |(0:ℂ).im|)) := Real.exp_pos _
+    by_contra hneg; push Not at hneg
+    have : Kδ δ * Real.exp (-(0.28 * |(0:ℂ).im|)) < 0 := mul_neg_of_neg_of_pos hneg hp
+    linarith [norm_nonneg (Gr 0 δ 0)]
+  have hint : Integrable fun y : ℝ => A * Real.exp (-(0.28 * |y|)) + B * Real.exp (-(0.14 * |y|)) :=
+    ((integrable_exp_neg_abs (by norm_num)).const_mul A).add
+      ((integrable_exp_neg_abs (by norm_num)).const_mul B)
+  refine hint.mono' hc.aestronglyMeasurable (Eventually.of_forall fun y => ?_)
+  rw [hInt, norm_mul, norm_mul, norm_cpow_x hx]
+  have hre : (((-1 / 2 : ℝ) : ℂ) + y * I).re = -1 / 2 := by simp
+  have him : (((-1 / 2 : ℝ) : ℂ) + y * I).im = y := by simp
+  rw [hre]
+  have h1 := norm_logDeriv_L_left hχ hχ1 y
+  have hLB := LB_le_linear (N := N) y
+  have hG := norm_G_le_strip δ (s := ((-1 / 2 : ℝ) : ℂ) + y * I) (by rw [hre]) (by rw [hre]; norm_num)
+  rw [him] at hG
+  have hLB0 : 0 ≤ Real.log (BT N y / 0.355) := by
+    have := one_le_BT (N := N) y
+    exact Real.log_nonneg (by rw [le_div_iff₀ (by norm_num)]; linarith)
+  have hlogd : ‖logDeriv χ.LFunction (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ c1 * (|DN N| + 37 + 2.6 * |y|) := by
+    refine h1.trans ?_
+    have e : Real.log (BT N y / 0.355) / Real.log 2 / (1 / 2) + 4.8 * Real.log (BT N y / 0.355) =
+        c1 * Real.log (BT N y / 0.355) := by rw [hc1]; field_simp
+    rw [e]
+    have hc10 : 0 ≤ c1 := by rw [hc1]; have := div_nonneg (by norm_num : (0:ℝ) ≤ 2) hlog2.le; linarith
+    exact mul_le_mul_of_nonneg_left (by linarith [le_abs_self (DN N)]) hc10
+  have hxp : 0 ≤ x ^ (-1 / 2 : ℝ) := by positivity
+  have hy : |y| ≤ Real.exp (0.14 * |y|) / 0.14 := by
+    rw [le_div_iff₀ (by norm_num)]
+    have := Real.add_one_le_exp (0.14 * |y|); nlinarith [abs_nonneg y]
+  have hexp : Real.exp (0.14 * |y|) * Real.exp (-(0.28 * |y|)) = Real.exp (-(0.14 * |y|)) := by
+    rw [← Real.exp_add]; congr 1; ring
+  have hc10 : 0 ≤ c1 := by rw [hc1]; have := div_nonneg (by norm_num : (0:ℝ) ≤ 2) hlog2.le; linarith
+  calc ‖logDeriv χ.LFunction (((-1 / 2 : ℝ) : ℂ) + y * I)‖ *
+        (‖Gr (((-1 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (-1 / 2 : ℝ))
+      ≤ c1 * (|DN N| + 37 + 2.6 * |y|) * (Kδ δ * Real.exp (-(0.28 * |y|)) * x ^ (-1 / 2 : ℝ)) := by
+        gcongr
+    _ = A * Real.exp (-(0.28 * |y|)) + c1 * 2.6 * Kδ δ * x ^ (-1 / 2 : ℝ) *
+          (|y| * Real.exp (-(0.28 * |y|))) := by rw [hA]; ring
+    _ ≤ A * Real.exp (-(0.28 * |y|)) + c1 * 2.6 * Kδ δ * x ^ (-1 / 2 : ℝ) *
+          (Real.exp (0.14 * |y|) / 0.14 * Real.exp (-(0.28 * |y|))) := by
+        gcongr
+    _ = A * Real.exp (-(0.28 * |y|)) + B * Real.exp (-(0.14 * |y|)) := by
+        rw [hB, ← hexp]; ring
+
 end TernaryGoldbach.Explicit
