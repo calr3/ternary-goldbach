@@ -164,6 +164,20 @@ Ramaré) beyond `x ≈ e^{4000}`; we do not formalize those. Instead:
   The model (`zf/stech2.py` in the session scratchpad) gives `R ≈ 10.3` at `t = 3·10¹²`; `R = 11` is proved
   for `t ≥ 10⁹` with margin.
 
+## ψ-sandwich design (2026-11-01, after the zero-free region)
+
+Model `zf/eps2.py` (session scratchpad): smoothing `φ(u) = Φ((a − log u)/δ) − Φ((b − log u)/δ)` (`Φ` normal cdf,
+`e^b = 10¹⁰/x`, `a = ±K₀δ`), `M(s) = e^{δ²s²/2}(e^{as} − e^{bs})/s` (entire), zeros: Jensen windows
+(`count_tail_windowG` at `T₀ = H = 3·10¹²`, `count_line_windowG` below), RH to `H` (Platt–Trudgian axiom),
+`zero_free` above `H`. Sandwich: `ψ(x) ≤ S(K₀δ)/Φ(K₀)`, `ψ(x) ≥ S(−K₀δ) − tail`. Achievable relative error:
+`6·10⁻⁷` at `x = 10¹⁹`, `≈ 2·10⁻¹¹` for `100 ≤ log x ≤ 7000` (`δH ≈ 7.5`, `K₀ = 7`), `< 1/log³x` again from
+`log x ≈ 12000` (needs the zero-free region; crude window bounds need `≈ 15000`). Interface plan:
+`|θ(x) − x| ≤ x/log³x` for `x ≤ e^{3500}` and `x ≥ e^{15000}`, `≤ 2.1·10⁻¹¹ x` in between.
+K-budget (MoebiusBound): the plateau costs `≈ ε_p·ΔL·L ≈ 2–4·10⁻³` in `K_partC`; current slack is `8·10⁻⁴`, so
+relax `K ≤ 0.54` to `0.55` — `abs_ls_big` still gives `≤ 0.99` if `Σ 1/u² ≤ 5/3` is replaced by `π²/6`
+(`0.55·(1.034·π²/6 + 0.09·1.0117) + 0.0042 = 0.990`, check exactly) or a tighter partial sum.
+Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` — absolute size `≈ 10¹⁰`, negligible.
+
 ## Status (2026-11-01, latest)
 
 * `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,
