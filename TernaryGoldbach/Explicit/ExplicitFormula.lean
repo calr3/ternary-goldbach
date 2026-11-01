@@ -302,4 +302,39 @@ theorem rect_identity {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ 
       (differentiableAt_id.const_cpow (Or.inl hx0))).differentiableWithinAt
   exact rectInt_logDeriv_mul hf hR hf2 (by simp; norm_num) (by simp; linarith) hrect hbd hUo hsubU hh
 
+/-! ## Part C: good heights -/
+
+/-- In `[k, k+1]` there is a point at distance `≥ 1/(2M+2)` from each of `M` given reals. -/
+theorem exists_far_point (A : Finset ℝ) (k : ℝ) :
+    ∃ T ∈ Icc k (k + 1), ∀ a ∈ A, 1 / (2 * (A.card : ℝ) + 2) ≤ |T - a| := by
+  set δ := 1 / (2 * (A.card : ℝ) + 2) with hδ
+  have hδ0 : 0 < δ := by positivity
+  by_contra hcon
+  push Not at hcon
+  have hsub : Icc k (k + 1) ⊆ ⋃ a ∈ A, Ioo (a - δ) (a + δ) := by
+    intro T hT
+    obtain ⟨a, ha, h⟩ := hcon T hT
+    rw [Set.mem_iUnion₂]
+    refine ⟨a, ha, ?_⟩
+    rw [abs_lt] at h
+    exact ⟨by linarith [h.1], by linarith [h.2]⟩
+  have h1 := MeasureTheory.measure_mono (μ := volume) hsub
+  have h2 := MeasureTheory.measure_biUnion_finset_le (μ := volume) A fun a => Ioo (a - δ) (a + δ)
+  simp only [Real.volume_Icc, Real.volume_Ioo, add_sub_cancel_left] at h1 h2
+  have h3 : ∑ a ∈ A, ENNReal.ofReal (a + δ - (a - δ)) = A.card * ENNReal.ofReal (2 * δ) := by
+    have e : ∀ a ∈ A, ENNReal.ofReal (a + δ - (a - δ)) = ENNReal.ofReal (2 * δ) := fun a _ => by
+      congr 1; ring
+    rw [Finset.sum_congr rfl e]; simp
+  rw [h3] at h2
+  have h4 := h1.trans h2
+  have hlt : (A.card : ENNReal) * ENNReal.ofReal (2 * δ) < ENNReal.ofReal 1 := by
+    rw [← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (by positivity)]
+    refine (ENNReal.ofReal_lt_ofReal_iff (by norm_num)).2 ?_
+    rw [hδ]
+    have : (0:ℝ) < 2 * (A.card : ℝ) + 2 := by positivity
+    rw [show (A.card : ℝ) * (2 * (1 / (2 * (A.card : ℝ) + 2))) = 2 * A.card / (2 * A.card + 2) by
+      field_simp]
+    rw [div_lt_one this]; linarith
+  exact absurd h4 (not_le.2 hlt)
+
 end TernaryGoldbach.Explicit
