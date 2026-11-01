@@ -33,7 +33,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `K` | `K_blocks`, `K_pieces` | prime powers `≤ 10⁹` | 2 min |
 | `liouville` | `liouville_small` | `k ≤ 10⁵` | < 1 s |
 | `C_grid` | `C_grid` | 7720 grid points × 3000 terms | 25 s |
-| `lemma7` | `lemma7_numeric`, `GS_N0` | `r ≤ 3·10⁷` | 20 s |
+| `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
 | `lemma8` | `lemma8_numeric` | `n ≤ 10⁴` | 10 s |
 | `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |

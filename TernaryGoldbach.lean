@@ -5,6 +5,8 @@ import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.SmallPsi
+import TernaryGoldbach.Prelim.RamareGq
+import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallProdAp
 import TernaryGoldbach.Prelim.SmallFsq

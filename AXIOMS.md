@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 28 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 26 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -82,7 +82,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (19)
+### Our own computations (17)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -108,8 +108,6 @@ contain the axiom.
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | equality at `k = 1`; otherwise max ratio `0.612372` at `k = 2` | [B, (2.24)] (Helfgott, interval arithmetic, `x ≤ 10¹²`; Ramaré earlier `x ≤ 10¹⁰`) |
 | `Prelim.liouville_small` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `1 ≤ k ≤ 10⁵` | `liouville_small_check.py` | max `0.783122` at `k = 10` | |
 | `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | max `2.742169` at `i = 0` | |
-| `Prelim.MV.lemma7_numeric` | `G(r) ≥ log(r+1) + 1.07`, `6 ≤ r < 3·10⁷` | `mv_lemma8_check.py` | min margin `0.044082` at `r = 9` | |
-| `Prelim.MV.GS_N0` | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | `mv_lemma8_check.py` | `1.3325830` | |
 | `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | min margin `1.1352·10⁻⁶` at `n = 4`; second sum max `0.638395` | first sum: [MV73, Lemma 8] for `R ≥ 100`, as cited in [B, p. 97] |
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`scripts/rigorous/eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
 | `MajorArcs.etaO_numerics` | `∫₀² η◦² ∈ [0.640205997, 0.640205998]`, `∫₀² η◦² log t ∈ [−0.0210947787, −0.0210947786]`, `‖W₀''‖₂² ≤ 36`, `‖W₁''‖₂² ≤ 8.4` (elementary integrals) | — | `0.64020599736635…`, `−0.02109477869887…`, `35.790`, `8.389` (`scripts/rigorous/eta_circ_rig.py`, Arb integration) | first two: [B, p. 197] (VNODE-LP) |
@@ -144,7 +142,7 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
-| `MinorArcs.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 (open access: numdam ASNSP_1995_4_22_4_645_0) | checked against the paper: Lemma 3.4 states this for all `X > 0`, `d ≥ 1`, with this `f₁`; (3.6) gives `c = γ + ∑_p log p/(p(p−1)) = 1.332582275332…`. `scripts/rigorous/ramare_check.c`: `c ∈ [1.332582274733, 1.332582276813]` (MPFR, primes `≤ 10⁹`, tail via our `ψ(t) ≤ 1.03883 t`); the estimate holds for all `d ≤ 2000`, three primorials and all `X ≤ 2·10⁶` (interval arithmetic), using at most `0.18` of the error bound |
+| `Prelim.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 (open access: numdam ASNSP_1995_4_22_4_645_0) | checked against the paper: Lemma 3.4 states this for all `X > 0`, `d ≥ 1`, with this `f₁`; (3.6) gives `c = γ + ∑_p log p/(p(p−1)) = 1.332582275332…`. `scripts/rigorous/ramare_check.c`: `c ∈ [1.332582274733, 1.332582276813]` (MPFR, primes `≤ 10⁹`, tail via our `ψ(t) ≤ 1.03883 t`); the estimate holds for all `d ≤ 2000`, three primorials and all `X ≤ 2·10⁶` (interval arithmetic), using at most `0.18` of the error bound |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 10¹⁰` (the range used) | Ramaré, Acta Arith. 157 (2013) 365–379, for `x ≥ 11815` ([B, (2.21)]) | implied by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969. That paper also proves `≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2). |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
@@ -157,7 +155,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (19):** all are checked rigorously in `scripts/rigorous/` (interval
+* **Our own computations (17):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Four are also contained in
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
@@ -296,6 +294,15 @@ The Lean definitions that the axioms above refer to were compared with the book'
   * `q < 2.2·10¹⁰`: the computation decides, for each integer `n < λ(q)`, between `regionS` and
     the explicit check (12.31).
   * See Finding 6 for two slips in [B]'s argument.
+
+* `lemma7_numeric` and `GS_N0` ([MV73, Lemma 7], `Prelim/MVLemma7.lean`) are gone.
+  * Ramaré's (12.12) at `d = 1` (`Prelim.ramare_Gq`, moved to `Prelim/RamareGq.lean`) gives
+    `G(r) ≥ log r + c_E − 7.284 r^{−1/3} ≥ log r + 1.07` for `r ≥ 21400`. This also makes the constant
+    `κ = c_E` known, which `GS_N0` used to provide.
+  * For `6 ≤ r < 21400` the kernel checks `G(r) ≥ log r + 1.07` (`Prelim/SmallG.lean`, 23 s).
+    `G(a) ≥ ∑_{T ⊆ P, ∏T ≤ a} ∏_{p∈T} 1/(p−1)` for any set `P` of primes, and a depth-first search over the
+    primes `≤ 21400` computes this sum in fixed point, rounding down. 32 blocks `[a, b)` with
+    `G(a) > log b + 1.07` cover the range. Only the primality of the listed primes is used.
 
 ## Candidates for proofs in Lean
 

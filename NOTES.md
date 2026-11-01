@@ -280,6 +280,11 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `ramare_check.c` recomputes `c_E` and tests (12.12) on `d ≤ 2000`, `X ≤ 2·10⁶`.
   * `ramare_moebius` is now stated only for `x ≥ 10¹⁰`. It is implied by Ramaré 2015 Thm 1.2, which
     arXiv:2408.05969 re-derives (that paper also proves `0.010032/log X` for `X ≥ 617 990`).
+* Own computations reduced (goal 2026-11-01, items 1–7):
+  * Item 1: `lemma7_numeric` and `GS_N0` were removed. Ramaré's (12.12) covers `r ≥ 21400`, and the
+    kernel covers smaller `r` (`Prelim/SmallG.lean`: a DFS over subsets of primes, lower bound only,
+    23 s, 7.5 GB peak). `ramare_Gq` moved to `Prelim/RamareGq.lean`; `MinorArcs.ramare_Gq` is now a
+    theorem. 26 axioms (17 own, 9 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

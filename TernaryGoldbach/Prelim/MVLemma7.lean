@@ -1,16 +1,18 @@
 import TernaryGoldbach.Prelim.MVLemma8
 import TernaryGoldbach.Prelim.SmallProdAp
+import TernaryGoldbach.Prelim.SmallG
+import TernaryGoldbach.Prelim.RamareGq
 
 /-!
 # [MV73, Lemma 7]: `G(r) = ∑_{s ≤ r} μ(s)²/φ(s) ≥ log r + 1.07` for `r ≥ 6`
 
-Write `F(n) = n μ(n)²/φ(n)` and `h = F ∗ μ`, so that `F = h ∗ 1`. Then `h` is multiplicative with
-`h(p) = 1/(p−1)`, `h(p²) = −p/(p−1)`, `h(p^k) = 0` for `k ≥ 3`, and
-`G(N) = ∑_{d ≤ N} (h(d)/d) H(N/d)`, where `H(m) = ∑_{i ≤ m} 1/i`.
-Since `∑ h(d)/d = 1` (Euler product), `|G(N) − log N − κ| ≤ C N^{−1/3}` with
-`C = (2 + 3/e + γ) P` and `P = ∑ |h(d)| d^{−2/3} ≤ 9.21` (Rankin's trick). A finite Euler product
-over `p < 10⁴` is a numerical axiom. Comparing `N` with `N₀ = 3·10⁷` eliminates `κ`. For
-`6 ≤ r ≤ 3·10⁷` we use a numerical axiom (a direct computation, `scripts/mv_lemma8_check.py`).
+For `r ≥ 21400` this follows from Ramaré's estimate `G(r) = log r + c_E + O*(7.284 r^{−1/3})`
+(`Prelim.ramare_Gq`, [B, (12.12)]); for `6 ≤ r < 21400` it is checked by the kernel
+(`SmallG.lemma7_small`).
+
+The file also proves the asymptotic `|G(N) − log N − κ| ≤ (2 + 3/e + γ) P N^{−1/3}` from the
+Euler product of `h = F ∗ μ`, `F(n) = n μ(n)²/φ(n)` (Rankin's trick, `P = ∑ |h(d)| d^{−2/3} ≤ 9.32`);
+it is no longer needed for Lemma 7.
 -/
 
 open Finset Real ArithmeticFunction
@@ -610,55 +612,39 @@ theorem GS_asymp {N : ℕ} (hN : 1 ≤ N) :
 
 /-! ### Lemma 7 and Lemma 8 -/
 
-/-- **Numerical axiom** (`scripts/mv_lemma8_check.py`, minimal margin `0.044` at `r = 9`):
-`G(r) ≥ log(r + 1) + 1.07` for `6 ≤ r < 3·10⁷`. -/
-axiom lemma7_numeric (r : ℕ) (h6 : 6 ≤ r) (hr : r ≤ 29999999) : Real.log (r + 1) + 1.07 ≤ GS r
-
-/-- **Numerical axiom** (`scripts/mv_lemma8_check.py`, value `1.33258`):
-`G(3·10⁷) ≥ log(3·10⁷) + 1.3325`. -/
-axiom GS_N0 : Real.log (30000000 : ℕ) + 1.3325 ≤ GS 30000000
+/-- `G(r)` as Ramaré's `G_1(r)`. -/
+theorem GS_eq_GqP (r : ℕ) : GS r = TernaryGoldbach.Prelim.GqP 1 r := by
+  unfold GS TernaryGoldbach.Prelim.GqP
+  rw [Nat.floor_natCast, filter_true_of_mem (fun x _ => Nat.coprime_one_right x)]
+  refine sum_congr rfl fun n _ => ?_
+  unfold gS
+  have h := ArithmeticFunction.moebius_sq (n := n)
+  have h' : ((μ n : ℝ)) ^ 2 = if Squarefree n then 1 else 0 := by
+    have := congrArg (fun z : ℤ => (z : ℝ)) h
+    push_cast at this; rw [this]
+  rw [h']; split_ifs <;> simp
 
 /-- **[MV73, Lemma 7]**: `G(r) ≥ log r + 1.07` for `r ≥ 6`. -/
 theorem lemma7 (r : ℕ) (h6 : 6 ≤ r) : Real.log r + 1.07 ≤ GS r := by
-  rcases le_or_gt r 29999999 with hr | hr
-  · have h := lemma7_numeric r h6 hr
-    have : Real.log r ≤ Real.log (r + 1) :=
-      Real.log_le_log (by exact_mod_cast (by omega : 0 < r)) (by linarith)
-    linarith
-  -- asymptotic range: compare with `N₀ = 3·10⁷`
-  have hr1 : 1 ≤ r := by omega
-  have hN0 : 1 ≤ (30000000 : ℕ) := by norm_num
-  have ha := GS_asymp hr1
-  have hb := GS_asymp hN0
-  set C := (2 + 3 / Real.exp 1 + eulerMascheroniConstant) * 9.32
-  have hC : C ≤ 35.15 := by
-    have he := Real.exp_one_gt_d9
-    have hγ := Real.eulerMascheroniConstant_lt_two_thirds
-    have h3e : 3 / Real.exp 1 ≤ 1.10365 := by
-      rw [div_le_iff₀ (Real.exp_pos 1)]; linarith
-    simp only [C]; nlinarith
-  have hC0 : 0 ≤ C := by
-    have := lt_trans (by norm_num : (0 : ℝ) < 1 / 2) Real.one_half_lt_eulerMascheroniConstant
-    simp only [C]; positivity
-  -- `N₀^{−1/3} ≤ 1/310.7` and `r^{−1/3} ≤ N₀^{−1/3}`
-  have hN0r : ((30000000 : ℕ) : ℝ) ^ (-(1 / 3) : ℝ) ≤ 1 / 310.7 := by
-    have h1 : (310.7 : ℝ) ≤ ((30000000 : ℕ) : ℝ) ^ ((1 / 3) : ℝ) := by
-      have : (310.7 : ℝ) = ((310.7 : ℝ) ^ (3 : ℕ)) ^ ((1 / 3) : ℝ) := by
-        rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num
-      rw [this]; exact Real.rpow_le_rpow (by positivity) (by norm_num) (by norm_num)
+  rcases lt_or_ge r 21400 with hr | hr
+  · exact TernaryGoldbach.Prelim.SmallG.lemma7_small r h6 hr
+  obtain ⟨c, hc1, -, hram⟩ := TernaryGoldbach.Prelim.ramare_Gq
+  have hr' : (21400 : ℝ) ≤ r := by exact_mod_cast hr
+  have h := (abs_le.1 (hram 1 le_rfl r (by linarith))).1
+  have hS : TernaryGoldbach.Prelim.SqP 1 = 0 := by simp [TernaryGoldbach.Prelim.SqP]
+  have hf : TernaryGoldbach.Prelim.f1qP 1 = 1 := by simp [TernaryGoldbach.Prelim.f1qP]
+  rw [hS, hf] at h
+  simp only [Nat.totient_one, Nat.cast_one, div_one, one_mul, mul_one, add_zero] at h
+  -- `r^{−1/3} ≤ 1/27.75`
+  have h3 : (27.75 : ℝ) ≤ (r : ℝ) ^ (1 / 3 : ℝ) := by
+    calc (27.75 : ℝ) = ((27.75 : ℝ) ^ (3 : ℕ)) ^ (1 / 3 : ℝ) := by
+          rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num
+      _ ≤ (r : ℝ) ^ (1 / 3 : ℝ) := Real.rpow_le_rpow (by norm_num) (by norm_num; linarith) (by norm_num)
+  have h4 : (r : ℝ) ^ (-(1 / 3 : ℝ)) ≤ 1 / 27.75 := by
     rw [Real.rpow_neg (by positivity), ← one_div]
-    exact one_div_le_one_div_of_le (by norm_num) h1
-  have hrr : (r : ℝ) ^ (-(1 / 3) : ℝ) ≤ ((30000000 : ℕ) : ℝ) ^ (-(1 / 3) : ℝ) :=
-    Real.rpow_le_rpow_of_nonpos (by positivity) (by exact_mod_cast (show 30000000 ≤ r by omega)) (by norm_num)
-  have hpos : 0 ≤ ((30000000 : ℕ) : ℝ) ^ (-(1 / 3) : ℝ) := by positivity
-  have hG0 := GS_N0
-  rw [abs_le] at ha hb
-  have h1 : C * (r : ℝ) ^ (-(1 / 3) : ℝ) ≤ C * (1 / 310.7) :=
-    mul_le_mul_of_nonneg_left (hrr.trans hN0r) hC0
-  have h2 : C * ((30000000 : ℕ) : ℝ) ^ (-(1 / 3) : ℝ) ≤ C * (1 / 310.7) :=
-    mul_le_mul_of_nonneg_left hN0r hC0
-  have h3 : C * (1 / 310.7) ≤ 35.15 * (1 / 310.7) := mul_le_mul_of_nonneg_right hC (by norm_num)
-  linarith [ha.1, hb.2]
+    exact one_div_le_one_div_of_le (by norm_num) h3
+  rw [GS_eq_GqP]
+  nlinarith
 
 /-- **[MV73, Lemma 8]** (with the numerical check for small `R`): for `R ≥ 2`,
 `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) > log R + 0.25068`. -/
