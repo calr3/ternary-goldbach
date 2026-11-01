@@ -18,6 +18,8 @@ import TernaryGoldbach.MajorArcs.EtaCirc
 import TernaryGoldbach.MajorArcs.HHFourier
 import TernaryGoldbach.MajorArcs.EtaPlusL2
 import TernaryGoldbach.MajorArcs.ArcChars
+import TernaryGoldbach.MajorArcs.SumMuPhi
+import TernaryGoldbach.MajorArcs.L2Major
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV

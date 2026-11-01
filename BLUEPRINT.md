@@ -31,7 +31,8 @@ statements, each with its own `sorry`.
      │   [repair 3 (NOTES): `thm_13_2_1_repaired` ✅ (base level 𝔐_{8,r₀}(x), higher levels
      │    𝔐_{8,n}(y), (12.42) with δ₀ = 392); Prop 11.2.3′ ✅ MinorArcs/Prop1123b.lean;
      │    base gap via Cor 7.1.3 ✅ BaseGap2.lean; S₁/S₂ split ✅ MinorTotal.lean;
-     │    numerics ✅ NumericsCells/Asymp/Final ⇒ (14.49) ✅ `minor_arcs_input` is a theorem]
+     │    numerics ✅ NumericsCells/Asymp/Final ⇒ (14.49) ✅ `minor_arcs_input` is a theorem;
+     │    its input (14.7) ✅ MajorArcs/L2Major.lean]
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds) ✅ MinorArcs/Prop1312.lean (discrete form)
      │   ⚠ Thm 13.2.1's proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ²
      │     input and (14.27); see NOTES "Ch. 13: scale erratum"
@@ -76,11 +77,16 @@ statements, each with its own `sorry`.
 ```
 (14.27)  [§§14.1–14.2: numerics]
  └─ Prop 10.4.1  (+ §10.1 character decomposition, §10.2 main term, §10.3 ℓ² over major arcs)
+     │   [§10.3 + §14.1, i.e. (14.7) ✅ MajorArcs/L2Major.lean `l2_major_bounds` (8.688x … 8.709x):
+     │    arcs (ArcsEq), η◦ tail (EtaCirc), ‖η₊ − η◦‖₂ via h_H in log coordinates (HHFourier),
+     │    ‖η₊‖₂ from (9.94) (EtaPlusL2), per-modulus characters + Thm 7.1.4 (ArcChars),
+     │    Σ_{q≤r odd} μ²/φ (numerical axiom, SumMuPhi); Plancherel for L¹∩L² (Prelim/PlancherelReal)]
      ├─ Thm 7.1.1, Thm 7.1.2, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5   ← Part II
      │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 (cited, conditional
      │    on GRH up to T₀) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
      │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 (cited, conditional) + Platt (q = 1, T₀ = 440)
-     │    + (9.94) (numerical axiom); Thm 7.1.4 not yet stated (needed for Ch. 10)]
+     │    + (9.94) (numerical axiom); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 (cited,
+     │    conditional) + Platt]
      │   (explicit bounds on Sη(δ/x, x) twisted by primitive χ, for η = Gaussian, t²e^{-t²/2},
      │    η_*, η₊)
      │   ├─ Ch 8  Mellin transform of the twisted Gaussian: Thm 8.0.1, Cor 8.0.2 (saddle point)

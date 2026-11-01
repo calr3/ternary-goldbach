@@ -3,6 +3,14 @@
 Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`. For the
 `sorry` policy, see `README.md`.
 
+## Status (2026-11-01)
+
+* `ternary_goldbach` depends on 5 `sorry`s — `major_arcs_input` ((14.27)), `dusart_theta`, and the three
+  cited explicit formulas [B, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical
+  axioms. (14.7) is proved (`MajorArcs/L2Major.lean`), with a Cauchy–Schwarz-free error analysis that
+  gives `8.688x … 8.709x` (so [B]'s `0.0754` slip is moot); it brought Prop 9.4.2 onto the main path and
+  added the numerical axiom `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`.
+
 ## Status (2026-10-31)
 
 * `ternary_goldbach` depends only on the 4 `sorry`s in `Helfgott/Inputs.lean`: the major arcs
@@ -249,7 +257,7 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 6. *Characters per `q`* — **DONE** (`ArcChars.lean`, `arc_chars`): `totient_mul_sum_units`, `norm_sq_gaussSum`, `cond ψ⁻¹ = cond ψ`,
    `S'_ψ = S'_{ψ*}` and `|S'_{ψ*} − S_{ψ*}| ≤ B`; Thm 7.1.4 (`thm_7_1_4_one/odd/even`) on `ψ*`: principal part
    `μ²(q)/φ(q) |S'(β)|²`, non-principal `≤ (E x + √(2r) B)²`, `E ≤ 2.3992·10⁻⁸`.
-7. *Assembly* (`L2Major.lean`): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
+7. *Assembly* — **DONE** (`L2Major.lean`, `l2_major_bounds`: `8.688x ≤ ∫ ≤ 8.709x`; `l2_major_14_7` is a theorem): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
    2 Σ_{q odd ≤ r} μ²/φ`; **numerical axiom** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
 Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
 Next: Ch. 10

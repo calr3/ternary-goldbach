@@ -2,7 +2,7 @@
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
 odd integer greater than 5 is a sum of three primes. It is derived in Lean from **5 explicitly
-stated results from the literature**, which are still `sorry`, and **32 numerical axioms**
+stated results from the literature**, which are still `sorry`, and **33 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
 ```
@@ -18,6 +18,7 @@ $ echo 'import TernaryGoldbach
  TernaryGoldbach.MajorArcs.integral_etaPlus_sq_log,
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
+ TernaryGoldbach.MajorArcs.sum_odd_mu_sq_div_totient,
  TernaryGoldbach.MinorArcs.H2_le,
  TernaryGoldbach.MinorArcs.T2_le,
  TernaryGoldbach.MinorArcs.eta2_fourier_bound',
@@ -53,11 +54,14 @@ The 5 `sorry`s that `ternary_goldbach` depends on are:
 
 * **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
   `major_arcs_input` (see "The inputs" below);
-* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2] and [B, Prop 9.5.1]
-  (`MajorArcs/GRH.lean`, `MajorArcs/Prop715.lean`), stated *conditionally* on GRH up to a height `T₀`, and
-  [B, (14.7)] (`MinorArcs/PartIICited.lean`). [B, Cor 7.1.3] and [B, Prop 7.1.5] are proved from the first
-  two, Platt's GRH verification (numerical axioms `platt_odd`, `platt_even`) and the value (9.94)
-  (numerical axiom); [B, (14.28)] is proved, in a weaker form, in `MinorArcs/EBound.lean`;
+* **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2], [B, Prop 9.4.2] and
+  [B, Prop 9.5.1] (`MajorArcs/GRH.lean`, `MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated
+  *conditionally* on GRH up to a height `T₀`. From them, Platt's GRH verification (numerical axioms
+  `platt_odd`, `platt_even`) and the value (9.94) (numerical axiom), [B, Cor 7.1.3], [B, Thm 7.1.4] and
+  [B, Prop 7.1.5] are proved; [B, (14.7)] (the `ℓ²` norm over the major arcs, Lemma 10.3.1 + §14.1) is
+  proved from Thm 7.1.4 in `MajorArcs/L2Major.lean`, with one more numerical axiom
+  (`Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`); [B, (14.28)] is proved, in a weaker form, in
+  `MinorArcs/EBound.lean`;
 * **one literature result** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
   `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]).
   All the bounds on `ψ` and `θ` that [B] quotes — (2.12)–(2.15), (2.17), (2.19), (5.5) — and
@@ -70,9 +74,7 @@ The 5 `sorry`s that `ternary_goldbach` depends on are:
   downstream. (The sharp large sieves and [MV73, Lemmas 7, 8] in
   `Prelim/LargeSieveMV.lean` are also proved.)
 
-One more cited `sorry` is not (yet) on the main path: [B, Prop 9.4.2] (`MajorArcs/Thm714.lean`, conditional on
-GRH up to `T₀`), from which [B, Thm 7.1.4] (the `η₊` twisted sums needed for Ch. 10) is proved with Platt's
-verification. Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
+Of [B]'s remaining §2 statements that `ternary_goldbach` does not use,
 (2.16) and (2.18) are proved in `Prelim/LambdaMuExtra.lean` (with three more finite checks, listed
 below but not in the `#print axioms` output), (2.24) is proved for `x < 10¹⁰` (our sieve; [B] cites
 Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated: our substitute is
@@ -83,10 +85,11 @@ Helfgott's check to `10¹²`), and (2.21) (Ramaré's `0.03/log x`) is not stated
 These are finite computer computations: seven from [B] (the book describes the method but
 doesn't include the code or the output), the two computational inputs for small `N`, four finite
 checks behind [MV73, Lemmas 7, 8], eleven checks of `ψ`, `θ` and Mertens products over finite ranges, and five
-checks behind (2.22), plus Platt's GRH verification [B, §9.6] and the value [B, (9.94)] (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
+checks behind (2.22), plus Platt's GRH verification [B, §9.6], the value [B, (9.94)] and the sum
+`Σ μ²(q)/φ(q)` of [B, §14.1] (our own computations, reproducible with `scripts/mv_lemma8_check.py`,
 `scripts/psi_checks.py`, `scripts/psi_mid_check.py`, `scripts/mertens_product_check.py`,
 `scripts/moebius_K_check.py`, `scripts/moebius_sqrt_check.py`, `scripts/liouville_small_check.py`,
-`scripts/moebius_C_grid.py`). They are stated as Lean `axiom`s, so `#print axioms`
+`scripts/moebius_C_grid.py`, `scripts/check_sum_mu2_phi.py`). They are stated as Lean `axiom`s, so `#print axioms`
 lists each one by name. Most are interval-arithmetic computations.
 
 | Axiom | [B] | Statement | How [B] obtains it |
@@ -122,6 +125,7 @@ lists each one by name. Most are interval-arithmetic computations.
 | `MajorArcs.platt_odd` (`MajorArcs/GRH.lean`) | §9.6, [Plab] | GRH for `L(s, χ)` up to height `10⁸/q`, every primitive `χ` of odd conductor `q ≤ 3·10⁵` | D. Platt's rigorous (interval-arithmetic) computation |
 | `MajorArcs.platt_even` (`MajorArcs/GRH.lean`) | §9.6, [Plab] | the same for even `q ≤ 4·10⁵`, up to `max(10⁸/q, 200 + 7.5·10⁷/q)` | the same |
 | `MajorArcs.integral_etaPlus_sq_log` (`MajorArcs/Prop715.lean`) | (9.94) | `∫₀^∞ η₊²(t) log(xt) dt = (0.640206 + O*(1.95·10⁻⁶)) log x − 0.021095 + O*(5.3·10⁻⁷)` | rigorous integration (VNODE-LP) of `η◦` and the bounds (A.23), (A.24) on `η₊ − η◦` |
+| `MajorArcs.sum_odd_mu_sq_div_totient` (`MajorArcs/SumMuPhi.lean`) | §14.1 | `6.798779 ≤ ∑_{q≤150000, q odd} μ²(q)/φ(q) ≤ 6.79878` | interval arithmetic; ours: directed-rounding decimal sum (`scripts/check_sum_mu2_phi.py`; value `6.7987791731…`) |
 | `Prelim.lambda_mul_small` (`LambdaMuExtra.lean`, unused) | (2.16) range | `∑_{n≤k} Λ(n) n < 1.03884 k²/2` for `663 ≤ k ≤ 1.6·10⁶` | sieve (`scripts/psi_extra_check.py`; max ratio `1.03583` at `k = 663`) |
 | `Prelim.lambda_sqrt_small` (`LambdaMuExtra.lean`, unused) | (2.18) range | `∑_{n≤k} Λ(n)/√n < 2.0008 √k` for `1 ≤ k ≤ 2·10⁶` | same script (max ratio `1.99838`) |
 | `Prelim.lambda_sqrt_point` (`LambdaMuExtra.lean`, unused) | (2.18) | `∑_{n≤K} Λ(n)/√n − ψ(K)/√(K+1) − 1.0004√(K+1) ≤ −2`, `K = 2·10⁶` | same script (value `−3.2553`) |
@@ -209,14 +213,16 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/Prop1123b.lean` | Prop 11.2.3′: ℓ∞ bound for `S_{η_*}` off `𝔐_{8,n}(x/κ)`, fresh Dirichlet approximation at each scale `wy` | ✅ (uses trusted bounds) |
 | `MinorArcs/LinftyLevels.lean`, `PhiIntegrals.lean` | ℓ∞ bound per level, closed form `ĝ(y,n) = 1.398 max(g_y(n), h(y)) + 17(670/n)³/3`; `∫_{w₀}^∞ max(1,1/w)φ ≤ 1.398` | ✅ (uses trusted bounds) |
 | `MinorArcs/BaseGap.lean`, `BaseGap2.lean`, `EtaU.lean` | base gap `𝔐_{8,r₀}(x/κ) \ 𝔐_{8,r₀}(x)`: character expansion, `|η̂(t)| ≤ c₀√(π/2)/(2πt)²` (Fubini), non-coprime terms; `|S_{η_*}| ≤ 0.012 x/κ` there | ✅ (uses cited Cor 7.1.3, axiom (B.6)) |
-| `MinorArcs/PartIICited.lean` | cited Part II results: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], [B, (14.28)] | ❌ four cited results |
+| `MinorArcs/PartIICited.lean` | the Part II results used by the minor arcs: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], all proved in `MajorArcs/` | ✅ (uses cited 9.3.2, 9.4.2, 9.5.1) |
+| `Prelim/PlancherelReal.lean` | Plancherel for `L¹ ∩ L²` on `ℝ` (Mathlib's `L²` transform identified with the integral one via tempered distributions) | ✅ |
+| `MajorArcs/ArcsEq.lean`, `EtaCirc.lean`, `HHFourier.lean`, `EtaPlusL2.lean`, `ArcChars.lean`, `SumMuPhi.lean`, `L2Major.lean` | **[B, (14.7)] proved** (`l2_major_bounds`: `8.688x ≤ ∫_𝔐 \|S_{η₊}\|² ≤ 8.709x`): arcs as a disjoint union; `η◦` and its Fourier tail `≤ 98/(2πT)⁴`; `‖η₊ − η◦‖₂² ≤ 19.5/(2·200²)` (Fourier analysis of `h_H` in log coordinates: `h_H` is `h` with its spectrum cut at `H/2π`); `‖η₊‖₂²` from (9.94); per modulus: coprime split, Bombieri's identity, Thm 7.1.4 for the primitive characters; `Σ μ²/φ` (numerical axiom) | ✅ (cited 9.4.2, axioms Platt, (9.94), `Σ μ²/φ`) |
 | `MinorArcs/MinorTotal.lean` | (14.49) via repair 3: `S₁/S₂` split, `I₀ ≥ 8.6294x` (from (14.7) with `O*(0.0756)`; [B]: `0.0754`, an arithmetic slip, see NOTES), `T ≤ σ(x)x`, assembly `minor_total` | ✅ (uses the above) |
 | `MinorArcs/NumericsCore.lean`, `NumericsCells.lean` (generated by `scripts/gen_cells.py`), `NumericsAsymp.lean`, `NumericsFinal.lean` | the numerical inequality `Mexpr x r₂ ≤ 1.037` for all `x ≥ 4.9·10²⁶` | ✅ |
 | `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (numerical axiom)** | ✅ (one numerical axiom) |
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
 | `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 32 axioms) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 33 axioms) |
 
 ## The inputs
 
@@ -233,8 +239,9 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
 3. ~~`minor_arcs_input`~~ **proved** (`MinorArcs/MinorTotal.lean: minor_total` +
    `NumericsFinal.lean: numerics_M`): [B, (14.49)] as `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`, by a
    *repaired* Thm 13.2.1 ("repair 3", see Caveats). It depends on the trusted inputs of Theorem
-   3.1.1, the numerical axiom Prop 12.2.4, and four cited Part II results
-   (`MinorArcs/PartIICited.lean`: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], [B, (14.28)]).
+   3.1.1, the numerical axiom Prop 12.2.4, and the Part II results [B, Cor 7.1.3], [B, Prop 7.1.5],
+   [B, (14.7)] (`MinorArcs/PartIICited.lean`, all proved from the cited Props 9.3.2, 9.4.2, 9.5.1), and
+   [B, (14.28)] (proved in a weaker form).
 4. ~~`nonprime_input`~~ **proved**, a weaker form of [B, (14.51)] with constant `6.7·10⁶` in place of
    `7.3306`. Helfgott's sharp inputs (`|η₊| ≤ 1.079955`, `|η_*| ≤ 1.414`, and Rosser–Schoenfeld)
    are replaced by easy ones: `|η₊| ≤ 400`, `|η_*| ≤ 6.2`, `ψ(N) ≤ 1.387 N`,
