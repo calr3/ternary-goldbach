@@ -10,7 +10,8 @@ source:
 * For published results, against the paper.
 
 All scripts were re-run. The audit was done on 2026-11-01. Sources: [B] = Helfgott, *The ternary
-Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv number.
+Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv number. [RS62] and [MV73] are
+as in the README.
 
 ## Findings
 
@@ -64,26 +65,43 @@ Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv numbe
 
 ### Our own computations (14)
 
-Scripts are in `scripts/`; all were re-run on 2026-11-01 and reproduce the stated values.
-"float64" means double precision. In those cases the rounding error is bounded in the script's
-docstring and is orders of magnitude below the margin.
+Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
+rigorous program in `scripts/rigorous/` (see its README):
+* `rig_checks.c` encloses every real quantity in an interval of MPFR numbers, rounding the lower
+  end down and the upper end up. MPFR is correctly rounded, including `log`, `exp`, `sqrt` and `γ`.
+  Sieves, `φ`, `μ` and `λ` are exact integers.
+* `moebius_sqrt_rig.c` uses IEEE double arithmetic in round-down mode only (upper bounds via
+  negation).
 
-| Axiom | Statement | Script | Arithmetic | Result (margin) |
+A check passes only if it holds for the whole interval. All passed on 2026-11-01; the reference
+output is `scripts/rigorous/output.txt`. "Also published" lists results in the literature that
+contain the axiom.
+
+| Axiom | Statement | Float script | Rigorous re-check: worst case | Also published |
 |---|---|---|---|---|
-| `Prelim.nonprime_small` | `ψ(n) − θ(n) < 1.4262 √n`, `1 ≤ n ≤ 10¹²` | `psi_checks.py` | float64 (checked at every prime power `p^k`, `k ≥ 2`) | max `1.4261933` at `n = 361` |
-| `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `0.0141` at `n = 6` |
-| `Prelim.mertens_point` | value at `X = 10⁶` `≥ −1.5776` | `psi_checks.py` | float64 | `−1.57721` |
-| `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | float64 | min margin `2.137` at `n = 117` |
-| `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 2·10⁸` | `mertens_product_check.py` | mpmath, 40 digits, below `10⁴`; float64 above | min margin `2.44·10⁻⁷` at `x = 23`; `≥ 0.1309` above `10⁴` |
-| `Prelim.K_pieces` | piecewise sum `≤ 0.4035` | `moebius_K_check.py` | float64 | `0.403420` |
-| `Prelim.K_blocks` | block bounds `hblk j`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | float64 (block maxima `+10⁻⁷`, rounded up) | the 20 Lean constants equal the script's list |
-| `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | float64 | equality at `k = 1`; otherwise max ratio `0.6124` at `k = 2` |
-| `Prelim.liouville_small` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `1 ≤ k ≤ 10⁵` | `liouville_small_check.py` | float64 | max `0.7831` at `k = 10` |
-| `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | float64 | max `2.7422` |
-| `Prelim.MV.lemma7_numeric` | `G(r) ≥ log(r+1) + 1.07`, `6 ≤ r < 3·10⁷` | `mv_lemma8_check.py` | float64 | min margin `0.0441` at `r = 9` |
-| `Prelim.MV.GS_N0` | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | `mv_lemma8_check.py` | float64 | `1.332583` |
-| `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | float64; exact rationals at `n = 4` | min margin `1.14·10⁻⁶` at `n = 4`; second sum max `0.638` |
-| `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` | directed rounding, 40 digits (rigorous) | `6.7987791731…` |
+| `Prelim.nonprime_small` | `ψ(n) − θ(n) < 1.4262 √n`, `1 ≤ n ≤ 10¹²` | `psi_checks.py` | max ratio `1.4261933` at `n = 361` (all `80070` prime powers `p^k`, `k ≥ 2`) | [RS62, Thm 13] (all `x > 0`), as cited in [B, (5.5), (14.51)] |
+| `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | min margin `0.0140806` at `n = 6` | |
+| `Prelim.mertens_point` | value at `X = 10⁶` `≥ −1.5776` | `psi_checks.py` | `−1.5772056` | |
+| `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | min margin `2.1373` at `n = 117` | |
+| `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 2·10⁸` | `mertens_product_check.py` | min margin `2.4367·10⁻⁷` at `x = 23`; `≥ 0.13088` above `10⁴` | [RS62, Thm 15, (3.42)] at `n = ∏_{p≤x} p` (`log n = θ(x)`), as cited in [B, (C.19)] |
+| `Prelim.K_pieces` | piecewise sum `≤ 0.4035` | `moebius_K_check.py` | `0.4034195` | |
+| `Prelim.K_blocks` | block bounds `hblk j`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | all 20 blocks hold; e.g. block 19: `2.55663·10⁻⁵ ≤ 2.567·10⁻⁵` | |
+| `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | equality at `k = 1`; otherwise max ratio `0.612372` at `k = 2` | [B, (2.24)] (Helfgott, interval arithmetic, `x ≤ 10¹²`; Ramaré earlier `x ≤ 10¹⁰`) |
+| `Prelim.liouville_small` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `1 ≤ k ≤ 10⁵` | `liouville_small_check.py` | max `0.783122` at `k = 10` | |
+| `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | max `2.742169` at `i = 0` | |
+| `Prelim.MV.lemma7_numeric` | `G(r) ≥ log(r+1) + 1.07`, `6 ≤ r < 3·10⁷` | `mv_lemma8_check.py` | min margin `0.044082` at `r = 9` | |
+| `Prelim.MV.GS_N0` | `G(3·10⁷) ≥ log(3·10⁷) + 1.3325` | `mv_lemma8_check.py` | `1.3325830` | |
+| `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | min margin `1.1352·10⁻⁶` at `n = 4`; second sum max `0.638395` | first sum: [MV73, Lemma 8] for `R ≥ 100`, as cited in [B, p. 97] |
+| `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
+
+Cross-checks:
+* The rigorous values agree with the float scripts to the digits printed.
+* `moebius_sqrt_rig` also checks [B, p. 38]: the stronger bound `|m(x)| ≤ 1/(2√x)` first fails on
+  `[7727068587, 7727068588)`. It fails already at `x = 7727068587`: `μ(7727068587) = 1`, so `m` jumps
+  there, and `4 m(x)² x ∈ [1.0000156, 1.0000165]`. [B] states that the bound holds for
+  `x ≤ 7727068587`. This remark is not used anywhere.
+* `rig_checks` gives `Ψ(10⁹) = ∑_{n≤10⁹} Λ(n)/n ∈ [20.146051364519, 20.146051364606]`. So
+  `E(10⁹) = Ψ(10⁹) − log 10⁹ ≈ −0.5772144724`, close to `−γ = −0.5772156649` (Mertens).
 
 Unused (in `Prelim/LambdaMuExtra.lean`, not on the path of `ternary_goldbach`):
 * `lambda_mul_small` (`k ≤ 2.5·10⁷`): max ratio `1.03583`.
@@ -125,7 +143,11 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 ## Summary by kind
 
-* **Our own computations (14):** reproducible with the scripts in `scripts/`.
+* **Our own computations (14):** all are checked rigorously (interval arithmetic with directed
+  rounding, `scripts/rigorous/`), besides the float scripts in `scripts/`. Four are also contained in
+  published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
+  `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
+  [MV73, Lemma 8].
 * **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
   in the papers.

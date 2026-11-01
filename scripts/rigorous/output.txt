@@ -1,0 +1,84 @@
+### scripts/rigorous/rig_checks
+MPFR 4.2.1, precision 64 bits
+
+== nonprime_small: psi(n) - theta(n) < 1.4262 sqrt(n) for 1 <= n <= 10^12
+  80070 prime powers p^k (k >= 2); max (psi - theta)/sqrt(n) in [1.426193289, 1.426193289] at n = 361
+nonprime_small: OK (rigorous)
+
+== mertens_lower_small: log(n+1) - log(3/sqrt 2) <= sum_{m<=n} Lambda(m)/m, 3 <= n <= 10^6
+  min margin in [0.014080613, 0.014080613] at n = 6
+mertens_lower_small: OK (rigorous)
+
+== mertens_point: sum Lambda(m)/m - psi(X)/(X+1) - log(X+2) >= -1.5776, X = 10^6
+  value in [-1.577205625, -1.577205625]
+mertens_point: OK (rigorous)
+
+== logsq_small: sum_{n/2<p<=n} (log p)^2 <= n log(n)/2, 117 <= n <= 10^6
+  min margin in [2.137274, 2.137274] at n = 117
+logsq_small: OK (rigorous)
+
+== mertens_product_small: prod_{p<=x} p/(p-1) < e^gamma log theta(x) + 2.50637/log theta(x), primes 5 <= x <= 2*10^8
+  11078935 primes checked; min margin >= 2.4367e-07 at x = 23; for x > 10^4: >= 0.130878 at x = 199999991
+mertens_product_small: OK (rigorous)
+
+== K_blocks / K_pieces: Psi(k) = sum_{n<=k} Lambda(n)/n to 10^9, EZ = Psi(10^9) - log 10^9
+  Psi(10^9) in [20.146051364519, 20.146051364606];  EZ in [-0.577214472427, -0.577214472340]
+  block  0: max |E - EZ| <= 0.02011065   hblk = 0.02012   ok
+  block  1: max |E - EZ| <= 0.01190661   hblk = 0.01191   ok
+  block  2: max |E - EZ| <= 0.007333508   hblk = 0.007334   ok
+  block  3: max |E - EZ| <= 0.006358649   hblk = 0.006359   ok
+  block  4: max |E - EZ| <= 0.005000912   hblk = 0.005002   ok
+  block  5: max |E - EZ| <= 0.003463484   hblk = 0.003464   ok
+  block  6: max |E - EZ| <= 0.002256725   hblk = 0.002257   ok
+  block  7: max |E - EZ| <= 0.001476361   hblk = 0.001477   ok
+  block  8: max |E - EZ| <= 0.001298676   hblk = 0.001299   ok
+  block  9: max |E - EZ| <= 0.0007302422   hblk = 0.0007304   ok
+  block 10: max |E - EZ| <= 0.0006187445   hblk = 0.0006189   ok
+  block 11: max |E - EZ| <= 0.0003703275   hblk = 0.0003705   ok
+  block 12: max |E - EZ| <= 0.0002867033   hblk = 0.0002869   ok
+  block 13: max |E - EZ| <= 0.0001920899   hblk = 0.0001922   ok
+  block 14: max |E - EZ| <= 0.000131307   hblk = 0.0001315   ok
+  block 15: max |E - EZ| <= 0.0001248251   hblk = 0.000125   ok
+  block 16: max |E - EZ| <= 7.388643e-05   hblk = 0.00007399   ok
+  block 17: max |E - EZ| <= 5.291865e-05   hblk = 0.00005302   ok
+  block 18: max |E - EZ| <= 3.185739e-05   hblk = 0.00003196   ok
+  block 19: max |E - EZ| <= 2.556625e-05   hblk = 0.00002567   ok
+K_blocks: OK (rigorous)
+
+  K_pieces sum in [0.403419539, 0.403419540] (need <= 0.4035)
+K_pieces: OK (rigorous)
+
+== liouville_small: |sum_{n<=k} lambda(n)/n| log(k+1) <= 0.99, 1 <= k <= 10^5
+  max in [0.783122, 0.783122] at k = 10
+liouville_small: OK (rigorous)
+
+== C_grid: (2.8 + (i+1)/100) G(2.8 + i/100) <= 2.8, i < 7720
+  max in [2.742169, 2.742169] at i = 0
+C_grid: OK (rigorous)
+
+== lemma7_numeric: log(r+1) + 1.07 <= G(r), 6 <= r <= 29999999;  GS_N0: G(3*10^7) >= log(3*10^7) + 1.3325
+  min margin in [0.044082, 0.044082] at r = 9
+lemma7_numeric: OK (rigorous)
+
+  G(3*10^7) - log(3*10^7) in [1.332582986, 1.332582986] (G(3e7) = G(29999999): yes)
+GS_N0: OK (rigorous)
+
+== lemma8_numeric: for 2 <= n <= 10^4, log(n+1) + 0.25068 < sum g(r)(n+1)/(n+1+r) and sum g(r) r(n+1)/((n+1+r)(n+r)) <= 1
+  first: min margin in [1.1352e-06, 1.1352e-06] at n = 4;  second: max in [0.638395, 0.638395] at n = 7
+lemma8_numeric: OK (rigorous)
+
+ALL CHECKS PASSED
+
+real	4m9.308s
+user	4m8.591s
+sys	0m0.108s
+
+### scripts/rigorous/moebius_sqrt_rig
+m(10^10 - 1) in [-3.396784968367e-06, -3.396782249394e-06]
+max over 2 <= k < 10^10 of |m(k)|/sqrt(2/(k+1)) <= 0.612372 at k = 2 (k = 1: equality)
+moebius_sqrt_small: OK (rigorous)
+cross-check [B, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1): 7727068587; certainly > 1 there: yes; 4 m(k)^2 k in [1.000015637493, 1.000016485432] there
+
+real	5m27.744s
+user	5m28.954s
+sys	0m0.038s

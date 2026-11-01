@@ -207,6 +207,15 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     tables; `[2, 15]` by monotonicity (`H₂ ≥ 0.15107`), `[1, 2]` and `[15, 16]` by hand;
   * `g2`, `T2`, `H2` moved to `MinorArcs/T2Defs.lean` so that `TypeIIS1` can import the proofs.
   ternary_goldbach now depends on 26 axioms (14 our own, 7 published, 5 from [B]).
+* Rigorous re-checks of all our computation axioms (`scripts/rigorous/`):
+  * `rig_checks.c`: MPFR intervals with directed rounding;
+  * `moebius_sqrt_rig.c`: IEEE round-down mode, `10¹⁰` terms in 6 min.
+  All pass; the values agree with the float scripts. Published equivalents:
+  * `nonprime_small`: [RS62, Thm 13];
+  * `mertens_product_small`: [RS62, Thm 15] at primorials;
+  * `moebius_sqrt_small`: [B, (2.24)];
+  * `lemma8_numeric` (first sum, `R ≥ 100`): [MV73, Lemma 8].
+  Building needs only `gcc`, `gmpy2` (for the MPFR headers) and the system MPFR.
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

@@ -9,7 +9,8 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 26 explicitly stated
 axioms besides Lean's standard three. They are:
-* 14 finite computations of our own;
+* 14 finite computations of our own, each checked in rigorous interval arithmetic
+  (`scripts/rigorous/`); four of them are also contained in published results;
 * 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms);
