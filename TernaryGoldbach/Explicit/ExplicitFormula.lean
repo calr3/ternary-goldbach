@@ -337,4 +337,86 @@ theorem exists_far_point (A : Finset ℝ) (k : ℝ) :
     rw [div_lt_one this]; linarith
   exact absurd h4 (not_le.2 hlt)
 
+/-! ## Divisor bookkeeping for entire functions -/
+
+theorem divB_eq_of_mem {f : ℂ → ℂ} (hf : Differentiable ℂ f) {c c' u : ℂ} {R R' : ℝ}
+    (hu : u ∈ Metric.closedBall c R) (hu' : u ∈ Metric.closedBall c' R') :
+    divB f c R u = divB f c' R' u := by
+  rw [divB, divB, MeromorphicOn.AnalyticOnNhd.divisor_apply
+      (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ f (Metric.closedBall c R)) hu,
+    MeromorphicOn.AnalyticOnNhd.divisor_apply
+      (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ f (Metric.closedBall c' R')) hu']
+
+/-- `Σ_{u ∈ zerosIn f c R r} m_u ≤ Σᶠ divisor(closedBall c |r|)` (for `r ≤ R`). -/
+theorem sum_zerosIn_le {f : ℂ → ℂ} (hf : Differentiable ℂ f) {c : ℂ} {R r : ℝ} (hr : 0 < r)
+    (hrR : r ≤ R) :
+    ((∑ u ∈ zerosIn f c R r, (divB f c R u).toNat : ℕ) : ℝ) ≤
+      ((∑ᶠ u, MeromorphicOn.divisor f (Metric.closedBall c |r|) u : ℤ) : ℝ) := by
+  set D := MeromorphicOn.divisor f (Metric.closedBall c |r|)
+  have hfa : AnalyticOnNhd ℂ f (Metric.closedBall c |r|) := fun z _ => hf.analyticAt z
+  have hDnn : ∀ u, 0 ≤ D u := fun u => (MeromorphicOn.AnalyticOnNhd.divisor_nonneg hfa) u
+  have hfin : D.support.Finite := D.finiteSupport (isCompact_closedBall c |r|)
+  have hS : zerosIn f c R r ⊆ hfin.toFinset := by
+    intro u hu
+    obtain ⟨hur, hu0⟩ := mem_zerosIn hu
+    have hu1 : u ∈ Metric.closedBall c R := by
+      rw [Metric.mem_closedBall, dist_eq_norm]; linarith
+    have hu2 : u ∈ Metric.closedBall c |r| := by
+      rw [Metric.mem_closedBall, dist_eq_norm, abs_of_pos hr]; linarith
+    rw [Set.Finite.mem_toFinset, Function.mem_support]
+    rw [divB_eq_of_mem hf hu1 hu2] at hu0
+    exact hu0
+  rw [finsum_eq_sum_of_support_subset _ (s := hfin.toFinset) (by simp)]
+  push_cast
+  have e : ∀ u ∈ zerosIn f c R r, ((divB f c R u).toNat : ℝ) = (D u : ℝ) := by
+    intro u hu
+    obtain ⟨hur, -⟩ := mem_zerosIn hu
+    have hu1 : u ∈ Metric.closedBall c R := by
+      rw [Metric.mem_closedBall, dist_eq_norm]; linarith
+    have hu2 : u ∈ Metric.closedBall c |r| := by
+      rw [Metric.mem_closedBall, dist_eq_norm, abs_of_pos hr]; linarith
+    rw [divB_eq_of_mem hf hu1 hu2]
+    have := hDnn u
+    exact_mod_cast Int.toNat_of_nonneg this
+  rw [Finset.sum_congr rfl e]
+  exact Finset.sum_le_sum_of_subset_of_nonneg hS fun u _ _ => by exact_mod_cast hDnn u
+
+/-- **`L'/L` on a horizontal segment**: if `z` (with `|z − (2 + iT)| ≤ 5/2`) is at distance `≥ δ` from
+every zero `u` with `|u − (2 + iT)| < 5`, then
+`|L'/L(z)| ≤ (log(B_T/0.355)/log 2)/δ + 4.8 log(B_T/0.355)`. -/
+theorem norm_logDeriv_L_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) {T : ℝ} {z : ℂ} (hz : z ∈ Metric.closedBall (2 + T * I) (10 / 4)) {δ : ℝ}
+    (hδ : 0 < δ) (hfar : ∀ u ∈ zerosIn χ.LFunction (2 + T * I) 10 (10 / 2), δ ≤ ‖z - u‖)
+    (hLz : χ.LFunction z ≠ 0) :
+    ‖logDeriv χ.LFunction z‖ ≤
+      Real.log (BT N T / 0.355) / Real.log 2 / δ + 4.8 * Real.log (BT N T / 0.355) := by
+  have hf := DirichletCharacter.differentiable_LFunction hχ1
+  have h1 := logDeriv_L_near hχ hχ1 hz hLz
+  set Z := zerosIn χ.LFunction (2 + T * I) 10 (10 / 2)
+  have hsum : ‖∑ u ∈ Z, ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u)‖ ≤
+      (∑ u ∈ Z, (divB χ.LFunction (2 + T * I) 10 u).toNat : ℕ) / δ := by
+    refine (norm_sum_le _ _).trans ?_
+    push_cast
+    rw [Finset.sum_div]
+    refine Finset.sum_le_sum fun u hu => ?_
+    rw [norm_div, Complex.norm_natCast]
+    exact div_le_div_of_nonneg_left (by positivity) hδ (hfar u hu)
+  have hcnt := sum_zerosIn_le hf (c := 2 + T * I) (R := 10) (r := 10 / 2) (by norm_num) (by norm_num)
+  have h5 := zero_count_5 hχ hχ1 T
+  rw [show (10 : ℝ) / 2 = 5 by norm_num] at hcnt
+  have hcnt' : ((∑ u ∈ Z, (divB χ.LFunction (2 + T * I) 10 u).toNat : ℕ) : ℝ) ≤
+      Real.log (BT N T / 0.355) / Real.log 2 := by
+    have : Z = zerosIn χ.LFunction (2 + T * I) 10 5 := by
+      simp only [Z]; norm_num
+    rw [this]; exact hcnt.trans h5
+  calc ‖logDeriv χ.LFunction z‖
+      ≤ ‖∑ u ∈ Z, ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u)‖ +
+          ‖logDeriv χ.LFunction z - ∑ u ∈ Z, ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u)‖ := by
+        have := norm_add_le (∑ u ∈ Z, ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u))
+          (logDeriv χ.LFunction z - ∑ u ∈ Z, ((divB χ.LFunction (2 + T * I) 10 u).toNat : ℂ) / (z - u))
+        rwa [add_sub_cancel] at this
+    _ ≤ Real.log (BT N T / 0.355) / Real.log 2 / δ + 4.8 * Real.log (BT N T / 0.355) := by
+        refine add_le_add (hsum.trans ?_) h1
+        exact div_le_div_of_nonneg_right hcnt' hδ.le
+
 end TernaryGoldbach.Explicit
