@@ -211,7 +211,6 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `rig_checks.c`: MPFR intervals with directed rounding;
   * `moebius_sqrt_rig.c`: IEEE round-down mode, `10¹⁰` terms in 6 min.
   All pass; the values agree with the float scripts. Published equivalents:
-  * `nonprime_small`: [RS62, Thm 13];
   * `mertens_product_small`: [RS62, Thm 15] at primorials;
   * `moebius_sqrt_small`: [B, (2.24)];
   * `lemma8_numeric` (first sum, `R ≥ 100`): [MV73, Lemma 8].
@@ -285,6 +284,9 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     kernel covers smaller `r` (`Prelim/SmallG.lean`: a DFS over subsets of primes, lower bound only,
     23 s, 7.5 GB peak). `ramare_Gq` moved to `Prelim/RamareGq.lean`; `MinorArcs.ramare_Gq` is now a
     theorem. 26 axioms (17 own, 9 published).
+  * Item 2: `nonprime_small` was removed: analytic for `10⁶ ≤ n ≤ 10¹²` from `buthe_psi` and
+    `ψ − θ ≤ θ(√n) + θ(n^{1/3}) + θ(n^{1/4}) + n^{1/5} log n` (`nonprime_sum_le4`), kernel below
+    (`Prelim/SmallNonprime.lean`, 31 blocks, 9 s). 25 axioms (16 own, 9 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

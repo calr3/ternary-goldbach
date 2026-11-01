@@ -26,7 +26,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 
 | Check | Axiom | Range | Time |
 |---|---|---|---|
-| `nonprime` | `nonprime_small` | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
+| `nonprime` | (former axiom `nonprime_small`; now proved) | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
 | `mertens_lower` | `mertens_lower_small`, `mertens_point` | `n ≤ 10⁶` | 1 s |
 | `logsq` | `logsq_small` | `n ≤ 10⁶` | 2 s |
 | `mertens_product` | `mertens_product_small` | primes `≤ 2·10⁸` | 70 s |
