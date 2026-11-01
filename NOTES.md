@@ -242,7 +242,7 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 3. *`η₊ − η◦`* — **DONE** (`HHFourier.lean`, `integral_sq_etaPlus_sub_etaO_le`: `≤ 19.5/(2·200²)`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
    (Fubini, `sin(Hv)/(πv) = ∫_{|ξ|≤H/2π} e(ξv)dξ`); L² Fourier (`fourierL2_ae_eq`) gives `|g − g_H|₂² = ∫_{|ξ|>H/2π}|ĝ|²
    ≤ |g'|₂²/H²`; then `|η₊ − η◦|₂ ≤ sup(s^{3/2}e^{−s²/2}) |g'|₂/H` (`|g'|₂² = ∫₀² t h'(t)² dt ≈ 6.92`).
-4. *Main term* (`EtaPlusL2.lean`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);
+4. *Main term* — **DONE** (`EtaPlusL2.lean`, `integral_fourier_etaPlus_Ioo_bounds`: `[0.6392, 0.640208]` for `T ≥ 4`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);
    for `T ≥ 4`, `|η₊|₂² − tail ≤ ∫_{|δ|<T}|η̂₊|² ≤ |η₊|₂²`, `tail ≤ 2·98/(8π)⁴ + 2|η₊−η◦|₂²` (Plancherel, done).
 5. *Coprime split* (`CoprimeSplit.lean`): `|S − S'_q| ≤ B ≪ log x` (prime powers of `p ≤ 2r`), `S'_q` over `(n, q) = 1`;
    `|S|² ≤ (1+t)|S'|² + (1+1/t)B²` both ways.
