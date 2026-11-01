@@ -662,4 +662,93 @@ theorem good_height {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : 
     nlinarith
   exact ⟨⟨hne T (Or.inl rfl), hne (-T) (Or.inr rfl)⟩, hbound T (Or.inl rfl), hbound (-T) (Or.inr rfl)⟩
 
+/-! ## Part C: the two vertical lines -/
+
+/-- `h(s) = L'/L(s) G_δ(s) x^s` (the integrand of the residue theorem). -/
+noncomputable def hInt {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) : ℂ :=
+  logDeriv χ.LFunction s * (Gr s δ 0 * (x : ℂ) ^ s)
+
+theorem hInt_eq_neg_Fline {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (δ x : ℝ) (s : ℂ) :
+    hInt χ δ x s = -Fline χ δ x s := by
+  rw [hInt, Fline, logDeriv_apply]; ring
+
+/-- `C₃ = Σ Λ(n) n^{−3/2}`. -/
+noncomputable def C3 : ℝ := ∑' n : ℕ, Λ n * (n : ℝ) ^ (-(3 / 2 : ℝ))
+
+theorem summable_C3 : Summable fun n : ℕ => Λ n * (n : ℝ) ^ (-(3 / 2 : ℝ)) := by
+  have hΛ := ArithmeticFunction.LSeriesSummable_vonMangoldt (s := ((3 / 2 : ℝ) : ℂ)) (by norm_num)
+  refine hΛ.norm.congr fun n => ?_
+  rw [LSeries.norm_term_eq]
+  split_ifs with h0
+  · simp [h0]
+  · rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg,
+      Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
+    simp
+
+/-- `|L'/L(3/2 + iy)| ≤ C₃`. -/
+theorem norm_logDeriv_L_right {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ) :
+    ‖logDeriv χ.LFunction (((3 / 2 : ℝ) : ℂ) + y * I)‖ ≤ C3 := by
+  set s : ℂ := ((3 / 2 : ℝ) : ℂ) + y * I with hs
+  have hs1 : 1 < s.re := by simp [hs]; norm_num
+  have hL := DirichletCharacter.LSeries_twist_vonMangoldt_eq χ hs1
+  rw [← DirichletCharacter.LFunction_eq_LSeries χ hs1,
+    ← DirichletCharacter.deriv_LFunction_eq_deriv_LSeries χ hs1] at hL
+  have e : logDeriv χ.LFunction s = -LSeries ((fun n : ℕ => χ n) * fun n : ℕ => (Λ n : ℂ)) s := by
+    rw [hL, logDeriv_apply]; ring
+  rw [e, norm_neg]
+  have hsum := DirichletCharacter.LSeriesSummable_twist_vonMangoldt χ hs1
+  refine (norm_tsum_le_tsum_norm hsum.norm).trans ?_
+  refine hsum.norm.tsum_le_tsum (fun n => ?_) summable_C3
+  rw [LSeries.norm_term_eq]
+  split_ifs with h0
+  · simp [h0]
+  · have hsre : s.re = 3 / 2 := by simp [hs]
+    rw [hsre, Pi.mul_apply, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg, Real.rpow_neg (Nat.cast_nonneg n),
+      div_eq_mul_inv]
+    have := DirichletCharacter.norm_le_one χ n
+    have hp : 0 ≤ ((n : ℝ) ^ (3 / 2 : ℝ))⁻¹ := by positivity
+    have hΛ := ArithmeticFunction.vonMangoldt_nonneg (n := n)
+    calc ‖χ n‖ * Λ n * ((n : ℝ) ^ (3 / 2 : ℝ))⁻¹ ≤ 1 * Λ n * ((n : ℝ) ^ (3 / 2 : ℝ))⁻¹ := by gcongr
+      _ = Λ n * ((n : ℝ) ^ (3 / 2 : ℝ))⁻¹ := by ring
+
+theorem norm_cpow_x {x : ℝ} (hx : 0 < x) (s : ℂ) : ‖(x : ℂ) ^ s‖ = x ^ s.re :=
+  Complex.norm_cpow_eq_rpow_re_of_pos hx s
+
+theorem continuous_logDeriv_L_line {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ1 : χ ≠ 1)
+    (σ : ℝ) (hne : ∀ y : ℝ, χ.LFunction ((σ : ℂ) + y * I) ≠ 0) :
+    Continuous fun y : ℝ => logDeriv χ.LFunction ((σ : ℂ) + y * I) := by
+  have hf := DirichletCharacter.differentiable_LFunction hχ1
+  have hd : Continuous (deriv χ.LFunction) :=
+    continuous_iff_continuousAt.2 fun z => (hf.analyticAt z).deriv.continuousAt
+  have e : (fun y : ℝ => logDeriv χ.LFunction ((σ : ℂ) + y * I)) =
+      fun y : ℝ => deriv χ.LFunction ((σ : ℂ) + y * I) / χ.LFunction ((σ : ℂ) + y * I) := by
+    ext y; rw [logDeriv_apply]
+  rw [e]
+  exact (hd.comp (by fun_prop)).div (hf.continuous.comp (by fun_prop)) hne
+
+/-- `h` is integrable on `ℜs = 3/2`. -/
+theorem integrable_hInt_right {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ1 : χ ≠ 1)
+    (δ : ℝ) {x : ℝ} (hx : 0 < x) :
+    Integrable fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
+  have hGi := integrable_G_line δ (3 / 2) (by norm_num) le_rfl
+  have hc : Continuous fun y : ℝ => hInt χ δ x (((3 / 2 : ℝ) : ℂ) + y * I) := by
+    unfold hInt
+    refine (continuous_logDeriv_L_line hχ1 (3 / 2) fun y =>
+      DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by simp; norm_num)).mul
+      ((continuous_G_line δ (3 / 2) (by norm_num)).mul ?_)
+    exact continuous_iff_continuousAt.2 fun y =>
+      (continuousAt_const_cpow (Complex.ofReal_ne_zero.2 hx.ne')).comp (by fun_prop)
+  refine (hGi.norm.const_mul (C3 * x ^ (3 / 2 : ℝ))).mono' hc.aestronglyMeasurable
+    (Eventually.of_forall fun y => ?_)
+  rw [hInt, norm_mul, norm_mul, norm_cpow_x hx]
+  have h1 := norm_logDeriv_L_right χ y
+  have hre : (((3 / 2 : ℝ) : ℂ) + y * I).re = 3 / 2 := by simp
+  rw [hre]
+  have hx0 : 0 ≤ x ^ (3 / 2 : ℝ) := by positivity
+  calc ‖logDeriv χ.LFunction (((3 / 2 : ℝ) : ℂ) + y * I)‖ *
+        (‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (3 / 2 : ℝ))
+      ≤ C3 * (‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ * x ^ (3 / 2 : ℝ)) := by gcongr
+    _ = C3 * x ^ (3 / 2 : ℝ) * ‖Gr (((3 / 2 : ℝ) : ℂ) + y * I) δ 0‖ := by ring
+
 end TernaryGoldbach.Explicit
