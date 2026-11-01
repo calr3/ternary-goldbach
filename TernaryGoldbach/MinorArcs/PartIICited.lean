@@ -16,8 +16,10 @@ erratum"). We state them as [B] does.
 * **`prop_7_1_5`** — [B, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)`. **Proved** (`MajorArcs/Prop715.lean`) from
   the cited [B, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, conditional on RH up to `T₀`), Platt's verification
   at `q = 1` (`T₀ = 440`) and the numerical axiom `integral_etaPlus_sq_log` ([B, (9.94)]).
-* **`l2_major_14_7`** — [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0754)) x`
-  for `x ≥ 4.9·10²⁶` (from Lemma 10.3.1 and the computations of §14.1).
+* **`l2_major_14_7`** — [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x`
+  for `x ≥ 4.9·10²⁶` (from Lemma 10.3.1 and the computations of §14.1). [B] writes `0.0754`, but its
+  term `5.19 δ₀ r ET (|η₊|₁ + ET/2)` evaluates to `0.075456` with (14.1), (14.3) ([B] prints `0.075272`),
+  so the error supported by [B]'s argument is `0.07553 ≤ 0.0756`.
 -/
 
 open Real Set MeasureTheory FourierTransform
@@ -49,10 +51,10 @@ theorem prop_7_1_5 {x : ℝ} (hx : 1e12 ≤ x) :
   MajorArcs.prop_7_1_5' hx
 
 /-- **[B, (14.7)]** — *cited*. For `x ≥ 4.9·10²⁶`,
-`∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0754)) x` (`𝔐` read in `ℝ/ℤ`, i.e. over
+`∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` (`𝔐` read in `ℝ/ℤ`, i.e. over
 `(0, 1]`). -/
 theorem l2_major_14_7 {x : ℝ} (hx : 4.9e26 ≤ x) :
-    |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7052 * x| ≤ 0.0754 * x := by
+    |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7052 * x| ≤ 0.0756 * x := by
   sorry
 
 end TernaryGoldbach.MinorArcs

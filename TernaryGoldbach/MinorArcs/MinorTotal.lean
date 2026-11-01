@@ -76,7 +76,7 @@ noncomputable def cL (n : ℕ) : ℝ := Real.log (2 * ((n : ℝ) + 1)) + 1.36
 
 /-- The bound for `Z₁/(x · x/κ)` produced by `thm_13_2_1_repaired`. -/
 noncomputable def Mexpr (x : ℝ) (r₂ : ℕ) : ℝ :=
-  ghatY (x / κ) 150000 * (cL 150000 * sig x / Dx x - 8.6296) +
+  ghatY (x / κ) 150000 * (cL 150000 * sig x / Dx x - 8.6294) +
     ∑ n ∈ Finset.Ioo 150000 r₂, ghatY (x / κ) n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) +
     ghatY (x / κ) r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x)
 
@@ -270,15 +270,15 @@ theorem integrableOn_Ioc_of_continuous {f : ℝ → ℝ} (hf : Continuous f) (A 
     (hA : A ⊆ Ioc 0 1) : IntegrableOn f A :=
   (hf.integrableOn_Icc (a := 0) (b := 1)).mono_set (hA.trans Ioc_subset_Icc_self)
 
-/-- `I₀ = ∫_{(0,1] ∩ 𝔐_{8,r₀}(x)} |S₁|² ≥ 8.6296 x`. -/
+/-- `I₀ = ∫_{(0,1] ∩ 𝔐_{8,r₀}(x)} |S₁|² ≥ 8.6294 x`. -/
 theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
-    8.6296 * x ≤ ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖expTsum (a₁ x) α‖ ^ 2 := by
+    8.6294 * x ≤ ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖expTsum (a₁ x) α‖ ^ 2 := by
   have hx0 : 0 < x := by linarith
   set B := Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x
   have hB : MeasurableSet B := measurableSet_Ioc.inter (Helfgott.measurableSet_majorArcs _ _ _)
   have hBsub : B ⊆ Ioc 0 1 := inter_subset_left
   have hJ := l2_major_14_7 hx
-  have hJ' : 8.6298 * x ≤ ∫ α in B, ‖S etaPlus x α‖ ^ 2 := by
+  have hJ' : 8.6296 * x ≤ ∫ α in B, ‖S etaPlus x α‖ ^ 2 := by
     have := (abs_le.1 hJ).1; linarith
   set t : ℝ := 1e-5
   have ht : 0 < t := by norm_num
@@ -305,9 +305,9 @@ theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
   have h3 : 0 ≤ ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 := setIntegral_nonneg hB fun α _ => by positivity
   have : (1 + 1 / t) * ∫ α in B, ‖expTsum (a₂ x) α‖ ^ 2 ≤ (1 + 1 / t) * (8e-11 * x) :=
     mul_le_mul_of_nonneg_left h2 (by positivity)
-  have h4 : 8.6298 * x - (1 + 1 / t) * (8e-11 * x) ≤
+  have h4 : 8.6296 * x - (1 + 1 / t) * (8e-11 * x) ≤
       (1 + t) * ∫ α in B, ‖expTsum (a₁ x) α‖ ^ 2 := by linarith
-  have h5 : 8.6296 * x * (1 + t) ≤ 8.6298 * x - (1 + 1 / t) * (8e-11 * x) := by
+  have h5 : 8.6294 * x * (1 + t) ≤ 8.6296 * x - (1 + 1 / t) * (8e-11 * x) := by
     simp only [t]; nlinarith
   have := le_trans h5 h4
   rw [mul_comm (1 + t)] at this
@@ -436,13 +436,13 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     linarith
   -- base term
   have hbase : g 150000 * (Hl2y x T r₂ 150000 - ∫ α in Ioc 0 1 ∩ majorArcs 8 ((150000 : ℕ) : ℝ) x,
-      ‖expTsum (a₁ x) α‖ ^ 2) ≤ y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296)) := by
+      ‖expTsum (a₁ x) α‖ ^ 2) ≤ y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294)) := by
     rw [hHl 150000 h150]
     have h1 : cL 150000 / Dx x * T ≤ cL 150000 / Dx x * (sig x * x) :=
       mul_le_mul_of_nonneg_left hT (div_nonneg (hcL _) hD.le)
     have h2 : cL 150000 / Dx x * T - ∫ α in Ioc 0 1 ∩ majorArcs 8 ((150000 : ℕ) : ℝ) x,
-        ‖expTsum (a₁ x) α‖ ^ 2 ≤ x * (cL 150000 * sig x / Dx x - 8.6296) := by
-      have e : x * (cL 150000 * sig x / Dx x - 8.6296) = cL 150000 / Dx x * (sig x * x) - 8.6296 * x := by
+        ‖expTsum (a₁ x) α‖ ^ 2 ≤ x * (cL 150000 * sig x / Dx x - 8.6294) := by
+      have e : x * (cL 150000 * sig x / Dx x - 8.6294) = cL 150000 / Dx x * (sig x * x) - 8.6294 * x := by
         field_simp
       rw [e]; push_cast at hI ⊢; linarith
     have := mul_le_mul_of_nonneg_left h2 (hgnn 150000 le_rfl)
@@ -499,10 +499,10 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     refine key.trans ?_
     unfold Mexpr
     rw [← hy_def]
-    have : y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296) +
+    have : y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294) +
         ∑ n ∈ Finset.Ioo 150000 r₂, ghatY y n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) +
         ghatY y r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x)) =
-        y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296)) +
+        y * x * (ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294)) +
         y * x * (∑ n ∈ Finset.Ioo 150000 r₂, ghatY y n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) +
         ghatY y r₂ * (sig x - cL (r₂ - 1) * sig x / Dx x)) := by ring
     push_cast at hbase hsum ⊢

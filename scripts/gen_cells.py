@@ -153,8 +153,8 @@ def cell(k, Y, Ylit, Y2, Y2lit, rho):
     a = Fr('0.640208000017'); b = Fr('0.021095')
     sD = up((a * L0 - b) / (L0 / 2 - Fr('1.3066')), 7)
     tau = up((a * L1 - b) * (1 - clt / (L1 / 2 - Fr('1.3064'))), 7)
-    assert Fr('8.6296') <= cl0 * sD and tau >= 0
-    total = G0 * (cl0 * sD - Fr('8.6296')) + sD * sum(Gs[i] * ells[i] for i in range(kk)) + Gt * tau
+    assert Fr('8.6294') <= cl0 * sD and tau >= 0
+    total = G0 * (cl0 * sD - Fr('8.6294')) + sD * sum(Gs[i] * ells[i] for i in range(kk)) + Gt * tau
     assert total <= Fr('1.037'), (k, float(total))
     print(f"-- cell {k}: total {float(total):.5f}", file=sys.stderr)
     plist = "[" + ", ".join(str(p) for p in pts) + "]"

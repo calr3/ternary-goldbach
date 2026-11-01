@@ -484,13 +484,13 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
     norm_num at this ⊢; linarith
   have hcl00 : 0 ≤ cL 150000 := by
     unfold cL; exact add_nonneg (Real.log_nonneg (by push_cast; norm_num)) (by norm_num)
-  have hbase : ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296) ≤
-      0.0506141 * (13.97155 * sD' - 8.6296) := by
+  have hbase : ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294) ≤
+      0.0506141 * (13.97155 * sD' - 8.6294) := by
     have h1 : cL 150000 * sig x / Dx x ≤ 13.97155 * sD' := by
       rw [mul_div_assoc]; exact mul_le_mul hcl0 hsD' hsD0 (by norm_num)
-    have h2 : (0:ℝ) ≤ 13.97155 * sD' - 8.6296 := by norm_num
-    calc ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296)
-        ≤ ghatY y 150000 * (13.97155 * sD' - 8.6296) := mul_le_mul_of_nonneg_left (by linarith) hgb0
+    have h2 : (0:ℝ) ≤ 13.97155 * sD' - 8.6294 := by norm_num
+    calc ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294)
+        ≤ ghatY y 150000 * (13.97155 * sD' - 8.6294) := mul_le_mul_of_nonneg_left (by linarith) hgb0
       _ ≤ _ := mul_le_mul_of_nonneg_right (by exact_mod_cast hgb) h2
   -- the middle sum
   set Ξ := 3.8 * y ^ (-1 / 6 : ℝ) + hfun y with hΞ
@@ -602,7 +602,7 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
       _ ≤ 2.2e-4 := by norm_num
   unfold Mexpr
   rw [← hy_def]
-  have : 0.0506141 * (13.97155 * sD' - 8.6296) +
+  have : 0.0506141 * (13.97155 * sD' - 8.6294) +
       sD' * (0.163876100375765093 + (8.4e-4 + 1.398 * 1e-10)) + 2.2e-4 ≤ 1.037 := by norm_num
   linarith
 

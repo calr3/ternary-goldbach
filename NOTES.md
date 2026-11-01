@@ -554,6 +554,13 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
   In the proof of 4.2.1/4.2.2, `Q = ⌊x/|δq|⌋` is too small by rounding for `c₂x/q ≤ Q/2`
   (we use the unrounded `Q`). Lean's `C/0 = 0` makes `min(A, C/sin²)` vanish where `sin = 0`,
   so Lemma 4.1.1 is also proved with the honest summand (`lemma_4_1_1'`, `minA`).
+* Part II/III errata (2026-11-01): (9.70)'s second line has `x^{1/2}` for `x^{-1/2}`. In §14.1 the term
+  `5.19 δ₀ r ET_{η₊,δ₀r/2} (|η₊|₁ + ET/2)` is printed as `≤ 0.075272`, but with [B]'s own (14.1)
+  (`ET ≤ 1.1405·10⁻⁸`) and (14.3) (`|η₊|₁ ≤ 1.062319`) it is `0.075456`; so (14.7) holds with `O*(0.0756)`, not
+  `O*(0.0754)`. We state `l2_major_14_7` with `0.0756`; MinorTotal then uses `∫_𝔐 |S_{η₊}|² ≥ 8.6296x` and
+  `I₀ ≥ 8.6294x` (the numerics `Mexpr ≤ 1.037` keep a margin `0.34` in the asymptotic range, cells unchanged).
+  The rest of §9.6 checks out (`2.48404·10⁻¹⁹ ≤ 2.485·10⁻¹⁹`; Thm 7.1.4's `q = 1` constants hold with
+  `4.7712·10⁻¹¹`, `251385`).
   **(4.40) is inconsistent with its proof**: the statement has `x/q`, `η̂(-δ)` (so
   `min(1, c₀/(2πδ)²)`) and `(m,q) = 1`, the values for the all-`n` version; the proof (p. 67) gives
   `x/2q`, `η̂(-δ/2)` (so `min(1, c₀/(πδ)²)`) and `(m,2q) = 1`, as in (4.30). `bound_4_40` is the

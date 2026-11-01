@@ -282,8 +282,8 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
     {sD' τ' : ℝ}
     (hsD' : (0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - 1.3066) ≤ sD')
     (hτ' : (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - 1.3064)) ≤ τ')
-    (hb : 8.6296 ≤ cl0 * sD') (hτ0 : 0 ≤ τ')
-    (hfin : G0 * (cl0 * sD' - 8.6296) + sD' * ∑ i ∈ Finset.range k, G i * ℓ i + Gt * τ' ≤ 1.037) :
+    (hb : 8.6294 ≤ cl0 * sD') (hτ0 : 0 ≤ τ')
+    (hfin : G0 * (cl0 * sD' - 8.6294) + sD' * ∑ i ∈ Finset.range k, G i * ℓ i + Gt * τ' ≤ 1.037) :
     Mexpr x r₂ ≤ 1.037 := by
   obtain ⟨h14a, h14b⟩ := log14_bounds
   have hcE : cE = 1.33258 := rfl
@@ -376,17 +376,17 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
     linarith
   have hgb := (ghatY_mono_y hY hYx hy670 hr0Y).trans hG0
   have hgb0 := ghatY_nonneg (y := y) (n := 150000) (by linarith) (by norm_num)
-  have hbase : ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296) ≤ G0 * (cl0 * sD - 8.6296) := by
+  have hbase : ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294) ≤ G0 * (cl0 * sD - 8.6294) := by
     have h1 : cL 150000 * sig x / Dx x ≤ cl0 * sD := by
       have hc0 : 0 ≤ cL 150000 := by
         unfold cL
         exact add_nonneg (Real.log_nonneg (by push_cast; norm_num)) (by norm_num)
       rw [mul_div_assoc]
       exact mul_le_mul hcl0 hsD hsD0 (hc0.trans hcl0)
-    have h2 : 0 ≤ cl0 * sD - 8.6296 := by linarith
-    calc ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6296)
-        ≤ ghatY y 150000 * (cl0 * sD - 8.6296) := mul_le_mul_of_nonneg_left (by linarith) hgb0
-      _ ≤ G0 * (cl0 * sD - 8.6296) := mul_le_mul_of_nonneg_right hgb h2
+    have h2 : 0 ≤ cl0 * sD - 8.6294 := by linarith
+    calc ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294)
+        ≤ ghatY y 150000 * (cl0 * sD - 8.6294) := mul_le_mul_of_nonneg_left (by linarith) hgb0
+      _ ≤ G0 * (cl0 * sD - 8.6294) := mul_le_mul_of_nonneg_right hgb h2
   have hr2_670 : (670 : ℝ) ≤ r₂ := by exact_mod_cast (by omega : 670 ≤ r₂)
   have hgt := (ghatY_mono_y hY hYx hr2_670 hr2Y).trans hGt
   have hgt0 := ghatY_nonneg (y := y) (n := r₂) (by linarith) (by linarith)
