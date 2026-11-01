@@ -171,4 +171,81 @@ theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb 
   rw [e, norm_neg]
   exact (norm_add_le _ _).trans (add_le_add h1 h2)
 
+/-! ## `ψ` bounds from a general error term -/
+
+theorem psi_upper_of_err {δ K y0 x E : ℝ} (hδ : 0 < δ) (hK : 0 ≤ K) (hK1 : 2 * Real.exp (-(K ^ 2 / 2)) < 1)
+    (hy0 : 0 < y0) (hx : 1 ≤ x) (hYx : y0 * Real.exp (K * δ) ≤ x)
+    (hE : |∑' n : ℕ, Λ n * gsm (K * δ) (Real.log (y0 / x)) δ (n / x) -
+      Real.exp (δ ^ 2 / 2) * (Real.exp (K * δ) - Real.exp (Real.log (y0 / x))) * x| ≤ E) :
+    psiR x ≤ 4 * (y0 * Real.exp (K * δ)) +
+      (Real.exp (δ ^ 2 / 2 + K * δ) * x + E) / (1 - 2 * Real.exp (-(K ^ 2 / 2))) := by
+  have hx0 : 0 < x := by linarith
+  have hb : Real.log (y0 / x) ≤ 0 := Real.log_nonpos (by positivity) ((div_le_one hx0).2
+    (le_trans (le_mul_of_one_le_right hy0.le (Real.one_le_exp (by positivity))) hYx))
+  have hab : Real.log (y0 / x) ≤ K * δ := hb.trans (by positivity)
+  have hS := sandwich_upper hδ hK hy0 hx0 hYx (summable_gsm hδ hab hx0)
+  have hc : 0 < 1 - 2 * Real.exp (-(K ^ 2 / 2)) := by linarith
+  have hmain : Real.exp (δ ^ 2 / 2) * (Real.exp (K * δ) - Real.exp (Real.log (y0 / x))) * x ≤
+      Real.exp (δ ^ 2 / 2 + K * δ) * x := by
+    rw [Real.exp_add]
+    have hp : 0 < Real.exp (δ ^ 2 / 2) * Real.exp (Real.log (y0 / x)) * x :=
+      mul_pos (mul_pos (Real.exp_pos _) (Real.exp_pos _)) hx0
+    have e : Real.exp (δ ^ 2 / 2) * (Real.exp (K * δ) - Real.exp (Real.log (y0 / x))) * x =
+        Real.exp (δ ^ 2 / 2) * Real.exp (K * δ) * x - Real.exp (δ ^ 2 / 2) * Real.exp (Real.log (y0 / x)) * x := by
+      ring
+    rw [e]; linarith
+  have hsum : ∑' n : ℕ, Λ n * gsm (K * δ) (Real.log (y0 / x)) δ (n / x) ≤
+      Real.exp (δ ^ 2 / 2 + K * δ) * x + E := by
+    have := (abs_le.1 hE).2; linarith
+  have hY := psiR_le (y := y0 * Real.exp (K * δ)) (by positivity)
+  have h1 : psiR x - psiR (y0 * Real.exp (K * δ)) ≤
+      (Real.exp (δ ^ 2 / 2 + K * δ) * x + E) / (1 - 2 * Real.exp (-(K ^ 2 / 2))) := by
+    rw [le_div_iff₀ hc]; nlinarith
+  linarith
+
+theorem psi_lower_of_err {δ K y0 x E : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1) (hKδ : δ ≤ K) (hy0 : 0 < y0)
+    (hx : 1 ≤ x) (hb : Real.log (y0 / x) ≤ -(K * δ))
+    (hE : |∑' n : ℕ, Λ n * gsm (-(K * δ)) (Real.log (y0 / x)) δ (n / x) -
+      Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) - Real.exp (Real.log (y0 / x))) * x| ≤ E) :
+    Real.exp (-(K * δ)) * x - 2 * y0 - E - 4 * x * Real.exp (-(K ^ 2 / 2)) ≤ psiR x := by
+  have hx0 : 0 < x := by linarith
+  have hS := sandwich_lower hδ hKδ hx0 hb
+  have he : Real.exp (Real.log (y0 / x)) = y0 / x := Real.exp_log (by positivity)
+  rw [he] at hE
+  have hd : Real.exp (δ ^ 2 / 2) ≤ 2 := by
+    have : Real.exp (δ ^ 2 / 2) ≤ Real.exp (1 / 2) := Real.exp_le_exp.2 (by nlinarith)
+    have h2 : Real.exp (1 / 2) ≤ 2 := by
+      have := Real.exp_one_lt_d9
+      have : Real.exp (1 / 2) ^ 2 = Real.exp 1 := by rw [← Real.exp_nat_mul]; norm_num
+      nlinarith [Real.exp_pos (1 / 2)]
+    linarith
+  have hd1 : 1 ≤ Real.exp (δ ^ 2 / 2) := Real.one_le_exp (by positivity)
+  have hmain : Real.exp (-(K * δ)) * x - 2 * y0 ≤
+      Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) - y0 / x) * x := by
+    have e : Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) - y0 / x) * x =
+        Real.exp (δ ^ 2 / 2) * Real.exp (-(K * δ)) * x - Real.exp (δ ^ 2 / 2) * y0 := by
+      field_simp
+    rw [e]
+    have hq : 0 ≤ Real.exp (-(K * δ)) * x := (mul_pos (Real.exp_pos _) hx0).le
+    have h1 : 1 * (Real.exp (-(K * δ)) * x) ≤ Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) * x) :=
+      mul_le_mul_of_nonneg_right hd1 hq
+    have h2 : Real.exp (δ ^ 2 / 2) * y0 ≤ 2 * y0 := mul_le_mul_of_nonneg_right hd hy0.le
+    have e2 : Real.exp (δ ^ 2 / 2) * (Real.exp (-(K * δ)) * x) = Real.exp (δ ^ 2 / 2) * Real.exp (-(K * δ)) * x := by ring
+    rw [e2, one_mul] at h1
+    linarith
+  have := (abs_le.1 hE).1
+  linarith
+
+/-- The tsum version of `SsumG_gsm_err_zf`. -/
+theorem tsum_gsm_le_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
+    |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤
+      √x * LineB a δ + x * MidB a δ Γ x + x * TailBG a δ Γ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
+  have h := SsumG_gsm_err_zf hδ hab hb hx hΓ
+  rw [SsumG_one_ofReal, Mg_one] at h
+  rw [show ((∑' n : ℕ, Λ n * gsm a b δ (n / x) : ℝ) : ℂ) -
+      ((Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) : ℝ) : ℂ) * (x : ℂ) =
+      ((∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x : ℝ) : ℂ) by
+      push_cast; ring, Complex.norm_real, Real.norm_eq_abs] at h
+  exact h
+
 end TernaryGoldbach.Explicit
