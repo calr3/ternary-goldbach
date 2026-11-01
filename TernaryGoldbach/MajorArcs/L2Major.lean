@@ -8,7 +8,7 @@ import TernaryGoldbach.MajorArcs.SumMuPhi
 pointwise square is split as `|u + v|² = (1 ± t)|u|² + O((1 + 1/t)|v|²)` with `t = 10⁻⁴`). Per modulus
 `q` (`ArcChars.lean`): coprime split, Bombieri's identity, [B, Thm 7.1.4]; the main term
 `μ²(q)/φ(q) · x ∫_{|δ| < T_q} |η̂₊(δ)|² dδ` with `T_q = 1.2·10⁶/q̃ ≥ 4` (`EtaPlusL2.lean`); then
-`Σ_q μ²(q)/φ(q) = 2 · 6.798779…` (`SumMuPhi.lean`). Result: `8.688 x ≤ ∫ ≤ 8.709 x`.
+`Σ_q μ²(q)/φ(q) = 2 · 6.798779…` (`SumMuPhi.lean`). Result: `8.675 x ≤ ∫ ≤ 8.786 x`.
 -/
 
 open Real MeasureTheory FourierTransform Set Finset
@@ -94,12 +94,12 @@ theorem continuous_norm_sq_S {x : ℝ} (hx : 0 < x) : Continuous fun y => ‖S e
 
 set_option maxHeartbeats 4000000 in
 /-- **The arcs of modulus `q`** (`q ∈ Qset r₀`, `x ≥ 4.9·10²⁶`):
-`Σ_b ∫_{J_{q,b}} |S_{η₊}|² = μ²(q)/φ(q) · (0.6392…0.64034) x + O(1.57·10⁻⁶ μ²(q)/φ(q) x + 4.3·10⁻⁹ x)`. -/
+`Σ_b ∫_{J_{q,b}} |S_{η₊}|² = μ²(q)/φ(q) · (0.6392…0.64034) x + O(9.62·10⁻⁴ μ²(q)/φ(q) x + 2.17·10⁻⁷ x)`. -/
 theorem Jq_bounds {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
-    0.63907 * mPhi q * x - 1.57e-6 * mPhi q * x - 3.6e-9 * x ≤
+    0.63907 * mPhi q * x - 9.62e-4 * mPhi q * x - 3.6e-9 * x ≤
         ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 ∧
       ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 ≤
-        0.64034 * mPhi q * x + 1.57e-6 * mPhi q * x + 4.3e-9 * x := by
+        0.64034 * mPhi q * x + 9.62e-4 * mPhi q * x + 2.17e-7 * x := by
   have hx0 : 0 < x := by linarith
   have hr₀ : r₀ = 150000 := rfl
   obtain ⟨hqI, hqt⟩ := Finset.mem_filter.1 hq
@@ -141,8 +141,8 @@ theorem Jq_bounds {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀)
   set t : ℝ := 1e-4 with ht
   have ht0 : (0 : ℝ) < t := by norm_num
   set Cb := (1e-15 * x) ^ 2
-  set Cp := (1.141e-8 * x) ^ 2
-  set Cn := (2.41e-8 * x) ^ 2
+  set Cp := (2.83e-7 * x) ^ 2
+  set Cn := (4.25e-7 * x) ^ 2
   have hCb : 0 ≤ Cb := sq_nonneg _
   have hCp : 0 ≤ Cp := sq_nonneg _
   have hCn : 0 ≤ Cn := sq_nonneg _
@@ -250,9 +250,9 @@ theorem Jq_bounds {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀)
   have hmx : 0 ≤ m * x := by positivity
   have hxM : 0.6392 * x ≤ x * M := by nlinarith
   have hxM' : x * M ≤ 0.640208 * x := by nlinarith
-  have hCpx : (1200000 / x) * Cp = 1.5622572e-10 * x := by
+  have hCpx : (1200000 / x) * Cp = 9.61068e-8 * x := by
     simp only [Cp]; field_simp; ring
-  have hCnx : (1200000 / x) * Cn = 6.969720e-10 * x := by
+  have hCnx : (1200000 / x) * Cn = 2.1675e-7 * x := by
     simp only [Cn]; field_simp; ring
   have hCbx : (1200000 / x) * Cb = 1.2e-24 * x := by
     simp only [Cb]; field_simp; ring
@@ -302,10 +302,10 @@ theorem card_Qset_le : ((Qset r₀).card : ℝ) ≤ 300000 := by
   exact_mod_cast (by omega : (Qset r₀).card ≤ 300000)
 
 /-- **[B, (14.7)], proved**: for `x ≥ 4.9·10²⁶`,
-`8.6296 x ≤ ∫_{(0,1] ∩ 𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα ≤ 8.7808 x` (in fact `8.688 x … 8.709 x`). -/
+`8.6296 x ≤ ∫_{(0,1] ∩ 𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα ≤ 8.79 x` (in fact `8.675 x … 8.786 x`). -/
 theorem l2_major_bounds {x : ℝ} (hx : 4.9e26 ≤ x) :
     8.6296 * x ≤ ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2 ∧
-      ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2 ≤ 8.7808 * x := by
+      ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2 ≤ 8.79 * x := by
   have hx0 : 0 < x := by linarith
   have hr₀ : r₀ = 150000 := rfl
   set g : ℝ → ℝ := fun α => ‖S etaPlus x α‖ ^ 2 with hg
@@ -319,16 +319,16 @@ theorem l2_major_bounds {x : ℝ} (hx : 4.9e26 ≤ x) :
     (by rw [hr₀]; norm_num) (by rw [hr₀]; linarith) (by rw [hr₀]; linarith)
   have hlo := Finset.sum_le_sum fun q (hq : q ∈ Qset r₀) => (Jq_bounds hx hq).1
   have hhi := Finset.sum_le_sum fun q (hq : q ∈ Qset r₀) => (Jq_bounds hx hq).2
-  have e1 : ∑ q ∈ Qset r₀, (0.63907 * mPhi q * x - 1.57e-6 * mPhi q * x - 3.6e-9 * x) =
-      (0.63907 - 1.57e-6) * x * (∑ q ∈ Qset r₀, mPhi q) - 3.6e-9 * x * (Qset r₀).card := by
-    have : ∀ q, 0.63907 * mPhi q * x - 1.57e-6 * mPhi q * x - 3.6e-9 * x =
-        ((0.63907 - 1.57e-6) * x) * mPhi q - 3.6e-9 * x := fun q => by ring
+  have e1 : ∑ q ∈ Qset r₀, (0.63907 * mPhi q * x - 9.62e-4 * mPhi q * x - 3.6e-9 * x) =
+      (0.63907 - 9.62e-4) * x * (∑ q ∈ Qset r₀, mPhi q) - 3.6e-9 * x * (Qset r₀).card := by
+    have : ∀ q, 0.63907 * mPhi q * x - 9.62e-4 * mPhi q * x - 3.6e-9 * x =
+        ((0.63907 - 9.62e-4) * x) * mPhi q - 3.6e-9 * x := fun q => by ring
     simp_rw [this]
     rw [Finset.sum_sub_distrib, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul]; ring
-  have e2 : ∑ q ∈ Qset r₀, (0.64034 * mPhi q * x + 1.57e-6 * mPhi q * x + 4.3e-9 * x) =
-      (0.64034 + 1.57e-6) * x * (∑ q ∈ Qset r₀, mPhi q) + 4.3e-9 * x * (Qset r₀).card := by
-    have : ∀ q, 0.64034 * mPhi q * x + 1.57e-6 * mPhi q * x + 4.3e-9 * x =
-        ((0.64034 + 1.57e-6) * x) * mPhi q + 4.3e-9 * x := fun q => by ring
+  have e2 : ∑ q ∈ Qset r₀, (0.64034 * mPhi q * x + 9.62e-4 * mPhi q * x + 2.17e-7 * x) =
+      (0.64034 + 9.62e-4) * x * (∑ q ∈ Qset r₀, mPhi q) + 2.17e-7 * x * (Qset r₀).card := by
+    have : ∀ q, 0.64034 * mPhi q * x + 9.62e-4 * mPhi q * x + 2.17e-7 * x =
+        ((0.64034 + 9.62e-4) * x) * mPhi q + 2.17e-7 * x := fun q => by ring
     simp_rw [this]
     rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul]; ring
   rw [e1] at hlo

@@ -17,9 +17,10 @@ erratum"). We state them as [B] does.
 * **`prop_7_1_5`** — [B, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)`. **Proved** (`MajorArcs/Prop715.lean`) from
   the cited [B, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, conditional on RH up to `T₀`), Platt's verification
   at `q = 1` (`T₀ = 440`) and the numerical axiom `integral_etaPlus_sq_log` ([B, (9.94)]).
-* **`l2_major_14_7`** — [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x`
-  for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.688 x … 8.709 x`)
-  from [B, Thm 7.1.4] (cited Prop 9.4.2 + Platt), Plancherel, the bound on `‖η₊ − η◦‖₂` and the numerical
+* **`l2_major_14_7`** — [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` in [B];
+  we state `(8.7098 + O*(0.0802)) x` (same lower end `8.6296 x`; our Thm 7.1.4 constants are weaker)
+  for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.675 x … 8.786 x`)
+  from [B, Thm 7.1.4] (Prop 9.4.2, proved, + Platt), Plancherel, the bound on `‖η₊ − η◦‖₂` and the numerical
   axioms `integral_etaPlus_sq_log` ((9.94)) and `sum_odd_mu_sq_div_totient` (`Σ μ²/φ = 6.798779…`).
   [B] writes `0.0754`, but its term `5.19 δ₀ r ET (|η₊|₁ + ET/2)` evaluates to `0.075456` with (14.1),
   (14.3) ([B] prints `0.075272`); our proof splits the cross term differently and has a much smaller
@@ -55,10 +56,10 @@ theorem prop_7_1_5 {x : ℝ} (hx : 1e12 ≤ x) :
   MajorArcs.prop_7_1_5' hx
 
 /-- **[B, (14.7)]** — proved (`MajorArcs.l2_major_bounds`). For `x ≥ 4.9·10²⁶`,
-`∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` (`𝔐` read in `ℝ/ℤ`, i.e. over
-`(0, 1]`). -/
+`∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7098 + O*(0.0802)) x` (`𝔐` read in `ℝ/ℤ`, i.e. over
+`(0, 1]`; [B]: `8.7052 + O*(0.0756)`). -/
 theorem l2_major_14_7 {x : ℝ} (hx : 4.9e26 ≤ x) :
-    |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7052 * x| ≤ 0.0756 * x := by
+    |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7098 * x| ≤ 0.0802 * x := by
   obtain ⟨h1, h2⟩ := MajorArcs.l2_major_bounds hx
   rw [abs_le]; constructor <;> linarith
 

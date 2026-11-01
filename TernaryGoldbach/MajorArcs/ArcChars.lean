@@ -319,54 +319,39 @@ theorem norm_S_sub_coprime_le {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 �
   rw [S_etaPlus_eq_expTsum, ← expTsum_sub hc ha]
   exact (norm_expTsum_le_tsum (summable_sub_coprimePart hx0 q) α).trans (coprime_split hx hq1 hq)
 
-/-- `√c (err_{7.1.4}(c) x + 10⁻¹⁵ x) ≤ 2.41·10⁻⁸ x` for `2 ≤ c ≤ 3·10⁵`. -/
+/-- `√c (err_{7.1.4}(c) x + 10⁻¹⁵ x) ≤ 4.25·10⁻⁷ x` for `2 ≤ c ≤ 3·10⁵`. -/
 theorem err_scaled_le {x c : ℝ} (hx : 4.9e26 ≤ x) (hc2 : 2 ≤ c) (hc3 : c ≤ 300000) :
-    √c * ((1.35e-14 + 1.62e-10 / c + (499900 / √c + 52) / √x) * x + 1e-15 * x) ≤ 2.41e-8 * x := by
+    √c * (((7.5e-8 + 7.7e6 / √x) / √c) * x + 1e-15 * x) ≤ 4.25e-7 * x := by
   have hx0 : 0 < x := by linarith
-  set s := √c with hs
-  set r := √x with hr
-  have hs2 : s ^ 2 = c := Real.sq_sqrt (by linarith)
-  have hr2 : r ^ 2 = x := Real.sq_sqrt hx0.le
-  have hs1 : 1.414 ≤ s := Real.le_sqrt_of_sq_le (by nlinarith)
-  have hs548 : s ≤ 548 := by
-    rw [hs, Real.sqrt_le_left (by norm_num)]; linarith
-  have hr1 : 2.2135e13 ≤ r := sqrt_x_ge hx
-  have hs0 : 0 < s := by linarith
-  have hr0 : 0 < r := by linarith
-  have e : s * ((1.35e-14 + 1.62e-10 / c + (499900 / s + 52) / r) * x + 1e-15 * x) =
-      r ^ 2 * (1.35e-14 * s + 1.62e-10 / s + 1e-15 * s) + r * (499900 + 52 * s) := by
-    rw [← hs2, ← hr2]; field_simp; ring
-  rw [e, ← hr2]
-  have h1 : 1.62e-10 / s ≤ 1.62e-10 / 1.414 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hs1
-  have h2 : r * (499900 + 52 * s) ≤ r * 528396 := by
-    apply mul_le_mul_of_nonneg_left _ hr0.le; linarith
-  have h3 : r * 528396 ≤ r ^ 2 * (528396 / 2.2135e13) := by
-    rw [mul_div_assoc', le_div_iff₀ (by norm_num)]; nlinarith
-  have h4 : r ^ 2 * (1.35e-14 * s + 1.62e-10 / s + 1e-15 * s) ≤
-      r ^ 2 * (1.35e-14 * 548 + 1.62e-10 / 1.414 + 1e-15 * 548) := by
-    apply mul_le_mul_of_nonneg_left _ (by positivity); linarith
-  have h5 : (1.35e-14 * 548 + 1.62e-10 / 1.414 + 1e-15 * 548 : ℝ) + 528396 / 2.2135e13 ≤ 2.41e-8 := by
-    norm_num
-  nlinarith [sq_nonneg r]
+  have hs0 : 0 < √c := Real.sqrt_pos.2 (by linarith)
+  have hs548 : √c ≤ 548 := by rw [Real.sqrt_le_left (by norm_num)]; linarith
+  have hr1 : 2.2135e13 ≤ √x := sqrt_x_ge hx
+  have e : √c * (((7.5e-8 + 7.7e6 / √x) / √c) * x + 1e-15 * x) =
+      (7.5e-8 + 7.7e6 / √x + 1e-15 * √c) * x := by
+    field_simp
+  rw [e]
+  apply mul_le_mul_of_nonneg_right _ hx0.le
+  have h1 : 7.7e6 / √x ≤ 7.7e6 / 2.2135e13 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hr1
+  have h2 : (7.5e-8 + 7.7e6 / 2.2135e13 + 1e-15 * 548 : ℝ) ≤ 4.25e-7 := by norm_num
+  nlinarith
 
 /-! ## The arcs of modulus `q` -/
 
 set_option maxHeartbeats 1000000 in
 /-- **[B, §10.3] for one modulus `q`** (`q̃ ≤ 3·10⁵`, `|βx| ≤ 1.2·10⁶/q̃`, `x ≥ 4.9·10²⁶`), with
 `S'_q = Σ_{(n,q)=1} Λ(n) η₊(n/x) e(nα)`:
-`μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (2.41·10⁻⁸ x)²` and
-`|S'_q(β) − η̂₊(−βx) x| ≤ 1.141·10⁻⁸ x`. -/
+`μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (4.25·10⁻⁷ x)²` and
+`|S'_q(β) − η̂₊(−βx) x| ≤ 2.83·10⁻⁷ x`. -/
 theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt : (qt q : ℝ) ≤ 300000)
     {β : ℝ} (hβ : |β * x| ≤ 1200000 / qt q) :
     ((if Squarefree q then (1:ℝ) else 0) / q.totient * ‖expTsum (coprimePart q (cP x)) β‖ ^ 2 ≤
         ∑ b ∈ Bset q, ‖expTsum (coprimePart q (cP x)) ((b : ℝ) / q + β)‖ ^ 2 ∧
       ∑ b ∈ Bset q, ‖expTsum (coprimePart q (cP x)) ((b : ℝ) / q + β)‖ ^ 2 ≤
         (if Squarefree q then (1:ℝ) else 0) / q.totient * ‖expTsum (coprimePart q (cP x)) β‖ ^ 2 +
-          (2.41e-8 * x) ^ 2) ∧
-      ‖expTsum (coprimePart q (cP x)) β - 𝓕 etaPC (-(β * x)) * x‖ ≤ 1.141e-8 * x := by
+          (4.25e-7 * x) ^ 2) ∧
+      ‖expTsum (coprimePart q (cP x)) β - 𝓕 etaPC (-(β * x)) * x‖ ≤ 2.83e-7 * x := by
   haveI : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
-  have hx12 : (1e12 : ℝ) ≤ x := by linarith
   set a := coprimePart q (cP x) with ha_def
   have hc := summable_cP hx0
   have ha : Summable fun n => ‖a n‖ :=
@@ -390,7 +375,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
   have hδx : β * x / x = β := by field_simp
   -- the non-principal characters
   have hE : ∀ ψ : DirichletCharacter ℂ q, ψ ≠ 1 →
-      ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 2.41e-8 * x := by
+      ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 4.25e-7 * x := by
     intro ψ hψ
     set c' := ψ⁻¹.conductor with hc'
     haveI : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
@@ -414,7 +399,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
       linarith
     have hcr : (c' : ℝ) ≤ q := by exact_mod_cast hc'le
     have hT : ‖Schar χ (cP x) β‖ ≤
-        (1.35e-14 + 1.62e-10 / c' + (499900 / √(c' : ℝ) + 52) / √x) * x := by
+        ((7.5e-8 + 7.7e6 / √x) / √(c' : ℝ)) * x := by
       rcases Nat.even_or_odd c' with hev | hod
       · have hqev : Even q := (even_iff_two_dvd.1 hev).trans hc'q |> even_iff_two_dvd.2
         have hqtq : qt q = q := by unfold qt; rw [if_pos hqev]
@@ -423,7 +408,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
           refine hβ.trans ?_
           rw [hqtq]
           exact div_le_div_of_nonneg_left (by norm_num) (by exact_mod_cast (by omega : 0 < c')) hcr
-        have := thm_7_1_4_even hx12 hev hc'3 χ hχ hδ
+        have := thm_7_1_4_even hx hev hc'3 χ hχ hδ
         rw [if_neg hc'1, sub_zero, hδx] at this
         exact this
       · have hc'pos : (0 : ℝ) < c' := by exact_mod_cast (by omega : 0 < c')
@@ -442,16 +427,15 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
         have hδ : |β * x| ≤ 600000 / c' := by
           refine hβ.trans ?_
           rw [div_le_div_iff₀ hqt0 hc'pos]; nlinarith
-        have := thm_7_1_4_odd hx12 hod hc'3 χ hχ hδ
+        have := thm_7_1_4_odd hx hod hc'3 χ hχ hδ
         rw [if_neg hc'1, sub_zero, hδx] at this
         exact this
     have hc'3r : (c' : ℝ) ≤ 300000 := hcr.trans (by exact_mod_cast hq3)
     have hc'2r : (2 : ℝ) ≤ c' := by exact_mod_cast hc'2
     calc ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖
-        ≤ √(c' : ℝ) * ((1.35e-14 + 1.62e-10 / c' + (499900 / √(c' : ℝ) + 52) / √x) * x +
-            1e-15 * x) :=
+        ≤ √(c' : ℝ) * (((7.5e-8 + 7.7e6 / √x) / √(c' : ℝ)) * x + 1e-15 * x) :=
           mul_le_mul hτ (hS.trans (by linarith)) (norm_nonneg _) (Real.sqrt_nonneg _)
-      _ ≤ 2.41e-8 * x := err_scaled_le hx hc'2r hc'3r
+      _ ≤ 4.25e-7 * x := err_scaled_le hx hc'2r hc'3r
   refine ⟨?_, ?_⟩
   · have hsplit := sum_units_sq_bounds ha hcop β hE
     rw [sum_Bset_eq_units (fun t => ‖expTsum a t‖ ^ 2) β]
@@ -460,13 +444,13 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
     have hδ1 : |β * x| ≤ 600000 := by
       refine hβ.trans ?_
       rw [div_le_iff₀ hqt0]; nlinarith
-    have h1 := thm_7_1_4_one hx12 (1 : DirichletCharacter ℂ 1) hδ1
+    have h1 := thm_7_1_4_one hx (1 : DirichletCharacter ℂ 1) hδ1
     rw [hδx, Schar_level_one] at h1
     have h2 : expTsum a β = expTsum (cP x) β - expTsum (cP x - a) β := by
       rw [expTsum_sub hc ha]; ring
     have h3 := (norm_expTsum_le_tsum hca β).trans hDa
     have hsx := sqrt_x_ge hx
-    have h4 : 251400 / √x ≤ 251400 / 2.2135e13 :=
+    have h4 : 6.24e6 / √x ≤ 6.24e6 / 2.2135e13 :=
       div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsx
     rw [h2]
     calc ‖expTsum (cP x) β - expTsum (cP x - a) β - 𝓕 etaPC (-(β * x)) * x‖
@@ -475,7 +459,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
           calc _ = ‖expTsum (cP x) β - 𝓕 etaPC (-(β * x)) * x - expTsum (cP x - a) β‖ := by
                 congr 1; ring
             _ ≤ _ := this
-      _ ≤ (4.78e-11 + 251400 / √x) * x + 1e-15 * x := add_le_add h1 h3
-      _ ≤ 1.141e-8 * x := by nlinarith
+      _ ≤ (1e-18 + 6.24e6 / √x) * x + 1e-15 * x := add_le_add h1 h3
+      _ ≤ 2.83e-7 * x := by nlinarith
 
 end TernaryGoldbach.MajorArcs

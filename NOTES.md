@@ -48,6 +48,20 @@ Abel bound, functional equation), `ZetaDatum`, `ZetaExplicit` (main term `M(1)x`
 3.42e6 (actual ≈3.07e6). **Remaining sorries**: Props 9.4.2, 9.5.1 (η₊: need `GoodSmoothing` for
 `η₊(t)e(δt)` via `h_H` band-limited: `M(s) = (1/2π)∫_{−H}^{H} ĥ(r) G₁(s − ir) dr`, `G₁(s) = G₂(s−1)`; then
 `zero_sum_boundG` for χ (`ldatum_L` + a `PolyDatum` for `L`) and ζ; 9.5.1 needs `η₊²·log`) and Dusart.
+**Prop 9.4.2 DONE (2026-11-01, later)**: `Explicit/EtaPlusMellin` (`M₊(s) = ∫_{|ξ|≤100/π} ĝ(ξ)
+G₁(s−1+2πiξ) dξ`; the `G` bounds shifted by `≤ 200` in height; `GoodSmoothing` with `θ = min(θ_δ, 1/200)`, which
+avoids an `e^{56}` factor), `Explicit/EtaPlusCg` (`C_g = ∫|g| = 92e^{−1/2} − 12e^{3/2} ≤ 2.03`, by FTC),
+`Explicit/MellinPlancherelGen` (Mellin–Plancherel on `ℜs = 1/2` for any smoothing with `|e^{−u/2}φ(e^{−u})| ≤
+Ce^{−c|u|}`), `Explicit/ExplicitBoundGen` (explicit-formula bounds for any admissible smoothing, `χ` and `ζ`),
+`Explicit/EtaPlusBound` (`∫₀^∞ (log v)²η₊² ≤ 3.15²(1 − √π/2) ≤ 1.129`), `MajorArcs/Prop942` (`prop_9_4_2`,
+error `err942N`, with `∫η₊² ≤ 0.6403` from `EtaPlusL2`). **Thm 7.1.4 restated** (`MajorArcs/Thm714.lean`) for
+`x ≥ 4.9·10²⁶`: `q = 1` (`T₀ = 10⁸`): `|E| ≤ 10⁻¹⁸ + 6.24·10⁶/√x`; `q ≥ 2`: `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q`
+(`T₀ = 10⁸/q`; for even `q > 1.25·10⁵`, `T₀ = 200 + 7.5·10⁷/q`, where the regime-A tail at `u₀ = 19.89` gives
+`√q E₂ ≤ 6.86·10⁻⁸`; the vertical-line term `V ~ 10¹⁹` forces the larger `x`). Consumers: ArcChars
+`2.41e-8 → 4.25e-7` and `1.141e-8 → 2.83e-7`; L2Major per modulus `1.57e-6 → 9.62e-4`, `4.3e-9 → 2.17e-7`, total
+`8.675x … 8.786x` (stated `8.6296x … 8.79x`); `l2_major_14_7` restated `8.7098 ± 0.0802` (same lower end, so
+MinorTotal is unchanged); `resid_plus` `2.14e-15 → 7.83e-13`; (14.27) still `1.049` (margin ≈ `6.6·10⁻⁵`).
+**Remaining sorries**: Prop 9.5.1 (`η₊²` and `η₊² log`: `ζ` explicit formula, band limit `2H = 400`) and Dusart.
 **Prop 9.3.2 for `q ≥ 2` DONE** (`Explicit/LineZeros`, `ZeroSumBound`, `ExplicitBound`, `MajorArcs/Prop932`):
 `|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [B]'s constants) for
 `q = 1`, proved for `q ≥ 2`. Cor 9.3.3 averages either error (`err933N`); Cor 7.1.3 restated as
@@ -99,6 +113,12 @@ chosen `≥ 1/(2N+2)` from all ordinates, by a measure argument) and the line `�
    (Sharp alternative: Weil's explicit formula with a test function supported in `|log n| < log 2`.)
 7. *Dusart*: explicit formula for `ζ` + zero-free region (3-4-1 with step 4) + RH verification (numerical
    axiom) + numerics; or weaken `dusart_theta` to what the uses need.
+
+## Status (2026-11-01, latest)
+
+* `ternary_goldbach` depends on 2 `sorry`s — `dusart_theta` and [B, Prop 9.5.1] (`MajorArcs/Prop715.lean`) —
+  and 33 numerical axioms. Props 9.3.2 and 9.4.2 are proved (`Explicit/`, `MajorArcs/Prop932.lean`,
+  `MajorArcs/Prop942.lean`) with weaker constants; Cor 7.1.3, Thm 7.1.4, (14.7) restated; (14.27) still `1.049`.
 
 ## Status (2026-11-01, later)
 
@@ -393,7 +413,7 @@ a factor `≈ 4.6`, too much at this margin).
    instead of Cauchy–Schwarz for the `β`-integrals; main term: `η₊ → η◦` costs `≲ 2·10⁻³ x²/κ`, completing
    `∫_{|β|<w}` to `ℝ` costs `≲ 10⁻³ x²/κ`; `x²·C_{η◦,η_*}(N/x)·1.314 ≥ 1.0521 x²/κ`. Target `(14.27)` with `1.045`.
    *Book note*: (14.17) prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip; harmless).
-Remaining `sorry`s: the cited [B, Props 9.3.2, 9.4.2, 9.5.1] (explicit formulas, Ch. 9) and `dusart_theta`. No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
+Remaining `sorry`s: the cited [B, Prop 9.5.1] (explicit formula, Ch. 9) and `dusart_theta` (Props 9.3.2, 9.4.2 proved since). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
 (Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is

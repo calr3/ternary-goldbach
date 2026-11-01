@@ -228,11 +228,11 @@ theorem totient_mul_norm_sq_le {q : ℕ} (hq1 : 1 ≤ q) :
   · rw [mul_one_div, div_le_one (by positivity)]; nlinarith
   · simp
 
-/-- **`η₊`**: `Σ_b |S_{η₊}(b/q + β) − μ(q)/φ(q) η̂₊(−βx) x|² ≤ 2.14·10⁻¹⁵ x²`. -/
+/-- **`η₊`**: `Σ_b |S_{η₊}(b/q + β) − μ(q)/φ(q) η̂₊(−βx) x|² ≤ 7.83·10⁻¹³ x²`. -/
 theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
     (hβ : |β * x| ≤ 1200000 / qt q) :
     ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient * (𝓕 etaPC (-(β * x)) * x)‖ ^ 2 ≤
-      2.14e-15 * x ^ 2 := by
+      7.83e-13 * x ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
   haveI : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
@@ -243,7 +243,7 @@ theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     by_contra h; exact hn (by simp [a, TernaryGoldbach.MinorArcs.coprimePart, h])
   obtain ⟨⟨-, hup⟩, hpr⟩ := arc_chars hx hq1 hqt' hβ
   have hE : ∑ b ∈ Bset q, ‖expTsum a ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient * expTsum a β‖ ^ 2 ≤
-      (2.41e-8 * x) ^ 2 := by
+      (4.25e-7 * x) ^ 2 := by
     rw [sum_Bset_sq_sub_principal ha hcop]; linarith
   have h := sum_residual_le (T := S etaPlus x) (S' := expTsum a) (m := (μ q : ℂ) / q.totient)
     (A := 𝓕 etaPC (-(β * x)) * x) (q := q) (β := β) (D := 1e-15 * x)
@@ -253,8 +253,8 @@ theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
   refine h.trans ?_
   have h1 : (q.totient : ℝ) * (1e-15 * x) ^ 2 ≤ 300000 * (1e-15 * x) ^ 2 :=
     mul_le_mul_of_nonneg_right hφ.2 (by positivity)
-  have h2 : (q.totient : ℝ) * ‖(μ q : ℂ) / q.totient‖ ^ 2 * (1.141e-8 * x) ^ 2 ≤ (1.141e-8 * x) ^ 2 := by
-    have := mul_le_mul_of_nonneg_right hm (by positivity : (0:ℝ) ≤ (1.141e-8 * x) ^ 2)
+  have h2 : (q.totient : ℝ) * ‖(μ q : ℂ) / q.totient‖ ^ 2 * (2.83e-7 * x) ^ 2 ≤ (2.83e-7 * x) ^ 2 := by
+    have := mul_le_mul_of_nonneg_right hm (by positivity : (0:ℝ) ≤ (2.83e-7 * x) ^ 2)
     linarith
   nlinarith
 
@@ -758,9 +758,9 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
     (hβ : |β * x| ≤ 1200000 / qt q) :
     ‖∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) -
         (coefN N q : ℂ) * ((𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β)))‖ ≤
-      (3.67e-6 * (x / κ) + 4.63e-8 * x / 9) * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
-        9 * 4.63e-8 * x / 2 * mPhi2 q * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 +
-        4.63e-8 * x / 9 * mPhi q * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 := by
+      (3.67e-6 * (x / κ) + 8.85e-7 * x / 9) * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
+        9 * 8.85e-7 * x / 2 * mPhi2 q * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 +
+        8.85e-7 * x / 9 * mPhi q * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
   have hx0 : 0 < x := by linarith
   have hy0 : 0 < x / κ := div_pos hx0 kappa_pos
@@ -769,7 +769,7 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
   set Ap : ℂ := 𝓕 etaPC (-(β * x)) * x with hAp
   set Au : ℂ := 𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ) with hAu
   have hAs : Au = 𝓕 etaSC (-(β * x)) * x := As_eq β
-  have hρ : ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - m * Ap‖ ^ 2 ≤ (4.63e-8 * x) ^ 2 := by
+  have hρ : ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - m * Ap‖ ^ 2 ≤ (8.85e-7 * x) ^ 2 := by
     refine (resid_plus hx hq hβ).trans ?_; nlinarith
   have hU : ∀ b ∈ Bset q, ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ≤ 3.67e-6 * (x / κ) := by
     intro b hb
@@ -780,7 +780,7 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
   have heb : ∀ b ∈ Bset q, ‖e (-(N * ((b : ℝ) / q + β)))‖ = 1 := fun b _ => TernaryGoldbach.norm_e _
   have hmain := sum_cubic_error (s := Bset q) (fun b => S etaPlus x ((b : ℝ) / q + β))
     (fun b => S etaStar x ((b : ℝ) / q + β)) (fun b => e (-(N * ((b : ℝ) / q + β)))) (m * Ap) (m * Au)
-    (by positivity : (0:ℝ) < 4.63e-8 * x) heb hU hρ
+    (by positivity : (0:ℝ) < 8.85e-7 * x) heb hU hρ
   have hid : (m * Ap) ^ 2 * (m * Au) * ∑ b ∈ Bset q, e (-(N * ((b : ℝ) / q + β))) =
       (coefN N q : ℂ) * (Ap ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β))) := by
     rw [← coef_eq hq1, ← hAs, hm]
@@ -804,9 +804,9 @@ set_option maxHeartbeats 1000000 in
 theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
     ‖(∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y) -
         (coefN N q : ℂ) * ((x : ℂ) ^ 2 * (Cmain (N / x) : ℂ))‖ ≤
-      (3.67e-6 * (x / κ) + 4.63e-8 * x / 9) * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
-        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
-        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2) := by
+      (3.67e-6 * (x / κ) + 8.85e-7 * x / 9) * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+        9 * 8.85e-7 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        8.85e-7 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2) := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
   have hx0 : 0 < x := by linarith
   have hy0 : 0 < x / κ := div_pos hx0 kappa_pos
@@ -855,9 +855,9 @@ theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q �
       integrable_etaUC).comp (by fun_prop)).mul continuous_const).norm.pow 2
   have kP : Continuous fun β => ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 :=
     ((continuous_fourier_etaPC.comp (by fun_prop)).mul continuous_const).norm.pow 2
-  set k1 : ℝ := 3.67e-6 * (x / κ) + 4.63e-8 * x / 9
-  set k2 : ℝ := 9 * 4.63e-8 * x / 2 * mPhi2 q
-  set k3 : ℝ := 4.63e-8 * x / 9 * mPhi q
+  set k1 : ℝ := 3.67e-6 * (x / κ) + 8.85e-7 * x / 9
+  set k2 : ℝ := 9 * 8.85e-7 * x / 2 * mPhi2 q
+  set k3 : ℝ := 8.85e-7 * x / 9 * mPhi q
   have hInt : ‖∫ β in -w..w, (∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) - (coefN N q : ℂ) * Mn β)‖ ≤
       ∫ β in -w..w, (k1 * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
         k2 * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 + k3 * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2) :=
@@ -985,10 +985,10 @@ theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
   rw [Complex.re_sum]
   -- each modulus
   have hlow : ∀ q ∈ Qset r₀, coefN N q * (x ^ 2 * Cmain (N / x)) -
-      ((3.67e-6 * (x / κ) + 4.63e-8 * x / 9) *
+      ((3.67e-6 * (x / κ) + 8.85e-7 * x / 9) *
           (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
-        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
-        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) ≤
+        9 * 8.85e-7 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        8.85e-7 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) ≤
       (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y).re := by
     intro q hq
     have h := per_modulus N hx hq
@@ -1001,18 +1001,18 @@ theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
   refine le_trans ?_ (sum_le_sum hlow)
   rw [sum_sub_distrib, ← sum_mul]
   -- the error terms, summed
-  set k1 : ℝ := 3.67e-6 * (x / κ) + 4.63e-8 * x / 9
-  set K2 : ℝ := 9 * 4.63e-8 * x / 2 * (7.78 * (x / κ)) + 2.03e-5 * x ^ 2
-  set K3 : ℝ := 4.63e-8 * x / 9 * (0.640208 * x)
+  set k1 : ℝ := 3.67e-6 * (x / κ) + 8.85e-7 * x / 9
+  set K2 : ℝ := 9 * 8.85e-7 * x / 2 * (7.78 * (x / κ)) + 2.03e-5 * x ^ 2
+  set K3 : ℝ := 8.85e-7 * x / 9 * (0.640208 * x)
   have hEsum : ∑ q ∈ Qset r₀, (k1 * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
-        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
-        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) =
+        9 * 8.85e-7 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        8.85e-7 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) =
       k1 * (∑ q ∈ Qset r₀, ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
         K2 * (∑ q ∈ Qset r₀, mPhi2 q) + K3 * (∑ q ∈ Qset r₀, mPhi q) := by
     rw [mul_sum, mul_sum, mul_sum, ← sum_add_distrib, ← sum_add_distrib]
     exact sum_congr rfl fun q _ => by ring
   rw [hEsum]
-  have hJ : ∑ q ∈ Qset r₀, ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 ≤ 8.7808 * x := by
+  have hJ : ∑ q ∈ Qset r₀, ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 ≤ 8.79 * x := by
     rw [← integral_majorArcs_eq (continuous_norm_sq_S hx0)
       (fun α => by simp only [S_etaPlus_eq_expTsum]; rw [expTsum_periodic]) hx]
     exact (l2_major_bounds hx).2
