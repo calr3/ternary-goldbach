@@ -15,8 +15,8 @@ open scoped Real Topology ArithmeticFunction.vonMangoldt
 namespace TernaryGoldbach.Explicit
 
 /-- The tail bound for `G_δ` in the floor form used by `zero_sum_boundG`. -/
-theorem norm_G_tail_floor {δ T0 : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {s : ℂ} (hr1 : 0 < s.re)
-    (hr2 : s.re < 1) (hτ : T0 < |s.im|) :
+theorem norm_G_tail_floor {δ T0 : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {s : ℂ} (hr1 : -1 ≤ s.re)
+    (hr2 : s.re ≤ 1) (hτ : T0 < |s.im|) :
     ‖Gr s δ 0‖ ≤ EB T0 * rhoB ^ ⌊(|s.im| - T0) / 4.4⌋₊ +
       EA T0 δ * rhoA δ ^ ⌊(|s.im| - T0) / 4.4⌋₊ := by
   have hT00 : 0 < T0 := by linarith [le_max_right (10 * π * |δ|) 50]
@@ -25,7 +25,7 @@ theorem norm_G_tail_floor {δ T0 : ℝ} (hT0 : max (10 * π * |δ|) 50 ≤ T0) {
     have h0 : 0 ≤ (|s.im| - T0) / 4.4 := div_nonneg (by linarith) (by norm_num)
     have := Nat.floor_le h0
     rwa [le_div_iff₀ (by norm_num)] at this
-  have hGt := norm_G_tail s δ (by linarith) hr2.le hT0 hτ.le
+  have hGt := norm_G_tail s δ hr1 hr2 hT0 hτ.le
   have hB' : Real.exp (-0.1398 * (|s.im| - T0)) ≤ rhoB ^ k := by
     unfold rhoB; rw [← Real.exp_nat_mul]
     apply Real.exp_le_exp.2
@@ -159,7 +159,7 @@ theorem norm_SsumG_zeta_le (δ : ℝ) {x : ℝ} (hx : 1 ≤ x) {T0 : ℝ} (hT0 :
       (integrable_norm_sq_fline δ) (integrable_norm_sq_flineD δ) (integral_norm_sq_fline_le δ)
       (integral_norm_sq_flineD_le δ) (EB_nonneg hT00.le) (EA_nonneg T0 δ) (Real.exp_pos _).le
       rhoB_lt_one (Real.exp_pos _).le (rhoA_lt_one δ) (fun s h1 h2 h3 => by
-        rw [mellin_fδ]; exact norm_G_tail_floor hT0 h1 h2 h3) hx T
+        rw [mellin_fδ]; exact norm_G_tail_floor hT0 (by linarith) h2.le h3) hx T
   have h1 : ‖mellin (fδ δ) 1 * x - SsumG (1 : DirichletCharacter ℂ 1) (fδ δ) x - (1 / (2 * π) : ℂ) * I0‖ ≤
       112 * Z3g BPz2 0 + √x * E1g BPz2 T0 (2 * π * 0.6647) (2 * π * 0.1707) +
         x * E2g BPz2 10 T0 (EB T0) (EA T0 δ) rhoB (rhoA δ) :=

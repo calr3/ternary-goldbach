@@ -203,4 +203,114 @@ theorem mellin_fP_eq (δ : ℝ) {s : ℂ} (hs : -1 < s.re) :
           (((t ^ 2 * Real.exp (-t ^ 2 / 2) : ℝ) : ℂ) * Complex.exp (2 * π * I * δ * t))) := by
         rw [key, ht2]; push_cast; ring
 
+/-! ## Bounds for `M₊` -/
+
+/-- `θ'_δ = min(θ_δ, 1/200)`. -/
+noncomputable def thP (δ : ℝ) : ℝ := min (thetaD δ) (1 / 200)
+
+theorem thP_pos (δ : ℝ) : 0 < thP δ := lt_min (thetaD_pos δ) (by norm_num)
+theorem thP_le (δ : ℝ) : thP δ ≤ thetaD δ := min_le_left _ _
+theorem thP_le' (δ : ℝ) : thP δ ≤ 1 / 200 := min_le_right _ _
+
+theorem two_pi_aH : 2 * π * aH = 200 := by unfold aH; field_simp
+
+theorem abs_shift_le {ξ : ℝ} (hξ : ξ ∈ Icc (-aH) aH) : |2 * π * ξ| ≤ 200 := by
+  rw [abs_mul, abs_of_pos (by positivity : (0:ℝ) < 2 * π), ← two_pi_aH]
+  exact mul_le_mul_of_nonneg_left (abs_le.2 ⟨hξ.1, hξ.2⟩) (by positivity)
+
+theorem norm_mellin_fP_le (δ : ℝ) {s : ℂ} (hs : -1 < s.re) {B : ℝ}
+    (hB : ∀ ξ ∈ Icc (-aH) aH, ‖Gr (s - 1 + ((2 * π * ξ : ℝ) : ℂ) * I) δ 0‖ ≤ B) :
+    ‖mellin (fP δ) s‖ ≤ Cg * B * (2 * aH) := by
+  rw [mellin_fP_eq δ hs]
+  have hvol : (volume (Icc (-aH) aH)).toReal = 2 * aH := by
+    rw [Real.volume_Icc, ENNReal.toReal_ofReal (by linarith [aH_pos])]; ring
+  rw [← hvol]
+  refine norm_setIntegral_le_of_norm_le_const (by rw [Real.volume_Icc]; exact ENNReal.ofReal_lt_top)
+    fun ξ hξ => ?_
+  rw [norm_mul]
+  exact mul_le_mul (norm_fourier_gC_le ξ) (hB ξ hξ) (norm_nonneg _) Cg_nonneg
+
+theorem im_shift (s : ℂ) (ξ : ℝ) : (s - 1 + ((2 * π * ξ : ℝ) : ℂ) * I).im = s.im + 2 * π * ξ := by simp
+theorem re_shift (s : ℂ) (ξ : ℝ) : (s - 1 + ((2 * π * ξ : ℝ) : ℂ) * I).re = s.re - 1 := by simp
+
+/-- **Uniform bound**: `|M₊(s)| ≤ 2a C_g · 300e · e^{−θ'|ℑs|}` on `−1/2 ≤ ℜs ≤ 2`. -/
+theorem norm_mellin_fP_uniform (δ : ℝ) {s : ℂ} (h1 : -1 / 2 ≤ s.re) (h2 : s.re ≤ 2) :
+    ‖mellin (fP δ) s‖ ≤ Cg * (300 * Real.exp 1) * (2 * aH) * Real.exp (-(thP δ * |s.im|)) := by
+  have h := norm_mellin_fP_le δ (s := s) (by linarith)
+    (B := 300 * Real.exp 1 * Real.exp (-(thP δ * |s.im|))) fun ξ hξ => by
+    have hG := norm_G_uniform_ext (s - 1 + ((2 * π * ξ : ℝ) : ℂ) * I) δ
+      (by rw [re_shift]; linarith) (by rw [re_shift]; linarith)
+    rw [im_shift] at hG
+    refine hG.trans ?_
+    have hsh := abs_shift_le hξ
+    have hθ := thP_le δ
+    have hθ' := thP_le' δ
+    have hθ0 := thP_pos δ
+    have ha : |s.im| - 200 ≤ |s.im + 2 * π * ξ| := by
+      have := abs_sub_abs_le_abs_sub s.im (-(2 * π * ξ)); rw [abs_neg] at this
+      have e : s.im - -(2 * π * ξ) = s.im + 2 * π * ξ := by ring
+      rw [e] at this; linarith
+    have hexp : Real.exp (-(thetaD δ * |s.im + 2 * π * ξ|)) ≤
+        Real.exp 1 * Real.exp (-(thP δ * |s.im|)) := by
+      rw [← Real.exp_add]
+      apply Real.exp_le_exp.2
+      have h1 : thP δ * (|s.im| - 200) ≤ thP δ * |s.im + 2 * π * ξ| :=
+        mul_le_mul_of_nonneg_left ha hθ0.le
+      have h2 : thP δ * |s.im + 2 * π * ξ| ≤ thetaD δ * |s.im + 2 * π * ξ| :=
+        mul_le_mul_of_nonneg_right hθ (abs_nonneg _)
+      nlinarith
+    calc 300 * Real.exp (-(thetaD δ * |s.im + 2 * π * ξ|))
+        ≤ 300 * (Real.exp 1 * Real.exp (-(thP δ * |s.im|))) := by gcongr
+      _ = _ := by ring
+  refine h.trans (le_of_eq ?_)
+  ring
+
+theorem goodSmoothing_fP (δ : ℝ) :
+    GoodSmoothing (fP δ) (Cg * (300 * Real.exp 1) * (2 * aH)) (thP δ) where
+  continuousAt := fun y hy => continuousAt_fP δ hy
+  conv := mellinConvergent_fP δ (by norm_num)
+  diff := fun s hs => differentiableAt_mellin_fP δ hs
+  c_pos := thP_pos δ
+  strip := fun s h1 h2 => norm_mellin_fP_uniform δ h1 (by linarith)
+
+theorem norm_mellin_fP_zero (δ : ℝ) : ‖mellin (fP δ) 0‖ ≤ Cg * 300 * (2 * aH) :=
+  norm_mellin_fP_le δ (s := 0) (by norm_num) (B := 300) fun ξ hξ => by
+    have hG := norm_G_uniform_ext ((0:ℂ) - 1 + ((2 * π * ξ : ℝ) : ℂ) * I) δ
+      (by rw [re_shift]; norm_num) (by rw [re_shift]; norm_num)
+    refine hG.trans ?_
+    have : Real.exp (-(thetaD δ * |((0:ℂ) - 1 + ((2 * π * ξ : ℝ) : ℂ) * I).im|)) ≤ 1 :=
+      Real.exp_le_one_iff.2 (by have := thetaD_pos δ; nlinarith [abs_nonneg ((0:ℂ) - 1 + ((2 * π * ξ : ℝ) : ℂ) * I).im])
+    linarith
+
+/-- **The tail above `T₀`** (`T₀ ≥ 200 + max(10π|δ|, 50)`). -/
+theorem norm_mellin_fP_tail {δ T0 : ℝ} (hT0 : 200 + max (10 * π * |δ|) 50 ≤ T0) {s : ℂ}
+    (hr1 : 0 < s.re) (hr2 : s.re < 1) (hτ : T0 < |s.im|) :
+    ‖mellin (fP δ) s‖ ≤ Cg * (2 * aH) * EB (T0 - 200) * rhoB ^ ⌊(|s.im| - T0) / 4.4⌋₊ +
+      Cg * (2 * aH) * EA (T0 - 200) δ * rhoA δ ^ ⌊(|s.im| - T0) / 4.4⌋₊ := by
+  set k := ⌊(|s.im| - T0) / 4.4⌋₊ with hk
+  have hT0' : max (10 * π * |δ|) 50 ≤ T0 - 200 := by linarith
+  have h := norm_mellin_fP_le δ (s := s) (by linarith)
+    (B := EB (T0 - 200) * rhoB ^ k + EA (T0 - 200) δ * rhoA δ ^ k) fun ξ hξ => by
+    have hsh := abs_shift_le hξ
+    have ha : |s.im| - 200 ≤ |s.im + 2 * π * ξ| := by
+      have := abs_sub_abs_le_abs_sub s.im (-(2 * π * ξ)); rw [abs_neg] at this
+      have e : s.im - -(2 * π * ξ) = s.im + 2 * π * ξ := by ring
+      rw [e] at this; linarith
+    have hτ' : T0 - 200 < |(s - 1 + ((2 * π * ξ : ℝ) : ℂ) * I).im| := by rw [im_shift]; linarith
+    have hG := norm_G_tail_floor hT0' (by rw [re_shift]; linarith) (by rw [re_shift]; linarith) hτ'
+    rw [im_shift] at hG
+    refine hG.trans ?_
+    have hkk : k ≤ ⌊(|s.im + 2 * π * ξ| - (T0 - 200)) / 4.4⌋₊ := by
+      rw [hk]; apply Nat.floor_le_floor
+      apply div_le_div_of_nonneg_right _ (by norm_num); linarith
+    have hB1 : rhoB ^ ⌊(|s.im + 2 * π * ξ| - (T0 - 200)) / 4.4⌋₊ ≤ rhoB ^ k :=
+      pow_le_pow_of_le_one (Real.exp_pos _).le rhoB_lt_one.le hkk
+    have hA1 : rhoA δ ^ ⌊(|s.im + 2 * π * ξ| - (T0 - 200)) / 4.4⌋₊ ≤ rhoA δ ^ k :=
+      pow_le_pow_of_le_one (Real.exp_pos _).le (rhoA_lt_one δ).le hkk
+    have hEB := EB_nonneg (by linarith [le_max_right (10 * π * |δ|) 50] : (0:ℝ) ≤ T0 - 200)
+    have hEA := EA_nonneg (T0 - 200) δ
+    gcongr
+  refine h.trans (le_of_eq ?_)
+  ring
+
 end TernaryGoldbach.Explicit

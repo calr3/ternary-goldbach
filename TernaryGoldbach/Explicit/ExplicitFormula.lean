@@ -46,10 +46,10 @@ theorem integrable_G_line (δ σ : ℝ) (h1 : -1 / 2 ≤ σ) (h2 : σ ≤ 3 / 2)
   have := norm_G_le_strip δ (s := (σ : ℂ) + t * I) (by simpa using h1) (by simpa using h2)
   simpa using this
 
-/-- **Admissible smoothings**: `φ` continuous, Mellin-convergent at `3/2`, `M = mellin φ` holomorphic on
+/-- **Admissible smoothings**: `φ` continuous on `(0, ∞)`, Mellin-convergent at `3/2`, `M = mellin φ` holomorphic on
 `ℜs > −1`, and `|M(s)| ≤ K e^{−c|ℑs|}` (`c > 0`) on `−1/2 ≤ ℜs ≤ 3/2`. -/
 structure GoodSmoothing (φ : ℝ → ℂ) (K c : ℝ) : Prop where
-  continuous : Continuous φ
+  continuousAt : ∀ y : ℝ, 0 < y → ContinuousAt φ y
   conv : MellinConvergent φ ((3 / 2 : ℝ) : ℂ)
   diff : ∀ s : ℂ, -1 < s.re → DifferentiableAt ℂ (mellin φ) s
   c_pos : 0 < c
@@ -75,7 +75,7 @@ theorem GoodSmoothing.integrable_line {φ : ℝ → ℂ} {K c : ℝ} (hφ : Good
   simpa using this
 
 theorem goodSmoothing_fδ (δ : ℝ) : GoodSmoothing (fδ δ) (Kδ δ) 0.28 where
-  continuous := continuous_fδ δ
+  continuousAt := fun y _ => (continuous_fδ δ).continuousAt
   conv := mellinConvergent_of_isBigO_rpow_exp (a := 1) (b := -2) one_pos
       ((continuous_fδ δ).locallyIntegrable.locallyIntegrableOn _) (fδ_isBigO_top δ) (fδ_isBigO_bot δ)
       (by norm_num)
@@ -93,7 +93,7 @@ theorem GoodSmoothing.eq_mellinInv {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmo
   have hvert : Complex.VerticalIntegrable (mellin φ) (3 / 2) := by
     rw [Complex.VerticalIntegrable]
     exact hφ.integrable_line (σ := 3 / 2) (by norm_num) le_rfl
-  have h := mellinInv_mellin_eq (3 / 2) φ hy hφ.conv hvert hφ.continuous.continuousAt
+  have h := mellinInv_mellin_eq (3 / 2) φ hy hφ.conv hvert (hφ.continuousAt y hy)
   rw [← h, mellinInv]
 
 /-- `S_χ(φ, x) = Σ_n Λ(n) χ(n) φ(n/x)`. -/
