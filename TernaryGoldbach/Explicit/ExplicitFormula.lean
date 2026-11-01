@@ -419,4 +419,65 @@ theorem norm_logDeriv_L_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} 
         refine add_le_add (hsum.trans ?_) h1
         exact div_le_div_of_nonneg_right hcnt' hδ.le
 
+/-- A zero of `L` near `c` lies in `zerosIn`. -/
+theorem mem_zerosIn_of_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ1 : χ ≠ 1) {c u : ℂ}
+    {R r : ℝ} (hrR : r ≤ R) (hu : ‖u - c‖ < r) (hLu : χ.LFunction u = 0) :
+    u ∈ zerosIn χ.LFunction c R r := by
+  have hf := DirichletCharacter.differentiable_LFunction hχ1
+  have huR : u ∈ Metric.closedBall c R := by
+    rw [Metric.mem_closedBall, dist_eq_norm]; linarith
+  rw [zerosIn, Finset.mem_filter, Set.Finite.mem_toFinset, Function.mem_support]
+  refine ⟨?_, hu⟩
+  rw [divB, MeromorphicOn.AnalyticOnNhd.divisor_apply
+    (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ χ.LFunction (Metric.closedBall c R)) huR]
+  intro h
+  have hord : analyticOrderAt χ.LFunction u ≠ 0 := by
+    rw [Ne, (hf.analyticAt u).analyticOrderAt_eq_zero]; exact not_not.2 hLu
+  have hfin : analyticOrderAt χ.LFunction u ≠ ⊤ := by
+    have h2 : χ.LFunction 2 ≠ 0 :=
+      DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ1) (by norm_num)
+    have hc0 : analyticOrderAt χ.LFunction 2 ≠ ⊤ := by
+      rw [(hf.analyticAt 2).analyticOrderAt_eq_zero.2 h2]; simp
+    exact AnalyticOnNhd.analyticOrderAt_ne_top_of_isPreconnected
+      (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ χ.LFunction Set.univ)
+      isPreconnected_univ (Set.mem_univ 2) (Set.mem_univ u) hc0
+  apply hord
+  revert h
+  cases hk : analyticOrderAt χ.LFunction u with
+  | top => exact absurd hk hfin
+  | coe n => simp
+
+/-- **`L'/L` on the line `ℜs = −1/2`**: `|L'/L(−1/2 + iy)| ≤ (2/log 2 + 4.8) log(B_y/0.355)`. -/
+theorem norm_logDeriv_L_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
+    (hχ1 : χ ≠ 1) (y : ℝ) :
+    ‖logDeriv χ.LFunction (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤
+      Real.log (BT N y / 0.355) / Real.log 2 / (1 / 2) + 4.8 * Real.log (BT N y / 0.355) := by
+  set z : ℂ := ((-1 / 2 : ℝ) : ℂ) + y * I with hz
+  have hzc : z ∈ Metric.closedBall (2 + y * I) (10 / 4) := by
+    rw [Metric.mem_closedBall, dist_eq_norm, hz]
+    have : ((-1 / 2 : ℝ) : ℂ) + y * I - (2 + y * I) = ((-5 / 2 : ℝ) : ℂ) := by push_cast; ring
+    rw [this, Complex.norm_real, Real.norm_eq_abs]; norm_num
+  have hLz : χ.LFunction z ≠ 0 := LFunction_ne_zero_strip hχ hχ1 (by simp [hz]; norm_num)
+    (by simp [hz]; norm_num)
+  refine norm_logDeriv_L_le hχ hχ1 hzc (by norm_num) (fun u hu => ?_) hLz
+  have hLu : χ.LFunction u = 0 := by
+    have hf := DirichletCharacter.differentiable_LFunction hχ1
+    obtain ⟨hur, hu0⟩ := mem_zerosIn hu
+    have huR : u ∈ Metric.closedBall (2 + y * I) 10 := by
+      rw [Metric.mem_closedBall, dist_eq_norm]; linarith
+    rw [divB, MeromorphicOn.AnalyticOnNhd.divisor_apply
+      (fun z _ => hf.analyticAt z : AnalyticOnNhd ℂ χ.LFunction (Metric.closedBall _ 10)) huR] at hu0
+    by_contra hne
+    exact hu0 (by rw [(hf.analyticAt u).analyticOrderAt_eq_zero.2 hne]; simp)
+  have hre : u.re ≤ -1 ∨ 0 ≤ u.re := by
+    by_contra hcon
+    push Not at hcon
+    exact LFunction_ne_zero_strip hχ hχ1 hcon.1 hcon.2 hLu
+  have := Complex.abs_re_le_norm (z - u)
+  have hzre : z.re = -1 / 2 := by simp [hz]
+  rw [Complex.sub_re, hzre] at this
+  rcases hre with h | h
+  · rw [abs_of_nonneg (by linarith)] at this; linarith
+  · rw [abs_of_nonpos (by linarith)] at this; linarith
+
 end TernaryGoldbach.Explicit
