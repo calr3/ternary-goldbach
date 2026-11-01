@@ -5,6 +5,7 @@ import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Reduction
 import TernaryGoldbach.MinorArcs.NumericsFinal
+import TernaryGoldbach.MajorArcs.MajorTotal
 
 /-!
 # Unproved inputs
@@ -57,16 +58,39 @@ theorem circle_identity_input (N : ℕ) (hN : 0 < N) :
     Finset.sum_congr rfl fun _ _ => ?_
   split_ifs <;> ring
 
-/-- **Major arcs** [B, (14.27)]:
-`∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.058259 x²/κ` with `r₀ = 150000`.
+/-- `x = xOf N ≥ 4.9·10²⁶` for `N ≥ 10²⁷`. -/
+theorem xOf_ge (N : ℕ) (hN27 : 10 ^ 27 ≤ N) : (4.9e26 : ℝ) ≤ xOf N := by
+  obtain ⟨h0, h1⟩ := xOf_denom_bounds
+  have hN : (1e27 : ℝ) ≤ N := by
+    have : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
+    norm_num at this ⊢; linarith
+  unfold xOf
+  rw [le_div_iff₀ h0]
+  nlinarith
 
-*Proof in the literature:* [B, Part II (Chs. 7–9), Ch. 10, §§14.1–14.2]; formerly [H, (7.25)]
-and [Hela].  This relies on Platt's rigorous computer verification of GRH for Dirichlet
-`L`-functions of modulus `q ≤ 300000` up to a bounded height [B, §9.6]. -/
+/-- **Major arcs** [B, (14.27)], with `1.049` in place of [B]'s `1.058259`:
+`Re ∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.049 x²/κ` with `r₀ = 150000`.
+
+*Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [B, §§14.1–14.2]. On the
+arcs of modulus `q` the sums are compared with `μ(q)/φ(q) η̂(−βx)x` by Cor 7.1.3 and Prop 7.1.5
+(the cited Part II inputs in `MinorArcs/PartIICited.lean`); the singular series is bounded below
+with the Mertens axiom; and `C_{η◦,η_*}(N/x)` is computed. -/
 theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
-    1.058259 * xOf N ^ 2 / κ ≤
+    1.049 * xOf N ^ 2 / κ ≤
       (∫ α in Set.Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ (xOf N), integrand N α).re := by
-  sorry
+  have hx := xOf_ge N hN27
+  have hNx : (N : ℝ) / xOf N = 2 + 9 / (8 * √(Real.pi / 2)) / κ := by
+    have hN0 : (N : ℝ) ≠ 0 := by
+      have : 0 < N := lt_of_lt_of_le (by positivity) hN27
+      exact_mod_cast this.ne'
+    have hs : √(2 * Real.pi) = 2 * √(Real.pi / 2) := by
+      rw [show 2 * Real.pi = 2 ^ 2 * (Real.pi / 2) by ring, Real.sqrt_mul (by positivity),
+        Real.sqrt_sq (by norm_num)]
+    have hs0 : 0 < √(Real.pi / 2) := Real.sqrt_pos.2 (by positivity)
+    rw [xOf, hs, κ]
+    field_simp
+    ring
+  exact MajorArcs.major_total hN hx hNx
 
 /-- **Minor arcs** [B, (14.49)]:
 `∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
@@ -86,15 +110,8 @@ proof gives `0.8103`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by
-  have hx : (4.9e26 : ℝ) ≤ xOf N := ?_
-  · exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
-  obtain ⟨h0, h1⟩ := xOf_denom_bounds
-  have hN : (1e27 : ℝ) ≤ N := by
-    have : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
-    norm_num at this ⊢; linarith
-  unfold xOf
-  rw [le_div_iff₀ h0]
-  nlinarith
+  have hx := xOf_ge N hN27
+  exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
 
 /-- **Non-prime and even terms**, a weaker form of [B, (14.51)]: the terms where some `nᵢ` is
 even or not prime contribute at most `6.7 · 10⁶ · N^{3/2} log N`.

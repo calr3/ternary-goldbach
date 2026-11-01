@@ -523,4 +523,519 @@ theorem integral_sq_fourier_add_le :
   rw [e] at h
   linarith [integral_sq_etaPlus_bounds.2, integral_sq_etaO_bounds.2]
 
+/-! ## The main term of one modulus -/
+
+theorem norm_fourier_etaSC_le' (ξ : ℝ) : ‖𝓕 etaSC ξ‖ ≤ 0.02558 := by
+  rw [fourier_etaSC, norm_mul, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos kappa_pos]
+  have h := norm_fourier_etaUC_le (ξ / κ)
+  rw [TernaryGoldbach.Helfgott.κ]
+  calc (49 : ℝ)⁻¹ * ‖𝓕 etaUC (ξ / κ)‖ ≤ 49⁻¹ * 1.2534 := by gcongr
+    _ ≤ 0.02558 := by norm_num
+
+theorem continuous_fourier_etaOC' : Continuous (𝓕 etaOC) :=
+  VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar (by fun_prop) integrable_etaOC
+
+theorem continuous_fourier_etaSC' : Continuous (𝓕 etaSC) :=
+  VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar (by fun_prop) integrable_etaSC
+
+theorem integral_indicator_comp_mul {f : ℝ → ℝ} {c w : ℝ} (hc : 0 < c) :
+    ∫ β, {β : ℝ | w ≤ |β|}.indicator (fun β => f (-(β * c))) β =
+      c⁻¹ * ∫ ξ in {ξ : ℝ | w * c ≤ |ξ|}, f ξ := by
+  rw [← integral_indicator ((isClosed_le continuous_const continuous_abs).measurableSet)]
+  have h := Measure.integral_comp_mul_left ({ξ : ℝ | w * c ≤ |ξ|}.indicator f) (-c)
+  rw [abs_inv, abs_neg, abs_of_pos hc, smul_eq_mul] at h
+  rw [← h]
+  congr 1; ext β
+  simp only [indicator, mem_setOf_eq]
+  have e : |-c * β| = |β| * c := by rw [abs_mul, abs_neg, abs_of_pos hc, mul_comm]
+  rw [e, show -(β * c) = -c * β by ring]
+  by_cases h1 : w ≤ |β|
+  · rw [if_pos h1, if_pos (by nlinarith)]
+  · rw [if_neg h1, if_neg (fun h2 => h1 (by nlinarith [abs_nonneg β]))]
+
+set_option maxHeartbeats 2000000 in
+/-- **The main term of one modulus**: `‖∫_{−w}^{w} (η̂₊(−βx)x)² η̂_*(−βx)x e(−Nβ) dβ − x² C(N/x)‖ ≤
+2.03·10⁻⁵ x²` for `wx ≥ 4`. -/
+theorem main_comparison {x : ℝ} (hx : 0 < x) {w : ℝ} (hw : 0 ≤ w) (hwx : 4 ≤ w * x) (N : ℝ) :
+    ‖(∫ β in -w..w, (𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β))) -
+        (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)‖ ≤ 2.03e-5 * x ^ 2 := by
+  set P : ℝ → ℂ := fun β => 𝓕 etaPC (-(β * x)) * x with hP
+  set O : ℝ → ℂ := fun β => 𝓕 etaOC (-(β * x)) * x with hO
+  set Sx : ℝ → ℂ := fun β => 𝓕 etaSC (-(β * x)) * x with hSx
+  set E : ℝ → ℂ := fun β => e (-(N * β)) with hE
+  have hPc : Continuous P := (continuous_fourier_etaPC.comp (by fun_prop)).mul continuous_const
+  have hOc : Continuous O := (continuous_fourier_etaOC'.comp (by fun_prop)).mul continuous_const
+  have hSc : Continuous Sx := (continuous_fourier_etaSC'.comp (by fun_prop)).mul continuous_const
+  have hEc : Continuous E := TernaryGoldbach.continuous_e.comp (by fun_prop)
+  have hEn : ∀ β, ‖E β‖ = 1 := fun β => TernaryGoldbach.norm_e _
+  have hSn : ∀ β, ‖Sx β‖ ≤ 0.02558 * x := fun β => by
+    simp only [hSx]; rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
+    exact mul_le_mul_of_nonneg_right (norm_fourier_etaSC_le' _) hx.le
+  -- `L²` integrals after the substitution `ξ = −βx`
+  have iO2 : Integrable fun β => ‖O β‖ ^ 2 := by
+    have h := (integrable_norm_sq_fourier integrable_etaOC memLp_etaOC).comp_mul_left' (neg_ne_zero.2 hx.ne')
+    refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
+    simp only [Function.comp, hO, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
+    ring_nf
+  have iPm : Integrable fun β => ‖P β - O β‖ ^ 2 := by
+    have hc : Continuous fun ξ => ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2 :=
+      ((continuous_fourier_etaPC.sub continuous_fourier_etaOC').norm.pow 2)
+    have hi : Integrable fun ξ => ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2 := by
+      have iP := integrable_norm_sq_fourier integrable_etaPC memLp_etaPC
+      have iO := integrable_norm_sq_fourier integrable_etaOC memLp_etaOC
+      have i2 : Integrable fun ξ => 2 * ‖𝓕 etaPC ξ‖ ^ 2 + 2 * ‖𝓕 etaOC ξ‖ ^ 2 :=
+        (iP.const_mul 2).add (iO.const_mul 2)
+      refine i2.mono' hc.aestronglyMeasurable (Filter.Eventually.of_forall fun ξ => ?_)
+      rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+      have := norm_sub_le (𝓕 etaPC ξ) (𝓕 etaOC ξ)
+      nlinarith [norm_nonneg (𝓕 etaPC ξ - 𝓕 etaOC ξ), norm_nonneg (𝓕 etaPC ξ),
+        norm_nonneg (𝓕 etaOC ξ), sq_nonneg (‖𝓕 etaPC ξ‖ - ‖𝓕 etaOC ξ‖)]
+    have h := hi.comp_mul_left' (neg_ne_zero.2 hx.ne')
+    refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
+    simp only [Function.comp, hO, hP, ← sub_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos hx]
+    ring_nf
+  have iPp : Integrable fun β => ‖P β + O β‖ ^ 2 := by
+    have iP2 : Integrable fun β => ‖P β‖ ^ 2 := by
+      have h := (integrable_norm_sq_fourier integrable_etaPC memLp_etaPC).comp_mul_left'
+        (neg_ne_zero.2 hx.ne')
+      refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
+      simp only [Function.comp, hP, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
+      ring_nf
+    have i2 : Integrable fun β => 2 * ‖P β‖ ^ 2 + 2 * ‖O β‖ ^ 2 := (iP2.const_mul 2).add (iO2.const_mul 2)
+    refine i2.mono' ((hPc.add hOc).norm.pow 2).aestronglyMeasurable
+      (Filter.Eventually.of_forall fun β => ?_)
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    have := norm_add_le (P β) (O β)
+    nlinarith [norm_nonneg (P β + O β), norm_nonneg (P β), norm_nonneg (O β), sq_nonneg (‖P β‖ - ‖O β‖)]
+  have hIPm : ∫ β, ‖P β - O β‖ ^ 2 ≤ x * 1.15e-7 := by
+    have e : (fun β => ‖P β - O β‖ ^ 2) =
+        fun β => x ^ 2 * ‖𝓕 etaPC (-(β * x)) - 𝓕 etaOC (-(β * x))‖ ^ 2 := by
+      ext β; simp only [hP, hO, ← sub_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos hx]; ring
+    rw [e, integral_const_mul, integral_norm_sq_comp_mul (f := fun ξ => 𝓕 etaPC ξ - 𝓕 etaOC ξ) hx]
+    have := integral_sq_fourier_sub_le
+    have hxx : x ^ 2 * x⁻¹ = x := by field_simp
+    calc x ^ 2 * (x⁻¹ * ∫ ξ, ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2) = x * ∫ ξ, ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2 := by
+          rw [← mul_assoc, hxx]
+      _ ≤ x * 1.15e-7 := mul_le_mul_of_nonneg_left this hx.le
+  have hIPp : ∫ β, ‖P β + O β‖ ^ 2 ≤ x * 2.5621 := by
+    have e : (fun β => ‖P β + O β‖ ^ 2) =
+        fun β => x ^ 2 * ‖𝓕 etaPC (-(β * x)) + 𝓕 etaOC (-(β * x))‖ ^ 2 := by
+      ext β; simp only [hP, hO, ← add_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos hx]; ring
+    rw [e, integral_const_mul, integral_norm_sq_comp_mul (f := fun ξ => 𝓕 etaPC ξ + 𝓕 etaOC ξ) hx]
+    have := integral_sq_fourier_add_le
+    have hxx : x ^ 2 * x⁻¹ = x := by field_simp
+    calc x ^ 2 * (x⁻¹ * ∫ ξ, ‖𝓕 etaPC ξ + 𝓕 etaOC ξ‖ ^ 2) = x * ∫ ξ, ‖𝓕 etaPC ξ + 𝓕 etaOC ξ‖ ^ 2 := by
+          rw [← mul_assoc, hxx]
+      _ ≤ x * 2.5621 := mul_le_mul_of_nonneg_left this hx.le
+  have hItail' : ∫ β in {β : ℝ | w ≤ |β|}, ‖O β‖ ^ 2 ≤ x * 2.47e-4 := by
+    have h := integral_indicator_comp_mul (f := fun ξ => ‖𝓕 etaOC ξ‖ ^ 2) (w := w) hx
+    rw [integral_indicator ((isClosed_le continuous_const continuous_abs).measurableSet)] at h
+    have e : (fun β => ‖O β‖ ^ 2) = fun β => x ^ 2 * ‖𝓕 etaOC (-(β * x))‖ ^ 2 := by
+      ext β; simp only [hO, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]; ring
+    rw [e, integral_const_mul, h]
+    have ht := tail_etaO_le (T := w * x) (by linarith)
+    have hπ := Real.pi_gt_d2
+    have hT : 98 / (2 * π * (w * x)) ^ 4 ≤ 2.47e-4 := by
+      have h1 : (25.12 : ℝ) ≤ 2 * π * (w * x) := by nlinarith
+      have h2 : (25.12 : ℝ) ^ 4 ≤ (2 * π * (w * x)) ^ 4 := pow_le_pow_left₀ (by norm_num) h1 4
+      calc 98 / (2 * π * (w * x)) ^ 4 ≤ 98 / 25.12 ^ 4 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) h2
+        _ ≤ 2.47e-4 := by norm_num
+    have hxx : x ^ 2 * x⁻¹ = x := by field_simp
+    calc x ^ 2 * (x⁻¹ * ∫ ξ in {ξ : ℝ | w * x ≤ |ξ|}, ‖𝓕 etaOC ξ‖ ^ 2) =
+          x * ∫ ξ in {ξ : ℝ | w * x ≤ |ξ|}, ‖𝓕 etaOC ξ‖ ^ 2 := by rw [← mul_assoc, hxx]
+      _ ≤ x * 2.47e-4 := mul_le_mul_of_nonneg_left (ht.trans hT) hx.le
+  -- the decomposition
+  set F : ℝ → ℂ := fun β => O β ^ 2 * Sx β * E β with hF
+  set G : ℝ → ℂ := fun β => P β ^ 2 * Sx β * E β with hG
+  have hFc : Continuous F := ((hOc.pow 2).mul hSc).mul hEc
+  have hGc : Continuous G := ((hPc.pow 2).mul hSc).mul hEc
+  have hFn : ∀ β, ‖F β‖ ≤ 0.02558 * x * ‖O β‖ ^ 2 := fun β => by
+    simp only [hF, norm_mul, norm_pow, hEn, mul_one]
+    rw [mul_comm (0.02558 * x)]; exact mul_le_mul_of_nonneg_left (hSn β) (by positivity)
+  have hFi : Integrable F := (iO2.const_mul (0.02558 * x)).mono' hFc.aestronglyMeasurable
+    (Filter.Eventually.of_forall hFn)
+  have hfull : ∫ β, F β = (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ) := integral_full_main hx N
+  have hw' : -w ≤ w := by linarith
+  have hGi : IntegrableOn G (Ioc (-w) w) := (hGc.integrableOn_Icc).mono_set Ioc_subset_Icc_self
+  have hFi' : IntegrableOn F (Ioc (-w) w) := hFi.integrableOn
+  show ‖(∫ β in -w..w, G β) - (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)‖ ≤ 2.03e-5 * x ^ 2
+  rw [← hfull, intervalIntegral.integral_of_le hw', ← integral_add_compl measurableSet_Ioc hFi]
+  have e : (∫ β in Ioc (-w) w, G β) - ((∫ β in Ioc (-w) w, F β) + ∫ β in (Ioc (-w) w)ᶜ, F β) =
+      (∫ β in Ioc (-w) w, (G β - F β)) - ∫ β in (Ioc (-w) w)ᶜ, F β := by
+    rw [integral_sub hGi hFi']; ring
+  rw [e]
+  refine (norm_sub_le _ _).trans ?_
+  -- the change of weight
+  have hAM : ∀ β, ‖G β - F β‖ ≤
+      0.02558 * x * (2360 * ‖P β - O β‖ ^ 2 + 1 / 9440 * ‖P β + O β‖ ^ 2) := by
+    intro β
+    have e1 : G β - F β = (P β - O β) * (P β + O β) * Sx β * E β := by simp only [hG, hF]; ring
+    rw [e1, norm_mul, norm_mul, norm_mul, hEn, mul_one]
+    have h1 : ‖P β - O β‖ * ‖P β + O β‖ ≤ 2360 * ‖P β - O β‖ ^ 2 + 1 / 9440 * ‖P β + O β‖ ^ 2 := by
+      nlinarith [sq_nonneg (4720 * ‖P β - O β‖ - ‖P β + O β‖)]
+    calc ‖P β - O β‖ * ‖P β + O β‖ * ‖Sx β‖ ≤
+          (2360 * ‖P β - O β‖ ^ 2 + 1 / 9440 * ‖P β + O β‖ ^ 2) * (0.02558 * x) :=
+          mul_le_mul h1 (hSn β) (norm_nonneg _) (by positivity)
+      _ = _ := by ring
+  have hgi : Integrable fun β => 0.02558 * x * (2360 * ‖P β - O β‖ ^ 2 + 1 / 9440 * ‖P β + O β‖ ^ 2) :=
+    ((iPm.const_mul 2360).add (iPp.const_mul (1 / 9440))).const_mul _
+  have hI1 : ‖∫ β in Ioc (-w) w, (G β - F β)‖ ≤ 1.3886e-5 * x ^ 2 := by
+    refine (norm_integral_le_of_norm_le hgi.integrableOn (Filter.Eventually.of_forall hAM)).trans ?_
+    refine (setIntegral_le_integral hgi (Filter.Eventually.of_forall fun β => by
+      simp only [Pi.zero_apply]; positivity)).trans ?_
+    rw [integral_const_mul, integral_add (iPm.const_mul 2360) (iPp.const_mul (1 / 9440)),
+      integral_const_mul, integral_const_mul]
+    nlinarith [mul_le_mul_of_nonneg_left hIPm hx.le, mul_le_mul_of_nonneg_left hIPp hx.le]
+  -- the tail
+  have hsub : (Ioc (-w) w)ᶜ ⊆ {β : ℝ | w ≤ |β|} := fun β hβ => by
+    rw [mem_compl_iff, Set.mem_Ioc, not_and_or, not_lt, not_le] at hβ
+    show w ≤ |β|
+    rcases hβ with h | h
+    · rw [abs_of_nonpos (by linarith)]; linarith
+    · rw [abs_of_pos (by linarith)]; linarith
+  have hI2 : ‖∫ β in (Ioc (-w) w)ᶜ, F β‖ ≤ 6.3183e-6 * x ^ 2 := by
+    have hOi : Integrable fun β => 0.02558 * x * ‖O β‖ ^ 2 := iO2.const_mul _
+    refine (norm_integral_le_of_norm_le hOi.integrableOn (Filter.Eventually.of_forall hFn)).trans ?_
+    refine (setIntegral_mono_set (t := {β : ℝ | w ≤ |β|}) hOi.integrableOn
+      (Filter.Eventually.of_forall fun β => by simp only [Pi.zero_apply]; positivity)
+      (Filter.Eventually.of_forall hsub)).trans ?_
+    rw [integral_const_mul]
+    have h := mul_le_mul_of_nonneg_left hItail' (by positivity : (0:ℝ) ≤ 0.02558 * x)
+    calc 0.02558 * x * ∫ β in {β : ℝ | w ≤ |β|}, ‖O β‖ ^ 2 ≤ 0.02558 * x * (x * 2.47e-4) := h
+      _ ≤ 6.3183e-6 * x ^ 2 := by nlinarith
+  calc _ ≤ 1.3886e-5 * x ^ 2 + 6.3183e-6 * x ^ 2 := add_le_add hI1 hI2
+    _ ≤ 2.03e-5 * x ^ 2 := by nlinarith
+
+/-! ## The arcs of one modulus -/
+
+theorem abs_coefN_le (N : ℕ) {q : ℕ} (hq : 1 ≤ q) : |coefN N q| ≤ mPhi2 q := by
+  have h := coef_eq (N := N) hq
+  have hφ : (0 : ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 (by omega)
+  have hμ : ‖(μ q : ℂ)‖ ≤ 1 := by
+    rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
+  have hsum : ‖∑ b ∈ Bset q, e (-(N * ((b : ℝ) / q)))‖ ≤ q.totient := by
+    refine (norm_sum_le _ _).trans ?_
+    simp only [TernaryGoldbach.norm_e, sum_const, nsmul_eq_mul, mul_one]
+    rw [card_Bset_eq]
+  have hm : ‖(μ q : ℂ) / q.totient‖ = ‖(μ q : ℂ)‖ / q.totient := by
+    rw [norm_div, Complex.norm_natCast]
+  rw [← Real.norm_eq_abs, ← Complex.norm_real, ← h]
+  calc ‖((μ q : ℂ) / q.totient) ^ 3 * ∑ b ∈ Bset q, e (-(N * ((b : ℝ) / q)))‖
+      ≤ ‖(μ q : ℂ) / q.totient‖ ^ 3 * q.totient := by
+        rw [norm_mul, norm_pow]; exact mul_le_mul_of_nonneg_left hsum (by positivity)
+    _ = ‖(μ q : ℂ) / q.totient‖ ^ 2 * (‖(μ q : ℂ)‖ / q.totient * q.totient) := by rw [hm]; ring
+    _ = ‖(μ q : ℂ) / q.totient‖ ^ 2 * ‖(μ q : ℂ)‖ := by rw [div_mul_cancel₀ _ hφ.ne']
+    _ ≤ ‖(μ q : ℂ) / q.totient‖ ^ 2 * 1 := mul_le_mul_of_nonneg_left hμ (by positivity)
+    _ = mPhi2 q := by rw [mul_one, norm_moebius_div_sq_le]; rfl
+
+theorem setIntegral_arc_eq_C {g : ℝ → ℂ} {δ₀ R x : ℝ} {q b : ℕ} (hw : 0 ≤ wrad δ₀ R x q) :
+    ∫ y in arc δ₀ R x q b, g y =
+      ∫ β in -wrad δ₀ R x q..wrad δ₀ R x q, g ((b : ℝ) / q + β) := by
+  set w := wrad δ₀ R x q
+  rw [intervalIntegral.integral_comp_add_left, arc, ← integral_Ioc_eq_integral_Ioo,
+    ← intervalIntegral.integral_of_le (by linarith), sub_eq_add_neg]
+
+theorem continuous_S_etaPlus {x : ℝ} (hx : 0 < x) : Continuous (S etaPlus x) := by
+  have : S etaPlus x = expTsum (cP x) := funext fun α => S_etaPlus_eq_expTsum x α
+  rw [this]; exact TernaryGoldbach.continuous_expTsum (summable_cP hx)
+
+theorem continuous_S_etaStar {x : ℝ} (hx : 0 < x) : Continuous (S etaStar x) := by
+  have : S etaStar x = expTsum (cU (x / κ)) := funext fun α => S_etaStar_eq_cU hx α
+  rw [this]; exact TernaryGoldbach.continuous_expTsum (summable_cU (div_pos hx kappa_pos))
+
+/-- The integrand `S_{η₊}(α)² S_{η_*}(α) e(−Nα)` at a general `x`. -/
+noncomputable def fI (N : ℕ) (x α : ℝ) : ℂ := S etaPlus x α ^ 2 * S etaStar x α * e (-(N * α))
+
+theorem continuous_fI (N : ℕ) {x : ℝ} (hx : 0 < x) : Continuous (fI N x) :=
+  (((continuous_S_etaPlus hx).pow 2).mul (continuous_S_etaStar hx)).mul
+    (TernaryGoldbach.continuous_e.comp (by fun_prop))
+
+/-- **The pointwise estimate** at `α = b/q + β`, summed over `b`. -/
+theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
+    (hβ : |β * x| ≤ 1200000 / qt q) :
+    ‖∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) -
+        (coefN N q : ℂ) * ((𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β)))‖ ≤
+      (3.15e-7 * (x / κ) + 4.63e-8 * x / 9) * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
+        9 * 4.63e-8 * x / 2 * mPhi2 q * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 +
+        4.63e-8 * x / 9 * mPhi q * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 := by
+  obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
+  have hx0 : 0 < x := by linarith
+  have hy0 : 0 < x / κ := div_pos hx0 kappa_pos
+  have hφ : (q.totient : ℝ) ≠ 0 := by exact_mod_cast (Nat.totient_pos.2 (by omega)).ne'
+  set m : ℂ := (μ q : ℂ) / q.totient with hm
+  set Ap : ℂ := 𝓕 etaPC (-(β * x)) * x with hAp
+  set Au : ℂ := 𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ) with hAu
+  have hAs : Au = 𝓕 etaSC (-(β * x)) * x := As_eq β
+  have hρ : ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - m * Ap‖ ^ 2 ≤ (4.63e-8 * x) ^ 2 := by
+    refine (resid_plus hx hq hβ).trans ?_; nlinarith
+  have hU : ∀ b ∈ Bset q, ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ≤ 3.15e-7 * (x / κ) := by
+    intro b hb
+    have h := resid_star hx hq hβ hb
+    have h2 : ‖S etaStar x ((b : ℝ) / q + β) - m * Au‖ ^ 2 ≤ (3.15e-7 * (x / κ)) ^ 2 := by
+      refine h.trans ?_; nlinarith
+    exact (pow_le_pow_iff_left₀ (norm_nonneg _) (by positivity) two_ne_zero).1 h2
+  have heb : ∀ b ∈ Bset q, ‖e (-(N * ((b : ℝ) / q + β)))‖ = 1 := fun b _ => TernaryGoldbach.norm_e _
+  have hmain := sum_cubic_error (s := Bset q) (fun b => S etaPlus x ((b : ℝ) / q + β))
+    (fun b => S etaStar x ((b : ℝ) / q + β)) (fun b => e (-(N * ((b : ℝ) / q + β)))) (m * Ap) (m * Au)
+    (by positivity : (0:ℝ) < 4.63e-8 * x) heb hU hρ
+  have hid : (m * Ap) ^ 2 * (m * Au) * ∑ b ∈ Bset q, e (-(N * ((b : ℝ) / q + β))) =
+      (coefN N q : ℂ) * (Ap ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β))) := by
+    rw [← coef_eq hq1, ← hAs, hm]
+    have : ∀ b ∈ Bset q, e (-(N * ((b : ℝ) / q + β))) = e (-(N * ((b : ℝ) / q))) * e (-(N * β)) := by
+      intro b _; rw [← TernaryGoldbach.e_add]; congr 1; ring
+    rw [sum_congr rfl this, ← sum_mul]; ring
+  have h1 : ‖m * Au‖ ^ 2 = mPhi2 q * ‖Au‖ ^ 2 := by
+    rw [norm_mul, mul_pow, hm, norm_moebius_div_sq_le]; rfl
+  have h2 : 2 * ((Bset q).card : ℝ) * ‖m * Ap‖ ^ 2 = 2 * (mPhi q * ‖Ap‖ ^ 2) := by
+    rw [card_Bset_eq, norm_mul, mul_pow, hm, norm_moebius_div_sq_le]
+    unfold mPhi; field_simp
+  rw [hid, h1, h2] at hmain
+  have e1 : ∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) = ∑ b ∈ Bset q, S etaPlus x ((b : ℝ) / q + β) ^ 2 *
+      S etaStar x ((b : ℝ) / q + β) * e (-(N * ((b : ℝ) / q + β))) := rfl
+  rw [e1]
+  refine hmain.trans (le_of_eq ?_)
+  ring
+
+set_option maxHeartbeats 1000000 in
+/-- **One modulus**: `Σ_b ∫_{J_{q,b}} S₊²S_* e(−N·)` is `c_q x² C_{η◦,η_*}(N/x)` up to a small error. -/
+theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
+    ‖(∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y) -
+        (coefN N q : ℂ) * ((x : ℂ) ^ 2 * (Cmain (N / x) : ℂ))‖ ≤
+      (3.15e-7 * (x / κ) + 4.63e-8 * x / 9) * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2) := by
+  obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
+  have hx0 : 0 < x := by linarith
+  have hy0 : 0 < x / κ := div_pos hx0 kappa_pos
+  have hr₀ : r₀ = 150000 := rfl
+  have hqt0 : (0 : ℝ) < qt q := by
+    have : 1 ≤ qt q := by unfold qt; split_ifs <;> omega
+    exact_mod_cast this
+  set w := wrad 8 r₀ x q with hw
+  have hwx : w * x = 1200000 / qt q := by
+    rw [hw, TernaryGoldbach.MinorArcs.wrad, hr₀]; field_simp; norm_num
+  have hw0 : 0 ≤ w := by rw [hw, TernaryGoldbach.MinorArcs.wrad, hr₀]; positivity
+  have hwx4 : 4 ≤ w * x := by rw [hwx, le_div_iff₀ hqt0]; linarith
+  have hβ : ∀ β ∈ Ioc (-w) w, |β * x| ≤ 1200000 / qt q := fun β hβ => by
+    rw [← hwx, abs_mul, abs_of_pos hx0]
+    exact mul_le_mul_of_nonneg_right (abs_le.2 ⟨hβ.1.le, hβ.2⟩) hx0.le
+  have hfc := continuous_fI N hx0
+  have hsw : ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y =
+      ∫ β in -w..w, ∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) := by
+    rw [intervalIntegral.integral_finset_sum (f := fun (b : ℕ) (β : ℝ) => fI N x ((b : ℝ) / q + β))
+      (fun b _ => (hfc.comp (continuous_const.add continuous_id)).intervalIntegrable _ _)]
+    exact sum_congr rfl fun b _ => setIntegral_arc_eq_C (g := fI N x) hw0
+  set Mn : ℝ → ℂ := fun β => (𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β))
+    with hMn
+  have kM : Continuous Mn :=
+    ((((continuous_fourier_etaPC.comp (by fun_prop)).mul continuous_const).pow 2).mul
+      ((continuous_fourier_etaSC'.comp (by fun_prop)).mul continuous_const)).mul
+      (TernaryGoldbach.continuous_e.comp (by fun_prop))
+  have kF : Continuous fun β => ∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) :=
+    continuous_finsetSum _ fun b _ => hfc.comp (continuous_const.add continuous_id)
+  have hmc : ‖(∫ β in -w..w, Mn β) - (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)‖ ≤ 2.03e-5 * x ^ 2 :=
+    main_comparison hx0 hw0 hwx4 (N : ℝ)
+  have hdec : (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y) -
+        (coefN N q : ℂ) * ((x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)) =
+      (∫ β in -w..w, (∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) - (coefN N q : ℂ) * Mn β)) +
+        (coefN N q : ℂ) * ((∫ β in -w..w, Mn β) - (x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)) := by
+    have iM : IntervalIntegrable (fun β => (coefN N q : ℂ) * Mn β) volume (-w) w :=
+      (continuous_const.mul kM).intervalIntegrable _ _
+    rw [hsw, intervalIntegral.integral_sub (kF.intervalIntegrable _ _) iM,
+      intervalIntegral.integral_const_mul]
+    ring
+  -- the pointwise bound, integrated
+  have kS : Continuous fun β => ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 :=
+    continuous_finsetSum _ fun b _ => (continuous_norm_sq_S hx0).comp (continuous_const.add continuous_id)
+  have kU : Continuous fun β => ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 :=
+    (((VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar (by fun_prop)
+      integrable_etaUC).comp (by fun_prop)).mul continuous_const).norm.pow 2
+  have kP : Continuous fun β => ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 :=
+    ((continuous_fourier_etaPC.comp (by fun_prop)).mul continuous_const).norm.pow 2
+  set k1 : ℝ := 3.15e-7 * (x / κ) + 4.63e-8 * x / 9
+  set k2 : ℝ := 9 * 4.63e-8 * x / 2 * mPhi2 q
+  set k3 : ℝ := 4.63e-8 * x / 9 * mPhi q
+  have hInt : ‖∫ β in -w..w, (∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) - (coefN N q : ℂ) * Mn β)‖ ≤
+      ∫ β in -w..w, (k1 * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 +
+        k2 * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 + k3 * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2) :=
+    intervalIntegral.norm_integral_le_of_norm_le (by linarith)
+      (Filter.Eventually.of_forall fun β hβ' => pointwise_bound N hx hq (hβ β hβ'))
+      ((((continuous_const.mul kS).add (continuous_const.mul kU)).add
+        (continuous_const.mul kP)).intervalIntegrable _ _)
+  have iS : IntervalIntegrable (fun β => k1 * ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2)
+      volume (-w) w := (continuous_const.mul kS).intervalIntegrable _ _
+  have iU : IntervalIntegrable (fun β => k2 * ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2)
+      volume (-w) w := (continuous_const.mul kU).intervalIntegrable _ _
+  have iP : IntervalIntegrable (fun β => k3 * ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2)
+      volume (-w) w := (continuous_const.mul kP).intervalIntegrable _ _
+  rw [intervalIntegral.integral_add (iS.add iU) iP, intervalIntegral.integral_add iS iU,
+    intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
+    intervalIntegral.integral_const_mul] at hInt
+  have hB1 : ∫ β in -w..w, ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 =
+      ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 := by
+    rw [intervalIntegral.integral_finset_sum
+      (f := fun (b : ℕ) (β : ℝ) => ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2) (fun b _ =>
+      ((continuous_norm_sq_S hx0).comp (continuous_const.add continuous_id)).intervalIntegrable _ _)]
+    exact sum_congr rfl fun b _ => (setIntegral_arc_eq (g := fun y => ‖S etaPlus x y‖ ^ 2) hw0).symm
+  have hB2 : ∫ β in -w..w, ‖𝓕 etaUC (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ^ 2 ≤ 7.78 * (x / κ) := by
+    set y := x / κ
+    have e : (fun β => ‖𝓕 etaUC (-(β * y)) * ((y : ℝ) : ℂ)‖ ^ 2) =
+        fun β => y ^ 2 * ‖𝓕 etaUC (-(β * y))‖ ^ 2 := by
+      ext β; rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hy0]; ring
+    have hi : Integrable fun β => y ^ 2 * ‖𝓕 etaUC (-(β * y))‖ ^ 2 := by
+      have h := (integrable_norm_sq_fourier integrable_etaUC memLp_etaUC).comp_mul_left'
+        (neg_ne_zero.2 hy0.ne')
+      refine (h.const_mul (y ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
+      ring_nf
+    rw [e, intervalIntegral.integral_of_le (by linarith)]
+    refine (setIntegral_le_integral hi (Filter.Eventually.of_forall fun β => by
+      simp only [Pi.zero_apply]; positivity)).trans ?_
+    rw [integral_const_mul, integral_norm_sq_comp_mul (f := 𝓕 etaUC) hy0]
+    have := integral_norm_sq_fourier_etaUC_le
+    have hyy : y ^ 2 * y⁻¹ = y := by field_simp
+    calc y ^ 2 * (y⁻¹ * ∫ ξ, ‖𝓕 etaUC ξ‖ ^ 2) = y * ∫ ξ, ‖𝓕 etaUC ξ‖ ^ 2 := by rw [← mul_assoc, hyy]
+      _ ≤ 7.78 * y := by nlinarith
+  have hB3 : ∫ β in -w..w, ‖𝓕 etaPC (-(β * x)) * x‖ ^ 2 ≤ 0.640208 * x := by
+    rw [integral_main_term hx0 hw0]
+    have hi := integrable_norm_sq_fourier integrable_etaPC memLp_etaPC
+    have h1 : ∫ δ in Ioo (-(w * x)) (w * x), ‖𝓕 etaPC δ‖ ^ 2 ≤ ∫ δ, ‖𝓕 etaPC δ‖ ^ 2 :=
+      setIntegral_le_integral hi (Filter.Eventually.of_forall fun δ => by
+        simp only [Pi.zero_apply]; positivity)
+    rw [integral_norm_sq_fourier_etaPC] at h1
+    nlinarith [mul_le_mul_of_nonneg_left (h1.trans integral_sq_etaPlus_bounds.2) hx0.le]
+  have hm2 : 0 ≤ mPhi2 q := div_nonneg (by split_ifs <;> norm_num) (by positivity)
+  have hm1 : 0 ≤ mPhi q := mPhi_nonneg q
+  have hk2 : 0 ≤ k2 := by positivity
+  have hk3 : 0 ≤ k3 := by positivity
+  have hc : ‖(coefN N q : ℂ)‖ ≤ mPhi2 q := by
+    rw [Complex.norm_real, Real.norm_eq_abs]; exact abs_coefN_le N hq1
+  rw [hdec]
+  refine (norm_add_le _ _).trans ?_
+  rw [norm_mul]
+  have hT2 := mul_le_mul hc hmc (norm_nonneg _) hm2
+  rw [hB1] at hInt
+  have hT1 := hInt.trans (add_le_add (add_le_add le_rfl (mul_le_mul_of_nonneg_left hB2 hk2))
+    (mul_le_mul_of_nonneg_left hB3 hk3))
+  calc _ ≤ _ := add_le_add hT1 hT2
+    _ = _ := by ring
+
+/-! ## Assembly: [B, (14.27)] -/
+
+theorem fI_periodic (N : ℕ) {x : ℝ} (hx : 0 < x) : Function.Periodic (fI N x) 1 := by
+  intro α
+  have h1 : S etaPlus x (α + 1) = S etaPlus x α := by
+    rw [S_etaPlus_eq_expTsum, S_etaPlus_eq_expTsum, expTsum_periodic]
+  have h2 : S etaStar x (α + 1) = S etaStar x α := by
+    rw [S_etaStar_eq_cU hx, S_etaStar_eq_cU hx, expTsum_periodic]
+  have h3 : e (-(N * (α + 1))) = e (-(N * α)) := by
+    rw [show -((N : ℝ) * (α + 1)) = -(N * α) + ((-(N : ℤ) : ℤ) : ℝ) by push_cast; ring,
+      TernaryGoldbach.e_add, TernaryGoldbach.e_intCast, mul_one]
+  simp only [fI, h1, h2, h3]
+
+theorem Cmain_ge_num {x : ℝ} (N : ℝ) (hNx : N / x = 2 + 9 / (8 * √(π / 2)) / κ) :
+    0.800689 / κ ≤ Cmain (N / x) := by
+  have hs1 : (1.25331 : ℝ) ≤ √(π / 2) := Real.le_sqrt_of_sq_le (by nlinarith [Real.pi_gt_d6])
+  have hs2 : √(π / 2) ≤ 1.25332 := by
+    rw [Real.sqrt_le_left (by norm_num)]; have := Real.pi_lt_d6; linarith
+  set s := √(π / 2)
+  set c := 9 / (8 * s) with hc
+  have hs0 : 0 < s := by linarith
+  have hcs : c * s = 9 / 8 := by rw [hc]; field_simp
+  have hc1 : 0.8976 ≤ c := by
+    rw [hc, le_div_iff₀ (by positivity)]; nlinarith
+  have hQ : 49 / 48 * s - 9 / 4 * c + c ^ 2 * s ≤ 0.2696413 := by
+    have : c ^ 2 * s = 9 / 8 * c := by rw [sq, mul_assoc, hcs]; ring
+    rw [this]; nlinarith
+  have hO := integral_sq_etaO_bounds.1
+  rw [hNx]
+  refine le_trans ?_ (Cmain_ge c)
+  rw [TernaryGoldbach.Helfgott.κ]
+  have h1 : 0.63965 * 1.25331 ≤ (∫ t, etaO t ^ 2) * s := by
+    have := mul_le_mul hO hs1 (by norm_num) (by linarith)
+    linarith
+  have h2 : 8.82 * ((49 / 48 * s - 9 / 4 * c + c ^ 2 * s) / 49 ^ 3) ≤ 8.82 * (0.2696413 / 49 ^ 3) := by
+    gcongr
+  have e1 : (∫ t, etaO t ^ 2) * (s / 49) = (∫ t, etaO t ^ 2) * s / 49 := by ring
+  rw [e1]
+  norm_num at h1 h2
+  linarith
+
+set_option maxHeartbeats 2000000 in
+/-- **[B, (14.27)]** (with `1.049` in place of [B]'s `1.058259`):
+`Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α)² S_{η_*}(α) e(−Nα) dα ≥ 1.049 x²/κ`. -/
+theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
+    (hNx : (N : ℝ) / x = 2 + 9 / (8 * √(π / 2)) / κ) :
+    1.049 * x ^ 2 / κ ≤ (∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, fI N x α).re := by
+  have hx0 : 0 < x := by linarith
+  have hfc := continuous_fI N hx0
+  have hsub : Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x ⊆ Icc 0 1 := fun α hα => Ioc_subset_Icc_self hα.1
+  have hint : IntegrableOn (fI N x) (Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x) :=
+    (hfc.integrableOn_Icc).mono_set hsub
+  have hre : (∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, fI N x α).re =
+      ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, (fI N x α).re := (integral_re hint).symm
+  rw [hre, integral_majorArcs_eq (g := fun α => (fI N x α).re) (Complex.continuous_re.comp hfc)
+    (fun α => by show (fI N x (α + 1)).re = (fI N x α).re; rw [fI_periodic N hx0 α]) hx]
+  have harc : ∀ q b, ∫ y in arc 8 r₀ x q b, (fI N x y).re = (∫ y in arc 8 r₀ x q b, fI N x y).re :=
+    fun q b => integral_re ((hfc.integrableOn_Icc
+      (a := (b : ℝ) / q - wrad 8 r₀ x q) (b := (b : ℝ) / q + wrad 8 r₀ x q)).mono_set Ioo_subset_Icc_self)
+  simp_rw [harc, ← Complex.re_sum]
+  rw [Complex.re_sum]
+  -- each modulus
+  have hlow : ∀ q ∈ Qset r₀, coefN N q * (x ^ 2 * Cmain (N / x)) -
+      ((3.15e-7 * (x / κ) + 4.63e-8 * x / 9) *
+          (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) ≤
+      (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y).re := by
+    intro q hq
+    have h := per_modulus N hx hq
+    have hw : (coefN N q : ℂ) * ((x : ℂ) ^ 2 * (Cmain (N / x) : ℂ)) =
+        ((coefN N q * (x ^ 2 * Cmain (N / x)) : ℝ) : ℂ) := by push_cast; ring
+    rw [hw] at h
+    have h1 := (Complex.abs_re_le_norm _).trans h
+    rw [Complex.sub_re, Complex.ofReal_re] at h1
+    linarith [(abs_le.1 h1).1]
+  refine le_trans ?_ (sum_le_sum hlow)
+  rw [sum_sub_distrib, ← sum_mul]
+  -- the error terms, summed
+  set k1 : ℝ := 3.15e-7 * (x / κ) + 4.63e-8 * x / 9
+  set K2 : ℝ := 9 * 4.63e-8 * x / 2 * (7.78 * (x / κ)) + 2.03e-5 * x ^ 2
+  set K3 : ℝ := 4.63e-8 * x / 9 * (0.640208 * x)
+  have hEsum : ∑ q ∈ Qset r₀, (k1 * (∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+        9 * 4.63e-8 * x / 2 * mPhi2 q * (7.78 * (x / κ)) +
+        4.63e-8 * x / 9 * mPhi q * (0.640208 * x) + mPhi2 q * (2.03e-5 * x ^ 2)) =
+      k1 * (∑ q ∈ Qset r₀, ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2) +
+        K2 * (∑ q ∈ Qset r₀, mPhi2 q) + K3 * (∑ q ∈ Qset r₀, mPhi q) := by
+    rw [mul_sum, mul_sum, mul_sum, ← sum_add_distrib, ← sum_add_distrib]
+    exact sum_congr rfl fun q _ => by ring
+  rw [hEsum]
+  have hJ : ∑ q ∈ Qset r₀, ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 ≤ 8.7808 * x := by
+    rw [← integral_majorArcs_eq (continuous_norm_sq_S hx0)
+      (fun α => by simp only [S_etaPlus_eq_expTsum]; rw [expTsum_periodic]) hx]
+    exact (l2_major_bounds hx).2
+  have hm2 := sum_Qset_mPhi2_le
+  have hm1 := sum_Qset_mPhi_bounds.2
+  have hcN := sum_Qset_coefN_ge hN
+  have hC := Cmain_ge_num (x := x) N hNx
+  have hκ : κ = 49 := rfl
+  have hy : 0 ≤ x / κ := by rw [hκ]; positivity
+  have hk1 : 0 ≤ k1 := by positivity
+  have hK2 : 0 ≤ K2 := by positivity
+  have hK3 : 0 ≤ K3 := by positivity
+  have hxC : 0 ≤ x ^ 2 * Cmain (N / x) := by
+    have : 0 ≤ Cmain (N / x) := le_trans (by rw [hκ]; norm_num) hC
+    positivity
+  have hP1 := mul_le_mul_of_nonneg_left hJ hk1
+  have hP2 := mul_le_mul_of_nonneg_left hm2 hK2
+  have hP3 := mul_le_mul_of_nonneg_left hm1 hK3
+  have hP4 := mul_le_mul_of_nonneg_right hcN hxC
+  have hP5 := mul_le_mul_of_nonneg_left hC (sq_nonneg x)
+  have hr₀ : r₀ = 150000 := rfl
+  rw [hr₀] at hP1 ⊢
+  simp only [k1, K2, K3, hκ] at hP1 hP2 hP3 hP4 hP5 ⊢
+  nlinarith [sq_nonneg x]
+
 end TernaryGoldbach.MajorArcs
