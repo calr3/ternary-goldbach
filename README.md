@@ -1,7 +1,7 @@
 # Ternary Goldbach in Lean 4 (a blueprint of Helfgott's proof)
 
 **Status: not a complete formal proof.** `TernaryGoldbach.ternary_goldbach` states that every
-odd integer greater than 5 is a sum of three primes. It is derived in Lean from **5 explicitly
+odd integer greater than 5 is a sum of three primes. It is derived in Lean from **4 explicitly
 stated results from the literature**, which are still `sorry`, and **33 numerical axioms**
 (finite computations, listed below). Everything that connects them to the theorem is proved.
 
@@ -50,17 +50,17 @@ $ echo 'import TernaryGoldbach
 
 See [`BLUEPRINT.md`](BLUEPRINT.md) for the chapter-by-chapter map from the book to Lean.
 
-The 5 `sorry`s that `ternary_goldbach` depends on are:
+The 4 `sorry`s that `ternary_goldbach` depends on are:
 
-* **one unproved input** in [`Helfgott/Inputs.lean`](TernaryGoldbach/Helfgott/Inputs.lean):
-  `major_arcs_input` (see "The inputs" below);
 * **three cited Part II results**: the explicit-formula estimates [B, Prop 9.3.2], [B, Prop 9.4.2] and
   [B, Prop 9.5.1] (`MajorArcs/GRH.lean`, `MajorArcs/Thm714.lean`, `MajorArcs/Prop715.lean`), each stated
   *conditionally* on GRH up to a height `T₀`. From them, Platt's GRH verification (numerical axioms
   `platt_odd`, `platt_even`) and the value (9.94) (numerical axiom), [B, Cor 7.1.3], [B, Thm 7.1.4] and
   [B, Prop 7.1.5] are proved; [B, (14.7)] (the `ℓ²` norm over the major arcs, Lemma 10.3.1 + §14.1) is
   proved from Thm 7.1.4 in `MajorArcs/L2Major.lean`, with one more numerical axiom
-  (`Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`); [B, (14.28)] is proved, in a weaker form, in
+  (`Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`); [B, (14.27)] (the major-arc total, Chs. 10–11 and
+  §14.2) is proved from Cor 7.1.3, Prop 7.1.5 and (14.7) in `MajorArcs/MajorTotal.lean`, with constant
+  `1.049` in place of [B]'s `1.058259`; [B, (14.28)] is proved, in a weaker form, in
   `MinorArcs/EBound.lean`;
 * **one literature result** in `Prelim/LambdaMu.lean`: Dusart's explicit prime number theorem
   `|θ(x) − x| < x/log³ x` for `x ≥ 89 967 803` ([Dus18, Thm. 4.2]).
@@ -149,7 +149,7 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `Helfgott/NonPrime.lean` | [H, (7.50)] from sup bounds on η₊, η_* and bounds on ψ, ψ − θ (constants as parameters) | ✅ |
 | `Helfgott/SupNorms.lean` | easy sup bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2` | ✅ |
 | `Helfgott/Chebyshev.lean` | elementary `θ(N) ≤ N log 4`, `ψ(N) − θ(N) ≤ 1.6√N`, `ψ(N) ≤ 1.387 N` (for `N ≥ 10²⁷`) | ✅ |
-| `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < (1.058259 − 1.0376) x²/κ = 0.020659 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
+| `Helfgott/Numerics.lean` | the final inequality of [B, §14.4], `C·N^{3/2} log N < (1.049 − 1.0376) x²/κ = 0.0114 x²/κ` for `N ≥ 10²⁷`, both with Helfgott's `C = 7.3306` and with the cruder `C = 6.7·10⁶` we actually use | ✅ |
 | `MinorArcs/Vaughan.lean` | Vaughan's identity `Λ = Λ_{≤V} + μ_{≤U}∗log − μ_{≤U}∗Λ_{≤V}∗1 + μ_{>U}∗Λ_{>V}∗1` | ✅ |
 | `MinorArcs/LargeSieve.lean` | Gallagher's lemma; the large sieve `∑_r |S(α_r)|² ≤ (δ⁻¹ + 4πX)‖a‖²` for `δ`-spaced points; the Farey version with `Q² + 4πX` | ✅ |
 | `Helfgott/Eta2.lean` | explicit formulas for `η₂`, `|η₂|₁ = 1`, continuity, compact support, total variation `8 log 2` | ✅ |
@@ -216,26 +216,29 @@ these `sorry`s or numerical axioms (through `#print axioms`); the file itself co
 | `MinorArcs/PartIICited.lean` | the Part II results used by the minor arcs: [B, Cor 7.1.3], [B, Prop 7.1.5], [B, (14.7)], all proved in `MajorArcs/` | ✅ (uses cited 9.3.2, 9.4.2, 9.5.1) |
 | `Prelim/PlancherelReal.lean` | Plancherel for `L¹ ∩ L²` on `ℝ` (Mathlib's `L²` transform identified with the integral one via tempered distributions) | ✅ |
 | `MajorArcs/ArcsEq.lean`, `EtaCirc.lean`, `HHFourier.lean`, `EtaPlusL2.lean`, `ArcChars.lean`, `SumMuPhi.lean`, `L2Major.lean` | **[B, (14.7)] proved** (`l2_major_bounds`: `8.688x ≤ ∫_𝔐 \|S_{η₊}\|² ≤ 8.709x`): arcs as a disjoint union; `η◦` and its Fourier tail `≤ 98/(2πT)⁴`; `‖η₊ − η◦‖₂² ≤ 19.5/(2·200²)` (Fourier analysis of `h_H` in log coordinates: `h_H` is `h` with its spectrum cut at `H/2π`); `‖η₊‖₂²` from (9.94); per modulus: coprime split, Bombieri's identity, Thm 7.1.4 for the primitive characters; `Σ μ²/φ` (numerical axiom) | ✅ (cited 9.4.2, axioms Platt, (9.94), `Σ μ²/φ`) |
+| `MajorArcs/CMain.lean`, `FourierMain.lean`, `Singular.lean`, `ArcCharsStar.lean`, `MajorTotal.lean` | **[B, (14.27)] proved with `1.049`** (`major_total`): `C_{η◦,η_*}(N/x) ≥ 0.800689/κ` (Ch. 11: polarization for `η◦∗η◦`, the moments of `η_*`); the Fourier identity (10.22) `∫ η̂◦²η̂_* e(ξρ) = C_{η◦,η_*}(ρ)`; the singular series `Σ_{q∈Q} c_q(N) ≥ 1.314` (Ramanujan sums, Euler product with Rankin's trick, `mertens_product_small` at `150001`) and `Σ μ²/φ² ≤ 2.85`; `S_{η_*}` on the arcs of one modulus via characters and Cor 7.1.3; per modulus, the principal character (`τ(1) = μ(q)`) with `ℓ²` residuals and AM–GM; `η₊ → η◦` and the Fourier tail cost `≤ 2.03·10⁻⁵ x²` per modulus | ✅ (cited 9.3.2, 9.4.2, 9.5.1; axioms Platt, (9.94), `Σ μ²/φ`, Mertens product) |
 | `MinorArcs/MinorTotal.lean` | (14.49) via repair 3: `S₁/S₂` split, `I₀ ≥ 8.6294x` (from (14.7) with `O*(0.0756)`; [B]: `0.0754`, an arithmetic slip, see NOTES), `T ≤ σ(x)x`, assembly `minor_total` | ✅ (uses the above) |
 | `MinorArcs/NumericsCore.lean`, `NumericsCells.lean` (generated by `scripts/gen_cells.py`), `NumericsAsymp.lean`, `NumericsFinal.lean` | the numerical inequality `Mexpr x r₂ ≤ 1.037` for all `x ≥ 4.9·10²⁶` | ✅ |
 | `MinorArcs/LargeSievePrimes.lean` | [B, Ch. 12]: `G_q`; **Prop 12.2.4 (numerical axiom)** | ✅ (one numerical axiom) |
 | `MinorArcs/Bombieri.lean`, `LargeSieveWeights.lean`, `Periodize.lean`, `LargeSieveArcs.lean`, `Plancherel.lean`, `LargeSieveProof.lean` | **[B, Prop 12.1.2] proved** (with `δ₀ ≥ 2`): Bombieri's identity (Parseval over characters, Gauss sums, grouping by conductor), the weights `(c/φ(c))κ_c G_{c̃}`, arcs (covering and Farey disjointness), Plancherel for `ℓ¹`; **Cor 12.2.5 (12.42)** from it and Prop 12.2.4 | ✅ (Cor 12.2.5 uses the axiom 12.2.4) |
 | `Prelim/GaussInduced.lean` | Gauss sums: induced characters `τ(χ↑) = μ(r)χ(r)τ(χ)`; `|τ(χ)|² = N` for primitive `χ` | ✅ |
-| `Helfgott/Inputs.lean` | proved inputs 1, 3 and 4; numerical axioms 5 and 6; **the unproved input 2** (see below) | ❌ one input |
-| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 5 `sorry`s and 33 axioms) |
+| `Helfgott/Inputs.lean` | proved inputs 1–4; numerical axioms 5 and 6 (see below) | ✅ (uses trusted bounds) |
+| `Helfgott/Main.lean` | assembly: inputs ⇒ odd `N ≥ 10²⁷` is a sum of three primes; ladder ⇒ small cases; ⇒ `ternary_goldbach` | ✅ (uses all 4 `sorry`s and 33 axioms) |
 
 ## The inputs
 
 The blueprint follows Helfgott's book *The ternary Goldbach problem*, arXiv:1501.05438v2 [B],
 which supersedes the papers (arXiv:1205.5252, 1305.2897, 1312.7748 [H]). Its definitions and
 constants match [H], with one exception: the corrected minor-arc bound is `1.00948 x²/κ` [B,
-(14.49)] rather than `0.97392 x²/κ` [H, (7.48)], so [B]'s final margin is `0.04877 x²/κ` (ours: `0.020659 x²/κ`, see Caveats).
+(14.49)] rather than `0.97392 x²/κ` [H, (7.48)], so [B]'s final margin is `0.04877 x²/κ` (ours: `1.049 − 1.0376 = 0.0114 x²/κ`, see Caveats).
 
 1. ~~`circle_identity_input`~~ **proved**: [H, (3.3)/(7.49)] for the infinite smoothed sums,
    from `circle_identity_tsum` and the decay bounds in `Helfgott/Decay.lean`.
-2. `major_arcs_input`: [B, (14.27)], `∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.058259 x²/κ`.
-   This uses explicit formulas for Dirichlet L-functions and Platt's rigorous GRH verification
-   for moduli up to 300000.
+2. ~~`major_arcs_input`~~ **proved** (`MajorArcs/MajorTotal.lean: major_total`): [B, (14.27)] as
+   `Re ∫_{𝔐_{8,150000}} S_{η₊}² S_{η_*} e(−Nα) ≥ 1.049 x²/κ` ([B]: `1.058259`). It depends on the
+   cited Props 9.3.2, 9.4.2, 9.5.1 (explicit formulas), Platt's GRH verification for moduli up to
+   `300000` and the other numerical axioms of Part II. Main term `1.314 · 0.800689 = 1.0521`;
+   errors `0.0028` (almost all from replacing `η₊` by `η◦` and completing the `β`-integral).
 3. ~~`minor_arcs_input`~~ **proved** (`MinorArcs/MinorTotal.lean: minor_total` +
    `NumericsFinal.lean: numerics_M`): [B, (14.49)] as `∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`, by a
    *repaired* Thm 13.2.1 ("repair 3", see Caveats). It depends on the trusted inputs of Theorem
@@ -254,8 +257,8 @@ constants match [H], with one exception: the corrected minor-arc bound is `1.009
 * [B]'s Theorem 3.1.1 constant `0.5` comes from an arithmetic slip in (6.77). The correct value
   is `0.8103`, and `3.36 x^{5/6}` becomes `3.8 x^{5/6}` in our proof. Re-running [B, §14.3] with
   these constants (`scripts/minor_arc_total_numerics.py`) gives the minor-arc total
-  `1.0376 x²/κ` instead of `1.00948 x²/κ`. The final margin is then `0.020659 x²/κ` instead of
-  `0.04877 x²/κ`, which still suffices.
+  `1.0376 x²/κ` instead of `1.00948 x²/κ`. With our major-arc constant `1.049` the final margin is
+  `0.0114 x²/κ` instead of `0.04877 x²/κ`, which still suffices (`Helfgott/Numerics.lean`).
 * **[B]'s proof of Thm 13.2.1 (the minor-arc total) mixes two scales of major arcs.** Its ℓ∞ input is
   derived only off the arcs at scale `x/κ`, 49 times wider than the scale-`x` arcs of its ℓ² input
   and of (14.27); the obvious repairs fail (`scripts/minor_arc_scale_check.py`). **Fixed** ("repair

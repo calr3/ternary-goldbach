@@ -3,9 +3,9 @@
 Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), 327 pp.
 This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
 
-This is a chapter-level map of what feeds each remaining `sorry` in
-`TernaryGoldbach/Helfgott/Inputs.lean`. The next step is to turn each node into Lean
-statements, each with its own `sorry`.
+This is a chapter-level map from [B] to the Lean files. All four inputs of
+`TernaryGoldbach/Helfgott/Inputs.lean` are now proved; the remaining `sorry`s are the cited
+explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1] and Dusart's bound (see the README).
 
 ## Top level ([B, §14.4]) — done
 
@@ -14,7 +14,7 @@ statements, each with its own `sorry`.
 | [B] | Lean | Status |
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
-| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input` | ❌ `sorry` |
+| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses cited Props 9.3.2, 9.4.2, 9.5.1 and numerical axioms) |
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
@@ -75,7 +75,11 @@ statements, each with its own `sorry`.
 ## Major arcs: (14.27) ⟸ Prop 10.4.1
 
 ```
-(14.27)  [§§14.1–14.2: numerics]
+(14.27)  [§§14.1–14.2: numerics]   ✅ MajorArcs/MajorTotal.lean `major_total` (≥ 1.049 x²/κ)
+ │   [per modulus: S_η = μ(q)/φ(q) η̂(−βx)x + residual (τ(1) = μ(q), Cor 7.1.3 / Thm 7.1.4 per
+ │    character, ArcChars + ArcCharsStar); the residuals by AM–GM against (14.7); main term
+ │    Σ_q c_q(N) ≥ 1.314 (Singular), C_{η◦,η_*}(N/x) ≥ 0.800689/κ (CMain, FourierMain), with
+ │    η₊ → η◦ and the β-tail costing ≤ 2.03·10⁻⁵ x² per modulus]
  └─ Prop 10.4.1  (+ §10.1 character decomposition, §10.2 main term, §10.3 ℓ² over major arcs)
      │   [§10.3 + §14.1, i.e. (14.7) ✅ MajorArcs/L2Major.lean `l2_major_bounds` (8.688x … 8.709x):
      │    arcs (ArcsEq), η◦ tail (EtaCirc), ‖η₊ − η◦‖₂ via h_H in log coordinates (HHFourier),
@@ -93,7 +97,8 @@ statements, each with its own `sorry`.
      │   └─ Ch 9  explicit formulas: §9.1 general explicit formula; Props 9.2.2, 9.3.2,
      │            Cor 9.3.3, Props 9.4.2, 9.5.1
      │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← numerical axioms ✅
-     ├─ Ch 11  the smoothing functions η◦, η_* (§11.1 η◦(t)η◦(ρ−t))
+     ├─ Ch 11  the smoothing functions η◦, η_* (§11.1 η◦(t)η◦(ρ−t))  ✅ (CMain: polarization bound
+     │         for η◦∗η◦ and the moments of η_*; constant 8.82)
      └─ Appendix A  norms of η₊ (A.3–A.5: |η₊|_∞ ≤ 1.079955, …)
          (✅ crude bounds in Helfgott/Decay.lean, Helfgott/SupNorms.lean)
 ```

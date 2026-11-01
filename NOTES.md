@@ -3,6 +3,13 @@
 Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`. For the
 `sorry` policy, see `README.md`.
 
+## Status (2026-11-01, later)
+
+* `ternary_goldbach` depends on 4 `sorry`s — `dusart_theta` and the three cited explicit formulas
+  [B, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical axioms.
+  **(14.27) is proved** (`MajorArcs/MajorTotal.lean`, constant `1.049` for [B]'s `1.058259`), so all of
+  `Helfgott/Inputs.lean` is proved; the final margin is `1.049 − 1.0376 = 0.0114 x²/κ`.
+
 ## Status (2026-11-01)
 
 * `ternary_goldbach` depends on 5 `sorry`s — `major_arcs_input` ((14.27)), `dusart_theta`, and the three
@@ -260,7 +267,12 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 7. *Assembly* — **DONE** (`L2Major.lean`, `l2_major_bounds`: `8.688x ≤ ∫ ≤ 8.709x`; `l2_major_14_7` is a theorem): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
    2 Σ_{q odd ≤ r} μ²/φ`; **numerical axiom** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
 Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
-**Roadmap for (14.27)** (Prop 10.4.1 + §14.2), *planned 2026-11-01*. Budget: `final_inequality_crude` only needs
+**(14.27): DONE** (`MajorArcs/MajorTotal.lean`, `major_total`; `major_arcs_input` is a theorem with `1.049`).
+Final numbers (units `x²/κ`): main `1.314 · 0.800689 = 1.05211`; `η₊ → η◦` + `β`-tail `2.85 · 2.03·10⁻⁵ · 49 = 0.00283`;
+residual terms `≈ 1.2·10⁻⁵` (`ρ₊ = 4.63·10⁻⁸x` in `ℓ²`, `|R_*| ≤ 3.15·10⁻⁷ x/κ` pointwise); total `≥ 1.04926`.
+`final_inequality_crude` with margin `0.0114` needed `v = N^{1/64}` (the `N^{1/16}` + `log u ≤ u/e` argument loses
+a factor `≈ 4.6`, too much at this margin).
+**Roadmap for (14.27)** (Prop 10.4.1 + §14.2), *planned 2026-11-01* (kept for reference). Budget: `final_inequality_crude` only needs
 `(major − 1.0376)/κ·x² > 6.7·10⁶ N^{3/2} log N`, i.e. major `≳ 1.0402` (not [B]'s `1.058259`); [B]'s main term is
 `C₀ C_{η◦,η_*} x² ≥ 1.0583 x²/κ`, so ~`0.013 x²/κ` is available for crude constants. Pieces:
 1. *Sharper `‖η₊ − η◦‖₂`* — **DONE** (`HHFourier2.lean`, `integral_sq_etaPlus_sub_etaO_le'`: `≤ 368/(2·200⁴)`): the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
@@ -273,10 +285,10 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
 4. *Main term (§10.2)* — singular series **DONE** (`Singular.lean`: `coef_eq`, `sum_Qset_coefN_ge` `≥ 1.314`, `sum_Qset_mPhi2_le` `≤ 2.85`; uses `mertens_product_small` at `150001`): per `(q, a)`, principal parts `M_η = μ(q)/φ(q) η̂(−βx)x`; Ramanujan sum
    `Σ_a e(−Na/q) = μ(q/(q,N))φ((q,N))`; complete `Σ_q` and `∫` (tails with crude `Σ_{q>Q} μ²/φ² ≤ C/Q`); Euler product
    `Σ_q … = C₀ ≥ 2∏_{p>2}(1 − 1/(p−1)²)` (finite product + `1 − 1/(P−1)` tail; Mathlib `EulerProduct`).
-5. *Errors (§10.4)*: `S₊²S_* − M₊²M_* = R_* S₊² + M_* R₊(S₊ + M₊)`; `|R_*| ≤ E_*` pointwise (Cor 7.1.3 per character),
+5. *Errors (§10.4)* — **DONE** (`MajorTotal.lean`: `resid_plus`, `resid_star`, `sum_cubic_error`, `pointwise_bound`, `per_modulus`): `S₊²S_* − M₊²M_* = R_* S₊² + M_* R₊(S₊ + M₊)`; `|R_*| ≤ E_*` pointwise (Cor 7.1.3 per character),
    `Σ_a |R₊|² ≤ E₊²` (Bombieri without the principal character); `∫_𝔐 |S₊|² ≤ 8.709x` ((14.7), done); Cauchy–Schwarz.
-6. *Arcs for complex integrands*: `∫_{(0,1]∩𝔐} f = Σ_{q,b} ∫_{J_{q,b}} f` (equality via indicators + periodization).
-7. *Numerics*, then restate `major_arcs_input` with the constant obtained (≥ 1.045) and adjust `final_inequality`.
+6. *Arcs for complex integrands* — **DONE** (`integral_majorArcs_eq` for real continuous periodic `g`, via `g⁺`, `g⁻`; applied to `Re f`): `∫_{(0,1]∩𝔐} f = Σ_{q,b} ∫_{J_{q,b}} f` (equality via indicators + periodization).
+7. *Numerics* — **DONE**: `major_arcs_input` restated with `1.049`; `final_inequality{,_crude}` and `Main` use `1.049 − 1.0376`.
    *Assembly plan* (`MajorTotal.lean`): at `α = b/q + β`, `S_η = M_η + R_η` with `M_η = μ(q)/φ(q) η̂(−βx)x`;
    `Σ_b M₊²M_* e(−Nα) = coefN·η̂₊²η̂_* x³ e(−Nβ)` (`coef_eq`); error `R_* S₊² + M_* R₊ (S₊ + M₊)`, with
    `Σ_b |S'(b/q+β) − μ/φ S'(β)|² = Σ_b |S'|² − μ²/φ |S'(β)|² ≤ (2.41·10⁻⁸x)²` (`arc_chars` + `Σ_b S'(b/q+β) = μ(q)S'(β)`),
@@ -284,8 +296,7 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
    instead of Cauchy–Schwarz for the `β`-integrals; main term: `η₊ → η◦` costs `≲ 2·10⁻³ x²/κ`, completing
    `∫_{|β|<w}` to `ℝ` costs `≲ 10⁻³ x²/κ`; `x²·C_{η◦,η_*}(N/x)·1.314 ≥ 1.0521 x²/κ`. Target `(14.27)` with `1.045`.
    *Book note*: (14.17) prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip; harmless).
-Next: Ch. 10
-(character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
+Remaining `sorry`s: the cited [B, Props 9.3.2, 9.4.2, 9.5.1] (explicit formulas, Ch. 9) and `dusart_theta`. No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
 (Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is
