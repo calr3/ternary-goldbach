@@ -222,6 +222,39 @@ theorem integral_cpow_exp_one_add {s : ℂ} (hs : 0 < s.re) {u : ℝ} (hu : 0 �
   rw [one_div, Complex.inv_cpow _ _ (by
     rw [Complex.arg_ofReal_of_nonneg hr.le]; exact Real.pi_ne_zero.symm), Complex.cpow_neg]
 
+theorem integral_digF_left {s : ℂ} (hs0 : 0 < s.re) {u : ℝ} (hu : 0 < u) :
+    ∫ t : ℝ in Ioi 0, digF s (t, u) =
+      Complex.Gamma s * (((Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-s)) / u) := by
+  have i1 : IntegrableOn (fun t : ℝ => (t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ)) (Ioi 0) := by
+    refine (Complex.GammaIntegral_convergent hs0).congr_fun (fun t _ => by ring) measurableSet_Ioi
+  have i2 : IntegrableOn (fun t : ℝ => (t : ℂ) ^ (s - 1) *
+      ((Real.exp (-(t * u)) * Real.exp (-t) : ℝ) : ℂ)) (Ioi 0) := by
+    refine i1.norm.mono' ?_ ?_
+    · exact ContinuousOn.aestronglyMeasurable (fun t (ht : 0 < t) =>
+        ((ContinuousAt.cpow (by fun_prop) continuousAt_const
+          (Complex.ofReal_mem_slitPlane.2 ht)).mul (by fun_prop)).continuousWithinAt) measurableSet_Ioi
+    · refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun t (ht : 0 < t) => ?_)
+      rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real, Real.norm_eq_abs,
+        Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _), abs_of_pos (Real.exp_pos _)]
+      have : Real.exp (-(t * u)) ≤ 1 := Real.exp_le_one_iff.2 (by nlinarith)
+      have h0 : 0 ≤ ‖(t : ℂ) ^ (s - 1)‖ := norm_nonneg _
+      have h1 := Real.exp_pos (-t)
+      have := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right this h1.le) h0
+      linarith
+  have e : ∀ t : ℝ, digF s (t, u) = (1 / (u : ℂ)) * ((t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ) *
+      (Real.exp (-u) : ℂ) - (t : ℂ) ^ (s - 1) * ((Real.exp (-(t * u)) * Real.exp (-t) : ℝ) : ℂ)) := by
+    intro t
+    simp only [digF]; push_cast; field_simp
+  simp_rw [e]
+  rw [integral_const_mul, integral_sub (i1.mul_const _) i2, integral_mul_const,
+    integral_cpow_exp_one_add hs0 hu.le]
+  have hG : ∫ t : ℝ in Ioi 0, (t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ) = Complex.Gamma s := by
+    rw [Complex.Gamma_eq_integral hs0, Complex.GammaIntegral]
+    refine setIntegral_congr_fun measurableSet_Ioi fun t _ => ?_
+    push_cast; ring
+  rw [hG]
+  field_simp
+
 /-- **Dirichlet's formula**: `ψ(s) = ∫₀^∞ (e^{−u} − (1+u)^{−s}) du/u` for `ℜs > 1/2`. -/
 theorem digamma_eq_integral {s : ℂ} (hs : 1 / 2 < s.re) :
     Complex.digamma s =
@@ -241,39 +274,278 @@ theorem digamma_eq_integral {s : ℂ} (hs : 1 / 2 < s.re) :
   rw [integral_integral_swap hint] at hA
   -- the inner integrals
   have hB : ∀ u ∈ Ioi (0:ℝ), ∫ t : ℝ in Ioi 0, digF s (t, u) =
-      Complex.Gamma s * (((Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-s)) / u) := by
-    intro u (hu : 0 < u)
-    have i1 : IntegrableOn (fun t : ℝ => (t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ)) (Ioi 0) := by
-      refine (Complex.GammaIntegral_convergent hs0).congr_fun (fun t _ => by ring) measurableSet_Ioi
-    have i2 : IntegrableOn (fun t : ℝ => (t : ℂ) ^ (s - 1) *
-        ((Real.exp (-(t * u)) * Real.exp (-t) : ℝ) : ℂ)) (Ioi 0) := by
-      refine i1.norm.mono' ?_ ?_
-      · exact ContinuousOn.aestronglyMeasurable (fun t (ht : 0 < t) =>
-          ((ContinuousAt.cpow (by fun_prop) continuousAt_const
-            (Complex.ofReal_mem_slitPlane.2 ht)).mul (by fun_prop)).continuousWithinAt) measurableSet_Ioi
-      · refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun t (ht : 0 < t) => ?_)
-        rw [norm_mul, norm_mul, Complex.norm_real, Complex.norm_real, Real.norm_eq_abs,
-          Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _), abs_of_pos (Real.exp_pos _)]
-        have : Real.exp (-(t * u)) ≤ 1 := Real.exp_le_one_iff.2 (by nlinarith)
-        have h0 : 0 ≤ ‖(t : ℂ) ^ (s - 1)‖ := norm_nonneg _
-        have h1 := Real.exp_pos (-t)
-        have := mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right this h1.le) h0
-        linarith
-    have e : ∀ t : ℝ, digF s (t, u) = (1 / (u : ℂ)) * ((t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ) *
-        (Real.exp (-u) : ℂ) - (t : ℂ) ^ (s - 1) * ((Real.exp (-(t * u)) * Real.exp (-t) : ℝ) : ℂ)) := by
-      intro t
-      simp only [digF]; push_cast; field_simp
-    simp_rw [e]
-    rw [integral_const_mul, integral_sub (i1.mul_const _) i2, integral_mul_const,
-      integral_cpow_exp_one_add hs0 hu.le]
-    have hG : ∫ t : ℝ in Ioi 0, (t : ℂ) ^ (s - 1) * (Real.exp (-t) : ℂ) = Complex.Gamma s := by
-      rw [Complex.Gamma_eq_integral hs0, Complex.GammaIntegral]
-      refine setIntegral_congr_fun measurableSet_Ioi fun t _ => ?_
-      push_cast; ring
-    rw [hG]
-    field_simp
+      Complex.Gamma s * (((Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-s)) / u) :=
+    fun u hu => integral_digF_left hs0 hu
   rw [setIntegral_congr_fun measurableSet_Ioi hB, integral_const_mul] at hA
   rw [Complex.digamma_def, logDeriv_apply, hA]
   field_simp
+
+/-! ## Shifts and the sine integral -/
+
+theorem setIntegral_Ioi_one_add {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (f : ℝ → E) :
+    ∫ u in Ioi (0:ℝ), f (1 + u) = ∫ y in Ioi (1:ℝ), f y := by
+  rw [← integral_indicator measurableSet_Ioi, ← integral_indicator measurableSet_Ioi]
+  have : (fun u => (Ioi (0:ℝ)).indicator (fun u => f (1 + u)) u) =
+      fun u => (Ioi (1:ℝ)).indicator f (u + 1) := by
+    ext u
+    by_cases hu : 0 < u
+    · rw [indicator_of_mem (show u ∈ Ioi (0:ℝ) from hu),
+        indicator_of_mem (show u + 1 ∈ Ioi (1:ℝ) by simp only [mem_Ioi]; linarith), add_comm]
+    · rw [indicator_of_notMem (show u ∉ Ioi (0:ℝ) from hu),
+        indicator_of_notMem (show u + 1 ∉ Ioi (1:ℝ) by simp only [mem_Ioi]; linarith)]
+  rw [this, integral_add_right_eq_self (fun y => (Ioi (1:ℝ)).indicator f y) 1]
+
+theorem integrableOn_Ioi_one_add {E : Type*} [NormedAddCommGroup E] {f : ℝ → E}
+    (hf : IntegrableOn f (Ioi 1)) : IntegrableOn (fun u => f (1 + u)) (Ioi 0) := by
+  rw [← integrable_indicator_iff measurableSet_Ioi] at hf ⊢
+  have h := hf.comp_add_right 1
+  refine h.congr (Eventually.of_forall fun u => ?_)
+  by_cases hu : 0 < u
+  · simp only [indicator_of_mem (show u ∈ Ioi (0:ℝ) from hu),
+      indicator_of_mem (show u + 1 ∈ Ioi (1:ℝ) by simp only [mem_Ioi]; linarith), add_comm]
+  · simp only [indicator_of_notMem (show u ∉ Ioi (0:ℝ) from hu),
+      indicator_of_notMem (show u + 1 ∉ Ioi (1:ℝ) by simp only [mem_Ioi]; linarith)]
+
+theorem cpow_one_add_eq {u : ℝ} (hu : 0 ≤ u) (b w : ℝ) :
+    (((1 + u : ℝ) : ℂ) ^ ((-b : ℂ) + w * I)) =
+      ((1 + u) ^ (-b) : ℝ) * Complex.exp (w * Real.log (1 + u) * I) := by
+  have h1 : (0:ℝ) < 1 + u := by linarith
+  rw [Complex.cpow_def_of_ne_zero (by exact_mod_cast h1.ne'), ← Complex.ofReal_log h1.le,
+    Real.rpow_def_of_pos h1, Complex.ofReal_exp, ← Complex.exp_add]
+  congr 1; push_cast; ring
+
+theorem integrableOn_one_add_cpow {b w : ℝ} (hb : 1 < b) :
+    IntegrableOn (fun u : ℝ => ((1 + u : ℝ) : ℂ) ^ ((-b : ℂ) + w * I)) (Ioi 0) := by
+  have h := integrableOn_Ioi_cpow_of_lt (a := (-b : ℂ) + w * I) (by simp; linarith) one_pos
+  exact integrableOn_Ioi_one_add (f := fun y : ℝ => (y : ℂ) ^ ((-b : ℂ) + w * I)) h
+
+/-- `∫₀^∞ (1+u)^{−b} sin(w log(1+u)) du = w/((b−1)² + w²)` for `b > 1`. -/
+theorem integral_one_add_rpow_sin {b : ℝ} (hb : 1 < b) (w : ℝ) :
+    ∫ u in Ioi (0:ℝ), (1 + u) ^ (-b) * Real.sin (w * Real.log (1 + u)) = w / ((b - 1) ^ 2 + w ^ 2) := by
+  have hpt : ∀ u ∈ Ioi (0:ℝ), (1 + u) ^ (-b) * Real.sin (w * Real.log (1 + u)) =
+      (((1 + u : ℝ) : ℂ) ^ ((-b : ℂ) + w * I)).im := by
+    intro u (hu : 0 < u)
+    rw [cpow_one_add_eq hu.le, Complex.im_ofReal_mul,
+      show (w : ℂ) * (Real.log (1 + u) : ℂ) = ((w * Real.log (1 + u) : ℝ) : ℂ) by push_cast; ring,
+      Complex.exp_ofReal_mul_I_im]
+  rw [setIntegral_congr_fun measurableSet_Ioi hpt]
+  rw [show (∫ x in Ioi (0:ℝ), (((1 + x : ℝ) : ℂ) ^ ((-b : ℂ) + w * I)).im) =
+      ∫ x in Ioi (0:ℝ), RCLike.im (((1 + x : ℝ) : ℂ) ^ ((-b : ℂ) + w * I)) from rfl,
+    integral_im (integrableOn_one_add_cpow hb)]
+  rw [setIntegral_Ioi_one_add (fun y : ℝ => (y : ℂ) ^ ((-b : ℂ) + w * I)),
+    integral_Ioi_cpow_of_lt (by simp; linarith) one_pos]
+  simp only [Complex.ofReal_one, Complex.one_cpow]
+  have hne : ((-b : ℂ) + w * I + 1) ≠ 0 := by
+    intro h; have := congrArg Complex.re h; simp at this; linarith
+  rw [show RCLike.im (-1 / ((-b : ℂ) + w * I + 1)) = (-1 / ((-b : ℂ) + w * I + 1)).im from rfl,
+    Complex.div_im]
+  simp only [Complex.one_re, Complex.one_im, Complex.add_re, Complex.add_im, Complex.neg_re,
+    Complex.neg_im, Complex.ofReal_re, Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re,
+    Complex.I_im, Complex.normSq_apply]
+  have hD : (1 - b) * (1 - b) + w * w ≠ 0 := by nlinarith [sq_nonneg w]
+  have hD' : (b - 1) ^ 2 + w ^ 2 ≠ 0 := by nlinarith [sq_nonneg w]
+  have e : (-b + (w * 0 - 0 * 1) + 1) * (-b + (w * 0 - 0 * 1) + 1) +
+      (-0 + (w * 1 + 0 * 0) + 0) * (-0 + (w * 1 + 0 * 0) + 0) = (b - 1) ^ 2 + w ^ 2 := by ring
+  rw [e]
+  ring
+
+/-- `(1 − cos(tL))/L = ∫₀^{|t|} sin(wL) dw` for `L ≠ 0`. -/
+theorem one_sub_cos_div_eq {L : ℝ} (hL : L ≠ 0) (t : ℝ) :
+    (1 - Real.cos (t * L)) / L = ∫ w in (0:ℝ)..|t|, Real.sin (w * L) := by
+  have hF : ∀ w ∈ [[(0:ℝ), |t|]], HasDerivAt (fun w => -Real.cos (w * L) / L) (Real.sin (w * L)) w := by
+    intro w _
+    have h1 : HasDerivAt (fun w : ℝ => w * L) L w := by
+      have := (hasDerivAt_id w).mul_const L
+      simp only [id, one_mul] at this
+      exact this
+    have h := (h1.cos.neg).div_const L
+    convert h using 1
+    field_simp
+  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hF
+    ((by fun_prop : Continuous fun w : ℝ => Real.sin (w * L)).intervalIntegrable _ _)]
+  rcases abs_choice t with h | h <;> rw [h] <;> simp [Real.cos_neg] <;> ring
+
+/-! ## `Re ψ(σ + it) ≤ log σ + ½ log(1 + t²/(σ−1)²)` -/
+
+/-- Dirichlet's integrand. -/
+noncomputable def digG (s : ℂ) (u : ℝ) : ℂ := ((Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-s)) / u
+
+theorem integrableOn_digG {s : ℂ} (hs : 1 / 2 < s.re) : IntegrableOn (digG s) (Ioi 0) := by
+  have hs0 : 0 < s.re := by linarith
+  have h : IntegrableOn (fun u : ℝ => ∫ t : ℝ in Ioi 0, digF s (t, u)) (Ioi 0) :=
+    (integrable_digF hs).integral_prod_right
+  have h2 : IntegrableOn (fun u : ℝ => (Complex.Gamma s)⁻¹ * ∫ t : ℝ in Ioi 0, digF s (t, u)) (Ioi 0) :=
+    h.const_mul _
+  refine h2.congr_fun (fun u (hu : 0 < u) => ?_) measurableSet_Ioi
+  show (Complex.Gamma s)⁻¹ * ∫ t : ℝ in Ioi 0, digF s (t, u) = digG s u
+  rw [integral_digF_left hs0 hu, ← mul_assoc, inv_mul_cancel₀ (Complex.Gamma_ne_zero_of_re_pos hs0),
+    one_mul, digG]
+
+theorem re_digG {σ t u : ℝ} (hu : 0 < u) :
+    (digG ((σ : ℂ) + t * I) u).re =
+      (Real.exp (-u) - (1 + u) ^ (-σ) * Real.cos (t * Real.log (1 + u))) / u := by
+  have e : -((σ : ℂ) + t * I) = (-σ : ℂ) + ((-t : ℝ) : ℂ) * I := by push_cast; ring
+  rw [digG, e, cpow_one_add_eq hu.le, Complex.div_ofReal_re, Complex.sub_re, Complex.ofReal_re,
+    Complex.re_ofReal_mul, show ((-t : ℝ) : ℂ) * (Real.log (1 + u) : ℂ) =
+      ((-t * Real.log (1 + u) : ℝ) : ℂ) by push_cast; ring, Complex.exp_ofReal_mul_I_re,
+    show -t * Real.log (1 + u) = -(t * Real.log (1 + u)) by ring, Real.cos_neg]
+
+theorem integrableOn_one_add_rpow {σ : ℝ} (hσ : 1 < σ) :
+    IntegrableOn (fun u : ℝ => (1 + u) ^ (-σ)) (Ioi 0) := by
+  have h := integrableOn_Ioi_rpow_of_lt (a := -σ) (by linarith) one_pos
+  exact integrableOn_Ioi_one_add (f := fun y : ℝ => y ^ (-σ)) h
+
+/-- The Fubini integrand for the cosine integral. -/
+noncomputable def cosF (σ : ℝ) (p : ℝ × ℝ) : ℝ := (1 + p.1) ^ (-σ) * Real.sin (p.2 * Real.log (1 + p.1))
+
+theorem measurable_cosF (σ : ℝ) : Measurable (cosF σ) := by
+  unfold cosF
+  exact ((measurable_fst.const_add 1).pow_const _).mul
+    (Real.measurable_sin.comp (measurable_snd.mul (Real.measurable_log.comp (measurable_fst.const_add 1))))
+
+theorem integrable_cosF {σ : ℝ} (hσ : 1 < σ) (T : ℝ) :
+    Integrable (cosF σ) ((volume.restrict (Ioi (0:ℝ))).prod (volume.restrict (Ioc 0 T))) := by
+  have hb : Integrable (fun p : ℝ × ℝ => (1 + p.1) ^ (-σ) * (1 : ℝ))
+      ((volume.restrict (Ioi (0:ℝ))).prod (volume.restrict (Ioc 0 T))) :=
+    Integrable.mul_prod (integrableOn_one_add_rpow hσ) (integrable_const (1:ℝ))
+  refine hb.mono' (measurable_cosF σ).aestronglyMeasurable ?_
+  rw [Measure.prod_restrict]
+  refine (ae_restrict_iff' (measurableSet_Ioi.prod measurableSet_Ioc)).2
+    (Eventually.of_forall fun p hp => ?_)
+  have h1 : (0:ℝ) < 1 + p.1 := by have := hp.1; simp only [mem_Ioi] at this; linarith
+  rw [cosF, Real.norm_eq_abs, abs_mul, abs_of_pos (Real.rpow_pos_of_pos h1 _), mul_one]
+  exact mul_le_of_le_one_right (Real.rpow_pos_of_pos h1 _).le (Real.abs_sin_le_one _)
+
+/-- `∫₀^∞ (1+u)^{−σ} (1 − cos(t log(1+u)))/log(1+u) du = ½ log(1 + t²/(σ−1)²)` (Fubini). -/
+theorem integral_one_add_rpow_cos {σ : ℝ} (hσ : 1 < σ) (t : ℝ) :
+    IntegrableOn (fun u : ℝ => (1 + u) ^ (-σ) * ((1 - Real.cos (t * Real.log (1 + u))) / Real.log (1 + u)))
+      (Ioi 0) ∧
+    ∫ u in Ioi (0:ℝ), (1 + u) ^ (-σ) * ((1 - Real.cos (t * Real.log (1 + u))) / Real.log (1 + u)) =
+      1 / 2 * Real.log (1 + t ^ 2 / (σ - 1) ^ 2) := by
+  have hprod : Integrable (Function.uncurry fun u w => cosF σ (u, w))
+      ((volume.restrict (Ioi (0:ℝ))).prod (volume.restrict (Ioc 0 |t|))) := integrable_cosF hσ |t|
+  have hpt : ∀ u ∈ Ioi (0:ℝ), (1 + u) ^ (-σ) * ((1 - Real.cos (t * Real.log (1 + u))) / Real.log (1 + u)) =
+      ∫ w in Ioc 0 |t|, cosF σ (u, w) := by
+    intro u (hu : 0 < u)
+    have hL : Real.log (1 + u) ≠ 0 := (Real.log_pos (by linarith)).ne'
+    rw [one_sub_cos_div_eq hL t, intervalIntegral.integral_of_le (abs_nonneg t), ← integral_const_mul]
+    rfl
+  refine ⟨?_, ?_⟩
+  · have h : IntegrableOn (fun u : ℝ => ∫ w in Ioc 0 |t|, cosF σ (u, w)) (Ioi 0) :=
+      hprod.integral_prod_left
+    exact h.congr_fun (fun u hu => (hpt u hu).symm) measurableSet_Ioi
+  rw [setIntegral_congr_fun measurableSet_Ioi hpt, integral_integral_swap hprod]
+  simp only [cosF]
+  rw [setIntegral_congr_fun measurableSet_Ioc fun w _ => integral_one_add_rpow_sin hσ w,
+    ← intervalIntegral.integral_of_le (abs_nonneg t)]
+  have ha : 0 < (σ - 1) ^ 2 := by have : σ - 1 ≠ 0 := by linarith
+                                  positivity
+  have hG : ∀ w ∈ [[(0:ℝ), |t|]], HasDerivAt (fun w => 1 / 2 * Real.log ((σ - 1) ^ 2 + w ^ 2))
+      (w / ((σ - 1) ^ 2 + w ^ 2)) w := by
+    intro w _
+    have hp : 0 < (σ - 1) ^ 2 + w ^ 2 := by positivity
+    have h := (((hasDerivAt_pow 2 w).const_add ((σ - 1) ^ 2)).log hp.ne').const_mul (1 / 2 : ℝ)
+    convert h using 1
+    field_simp
+    push_cast; ring
+  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt hG (by
+    refine ContinuousOn.intervalIntegrable ?_
+    exact fun w _ => ((continuousAt_id.div (continuousAt_const.add (continuousAt_id.pow 2))
+      (by have : 0 ≤ w ^ 2 := sq_nonneg w
+          show (σ - 1) ^ 2 + w ^ 2 ≠ 0
+          linarith)).continuousWithinAt))]
+  rw [sq_abs, show (0:ℝ) ^ 2 = 0 by norm_num, add_zero, ← mul_sub,
+    ← Real.log_div (by positivity) ha.ne']
+  congr 2
+  field_simp
+
+/-- **`Re ψ(σ + it) ≤ log σ + ½ log(1 + t²/(σ−1)²)`** for `σ > 1`. -/
+theorem re_digamma_le {σ t : ℝ} (hσ : 1 < σ) :
+    (Complex.digamma ((σ : ℂ) + t * I)).re ≤ Real.log σ + 1 / 2 * Real.log (1 + t ^ 2 / (σ - 1) ^ 2) := by
+  have hs : 1 / 2 < ((σ : ℂ) + t * I).re := by simp; linarith
+  have hσ0 : 0 < σ := by linarith
+  rw [digamma_eq_integral hs]
+  have hint := integrableOn_digG hs
+  rw [show (∫ u : ℝ in Ioi 0, ((Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-((σ : ℂ) + t * I))) / u).re =
+      RCLike.re (∫ u : ℝ in Ioi 0, digG ((σ : ℂ) + t * I) u) from rfl, ← integral_re hint]
+  obtain ⟨hJi, hJ⟩ := integral_one_add_rpow_cos hσ t
+  have hFr := integrableOn_frullani (a := 1) (b := σ) one_pos hσ.le
+  have hFv := frullani_of_le (a := 1) (b := σ) one_pos hσ.le
+  simp only [one_mul, div_one] at hFr hFv
+  have hpt : ∀ u ∈ Ioi (0:ℝ), RCLike.re (digG ((σ : ℂ) + t * I) u) ≤
+      (Real.exp (-u) - Real.exp (-(σ * u))) / u +
+        (1 + u) ^ (-σ) * ((1 - Real.cos (t * Real.log (1 + u))) / Real.log (1 + u)) := by
+    intro u (hu : 0 < u)
+    rw [show RCLike.re (digG ((σ : ℂ) + t * I) u) = (digG ((σ : ℂ) + t * I) u).re from rfl, re_digG hu]
+    have hL0 : 0 < Real.log (1 + u) := Real.log_pos (by linarith)
+    have hLu : Real.log (1 + u) ≤ u := by
+      have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1 + u by linarith); linarith
+    have h1 : Real.exp (-(σ * u)) ≤ (1 + u) ^ (-σ) := by
+      rw [Real.rpow_neg (by linarith), ← Real.exp_log (show (0:ℝ) < 1 + u by linarith),
+        ← Real.exp_mul, ← Real.exp_neg]
+      exact Real.exp_le_exp.2 (by nlinarith)
+    have hc : 0 ≤ 1 - Real.cos (t * Real.log (1 + u)) := by linarith [Real.cos_le_one (t * Real.log (1 + u))]
+    have hr : 0 ≤ (1 + u) ^ (-σ) := Real.rpow_nonneg (by linarith) _
+    have h2 : (1 + u) ^ (-σ) * (1 - Real.cos (t * Real.log (1 + u))) / u ≤
+        (1 + u) ^ (-σ) * ((1 - Real.cos (t * Real.log (1 + u))) / Real.log (1 + u)) := by
+      rw [mul_div_assoc]
+      exact mul_le_mul_of_nonneg_left (div_le_div_of_nonneg_left hc hL0 hLu) hr
+    have e : (Real.exp (-u) - (1 + u) ^ (-σ) * Real.cos (t * Real.log (1 + u))) / u =
+        (Real.exp (-u) - Real.exp (-(σ * u))) / u + (Real.exp (-(σ * u)) - (1 + u) ^ (-σ)) / u +
+          (1 + u) ^ (-σ) * (1 - Real.cos (t * Real.log (1 + u))) / u := by
+      field_simp; ring
+    rw [e]
+    have h3 : (Real.exp (-(σ * u)) - (1 + u) ^ (-σ)) / u ≤ 0 :=
+      div_nonpos_of_nonpos_of_nonneg (by linarith) hu.le
+    linarith
+  refine (setIntegral_mono_on hint.re (hFr.add hJi) measurableSet_Ioi hpt).trans (le_of_eq ?_)
+  simp only [Pi.add_apply]
+  rw [integral_add hFr hJi, hFv, hJ]
+
+/-- **`Re ψ(x + iy) ≤ log(x+1) + ½ log(1 + y²/x²)`** for `x > 0` (via `ψ(z) = ψ(z+1) − 1/z`). -/
+theorem re_digamma_le' {x y : ℝ} (hx : 0 < x) :
+    (Complex.digamma ((x : ℂ) + y * I)).re ≤ Real.log (x + 1) + 1 / 2 * Real.log (1 + y ^ 2 / x ^ 2) := by
+  set z : ℂ := (x : ℂ) + y * I with hz
+  have hz0 : ∀ m : ℕ, z ≠ -(m : ℂ) := by
+    intro m h
+    have := congrArg Complex.re h
+    simp [hz] at this
+    have : (0:ℝ) ≤ m := Nat.cast_nonneg m
+    linarith
+  have hrec := Complex.digamma_apply_add_one z hz0
+  have h1 : (Complex.digamma (z + 1)).re ≤
+      Real.log (x + 1) + 1 / 2 * Real.log (1 + y ^ 2 / (x + 1 - 1) ^ 2) := by
+    have e : z + 1 = ((x + 1 : ℝ) : ℂ) + y * I := by rw [hz]; push_cast; ring
+    rw [e]; exact re_digamma_le (by linarith)
+  rw [show x + 1 - 1 = x by ring] at h1
+  have h2 : 0 ≤ (z⁻¹).re := by
+    rw [Complex.inv_re]; apply div_nonneg _ (Complex.normSq_nonneg _); simp [hz]; linarith
+  have : (Complex.digamma z).re = (Complex.digamma (z + 1)).re - (z⁻¹).re := by
+    rw [hrec, Complex.add_re]; ring
+  linarith
+
+/-- For the zero-free region: `½ Re ψ(s/2) ≤ ½ log|t| + 0.36` for `s = σ + it`, `1 < σ ≤ 2`, `|t| ≥ 10`. -/
+theorem half_re_digamma_half_le {σ t : ℝ} (h1 : 1 < σ) (h2 : σ ≤ 2) (ht : 10 ≤ |t|) :
+    1 / 2 * (Complex.digamma (((σ : ℂ) + t * I) / 2)).re ≤ 1 / 2 * Real.log |t| + 0.36 := by
+  have e : ((σ : ℂ) + t * I) / 2 = ((σ / 2 : ℝ) : ℂ) + ((t / 2 : ℝ) : ℂ) * I := by push_cast; ring
+  rw [e]
+  have h := re_digamma_le' (x := σ / 2) (y := t / 2) (by linarith)
+  have hl1 : Real.log (σ / 2 + 1) ≤ Real.log 2 := Real.log_le_log (by linarith) (by linarith)
+  have hl2 := Real.log_two_lt_d9
+  have hq : 1 + (t / 2) ^ 2 / (σ / 2) ^ 2 ≤ t ^ 2 * 1.01 := by
+    rw [div_pow, div_pow, div_div_div_cancel_right₀ (by norm_num : (2:ℝ) ^ 2 ≠ 0)]
+    have hσ2 : 1 ≤ σ ^ 2 := by nlinarith
+    have ht2 : 100 ≤ t ^ 2 := by rw [← sq_abs]; nlinarith
+    have : t ^ 2 / σ ^ 2 ≤ t ^ 2 := div_le_self (sq_nonneg t) hσ2
+    linarith
+  have hq0 : 0 < 1 + (t / 2) ^ 2 / (σ / 2) ^ 2 := by positivity
+  have hl3 : Real.log (1 + (t / 2) ^ 2 / (σ / 2) ^ 2) ≤ 2 * Real.log |t| + Real.log 1.01 := by
+    have ht0 : 0 < |t| := by linarith
+    refine (Real.log_le_log hq0 hq).trans (le_of_eq ?_)
+    have htne : t ≠ 0 := by intro h; rw [h, abs_zero] at ht; norm_num at ht
+    rw [Real.log_mul (pow_ne_zero 2 htne) (by norm_num), ← sq_abs, Real.log_pow]; push_cast; ring
+  have hl4 : Real.log 1.01 ≤ 0.01 := by
+    have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1.01 by norm_num); linarith
+  nlinarith
 
 end TernaryGoldbach.Explicit
