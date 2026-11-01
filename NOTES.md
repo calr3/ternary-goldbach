@@ -263,7 +263,7 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
 **Roadmap for (14.27)** (Prop 10.4.1 + §14.2), *planned 2026-11-01*. Budget: `final_inequality_crude` only needs
 `(major − 1.0376)/κ·x² > 6.7·10⁶ N^{3/2} log N`, i.e. major `≳ 1.0402` (not [B]'s `1.058259`); [B]'s main term is
 `C₀ C_{η◦,η_*} x² ≥ 1.0583 x²/κ`, so ~`0.013 x²/κ` is available for crude constants. Pieces:
-1. *Sharper `‖η₊ − η◦‖₂`*: the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
+1. *Sharper `‖η₊ − η◦‖₂`* — **DONE** (`HHFourier2.lean`, `integral_sq_etaPlus_sub_etaO_le'`: `≤ 368/(2·200⁴)`): the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
    `HHFourier` with `g''` (`h` is `C²` on `(0,∞)`, `hP''(2) = 0`): `‖g − g_H‖₂ ≤ ‖g''‖₂/H²`, `‖g''‖₂² ≈ 142.6`.
 2. *`C_{η◦,η_*}` (Ch. 11)*: polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
    ½(2−ρ)²‖η◦'‖₂²` (better than [B]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
