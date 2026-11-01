@@ -19,6 +19,7 @@ import TernaryGoldbach.MajorArcs.HHFourier
 import TernaryGoldbach.MajorArcs.HHFourier2
 import TernaryGoldbach.MajorArcs.CMain
 import TernaryGoldbach.MajorArcs.FourierMain
+import TernaryGoldbach.MajorArcs.Singular
 import TernaryGoldbach.MajorArcs.EtaPlusL2
 import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MajorArcs.SumMuPhi
