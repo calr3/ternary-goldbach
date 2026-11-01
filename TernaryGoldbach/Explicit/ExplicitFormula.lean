@@ -832,4 +832,98 @@ theorem integrable_hInt_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N
     _ = A * Real.exp (-(0.28 * |y|)) + B * Real.exp (-(0.14 * |y|)) := by
         rw [hB, ← hexp]; ring
 
+/-! ## Part C: the limit -/
+
+theorem DN_nonneg (N : ℕ) [NeZero N] : 0 ≤ DN N := by
+  have hN1 : (1:ℝ) ≤ N := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
+  have h9 : (1:ℝ) ≤ (N : ℝ) ^ 9 := one_le_pow₀ hN1
+  apply Real.log_nonneg
+  rw [le_div_iff₀ (by norm_num)]
+  nlinarith
+
+theorem Hk_le (N : ℕ) [NeZero N] (k : ℕ) :
+    Hk N k ≤ (DN N + 40 + 2.6 * k) * ((4 * (DN N + 40 + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8) := by
+  have hL := LB_le_linear (N := N) ((k : ℝ) + 1)
+  rw [abs_of_nonneg (by positivity)] at hL
+  set P := Real.log (BT N ((k : ℝ) + 1) / 0.355) with hP
+  have hP0 : 0 ≤ P := by
+    have := one_le_BT (N := N) ((k : ℝ) + 1)
+    exact Real.log_nonneg (by rw [le_div_iff₀ (by norm_num)]; linarith)
+  have hPle : P ≤ DN N + 40 + 2.6 * k := by linarith
+  have hl106 : 0.51 ≤ Real.log (10 / 6) := by
+    rw [Real.le_log_iff_exp_le (by norm_num)]
+    have := Real.exp_bound' (x := 0.51) (by norm_num) (by norm_num) (n := 4) (by norm_num)
+    norm_num [Finset.sum_range_succ, Nat.factorial] at this ⊢; linarith
+  have hl2 : 0.69 ≤ Real.log 2 := by
+    rw [Real.le_log_iff_exp_le (by norm_num)]
+    have := Real.exp_bound' (x := 0.69) (by norm_num) (by norm_num) (n := 4) (by norm_num)
+    norm_num [Finset.sum_range_succ, Nat.factorial] at this ⊢; linarith
+  unfold Hk
+  rw [← hP]
+  have hD := DN_nonneg N
+  have h1 : 2 * (2 * P / Real.log (10 / 6)) + 2 ≤ 4 * (DN N + 40 + 2.6 * k) / 0.51 + 2 := by
+    have hl0 : 0 < Real.log (10 / 6) := by linarith
+    have : 2 * P / Real.log (10 / 6) ≤ 2 * (DN N + 40 + 2.6 * k) / 0.51 :=
+      calc 2 * P / Real.log (10 / 6) ≤ 2 * P / 0.51 :=
+            div_le_div_of_nonneg_left (by linarith) (by norm_num) hl106
+        _ ≤ 2 * (DN N + 40 + 2.6 * k) / 0.51 := div_le_div_of_nonneg_right (by linarith) (by norm_num)
+    have e4 : 4 * (DN N + 40 + 2.6 * k) / 0.51 = 2 * (2 * (DN N + 40 + 2.6 * k) / 0.51) := by ring
+    linarith
+  have h2 : (2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2 ≤
+      (4 * (DN N + 40 + 2.6 * k) / 0.51 + 2) / 0.69 := by
+    have h0 : 0 ≤ 2 * (2 * P / Real.log (10 / 6)) + 2 := by
+      have : 0 ≤ 2 * P / Real.log (10 / 6) := div_nonneg (by linarith) (by linarith)
+      linarith
+    calc (2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2
+        ≤ (2 * (2 * P / Real.log (10 / 6)) + 2) / 0.69 := div_le_div_of_nonneg_left h0 (by norm_num) hl2
+      _ ≤ _ := by gcongr
+  have h3 : 0 ≤ (2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2 + 4.8 := by
+    have : 0 ≤ (2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2 := by
+      have : 0 ≤ 2 * P / Real.log (10 / 6) := div_nonneg (by linarith) (by linarith)
+      exact div_nonneg (by linarith) (by linarith)
+    linarith
+  calc P * ((2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2 + 4.8)
+      ≤ (DN N + 40 + 2.6 * k) * ((2 * (2 * P / Real.log (10 / 6)) + 2) / Real.log 2 + 4.8) :=
+        mul_le_mul_of_nonneg_right hPle h3
+    _ ≤ _ := by gcongr
+
+theorem tendsto_Hk_exp (N : ℕ) [NeZero N] :
+    Tendsto (fun k : ℕ => Hk N k * Real.exp (-(0.28 * k))) atTop (𝓝 0) := by
+  set a := DN N + 40 with ha
+  have hpoly : ∀ k : ℕ, Hk N k * Real.exp (-(0.28 * k)) ≤
+      ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(0.28 * k)) :=
+    fun k => mul_le_mul_of_nonneg_right (Hk_le N k) (Real.exp_pos _).le
+  have hnn : ∀ k : ℕ, 0 ≤ Hk N k * Real.exp (-(0.28 * k)) := by
+    intro k
+    refine mul_nonneg ?_ (Real.exp_pos _).le
+    unfold Hk
+    have hP0 : 0 ≤ Real.log (BT N ((k : ℝ) + 1) / 0.355) := by
+      have := one_le_BT (N := N) ((k : ℝ) + 1)
+      exact Real.log_nonneg (by rw [le_div_iff₀ (by norm_num)]; linarith)
+    have hl : 0 < Real.log (10 / 6) := Real.log_pos (by norm_num)
+    have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    positivity
+  refine squeeze_zero hnn hpoly ?_
+  -- polynomial × exponential decay
+  have hlim : ∀ n : ℕ, Tendsto (fun k : ℕ => (k : ℝ) ^ n * Real.exp (-(0.28 * k))) atTop (𝓝 0) := by
+    intro n
+    have h := (Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero n).comp
+      ((tendsto_natCast_atTop_atTop).const_mul_atTop (show (0:ℝ) < 0.28 by norm_num))
+    have h' := h.const_mul ((1 / 0.28) ^ n)
+    rw [mul_zero] at h'
+    refine h'.congr fun k => ?_
+    simp only [Function.comp]
+    rw [← mul_assoc, ← mul_pow, show (1 / 0.28 : ℝ) * (0.28 * (k : ℝ)) = k by ring]
+  have e : ∀ k : ℕ, ((a + 2.6 * k) * ((4 * (a + 2.6 * k) / 0.51 + 2) / 0.69 + 4.8)) * Real.exp (-(0.28 * k)) =
+      (a * ((4 * a / 0.51 + 2) / 0.69 + 4.8)) * ((k : ℝ) ^ 0 * Real.exp (-(0.28 * k))) +
+      (2.6 * ((4 * a / 0.51 + 2) / 0.69 + 4.8) + a * (4 * 2.6 / 0.51 / 0.69)) *
+        ((k : ℝ) ^ 1 * Real.exp (-(0.28 * k))) +
+      (2.6 * (4 * 2.6 / 0.51 / 0.69)) * ((k : ℝ) ^ 2 * Real.exp (-(0.28 * k))) := by
+    intro k; ring
+  simp_rw [e]
+  have := (((hlim 0).const_mul (a * ((4 * a / 0.51 + 2) / 0.69 + 4.8))).add
+    ((hlim 1).const_mul (2.6 * ((4 * a / 0.51 + 2) / 0.69 + 4.8) + a * (4 * 2.6 / 0.51 / 0.69)))).add
+    ((hlim 2).const_mul (2.6 * (4 * 2.6 / 0.51 / 0.69)))
+  simpa using this
+
 end TernaryGoldbach.Explicit
