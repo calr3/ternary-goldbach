@@ -275,7 +275,7 @@ theorem psi_upper_of {N : ℕ} (hN : 89967803 ≤ N)
   linarith
 
 /-- `ψ(n) ≤ 1.03883 n` for all `n`, and `ψ(n) ≤ 1.0004 n` for `n ≥ 2·10⁶` (strong induction:
-finite checks below `10⁹`, Dusart's bound and `ψ − θ ≤ ψ(√n) + n^{1/3} log n` above). -/
+finite checks below `10⁹`, `theta_explicit` and `ψ − θ ≤ ψ(√n) + n^{1/3} log n` above). -/
 theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (2000000 ≤ n → psiN n ≤ 1.0004 * n) := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
@@ -307,7 +307,7 @@ theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (2000000 ≤ n → psi
 /-! ### (2.14), (2.15) -/
 
 /-- **[B, (2.14)]** ([RR96, p. 423, second table] and a computation for `2·10⁶ ≤ y ≤ 4·10⁶`):
-`∑_{n ≤ y} Λ(n) ≤ 1.0004 y` for `y ≥ 2·10⁶`.  Proved from Dusart's bound and finite checks
+`∑_{n ≤ y} Λ(n) ≤ 1.0004 y` for `y ≥ 2·10⁶`.  Proved from `theta_explicit` and finite checks
 (`psi_bounds`). -/
 theorem sum_vonMangoldt_le_10004 {y : ℝ} (hy : 2e6 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0004 * y := by
@@ -1154,7 +1154,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 
 /- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is not used by the
 formalization and is not stated here; our weaker substitute is `MoebiusBound.abs_sum_moebius_div_le`
-(`0.54/(log x − 0.7521)` for `x ≥ 10¹⁰`). -/
+(`0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`). -/
 
 /- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

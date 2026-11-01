@@ -8,7 +8,8 @@ Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
 * Mertens' second theorem in the form `∑_{d ≤ x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with
   `E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log² t) dt` (ported from PNT+, `Prelim/PNTMertens.lean`);
 * `|E₂Λ(x)| ≤ 2D/log x` when `E₁Λ` stays within `D` of `E₁Λ(x)` on `[x, ∞)`, and `D = O(1/log² x)`
-  by summation by parts from Dusart's `|θ(x) − x| < x/log³ x` (`Prelim/LambdaMu.lean`);
+  by summation by parts from `theta_explicit` (`|θ(n) − n| < n/log³ n + ε_pl(n) n`, `Prelim/ThetaExplicit.lean`;
+  the plateau adds `P(M) = 3.7·10⁻⁷` to `D` while `log M < 20000`);
 * `log ∏_{p ≤ x} p/(p−1) ≤ ∑_{d ≤ x} Λ(d)/(d log d) + 3/⌊√x⌋` (the log series);
 * hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁸` (`F_large`), and for
   primes `5 ≤ x ≤ 10⁸` by a finite check (`mertens_product_small`);
