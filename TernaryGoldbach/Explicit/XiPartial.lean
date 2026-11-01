@@ -12,7 +12,7 @@ Without the product theorem: on squares `R_k` symmetric about `ℜs = 1/2` at go
 -/
 
 open Complex Set Metric Filter
-open scoped Real Interval Topology
+open scoped Real Interval Topology ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.Explicit
 
@@ -228,5 +228,215 @@ theorem norm_rectInt_le {G : ℂ → ℂ} {z w : ℂ} (hzw1 : z.re ≤ w.re) (hz
         · rw [norm_smul, hI, one_mul]
     _ ≤ M * (w.re - z.re) + M * (w.re - z.re) + M * (w.im - z.im) + M * (w.im - z.im) := by linarith
     _ = _ := by ring
+
+/-! ## `ξ'/ξ` on the squares -/
+
+theorem deriv_xiF_one_sub (w : ℂ) : deriv xiF (1 - w) = -deriv xiF w := by
+  have h1 : HasDerivAt (fun s => xiF (1 - s)) (deriv xiF (1 - w) * (-1)) w := by
+    have h3 : HasDerivAt (fun s : ℂ => 1 - s) (-1) w := by simpa using (hasDerivAt_id w).const_sub 1
+    exact ((differentiable_xiF _).hasDerivAt).comp w h3
+  have e : (fun s => xiF (1 - s)) = xiF := funext xiF_one_sub
+  rw [e] at h1
+  have := h1.unique (differentiable_xiF w).hasDerivAt
+  linear_combination -this
+
+theorem logDeriv_xiF_one_sub (w : ℂ) : logDeriv xiF (1 - w) = -logDeriv xiF w := by
+  rw [logDeriv_apply, logDeriv_apply, deriv_xiF_one_sub, xiF_one_sub]; ring
+
+/-- `|ζ'/ζ(u)| ≤ C₃` for `ℜu ≥ 3/2`. -/
+theorem norm_logDeriv_zeta_le {u : ℂ} (hu : 3 / 2 ≤ u.re) : ‖logDeriv riemannZeta u‖ ≤ C3 := by
+  have hs1 : 1 < u.re := by linarith
+  have hL := ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hs1
+  have e : logDeriv riemannZeta u = -LSeries (fun n : ℕ => (Λ n : ℂ)) u := by
+    rw [logDeriv_apply, hL]; ring
+  rw [e, norm_neg]
+  have hsum := ArithmeticFunction.LSeriesSummable_vonMangoldt hs1
+  refine (norm_tsum_le_tsum_norm hsum.norm).trans ?_
+  refine hsum.norm.tsum_le_tsum (fun n => ?_) summable_C3
+  rw [LSeries.norm_term_eq]
+  split_ifs with h0
+  · simp [h0]
+  · rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg,
+      Real.rpow_neg (Nat.cast_nonneg n), div_eq_mul_inv]
+    have hn : (1:ℝ) ≤ n := by exact_mod_cast Nat.one_le_iff_ne_zero.2 h0
+    have : (n : ℝ) ^ (3 / 2 : ℝ) ≤ (n : ℝ) ^ u.re := Real.rpow_le_rpow_of_exponent_le hn hu
+    have hp : 0 < (n : ℝ) ^ (3 / 2 : ℝ) := by positivity
+    exact mul_le_mul_of_nonneg_left (inv_anti₀ hp this) ArithmeticFunction.vonMangoldt_nonneg
+
+theorem C3_nonneg : 0 ≤ C3 :=
+  tsum_nonneg fun n => mul_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
+
+/-- `|ψ(u/2)| ≤ 16 log(2 + |u|) + 4` for `ℜu ≥ 1/2`, `|u| ≥ 8`. -/
+theorem norm_digamma_half_le {u : ℂ} (h1 : 1 / 2 ≤ u.re) (h2 : 8 ≤ ‖u‖) :
+    ‖Complex.digamma (u / 2)‖ ≤ 16 * Real.log (2 + ‖u‖) + 4 := by
+  have hn2 : ‖u / 2‖ = ‖u‖ / 2 := by rw [norm_div, Complex.norm_ofNat]
+  rcases le_total 1 (u / 2).re with h | h
+  · have hz : 3 ≤ ‖u / 2‖ := by rw [hn2]; linarith
+    refine (norm_digamma_le h hz).trans ?_
+    rw [hn2]
+    have : Real.log (1 + ‖u‖ / 2) ≤ Real.log (2 + ‖u‖) :=
+      Real.log_le_log (by positivity) (by linarith [norm_nonneg u])
+    linarith
+  · set z := u / 2 with hz
+    have hzre : 1 / 4 ≤ z.re := by rw [hz]; simp; linarith
+    have hm : ∀ m : ℕ, z ≠ -(m : ℂ) := by
+      intro m h
+      have := congrArg Complex.re h
+      simp at this
+      have : (0:ℝ) ≤ m := Nat.cast_nonneg m
+      linarith
+    have hrec := Complex.digamma_apply_add_one z hm
+    have hz1 : 1 ≤ (z + 1).re := by simp; linarith
+    have hzn' : ‖z‖ = ‖u‖ / 2 := by rw [hz]; exact hn2
+    have hzn : 3 ≤ ‖z + 1‖ := by
+      have := norm_sub_norm_le z (-1)
+      rw [sub_neg_eq_add, norm_neg, norm_one] at this
+      linarith
+    have hb := norm_digamma_le hz1 hzn
+    have hzinv : ‖z⁻¹‖ ≤ 4 := by
+      rw [norm_inv]
+      have : 1 / 4 ≤ ‖z‖ := (by linarith : (1/4:ℝ) ≤ z.re).trans (Complex.re_le_norm z)
+      rw [inv_le_comm₀ (by linarith) (by norm_num)]; linarith
+    have e : Complex.digamma z = Complex.digamma (z + 1) - z⁻¹ := by rw [hrec]; ring
+    rw [e]
+    refine (norm_sub_le _ _).trans ?_
+    have hl : Real.log (1 + ‖z + 1‖) ≤ Real.log (2 + ‖u‖) := by
+      apply Real.log_le_log (by positivity)
+      have := norm_add_le z 1
+      rw [norm_one] at this
+      linarith [norm_nonneg u]
+    linarith
+
+/-- The bound for `|ξ'/ξ|` on the square at a good height in `[k, k+1]`. -/
+noncomputable def MX (k : ℕ) : ℝ := 3.6 + 8 * Real.log (2 * k + 5) + (C3 + 2 + HkD BPz2 k)
+
+theorem log_pi_le : Real.log π ≤ 1.2 := by
+  rw [Real.log_le_iff_le_exp Real.pi_pos]
+  have h := Real.exp_one_gt_d9
+  have h2 : Real.exp 1.2 = Real.exp 1 * Real.exp 0.2 := by rw [← Real.exp_add]; norm_num
+  have h3 : 1.2 ≤ Real.exp 0.2 := by linarith [Real.add_one_le_exp (0.2 : ℝ)]
+  have := Real.pi_lt_d2
+  nlinarith
+
+/-- `|ξ'/ξ(u)| ≤ 1.6 + ½|ψ(u/2)| + |zetaF'/zetaF(u)|`, for `ℜu > 0`, `|u| ≥ 1`. -/
+theorem norm_logDeriv_xiF_le {u : ℂ} (h0 : 0 < u.re) (hu1 : u ≠ 1) (hξ : xiF u ≠ 0) (hn : 1 ≤ ‖u‖) :
+    ‖logDeriv xiF u‖ ≤ 1.6 + 1 / 2 * ‖Complex.digamma (u / 2)‖ + ‖logDeriv zetaF u‖ := by
+  rw [logDeriv_xiF h0 hu1 hξ]
+  have h1 : ‖1 / u‖ ≤ 1 := by
+    rw [norm_div, norm_one, div_le_one (by linarith)]; exact hn
+  have hl : ‖-(1 / 2) * Complex.log π‖ ≤ 0.6 := by
+    rw [norm_mul, show (π : ℂ) = ((π : ℝ) : ℂ) from rfl, ← Complex.ofReal_log Real.pi_pos.le,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.log_pos (by linarith [Real.pi_gt_three]))]
+    have := log_pi_le
+    simp only [norm_neg, norm_div, norm_one, Complex.norm_ofNat]
+    linarith
+  have hd : ‖1 / 2 * Complex.digamma (u / 2)‖ = 1 / 2 * ‖Complex.digamma (u / 2)‖ := by
+    rw [norm_mul]; simp
+  calc ‖1 / u + (-(1 / 2) * Complex.log π + 1 / 2 * Complex.digamma (u / 2)) + logDeriv zetaF u‖
+      ≤ ‖1 / u + (-(1 / 2) * Complex.log π + 1 / 2 * Complex.digamma (u / 2))‖ + ‖logDeriv zetaF u‖ :=
+        norm_add_le _ _
+    _ ≤ ‖1 / u‖ + ‖-(1 / 2) * Complex.log π + 1 / 2 * Complex.digamma (u / 2)‖ + ‖logDeriv zetaF u‖ := by
+        gcongr; exact norm_add_le _ _
+    _ ≤ ‖1 / u‖ + (‖-(1 / 2) * Complex.log π‖ + ‖1 / 2 * Complex.digamma (u / 2)‖) + ‖logDeriv zetaF u‖ := by
+        gcongr; exact norm_add_le _ _
+    _ ≤ 1 + (0.6 + 1 / 2 * ‖Complex.digamma (u / 2)‖) + ‖logDeriv zetaF u‖ := by rw [hd]; gcongr
+    _ = _ := by ring
+
+/-- **`|ξ'/ξ| ≤ MX k`** (and `ξ ≠ 0`) on the boundary of the square `[1/2 − T, 1/2 + T] × [−T, T]` at a good
+height `T ∈ [k, k+1]`, `k ≥ 8`. -/
+theorem xiF_sq_bound {k : ℕ} (hk : 8 ≤ k) {T : ℝ} (hT : T ∈ Icc (k : ℝ) (k + 1))
+    (hgood : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]],
+      (zetaF ((σ : ℂ) + ((T : ℝ) : ℂ) * I) ≠ 0 ∧ zetaF ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) ≠ 0) ∧
+      (‖logDeriv zetaF ((σ : ℂ) + ((T : ℝ) : ℂ) * I)‖ ≤ HkD BPz2 k ∧
+        ‖logDeriv zetaF ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)‖ ≤ HkD BPz2 k))
+    {u : ℂ} (h1 : |u.re - 1 / 2| ≤ T) (h2 : |u.im| ≤ T) (h3 : |u.im| = T ∨ |u.re - 1 / 2| = T) :
+    xiF u ≠ 0 ∧ ‖logDeriv xiF u‖ ≤ MX k := by
+  have hk' : (8:ℝ) ≤ k := by exact_mod_cast hk
+  have hT8 : 8 ≤ T := le_trans hk' hT.1
+  have hHk : 0 ≤ HkD BPz2 k := by
+    unfold HkD
+    have := (polyDatum_zeta2.log_pos ((k:ℝ) + 1)).le
+    have h6 : 0 < Real.log (10 / 6) := log_ratio_pos (by norm_num) (by norm_num)
+    have h2' := Real.log_pos (by norm_num : (1:ℝ) < 2)
+    positivity
+  have hC3 := C3_nonneg
+  -- the case `ℜu ≥ 1/2`
+  have main : ∀ v : ℂ, 1 / 2 ≤ v.re → |v.re - 1 / 2| ≤ T → |v.im| ≤ T →
+      (|v.im| = T ∨ |v.re - 1 / 2| = T) → xiF v ≠ 0 ∧ ‖logDeriv xiF v‖ ≤ MX k := by
+    intro v hv1 hv2 hv3 hv4
+    have hvn : 8 ≤ ‖v‖ := by
+      rcases hv4 with h | h
+      · exact h ▸ hT8 |>.trans (Complex.abs_im_le_norm v)
+      · have : v.re = 1 / 2 + T := by
+          rw [abs_of_nonneg (by linarith)] at h; linarith
+        linarith [Complex.re_le_norm v]
+    have hvn' : ‖v‖ ≤ 2 * k + 3 := by
+      refine (Complex.norm_le_abs_re_add_abs_im v).trans ?_
+      rw [abs_of_nonneg (by linarith : (0:ℝ) ≤ v.re)]
+      have := abs_le.1 hv2
+      linarith [hT.2]
+    have hv1' : v ≠ 1 := by
+      intro h; rw [h] at hvn; simp at hvn
+    have hpsi := norm_digamma_half_le hv1 hvn
+    have hlog : Real.log (2 + ‖v‖) ≤ Real.log (2 * k + 5) := Real.log_le_log (by positivity) (by linarith)
+    -- the `zetaF` part and `ξ ≠ 0`
+    have hZ : xiF v ≠ 0 ∧ ‖logDeriv zetaF v‖ ≤ C3 + 2 + HkD BPz2 k := by
+      rcases le_or_gt (3 / 2) v.re with hr | hr
+      · have hz : riemannZeta v ≠ 0 := riemannZeta_ne_zero_of_one_le_re (by linarith)
+        refine ⟨xiF_ne_zero_of_one_le_re (by linarith), ?_⟩
+        rw [logDeriv_zetaF_eq hv1' hz]
+        have hinv : ‖1 / (v - 1)‖ ≤ 2 := by
+          rw [norm_div, norm_one, div_le_iff₀ (norm_pos_iff.2 (sub_ne_zero.2 hv1'))]
+          have := Complex.re_le_norm (v - 1); simp at this; linarith
+        have := norm_logDeriv_zeta_le hr
+        refine (norm_add_le _ _).trans ?_
+        linarith
+      · -- on a horizontal side
+        have hvim : |v.im| = T := by
+          rcases hv4 with h | h
+          · exact h
+          · exfalso
+            rw [abs_of_nonneg (by linarith)] at h; linarith
+        have hσ : v.re ∈ [[(-1 / 2 : ℝ), 3 / 2]] := by
+          rw [Set.uIcc_of_le (by norm_num)]; exact ⟨by linarith, hr.le⟩
+        obtain ⟨⟨hz1, hz2⟩, hb1, hb2⟩ := hgood v.re hσ
+        rcases abs_choice v.im with hsg | hsg <;> rw [hsg] at hvim
+        · have hv : v = (v.re : ℂ) + ((T : ℝ) : ℂ) * I := by
+            apply Complex.ext <;> simp [hvim]
+          rw [hv]
+          refine ⟨?_, hb1.trans (by linarith)⟩
+          intro hξ
+          rcases le_or_gt 1 v.re with hr1 | hr1
+          · exact xiF_ne_zero_of_one_le_re (by simp; linarith) hξ
+          · have hζ := (xiF_eq_zero_iff (by simp; linarith) (by simp; linarith)).1 hξ
+            have hne : (v.re : ℂ) + ((T : ℝ) : ℂ) * I ≠ 1 := by
+              intro h; have := congrArg Complex.im h; simp at this; linarith
+            exact hz1 (by rw [zetaF_of_ne hne, hζ, mul_zero])
+        · have hv : v = (v.re : ℂ) + ((-T : ℝ) : ℂ) * I := by
+            apply Complex.ext <;> simp; linarith
+          rw [hv]
+          refine ⟨?_, hb2.trans (by linarith)⟩
+          intro hξ
+          rcases le_or_gt 1 v.re with hr1 | hr1
+          · exact xiF_ne_zero_of_one_le_re (by simp; linarith) hξ
+          · have hζ := (xiF_eq_zero_iff (by simp; linarith) (by simp; linarith)).1 hξ
+            have hne : (v.re : ℂ) + ((-T : ℝ) : ℂ) * I ≠ 1 := by
+              intro h; have := congrArg Complex.im h; simp at this; linarith
+            exact hz2 (by rw [zetaF_of_ne hne, hζ, mul_zero])
+    refine ⟨hZ.1, ?_⟩
+    refine (norm_logDeriv_xiF_le (by linarith) hv1' hZ.1 (by linarith)).trans ?_
+    unfold MX
+    nlinarith
+  rcases le_total (1 / 2) u.re with hr | hr
+  · exact main u hr h1 h2 h3
+  · have e1 : (1 - u).re - 1 / 2 = -(u.re - 1 / 2) := by simp; ring
+    have e2 : (1 - u).im = -u.im := by simp
+    have hv := main (1 - u) (by simp; linarith) (by rw [e1, abs_neg]; exact h1)
+      (by rw [e2, abs_neg]; exact h2) (by
+        rcases h3 with h | h
+        · left; rw [e2, abs_neg]; exact h
+        · right; rw [e1, abs_neg]; exact h)
+    rw [logDeriv_xiF_one_sub, norm_neg, xiF_one_sub] at hv
+    exact hv
 
 end TernaryGoldbach.Explicit
