@@ -1,5 +1,7 @@
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MajorArcs.SumMuPhi
+import TernaryGoldbach.MajorArcs.Cor713
+import TernaryGoldbach.Prelim.MertensProduct
 
 /-!
 # The singular series of [B, §10.2] for `r = 150000`
@@ -244,12 +246,12 @@ def oddPrimes (R : ℕ) : Finset ℕ := (Icc 3 R).filter Nat.Prime
 theorem mem_oddPrimes {R p : ℕ} : p ∈ oddPrimes R ↔ (3 ≤ p ∧ p ≤ R) ∧ p.Prime := by
   unfold oddPrimes; rw [mem_filter, mem_Icc]
 
-theorem sum_odd_coefN_eq (N R : ℕ) :
-    ∑ q ∈ (Icc 1 R).filter Odd, coefN N q =
-      ∑ t ∈ (oddPrimes R).powerset.filter (fun t => ∏ p ∈ t, p ≤ R), ∏ p ∈ t, aP N p := by
-  have e1 : ∑ q ∈ (Icc 1 R).filter Odd, coefN N q =
-      ∑ q ∈ ((Icc 1 R).filter Odd).filter Squarefree, ∏ p ∈ q.primeFactors, aP N p := by
-    symm; rw [sum_filter]; rfl
+theorem sum_odd_sqfree_eq (g : ℕ → ℝ) (R : ℕ) :
+    ∑ q ∈ (Icc 1 R).filter Odd, (if Squarefree q then ∏ p ∈ q.primeFactors, g p else 0) =
+      ∑ t ∈ (oddPrimes R).powerset.filter (fun t => ∏ p ∈ t, p ≤ R), ∏ p ∈ t, g p := by
+  have e1 : ∑ q ∈ (Icc 1 R).filter Odd, (if Squarefree q then ∏ p ∈ q.primeFactors, g p else 0) =
+      ∑ q ∈ ((Icc 1 R).filter Odd).filter Squarefree, ∏ p ∈ q.primeFactors, g p := by
+    symm; rw [sum_filter]
   rw [e1]
   refine sum_bij' (fun q _ => q.primeFactors) (fun t _ => ∏ p ∈ t, p) ?_ ?_ ?_ ?_ ?_
   · intro q hq
@@ -287,6 +289,11 @@ theorem sum_odd_coefN_eq (N R : ℕ) :
     exact Nat.primeFactors_prod fun p hp => (mem_oddPrimes.1 (ht.1 hp)).2
   · intro q _; rfl
 
+theorem sum_odd_coefN_eq (N R : ℕ) :
+    ∑ q ∈ (Icc 1 R).filter Odd, coefN N q =
+      ∑ t ∈ (oddPrimes R).powerset.filter (fun t => ∏ p ∈ t, p ≤ R), ∏ p ∈ t, aP N p :=
+  sum_odd_sqfree_eq (aP N) R
+
 /-- **Rankin's trick**: the terms with `∏ t > R` are at most `R⁻¹ ∏_p (1 + p |a_p|)`. -/
 theorem expansion_ge (N R : ℕ) (hR : 0 < R) :
     ∏ p ∈ oddPrimes R, (1 + aP N p) - (1 / (R : ℝ)) * ∏ p ∈ oddPrimes R, (1 + p * |aP N p|) ≤
@@ -321,6 +328,340 @@ theorem expansion_ge (N R : ℕ) (hR : 0 < R) :
           rw [prod_mul_distrib]; field_simp
   have := le_abs_self (∑ t ∈ ps, (if ∏ p ∈ t, p ≤ R then 0 else ∏ p ∈ t, aP N p))
   rw [hexp, hsplit]
+  linarith
+
+/-! ## Numerics: `Σ_{q ≤ r₀ odd} ∏_{p∣q} a_p(N) ≥ 0.657` -/
+
+theorem oddPrimes_200 : oddPrimes 200 = {3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199} := by
+  ext p
+  rw [mem_oddPrimes]
+  simp only [mem_insert, mem_singleton]
+  constructor
+  · rintro ⟨⟨h1, h2⟩, hp⟩
+    interval_cases p <;> revert hp <;> norm_num
+  · rintro (rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl) <;> norm_num
+
+theorem prod_200_lower : (0.6606 : ℝ) ≤ ∏ p ∈ oddPrimes 200, (1 - 1 / ((p : ℝ) - 1) ^ 2) := by
+  rw [oddPrimes_200]; norm_num
+
+theorem prod_200_upper : ∏ p ∈ oddPrimes 200, (1 + 1 / ((p : ℝ) - 1) ^ 2) ≤ 1.4122 := by
+  rw [oddPrimes_200]; norm_num
+
+theorem aP_cases {N p : ℕ} (hp : 3 ≤ p) :
+    aP N p = -(1 / ((p : ℝ) - 1) ^ 2) ∨ (0 ≤ aP N p ∧ aP N p ≤ 1 / ((p : ℝ) - 1) ^ 2) := by
+  have hp1 : (2 : ℝ) ≤ (p : ℝ) - 1 := by
+    have : (3 : ℝ) ≤ p := by exact_mod_cast hp
+    linarith
+  unfold aP; rw [divW_apply]
+  split_ifs with h
+  · left; field_simp; ring
+  · right
+    rw [sub_zero]
+    constructor
+    · positivity
+    · rw [div_le_div_iff₀ (by positivity) (by positivity)]; nlinarith
+
+theorem aP_ge {N p : ℕ} (hp : 3 ≤ p) : -(1 / ((p : ℝ) - 1) ^ 2) ≤ aP N p := by
+  rcases aP_cases (N := N) hp with h | ⟨h0, -⟩
+  · rw [h]
+  · have : (0 : ℝ) ≤ 1 / ((p : ℝ) - 1) ^ 2 := by positivity
+    linarith
+
+theorem abs_aP_le {N p : ℕ} (hp : 3 ≤ p) : |aP N p| ≤ 1 / ((p : ℝ) - 1) ^ 2 := by
+  rcases aP_cases (N := N) hp with h | ⟨h0, h1⟩
+  · rw [h, abs_neg, abs_of_nonneg (by positivity)]
+  · rw [abs_of_nonneg h0]; exact h1
+
+theorem prod_one_sub_ge {s : Finset ℕ} {x : ℕ → ℝ} (h0 : ∀ i ∈ s, 0 ≤ x i)
+    (h1 : ∀ i ∈ s, x i ≤ 1) : 1 - ∑ i ∈ s, x i ≤ ∏ i ∈ s, (1 - x i) := by
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert a s ha ih =>
+    rw [prod_insert ha, sum_insert ha]
+    have ih' := ih (fun i hi => h0 i (mem_insert_of_mem hi)) (fun i hi => h1 i (mem_insert_of_mem hi))
+    have ha0 := h0 a (mem_insert_self a s)
+    have ha1 := h1 a (mem_insert_self a s)
+    have hS : 0 ≤ ∑ i ∈ s, x i := sum_nonneg fun i hi => h0 i (mem_insert_of_mem hi)
+    nlinarith [mul_le_mul_of_nonneg_left ih' (sub_nonneg.2 ha1)]
+
+theorem sum_rest_le {R : ℕ} (hR : 200 ≤ R) :
+    ∑ p ∈ oddPrimes R \ oddPrimes 200, 1 / ((p : ℝ) - 1) ^ 2 ≤ 1 / 199 := by
+  set rest := oddPrimes R \ oddPrimes 200
+  have hmem : ∀ p ∈ rest, 201 ≤ p ∧ p ≤ R := by
+    intro p hp
+    rw [mem_sdiff, mem_oddPrimes, mem_oddPrimes] at hp
+    obtain ⟨⟨⟨h3, hR'⟩, hpr⟩, hn⟩ := hp
+    refine ⟨?_, hR'⟩
+    by_contra h
+    exact hn ⟨⟨h3, by omega⟩, hpr⟩
+  set g : ℕ → ℝ := fun m => 1 / ((m : ℝ) * ((m : ℝ) - 1)) with hg
+  have hle : ∀ p ∈ rest, 1 / ((p : ℝ) - 1) ^ 2 ≤ g (p - 1) := by
+    intro p hp
+    obtain ⟨h1, -⟩ := hmem p hp
+    have hc : ((p - 1 : ℕ) : ℝ) = (p : ℝ) - 1 := by
+      rw [Nat.cast_sub (by omega : 1 ≤ p)]; push_cast; ring
+    simp only [hg, hc]
+    have hp' : (201 : ℝ) ≤ p := by exact_mod_cast h1
+    rw [div_le_div_iff₀ (by nlinarith) (by nlinarith)]; nlinarith
+  have hinj : ∀ a ∈ rest, ∀ b ∈ rest, a - 1 = b - 1 → a = b := by
+    intro a ha b hb hab
+    have := (hmem a ha).1; have := (hmem b hb).1
+    omega
+  have hsub : rest.image (· - 1) ⊆ Ioc 199 R := by
+    intro m hm
+    rw [mem_image] at hm
+    obtain ⟨p, hp, rfl⟩ := hm
+    obtain ⟨h1, h2⟩ := hmem p hp
+    rw [mem_Ioc]; constructor <;> omega
+  have hg0 : ∀ m ∈ Ioc 199 R, 0 ≤ g m := by
+    intro m hm
+    rw [mem_Ioc] at hm
+    have : (200 : ℝ) ≤ m := by exact_mod_cast hm.1
+    simp only [hg]
+    have : 0 < (m : ℝ) * ((m : ℝ) - 1) := by nlinarith
+    positivity
+  have htel : ∑ m ∈ Ioc 199 R, g m ≤ 1 / 199 - 1 / R :=
+    TernaryGoldbach.Prelim.sum_inv_mul_pred_le (by norm_num) (by omega)
+  have hR0 : (0 : ℝ) ≤ 1 / R := by positivity
+  calc ∑ p ∈ rest, 1 / ((p : ℝ) - 1) ^ 2 ≤ ∑ p ∈ rest, g (p - 1) := sum_le_sum hle
+    _ = ∑ m ∈ rest.image (· - 1), g m := (sum_image hinj).symm
+    _ ≤ ∑ m ∈ Ioc 199 R, g m := sum_le_sum_of_subset_of_nonneg hsub fun m hm _ => hg0 m hm
+    _ ≤ 1 / 199 := by linarith
+
+theorem oddPrimes_200_subset {R : ℕ} (hR : 200 ≤ R) : oddPrimes 200 ⊆ oddPrimes R := by
+  intro p hp; rw [mem_oddPrimes] at hp ⊢; exact ⟨⟨hp.1.1, by omega⟩, hp.2⟩
+
+theorem three_le_of_mem {R p : ℕ} (hp : p ∈ oddPrimes R) : 3 ≤ p := (mem_oddPrimes.1 hp).1.1
+
+theorem two_le_sub_one {p : ℕ} (hp : 3 ≤ p) : (2 : ℝ) ≤ (p : ℝ) - 1 := by
+  have : (3 : ℝ) ≤ p := by exact_mod_cast hp
+  linarith
+
+theorem prod_lower_bound {R : ℕ} (hR : 200 ≤ R) :
+    0.6606 * (1 - 1 / 199) ≤ ∏ p ∈ oddPrimes R, (1 - 1 / ((p : ℝ) - 1) ^ 2) := by
+  rw [← prod_sdiff (oddPrimes_200_subset hR)]
+  have hx0 : ∀ p ∈ oddPrimes R \ oddPrimes 200, (0:ℝ) ≤ 1 / ((p : ℝ) - 1) ^ 2 := fun p _ => by
+    positivity
+  have hx1 : ∀ p ∈ oddPrimes R \ oddPrimes 200, 1 / ((p : ℝ) - 1) ^ 2 ≤ 1 := by
+    intro p hp
+    have h2 := two_le_sub_one (three_le_of_mem (mem_sdiff.1 hp).1)
+    rw [div_le_one (by positivity)]; nlinarith
+  have h1 := prod_one_sub_ge hx0 hx1
+  have h2 := sum_rest_le hR
+  have h3 := prod_200_lower
+  have hA : 1 - 1 / 199 ≤ ∏ p ∈ oddPrimes R \ oddPrimes 200, (1 - 1 / ((p : ℝ) - 1) ^ 2) := by
+    linarith
+  calc (0.6606 : ℝ) * (1 - 1 / 199) = (1 - 1 / 199) * 0.6606 := by ring
+    _ ≤ (∏ p ∈ oddPrimes R \ oddPrimes 200, (1 - 1 / ((p : ℝ) - 1) ^ 2)) *
+          ∏ p ∈ oddPrimes 200, (1 - 1 / ((p : ℝ) - 1) ^ 2) :=
+        mul_le_mul hA h3 (by norm_num) (by linarith)
+
+theorem prod_upper_bound {R : ℕ} (hR : 200 ≤ R) :
+    ∏ p ∈ oddPrimes R, (1 + 1 / ((p : ℝ) - 1) ^ 2) ≤ 1.4122 * Real.exp (1 / 199) := by
+  rw [← prod_sdiff (oddPrimes_200_subset hR)]
+  have hrest : ∏ p ∈ oddPrimes R \ oddPrimes 200, (1 + 1 / ((p : ℝ) - 1) ^ 2) ≤ Real.exp (1 / 199) := by
+    calc ∏ p ∈ oddPrimes R \ oddPrimes 200, (1 + 1 / ((p : ℝ) - 1) ^ 2)
+        ≤ ∏ p ∈ oddPrimes R \ oddPrimes 200, Real.exp (1 / ((p : ℝ) - 1) ^ 2) := by
+          refine Finset.prod_le_prod₀ (fun p _ => by positivity) (fun p _ => ?_)
+          have := Real.add_one_le_exp (1 / ((p : ℝ) - 1) ^ 2); linarith
+      _ = Real.exp (∑ p ∈ oddPrimes R \ oddPrimes 200, 1 / ((p : ℝ) - 1) ^ 2) := (Real.exp_sum _ _).symm
+      _ ≤ Real.exp (1 / 199) := Real.exp_le_exp.2 (sum_rest_le hR)
+  calc (∏ p ∈ oddPrimes R \ oddPrimes 200, (1 + 1 / ((p : ℝ) - 1) ^ 2)) *
+        ∏ p ∈ oddPrimes 200, (1 + 1 / ((p : ℝ) - 1) ^ 2)
+      ≤ Real.exp (1 / 199) * 1.4122 := mul_le_mul hrest prod_200_upper (by positivity) (by positivity)
+    _ = 1.4122 * Real.exp (1 / 199) := by ring
+
+theorem one_le_prod_of_one_le {s : Finset ℕ} {f : ℕ → ℝ} (h : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i ∈ s, f i := by
+  calc (1 : ℝ) = ∏ i ∈ s, (1 : ℝ) := by simp
+    _ ≤ ∏ i ∈ s, f i := Finset.prod_le_prod₀ (fun _ _ => by norm_num) h
+
+/-- `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5` (from the numerical axiom `mertens_product_small` at `150001`). -/
+theorem prod_p_div_le : ∏ p ∈ oddPrimes 150000, ((p : ℝ) / (p - 1)) ≤ 15.5 := by
+  have hpr : Nat.Prime 150001 := by norm_num
+  have hM := TernaryGoldbach.Prelim.mertens_product_small 150001 hpr (by norm_num) (by norm_num)
+  set A := (Icc 1 150001).filter Nat.Prime with hA
+  set θ := ∑ p ∈ A, Real.log p with hθ
+  have hsub : insert 2 (oddPrimes 150000) ⊆ A := by
+    intro p hp
+    rw [mem_insert] at hp
+    rw [hA, mem_filter, mem_Icc]
+    rcases hp with rfl | hp
+    · exact ⟨⟨by norm_num, by norm_num⟩, Nat.prime_two⟩
+    · rw [mem_oddPrimes] at hp; exact ⟨⟨by omega, by omega⟩, hp.2⟩
+  have h2 : 2 ∉ oddPrimes 150000 := fun h => by have := three_le_of_mem h; omega
+  have hone : ∀ p ∈ A, (1 : ℝ) ≤ (p : ℝ) / (p - 1) := by
+    intro p hp
+    rw [hA, mem_filter] at hp
+    have : (2 : ℝ) ≤ p := by exact_mod_cast hp.2.two_le
+    rw [le_div_iff₀ (by linarith)]; linarith
+  have hsplit := Finset.prod_sdiff (f := fun p : ℕ => (p : ℝ) / (p - 1)) hsub
+  have hrest : 1 ≤ ∏ p ∈ A \ insert 2 (oddPrimes 150000), (p : ℝ) / (p - 1) :=
+    one_le_prod_of_one_le fun p hp => hone p (mem_sdiff.1 hp).1
+  rw [prod_insert h2] at hsplit
+  have hodd0 : 0 ≤ ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1) :=
+    prod_nonneg fun p hp => by
+      have := two_le_sub_one (three_le_of_mem hp); positivity
+  have he2 : ((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) = 2 := by norm_num
+  have hle : 2 * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1) ≤ ∏ p ∈ A, (p : ℝ) / (p - 1) := by
+    calc 2 * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)
+        = 1 * (((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)) := by
+          rw [he2]; ring
+      _ ≤ (∏ p ∈ A \ insert 2 (oddPrimes 150000), (p : ℝ) / (p - 1)) *
+            (((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)) :=
+          mul_le_mul_of_nonneg_right hrest (by rw [he2]; positivity)
+      _ = ∏ p ∈ A, (p : ℝ) / (p - 1) := hsplit
+  -- bounds on `log θ`
+  have hlog : Real.log 150001 ≤ 12.62 :=
+    (Real.log_le_log (by norm_num) (by norm_num)).trans TernaryGoldbach.MajorArcs.log_3e5_le
+  have hlog8 : 8 ≤ Real.log 150001 := by
+    rw [Real.le_log_iff_exp_le (by norm_num)]
+    have := Real.exp_one_lt_d9
+    calc Real.exp 8 = Real.exp 1 ^ 8 := by rw [← Real.exp_nat_mul]; norm_num
+      _ ≤ 2.7182818286 ^ 8 := by gcongr
+      _ ≤ 150001 := by norm_num
+  have hθlo : 8 ≤ θ := by
+    have h150 : (150001 : ℕ) ∈ A := by rw [hA, mem_filter, mem_Icc]; exact ⟨⟨by norm_num, le_rfl⟩, hpr⟩
+    have := single_le_sum (f := fun p : ℕ => Real.log p) (fun p hp => Real.log_natCast_nonneg p) h150
+    push_cast at this; linarith
+  have hθhi : θ ≤ 150001 * 12.62 := by
+    calc θ ≤ ∑ p ∈ A, (12.62 : ℝ) := by
+          refine sum_le_sum fun p hp => ?_
+          rw [hA, mem_filter, mem_Icc] at hp
+          have : (p : ℝ) ≤ 150001 := by exact_mod_cast hp.1.2
+          exact (Real.log_le_log (by exact_mod_cast hp.2.pos) this).trans hlog
+      _ = A.card * 12.62 := by rw [sum_const, nsmul_eq_mul]
+      _ ≤ 150001 * 12.62 := by
+          gcongr
+          have : A.card ≤ 150001 := (card_filter_le _ _).trans (by simp)
+          exact_mod_cast this
+  have hθpos : 0 < θ := by linarith
+  have ht_lo : 2 ≤ Real.log θ := by
+    rw [Real.le_log_iff_exp_le hθpos]
+    have := Real.exp_one_lt_d9
+    calc Real.exp 2 = Real.exp 1 ^ 2 := by rw [← Real.exp_nat_mul]; norm_num
+      _ ≤ 2.7182818286 ^ 2 := by gcongr
+      _ ≤ 8 := by norm_num
+      _ ≤ θ := hθlo
+  have ht_hi : Real.log θ ≤ 15.22 := by
+    rw [Real.log_le_iff_le_exp hθpos]
+    have h := TernaryGoldbach.MajorArcs.exp_split_ge 15 (u := 0.22) (by norm_num) 4
+    norm_num [Finset.sum_range_succ, Nat.factorial] at h
+    linarith
+  have hG := TernaryGoldbach.Prelim.exp_gamma_lt
+  have hf : Real.exp Real.eulerMascheroniConstant * Real.log θ + 2.50637 / Real.log θ ≤ 30.94 := by
+    have h1 : Real.exp Real.eulerMascheroniConstant * Real.log θ ≤ 1.95 * 15.22 :=
+      mul_le_mul hG.le ht_hi (by linarith) (by norm_num)
+    have h2 : 2.50637 / Real.log θ ≤ 2.50637 / 2 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) ht_lo
+    linarith
+  have hM' : ∏ p ∈ A, (p : ℝ) / (p - 1) < 30.94 := lt_of_lt_of_le hM hf
+  linarith
+
+theorem exp_inv199_le : Real.exp (1 / 199) ≤ 1.006 := by
+  have h := Real.add_one_le_exp (-(1 / 199))
+  have hp := Real.exp_pos (1 / 199)
+  have : Real.exp (-(1 / 199)) * Real.exp (1 / 199) = 1 := by rw [← Real.exp_add]; simp
+  nlinarith
+
+theorem prod_one_add_p_abs_le (N : ℕ) :
+    ∏ p ∈ oddPrimes 150000, (1 + p * |aP N p|) ≤ 22.1 := by
+  have hpt : ∀ p ∈ oddPrimes 150000, 1 + p * |aP N p| ≤ ((p : ℝ) / (p - 1)) * (1 + 1 / ((p : ℝ) - 1) ^ 2) := by
+    intro p hp
+    have h3 := three_le_of_mem hp
+    have h2 := two_le_sub_one h3
+    have ha := abs_aP_le (N := N) h3
+    have hp0 : (0 : ℝ) ≤ p := Nat.cast_nonneg p
+    calc 1 + p * |aP N p| ≤ 1 + p * (1 / ((p : ℝ) - 1) ^ 2) := by gcongr
+      _ ≤ ((p : ℝ) / (p - 1)) * (1 + 1 / ((p : ℝ) - 1) ^ 2) := by
+          rw [← sub_nonneg]
+          have e : ((p : ℝ) / (p - 1)) * (1 + 1 / ((p : ℝ) - 1) ^ 2) - (1 + p * (1 / ((p : ℝ) - 1) ^ 2)) =
+              1 / ((p : ℝ) - 1) ^ 3 := by
+            have : (p : ℝ) - 1 ≠ 0 := by linarith
+            field_simp; ring
+          rw [e]; positivity
+  have h1 : ∏ p ∈ oddPrimes 150000, (1 + p * |aP N p|) ≤
+      ∏ p ∈ oddPrimes 150000, (((p : ℝ) / (p - 1)) * (1 + 1 / ((p : ℝ) - 1) ^ 2)) :=
+    Finset.prod_le_prod₀ (fun p _ => by positivity) hpt
+  rw [prod_mul_distrib] at h1
+  have hA := prod_p_div_le
+  have hB := prod_upper_bound (R := 150000) (by norm_num)
+  have hE := exp_inv199_le
+  have hB' : ∏ p ∈ oddPrimes 150000, (1 + 1 / ((p : ℝ) - 1) ^ 2) ≤ 1.4122 * 1.006 :=
+    hB.trans (by gcongr)
+  have hA0 : 0 ≤ ∏ p ∈ oddPrimes 150000, ((p : ℝ) / (p - 1)) :=
+    prod_nonneg fun p hp => by have := two_le_sub_one (three_le_of_mem hp); positivity
+  have := mul_le_mul hA hB' (prod_nonneg fun p _ => by positivity) (by norm_num)
+  linarith
+
+/-- **The singular series over odd moduli**: `Σ_{q ≤ r₀ odd} ∏_{p∣q} a_p(N) ≥ 0.657`. -/
+theorem sum_odd_coefN_ge (N : ℕ) : 0.657 ≤ ∑ q ∈ (Icc 1 150000).filter Odd, coefN N q := by
+  rw [sum_odd_coefN_eq]
+  have hexp := expansion_ge N 150000 (by norm_num)
+  have hlow : ∏ p ∈ oddPrimes 150000, (1 - 1 / ((p : ℝ) - 1) ^ 2) ≤
+      ∏ p ∈ oddPrimes 150000, (1 + aP N p) := by
+    refine Finset.prod_le_prod₀ (fun p hp => ?_) (fun p hp => ?_)
+    · have h2 := two_le_sub_one (three_le_of_mem hp)
+      have : 1 / ((p : ℝ) - 1) ^ 2 ≤ 1 := by rw [div_le_one (by positivity)]; nlinarith
+      linarith
+    · have := aP_ge (N := N) (three_le_of_mem hp); linarith
+  have hlb := prod_lower_bound (R := 150000) (by norm_num)
+  have hub := prod_one_add_p_abs_le N
+  have : (1 / (150000 : ℝ)) * ∏ p ∈ oddPrimes 150000, (1 + p * |aP N p|) ≤ (1 / 150000) * 22.1 :=
+    mul_le_mul_of_nonneg_left hub (by norm_num)
+  push_cast at hexp
+  linarith
+
+/-- **The singular series over `𝔐_{8,r₀}`**: `Σ_{q ∈ Qset r₀} (μ(q)/φ(q))³ c_q(N) ≥ 1.314` for odd `N`. -/
+theorem sum_Qset_coefN_ge {N : ℕ} (hN : Odd N) :
+    1.314 ≤ ∑ q ∈ TernaryGoldbach.MinorArcs.Qset 150000, coefN N q := by
+  rw [sum_Qset_of_two_mul (coefN_two_mul hN)]
+  have := sum_odd_coefN_ge N
+  linarith
+
+/-! ## `Σ μ²/φ²` -/
+
+/-- `μ²(q)/φ(q)²`. -/
+noncomputable def mPhi2 (q : ℕ) : ℝ := (if Squarefree q then (1 : ℝ) else 0) / (q.totient : ℝ) ^ 2
+
+theorem mPhi2_eq (q : ℕ) :
+    mPhi2 q = if Squarefree q then ∏ p ∈ q.primeFactors, 1 / ((p : ℝ) - 1) ^ 2 else 0 := by
+  unfold mPhi2
+  split_ifs with h
+  · rw [totient_of_squarefree h, ← prod_pow, one_div, ← prod_inv_distrib]
+    refine prod_congr rfl fun p _ => by rw [one_div]
+  · simp
+
+theorem mPhi2_two_mul (q : ℕ) : mPhi2 (2 * q) = if Odd q then mPhi2 q else 0 := by
+  split_ifs with ho
+  · have hcop : Nat.Coprime 2 q := (Nat.coprime_two_left).2 ho
+    have hsq : Squarefree (2 * q) ↔ Squarefree q := by
+      rw [Nat.squarefree_mul hcop]; simp [Nat.squarefree_two]
+    unfold mPhi2
+    rw [Nat.totient_mul hcop, Nat.totient_two, one_mul]
+    simp only [hsq]
+  · have he : Even q := Nat.not_odd_iff_even.1 ho
+    obtain ⟨k, rfl⟩ := he
+    have hns : ¬Squarefree (2 * (k + k)) := by
+      intro hs
+      have h4 : 2 * 2 ∣ 2 * (k + k) := ⟨k, by ring⟩
+      have := hs 2 h4
+      norm_num at this
+    unfold mPhi2; rw [if_neg hns, zero_div]
+
+theorem sum_Qset_mPhi2_le : ∑ q ∈ TernaryGoldbach.MinorArcs.Qset 150000, mPhi2 q ≤ 2.85 := by
+  rw [sum_Qset_of_two_mul mPhi2_two_mul]
+  have e : ∑ q ∈ (Icc 1 150000).filter Odd, mPhi2 q =
+      ∑ t ∈ (oddPrimes 150000).powerset.filter (fun t => ∏ p ∈ t, p ≤ 150000),
+        ∏ p ∈ t, 1 / ((p : ℝ) - 1) ^ 2 := by
+    rw [← sum_odd_sqfree_eq]; exact sum_congr rfl fun q _ => mPhi2_eq q
+  rw [e]
+  have h1 : ∑ t ∈ (oddPrimes 150000).powerset.filter (fun t => ∏ p ∈ t, p ≤ 150000),
+      ∏ p ∈ t, 1 / ((p : ℝ) - 1) ^ 2 ≤ ∏ p ∈ oddPrimes 150000, (1 + 1 / ((p : ℝ) - 1) ^ 2) := by
+    rw [prod_one_add]
+    exact sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun t _ _ =>
+      prod_nonneg fun p _ => by positivity
+  have hB := prod_upper_bound (R := 150000) (by norm_num)
+  have hE := exp_inv199_le
+  have : 1.4122 * Real.exp (1 / 199) ≤ 1.4122 * 1.006 := by gcongr
   linarith
 
 end TernaryGoldbach.MajorArcs

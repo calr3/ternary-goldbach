@@ -270,7 +270,7 @@ Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, 
    `M(φ) = √(π/2), 2, 3√(π/2)`); `N/x = 2 + c₁/κ`, `c₁ = 9/(4√(2π))`; tail of `η_*` beyond `N/x` negligible.
 3. *Fourier identity (10.22)* — **DONE** (`FourierMain.lean`, `fourier_identity`): `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
    `∫ η̂◦²η̂_* e(tM) dt = h(M)` (`Continuous.fourier_inversion`).
-4. *Main term (§10.2)*: per `(q, a)`, principal parts `M_η = μ(q)/φ(q) η̂(−βx)x`; Ramanujan sum
+4. *Main term (§10.2)* — singular series **DONE** (`Singular.lean`: `coef_eq`, `sum_Qset_coefN_ge` `≥ 1.314`, `sum_Qset_mPhi2_le` `≤ 2.85`; uses `mertens_product_small` at `150001`): per `(q, a)`, principal parts `M_η = μ(q)/φ(q) η̂(−βx)x`; Ramanujan sum
    `Σ_a e(−Na/q) = μ(q/(q,N))φ((q,N))`; complete `Σ_q` and `∫` (tails with crude `Σ_{q>Q} μ²/φ² ≤ C/Q`); Euler product
    `Σ_q … = C₀ ≥ 2∏_{p>2}(1 − 1/(p−1)²)` (finite product + `1 − 1/(P−1)` tail; Mathlib `EulerProduct`).
 5. *Errors (§10.4)*: `S₊²S_* − M₊²M_* = R_* S₊² + M_* R₊(S₊ + M₊)`; `|R_*| ≤ E_*` pointwise (Cor 7.1.3 per character),
