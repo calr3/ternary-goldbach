@@ -138,3 +138,4 @@ import TernaryGoldbach.Explicit.ExplicitFormula
 import TernaryGoldbach.Explicit.GammaBounds
 import TernaryGoldbach.Explicit.LGrowthPoly
 import TernaryGoldbach.Explicit.ZeroSums
+import TernaryGoldbach.Explicit.MellinPlancherel
