@@ -307,8 +307,22 @@ theorem norm_digamma_half_le {u : ℂ} (h1 : 1 / 2 ≤ u.re) (h2 : 8 ≤ ‖u‖
       linarith [norm_nonneg u]
     linarith
 
+theorem HkD_BPz2_nonneg (k : ℕ) : 0 ≤ HkD BPz2 k := by
+  unfold HkD
+  have := (polyDatum_zeta2.log_pos ((k:ℝ) + 1)).le
+  have h6 : 0 < Real.log (10 / 6) := log_ratio_pos (by norm_num) (by norm_num)
+  have h2' := Real.log_pos (by norm_num : (1:ℝ) < 2)
+  positivity
+
 /-- The bound for `|ξ'/ξ|` on the square at a good height in `[k, k+1]`. -/
 noncomputable def MX (k : ℕ) : ℝ := 3.6 + 8 * Real.log (2 * k + 5) + (C3 + 2 + HkD BPz2 k)
+
+theorem MX_nonneg (k : ℕ) : 0 ≤ MX k := by
+  unfold MX
+  have := HkD_BPz2_nonneg k
+  have := C3_nonneg
+  have : 0 ≤ Real.log (2 * (k : ℝ) + 5) := Real.log_nonneg (by linarith [(Nat.cast_nonneg k : (0:ℝ) ≤ k)])
+  linarith
 
 theorem log_pi_le : Real.log π ≤ 1.2 := by
   rw [Real.log_le_iff_le_exp Real.pi_pos]
@@ -353,12 +367,7 @@ theorem xiF_sq_bound {k : ℕ} (hk : 8 ≤ k) {T : ℝ} (hT : T ∈ Icc (k : ℝ
     xiF u ≠ 0 ∧ ‖logDeriv xiF u‖ ≤ MX k := by
   have hk' : (8:ℝ) ≤ k := by exact_mod_cast hk
   have hT8 : 8 ≤ T := le_trans hk' hT.1
-  have hHk : 0 ≤ HkD BPz2 k := by
-    unfold HkD
-    have := (polyDatum_zeta2.log_pos ((k:ℝ) + 1)).le
-    have h6 : 0 < Real.log (10 / 6) := log_ratio_pos (by norm_num) (by norm_num)
-    have h2' := Real.log_pos (by norm_num : (1:ℝ) < 2)
-    positivity
+  have hHk : 0 ≤ HkD BPz2 k := HkD_BPz2_nonneg k
   have hC3 := C3_nonneg
   -- the case `ℜu ≥ 1/2`
   have main : ∀ v : ℂ, 1 / 2 ≤ v.re → |v.re - 1 / 2| ≤ T → |v.im| ≤ T →
@@ -438,5 +447,221 @@ theorem xiF_sq_bound {k : ℕ} (hk : 8 ≤ k) {T : ℝ} (hT : T ∈ Icc (k : ℝ
         · right; rw [e1, abs_neg]; exact h)
     rw [logDeriv_xiF_one_sub, norm_neg, xiF_one_sub] at hv
     exact hv
+
+/-! ## The partial-fraction identity on a square -/
+
+theorem continuousAt_logDeriv_xiF {u : ℂ} (hu : xiF u ≠ 0) : ContinuousAt (logDeriv xiF) u := by
+  have h1 : ContinuousAt (deriv xiF) u := (differentiable_xiF.analyticAt u).deriv.continuousAt
+  have h2 : ContinuousAt xiF u := differentiable_xiF.continuous.continuousAt
+  exact h1.div h2 hu
+
+/-- Integrability along the sides from continuity at every boundary point. -/
+theorem rectIntegrable_of_continuousAt {F : ℂ → ℂ} {z w : ℂ}
+    (h1 : ∀ x ∈ [[z.re, w.re]], ContinuousAt F (x + z.im * I))
+    (h2 : ∀ x ∈ [[z.re, w.re]], ContinuousAt F (x + w.im * I))
+    (h3 : ∀ y ∈ [[z.im, w.im]], ContinuousAt F (w.re + y * I))
+    (h4 : ∀ y ∈ [[z.im, w.im]], ContinuousAt F (z.re + y * I)) : RectIntegrable F z w := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> refine ContinuousOn.intervalIntegrable fun x hx => ?_
+  · exact ((h1 x hx).comp (f := fun x : ℝ => (x : ℂ) + z.im * I) (by fun_prop)).continuousWithinAt
+  · exact ((h2 x hx).comp (f := fun x : ℝ => (x : ℂ) + w.im * I) (by fun_prop)).continuousWithinAt
+  · exact ((h3 x hx).comp (f := fun y : ℝ => (w.re : ℂ) + y * I) (by fun_prop)).continuousWithinAt
+  · exact ((h4 x hx).comp (f := fun y : ℝ => (z.re : ℂ) + y * I) (by fun_prop)).continuousWithinAt
+
+/-- The zeros of `ξ` strictly inside the square `|ℜu − 1/2| < T`, `|ℑu| < T` (with `R = 4T`). -/
+noncomputable def sqZeros (T : ℝ) : Finset ℂ :=
+  (zerosIn xiF (1 / 2) (6 * T) (6 * T / 2)).filter
+    (fun u => (sqZ T T).re < u.re ∧ u.re < (sqW T T).re ∧ (sqZ T T).im < u.im ∧ u.im < (sqW T T).im)
+
+noncomputable def mult (T : ℝ) (u : ℂ) : ℕ := (divB xiF (1 / 2) (6 * T) u).toNat
+
+/-- **The partial-fraction identity on a square**: at a good height `T ∈ [k, k+1]` (`k ≥ 8`) and for
+`‖s − 1/2‖ ≤ T/2`, `ξ(s) ≠ 0`: `‖ξ'/ξ(s) + Σ_{u} m_u (u − s)^{-1}‖ ≤ 6 MX(k) ‖s − 1/2‖/T`. -/
+theorem xi_partial_frac {k : ℕ} (hk : 8 ≤ k) {T : ℝ} (hT : T ∈ Icc (k : ℝ) (k + 1))
+    (hgood : ∀ σ ∈ [[(-1 / 2 : ℝ), 3 / 2]],
+      (zetaF ((σ : ℂ) + ((T : ℝ) : ℂ) * I) ≠ 0 ∧ zetaF ((σ : ℂ) + ((-T : ℝ) : ℂ) * I) ≠ 0) ∧
+      (‖logDeriv zetaF ((σ : ℂ) + ((T : ℝ) : ℂ) * I)‖ ≤ HkD BPz2 k ∧
+        ‖logDeriv zetaF ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)‖ ≤ HkD BPz2 k))
+    {s : ℂ} (hs : ‖s - 1 / 2‖ ≤ T / 2) (hξs : xiF s ≠ 0) :
+    ‖logDeriv xiF s + ∑ u ∈ sqZeros T, (mult T u : ℂ) * (u - s)⁻¹‖ ≤ 6 * MX k * ‖s - 1 / 2‖ / T := by
+  have hk' : (8:ℝ) ≤ k := by exact_mod_cast hk
+  have hT8 : 8 ≤ T := le_trans hk' hT.1
+  have hT0 : 0 < T := by linarith
+  set z := sqZ T T with hz
+  set w := sqW T T with hw
+  have hzre : z.re = 1 / 2 - T := sqZ_re T T
+  have hzim : z.im = -T := sqZ_im T T
+  have hwre : w.re = 1 / 2 + T := sqW_re T T
+  have hwim : w.im = T := sqW_im T T
+  have hsre : |s.re - 1 / 2| ≤ T / 2 := by
+    have := Complex.abs_re_le_norm (s - 1 / 2); simp at this; linarith
+  have hsim : |s.im| ≤ T / 2 := by
+    have := Complex.abs_im_le_norm (s - 1 / 2); simp at this; linarith
+  -- boundary points
+  have bd : ∀ u : ℂ, |u.re - 1 / 2| ≤ T → |u.im| ≤ T → (|u.im| = T ∨ |u.re - 1 / 2| = T) →
+      xiF u ≠ 0 ∧ ‖logDeriv xiF u‖ ≤ MX k := fun u h1 h2 h3 => xiF_sq_bound hk hT hgood h1 h2 h3
+  have side1 : ∀ x ∈ [[z.re, w.re]], |((x : ℂ) + z.im * I).re - 1 / 2| ≤ T ∧ |((x : ℂ) + z.im * I).im| ≤ T ∧
+      (|((x : ℂ) + z.im * I).im| = T ∨ |((x : ℂ) + z.im * I).re - 1 / 2| = T) := by
+    intro x hx
+    rw [hzre, hwre, Set.uIcc_of_le (by linarith)] at hx
+    have e1 : ((x : ℂ) + z.im * I).re = x := by simp
+    have e2 : ((x : ℂ) + z.im * I).im = -T := by simp [hzim]
+    rw [e1, e2, abs_neg, abs_of_pos hT0]
+    exact ⟨abs_le.2 ⟨by linarith [hx.1], by linarith [hx.2]⟩, le_rfl, Or.inl rfl⟩
+  have side2 : ∀ x ∈ [[z.re, w.re]], |((x : ℂ) + w.im * I).re - 1 / 2| ≤ T ∧ |((x : ℂ) + w.im * I).im| ≤ T ∧
+      (|((x : ℂ) + w.im * I).im| = T ∨ |((x : ℂ) + w.im * I).re - 1 / 2| = T) := by
+    intro x hx
+    rw [hzre, hwre, Set.uIcc_of_le (by linarith)] at hx
+    have e1 : ((x : ℂ) + w.im * I).re = x := by simp
+    have e2 : ((x : ℂ) + w.im * I).im = T := by simp [hwim]
+    rw [e1, e2, abs_of_pos hT0]
+    exact ⟨abs_le.2 ⟨by linarith [hx.1], by linarith [hx.2]⟩, le_rfl, Or.inl rfl⟩
+  have side3 : ∀ y ∈ [[z.im, w.im]], |((w.re : ℂ) + y * I).re - 1 / 2| ≤ T ∧ |((w.re : ℂ) + y * I).im| ≤ T ∧
+      (|((w.re : ℂ) + y * I).im| = T ∨ |((w.re : ℂ) + y * I).re - 1 / 2| = T) := by
+    intro y hy
+    rw [hzim, hwim, Set.uIcc_of_le (by linarith)] at hy
+    have e1 : ((w.re : ℂ) + y * I).re - 1 / 2 = T := by simp [hwre]
+    have e2 : ((w.re : ℂ) + y * I).im = y := by simp
+    rw [e1, e2, abs_of_pos hT0]
+    exact ⟨le_rfl, abs_le.2 ⟨hy.1, hy.2⟩, Or.inr rfl⟩
+  have side4 : ∀ y ∈ [[z.im, w.im]], |((z.re : ℂ) + y * I).re - 1 / 2| ≤ T ∧ |((z.re : ℂ) + y * I).im| ≤ T ∧
+      (|((z.re : ℂ) + y * I).im| = T ∨ |((z.re : ℂ) + y * I).re - 1 / 2| = T) := by
+    intro y hy
+    rw [hzim, hwim, Set.uIcc_of_le (by linarith)] at hy
+    have e1 : ((z.re : ℂ) + y * I).re - 1 / 2 = -T := by simp [hzre]
+    have e2 : ((z.re : ℂ) + y * I).im = y := by simp
+    rw [e1, e2, abs_neg, abs_of_pos hT0]
+    exact ⟨le_rfl, abs_le.2 ⟨hy.1, hy.2⟩, Or.inr rfl⟩
+  -- distance from the boundary to `s` and `1 − s`
+  have far : ∀ u : ℂ, (|u.im| = T ∨ |u.re - 1 / 2| = T) → ∀ p : ℂ, ‖p - 1 / 2‖ ≤ T / 2 → T / 2 ≤ ‖u - p‖ := by
+    intro u hu p hp
+    have h1 : T ≤ ‖u - 1 / 2‖ := by
+      rcases hu with h | h
+      · have := Complex.abs_im_le_norm (u - 1 / 2); simp at this; linarith
+      · have := Complex.abs_re_le_norm (u - 1 / 2); simp at this; linarith
+    have := norm_sub_norm_le (u - 1 / 2) (p - 1 / 2)
+    rw [show u - 1 / 2 - (p - 1 / 2) = u - p by ring] at this
+    linarith
+  have hs' : ‖(1 - s) - 1 / 2‖ ≤ T / 2 := by
+    rw [show (1 - s) - 1 / 2 = -(s - 1 / 2) by ring, norm_neg]; exact hs
+  have hne : ∀ u : ℂ, (|u.im| = T ∨ |u.re - 1 / 2| = T) → u ≠ s ∧ u ≠ 1 - s := by
+    intro u hu
+    have a := far u hu s hs
+    have b := far u hu (1 - s) hs'
+    refine ⟨fun h => ?_, fun h => ?_⟩
+    · rw [h, sub_self, norm_zero] at a; linarith
+    · rw [h, sub_self, norm_zero] at b; linarith
+  -- the integrand
+  set G : ℂ → ℂ := fun v => logDeriv xiF v * (v - s)⁻¹ with hG
+  have cG : ∀ u : ℂ, |u.re - 1 / 2| ≤ T → |u.im| ≤ T → (|u.im| = T ∨ |u.re - 1 / 2| = T) →
+      ContinuousAt G u ∧ ContinuousAt (fun v => G (1 - v)) u := by
+    intro u h1 h2 h3
+    have hu := bd u h1 h2 h3
+    have e1 : (1 - u).re - 1 / 2 = -(u.re - 1 / 2) := by simp; ring
+    have e2 : (1 - u).im = -u.im := by simp
+    have hu' := bd (1 - u) (by rw [e1, abs_neg]; exact h1) (by rw [e2, abs_neg]; exact h2)
+      (by rcases h3 with h | h
+          · left; rw [e2, abs_neg]; exact h
+          · right; rw [e1, abs_neg]; exact h)
+    have hn := hne u h3
+    refine ⟨(continuousAt_logDeriv_xiF hu.1).mul ((continuousAt_id.sub continuousAt_const).inv₀
+      (sub_ne_zero.2 hn.1)), ?_⟩
+    have hc : ContinuousAt (fun v : ℂ => 1 - v) u := continuousAt_const.sub continuousAt_id
+    refine ((continuousAt_logDeriv_xiF hu'.1).comp (f := fun v : ℂ => 1 - v) hc).mul ?_
+    refine ((continuousAt_const.sub continuousAt_id).sub continuousAt_const).inv₀ ?_
+    intro h; apply hn.2; simp only [Pi.sub_apply, id_eq] at h; linear_combination -h
+  have rG : RectIntegrable G z w :=
+    rectIntegrable_of_continuousAt (fun x hx => (cG _ (side1 x hx).1 (side1 x hx).2.1 (side1 x hx).2.2).1)
+      (fun x hx => (cG _ (side2 x hx).1 (side2 x hx).2.1 (side2 x hx).2.2).1)
+      (fun x hx => (cG _ (side3 x hx).1 (side3 x hx).2.1 (side3 x hx).2.2).1)
+      (fun x hx => (cG _ (side4 x hx).1 (side4 x hx).2.1 (side4 x hx).2.2).1)
+  have rG' : RectIntegrable (fun v => G (1 - v)) z w :=
+    rectIntegrable_of_continuousAt (fun x hx => (cG _ (side1 x hx).1 (side1 x hx).2.1 (side1 x hx).2.2).2)
+      (fun x hx => (cG _ (side2 x hx).1 (side2 x hx).2.1 (side2 x hx).2.2).2)
+      (fun x hx => (cG _ (side3 x hx).1 (side3 x hx).2.1 (side3 x hx).2.2).2)
+      (fun x hx => (cG _ (side4 x hx).1 (side4 x hx).2.1 (side4 x hx).2.2).2)
+  -- symmetrization
+  have hsym := rectInt_one_sub G T T
+  have hH : rectInt (fun v => G v + (-1) * G (1 - v)) z w = 2 * rectInt G z w := by
+    rw [rectInt_add' rG (rG'.const_mul (-1)), rectInt_const_mul, hsym]; ring
+  -- the bound on `G(v) − G(1 − v)`
+  have hHb : ∀ u : ℂ, |u.re - 1 / 2| ≤ T → |u.im| ≤ T → (|u.im| = T ∨ |u.re - 1 / 2| = T) →
+      ‖G u + (-1) * G (1 - u)‖ ≤ MX k * (8 * ‖s - 1 / 2‖ / T ^ 2) := by
+    intro u h1 h2 h3
+    have hu := bd u h1 h2 h3
+    have hn := hne u h3
+    have hus : u - s ≠ 0 := sub_ne_zero.2 hn.1
+    have hus' : u - (1 - s) ≠ 0 := sub_ne_zero.2 hn.2
+    have e : G u + (-1) * G (1 - u) = logDeriv xiF u * ((2 * s - 1) * ((u - s)⁻¹ * (u - (1 - s))⁻¹)) := by
+      simp only [hG, logDeriv_xiF_one_sub]
+      have : (1 - u - s) = -(u - (1 - s)) := by ring
+      rw [this]
+      field_simp
+      ring
+    rw [e, norm_mul, norm_mul, norm_mul, norm_inv, norm_inv]
+    have a := far u h3 s hs
+    have b := far u h3 (1 - s) hs'
+    have h12 : ‖2 * s - (1 : ℂ)‖ = 2 * ‖s - 1 / 2‖ := by
+      rw [show 2 * s - (1 : ℂ) = 2 * (s - 1 / 2) by ring, norm_mul]; simp
+    rw [h12]
+    have hT2 : 0 < T / 2 := by linarith
+    have i1 : ‖u - s‖⁻¹ ≤ (T / 2)⁻¹ := inv_anti₀ hT2 a
+    have i2 : ‖u - (1 - s)‖⁻¹ ≤ (T / 2)⁻¹ := inv_anti₀ hT2 b
+    have hM : 0 ≤ MX k := (norm_nonneg _).trans hu.2
+    calc ‖logDeriv xiF u‖ * (2 * ‖s - 1 / 2‖ * (‖u - s‖⁻¹ * ‖u - (1 - s)‖⁻¹))
+        ≤ MX k * (2 * ‖s - 1 / 2‖ * ((T / 2)⁻¹ * (T / 2)⁻¹)) := by
+          gcongr
+          exact hu.2
+      _ = MX k * (8 * ‖s - 1 / 2‖ / T ^ 2) := by field_simp; ring
+  have hint := norm_rectInt_le (G := fun v => G v + (-1) * G (1 - v)) (z := z) (w := w)
+    (by rw [hzre, hwre]; linarith) (by rw [hzim, hwim]; linarith)
+    (fun x hx => hHb _ (side1 x (Set.Icc_subset_uIcc hx)).1 (side1 x (Set.Icc_subset_uIcc hx)).2.1
+      (side1 x (Set.Icc_subset_uIcc hx)).2.2)
+    (fun x hx => hHb _ (side2 x (Set.Icc_subset_uIcc hx)).1 (side2 x (Set.Icc_subset_uIcc hx)).2.1
+      (side2 x (Set.Icc_subset_uIcc hx)).2.2)
+    (fun x hx => hHb _ (side3 x (Set.Icc_subset_uIcc hx)).1 (side3 x (Set.Icc_subset_uIcc hx)).2.1
+      (side3 x (Set.Icc_subset_uIcc hx)).2.2)
+    (fun x hx => hHb _ (side4 x (Set.Icc_subset_uIcc hx)).1 (side4 x (Set.Icc_subset_uIcc hx)).2.1
+      (side4 x (Set.Icc_subset_uIcc hx)).2.2)
+  rw [hH, hzre, hwre, hzim, hwim] at hint
+  -- the residue theorem
+  have hc : xiF (1 / 2) ≠ 0 := xiF_half_ne_zero
+  have hrect : [[z.re, w.re]] ×ℂ [[z.im, w.im]] ⊆ ball (1 / 2 : ℂ) (6 * T / 2) := by
+    intro u hu
+    rw [mem_reProdIm, hzre, hwre, hzim, hwim, Set.uIcc_of_le (by linarith), Set.uIcc_of_le (by linarith)] at hu
+    rw [mem_ball, dist_eq_norm]
+    refine lt_of_le_of_lt (Complex.norm_le_abs_re_add_abs_im _) ?_
+    simp only [sub_re, sub_im, show ((1 / 2 : ℂ)).re = 1 / 2 by norm_num, show ((1 / 2 : ℂ)).im = 0 by norm_num,
+      sub_zero]
+    have := abs_le.2 (⟨by linarith [hu.1.1], by linarith [hu.1.2]⟩ : -T ≤ u.re - 1 / 2 ∧ u.re - 1 / 2 ≤ T)
+    have := abs_le.2 (⟨hu.2.1, hu.2.2⟩ : -T ≤ u.im ∧ u.im ≤ T)
+    linarith
+  have hbd : NoZerosOnSides xiF z w :=
+    ⟨fun x hx => (bd _ (side1 x hx).1 (side1 x hx).2.1 (side1 x hx).2.2).1,
+      fun x hx => (bd _ (side2 x hx).1 (side2 x hx).2.1 (side2 x hx).2.2).1,
+      fun y hy => (bd _ (side3 y hy).1 (side3 y hy).2.1 (side3 y hy).2.2).1,
+      fun y hy => (bd _ (side4 y hy).1 (side4 y hy).2.1 (side4 y hy).2.2).1⟩
+  have hres := rectInt_logDeriv_inv_sub differentiable_xiF (by linarith : (0:ℝ) < 6 * T) hc
+    (by rw [hzre, hwre]; linarith) (by rw [hzim, hwim]; linarith) hrect hbd
+    (p := s) (by rw [hzre]; linarith [(abs_le.1 hsre).1]) (by rw [hwre]; linarith [(abs_le.1 hsre).2])
+    (by rw [hzim]; linarith [(abs_le.1 hsim).1]) (by rw [hwim]; linarith [(abs_le.1 hsim).2]) hξs
+  have hres' : rectInt G z w = 2 * π * I * (logDeriv xiF s + ∑ u ∈ sqZeros T, (mult T u : ℂ) * (u - s)⁻¹) :=
+    hres
+  rw [hres'] at hint
+  have hpi : ‖(2 : ℂ) * π * I‖ = 2 * π := by
+    rw [norm_mul, norm_mul, Complex.norm_I, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+    simp
+  rw [norm_mul, norm_mul, hpi] at hint
+  have hpi3 := Real.pi_gt_three
+  have hM : 0 ≤ MX k := MX_nonneg k
+  set X := ‖logDeriv xiF s + ∑ u ∈ sqZeros T, (mult T u : ℂ) * (u - s)⁻¹‖ with hX
+  have hX0 : 0 ≤ X := norm_nonneg _
+  have key : 2 * (2 * π) * X ≤ 2 * (1 / 2 + T - (1 / 2 - T) + (T - -T)) * (MX k * (8 * ‖s - 1 / 2‖ / T ^ 2)) := by
+    simpa [mul_assoc] using hint
+  have e2 : 2 * (1 / 2 + T - (1 / 2 - T) + (T - -T)) * (MX k * (8 * ‖s - 1 / 2‖ / T ^ 2)) =
+      64 * (MX k * ‖s - 1 / 2‖ / T) := by field_simp; ring
+  rw [e2] at key
+  have hq : 0 ≤ MX k * ‖s - 1 / 2‖ / T := by positivity
+  rw [show 6 * MX k * ‖s - 1 / 2‖ / T = 6 * (MX k * ‖s - 1 / 2‖ / T) by ring]
+  nlinarith
 
 end TernaryGoldbach.Explicit
