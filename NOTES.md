@@ -287,6 +287,10 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * Item 2: `nonprime_small` was removed: analytic for `10⁶ ≤ n ≤ 10¹²` from `buthe_psi` and
     `ψ − θ ≤ θ(√n) + θ(n^{1/3}) + θ(n^{1/4}) + n^{1/5} log n` (`nonprime_sum_le4`), kernel below
     (`Prelim/SmallNonprime.lean`, 31 blocks, 9 s). 25 axioms (16 own, 9 published).
+  * Item 3: `logsq_small` was removed: Abel summation against `θ` for `40000 ≤ n ≤ 10⁶`
+    (`logsq_mid`), kernel below (`Prelim/SmallLogSq.lean`, 225 blocks, 78 s). 24 axioms (15 own).
+    Kernel lesson: a single `decide` over a 4203-element `IsChain` hits deep recursion, so the
+    table is kept in chunks and only upper bounds are used (no sortedness needed).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

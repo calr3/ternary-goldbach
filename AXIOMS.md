@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 25 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 24 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -82,7 +82,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (16)
+### Our own computations (15)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -100,7 +100,6 @@ contain the axiom.
 |---|---|---|---|---|
 | `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | min margin `0.0140806` at `n = 6` | |
 | `Prelim.mertens_point` | value at `X = 10⁶` `≥ −1.5776` | `psi_checks.py` | `−1.5772056` | |
-| `Prelim.logsq_small` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n ≤ 10⁶` | `psi_checks.py` | min margin `2.1373` at `n = 117` | |
 | `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 2·10⁸` | `mertens_product_check.py` | min margin `2.4367·10⁻⁷` at `x = 23`; `≥ 0.13088` above `10⁴` | [RS62, Thm 15, (3.42)] at `n = ∏_{p≤x} p` (`log n = θ(x)`), as cited in [B, (C.19)] |
 | `Prelim.K_pieces` | piecewise sum `≤ 0.4035` | `moebius_K_check.py` | `0.4034195` | |
 | `Prelim.K_blocks` | block bounds `hblk j`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | all 20 blocks hold; e.g. block 19: `2.55663·10⁻⁵ ≤ 2.567·10⁻⁵` | |
@@ -154,7 +153,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (16):** all are checked rigorously in `scripts/rigorous/` (interval
+* **Our own computations (15):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Three are also contained in
   published results: `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
@@ -310,6 +309,14 @@ The Lean definitions that the axioms above refer to were compared with the book'
   * For `n ≤ 10⁶` the kernel checks it (`Prelim/SmallNonprime.lean`, 9 s): `ψ(n) − θ(n) ≤ ∑_{p < 1001}
     #{2 ≤ k ≤ 20 : p^k ≤ n} u_p/10⁹` with `log p < u_p/10⁹`, on 31 blocks. The minimum margin is
     `1.3·10⁻⁴` (the constant `1.4262` is attained to within `7·10⁻⁶` at `n = 361`).
+
+* `logsq_small` (`∑_{n/2<p≤n} (log p)² ≤ ½ n log n` for `117 ≤ n ≤ 10⁶`, [B, (2.19)]) is now a theorem
+  (`Prelim/LambdaMu.lean`).
+  * For `40000 ≤ n ≤ 10⁶`: Abel summation against `θ`, with `θ(n) ≤ ψ(n) ≤ n + 0.94√n` and
+    `θ(n) ≥ n − 2.3662√n` (`buthe_psi` and `nonprime_small`); the margin is `½ n (1 − log 2)`.
+  * For `117 ≤ n < 40000` the kernel checks it (`Prelim/SmallLogSq.lean`, 78 s). The primes below
+    `40000` are listed in 40 chunks (complete by `scan`) with `log p < u_p/10⁶`, and 225 blocks
+    `[A, B)` satisfy `∑_{A/2<p<B} u_p²/10¹² ≤ ½ A log A`.
 
 ## Candidates for proofs in Lean
 

@@ -4,6 +4,7 @@ import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallNonprime
+import TernaryGoldbach.Prelim.SmallLogSq
 
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [B, §2.5]
@@ -51,11 +52,6 @@ axiom mertens_lower_small (n : ℕ) (h1 : 3 ≤ n) (h2 : n ≤ 10 ^ 6) :
 axiom mertens_point :
     -1.5776 ≤ ∑ m ∈ Icc 1 (10 ^ 6), (Λ m : ℝ) / m -
       (∑ m ∈ Icc 1 (10 ^ 6), (Λ m : ℝ)) / (10 ^ 6 + 1) - Real.log (10 ^ 6 + 2)
-
-/-- **Numerical axiom** (`scripts/psi_checks.py`; minimum margin `2.14` at `n = 117`):
-`∑_{n/2 < p ≤ n} (log p)² ≤ (1/2) n log n` for `117 ≤ n ≤ 10⁶`. -/
-axiom logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 6) :
-    ∑ p ∈ (Ioc (n / 2) n).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * n * Real.log n
 
 /-! ### The explicit prime number theorem
 
@@ -1348,6 +1344,170 @@ theorem logsq_large {N : ℕ} (hN : 10 ^ 6 < N) :
     ring
   have e4 : 1 / 2 * (N : ℝ) * Real.log N = Real.log N * N / 2 := by ring
   linarith only [h1, h2, k1, k2, k3, k4, k5, e3, e4, hE', ht3b, hNr]
+
+/-- `θ(n + 1) = θ(n) + [n + 1 prime] log(n + 1)`. -/
+theorem thetaN_succ' (n : ℕ) :
+    thetaN (n + 1) = thetaN n + (if (n + 1).Prime then Real.log ((n + 1 : ℕ) : ℝ) else 0) := by
+  rw [thetaN, thetaN, sum_filter, sum_filter, sum_Icc_succ_top (by omega)]
+
+/-- Abel summation against `θ`. -/
+theorem abel_theta (w : ℕ → ℝ) (M N : ℕ) (hMN : M < N) :
+    ∑ n ∈ Ioc M N, (if n.Prime then Real.log (n : ℝ) else 0) * w n =
+      thetaN N * w N - thetaN M * w (M + 1) + ∑ n ∈ Ioo M N, thetaN n * (w n - w (n + 1)) := by
+  induction N with
+  | zero => omega
+  | succ N ih =>
+    rcases Nat.lt_or_ge M N with h | h
+    · rw [Finset.sum_Ioc_succ_top (by omega), ih h, thetaN_succ',
+        show Ioo M (N + 1) = insert N (Ioo M N) by ext x; simp; omega,
+        sum_insert (by simp)]
+      ring
+    · have hN : N = M := by omega
+      subst hN
+      rw [show Ioc N (N + 1) = {N + 1} by ext x; simp only [mem_Ioc, mem_singleton]; omega,
+        show Ioo N (N + 1) = ∅ by ext x; simp only [mem_Ioo, Finset.notMem_empty, iff_false]; omega,
+        sum_singleton, sum_empty, thetaN_succ']
+      ring
+
+/-- `θ(n) ≥ n − 2.3662 √n` for `12 ≤ n ≤ 10¹²` ([Büthe] and `nonprime_small`). -/
+theorem thetaN_ge {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 12) :
+    (n : ℝ) - 2.3662 * √(n : ℝ) ≤ thetaN n := by
+  have hb := buthe_psi n h1 (by omega)
+  have hnp := nonprime_small n (by omega) h2
+  have he := psiN_eq n
+  unfold psiN at he
+  have := (abs_le.1 hb).1
+  linarith
+
+/-- `log N ≤ 0.0535 √N` for `N ≥ 40000`. -/
+theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 * √N := by
+  have he2 : Real.exp 2 ≤ (40000 : ℝ) := by
+    have := Real.exp_one_lt_d9
+    have h : Real.exp 2 = Real.exp 1 ^ 2 := by rw [← Real.exp_nat_mul]; norm_num
+    rw [h]; nlinarith [Real.exp_pos 1]
+  have hanti := Real.log_div_sqrt_antitoneOn (a := (40000 : ℝ)) (b := N)
+    (Set.mem_Ici.2 he2) (Set.mem_Ici.2 (he2.trans hN)) hN
+  have h107 : Real.log (40000 : ℝ) ≤ 10.7 := by
+    rw [Real.log_le_iff_le_exp (by norm_num)]
+    have e : Real.exp 10.7 = Real.exp 1 ^ 10 * Real.exp 0.7 := by
+      rw [← Real.exp_nat_mul, ← Real.exp_add]; norm_num
+    have h1 := Real.exp_one_gt_d9
+    have h2 := Real.quadratic_le_exp_of_nonneg (x := 0.7) (by norm_num)
+    have h3 : (2.7182818283 : ℝ) ^ 10 ≤ Real.exp 1 ^ 10 := pow_le_pow_left₀ (by norm_num) h1.le 10
+    rw [e]
+    calc (40000 : ℝ) ≤ 2.7182818283 ^ 10 * (1 + 0.7 + 0.7 ^ 2 / 2) := by norm_num
+      _ ≤ Real.exp 1 ^ 10 * Real.exp 0.7 := mul_le_mul h3 h2 (by norm_num) (by positivity)
+  have hs : √(40000 : ℝ) = 200 := by
+    rw [show (40000 : ℝ) = 200 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  have hsN : 0 < √N := Real.sqrt_pos.2 (by linarith)
+  simp only at hanti
+  rw [hs, div_le_div_iff₀ hsN (by norm_num)] at hanti
+  nlinarith
+
+/-- **[B, (2.19)] for `40000 ≤ N ≤ 10⁶`**, by Abel summation from [Büthe] and `nonprime_small`. -/
+theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 6) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  set a := N / 2 with ha
+  have ha1 : 20000 ≤ a := by omega
+  have haN : a < N := by omega
+  have hNr : (40000 : ℝ) ≤ N := by exact_mod_cast h1
+  have hN0 : (0 : ℝ) < N := by linarith
+  have har1 : (a : ℝ) ≤ N / 2 := by
+    have : 2 * a ≤ N := by omega
+    have : (2 : ℝ) * a ≤ N := by exact_mod_cast this
+    linarith
+  have har2 : ((N : ℝ) - 1) / 2 ≤ a := by
+    have : N ≤ 2 * a + 1 := by omega
+    have : (N : ℝ) ≤ 2 * a + 1 := by exact_mod_cast this
+    linarith
+  have ha0 : (20000 : ℝ) ≤ a := by exact_mod_cast ha1
+  have hS : ∑ p ∈ (Ioc a N).filter Nat.Prime, Real.log p ^ 2 =
+      ∑ n ∈ Ioc a N, (if n.Prime then Real.log (n : ℝ) else 0) * Real.log n := by
+    rw [sum_filter]; refine sum_congr rfl fun n _ => ?_; split_ifs <;> ring
+  rw [hS, abel_theta (fun n => Real.log n) a N haN]
+  beta_reduce
+  -- logarithms and square roots
+  set L := Real.log N with hL
+  have hL0 : 0 ≤ L := Real.log_nonneg (by linarith)
+  have ha1r : ((a + 1 : ℕ) : ℝ) = a + 1 := by push_cast; ring
+  have hLa1le : Real.log ((a + 1 : ℕ) : ℝ) ≤ L := by
+    rw [ha1r]; exact Real.log_le_log (by linarith) (by
+      have : a + 1 ≤ N := by omega
+      exact_mod_cast this)
+  have hLa1ge : L - Real.log 2 ≤ Real.log ((a + 1 : ℕ) : ℝ) := by
+    have : Real.log ((N : ℝ) / 2) ≤ Real.log ((a + 1 : ℕ) : ℝ) := by
+      rw [ha1r]; exact Real.log_le_log (by linarith) (by linarith)
+    rw [Real.log_div hN0.ne' (by norm_num)] at this; exact this
+  have hlog2 := Real.log_two_lt_d9
+  have hLa10 : 0 ≤ Real.log ((a + 1 : ℕ) : ℝ) := Real.log_natCast_nonneg _
+  set sN := √(N : ℝ) with hsN
+  have hsN2 : sN * sN = N := Real.mul_self_sqrt hN0.le
+  have hsN0 : 0 ≤ sN := Real.sqrt_nonneg _
+  have hsN200 : 200 ≤ sN := Real.le_sqrt_of_sq_le (by linarith)
+  have hlsq : L ≤ 0.0535 * sN := log_le_sqrt_40000 hNr
+  have hsa : √(a : ℝ) ≤ 0.70711 * sN := by
+    rw [show (0.70711 : ℝ) * sN = √(0.70711 ^ 2 * N) by
+      rw [Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]]
+    exact Real.sqrt_le_sqrt (by nlinarith)
+  -- (i) `θ(N) ≤ N + 0.94 √N`
+  have hθN : thetaN N ≤ N + 0.94 * sN := by
+    have hb := buthe_psi N (by omega) (by omega)
+    have := thetaN_le_psiN N
+    unfold psiN at this
+    linarith [(abs_le.1 hb).2]
+  -- (ii) `θ(a) ≥ a − 2.3662 √a`
+  have hθa := thetaN_ge (n := a) (by omega) (by omega)
+  -- (iii) the Abel sum
+  have hterm : ∀ n ∈ Ioo a N,
+      thetaN n * (Real.log (n : ℝ) - Real.log ((n + 1 : ℕ) : ℝ)) ≤ -0.9832 := by
+    intro n hn
+    have hn1 : a < n := (mem_Ioo.1 hn).1
+    have hn2 : n < N := (mem_Ioo.1 hn).2
+    have hnr : (20001 : ℝ) ≤ n := by exact_mod_cast (by omega : 20001 ≤ n)
+    have hn0 : (0 : ℝ) < n := by linarith
+    have hθ := thetaN_ge (n := n) (by omega) (by omega)
+    have hd : 1 / ((n : ℝ) + 1) ≤ Real.log ((n + 1 : ℕ) : ℝ) - Real.log n := by
+      have hl := Real.one_sub_inv_le_log_of_pos (x := ((n : ℝ) + 1) / n) (by positivity)
+      rw [Real.log_div (by positivity) hn0.ne'] at hl
+      have e : 1 - (((n : ℝ) + 1) / n)⁻¹ = 1 / (n + 1) := by field_simp; ring
+      rw [e] at hl; push_cast; linarith
+    set r := √(n : ℝ) with hr
+    have hr2 : r * r = n := Real.mul_self_sqrt hn0.le
+    have hr0 : 141.42 ≤ r := Real.le_sqrt_of_sq_le (by nlinarith)
+    have hm : 0.9832 * ((n : ℝ) + 1) ≤ n - 2.3662 * r := by
+      nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ r - 141.42) (by linarith : (0 : ℝ) ≤ r)]
+    have hm0 : 0 ≤ (n : ℝ) - 2.3662 * r := by nlinarith
+    have hprod : ((n : ℝ) - 2.3662 * r) * (1 / ((n : ℝ) + 1)) ≤
+        thetaN n * (Real.log ((n + 1 : ℕ) : ℝ) - Real.log n) :=
+      mul_le_mul hθ hd (by positivity) (by linarith)
+    have hq : 0.9832 ≤ ((n : ℝ) - 2.3662 * r) * (1 / ((n : ℝ) + 1)) := by
+      rw [mul_one_div, le_div_iff₀ (by positivity)]; exact hm
+    nlinarith
+  have hsum : ∑ n ∈ Ioo a N, thetaN n * (Real.log (n : ℝ) - Real.log ((n + 1 : ℕ) : ℝ)) ≤
+      -0.9832 * ((N : ℝ) - a - 1) := by
+    refine (sum_le_card_nsmul _ _ _ hterm).trans (le_of_eq ?_)
+    rw [Nat.card_Ioo, nsmul_eq_mul, Nat.cast_sub (by omega), Nat.cast_sub (by omega)]
+    push_cast; ring
+  -- assemble
+  have F1 := mul_le_mul_of_nonneg_right hθN hL0
+  have F2 := mul_le_mul_of_nonneg_right hθa hLa10
+  have hLl2 : Real.log 2 ≤ L := Real.log_le_log (by norm_num) (by linarith)
+  have F3 := mul_le_mul har2 hLa1ge (by linarith) (by linarith)
+  have F3' := mul_le_mul_of_nonneg_left hlog2.le (by linarith : (0 : ℝ) ≤ ((N : ℝ) - 1) / 2)
+  have F4 := mul_le_mul hsa hLa1le hLa10 (by positivity)
+  have F6 := mul_le_mul_of_nonneg_left hlsq hsN0
+  have F7 : L ≤ 0.0002675 * N := by
+    have := mul_le_mul_of_nonneg_right hsN200 hsN0
+    linarith
+  linarith [F1, F2, F3, F3', F4, F6, F7, hsum, hsN2, har1]
+
+/-- **`∑_{n/2 < p ≤ n} (log p)² ≤ ½ n log n` for `117 ≤ n ≤ 10⁶`**: kernel-checked for `n < 40000`
+(`SmallLS.logsq_kernel`), by Abel summation above. -/
+theorem logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 6) :
+    ∑ p ∈ (Ioc (n / 2) n).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * n * Real.log n := by
+  rcases lt_or_ge n 40000 with h | h
+  · exact TernaryGoldbach.Prelim.SmallLS.logsq_kernel n h1 h
+  · exact logsq_mid h h2
 
 /-- **[B, (2.19)]** ([RS75, Cor. 2] for `y ≥ 2·758699`, a computation for `117 ≤ y < 2·758699`):
 `∑_{y/2 < p ≤ y} (log p)² ≤ (1/2) y log y` for `y ≥ 117`. -/
