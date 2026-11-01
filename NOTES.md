@@ -40,6 +40,11 @@ rotation bounds; `ρ = 0` contributes `|G(0)| ≤ 1`. (b) explicit bound for the
 `|z−ρ| ≥ 1/2`, now polynomial). (c) `‖S‖ ≤ E_new x`. (d) `q = 1` (ζ: pole at 1 gives `G(1)x = η̂(−δ)x`; needs
 ζ versions of LGrowth/Landau/explicit formula). (e) restate `prop_9_3_2` with `E_new`; redo `Cor933.err932_le_Er`,
 `Cor713` numerics, check `ArcCharsStar`, `BaseGap*`, (14.27). Then Props 9.4.2/9.5.1 (`η₊`) and Dusart.
+*Constraint found:* the `|γ| ≤ T₀` zero sum must stay `O(√T₀ log qT₀)` (Lemma 9.1.4's Cauchy–Schwarz +
+Mellin–Plancherel `∫|G(1/2+it)|²dt = 2π|η|₂²`); the trivial `|G(1/2+it)| ≤ |η/√t|₁` gives `O(T₀ log)`, i.e.
+relative errors `~10⁻³` in Thm 7.1.4, which breaks (14.7) (needs `E ≲ 6·10⁻⁵`). Plan: windows of height 10
+(radius 6 in 10), `sup_window |G| ≤ (1/h)∫|G| + ∫|G'|`, Cauchy–Schwarz, Plancherel via `v = log u`
+(`F(v) = e^{v/2} η(e^v) e(δe^v)`, `PlancherelReal`), and `G'` = Mellin of `log t · η e(δt)`.
 *Zero density problem:* `LGrowthLeft`'s bound grows like `e^{π|t|/2}` (Gamma decay dropped), so Jensen gives
 `O(T)` zeros per window — fine for convergence, useless for Lemma 9.1.4. Fix (in progress): polynomial growth
 of `L` on `σ ≤ 1/4` via the exact ratio `Γ((s+κ)/2)/Γ((1−s+κ)/2) = 2^{1−s} π^{−1/2} Γ(s) sin(π(1−s+κ)/2)`
