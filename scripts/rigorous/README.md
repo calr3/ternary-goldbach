@@ -27,6 +27,8 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | `etaO_numerics` (input of [B, (9.94)]) | four integrals over `[0, 2]` | < 1 s |
+| `t2_rig.c` | `T2_small`, `T2_mid` (inputs of [B, (5.31)]) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
+| `g2_rig.c` | (exploration: `g₂` and `max \|g₂(n)\| n`) | `n ≤ N` | seconds |
 
 The reference output is `output.txt`.
 

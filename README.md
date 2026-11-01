@@ -7,17 +7,16 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 25 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 27 explicitly stated
 axioms besides Lean's standard three. They are:
-* 16 finite computations of our own, each checked in rigorous interval arithmetic
+* 18 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
 * 7 published computations: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, and Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms);
-* 2 numerical results of [B]:
-  * (5.31) on its computed range is re-checked by a float computation;
-  * the rest rests on [B]: Prop 12.2.4, which uses Ramaré's explicit estimate, and the analytic
-    range of (5.31).
+* 2 results of [B]: Prop 12.2.4, which uses Ramaré's explicit estimate and a computation, and the
+  analytic bound of Lemma 5.1.2 on `g₂(x)` for large `x`, which uses Ramaré's bound on
+  `∑ μ(n)/n` ([B, (2.21)]).
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 axioms.
@@ -74,7 +73,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 (B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`, `etaO_numerics`);
-[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5).
+[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5). (5.31) `T2_le` is proved from
+`T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2.
 
 ## How the proof is organized
 

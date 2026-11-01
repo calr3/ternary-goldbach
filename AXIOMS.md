@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 25 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 27 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -74,7 +74,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (16)
+### Our own computations (18)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -105,6 +105,8 @@ contain the axiom.
 | `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | min margin `1.1352·10⁻⁶` at `n = 4`; second sum max `0.638395` | first sum: [MV73, Lemma 8] for `R ≥ 100`, as cited in [B, p. 97] |
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`scripts/rigorous/eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
 | `MajorArcs.etaO_numerics` | `∫₀² η◦² ∈ [0.640205997, 0.640205998]`, `∫₀² η◦² log t ∈ [−0.0210947787, −0.0210947786]`, `‖W₀''‖₂² ≤ 36`, `‖W₁''‖₂² ≤ 8.4` (elementary integrals) | — | `0.64020599736635…`, `−0.02109477869887…`, `35.790`, `8.389` (`scripts/rigorous/eta_circ_rig.py`, Arb integration) | first two: [B, p. 197] (VNODE-LP) |
+| `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`scripts/rigorous/t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
+| `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
 | `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
 
 Cross-checks:
@@ -148,12 +150,12 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 
 | Axiom | [B] | Content | Independent check |
 |---|---|---|---|
-| `MinorArcs.T2_le` | (5.31), p. 92 | `T₂(S) ≤ 0.37273`, `S ≥ 16`: analytic for `S ≥ 10⁵` (Lemma 5.1.2, (5.30)), numerical below | `scripts/t2_check.py` (float, grid, all of `[16, 10⁵]`): max `0.371249` at `S = 16` |
+| `MinorArcs.lemma_5_1_2` | Lemma 5.1.2 (`v = 2`, `x ≥ 10⁶`) | `\|g₂(x)\| ≤ (1634.34 + 817.168 log x)/x` for `x < 10¹⁰`, `≤ 0.038128/(log x)² + 0.2046/√x` for `x ≥ 10¹⁰`; analytic, from Ramaré's `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` ([B, (2.21)]) and (2.24) | our rigorous computation of `g₂` confirms the first bound on `[10⁶, 10⁸]`; used only for `x ≥ 10⁸` |
 | `MinorArcs.prop_12_2_4` | Prop 12.2.4 | `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E)` | hypotheses and conclusion match; our `c_E = 1.33258` is [B]'s `1.3325822…` rounded down, which makes the axiom weaker; the content is Ramaré's explicit (12.12) plus a computation for `q < 3.3·10⁹` |
 
 ## Summary by kind
 
-* **Our own computations (16):** all are checked rigorously (interval arithmetic with directed
+* **Our own computations (18):** all are checked rigorously (interval arithmetic with directed
   rounding, `scripts/rigorous/`), besides the float scripts in `scripts/`. Four are also contained in
   published results: `nonprime_small` [RS62, Thm 13], `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
@@ -161,10 +163,10 @@ analytic arguments. The Lean definitions involved were compared with the book's:
 * **Published computations (7):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, and Büthe's bounds for `θ` and `ψ` (2 axioms). They are stated as
   in the papers.
-* **Results of [B] (2):**
-  * (5.31) on its computed range `[16, 10⁵]` is re-checked by a float computation.
-  * The rest rests on [B]: Prop 12.2.4 (Ramaré's explicit estimate and a computation), and
-    (5.31) for `S ≥ 10⁵` (Lemma 5.1.2).
+* **Results of [B] (2):** Prop 12.2.4 (Ramaré's explicit estimate (12.12) and a computation), and
+  the analytic bound of Lemma 5.1.2 for `g₂(x)`, `x ≥ 10⁶` (which rests on Ramaré's (2.21)). Both
+  rest on [B]; we use Lemma 5.1.2 only for `x ≥ 10⁸`, and our computation confirms it on
+  `[10⁶, 10⁸]`.
 
 ## Removed axioms
 
@@ -239,6 +241,20 @@ analytic arguments. The Lean definitions involved were compared with the book's:
     by Parseval `|∫ D W| ≤ ∫_{|ξ|>H/2π} |ĝ||Ŵ| ≤ (λ T_g + T_W/λ)/2`. Each tail is at most
     `‖·''‖₂²/H⁴`, which gives `≤ 7.2·10⁻⁸` and `≤ 3.5·10⁻⁸`.
   * In total the errors are at most `2.6·10⁻⁷ log x + 3.8·10⁻⁷`.
+
+* `T2_le` ([B, (5.31)]) is now a proof (`MinorArcs/T2Bound.lean`), with a simpler argument than
+  [B]'s (5.29)–(5.30):
+  * `∫_{1/2}^1 g₂(uz) du = z⁻¹ ∫_{z/2}^z g₂` gives `T₂(S) = S⁻¹ ∫₀^S g₂(y) N(y) dy`, where `N(y)` is
+    the number of odd `s ∈ (S/2y, S/y]`.
+  * So `|N(y) − S/(4y)| ≤ 1`, and `|T₂(S) − ¼ ∫₁^S g₂/y| ≤ S⁻¹ ∫₁^S |g₂|` (`abs_T2_sub_le`).
+  * For `16 ≤ S < 10⁵` this is replaced by the exact computation `T2_small`.
+  * For `10⁵ ≤ S ≤ 10⁸`: `T₂ ≤ 0.3607 + 10.5/10⁵` (`T2_mid`).
+  * For `S > 10⁸`: the extra terms are at most `1.25 ∫_{10⁸}^S |g₂|/y ≤ 1.25 · 0.0019`, by
+    [B, Lemma 5.1.2] (`lemma_5_1_2`, the explicit antiderivatives of its bounds).
+  * So `T₂ ≤ 0.3631` there, against `0.37273`.
+  * The [B] content is now only the analytic bound of Lemma 5.1.2. It replaces the bundle "(5.31) =
+    Lemma 5.1.2 + (5.29)–(5.30) + a computation on `[16, 10⁵]`". The axiom count goes up by two
+    because the computation is now our own (`T2_small`, `T2_mid`).
 
 ## Candidates for proofs in Lean
 

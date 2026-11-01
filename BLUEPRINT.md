@@ -4,7 +4,7 @@ Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015
 This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
 
 This is a chapter-level map from [B] to the Lean files. There is no `sorry`. `ternary_goldbach`
-depends on 25 axioms, which are listed and audited in `AXIOMS.md`. [B, (5.36)] is used in corrected
+depends on 27 axioms, which are listed and audited in `AXIOMS.md`. [B, (5.36)] is used in corrected
 form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status is in the README.
 
 ## Top level ([B, §14.4]) — done
@@ -50,7 +50,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), sharp large
      │   │    sieves ✅ (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved;
      │   │    §5.1: Lemma 5.1.1, (5.7)–(5.8), (5.34) ✅ MinorArcs/TypeIIS1.lean; trusted f(X) ≤ 1.27X,
-     │   │    T₂(S) ≤ 0.37273 (S ≥ 16; Lemma 5.1.2 + computations); (5.36) corrected and (5.37) proved, MinorArcs/H2Bound.lean]
+     │   │    T₂(S) ≤ 0.37273 (S ≥ 16) proved in MinorArcs/T2Bound.lean from computations + Lemma 5.1.2; (5.36) corrected and (5.37) proved, MinorArcs/H2Bound.lean]
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
      │       [(3.11) decomposition ✅ MinorArcs/Decomposition.lean; (5.2)–(5.5) Type II reduction ✅
      │        MinorArcs/TypeIIReduction.lean; §6.2: S_I1 ✅ TypeITotal, S_I2 (qV ≤ Q) ✅ TypeI2Sum/Large,

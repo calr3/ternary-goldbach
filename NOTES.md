@@ -235,6 +235,15 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     continuous for the `log` weight;
   * computation: `scripts/rigorous/eta_circ_rig.py` (Arb, under a second).
   ternary_goldbach now depends on 25 axioms (16 our own, 7 published, 2 from [B]).
+* (5.31) `T2_le` proved (`MinorArcs/T2Bound.lean`):
+  * `T₂(S) = S⁻¹ ∫₀^S g₂ N` with `N` the count of odd `s ∈ (S/2y, S/y]`; the counting lemma via
+    `#{odd ≤ n} = (n+1)/2`;
+  * notation pitfall: the body of `∫ y in a..b, …` absorbs a following `+ …`, so parenthesize;
+  * computations: `scripts/rigorous/t2_rig.c` (MPFR, `g₂(n)` for all `n ≤ 10⁸` in 8 min), giving
+    `T2_small`, `T2_mid`;
+  * [B, Lemma 5.1.2] is the remaining axiom, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
+    `|m(x)| ≤ 0.03/log x` ([B, (2.21)]): our Lean `0.55/(log x − 0.75)` is about 18 times too weak.
+  ternary_goldbach now depends on 27 axioms (18 our own, 7 published, 2 from [B]).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
