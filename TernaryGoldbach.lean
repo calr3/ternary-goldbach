@@ -158,3 +158,4 @@ import TernaryGoldbach.Explicit.EtaPlusBound
 import TernaryGoldbach.Explicit.EtaPlusCg
 import TernaryGoldbach.MajorArcs.Prop942
 import TernaryGoldbach.Explicit.EtaPlusSqBound
+import TernaryGoldbach.Explicit.Digamma
