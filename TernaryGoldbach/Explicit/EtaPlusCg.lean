@@ -80,4 +80,20 @@ theorem Cg_le : Cg ≤ 2.03 := by
     rw [inv_eq_one_div]; exact one_div_le_one_div_of_le (by norm_num) hs
   nlinarith
 
+theorem two_aH_le : 2 * aH ≤ 63.662 := by
+  have h := two_pi_aH
+  have hpi := Real.pi_gt_d6
+  have ha := aH_pos
+  nlinarith
+
+theorem cA_le : Cg * (2 * aH) ≤ 129.24 := by
+  have := Cg_le; have := two_aH_le; have := Cg_nonneg; have := aH_pos
+  nlinarith
+
+theorem cA_nonneg : 0 ≤ Cg * (2 * aH) := by
+  have := Cg_nonneg; have := aH_pos; positivity
+
+theorem cA_sq_le : (Cg * (2 * aH)) ^ 2 ≤ 16703 := by
+  have := cA_le; have := cA_nonneg; nlinarith
+
 end TernaryGoldbach.Explicit

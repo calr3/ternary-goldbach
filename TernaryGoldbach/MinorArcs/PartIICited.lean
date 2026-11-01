@@ -14,9 +14,10 @@ erratum"). We state them as [B] does.
   (`MajorArcs/Cor713.lean`) from [B, Prop 9.3.2] (`MajorArcs.prop_9_3_2`: proved for `q ≥ 2` with our
   constants, cited for `q = 1`; conditional on GRH up to height `T₀`) and Platt's verification
   (numerical axioms `platt_odd`, `platt_even`), via [B, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
-* **`prop_7_1_5`** — [B, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)`. **Proved** (`MajorArcs/Prop715.lean`) from
-  the cited [B, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, conditional on RH up to `T₀`), Platt's verification
-  at `q = 1` (`T₀ = 440`) and the numerical axiom `integral_etaPlus_sq_log` ([B, (9.94)]).
+* **`prop_7_1_5`** — [B, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)` (for `x ≥ 4.9·10²⁶`). **Proved**
+  (`MajorArcs/Prop715.lean`) from [B, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, proved: `ζ` explicit formulas for
+  `η₊²` and `η₊² log`, RH up to `500`), Platt's verification at `q = 1` and the numerical axiom
+  `integral_etaPlus_sq_log` ([B, (9.94)]).
 * **`l2_major_14_7`** — [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` in [B];
   we state `(8.7098 + O*(0.0802)) x` (same lower end `8.6296 x`; our Thm 7.1.4 constants are weaker)
   for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.675 x … 8.786 x`)
@@ -46,10 +47,10 @@ theorem cor_7_1_3 {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 3
       (1e-17 + 4.7e6 / √q / √y) * y :=
   MajorArcs.cor_7_1_3' hy hq χ hχ hδ
 
-/-- **[B, Prop 7.1.5]** — proved (`MajorArcs.prop_7_1_5'`). For `x ≥ 10¹²`,
+/-- **[B, Prop 7.1.5]** — proved (`MajorArcs.prop_7_1_5'`). For `x ≥ 4.9·10²⁶` ([B]: `x ≥ 10¹²`),
 `Σ Λ(n) (log n) η₊²(n/x) = 0.640206 x log x - 0.021095 x + E₂ x log x`,
 `|E₂| ≤ 2·10⁻⁶ + 366.91/√x`. -/
-theorem prop_7_1_5 {x : ℝ} (hx : 1e12 ≤ x) :
+theorem prop_7_1_5 {x : ℝ} (hx : 4.9e26 ≤ x) :
     ∃ E₂ : ℝ, |E₂| ≤ 2e-6 + 366.91 / √x ∧
       ∑' n : ℕ, Λ n * Real.log n * etaPlus (n / x) ^ 2 =
         0.640206 * x * Real.log x - 0.021095 * x + E₂ * x * Real.log x :=

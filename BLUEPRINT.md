@@ -5,7 +5,7 @@ This is the book version, and it supersedes the three papers. References `[B, �
 
 This is a chapter-level map from [B] to the Lean files. All four inputs of
 `TernaryGoldbach/Helfgott/Inputs.lean` are now proved; the remaining `sorry`s are the cited
-explicit-formula result [B, Prop 9.5.1] and Dusart's bound (see the README); Props 9.3.2 and 9.4.2 are proved.
+Dusart's bound (see the README); the explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1] are proved.
 
 ## Top level ([B, §14.4]) — done
 
@@ -14,7 +14,7 @@ explicit-formula result [B, Prop 9.5.1] and Dusart's bound (see the README); Pro
 | [B] | Lean | Status |
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
-| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses cited Prop 9.5.1 and numerical axioms) |
+| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses numerical axioms) |
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
@@ -89,7 +89,7 @@ explicit-formula result [B, Prop 9.5.1] and Dusart's bound (see the README); Pro
      │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 ✅
      │    (MajorArcs/Prop932.lean: q ≥ 2 from Explicit/ExplicitBound, q = 1 from Explicit/ZetaBound;
      │    weaker constants) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
-     │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 (cited, conditional) + Platt (q = 1, T₀ = 440)
+     │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 ✅ (same file, from Explicit/EtaPlusSqBound) + Platt (q = 1, T₀ = 500)
      │    + (9.94) (numerical axiom); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 ✅
      │    (MajorArcs/Prop942.lean from Explicit/EtaPlusBound; weaker constants) + Platt]
      │   (explicit bounds on Sη(δ/x, x) twisted by primitive χ, for η = Gaussian, t²e^{-t²/2},

@@ -61,7 +61,16 @@ error `err942N`, with `∫η₊² ≤ 0.6403` from `EtaPlusL2`). **Thm 7.1.4 res
 `2.41e-8 → 4.25e-7` and `1.141e-8 → 2.83e-7`; L2Major per modulus `1.57e-6 → 9.62e-4`, `4.3e-9 → 2.17e-7`, total
 `8.675x … 8.786x` (stated `8.6296x … 8.79x`); `l2_major_14_7` restated `8.7098 ± 0.0802` (same lower end, so
 MinorTotal is unchanged); `resid_plus` `2.14e-15 → 7.83e-13`; (14.27) still `1.049` (margin ≈ `6.6·10⁻⁵`).
-**Remaining sorries**: Prop 9.5.1 (`η₊²` and `η₊² log`: `ζ` explicit formula, band limit `2H = 400`) and Dusart.
+**Prop 9.5.1 DONE (2026-11-01, latest)**: `log n = log x + log(n/x)` splits the sum into the `ζ` explicit
+formulas for `φ₁ = η₊²` and `φ₂ = η₊² log`. `Explicit/EtaPlusSq`: `mellin_hHc_mul` (`M(h_H g)(s) =
+∫_{|ξ|≤a} ĝ(ξ) M g(s + 2πiξ) dξ` for any `|g| ≤ C t^b e^{−t²/2}`), applied twice to `η₊² = h_H·h_H·t²e^{−t²}`;
+`M(t²e^{−t²}) = Γ(s/2+1)/2`, bounded by the rotation bound for `Γ` (angle `1.2`): `|M(φ₁)(s)| ≤ (2aC_g)² 8 e^{400c}
+e^{−c|ℑs|}` on `−1 ≤ ℜs ≤ 2` for `0 ≤ c ≤ 0.6` (`c = 1/400` for `GoodSmoothing` and the line `ℜs = −1/2`,
+`c = 0.6` for the tail above `T₀ = 500`); `M(φ₂) = M(φ₁)'` by Cauchy's estimate (radius `1/2`).
+`Explicit/EtaPlusSqBound`: Plancherel data (`|Φ| ≤ 9.93e^{−|u|}`), crude `L²` moments (`η₊⁴ ≤ 98.46 v⁴e^{−v²}`,
+`log²v ≤ v + 1/v`). `MajorArcs/Prop715`: `prop_9_5_1` for `x ≥ 4.9·10²⁶` with error `10⁻⁸ x log x` (actual
+`≈ 2.65·10⁻⁹ + 4·10⁻⁹/log x`); Prop 7.1.5 keeps `|E₂| ≤ 2·10⁻⁶ + 366.91/√x` but now for `x ≥ 4.9·10²⁶` (the
+only use, `MinorTotal.T_le`, has that). **Remaining sorry**: Dusart.
 **Prop 9.3.2 for `q ≥ 2` DONE** (`Explicit/LineZeros`, `ZeroSumBound`, `ExplicitBound`, `MajorArcs/Prop932`):
 `|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [B]'s constants) for
 `q = 1`, proved for `q ≥ 2`. Cor 9.3.3 averages either error (`err933N`); Cor 7.1.3 restated as
@@ -116,9 +125,9 @@ chosen `≥ 1/(2N+2)` from all ordinates, by a measure argument) and the line `�
 
 ## Status (2026-11-01, latest)
 
-* `ternary_goldbach` depends on 2 `sorry`s — `dusart_theta` and [B, Prop 9.5.1] (`MajorArcs/Prop715.lean`) —
-  and 33 numerical axioms. Props 9.3.2 and 9.4.2 are proved (`Explicit/`, `MajorArcs/Prop932.lean`,
-  `MajorArcs/Prop942.lean`) with weaker constants; Cor 7.1.3, Thm 7.1.4, (14.7) restated; (14.27) still `1.049`.
+* `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,
+  9.5.1 are proved (`Explicit/`, `MajorArcs/Prop932.lean`, `Prop942.lean`, `Prop715.lean`) with weaker
+  constants; Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7) restated; (14.27) still `1.049`.
 
 ## Status (2026-11-01, later)
 
@@ -413,7 +422,7 @@ a factor `≈ 4.6`, too much at this margin).
    instead of Cauchy–Schwarz for the `β`-integrals; main term: `η₊ → η◦` costs `≲ 2·10⁻³ x²/κ`, completing
    `∫_{|β|<w}` to `ℝ` costs `≲ 10⁻³ x²/κ`; `x²·C_{η◦,η_*}(N/x)·1.314 ≥ 1.0521 x²/κ`. Target `(14.27)` with `1.045`.
    *Book note*: (14.17) prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip; harmless).
-Remaining `sorry`s: the cited [B, Prop 9.5.1] (explicit formula, Ch. 9) and `dusart_theta` (Props 9.3.2, 9.4.2 proved since). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
+Remaining `sorry`: `dusart_theta` (Props 9.3.2, 9.4.2, 9.5.1 proved since). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
 (Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is

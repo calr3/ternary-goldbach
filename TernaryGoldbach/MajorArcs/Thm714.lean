@@ -21,22 +21,9 @@ namespace TernaryGoldbach.MajorArcs
 open TernaryGoldbach (e Schar)
 open TernaryGoldbach.Helfgott (etaPlus)
 open TernaryGoldbach.Explicit (Cg aH Z3g ZLg E1g E2g c3g BP BPz2 EB EA rhoB rhoA VgL DN thP thetaD Jl ZL
-  Z3 c3)
+  Z3 c3 two_aH_le cA_le cA_nonneg)
 
 /-! ## Constants -/
-
-theorem two_aH_le : 2 * aH ≤ 63.662 := by
-  have h := Explicit.two_pi_aH
-  have hpi := Real.pi_gt_d6
-  have ha := Explicit.aH_pos
-  nlinarith
-
-theorem cA_le : Cg * (2 * aH) ≤ 129.24 := by
-  have := Explicit.Cg_le; have := two_aH_le; have := Explicit.Cg_nonneg; have := Explicit.aH_pos
-  nlinarith
-
-theorem cA_nonneg : 0 ≤ Cg * (2 * aH) := by
-  have := Explicit.Cg_nonneg; have := Explicit.aH_pos; positivity
 
 theorem cE0_le : Cg * 300 * (2 * aH) ≤ 38772 := by
   have := cA_le
