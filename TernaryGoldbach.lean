@@ -132,3 +132,4 @@ import TernaryGoldbach.Explicit.ZeroCount
 import TernaryGoldbach.Explicit.Landau
 import TernaryGoldbach.Explicit.LGrowthLeft
 import TernaryGoldbach.Explicit.LogDerivL
+import TernaryGoldbach.Explicit.RectResidue
