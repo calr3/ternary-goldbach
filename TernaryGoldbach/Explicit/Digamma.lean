@@ -548,4 +548,144 @@ theorem half_re_digamma_half_le {σ t : ℝ} (h1 : 1 < σ) (h2 : σ ≤ 2) (ht :
     have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1.01 by norm_num); linarith
   nlinarith
 
+/-! ## A crude bound `|ψ(z)| ≤ 16 log(1 + |z|)` -/
+
+/-- `|e^w − 1| ≤ |w|` for `ℜw ≤ 0`. -/
+theorem norm_exp_sub_one_le_of_re_nonpos {w : ℂ} (hw : w.re ≤ 0) : ‖Complex.exp w - 1‖ ≤ ‖w‖ := by
+  have hF : ∀ t ∈ [[(0:ℝ), 1]], HasDerivAt (fun t : ℝ => Complex.exp (t * w)) (w * Complex.exp (t * w)) t := by
+    intro t _
+    have h := ((hasDerivAt_id (t : ℂ)).mul_const w).cexp.comp_ofReal
+    simp only [id, one_mul] at h
+    convert h using 1; ring
+  have hint := intervalIntegral.integral_eq_sub_of_hasDerivAt hF
+    ((by fun_prop : Continuous fun t : ℝ => w * Complex.exp (t * w)).intervalIntegrable _ _)
+  simp only [Complex.ofReal_one, one_mul, Complex.ofReal_zero, zero_mul, Complex.exp_zero] at hint
+  rw [← hint]
+  have hb : ∀ t ∈ Ι (0:ℝ) 1, ‖w * Complex.exp (t * w)‖ ≤ ‖w‖ := by
+    intro t ht
+    rw [Set.uIoc_of_le zero_le_one] at ht
+    rw [norm_mul, Complex.norm_exp]
+    have : (t * w : ℂ).re ≤ 0 := by
+      simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
+      exact mul_nonpos_of_nonneg_of_nonpos ht.1.le hw
+    calc ‖w‖ * Real.exp ((t * w : ℂ).re) ≤ ‖w‖ * 1 :=
+          mul_le_mul_of_nonneg_left (Real.exp_le_one_iff.2 this) (norm_nonneg _)
+      _ = ‖w‖ := mul_one _
+  have := intervalIntegral.norm_integral_le_of_norm_le_const hb
+  simpa using this
+
+theorem integral_inv_one_add_mul {b : ℝ} (hb : 1 < b) :
+    IntegrableOn (fun u : ℝ => 1 / ((1 + b * u) * (1 + u))) (Ioi 0) ∧
+      ∫ u in Ioi (0:ℝ), 1 / ((1 + b * u) * (1 + u)) = Real.log b / (b - 1) := by
+  set F : ℝ → ℝ := fun u => (Real.log (1 + b * u) - Real.log (1 + u)) / (b - 1) with hF
+  have hb1 : (0:ℝ) < b - 1 := by linarith
+  have hd : ∀ x ∈ Ici (0:ℝ), HasDerivAt F (1 / ((1 + b * x) * (1 + x))) x := by
+    intro x (hx : 0 ≤ x)
+    have h1 : 0 < 1 + b * x := by nlinarith
+    have h2 : 0 < 1 + x := by linarith
+    have hx1 : HasDerivAt (fun x : ℝ => 1 + b * x) b x := by
+      simpa using ((hasDerivAt_id x).const_mul b).const_add 1
+    have hx2 : HasDerivAt (fun x : ℝ => 1 + x) 1 x := by simpa using (hasDerivAt_id x).const_add 1
+    have h := ((hx1.log h1.ne').sub (hx2.log h2.ne')).div_const (b - 1)
+    exact h.congr_deriv (by field_simp; ring)
+  have hpos : ∀ x ∈ Ioi (0:ℝ), 0 ≤ 1 / ((1 + b * x) * (1 + x)) := by
+    intro x (hx : 0 < x)
+    have h1 : 0 < 1 + b * x := by nlinarith
+    have h2 : 0 < 1 + x := by linarith
+    positivity
+  have hlim : Tendsto F atTop (𝓝 (Real.log b / (b - 1))) := by
+    have e : ∀ u : ℝ, 0 < u → F u = Real.log ((1 + b * u) / (1 + u)) / (b - 1) := by
+      intro u hu
+      rw [hF, Real.log_div (by nlinarith) (by linarith)]
+    have hq : Tendsto (fun u : ℝ => (1 + b * u) / (1 + u)) atTop (𝓝 b) := by
+      have : (fun u : ℝ => (1 + b * u) / (1 + u)) =ᶠ[atTop] fun u => b + (1 - b) / (1 + u) := by
+        filter_upwards [eventually_gt_atTop (0:ℝ)] with u hu
+        field_simp; ring
+      rw [tendsto_congr' this]
+      have h2 : Tendsto (fun u : ℝ => (1 - b) / (1 + u)) atTop (𝓝 0) :=
+        Tendsto.div_atTop tendsto_const_nhds (tendsto_atTop_add_const_left _ 1 tendsto_id)
+      simpa using h2.const_add b
+    have hl := ((Real.continuousAt_log (by linarith : b ≠ 0)).tendsto.comp hq).div_const (b - 1)
+    refine hl.congr' ?_
+    filter_upwards [eventually_gt_atTop (0:ℝ)] with u hu
+    exact (e u hu).symm
+  refine ⟨integrableOn_Ioi_deriv_of_nonneg' hd hpos hlim, ?_⟩
+  rw [integral_Ioi_of_hasDerivAt_of_tendsto' hd (integrableOn_Ioi_deriv_of_nonneg' hd hpos hlim) hlim]
+  simp [hF]
+
+/-- **`|ψ(z)| ≤ 16 log(1 + |z|)`** for `ℜz ≥ 1`, `|z| ≥ 3`. -/
+theorem norm_digamma_le {z : ℂ} (hx : 1 ≤ z.re) (hz : 3 ≤ ‖z‖) :
+    ‖Complex.digamma z‖ ≤ 16 * Real.log (1 + ‖z‖) := by
+  set A := 1 + ‖z‖ with hA
+  have hA4 : 4 ≤ A := by linarith
+  have hs : 1 / 2 < z.re := by linarith
+  rw [digamma_eq_integral hs]
+  obtain ⟨hMi, hMv⟩ := integral_inv_one_add_mul (b := A / 2) (by linarith)
+  have hpt : ∀ u ∈ Ioi (0:ℝ), ‖digG z u‖ ≤ 4 * A * (1 / ((1 + A / 2 * u) * (1 + u))) := by
+    intro u (hu : 0 < u)
+    have h1u : (0:ℝ) < 1 + u := by linarith
+    have hL : Real.log (1 + u) ≤ u := by
+      have := Real.log_le_sub_one_of_pos h1u; linarith
+    have hL0 : 0 ≤ Real.log (1 + u) := Real.log_nonneg (by linarith)
+    -- `|(1+u)^{−z}| ≤ (1+u)^{−1}`
+    have hcp : ((1 + u : ℝ) : ℂ) ^ (-z) = Complex.exp (-z * Real.log (1 + u)) := by
+      rw [Complex.cpow_def_of_ne_zero (by exact_mod_cast h1u.ne'), ← Complex.ofReal_log h1u.le]; ring_nf
+    have hcpn : ‖((1 + u : ℝ) : ℂ) ^ (-z)‖ ≤ 1 / (1 + u) := by
+      rw [Complex.norm_cpow_eq_rpow_re_of_pos h1u, Complex.neg_re, Real.rpow_neg h1u.le, one_div]
+      exact inv_anti₀ h1u (Real.self_le_rpow_of_one_le (by linarith) hx)
+    have hexp : Real.exp (-u) ≤ 1 / (1 + u) := by
+      rw [Real.exp_neg, one_div]; exact inv_anti₀ h1u (by linarith [Real.add_one_le_exp u])
+    -- bound (a): `|g| ≤ A`
+    have ha : ‖digG z u‖ ≤ A := by
+      rw [digG, norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hu, div_le_iff₀ hu]
+      have e : (Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-z) =
+          ((Real.exp (-u) : ℂ) - 1) - (Complex.exp (-z * Real.log (1 + u)) - 1) := by rw [hcp]; ring
+      rw [e]
+      have h1 : ‖(Real.exp (-u) : ℂ) - 1‖ ≤ u := by
+        rw [← Complex.ofReal_one, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs,
+          abs_of_nonpos (by linarith [Real.exp_le_one_iff.2 (by linarith : -u ≤ 0)])]
+        linarith [Real.add_one_le_exp (-u)]
+      have h2 : ‖Complex.exp (-z * Real.log (1 + u)) - 1‖ ≤ ‖z‖ * u := by
+        refine (norm_exp_sub_one_le_of_re_nonpos ?_).trans ?_
+        · simp only [Complex.mul_re, Complex.neg_re, Complex.ofReal_re, Complex.neg_im,
+            Complex.ofReal_im, mul_zero, sub_zero]
+          nlinarith
+        · rw [norm_mul, norm_neg, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hL0]
+          exact mul_le_mul_of_nonneg_left hL (norm_nonneg _)
+      calc ‖((Real.exp (-u) : ℂ) - 1) - (Complex.exp (-z * Real.log (1 + u)) - 1)‖
+          ≤ ‖(Real.exp (-u) : ℂ) - 1‖ + ‖Complex.exp (-z * Real.log (1 + u)) - 1‖ := norm_sub_le _ _
+        _ ≤ u + ‖z‖ * u := add_le_add h1 h2
+        _ = A * u := by rw [hA]; ring
+    -- bound (b): `|g| ≤ 2/(u(1+u))`
+    have hb : ‖digG z u‖ ≤ 2 / (u * (1 + u)) := by
+      rw [digG, norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hu]
+      have := norm_sub_le (Real.exp (-u) : ℂ) (((1 + u : ℝ) : ℂ) ^ (-z))
+      rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] at this
+      rw [div_le_div_iff₀ hu (by positivity)]
+      have hN : ‖(Real.exp (-u) : ℂ) - ((1 + u : ℝ) : ℂ) ^ (-z)‖ ≤ 2 / (1 + u) := by
+        have e : (2:ℝ) / (1 + u) = 1 / (1 + u) + 1 / (1 + u) := by ring
+        linarith
+      rw [le_div_iff₀ h1u] at hN
+      nlinarith
+    have hM0 : 0 < (1 + A / 2 * u) * (1 + u) := by positivity
+    rcases le_or_gt (A * u) 2 with hc | hc
+    · refine ha.trans ?_
+      rw [mul_one_div, le_div_iff₀ hM0]
+      have hu2 : u ≤ 1 / 2 := by nlinarith
+      have hp1 : 1 + A / 2 * u ≤ 2 := by nlinarith
+      have hp2 : (1 + A / 2 * u) * (1 + u) ≤ 2 * (3 / 2) :=
+        mul_le_mul hp1 (by linarith) (by linarith) (by norm_num)
+      nlinarith
+    · refine hb.trans ?_
+      rw [mul_one_div, div_le_div_iff₀ (by positivity) hM0]
+      nlinarith
+  have hint := (integrableOn_digG hs).norm
+  refine (norm_integral_le_integral_norm _).trans ?_
+  refine (setIntegral_mono_on hint (hMi.const_mul (4 * A)) measurableSet_Ioi hpt).trans ?_
+  rw [integral_const_mul, hMv]
+  have hlog : 0 ≤ Real.log (A / 2) := Real.log_nonneg (by linarith)
+  have hl2 : Real.log (A / 2) ≤ Real.log A := Real.log_le_log (by linarith) (by linarith)
+  rw [mul_div_assoc', div_le_iff₀ (by linarith)]
+  nlinarith
+
 end TernaryGoldbach.Explicit
