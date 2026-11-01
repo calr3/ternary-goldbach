@@ -12,6 +12,7 @@ import TernaryGoldbach.Prelim.LiouvilleBound
 import TernaryGoldbach.Prelim.LambdaMuExtra
 import TernaryGoldbach.MajorArcs.Prop715
 import TernaryGoldbach.MajorArcs.Thm714
+import TernaryGoldbach.Prelim.PlancherelReal
 import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.Prelim.SqfreeCount
 import TernaryGoldbach.Prelim.LargeSieveMV
