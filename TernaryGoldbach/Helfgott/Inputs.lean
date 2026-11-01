@@ -8,13 +8,12 @@ import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
 
 /-!
-# Unproved inputs
+# The top-level inputs
 
-**The top-level inputs.**  `major_arcs_input` is still `sorry`; `binary_goldbach_input` and
-`prime_ladder_input` are numerical axioms (finite computer verifications).  (Other `sorry`s and
-axioms, used by `minor_arcs_input`, are listed in `README.md`.)  Each remaining one is a result from the literature,
-stated as precisely as we could, with a pointer to where it is proved.  Everything else (the
-way these inputs combine into the ternary Goldbach conjecture) is proved in Lean.
+The four analytic inputs of [B, §14.4] (circle identity, major arcs (14.27), minor arcs (14.49),
+non-prime terms (14.51)) are proved here from the rest of the development.  The two computational
+inputs for the small cases, `binary_goldbach_input` [OeSHP14] and `prime_ladder_input` [HP13], are
+numerical axioms.  All numerical axioms are listed and audited in `AXIOMS.md`.
 
 [B]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
        version, which supersedes [H], [Hela], [Helb].  **This is the reference the blueprint
@@ -155,13 +154,14 @@ search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)): every even `4 �
 a sum of two primes. -/
 axiom binary_goldbach_input : BinaryGoldbachUpTo (4 * 10 ^ 18)
 
-/-- **Numerical axiom: the Helfgott–Platt prime ladder** [HP]. A computer construction of
-certified primes starting at `3`, with
-consecutive gaps `≤ 4 · 10¹⁸ - 4`, reaching `8.875694 · 10³⁰`.  (Building the ladder only up
-to `10²⁷` would suffice here; [H, §1] says that takes about 25 hours on one processor.) -/
+/-- **Numerical axiom: the Helfgott–Platt prime ladder** [HP13], [B, §1.6]. A computer construction
+of certified primes (Proth primes checked with Proth's theorem, the others by ECPP) starting at `3`,
+with consecutive gaps `≤ 4 · 10¹⁸`, reaching `8 875 694 145 621 773 516 800 000 000 000 ≥
+8.875694 · 10³⁰` ([HP13, §4, Thm 4.1]: "no gap between primes exceeded `4·10¹⁸`").  (A ladder up
+to `10²⁷` would suffice here.) -/
 axiom prime_ladder_input :
     ∃ l : List ℕ, (∀ p ∈ 3 :: l, p.Prime ∧ Odd p) ∧
-      List.IsChain (LadderStep (4 * 10 ^ 18 - 4)) (3 :: l) ∧
+      List.IsChain (LadderStep (4 * 10 ^ 18)) (3 :: l) ∧
       8875694 * 10 ^ 24 ≤ (3 :: l).getLast (List.cons_ne_nil _ _)
 
 end TernaryGoldbach.Helfgott

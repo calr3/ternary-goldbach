@@ -3,11 +3,10 @@
 Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), 327 pp.
 This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
 
-This is a chapter-level map from [B] to the Lean files. All four inputs of
-`TernaryGoldbach/Helfgott/Inputs.lean` are proved, and there is no `sorry` left: Dusart's bound is
-replaced by our explicit PNT `theta_explicit` (`Prelim/ThetaExplicit.lean`, from `Explicit/` with a
-zero-free region and RH to `3·10¹²`), and the explicit-formula results [B, Props 9.3.2, 9.4.2, 9.5.1]
-are proved. `ternary_goldbach` depends on 36 numerical axioms (see the README).
+This is a chapter-level map from [B] to the Lean files. There is no `sorry`. `ternary_goldbach`
+depends on 36 axioms, which are listed and audited in `AXIOMS.md`. One of them, [B, (5.36)], is false
+as stated because of an error in [B, (5.32)]; its correction is in progress. The current status is in
+the README.
 
 ## Top level ([B, §14.4]) — done
 

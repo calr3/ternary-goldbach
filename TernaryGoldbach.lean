@@ -1,5 +1,6 @@
 import TernaryGoldbach.Statement
 import TernaryGoldbach.Reduction
+import TernaryGoldbach.PrattPrime
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.ThetaExplicit

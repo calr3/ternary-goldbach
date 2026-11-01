@@ -1,5 +1,6 @@
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Numerics
+import TernaryGoldbach.PrattPrime
 
 /-!
 # Assembling Helfgott's proof
@@ -71,7 +72,8 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
 /-- The small cases: ternary Goldbach for odd `5 < N ≤ 8.875694 · 10³⁰` [HP]. -/
 theorem ternaryGoldbachUpTo : TernaryGoldbachUpTo (8875694 * 10 ^ 24) := by
   obtain ⟨l, hprime, hchain, htop⟩ := prime_ladder_input
-  have := ternaryUpTo_of_ladder (by norm_num) binary_goldbach_input l hprime hchain
+  have := ternaryUpTo_of_ladder_two (by norm_num) (by decide) binary_goldbach_input
+    isSumOfTwoPrimes_4e18_add_two l hprime hchain
   exact fun n hn h5 hle => this n hn h5 (by omega)
 
 end TernaryGoldbach.Helfgott

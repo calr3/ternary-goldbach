@@ -68,4 +68,53 @@ theorem ternaryUpTo_of_ladder {N : ℕ} (hN4 : 4 ≤ N) (hN : BinaryGoldbachUpTo
   obtain ⟨p, hpL, hpm, hmp⟩ := exists_rung_of_chain 3 l hchain m h3m hmM
   exact ⟨p, (hprime p hpL).1, (hprime p hpL).2, hpm, hmp⟩
 
+/-- With gaps `≤ g` and `g ≥ 1`: every `m` between the bottom and top rungs is less than `g` above
+some rung that is `≤ m`. -/
+theorem exists_rung_of_chain_lt {g : ℕ} (hg : 1 ≤ g) :
+    ∀ (a : ℕ) (l : List ℕ), List.IsChain (LadderStep g) (a :: l) →
+      ∀ m, a ≤ m → m ≤ (a :: l).getLast (List.cons_ne_nil _ _) →
+        ∃ p ∈ a :: l, p ≤ m ∧ m < p + g := by
+  intro a l
+  induction l generalizing a with
+  | nil =>
+    intro _ m ham hmL
+    simp only [List.getLast_singleton] at hmL
+    exact ⟨a, List.mem_singleton_self a, ham, by omega⟩
+  | cons b l ih =>
+    intro hc m ham hmL
+    rw [List.isChain_cons_cons] at hc
+    obtain ⟨⟨hab, hba⟩, hc⟩ := hc
+    rcases lt_or_ge m b with hmb | hbm
+    · exact ⟨a, List.mem_cons_self, ham, by omega⟩
+    · rw [List.getLast_cons (List.cons_ne_nil _ _)] at hmL
+      obtain ⟨p, hp, hpm, hmp⟩ := ih b hc m hbm hmL
+      exact ⟨p, List.mem_cons_of_mem _ hp, hpm, hmp⟩
+
+/-- **Small-case reduction, as in [B, §1.6].**  Binary Goldbach up to an even `N ≥ 4`, a
+decomposition of `N + 2` into two primes, and a ladder of odd primes `3 = p₀ ≤ p₁ ≤ ⋯ ≤ p_k`
+with consecutive gaps `≤ N` give ternary Goldbach for all odd `n` with `5 < n ≤ p_k + 4`.
+(For the largest rung `p ≤ n − 4`, `n − p` is even and lies in `[4, N + 2]`.) -/
+theorem ternaryUpTo_of_ladder_two {N : ℕ} (hN4 : 4 ≤ N) (hNe : Even N)
+    (hN : BinaryGoldbachUpTo N) (hN2 : IsSumOfTwoPrimes (N + 2))
+    (l : List ℕ) (hprime : ∀ p ∈ 3 :: l, p.Prime ∧ Odd p)
+    (hchain : List.IsChain (LadderStep N) (3 :: l)) :
+    TernaryGoldbachUpTo ((3 :: l).getLast (List.cons_ne_nil _ _) + 4) := by
+  intro n hn h5 hnM
+  have h7 : 7 ≤ n := by
+    obtain ⟨k, rfl⟩ := hn
+    omega
+  obtain ⟨p, hpL, hpm, hmp⟩ :=
+    exists_rung_of_chain_lt (by omega) 3 l hchain (n - 4) (by omega) (by omega)
+  obtain ⟨hp, hpodd⟩ := hprime p hpL
+  have hev : Even (n - p) := Nat.Odd.sub_odd hn hpodd
+  have hcases : n - p ≤ N ∨ n - p = N + 2 := by
+    obtain ⟨a, ha⟩ := hev
+    obtain ⟨b, hb⟩ := hNe
+    omega
+  rcases hcases with h | h
+  · obtain ⟨q, r, hq, hr, hqr⟩ := hN (n - p) hev (by omega) h
+    exact ⟨p, q, r, hp, hq, hr, by omega⟩
+  · obtain ⟨q, r, hq, hr, hqr⟩ := hN2
+    exact ⟨p, q, r, hp, hq, hr, by omega⟩
+
 end TernaryGoldbach

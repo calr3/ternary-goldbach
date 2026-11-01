@@ -178,6 +178,27 @@ relax `K ≤ 0.54` to `0.55` — `abs_ls_big` still gives `≤ 0.99` if `Σ 1/u�
 (`0.55·(1.034·π²/6 + 0.09·1.0117) + 0.0042 = 0.990`, check exactly) or a tighter partial sum.
 Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` — absolute size `≈ 10¹⁰`, negligible.
 
+## Axiom audit (2026-11-01): `AXIOMS.md`
+
+Every axiom has been checked against its source or script, and all scripts were re-run. Findings:
+
+* **[B, (5.32)] is false for `v = 2`, so `integral_H2_le` ((5.36)) is false.**
+  * Exactly, `∫₁⁴ T₂/S = 0.53344 > 0.37273 log 4`.
+  * True version: `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` (`scripts/h2_integral_check.py`; the supremum
+    of the excess is `0.023059`, constant from `T = 16` on).
+  * Next: replace the axiom and carry `+0.0231` through `integral_H2_comp`. It becomes `+0.0924` in
+    the factor `0.60428 Λ₀ + …` of `typeII_637`, `typeII_640`, `typeII_gen`, `typeII_split_gen` and
+    the `SecondTypeIIa/b` bounds (`a1B0`, `bB0`), then through the numerics (FirstChoice*,
+    Second*Num, Thm 3.1.1, the cells). The Type II main term grows by about `0.4%`.
+* **`prime_ladder_input` restated with gaps `≤ 4·10¹⁸`**, as in [HP13] and [B, §1.6]; before, it
+  said `≤ 4·10¹⁸ − 4`. `ternaryUpTo_of_ladder_two` uses binary Goldbach up to `N`, `N + 2` as a sum
+  of two primes, and gaps `≤ N`. `PrattPrime.lean` proves the two primes by kernel-checked Pratt
+  certificates (`powModAux` and `lucas_primality`, with `decide +kernel`).
+* Docstring fixes still to make with the next rebuild of `MinorArcs/`:
+  * `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)];
+  * `integral_H2_le` is false as stated;
+  * `rh_upto`: `γ ≤ 0` is classical.
+
 ## Dusart replaced: no `sorry` left (2026-11-01)
 
 `dusart_theta` is gone. `Prelim/ThetaExplicit.lean` `theta_explicit`:
@@ -209,8 +230,9 @@ Consumers absorb `ε_pl`:
 
 ## Status (2026-11-01, final)
 
-* `ternary_goldbach` depends on **no `sorry`** and 36 numerical axioms (`#print axioms`: the 33 before plus
-  `rh_upto`, `buthe_theta`, `theta_cube_small`).
+* `ternary_goldbach` depends on **no `sorry`** and 36 axioms (`#print axioms`: the 33 before plus
+  `rh_upto`, `buthe_theta`, `theta_cube_small`). The audit later found `integral_H2_le` to be false
+  (see "Axiom audit" above).
 
 ## Status (2026-11-01, latest)
 
