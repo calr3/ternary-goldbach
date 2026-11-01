@@ -260,6 +260,23 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 7. *Assembly* — **DONE** (`L2Major.lean`, `l2_major_bounds`: `8.688x ≤ ∫ ≤ 8.709x`; `l2_major_14_7` is a theorem): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
    2 Σ_{q odd ≤ r} μ²/φ`; **numerical axiom** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
 Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
+**Roadmap for (14.27)** (Prop 10.4.1 + §14.2), *planned 2026-11-01*. Budget: `final_inequality_crude` only needs
+`(major − 1.0376)/κ·x² > 6.7·10⁶ N^{3/2} log N`, i.e. major `≳ 1.0402` (not [B]'s `1.058259`); [B]'s main term is
+`C₀ C_{η◦,η_*} x² ≥ 1.0583 x²/κ`, so ~`0.013 x²/κ` is available for crude constants. Pieces:
+1. *Sharper `‖η₊ − η◦‖₂`*: the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
+   `HHFourier` with `g''` (`h` is `C²` on `(0,∞)`, `hP''(2) = 0`): `‖g − g_H‖₂ ≤ ‖g''‖₂/H²`, `‖g''‖₂² ≈ 142.6`.
+2. *`C_{η◦,η_*}` (Ch. 11)*: polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
+   ½(2−ρ)²‖η◦'‖₂²` (better than [B]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
+   `M(φ) = √(π/2), 2, 3√(π/2)`); `N/x = 2 + c₁/κ`, `c₁ = 9/(4√(2π))`; tail of `η_*` beyond `N/x` negligible.
+3. *Fourier identity (10.22)*: `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
+   `∫ η̂◦²η̂_* e(tM) dt = h(M)` (`Continuous.fourier_inversion`).
+4. *Main term (§10.2)*: per `(q, a)`, principal parts `M_η = μ(q)/φ(q) η̂(−βx)x`; Ramanujan sum
+   `Σ_a e(−Na/q) = μ(q/(q,N))φ((q,N))`; complete `Σ_q` and `∫` (tails with crude `Σ_{q>Q} μ²/φ² ≤ C/Q`); Euler product
+   `Σ_q … = C₀ ≥ 2∏_{p>2}(1 − 1/(p−1)²)` (finite product + `1 − 1/(P−1)` tail; Mathlib `EulerProduct`).
+5. *Errors (§10.4)*: `S₊²S_* − M₊²M_* = R_* S₊² + M_* R₊(S₊ + M₊)`; `|R_*| ≤ E_*` pointwise (Cor 7.1.3 per character),
+   `Σ_a |R₊|² ≤ E₊²` (Bombieri without the principal character); `∫_𝔐 |S₊|² ≤ 8.709x` ((14.7), done); Cauchy–Schwarz.
+6. *Arcs for complex integrands*: `∫_{(0,1]∩𝔐} f = Σ_{q,b} ∫_{J_{q,b}} f` (equality via indicators + periodization).
+7. *Numerics*, then restate `major_arcs_input` with the constant obtained (≥ 1.045) and adjust `final_inequality`.
 Next: Ch. 10
 (character decomposition, main term, Lemma 10.3.1) and §14.1–14.2 to prove (14.7) and (14.27). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
 three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
