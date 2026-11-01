@@ -31,6 +31,13 @@ by windows (Jensen counts `log(B_T/0.355)/log(10/r)` per window) × rotation bou
 (`GRHUpTo`) zeros with `|γ| ≤ T₀` have `ℜρ = 1/2` (plus `ρ = 0` for even `χ`). (b) restate Prop 9.3.2 with
 the resulting (weaker) constants and redo Cor 9.3.3 → Cor 7.1.3 → uses. (c) `q = 1` (ζ, pole at `s = 1`),
 `η₊` (Props 9.4.2, 9.5.1), Dusart.
+*Zero density problem:* `LGrowthLeft`'s bound grows like `e^{π|t|/2}` (Gamma decay dropped), so Jensen gives
+`O(T)` zeros per window — fine for convergence, useless for Lemma 9.1.4. Fix (in progress): polynomial growth
+of `L` on `σ ≤ 1/4` via the exact ratio `Γ((s+κ)/2)/Γ((1−s+κ)/2) = 2^{1−s} π^{−1/2} Γ(s) sin(π(1−s+κ)/2)`
+(reflection + duplication `Complex.Gamma_mul_Gamma_add_half`) and the rotation bound
+`|Γ(x+iy)| ≤ e^{−φ|y|} Γ(x)/cos^x φ` (from `norm_Gr_le` via `Gr(2a−2,0,0) = 2^{a−1}Γ(a)`, i.e. `t = u²/2`;
+Mathlib: `mellin_comp_rpow`, `mellin_comp_mul_left`, `mellin_cpow_smul`). Then `log B_T = O(log qT)` and
+`O(log qT)` zeros per window (≈ 10× the true density; downstream tolerates ~30×).
 *Old plan:* explicit formula = Mellin inversion on `ℜs = 3/2` (Mathlib `mellin_inversion`) + `Σ Λχ n^{-s} = −L'/L`
 (+ interchange) + residue theorem on `[−1/2, 3/2] × [−T_k, T_k]` (heights `T_k ∈ [k, k+1]` at distance
 `≥ 1/(2N+2)` from all ordinates) + `T_k → ∞` (horizontal sides: `|L'/L| ≤ N/δ + 4.8 log B` vs `|G| ≲ e^{−0.16T}`).
