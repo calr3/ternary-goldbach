@@ -193,4 +193,104 @@ theorem norm_zetaF_le {s : ℂ} (hs : 0 < s.re) : ‖zetaF s‖ ≤ ‖s‖ + �
   rw [mul_one_div] at this
   linarith
 
+/-! ## The left half: the functional equation -/
+
+theorem Gamma_le_40320 {x : ℝ} (h1 : 3 / 4 ≤ x) (h2 : x ≤ 9) : Real.Gamma x ≤ 40320 := by
+  have h34 : Real.Gamma (3 / 4) ≤ 24 := Gamma_le_24 (by norm_num) (by norm_num)
+  have h9 : Real.Gamma 9 = 40320 := by
+    rw [show (9:ℝ) = ((8:ℕ) : ℝ) + 1 by norm_num, Real.Gamma_nat_eq_factorial]
+    norm_num [Nat.factorial]
+  have h := Real.convexOn_Gamma.le_max_of_mem_segment (x := 3 / 4) (y := 9) (z := x)
+    (by norm_num) (by norm_num) (by rw [segment_eq_Icc (by norm_num)]; exact ⟨h1, h2⟩)
+  rw [h9] at h
+  exact h.trans (max_le (by linarith) le_rfl)
+
+/-- `|sin z| ≤ 1.18 |z| e^{|ℑz|}`. -/
+theorem norm_sin_le_mul (z : ℂ) : ‖Complex.sin z‖ ≤ 1.18 * ‖z‖ * Real.exp |z.im| := by
+  have he : 1 ≤ Real.exp |z.im| := Real.one_le_exp (abs_nonneg _)
+  by_cases h : ‖z‖ ≤ 1
+  · have hb := Complex.sin_bound h
+    have h1 : ‖Complex.sin z‖ ≤ ‖z - z ^ 3 / 6‖ + ‖z‖ ^ 5 / 100 := by
+      have := norm_sub_norm_le (Complex.sin z) (z - z ^ 3 / 6); linarith
+    have h2 : ‖z - z ^ 3 / 6‖ ≤ ‖z‖ + ‖z‖ ^ 3 / 6 := by
+      refine (norm_sub_le _ _).trans ?_
+      rw [norm_div, norm_pow]; norm_num
+    have hz0 := norm_nonneg z
+    have h3 : ‖z‖ ^ 3 ≤ ‖z‖ := by nlinarith [pow_le_one₀ hz0 h (n := 2)]
+    have h5 : ‖z‖ ^ 5 ≤ ‖z‖ := by nlinarith [pow_le_one₀ hz0 h (n := 4)]
+    nlinarith
+  · push Not at h
+    refine (norm_sin_le_exp z).trans ?_
+    nlinarith [Real.exp_pos |z.im|]
+
+/-- The functional equation for `zetaF`: for `w ≠ 0`, `ℜw ≤ 1/4`,
+`zetaF(w) = (w − 1) · 2 (2π)^{w−1} Γ(1−w) sin(πw/2) · zetaF(1 − w)/(−w)`. -/
+theorem zetaF_left_eq {w : ℂ} (hw0 : w ≠ 0) (hre : w.re ≤ 1 / 4) :
+    zetaF w = (w - 1) * (2 * (2 * π) ^ (-(1 - w)) * Complex.Gamma (1 - w) *
+      Complex.sin (π * w / 2) * (zetaF (1 - w) / (-w))) := by
+  have hw1 : w ≠ 1 := by intro h; rw [h] at hre; simp at hre; linarith
+  have h1w : 1 - w ≠ 1 := by intro h; apply hw0; linear_combination -h
+  have hFE := riemannZeta_one_sub (s := 1 - w) (fun n h => by
+    have := congrArg Complex.re h; simp at this; have : (0:ℝ) ≤ n := Nat.cast_nonneg n; linarith) h1w
+  rw [show 1 - (1 - w) = w by ring] at hFE
+  rw [zetaF_of_ne hw1, hFE, zetaF_of_ne h1w]
+  have hcos : Complex.cos (π * (1 - w) / 2) = Complex.sin (π * w / 2) := by
+    rw [show (π : ℂ) * (1 - w) / 2 = π / 2 - π * w / 2 by ring, Complex.cos_pi_div_two_sub]
+  rw [hcos]
+  field_simp
+  ring
+
+/-- **Growth on the left**: for `−8 ≤ ℜw ≤ 1/4`,
+`|zetaF(w)| ≤ 1.18·π·40320 · |w − 1| e^{π|ℑw|/2} (|1 − w| + |1 − w||w|/(1 − ℜw))`. -/
+theorem norm_zetaF_left {w : ℂ} (h1 : -8 ≤ w.re) (h2 : w.re ≤ 1 / 4) :
+    ‖zetaF w‖ ≤ 1.18 * π * 40320 * ‖w - 1‖ * Real.exp (π * |w.im| / 2) *
+      (‖1 - w‖ + ‖1 - w‖ * ‖w‖ / (1 - w.re)) := by
+  have hpi := Real.pi_gt_three
+  have hR0 : 0 < 1 - w.re := by linarith
+  by_cases hw0 : w = 0
+  · subst hw0
+    have h0 : zetaF 0 = 1 / 2 := by
+      rw [zetaF_of_ne (by norm_num), riemannZeta_zero]; norm_num
+    rw [h0]
+    simp only [zero_sub, norm_neg, norm_one, Complex.zero_im, abs_zero, mul_zero, zero_div,
+      Real.exp_zero, mul_one, sub_zero, norm_zero, Complex.zero_re, div_one, add_zero]
+    norm_num
+    nlinarith
+  rw [zetaF_left_eq hw0 h2]
+  have hwn : 0 < ‖w‖ := norm_pos_iff.2 hw0
+  have hcp : ‖(2 * (π : ℂ)) ^ (-(1 - w))‖ ≤ 1 := by
+    rw [show (2 * (π : ℂ)) = ((2 * π : ℝ) : ℂ) by push_cast; ring,
+      Complex.norm_cpow_eq_rpow_re_of_pos (by positivity)]
+    apply Real.rpow_le_one_of_one_le_of_nonpos (by linarith)
+    simp; linarith
+  have hG : ‖Complex.Gamma (1 - w)‖ ≤ 40320 := by
+    have hre1 : (1 - w).re = 1 - w.re := by simp
+    refine (norm_Gamma_le_Gamma_re (by rw [hre1]; linarith)).trans ?_
+    rw [hre1]; exact Gamma_le_40320 (by linarith) (by linarith)
+  have hsin : ‖Complex.sin (π * w / 2)‖ ≤ 1.18 * (π / 2 * ‖w‖) * Real.exp (π * |w.im| / 2) := by
+    refine (norm_sin_le_mul _).trans (le_of_eq ?_)
+    have hn : ‖(π : ℂ) * w / 2‖ = π / 2 * ‖w‖ := by
+      rw [norm_div, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+      norm_num; ring
+    have him : ((π : ℂ) * w / 2).im = π * w.im / 2 := by simp
+    rw [hn, him, abs_div, abs_mul, abs_of_pos Real.pi_pos, abs_two]
+  have hZ : ‖zetaF (1 - w)‖ ≤ ‖1 - w‖ + ‖1 - w‖ * ‖w‖ / (1 - w.re) := by
+    have hre1 : (1 - w).re = 1 - w.re := by simp
+    have := norm_zetaF_le (s := 1 - w) (by rw [hre1]; linarith)
+    rwa [hre1, show (1 - w - 1) = -w by ring, norm_neg] at this
+  rw [norm_mul, norm_mul, norm_mul, norm_mul, norm_mul, norm_div, norm_neg, Complex.norm_ofNat]
+  have hZ0 : 0 ≤ ‖1 - w‖ + ‖1 - w‖ * ‖w‖ / (1 - w.re) := by positivity
+  have hE := Real.exp_pos (π * |w.im| / 2)
+  calc ‖w - 1‖ * (2 * ‖(2 * (π : ℂ)) ^ (-(1 - w))‖ * ‖Complex.Gamma (1 - w)‖ *
+        ‖Complex.sin (π * w / 2)‖ * (‖zetaF (1 - w)‖ / ‖w‖))
+      = ‖w - 1‖ * (2 * ‖(2 * (π : ℂ)) ^ (-(1 - w))‖ * ‖Complex.Gamma (1 - w)‖ *
+          (‖Complex.sin (π * w / 2)‖ / ‖w‖) * ‖zetaF (1 - w)‖) := by ring
+    _ ≤ ‖w - 1‖ * (2 * 1 * 40320 * (1.18 * (π / 2) * Real.exp (π * |w.im| / 2)) *
+          (‖1 - w‖ + ‖1 - w‖ * ‖w‖ / (1 - w.re))) := by
+        gcongr
+        rw [div_le_iff₀ hwn]
+        calc ‖Complex.sin (π * w / 2)‖ ≤ 1.18 * (π / 2 * ‖w‖) * Real.exp (π * |w.im| / 2) := hsin
+          _ = _ := by ring
+    _ = _ := by ring
+
 end TernaryGoldbach.Explicit
