@@ -40,21 +40,24 @@ from `psi_extra_check.py`:
 
 ## Published results (7)
 
+Each row was re-checked against the paper on 2026-11-02 (PDFs of all the sources except Ramaré's
+Acta Arith. 157 paper, for which the later papers and the float check below stand in).
+
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
 | `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The axiom also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
-| `MajorArcs.platt_odd` | primitive `χ`, odd conductor `q ≤ 3·10⁵`: GRH up to `10⁸/q` | Platt, arXiv:1305.3087 | abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
+| `MajorArcs.platt_odd` | primitive `χ`, odd conductor `q ≤ 3·10⁵`: GRH up to `10⁸/q` | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `MajorArcs.platt_even` | even `q ≤ 4·10⁵`: GRH up to `max(10⁸/q, 200 + 7.5·10⁷/q)` | same | same |
-| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403). According to the project page, the independent double-check reaches `4·10¹⁷` |
+| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 2.8·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked" (we earlier cited `4·10¹⁷` from the project page). `SmallCases.lean` needs only `2.8·10¹⁷`, inside the double-checked range |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` |
-| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([B, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ 0.010032/log X` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
+| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([B, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The axioms are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [B, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
 `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_theta` and `rh_upto` (through
-`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
-`4·10¹⁸ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`). This replaces the Helfgott–Platt prime ladder
+`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 2.8·10¹⁷, n − 4]` for
+`2.8·10¹⁷ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`). This replaces the Helfgott–Platt prime ladder
 (arXiv:1305.3062), formerly the axiom `prime_ladder_input`.
 
 ## Errors found in the sources
@@ -96,7 +99,8 @@ behind [B, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for t
    * Ramaré's proof of Lemma 3.4 (= [B, (12.12)]) uses (3.9):
      `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`. The product over the primes below `10⁷` is
      already `8.0775`, and the full product is about `8.0845`. The constant `7.284 = 0.9105·8`
-     comes from (3.9); with `8.0845` the same argument gives about `7.36`.
+     comes from (3.9); with `8.0845` the same argument gives about `7.36`. (Checked against the page
+     images of [Ram95], p. 659.)
    * Our proof (`Prelim/Ramare*.lean`) uses a different decomposition and gives `7.04 ≤ 7.284`.
 6. **[B, p. 38] is off by one about `|m(x)| ≤ 1/(2√x)`.** [B] says the bound holds for
    `x ≤ 7727068587`. `moebius_sqrt_rig` finds that it fails already at `x = 7727068587`:

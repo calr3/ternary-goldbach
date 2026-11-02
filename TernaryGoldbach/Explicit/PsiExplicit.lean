@@ -5,7 +5,7 @@ import TernaryGoldbach.Explicit.ExplicitBoundGen
 /-!
 # The explicit-formula bound for the Gaussian-smoothed prime sum
 
-`|Σ Λ(n) φ(n/x) − M(1) x| ≤ √x·LineB + x·TailB + x^{−1/2} V/(2π)` for `φ = gsm a b δ`, unconditionally
+`|Σ Λ(n) φ(n/x) − M(1) x| ≤ √x·LineB2 + x·TailB + x^{−1/2} V/(2π)` for `φ = gsm a b δ`, unconditionally
 (RH to `3·10¹²` is the numerical axiom `rh_upto`).
 -/
 
@@ -105,6 +105,12 @@ theorem norm_integral_hZeta_gsm {a b δ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) {x
 noncomputable def LineB (a δ : ℝ) : ℝ :=
   ZLg BPz2 3e12 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48))
 
+/-- The sharper line-zero constant (`line_sum_leH` with windows of height `6`, radius `3.36`;
+`norm_Mg_line_le'`), used by `SsumG_gsm_err`. -/
+noncomputable def LineB2 (a b δ : ℝ) : ℝ :=
+  ZLh 6 3.36 3e12 * (Real.exp (δ ^ 2 / 2) * (Real.exp (a / 2) + Real.exp (b / 2))) *
+    (4 + 2 * (1 + Real.log (JlH 6 3e12)) / 6)
+
 /-- The tail constant (zeros above `3·10¹²`). -/
 noncomputable def TailB (a δ : ℝ) : ℝ :=
   EBg a δ 3e12 * (2 * Z3g BPz2 3e12 / (1 - rhoG δ 3e12) + 2 * c3g 10 3e12 / (1 - rhoG δ 3e12) ^ 2)
@@ -112,7 +118,7 @@ noncomputable def TailB (a δ : ℝ) : ℝ :=
 /-- **The explicit-formula bound for the smoothed sum.** -/
 theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 ≤ x) :
     ‖SsumG (1 : DirichletCharacter ℂ 1) (fun u => (gsm a b δ u : ℂ)) x - Mg a b δ 1 * x‖ ≤
-      √x * LineB a δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
+      √x * LineB2 a b δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
   have hx0 : 0 < x := by linarith
   set φ : ℝ → ℂ := fun u => (gsm a b δ u : ℂ) with hφ
   have hgood := goodSmoothing_gsm hδ hab
@@ -120,7 +126,7 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
   obtain ⟨Tk, -, hlim⟩ := explicit_formula_zeta hgood hx0
   set I0 := ∫ y : ℝ, hZeta φ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hI0
   have hbound : ∀ T : ℝ, ‖∑ u ∈ zerosRectD zetaF T, (multRectD zetaF T u : ℂ) * (mellin φ u * (x : ℂ) ^ u)‖ ≤
-      √x * LineB a δ + x * TailB a δ := by
+      √x * LineB2 a b δ + x * TailB a δ := by
     intro T
     set Z := zerosRectD zetaF T with hZ
     set m : ℂ → ℝ := fun u => (multRectD zetaF T u : ℝ) with hm
@@ -145,12 +151,12 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
         rw [hre u hu, ← Real.sqrt_eq_rpow]; ring
       rw [Finset.sum_congr rfl heq, ← Finset.mul_sum]
       refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
-      refine line_sum_le (by norm_num) S hSZ hre him (fun u => ‖Mg a b δ u‖) (fun u _ => norm_nonneg _)
-        (by positivity) (fun u hu => ?_)
+      refine line_sum_leH (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) S hSZ hre him
+        (fun u => ‖Mg a b δ u‖) (fun u _ => norm_nonneg _) (by positivity) (fun u hu => ?_)
       have hu' : u = ((1 / 2 : ℝ) : ℂ) + (u.im : ℂ) * I := by
         apply Complex.ext <;> simp [hre u hu]
       rw [hu']
-      have := norm_Mg_line_le (δ := δ) hab hb u.im
+      have := norm_Mg_line_le' a b δ u.im
       simpa using this
     · -- zeros above `3·10¹²`
       set S := Z.filter (fun u => ¬ |u.im| ≤ 3e12) with hS
@@ -158,7 +164,7 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
       have him : ∀ u ∈ S, 3e12 < |u.im| := fun u hu => not_le.1 (Finset.mem_filter.1 hu).2
       exact tail_sum_gauss (by norm_num) hδ hb hx S hSZ him
   have h1 : ‖mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x - (1 / (2 * π) : ℂ) * I0‖ ≤
-      √x * LineB a δ + x * TailB a δ :=
+      √x * LineB2 a b δ + x * TailB a δ :=
     le_of_tendsto' ((continuous_norm.tendsto _).comp hlim) fun k => hbound (Tk k)
   have h2 : ‖(1 / (2 * π) : ℂ) * I0‖ ≤ x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
     rw [norm_mul]
@@ -177,7 +183,7 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
 
 /-- The total explicit-formula error. -/
 noncomputable def ErrG (a b δ x : ℝ) : ℝ :=
-  √x * LineB a δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)
+  √x * LineB2 a b δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)
 
 theorem summable_gsm {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hx : 0 < x) :
     Summable fun n : ℕ => Λ n * gsm a b δ (n / x) := by

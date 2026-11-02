@@ -420,6 +420,33 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
+## Binary Goldbach needed only to `2.8·10¹⁷` (2026-11-02)
+
+* The θ error at `10²⁷` sets the range: binary Goldbach up to `N` suffices if
+  `(θ − x)⁺ + (x − θ)⁺ < N − 4` there. With `psi_plateau`'s old `15000√x` this was `9.96·10¹⁷`.
+* The line-zero constant (`LineB`, `14990`) lost three factors, now recovered in `LineB2`
+  (`ZetaZeroSums.lean`, "Sharper constants"; used by `SsumG_gsm_err` → `ErrG` → `psi_plateau` only;
+  `PsiLarge`/`PsiRange1`/`PsiAsymp` keep `LineB`):
+  * window weight `2/(1 + 3.48d)` → `1/max(½, hd)` (`|ρ| ≥ max(½, |γ|)`), about ×0.55;
+  * `2e^{|a|}` → `e^{a/2} + e^{b/2}` with `e^{b/2} = √(y₀/x) ≤ 3.2·10⁻⁵` (`norm_Mg_line_le'`), ×0.5;
+  * window height `h` and Jensen radius `r ≥ √(1.5² + (h/2)²)` as parameters (`line_sum_leH`,
+    `count_line_windowH`): `ZL(h)(4 + 2(1 + log J)/h)` is smallest near `h = 6`, `r = 3.36`
+    (`ZL ≤ 274.7`, `log J ≤ 26.94`), ×0.88.
+  `LineB2 ≤ 3658`, so `psi_plateau`: `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 3660√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`).
+* `theta_bound`: `−1.413·10¹⁷ ≤ θ(n) − n ≤ 1.373·10¹⁷` on `[1423, 10²⁷]` (the lower side has
+  `ψ − θ ≤ 2.001·63·√n`); sum `2.786·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (28 * 10 ^ 16)`.
+* [OeSHP14] (PDF in hand): verification to `4·10¹⁸`, full double-check to `3·10¹⁷` (Table 1, §1.3;
+  AXIOMS.md had `4·10¹⁷` from the project page). `2.8·10¹⁷` is inside the double-checked range.
+* Further levers, not done (estimates for `N`):
+  * the two `d = 0` windows (`|γ| ≤ 6`, weight `2`) cost `4·274.7 ≈ 1100` of `3658`; Jensen at height
+    `≈ 3` gives `≈ 36` zeros per window: `LineB2 ≈ 2700`, `N ≈ 2.2·10¹⁷`;
+  * height-dependent counts in every window (`log B(t)` instead of `log B(H)`): about ×0.5 more;
+  * the `x` term `2.15·10⁻¹¹x` (`Kδ = 64/H`) alone forces `N ≳ 4.3·10¹⁶`.
+* Other papers checked against the PDFs: Platt–Trudgian (abstract), Platt GRH (Thm 7.1), Büthe
+  (Thm 2), Ramaré–Zuniga-Alterman (Cor. 1.2, 1.3), [Ram95] Lemma 3.4 and (3.9) (Finding 5 confirmed;
+  product over primes `< 10⁷` recomputed: `8.07754`). [HP13]'s introduction describes the
+  Ramaré–Saouter route (RH to a height + binary Goldbach), which `SmallCases.lean` now follows.
+
 ## Prime ladder replaced (2026-11-02): 9 axioms (2 own, 7 published)
 
 * Assessment of the published axioms (user asked which could be formalized or weakened):

@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.PsiExplicit
 import TernaryGoldbach.Explicit.LogNumerics
 
 /-!
-# `|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 15000 √x + 4.2·10¹⁰` for `x ≥ 10¹⁹`
+# `|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 3660 √x + 4.2·10¹⁰` for `x ≥ 10¹⁹`
 
 `psi_upper_explicit`, `psi_lower_explicit` with `δ = 8/H`, `K₀ = 8`, `y₀ = 10¹⁰` (`H = 3·10¹²`).
 -/
@@ -108,21 +108,75 @@ theorem exp_neg32_le : Real.exp (-32) ≤ 1.3e-14 := by
   have := exp_nat_ge' 32
   norm_num at this ⊢; linarith
 
-theorem LineB_plateau_le {a : ℝ} (ha : |a| ≤ 64 / 3e12) : LineB a (8 / 3e12) ≤ 14990 := by
-  unfold LineB
-  have he : Real.exp ((8 / 3e12 : ℝ) ^ 2 / 2 + |a|) ≤ 1.000001 := by
-    have h := exp_small_le (t := (8 / 3e12 : ℝ) ^ 2 / 2 + |a|) (by positivity) (by norm_num at ha ⊢; linarith)
+/-- `e^{b/2} = √(10¹⁰/x) ≤ 3.2·10⁻⁵` for `b = log(10¹⁰/x)`, `x ≥ 10¹⁹`. -/
+theorem exp_half_log_le {x : ℝ} (hx : 1e19 ≤ x) : Real.exp (Real.log (1e10 / x) / 2) ≤ 3.2e-5 := by
+  have hx0 : 0 < x := by linarith
+  set e := Real.exp (Real.log (1e10 / x) / 2) with he
+  have he0 : 0 < e := Real.exp_pos _
+  have hsq : e ^ 2 = 1e10 / x := by
+    rw [he, sq, ← Real.exp_add, show Real.log (1e10 / x) / 2 + Real.log (1e10 / x) / 2 =
+      Real.log (1e10 / x) by ring, Real.exp_log (by positivity)]
+  have hq : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
+  nlinarith
+
+theorem log_10_336_ge : 1.0906 ≤ Real.log (10 / 3.36) := by
+  rw [Real.le_log_iff_exp_le (by norm_num)]
+  have h1 := Real.exp_one_lt_d9
+  have h2 := Real.exp_bound' (x := 0.0906) (by norm_num) (by norm_num) (n := 8) (by norm_num)
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h2
+  have e : Real.exp 1.0906 = Real.exp 1 * Real.exp 0.0906 := by rw [← Real.exp_add]; norm_num
+  rw [e]
+  nlinarith [Real.exp_pos 1, Real.exp_pos 0.0906]
+
+theorem logBPz2_H6_le : Real.log (BPz2 (3e12 + 6) / 0.355) ≤ 299.55 := by
+  have h := log_BPz2_le' (3e12 + 6)
+  rw [abs_of_pos (by norm_num)] at h
+  have h1 : Real.log (3e12 + 6 + 22) ≤ 28.7298 := by
+    refine log_le_of_le_exp'' (by norm_num) ?_
+    have h := exp_split_ge' 28 (u := 0.7298) (by norm_num) 10
+    norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+  have h2 : Real.log (1.25 * (3e12 + 6 + 11)) ≤ 28.9529 := by
+    refine log_le_of_le_exp'' (by norm_num) ?_
+    have h := exp_split_ge' 28 (u := 0.9529) (by norm_num) 12
+    norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+  linarith
+
+theorem ZLh_H_le : ZLh 6 3.36 3e12 ≤ 274.7 := by
+  unfold ZLh
+  rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) log_10_336_ge)]
+  have := logBPz2_H6_le; have := log_10_336_ge
+  nlinarith
+
+theorem log_JlH_H_le : Real.log (JlH 6 3e12) ≤ 26.94 := by
+  have hJ : (JlH 6 3e12 : ℝ) ≤ 3e12 / 6 + 1 := by
+    unfold JlH; push_cast
+    have := Nat.floor_le (show (0:ℝ) ≤ 3e12 / 6 by norm_num); linarith
+  have hJ0 : (0:ℝ) < JlH 6 3e12 := by unfold JlH; positivity
+  refine (Real.log_le_log hJ0 hJ).trans (log_le_of_le_exp'' (by norm_num) ?_)
+  have h := exp_split_ge' 26 (u := 0.94) (by norm_num) 10
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem LineB2_plateau_le {a x : ℝ} (ha : |a| ≤ 64 / 3e12) (hx : 1e19 ≤ x) :
+    LineB2 a (Real.log (1e10 / x)) (8 / 3e12) ≤ 3658 := by
+  unfold LineB2
+  have he1 : Real.exp ((8 / 3e12 : ℝ) ^ 2 / 2) ≤ 1.000001 := by
+    have h := exp_small_le (t := (8 / 3e12 : ℝ) ^ 2 / 2) (by positivity) (by norm_num)
+    norm_num at h ⊢; linarith
+  have he2 : Real.exp (a / 2) ≤ 1.000001 := by
+    have h1 : a / 2 ≤ |a| := by cases abs_cases a <;> linarith
+    have h := exp_small_le (t := |a|) (abs_nonneg a) (by norm_num at ha ⊢; linarith)
+    have := Real.exp_le_exp.2 h1
     norm_num at ha h ⊢; linarith
-  have h1 := ZLg_H_le
-  have h2 := log_Jl_H_le
-  have hZ0 : 0 ≤ ZLg BPz2 3e12 :=
-    div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le
-  have hJ0 : 0 ≤ Real.log (Jl 3e12) := Real.log_nonneg (by unfold Jl; norm_num)
-  have h3 : 4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48) ≤ 4 * (1 + (1 + 27.49) / 3.48) := by gcongr
-  have h4 : 2 * Real.exp ((8 / 3e12 : ℝ) ^ 2 / 2 + |a|) ≤ 2 * 1.000001 := by linarith
-  calc ZLg BPz2 3e12 * (2 * Real.exp ((8 / 3e12 : ℝ) ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48))
-      ≤ 203.9 * (2 * 1.000001) * (4 * (1 + (1 + 27.49) / 3.48)) := by gcongr
-    _ ≤ 14990 := by norm_num
+  have he3 := exp_half_log_le hx
+  have h1 := ZLh_H_le
+  have h2 := log_JlH_H_le
+  have hZ0 : 0 ≤ ZLh 6 3.36 3e12 := ZLh_nonneg (by norm_num) (by norm_num)
+  have hJ0 : 0 ≤ Real.log (JlH 6 3e12) := Real.log_nonneg (by unfold JlH; norm_num)
+  calc ZLh 6 3.36 3e12 * (Real.exp ((8 / 3e12 : ℝ) ^ 2 / 2) *
+        (Real.exp (a / 2) + Real.exp (Real.log (1e10 / x) / 2))) *
+        (4 + 2 * (1 + Real.log (JlH 6 3e12)) / 6)
+      ≤ 274.7 * (1.000001 * (1.000001 + 3.2e-5)) * (4 + 2 * (1 + 26.94) / 6) := by gcongr
+    _ ≤ 3658 := by norm_num
 
 theorem TailB_plateau_le {a : ℝ} (ha : |a| ≤ 64 / 3e12) : TailB a (8 / 3e12) ≤ 1e-13 := by
   unfold TailB EBg rhoG
@@ -227,9 +281,9 @@ theorem exp_small_le2 {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) : Real.exp t ≤ 1
   nlinarith [sq_nonneg t]
 
 theorem ErrG_plateau_le {a x : ℝ} (ha : |a| ≤ 64 / 3e12) (hx : 1e19 ≤ x) :
-    ErrG a (Real.log (1e10 / x)) (8 / 3e12) x ≤ 14990 * √x + 1e-13 * x + 9.6e8 := by
+    ErrG a (Real.log (1e10 / x)) (8 / 3e12) x ≤ 3658 * √x + 1e-13 * x + 9.6e8 := by
   unfold ErrG
-  have h1 := LineB_plateau_le ha
+  have h1 := LineB2_plateau_le ha hx
   have h2 := TailB_plateau_le ha
   have h3 := Vg_plateau_le ha hx
   have hx0 : 0 ≤ x := by linarith
@@ -237,8 +291,8 @@ theorem ErrG_plateau_le {a x : ℝ} (ha : |a| ≤ 64 / 3e12) (hx : 1e19 ≤ x) :
   have := mul_le_mul_of_nonneg_left h2 hx0
   nlinarith
 
-/-- **`|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 15000 √x + 4.2·10¹⁰`** for `x ≥ 10¹⁹`. -/
-theorem psi_plateau {x : ℝ} (hx : 1e19 ≤ x) : |psiR x - x| ≤ 2.15e-11 * x + 15000 * √x + 4.2e10 := by
+/-- **`|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 3660 √x + 4.2·10¹⁰`** for `x ≥ 10¹⁹`. -/
+theorem psi_plateau {x : ℝ} (hx : 1e19 ≤ x) : |psiR x - x| ≤ 2.15e-11 * x + 3660 * √x + 4.2e10 := by
   have hx0 : 0 < x := by linarith
   set δ : ℝ := 8 / 3e12 with hδ
   have hδ0 : 0 < δ := by rw [hδ]; norm_num
@@ -266,14 +320,14 @@ theorem psi_plateau {x : ℝ} (hx : 1e19 ≤ x) : |psiR x - x| ≤ 2.15e-11 * x 
     have := exp_small_le (t := (64 / 3e12 : ℝ)) (by norm_num) (by norm_num); norm_num at this ⊢; linarith
   have hden : 1 / (1 - 2 * Real.exp (-32)) ≤ 1 + 3e-14 := by
     rw [div_le_iff₀ (by linarith)]; nlinarith
-  have hup : psiR x ≤ x + 2.15e-11 * x + 15000 * √x + 4.2e10 := by
+  have hup : psiR x ≤ x + 2.15e-11 * x + 3660 * √x + 4.2e10 := by
     have hnum : Real.exp (δ ^ 2 / 2 + 64 / 3e12) * x + ErrG (64 / 3e12) (Real.log (1e10 / x)) δ x ≤
-        (1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8) := by
+        (1 + 2.1334e-11) * x + (3658 * √x + 1e-13 * x + 9.6e8) := by
       have := mul_le_mul_of_nonneg_right hexp1 hx0.le; linarith
-    have hnum0 : 0 ≤ (1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8) := by positivity
+    have hnum0 : 0 ≤ (1 + 2.1334e-11) * x + (3658 * √x + 1e-13 * x + 9.6e8) := by positivity
     have hd0 : 0 < 1 - 2 * Real.exp (-32) := by linarith
     have hq : (Real.exp (δ ^ 2 / 2 + 64 / 3e12) * x + ErrG (64 / 3e12) (Real.log (1e10 / x)) δ x) /
-        (1 - 2 * Real.exp (-32)) ≤ ((1 + 2.1334e-11) * x + (14990 * √x + 1e-13 * x + 9.6e8)) * (1 + 3e-14) := by
+        (1 - 2 * Real.exp (-32)) ≤ ((1 + 2.1334e-11) * x + (3658 * √x + 1e-13 * x + 9.6e8)) * (1 + 3e-14) := by
       rw [div_eq_mul_one_div]
       exact mul_le_mul hnum hden (by positivity) hnum0
     have h4 : 4 * (1e10 * Real.exp (64 / 3e12)) ≤ 4.0001e10 := by nlinarith
@@ -290,7 +344,7 @@ theorem psi_plateau {x : ℝ} (hx : 1e19 ≤ x) : |psiR x - x| ≤ 2.15e-11 * x 
   have hEl := ErrG_plateau_le (a := -(64 / 3e12)) (by rw [abs_neg, abs_of_pos (by norm_num)]) hx
   have hexp3 : 1 - 64 / 3e12 ≤ Real.exp (-(64 / 3e12)) := by
     have := Real.add_one_le_exp (-(64 / 3e12 : ℝ)); linarith
-  have hlo : x - 2.15e-11 * x - 15000 * √x - 4.2e10 ≤ psiR x := by
+  have hlo : x - 2.15e-11 * x - 3660 * √x - 4.2e10 ≤ psiR x := by
     have := mul_le_mul_of_nonneg_right hexp3 hx0.le
     have : 4 * x * Real.exp (-32) ≤ 4 * x * 1.3e-14 := by
       have := mul_le_mul_of_nonneg_left he32 (by positivity : (0:ℝ) ≤ 4 * x); linarith
