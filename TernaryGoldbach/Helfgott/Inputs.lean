@@ -3,7 +3,6 @@ import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
-import TernaryGoldbach.Reduction
 import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
 
@@ -11,9 +10,9 @@ import TernaryGoldbach.MajorArcs.MajorTotal
 # The top-level inputs
 
 The four analytic inputs of [B, §14.4] (circle identity, major arcs (14.27), minor arcs (14.49),
-non-prime terms (14.51)) are proved here from the rest of the development.  The two computational
-inputs for the small cases, `binary_goldbach_input` [OeSHP14] and `prime_ladder_input` [HP13], are
-numerical axioms.  All numerical axioms are listed and audited in `AXIOMS.md`.
+non-prime terms (14.51)) are proved here from the rest of the development.  The computational
+input for the small cases, `binary_goldbach_input` [OeSHP14], is a numerical axiom; the small
+cases themselves are in `SmallCases.lean`.  All numerical axioms are listed and audited in `AXIOMS.md`.
 
 [B]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
        version, which supersedes [H], [Hela], [Helb].  **This is the reference the blueprint
@@ -153,15 +152,5 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)): every even `4 ≤ n ≤ 4·10¹⁸` is
 a sum of two primes. -/
 axiom binary_goldbach_input : BinaryGoldbachUpTo (4 * 10 ^ 18)
-
-/-- **Numerical axiom: the Helfgott–Platt prime ladder** [HP13], [B, §1.6]. A computer construction
-of certified primes (Proth primes checked with Proth's theorem, the others by ECPP) starting at `3`,
-with consecutive gaps `≤ 4 · 10¹⁸`, reaching `8 875 694 145 621 773 516 800 000 000 000 ≥
-8.875694 · 10³⁰` ([HP13, §4, Thm 4.1]: "no gap between primes exceeded `4·10¹⁸`").  (A ladder up
-to `10²⁷` would suffice here.) -/
-axiom prime_ladder_input :
-    ∃ l : List ℕ, (∀ p ∈ 3 :: l, p.Prime ∧ Odd p) ∧
-      List.IsChain (LadderStep (4 * 10 ^ 18)) (3 :: l) ∧
-      8875694 * 10 ^ 24 ≤ (3 :: l).getLast (List.cons_ne_nil _ _)
 
 end TernaryGoldbach.Helfgott

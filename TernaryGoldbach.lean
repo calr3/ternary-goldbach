@@ -1,6 +1,4 @@
 import TernaryGoldbach.Statement
-import TernaryGoldbach.Reduction
-import TernaryGoldbach.PrattPrime
 import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.ThetaExplicit
@@ -60,6 +58,7 @@ import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Helfgott.Inputs
+import TernaryGoldbach.Helfgott.SmallCases
 import TernaryGoldbach.Helfgott.Main
 import TernaryGoldbach.MinorArcs.Vaughan
 import TernaryGoldbach.MinorArcs.Decomposition

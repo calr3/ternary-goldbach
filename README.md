@@ -7,14 +7,13 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 10 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 9 explicitly stated
 axioms besides Lean's standard three. They are:
 * 2 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [B, Lemma B.1.2] also contains, and the
   finite part of [B, Prop 12.2.4];
-* 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
-  Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
-  `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
+* 7 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+  Goldbach up to `4·10¹⁸`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ram95, Lemma 3.4]) is proved,
@@ -44,7 +43,6 @@ echo 'import TernaryGoldbach
  Quot.sound,
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
- TernaryGoldbach.Helfgott.prime_ladder_input,
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
  TernaryGoldbach.MinorArcs.eta2DD_small,
@@ -56,7 +54,6 @@ echo 'import TernaryGoldbach
 
 Beyond these axioms, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the computations that replace former axioms:
-* the primality certificates in `PrattPrime.lean`;
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
   `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean`,
   `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean` and
@@ -82,11 +79,11 @@ also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
 
 The top level is [B, §14.4] (`Helfgott/Main.lean`).
 
-* **Small cases.** Odd `5 < n ≤ 8.875694·10³⁰` (`Reduction.lean`, `PrattPrime.lean`):
+* **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
   * binary Goldbach up to `4·10¹⁸` [OeSHP14];
-  * the Helfgott–Platt ladder of primes with gaps `≤ 4·10¹⁸` [HP13];
-  * the decomposition `4·10¹⁸ + 2 = 2000000000000001301 + 1999999999999998701` [B, §1.6], with
-    both primes proved prime in Lean.
+  * for `n > 4·10¹⁸ + 3`, a prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, from `|θ(m) − m| ≤ 6·10¹⁷`
+    for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁹`, and the explicit formula with RH up to
+    `3·10¹²` (`Explicit/PsiPlateau.lean`) above. Then `n − p` is even and at most `4·10¹⁸`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [B, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
@@ -167,8 +164,6 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
   (`AXIOMS.md`, Finding 4).
-* The prime ladder's gaps are at most `4·10¹⁸`, as [HP13] and [B, §1.6] state. The case
-  `n − p = 4·10¹⁸ + 2` uses [B]'s explicit decomposition.
 * [B, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
   `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`, but the product is about `8.0845`. We prove (12.12)
   as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`AXIOMS.md`,
@@ -176,15 +171,17 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.
+* The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
+  which [B, §1.6] uses up to `8.875·10³⁰`.
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout
 
 | Path | Content |
 |---|---|
-| `Statement.lean`, `Reduction.lean`, `PrattPrime.lean` | the statement; small cases from binary Goldbach and a prime ladder; primality certificates |
+| `Statement.lean` | the statement |
 | `CircleMethod.lean` | the finite circle method and the circle identity for absolutely summable series |
-| `Helfgott/` | Helfgott's smoothings and major arcs (`Defs`), sup norms and decay, the non-prime terms, the top-level inputs (`Inputs`) and the assembly (`Main`) |
+| `Helfgott/` | Helfgott's smoothings and major arcs (`Defs`), sup norms and decay, the non-prime terms, the top-level inputs (`Inputs`), the small cases (`SmallCases`) and the assembly (`Main`) |
 | `MinorArcs/` | [B, Chs. 3–6, 11–13] and §14.3: Vaughan's identity, Type I and II sums, Thm 3.1.1, the large sieve for primes, the minor-arc total; generated numerics (`scripts/gen_*.py`) |
 | `MajorArcs/` | [B, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |

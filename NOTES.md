@@ -420,6 +420,29 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
+## Prime ladder replaced (2026-11-02): 9 axioms (2 own, 7 published)
+
+* Assessment of the published axioms (user asked which could be formalized or weakened):
+  * `prime_ladder_input`: replaceable, done below.
+  * `binary_goldbach_input`: stays (an exhaustive search). With `|θ − x| ≤ 6·10¹⁷` it could be
+    weakened to about `1.1·10¹⁸`, but it is the same kind of computation.
+  * `rh_upto`, `platt_odd`, `platt_even`: stay. The heights and moduli are pinned by the explicit
+    formula near `10¹⁹` and by the major arcs (`r₀ = 150000`, heights near `10⁸/q`).
+  * `buthe_psi`, `buthe_theta`: stay. From `rh_upto` alone the explicit formula gives about
+    `√x log²x/(8π)` below `10¹⁹`, 10–80 times `0.94√x`; (2.13), the Mertens product on
+    `[10⁵, 2·10⁸]` and the θ bounds of [B, §2] are tight.
+  * `ramare_moebius`: stays. Its proof rests on computations of `M(x)`; our uses need a constant
+    near `0.05/log x` (g₂ tail). `MoebiusBound.lean`'s `0.55/(log x − 0.7521)` is derived from it
+    (AXIOMS.md's Outlook called it elementary; fixed).
+* `Helfgott/SmallCases.lean`: `theta_bound` (`|θ(n) − n| ≤ 6·10¹⁷` for `1423 ≤ n ≤ 10²⁷`):
+  `buthe_theta` below `10¹⁹` (`1.95√n ≤ 7.8·10⁹`); above, `psi_plateau` (`2.15·10⁻¹¹ n + 15000√n +
+  4.2·10¹⁰ ≤ 5·10¹⁷` at `10²⁷`, mostly `15000√n`) and `ψ − θ ≤ 2.001 log n √n ≤ 4.1·10¹⁵`. For odd `n > 4·10¹⁸ + 3`,
+  `θ(n − 4) − θ(n − 4·10¹⁸) > 0` gives a prime `p ∈ (n − 4·10¹⁸, n − 4]`, and binary Goldbach takes
+  `n − p`. Below, `n = 3 + (n − 3)`.
+* `ternaryGoldbachUpTo : TernaryGoldbachUpTo (10 ^ 27)`; `Reduction.lean` and `PrattPrime.lean`
+  (ladder reduction, certificates for `4·10¹⁸ + 2`) deleted. Stale docstrings in `Main.lean`
+  ("still `sorry`") and `LambdaMu.lean` (Ramaré "for `x ≥ 10¹⁰`") fixed.
+
 ## Axiom audit (2026-11-01): `AXIOMS.md`
 
 Every axiom has been checked against its source or script, and all scripts were re-run. Findings:

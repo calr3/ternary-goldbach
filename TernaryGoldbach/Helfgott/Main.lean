@@ -1,13 +1,13 @@
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Numerics
-import TernaryGoldbach.PrattPrime
+import TernaryGoldbach.Helfgott.SmallCases
 
 /-!
 # Assembling Helfgott's proof
 
 This file derives the ternary Goldbach conjecture from the inputs in
-`TernaryGoldbach.Helfgott.Inputs`.  It contains no `sorry`; the proof depends on the
-remaining `sorry`s in that file and nothing else (check with `#print axioms ternary_goldbach`).
+`TernaryGoldbach.Helfgott.Inputs` and `SmallCases.lean`. There is no `sorry`; the axioms it depends
+on are listed by `#print axioms ternary_goldbach` and audited in `AXIOMS.md`.
 
 The argument follows [H, §7.4]:
 
@@ -15,7 +15,8 @@ The argument follows [H, §7.4]:
 2. `Re ∫_𝔐 ≥ 1.049 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`;
 3. so the count restricted to odd primes is `≥ 0.0114 x²/κ - 6.7·10⁶ N^{3/2} log N > 0`;
 4. a positive count over primes gives a representation;
-5. the cases `N < 10²⁷` follow from the ladder reduction (`ternaryUpTo_of_ladder`).
+5. the cases `N < 10²⁷` follow from binary Goldbach up to `4·10¹⁸` and the bounds for `θ`
+   (`ternaryGoldbachUpTo_1e27`, `SmallCases.lean`).
 -/
 
 open Complex MeasureTheory ArithmeticFunction
@@ -69,12 +70,8 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
   intro h0
   linarith
 
-/-- The small cases: ternary Goldbach for odd `5 < N ≤ 8.875694 · 10³⁰` [HP]. -/
-theorem ternaryGoldbachUpTo : TernaryGoldbachUpTo (8875694 * 10 ^ 24) := by
-  obtain ⟨l, hprime, hchain, htop⟩ := prime_ladder_input
-  have := ternaryUpTo_of_ladder_two (by norm_num) (by decide) binary_goldbach_input
-    isSumOfTwoPrimes_4e18_add_two l hprime hchain
-  exact fun n hn h5 hle => this n hn h5 (by omega)
+/-- The small cases: ternary Goldbach for odd `5 < N ≤ 10²⁷` (`SmallCases.lean`). -/
+theorem ternaryGoldbachUpTo : TernaryGoldbachUpTo (10 ^ 27) := ternaryGoldbachUpTo_1e27
 
 end TernaryGoldbach.Helfgott
 
@@ -83,11 +80,8 @@ namespace TernaryGoldbach
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5`
 is a sum of three primes.
 
-This depends on the literature inputs in `TernaryGoldbach.Helfgott.Inputs`, which are
-still `sorry`. -/
+It depends on the axioms listed in `AXIOMS.md` (`#print axioms ternary_goldbach`). -/
 theorem ternary_goldbach : Statement :=
-  statement_of_upTo_of_from
-    (fun n hn h5 hle => Helfgott.ternaryGoldbachUpTo n hn h5 (le_trans hle (by norm_num)))
-    Helfgott.ternaryGoldbachFrom
+  statement_of_upTo_of_from Helfgott.ternaryGoldbachUpTo Helfgott.ternaryGoldbachFrom
 
 end TernaryGoldbach

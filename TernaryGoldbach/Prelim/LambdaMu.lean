@@ -1525,7 +1525,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 /-! ### Sums of `μ` (trusted) -/
 
 /- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
-axiom `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for `x ≥ 10¹⁰`. -/
+axiom `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for the same range. -/
 
 /- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

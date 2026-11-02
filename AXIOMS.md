@@ -1,9 +1,9 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 10 further axioms (`#print axioms`):
+`Quot.sound`) and on 9 further axioms (`#print axioms`):
 * 2 finite computations of our own;
-* 8 published results;
+* 7 published results;
 * no result of Helfgott's book [B].
 
 A false axiom would make the axiom set inconsistent, and then the formal proof would say nothing.
@@ -38,7 +38,7 @@ from `psi_extra_check.py`:
 * `lambda_sqrt_small` (`k ≤ 6·10⁶`): max ratio `1.99906`;
 * `lambda_sqrt_point` (at `6·10⁶`): value `−3.6619`.
 
-## Published results (8)
+## Published results (7)
 
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
@@ -46,14 +46,16 @@ from `psi_extra_check.py`:
 | `MajorArcs.platt_odd` | primitive `χ`, odd conductor `q ≤ 3·10⁵`: GRH up to `10⁸/q` | Platt, arXiv:1305.3087 | abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `MajorArcs.platt_even` | even `q ≤ 4·10⁵`: GRH up to `max(10⁸/q, 200 + 7.5·10⁷/q)` | same | same |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403). According to the project page, the independent double-check reaches `4·10¹⁷` |
-| `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 ("no gap between primes exceeded `4·10¹⁸`") and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); [B, §1.6] says "at most `4·10¹⁸`". The case `n − p = 4·10¹⁸ + 2` uses [B]'s decomposition `2000000000000001301 + 1999999999999998701`, with both primes certified in `PrattPrime.lean` |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([B, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ 0.010032/log X` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The axioms are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [B, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
-`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
+`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_theta` and `rh_upto` (through
+`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
+`4·10¹⁸ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`). This replaces the Helfgott–Platt prime ladder
+(arXiv:1305.3062), formerly the axiom `prime_ladder_input`.
 
 ## Errors found in the sources
 
@@ -144,7 +146,6 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
 | `MinorArcs/SmallG2.lean` | `g₂(n)` for `n ≤ 10⁴` in fixed point (a trie of the sums `A_d(n)`); `T₂ ≤ 0.37273` on `[16, 10⁴)`; `∫₁^{10⁴} g₂/y`, `∫₁^{10⁴} \|g₂\|` | 54 s |
 | `MinorArcs/G2TailNum.lean` | `∫_k^∞ m(⌊t⌋)²/t` for `k ≤ 10⁴` (from `m(j)`, `j < 11815`), and the sum over `d ≤ 10⁴`, `a ≤ 10⁴/d` of the `g₂` tail bound | 82 s |
-| `PrattPrime.lean` | Pratt certificates for the two primes of the ladder's last case | seconds |
 
 ## Outlook
 
@@ -164,6 +165,9 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
   * Ramaré's paper also uses Pari/GP computations up to `1.8·10⁹` (its Lemma 6.3).
   * Near `x = 10¹⁰`, `x/4345` is the operative input: the analytic bound `0.013 x/log x` is weaker
     until `log x ≈ 56`.
-  * Our elementary bound, `|m(x)| ≤ 0.55/(log x − 0.7521)` (`Prelim/MoebiusBound.lean`), does not
-    use the cancellation in `μ`. The tail of (5.31) and the Liouville bound would need about
-    `0.1/log x`.
+  * `|m(x)| ≤ 0.55/(log x − 0.7521)` (`Prelim/MoebiusBound.lean`) is derived from
+    `ramare_moebius`. Without the cancellation in `μ` only `|m(x)| ≤ 1` is available, far from the
+    `c/log x` that the tail of (5.31) and the Liouville bound need.
+* The other published results are large computations (binary Goldbach, RH and GRH to the heights
+  used, Büthe's bounds). From `rh_upto` alone the explicit formula gives about `√x log²x/(8π)` below
+  `10¹⁹`, 10 to 80 times Büthe's `0.94√x`, too weak for its uses in [B, §2].
