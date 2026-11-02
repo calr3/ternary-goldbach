@@ -420,31 +420,36 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
-## Binary Goldbach needed only to `2.2·10¹⁷` (2026-11-02)
+## Binary Goldbach needed only to `1.45·10¹⁷` (2026-11-02)
 
 * The θ error at `10²⁷` sets the range: binary Goldbach up to `N` suffices if
   `(θ − x)⁺ + (x − θ)⁺ < N − 4` there. With `psi_plateau`'s old `15000√x` this was `9.96·10¹⁷`.
-* The line-zero constant (`LineB`, `14990`) lost three factors, now recovered in `LineB2`
-  (`ZetaZeroSums.lean`, "Sharper constants"; used by `SsumG_gsm_err` → `ErrG` → `psi_plateau` only;
-  `PsiLarge`/`PsiRange1`/`PsiAsymp` keep `LineB`):
+* The line-zero constant (`LineB`, `14990`) is replaced by `LineB2` (`ZetaZeroSums.lean`, "Sharper
+  constants"; used by `SsumG_gsm_err` → `ErrG` → `psi_plateau` only; `PsiLarge`/`PsiRange1`/`PsiAsymp`
+  keep `LineB`). Steps, with the binary Goldbach range each gave:
   * window weight `2/(1 + 3.48d)` → `1/max(½, hd)` (`|ρ| ≥ max(½, |γ|)`), about ×0.55;
   * `2e^{|a|}` → `e^{a/2} + e^{b/2}` with `e^{b/2} = √(y₀/x) ≤ 3.2·10⁻⁵` (`norm_Mg_line_le'`), ×0.5;
-  * window height `h` and Jensen radius `r ≥ √(1.5² + (h/2)²)` as parameters (`line_sum_leH`,
-    `count_line_windowH`): `ZL(h)(4 + 2(1 + log J)/h)` is smallest near `h = 6`, `r = 3.36`
-    (`ZL ≤ 274.7`, `log J ≤ 26.94`), ×0.88 (`LineB2 ≤ 3658`, binary Goldbach to `2.8·10¹⁷`);
-  * the two windows next to the real axis (`|γ| ≤ 6`, weight `2` each) are counted by Jensen at
-    their centres `±3` (`count_line_windowC`, `ZL0 6 3.36 ≤ 35.9` from `log(B(3)/0.355) ≤ 39.15`)
-    instead of at height `3·10¹²` (`274.7`).
-  `LineB2 = C(4 ZL₀ + 2 ZL (1 + log J)/6) ≤ 2703`, so `psi_plateau`:
-  `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 2705√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`).
-* `theta_bound`: `−1.111·10¹⁷ ≤ θ(n) − n ≤ 1.071·10¹⁷` on `[1423, 10²⁷]` (the lower side has
-  `ψ − θ ≤ 2.001·63·√n`); sum `2.181·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (22 * 10 ^ 16)`.
+  * window height `h` and Jensen radius `r ≥ √(1.5² + (h/2)²)` as parameters: `h = 6`, `r = 3.36`
+    (×0.88; `LineB2 ≤ 3658`, `N = 2.8·10¹⁷`);
+  * the two windows at `|γ| ≤ 6` counted by Jensen at their centres `±3` (`35.9` zeros each instead
+    of `274.7`; `LineB2 ≤ 2703`, `N = 2.2·10¹⁷`);
+  * every window counted by Jensen at its own centre `(d + ½)·6` (`line_sum_leH`, `count_line_windowC`):
+    `log(B(6d + 3)/0.355) ≤ 30.17 + 10 log d + 25.17/d` (`logB_window_le`, from `log_BPz2_le'` and
+    `log(αd + β) ≤ log α + log d + β/(αd)`), summed by telescoping against `a log d + (b/2) log² d`
+    (`sum_log_div_le`; the step uses `1/d ≤ log(d/(d − 1)) ≤ 1/(d − 1)`). The window sum is `≤ 765`
+    (`window_sum_le`), `LineB2 ≤ 1531`.
+  So `psi_plateau`: `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 1533√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`).
+* `theta_bound`: `−7.401·10¹⁶ ≤ θ(n) − n ≤ 7.003·10¹⁶` on `[1423, 10²⁷]` (the lower side has
+  `ψ − θ ≤ 2.001·63·√n`); sum `1.4404·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (145 * 10 ^ 15)`.
 * [OeSHP14] (PDF in hand): verification to `4·10¹⁸`, full double-check to `3·10¹⁷` (Table 1, §1.3;
-  AXIOMS.md had `4·10¹⁷` from the project page). `2.2·10¹⁷` is inside the double-checked range.
-* Further levers, not done (estimates for `N`):
-  * height-dependent counts in every window (`log B(t)` instead of `log B(H)`, i.e.
-    `count_line_windowC` everywhere): the remaining `2558` becomes about `1370`, `LineB2 ≈ 1510`, `N ≈ 1.45·10¹⁷`;
-  * the `x` term `2.15·10⁻¹¹x` (`Kδ = 64/H`) alone forces `N ≳ 4.3·10¹⁶`.
+  AXIOMS.md had `4·10¹⁷` from the project page). `1.45·10¹⁷` is inside the double-checked range.
+* What is left: `2·1533√x ≈ 9.7·10¹⁶` and `2·2.15·10⁻¹¹x ≈ 4.3·10¹⁶` at `10²⁷`.
+  * The `x` term (`Kδ = 64/H`, the Gaussian smoothing width needed to kill zeros above `H`) alone
+    forces `N ≳ 4.3·10¹⁶`.
+  * The `√x` term is Jensen's zero count, about 8 times the true density (`≈ (h/2π) log(t/2π)` per
+    window). A smaller Jensen disc needs a polynomial bound for `ζ` on a smaller disc than
+    `BPz2`'s radius `10` (about ×0.8); the Riemann–von Mangoldt formula with an explicit `S(T)`
+    would be a large project.
 * Other papers checked against the PDFs: Platt–Trudgian (abstract), Platt GRH (Thm 7.1), Büthe
   (Thm 2), Ramaré–Zuniga-Alterman (Cor. 1.2, 1.3), [Ram95] Lemma 3.4 and (3.9) (Finding 5 confirmed;
   product over primes `< 10⁷` recomputed: `8.07754`). [HP13]'s introduction describes the

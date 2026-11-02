@@ -148,10 +148,10 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
-/-- **Numerical axiom: binary Goldbach up to `2.2 · 10¹⁷`** [OeSHP]. An exhaustive computer
+/-- **Numerical axiom: binary Goldbach up to `1.45 · 10¹⁷`** [OeSHP]. An exhaustive computer
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)) shows that every even
 `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes; the range up to `3·10¹⁷` was double-checked
-([OeSHP, Table 1 and §1.3]). `SmallCases.lean` needs only `2.2·10¹⁷`. -/
-axiom binary_goldbach_input : BinaryGoldbachUpTo (22 * 10 ^ 16)
+([OeSHP, Table 1 and §1.3]). `SmallCases.lean` needs only `1.45·10¹⁷`. -/
+axiom binary_goldbach_input : BinaryGoldbachUpTo (145 * 10 ^ 15)
 
 end TernaryGoldbach.Helfgott

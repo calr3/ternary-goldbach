@@ -105,11 +105,12 @@ theorem norm_integral_hZeta_gsm {a b δ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) {x
 noncomputable def LineB (a δ : ℝ) : ℝ :=
   ZLg BPz2 3e12 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48))
 
-/-- The sharper line-zero constant (`line_sum_leH` with windows of height `6`, radius `3.36`, the two
-next to the real axis counted at height `3`; `norm_Mg_line_le'`), used by `SsumG_gsm_err`. -/
+/-- The sharper line-zero constant (`line_sum_leH` with windows of height `6`, radius `3.36`, each
+counted by Jensen at its centre; `norm_Mg_line_le'`), used by `SsumG_gsm_err`. -/
 noncomputable def LineB2 (a b δ : ℝ) : ℝ :=
   (Real.exp (δ ^ 2 / 2) * (Real.exp (a / 2) + Real.exp (b / 2))) *
-    (4 * ZL0 6 3.36 + 2 * ZLh 6 3.36 3e12 * (1 + Real.log (JlH 6 3e12)) / 6)
+    (2 * ∑ m ∈ Finset.range (JlH 6 3e12), Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
+      Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))))
 
 /-- The tail constant (zeros above `3·10¹²`). -/
 noncomputable def TailB (a δ : ℝ) : ℝ :=

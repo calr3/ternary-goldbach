@@ -244,7 +244,9 @@ theorem line_sum_le {T H : ℝ} (hH : 0 ≤ H) (S : Finset ℂ) (hS : S ⊆ zero
   instead of `2/(1 + h d)`;
 * `e^{a/2} + e^{b/2}` is kept instead of `2e^{|a|}` (for `ψ`, `b = log(y₀/x)` is very negative);
 * the window height `h` and the Jensen radius `r ≥ √(1.5² + (h/2)²)` are parameters (`h = 6`, `r = 3.36`
-  minimize `ZL(4 + 2(1 + log J)/h)` at `H = 3·10¹²`; `line_sum_le` has `h = 3.48`, `r = 2.3`). -/
+  for `ψ`; `line_sum_le` has `h = 3.48`, `r = 2.3`);
+* each window is counted by Jensen at its own centre `(d + ½)h` (`count_line_windowC`), not at `H`;
+  `sum_log_div_le` sums the resulting `(a + b log d)/d` by telescoping against `a log d + (b/2) log² d`. -/
 
 /-- On the critical line: `‖M(½ + iγ)‖ max(½, |γ|) ≤ e^{δ²/2}(e^{a/2} + e^{b/2})`. -/
 theorem norm_Mg_line_le' (a b δ y : ℝ) :
@@ -285,12 +287,6 @@ theorem lt_JlH {h T0 : ℝ} (hh : 0 < h) (hT : 0 ≤ T0) : T0 < JlH h T0 * h := 
   have := Nat.lt_floor_add_one (T0 / h)
   rw [div_lt_iff₀ hh] at this; linarith
 
-/-- Zeros per line window of height `h` (Jensen radius `r`) below height `T₀`. -/
-noncomputable def ZLh (h r T0 : ℝ) : ℝ := Real.log (BPz2 (T0 + h) / 0.355) / Real.log (10 / r)
-
-theorem ZLh_nonneg {h r T0 : ℝ} (hr : 0 < r) (hr10 : r < 10) : 0 ≤ ZLh h r T0 :=
-  div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos hr hr10).le
-
 /-- The window `k` of height `h` is centred at `c_k = (k − J + ½)h`. -/
 theorem window_center {h T0 : ℝ} (hh : 0 < h) (hT0 : 0 ≤ T0) {u : ℂ} (hu : |u.im| ≤ T0) {k : ℕ}
     (hk : (⌊u.im / h⌋ + JlH h T0).toNat = k) :
@@ -323,97 +319,107 @@ theorem count_line_windowC {h r T T0 : ℝ} (hh : 0 < h) (hr : 0 < r) (hr10 : r 
       simpa using hw
   exact sum_multRectD_le polyDatum_zeta2 F ((Finset.filter_subset _ _).trans hS) c hr hr10 hball
 
-/-- `count_line_windowG` for windows of height `h`, radius `r ≥ √(1.5² + (h/2)²)`. -/
-theorem count_line_windowH {h r T T0 : ℝ} (hh : 0 < h) (hr : 0 < r) (hr10 : r < 10)
-    (hhr : 1.5 ^ 2 + (h / 2) ^ 2 ≤ r ^ 2) (hT0 : 0 ≤ T0) (S : Finset ℂ)
-    (hS : S ⊆ zerosRectD zetaF T) (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ T0) (k : ℕ) :
-    ∑ u ∈ S.filter (fun u => (⌊u.im / h⌋ + JlH h T0).toNat = k), (multRectD zetaF T u : ℝ) ≤
-      ZLh h r T0 := by
-  set F := S.filter (fun u => (⌊u.im / h⌋ + JlH h T0).toNat = k) with hF
-  rcases F.eq_empty_or_nonempty with hE | ⟨u0, hu0⟩
-  · rw [hE, Finset.sum_empty]; exact ZLh_nonneg hr hr10
-  refine (count_line_windowC hh hr hr10 hhr hT0 S hS hre him k).trans ?_
-  set c := ((k : ℝ) - JlH h T0 + 1 / 2) * h with hc
-  obtain ⟨hu0S, hk0⟩ := Finset.mem_filter.1 hu0
-  have hcT : |c| ≤ |T0 + h| := by
-    have h0 := window_center hh hT0 (him u0 hu0S) hk0
-    have h0' := him u0 hu0S
-    rw [abs_of_pos (by linarith : (0:ℝ) < T0 + h)]
-    have := abs_sub_abs_le_abs_sub c u0.im
-    rw [abs_sub_comm] at this
+/-- `Σ_{m<k} 1/(m+1)² ≤ 2`. -/
+theorem sum_inv_sq_le_two (k : ℕ) : ∑ m ∈ Finset.range k, 1 / ((m : ℝ) + 1) ^ 2 ≤ 2 := by
+  have h : ∀ j : ℕ, ∑ m ∈ Finset.range (j + 1), 1 / ((m : ℝ) + 1) ^ 2 ≤ 2 - 1 / ((j : ℝ) + 1) := by
+    intro j
+    induction j with
+    | zero => norm_num
+    | succ j ih =>
+      rw [Finset.sum_range_succ]
+      have key : 1 / ((j : ℝ) + 2) ^ 2 ≤ 1 / ((j : ℝ) + 1) - 1 / ((j : ℝ) + 2) := by
+        rw [div_sub_div _ _ (by positivity) (by positivity), div_le_div_iff₀ (by positivity) (by positivity)]
+        nlinarith
+      have e : ((j + 1 : ℕ) : ℝ) + 1 = (j : ℝ) + 2 := by push_cast; ring
+      rw [e]
+      linarith
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · simp
+  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
+  have : 0 ≤ 1 / ((j : ℝ) + 1) := by positivity
+  linarith [h j]
+
+/-- One step of the telescoping: `(a + b log d)/d ≤ G(d) − G(d − 1) + (b/2)/(d − 1)²` for `d ≥ 2`,
+`G(t) = a log t + (b/2) log² t`. -/
+theorem log_div_step {a b d : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hd : 2 ≤ d) :
+    (a + b * Real.log d) / d ≤
+      (a * Real.log d + b / 2 * Real.log d ^ 2) - (a * Real.log (d - 1) + b / 2 * Real.log (d - 1) ^ 2) +
+        b / 2 * (1 / (d - 1)) ^ 2 := by
+  have hd0 : 0 < d := by linarith
+  have hd1 : 0 < d - 1 := by linarith
+  have hlogq : Real.log (d / (d - 1)) = Real.log d - Real.log (d - 1) := Real.log_div hd0.ne' hd1.ne'
+  have hℓ1 : 1 / d ≤ Real.log d - Real.log (d - 1) := by
+    have := Real.one_sub_inv_le_log_of_pos (show 0 < d / (d - 1) by positivity)
+    rw [hlogq] at this
+    have e : 1 - (d / (d - 1))⁻¹ = 1 / d := by field_simp; ring
     linarith
-  unfold ZLh
-  exact div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono hcT) (log_ratio_pos hr hr10).le
-
-/-- Zeros per line window next to the real axis (`|γ| ≤ h`): Jensen at height `h/2`. -/
-noncomputable def ZL0 (h r : ℝ) : ℝ := Real.log (BPz2 (h / 2) / 0.355) / Real.log (10 / r)
-
-theorem ZL0_nonneg {h r : ℝ} (hr : 0 < r) (hr10 : r < 10) : 0 ≤ ZL0 h r :=
-  div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos hr hr10).le
-
-/-- The two windows next to the real axis are centred at `±h/2`. -/
-theorem abs_center_le {h : ℝ} {k J : ℕ} (hk : k = J ∨ k + 1 = J) :
-    |((k : ℝ) - J + 1 / 2) * h| ≤ |h / 2| := by
-  rcases hk with rfl | hk
-  · rw [show ((k : ℝ) - k + 1 / 2) * h = h / 2 by ring]
-  · have : (J : ℝ) = k + 1 := by exact_mod_cast hk.symm
-    rw [this, show ((k : ℝ) - (k + 1) + 1 / 2) * h = -(h / 2) by ring, abs_neg]
-
-theorem sum_inv_max_split {h A B : ℝ} (hh : 0 < h) (hA : 0 ≤ A) (hB : 0 ≤ B) (J : ℕ) :
-    ∑ m ∈ Finset.range J, (if m = 0 then A else B) * (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) ≤
-      2 * A + B * (1 + Real.log J) / h := by
-  rcases Nat.eq_zero_or_pos J with rfl | hJ
-  · rw [Finset.sum_range_zero]
-    have : 0 ≤ B * (1 + Real.log ((0 : ℕ) : ℝ)) / h := div_nonneg (mul_nonneg hB (by simp)) hh.le
+  have hℓ2 : Real.log d - Real.log (d - 1) ≤ 1 / (d - 1) := by
+    have := Real.log_le_sub_one_of_pos (show 0 < d / (d - 1) by positivity)
+    rw [hlogq] at this
+    have e : d / (d - 1) - 1 = 1 / (d - 1) := by field_simp; ring
     linarith
-  obtain ⟨n, rfl⟩ : ∃ n, J = n + 1 := ⟨J - 1, by omega⟩
+  set ℓ := Real.log d - Real.log (d - 1) with hℓ
+  have hL : 0 ≤ Real.log d := Real.log_nonneg (by linarith)
+  have hℓ0 : 0 ≤ ℓ := le_trans (by positivity) hℓ1
+  have hsq : ℓ ^ 2 ≤ (1 / (d - 1)) ^ 2 := pow_le_pow_left₀ hℓ0 hℓ2 2
+  have hl1 : Real.log (d - 1) = Real.log d - ℓ := by rw [hℓ]; ring
+  rw [hl1]
+  have e1 : (a + b * Real.log d) / d = a * (1 / d) + b * Real.log d * (1 / d) := by field_simp
+  rw [e1]
+  have i1 := mul_le_mul_of_nonneg_left hℓ1 ha
+  have i2 := mul_le_mul_of_nonneg_left hℓ1 (mul_nonneg hb hL)
+  have i3 := mul_le_mul_of_nonneg_left hsq (by positivity : (0:ℝ) ≤ b / 2)
+  nlinarith
+
+/-- `Σ_{d ≤ n} (a + b log d)/d ≤ a(1 + log n) + (b/2) log² n + b`. -/
+theorem sum_log_div_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (n : ℕ) :
+    ∑ m ∈ Finset.range n, (a + b * Real.log ((m : ℝ) + 1)) / ((m : ℝ) + 1) ≤
+      a * (1 + Real.log n) + b / 2 * Real.log n ^ 2 + b := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp; positivity
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 := ⟨n - 1, by omega⟩
+  set F : ℕ → ℝ := fun m => a * Real.log ((m : ℝ) + 1) + b / 2 * Real.log ((m : ℝ) + 1) ^ 2 with hF
   rw [Finset.sum_range_succ']
-  have e : ∑ m ∈ Finset.range n, (if m + 1 = 0 then A else B) * (1 / max (1 / 2 : ℝ) (h * ((m + 1 : ℕ) : ℝ))) =
-      B * ∑ m ∈ Finset.range n, 1 / max (1 / 2 : ℝ) (h * ((m + 1 : ℕ) : ℝ)) := by
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun m _ => by rw [if_neg (Nat.succ_ne_zero m)]
-  have e0 : (if (0 : ℕ) = 0 then A else B) * (1 / max (1 / 2 : ℝ) (h * ((0 : ℕ) : ℝ))) = 2 * A := by
-    rw [if_pos rfl, Nat.cast_zero, mul_zero, max_eq_left (by norm_num)]; ring
-  rw [e, e0]
-  have h1 : ∑ m ∈ Finset.range n, 1 / max (1 / 2 : ℝ) (h * ((m + 1 : ℕ) : ℝ)) ≤
-      (1 / h) * ∑ m ∈ Finset.range n, ((m + 1 : ℕ) : ℝ)⁻¹ := by
-    rw [Finset.mul_sum]
-    refine Finset.sum_le_sum fun m _ => ?_
-    have hm : (0 : ℝ) < ((m + 1 : ℕ) : ℝ) := by positivity
-    calc 1 / max (1 / 2 : ℝ) (h * ((m + 1 : ℕ) : ℝ)) ≤ 1 / (h * ((m + 1 : ℕ) : ℝ)) :=
-          one_div_le_one_div_of_le (by positivity) (le_max_right _ _)
-      _ = 1 / h * ((m + 1 : ℕ) : ℝ)⁻¹ := by field_simp
-  have h2 : ∑ m ∈ Finset.range n, ((m + 1 : ℕ) : ℝ)⁻¹ = (harmonic n : ℝ) := by
-    simp [harmonic]
-  have h3 := harmonic_le_one_add_log n
-  have h4 : Real.log n ≤ Real.log ((n + 1 : ℕ) : ℝ) := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp
-    · exact Real.log_le_log (by exact_mod_cast hn) (by push_cast; linarith)
-  rw [h2] at h1
-  have h5 : (1 / h) * (harmonic n : ℝ) ≤ (1 + Real.log ((n + 1 : ℕ) : ℝ)) / h := by
-    rw [one_div_mul_eq_div]; exact div_le_div_of_nonneg_right (by linarith) hh.le
-  have h6 := mul_le_mul_of_nonneg_left (h1.trans h5) hB
-  have e2 : B * ((1 + Real.log ((n + 1 : ℕ) : ℝ)) / h) = B * (1 + Real.log ((n + 1 : ℕ) : ℝ)) / h := by ring
-  linarith
+  have h0 : (a + b * Real.log (((0 : ℕ) : ℝ) + 1)) / (((0 : ℕ) : ℝ) + 1) = a := by simp
+  rw [h0]
+  have hst : ∀ m ∈ Finset.range k, (a + b * Real.log (((m + 1 : ℕ) : ℝ) + 1)) / (((m + 1 : ℕ) : ℝ) + 1) ≤
+      (F (m + 1) - F m) + b / 2 * (1 / ((m : ℝ) + 1) ^ 2) := by
+    intro m _
+    have hd : (2 : ℝ) ≤ ((m + 1 : ℕ) : ℝ) + 1 := by
+      push_cast; linarith [(Nat.cast_nonneg m : (0:ℝ) ≤ m)]
+    have h := log_div_step ha hb hd
+    have e1 : ((m + 1 : ℕ) : ℝ) + 1 - 1 = (m : ℝ) + 1 := by push_cast; ring
+    rw [e1, one_div_pow] at h
+    simp only [hF]
+    calc _ ≤ _ := h
+      _ = _ := by ring
+  have hsum := Finset.sum_le_sum hst
+  rw [Finset.sum_add_distrib, Finset.sum_range_sub (f := F), ← Finset.mul_sum] at hsum
+  have hsq := sum_inv_sq_le_two k
+  have hF0 : F 0 = 0 := by simp [hF]
+  have hFk : F k = a * Real.log ((k + 1 : ℕ) : ℝ) + b / 2 * Real.log ((k + 1 : ℕ) : ℝ) ^ 2 := by
+    simp only [hF]; push_cast; ring
+  rw [hF0, hFk] at hsum
+  have := mul_le_mul_of_nonneg_left hsq (by positivity : (0:ℝ) ≤ b / 2)
+  nlinarith
 
-/-- **Line zeros**, sharper, with windows of height `h`: `Σ m_ρ g(ρ) ≤ C (4 ZL₀ + 2 ZL (1 + log J)/h)`
-if `g(ρ) max(½, |γ|) ≤ C`; the two windows next to the real axis are counted at height `h/2`. -/
+/-- **Line zeros**, sharper, with windows of height `h`, each counted by Jensen at its own centre:
+`Σ m_ρ g(ρ) ≤ 2C Σ_{d<J} log(B((d + ½)h)/0.355)/log(10/r) · 1/max(½, hd)` if `g(ρ) max(½, |γ|) ≤ C`. -/
 theorem line_sum_leH {T H h r : ℝ} (hH : 0 ≤ H) (hh : 0 < h) (hr : 0 < r) (hr10 : r < 10)
     (hhr : 1.5 ^ 2 + (h / 2) ^ 2 ≤ r ^ 2) (S : Finset ℂ) (hS : S ⊆ zerosRectD zetaF T)
     (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ H) (g : ℂ → ℝ) (hg0 : ∀ u ∈ S, 0 ≤ g u)
     {C : ℝ} (hC : 0 ≤ C) (hg : ∀ u ∈ S, g u * max (1 / 2) |u.im| ≤ C) :
     ∑ u ∈ S, (multRectD zetaF T u : ℝ) * g u ≤
-      C * (4 * ZL0 h r + 2 * ZLh h r H * (1 + Real.log (JlH h H)) / h) := by
+      C * (2 * ∑ m ∈ Finset.range (JlH h H), Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) /
+        Real.log (10 / r) * (1 / max (1 / 2 : ℝ) (h * (m : ℝ)))) := by
   set J := JlH h H with hJdef
   set idx : ℂ → ℕ := fun u => (⌊u.im / h⌋ + J).toNat with hidx
   have hJ := lt_JlH hh hH
-  have hZL0 : 0 ≤ ZLh h r H := ZLh_nonneg hr hr10
-  have hZ00 : 0 ≤ ZL0 h r := ZL0_nonneg hr hr10
   set d : ℕ → ℝ := fun k => if J ≤ k then ((k - J : ℕ) : ℝ) else ((J - 1 - k : ℕ) : ℝ) with hd
   set dn : ℕ → ℕ := fun k => if J ≤ k then k - J else J - 1 - k with hdn
   set w : ℕ → ℝ := fun k => 1 / max (1 / 2) (h * d k) with hw
-  set Zw : ℕ → ℝ := fun k => if dn k = 0 then ZL0 h r else ZLh h r H with hZw
+  set Zw : ℕ → ℝ := fun k => Real.log (BPz2 (((dn k : ℝ) + 1 / 2) * h) / 0.355) / Real.log (10 / r)
+    with hZw
   have hd0 : ∀ k, 0 ≤ d k := fun k => by simp only [hd]; split_ifs <;> positivity
   have hw0 : ∀ k, 0 ≤ w k := fun k => one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _))
   have hmaps : ∀ u ∈ S, idx u ∈ Finset.range (2 * J) := by
@@ -459,17 +465,15 @@ theorem line_sum_leH {T H h r : ℝ} (hH : 0 ≤ H) (hh : 0 < h) (hr : 0 < r) (h
     exact div_le_div_of_nonneg_left hC hm2 hmm
   have hcount : ∀ k, ∑ u ∈ S.filter (fun u => idx u = k), (multRectD zetaF T u : ℝ) ≤ Zw k := by
     intro k
-    by_cases h0 : dn k = 0
-    · have hZ : Zw k = ZL0 h r := by simp only [hZw]; exact if_pos h0
-      rw [hZ]
-      have hk : k = J ∨ k + 1 = J := by
-        simp only [hdn] at h0; split_ifs at h0 <;> omega
-      refine (count_line_windowC hh hr hr10 hhr hH S hS hre him k).trans ?_
-      exact div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono (abs_center_le hk))
-        (log_ratio_pos hr hr10).le
-    · have hZ : Zw k = ZLh h r H := by simp only [hZw]; exact if_neg h0
-      rw [hZ]
-      exact count_line_windowH hh hr hr10 hhr hH S hS hre him k
+    refine (count_line_windowC hh hr hr10 hhr hH S hS hre him k).trans ?_
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono (le_of_eq ?_)) (log_ratio_pos hr hr10).le
+    rw [← hJdef]
+    simp only [hdn]
+    split_ifs with hk
+    · rw [Nat.cast_sub hk]
+    · have e : (((J - 1 - k : ℕ) : ℝ) + 1 / 2) * h = -(((k : ℝ) - J + 1 / 2) * h) := by
+        rw [Nat.cast_sub (by omega), Nat.cast_sub (by omega)]; push_cast; ring
+      rw [e, abs_neg]
   calc ∑ u ∈ S, (multRectD zetaF T u : ℝ) * g u
       = ∑ k ∈ Finset.range (2 * J), ∑ u ∈ S.filter (fun u => idx u = k), (multRectD zetaF T u : ℝ) * g u :=
         (Finset.sum_fiberwise_of_maps_to hmaps _).symm
@@ -487,27 +491,26 @@ theorem line_sum_leH {T H h r : ℝ} (hH : 0 ≤ H) (hh : 0 < h) (hr : 0 < r) (h
               mul_le_mul_of_nonneg_right (hcount k) (mul_nonneg hC (hw0 k))
     _ = C * ∑ k ∈ Finset.range (2 * J), Zw k * w k := by
         rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun k _ => by ring
-    _ ≤ C * (4 * ZL0 h r + 2 * ZLh h r H * (1 + Real.log J) / h) := by
-        refine mul_le_mul_of_nonneg_left ?_ hC
+    _ ≤ C * (2 * ∑ m ∈ Finset.range J, Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) /
+          Real.log (10 / r) * (1 / max (1 / 2 : ℝ) (h * (m : ℝ)))) := by
+        refine mul_le_mul_of_nonneg_left (le_of_eq ?_) hC
         rw [← Finset.sum_range_add_sum_Ico _ (by omega : J ≤ 2 * J)]
         have hA : ∑ k ∈ Finset.range J, Zw k * w k = ∑ m ∈ Finset.range J,
-            (if m = 0 then ZL0 h r else ZLh h r H) * (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) := by
+            Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) / Real.log (10 / r) *
+              (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) := by
           rw [← Finset.sum_range_reflect]
           refine Finset.sum_congr rfl fun k hk => ?_
           rw [Finset.mem_range] at hk
           have e1 : J - 1 - (J - 1 - k) = k := by omega
           simp only [hw, hd, hZw, hdn, if_neg (show ¬ J ≤ J - 1 - k by omega), e1]
         have hB : ∑ k ∈ Finset.Ico J (2 * J), Zw k * w k = ∑ m ∈ Finset.range J,
-            (if m = 0 then ZL0 h r else ZLh h r H) * (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) := by
+            Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) / Real.log (10 / r) *
+              (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) := by
           rw [Finset.sum_Ico_eq_sum_range, show 2 * J - J = J by omega]
           refine Finset.sum_congr rfl fun k _ => ?_
           have e1 : J + k - J = k := by omega
           simp only [hw, hd, hZw, hdn, if_pos (show J ≤ J + k by omega), e1]
-        rw [hA, hB]
-        have hs := sum_inv_max_split hh hZ00 hZL0 J
-        calc _ ≤ (2 * ZL0 h r + ZLh h r H * (1 + Real.log J) / h) +
-              (2 * ZL0 h r + ZLh h r H * (1 + Real.log J) / h) := add_le_add hs hs
-          _ = _ := by ring
+        rw [hA, hB]; ring
 
 /-! ## Zeros above `H`: Gaussian windows -/
 
