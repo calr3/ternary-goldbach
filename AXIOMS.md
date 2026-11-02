@@ -1,13 +1,9 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 9 further axioms (`#print axioms`):
-* 2 finite computations of our own;
-* 7 published results;
-* no result of Helfgott's book [B].
+`Quot.sound`) and on 9 further axioms (`#print axioms`): 2 finite computations of our own, 
+and 7 published results. Each axiom has been checked:
 
-A false axiom would make the axiom set inconsistent, and then the formal proof would say nothing.
-So each axiom has been checked:
 * our computations against their scripts: range, edge cases, the exact Lean definitions involved,
   rounding, and margin;
 * published results against the papers.
