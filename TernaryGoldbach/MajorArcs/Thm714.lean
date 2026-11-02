@@ -3,13 +3,13 @@ import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Explicit.EtaPlusCg
 
 /-!
-# [B, Thm 7.1.4] from [B, Prop 9.4.2] (proved) and Platt's verification
+# [H, Thm 7.1.4] from [H, Prop 9.4.2] (proved) and Platt's verification
 
-`η₊(t) = h₂₀₀(t) t e^{-t²/2}` ([B, (9.63)], our `etaPlus`). From `prop_9_4_2` (our constants) with
+`η₊(t) = h₂₀₀(t) t e^{-t²/2}` ([H, (9.63)], our `etaPlus`). From `prop_9_4_2` (our constants) with
 * `q = 1`: `T₀ = 10⁸`, `|δ| ≤ 6·10⁵`: `|E| ≤ 10⁻¹⁸ + 6.24·10⁶/√x`;
 * `q ≥ 2`: `T₀ = 10⁸/q` (odd `q ≤ 1.5·10⁵`, `|δ| ≤ 6·10⁵/q`; even `q ≤ 1.25·10⁵`, `|δ| ≤ 1.2·10⁶/q`) or
   `T₀ = 200 + 7.5·10⁷/q` (even `1.25·10⁵ < q ≤ 3·10⁵`): `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q`,
-for `x ≥ 4.9·10²⁶`. ([B]: `4.772·10⁻¹¹ + 251400/√x` and `1.3482·10⁻¹⁴ + 1.617·10⁻¹⁰/q + (499900/√q + 52)/√x`
+for `x ≥ 4.9·10²⁶`. ([H]: `4.772·10⁻¹¹ + 251400/√x` and `1.3482·10⁻¹⁴ + 1.617·10⁻¹⁰/q + (499900/√q + 52)/√x`
 for `x ≥ 10¹²`.)
 -/
 
@@ -554,7 +554,7 @@ theorem errPZ_le {x : ℝ} (hx : 4.9e26 ≤ x) {δ : ℝ} (hδ : |δ| ≤ 6e5) :
   unfold errPZ
   linarith
 
-/-! ## [B, Thm 7.1.4] -/
+/-! ## [H, Thm 7.1.4] -/
 
 theorem hT0_of {q δ D T0 : ℝ} (hq : 0 < q) (hδ : |δ| ≤ D / q) (h1 : 10 * 3.1416 * D / q ≤ T0 - 200)
     (h2 : 250 ≤ T0) : 200 + max (10 * π * |δ|) 50 ≤ T0 := by
@@ -565,7 +565,7 @@ theorem hT0_of {q δ D T0 : ℝ} (hq : 0 < q) (hδ : |δ| ≤ D / q) (h1 : 10 * 
   have := max_le (show 10 * π * |δ| ≤ T0 - 200 by linarith) (show (50:ℝ) ≤ T0 - 200 by linarith)
   linarith
 
-/-- **[B, Thm 7.1.4], `q = 1`** (our constants), from `prop_9_4_2` at `T₀ = 10⁸` and Platt's
+/-- **[H, Thm 7.1.4], `q = 1`** (our constants), from `prop_9_4_2` at `T₀ = 10⁸` and Platt's
 verification: for `x ≥ 4.9·10²⁶`, `|δ| ≤ 6·10⁵`, `S_{η₊}(δ/x, x) = η̂₊(-δ) x + E x`,
 `|E| ≤ 10⁻¹⁸ + 6.24·10⁶/√x`. -/
 theorem thm_7_1_4_one {x : ℝ} (hx : 4.9e26 ≤ x) (χ : DirichletCharacter ℂ 1) {δ : ℝ}
@@ -586,7 +586,7 @@ theorem thm_7_1_4_one {x : ℝ} (hx : 4.9e26 ≤ x) (χ : DirichletCharacter ℂ
   simp only [ite_true]
   exact errPZ_le hx (by linarith)
 
-/-- **[B, Thm 7.1.4], odd `q ≤ 150000`** (Platt's verification at `10⁸/q`), our constants:
+/-- **[H, Thm 7.1.4], odd `q ≤ 150000`** (Platt's verification at `10⁸/q`), our constants:
 `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q` for `x ≥ 4.9·10²⁶`, `|δ| ≤ 6·10⁵/q`. -/
 theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd : Odd q) (hq : q ≤ 150000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 600000 / q) :
@@ -623,7 +623,7 @@ theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd :
   rw [show (1e8 : ℝ) / q + 3.48 = (1e8 + 3.48 * q) / q by field_simp]
   exact div_le_div_of_nonneg_right (by nlinarith) hq0.le
 
-/-- **[B, Thm 7.1.4], even `q ≤ 300000`** (Platt's verification at `max(10⁸/q, 200 + 7.5·10⁷/q)`), our
+/-- **[H, Thm 7.1.4], even `q ≤ 300000`** (Platt's verification at `max(10⁸/q, 200 + 7.5·10⁷/q)`), our
 constants: `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q` for `x ≥ 4.9·10²⁶`, `|δ| ≤ 1.2·10⁶/q`. -/
 theorem thm_7_1_4_even {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (heven : Even q) (hq : q ≤ 300000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 1200000 / q) :

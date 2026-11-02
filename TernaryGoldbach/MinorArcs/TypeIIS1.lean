@@ -3,17 +3,17 @@ import TernaryGoldbach.MinorArcs.H2Bound
 import TernaryGoldbach.MinorArcs.T2Bound
 
 /-!
-# Type II sums [B, §5.1]: the sum `S₁`
+# Type II sums [H, §5.1]: the sum `S₁`
 
-`S₁(U, W) = ∑_{max(U, x/2W) < m ≤ x/W, m odd} (∑_{d > U, d | m} μ(d))²` [B, (5.6)], `v = 2`.
+`S₁(U, W) = ∑_{max(U, x/2W) < m ≤ x/W, m odd} (∑_{d > U, d | m} μ(d))²` [H, (5.6)], `v = 2`.
 
-* `S1_eq`: the reduction [B, (5.7)–(5.8)]: `S₁ = ∑_{s odd} ∑_{r₁, r₂} μ(r₁)μ(r₂) #{l}` via the
+* `S1_eq`: the reduction [H, (5.7)–(5.8)]: `S₁ = ∑_{s odd} ∑_{r₁, r₂} μ(r₁)μ(r₂) #{l}` via the
   change of variables `(m, d₁, d₂) ↔ (s, r₁, r₂, l)`, `d_i = r_i l`, `l = (d₁, d₂)`, `m = s r₁ r₂ l`;
-* `integral_g2` (in `T2Defs.lean`): [B, (5.19)];
-* `S1_bound`: **[B, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
+* `integral_g2` (in `T2Defs.lean`): [H, (5.19)];
+* `S1_bound`: **[H, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
-`T2_le` ([B, (5.31)]) is proved in `T2Bound.lean`, from our computations and [B, Lemma 5.1.2]
+`T2_le` ([H, (5.31)]) is proved in `T2Bound.lean`, from our computations and [H, Lemma 5.1.2]
 (proved in `G2Bound.lean` from Ramaré's bound on `∑ μ(n)/n`). (5.37) and the corrected (5.36) are
 proved in `H2Bound.lean`.
 -/
@@ -27,7 +27,7 @@ open TernaryGoldbach.Prelim
 
 /-! ### The reduction (5.7)–(5.8) -/
 
-/-- The `l`-range of [B, (5.8)] for `y = B/(Us)`, `z = B/s`. -/
+/-- The `l`-range of [H, (5.8)] for `y = B/(Us)`, `z = B/s`. -/
 theorem mem_lrange {B U : ℝ} (hB : 0 < B) (hU : 0 < U) {s r₁ r₂ l : ℕ} (hs : 1 ≤ s)
     (hr₁ : 1 ≤ r₁) (hr₂ : 1 ≤ r₂) :
     l ∈ Ioc ⌊aL (B / U / s) (B / s) r₁ r₂⌋₊ ⌊bL (B / s) r₁ r₂⌋₊ ↔
@@ -49,12 +49,12 @@ theorem mem_lrange {B U : ℝ} (hB : 0 < B) (hU : 0 < U) {s r₁ r₂ l : ℕ} (
   · rintro ⟨h1, h2, h3, h4⟩
     refine ⟨⟨⟨by linarith, by linarith⟩, by nlinarith⟩, by nlinarith⟩
 
-/-- `S₁(U, W)` [B, (5.6)] with `v = 2`. -/
+/-- `S₁(U, W)` [H, (5.6)] with `v = 2`. -/
 noncomputable def S1 (x U W : ℝ) : ℝ :=
   ∑ m ∈ Ioc ⌊max U (x / (2 * W))⌋₊ ⌊x / W⌋₊,
     if Odd m then (∑ d ∈ m.divisors.filter (fun d : ℕ => U < (d : ℝ)), (μ d : ℝ)) ^ 2 else 0
 
-/-- The inner sum of [B, (5.8)] for fixed `s`, with `y = B/(Us)`, `z = B/s`, `B = x/W`. -/
+/-- The inner sum of [H, (5.8)] for fixed `s`, with `y = B/(Us)`, `z = B/s`, `B = x/W`. -/
 noncomputable def innerS (B U : ℝ) (s : ℕ) : ℝ :=
   ∑ r₁ ∈ Icc 1 ⌊B / U / s⌋₊, ∑ r₂ ∈ Icc 1 ⌊B / U / s⌋₊,
     if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
@@ -69,7 +69,7 @@ theorem moebius_mul_sq {r l : ℕ} (h : Squarefree (r * l)) : (μ (r * l) : ℝ)
   have hc := (Nat.squarefree_mul_iff.1 h).1
   rw [ArithmeticFunction.isMultiplicative_moebius.map_mul_of_coprime hc]; push_cast; ring
 
-/-- The left side of [B, (5.7)] as a sum over triples `(m, d₁, d₂)`. -/
+/-- The left side of [H, (5.7)] as a sum over triples `(m, d₁, d₂)`. -/
 theorem S1_eq_triples {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 0 < U) :
     S1 x U W = ∑ p ∈ (Icc 1 ⌊x / W⌋₊ ×ˢ Icc 1 ⌊x / W⌋₊ ×ˢ Icc 1 ⌊x / W⌋₊).filter
       (fun p : ℕ × ℕ × ℕ => Odd p.1 ∧ x / W / 2 < p.1 ∧ p.2.1 ∣ p.1 ∧ p.2.2 ∣ p.1 ∧
@@ -136,7 +136,7 @@ theorem mem_rrange {B U : ℝ} (hU : 0 < U) {s r₁ r₂ l : ℕ} (hs : 1 ≤ s)
   have : (s : ℝ) * r₁ * U ≤ s * r₁ * (r₂ * l) := by gcongr
   nlinarith
 
-/-- The right side of [B, (5.8)] as a sum over quadruples `(s, r₁, r₂, l)`. -/
+/-- The right side of [H, (5.8)] as a sum over quadruples `(s, r₁, r₂, l)`. -/
 theorem sum_innerS_eq {B U : ℝ} (hB : 0 < B) (hU : 1 ≤ U) :
     ∑ s ∈ (Icc 1 ⌊B⌋₊).filter Odd, innerS B U s =
     ∑ q ∈ (Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊).filter
@@ -333,14 +333,14 @@ theorem quads_eq_triples {B U : ℝ} (hB : 0 < B) (hU : 0 < U) :
     linear_combination (-(μ r₁ : ℝ) * μ r₂) * h'
 
 
-/-- **The reduction [B, (5.7)–(5.8)]**: `S₁(U, W) = ∑_{s ≤ x/W odd} innerS(x/W, U, s)`. -/
+/-- **The reduction [H, (5.7)–(5.8)]**: `S₁(U, W) = ∑_{s ≤ x/W odd} innerS(x/W, U, s)`. -/
 theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
     S1 x U W = ∑ s ∈ (Icc 1 ⌊x / W⌋₊).filter Odd, innerS (x / W) U s := by
   rw [S1_eq_triples hx hW (by linarith), sum_innerS_eq (div_pos hx hW) hU,
     quads_eq_triples (div_pos hx hW) (by linarith)]
 
-/-- **[B, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, our
-computations, and [B, Lemma 5.1.2] for `g₂` beyond `10⁸`, `G2Bound.lean`). -/
+/-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, our
+computations, and [H, Lemma 5.1.2] for `g₂` beyond `10⁸`, `G2Bound.lean`). -/
 theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := T2_le' hS
 
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
@@ -392,7 +392,7 @@ theorem innerS_sub {B U : ℝ} (s : ℕ) :
   · ring
   · ring
 
-/-- **[B, (5.34)]**: for `x, W > 0` and `U ≥ 1`,
+/-- **[H, (5.34)]**: for `x, W > 0` and `U ≥ 1`,
 `S₁(U, W) ≤ (x/W) H₂(x/(WU)) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`. -/
 theorem S1_bound {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
     S1 x U W ≤ x / W * H2 (x / (W * U)) +

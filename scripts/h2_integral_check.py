@@ -1,12 +1,12 @@
-"""Rigorous check of the corrected [B, (5.36)] (`integral_H2_le`, MinorArcs/TypeIIS1.lean), v = 2:
+"""Rigorous check of the corrected [H, (5.36)] (`integral_H2_le`, MinorArcs/TypeIIS1.lean), v = 2:
 
     int_1^T H2(S) dS/S <= 0.15107 log T + 0.0231   for all T >= 1   (C2 = 0.023059...),
 
 where H2(S) = (4/pi^2) max(T2(S), 0) for S < 16, H2(S) = 0.15107 for S >= 16, and
 T2(S) = sum_{s <= S odd} (1/s) int_{1/2}^1 g2(uS/s) du,  g2(x) = sum_{r1, r2 <= x, (r1, r2) = 1,
-r1 r2 odd} mu(r1) mu(r2)/(sigma(r1) sigma(r2))  ([B, (5.19), Lemma 5.1.2]).
+r1 r2 odd} mu(r1) mu(r2)/(sigma(r1) sigma(r2))  ([H, (5.19), Lemma 5.1.2]).
 
-[B, (5.32)] claims int_1^T G2(S) dS/S <= 0.37273 log T (G2 >= T2), i.e. C2 = 0; this is false:
+[H, (5.32)] claims int_1^T G2(S) dS/S <= 0.37273 log T (G2 >= T2), i.e. C2 = 0; this is false:
 int_1^4 T2(S) dS/S = (log 2 - 1/2) + (1/2) log(3/2) + (1/3) log(4/3) + 1/24 = 0.53344 > 0.37273 log 4.
 
 For S >= 16 the integrand is 0.15107/S, so the excess d(T) = int_1^T H2/S - 0.15107 log T is constant
@@ -15,7 +15,7 @@ a step function, so int_0^y g2 is piecewise linear); the integrals are exact rat
 evaluated in interval arithmetic.  Within a piece the integrand H2(S) - 0.15107 changes sign at most once, so the maximum of d on
 the piece is at an endpoint or at that sign change; all three are evaluated.
 
-Also checks `H2_le` ([B, (5.37)]): T2(S) <= 1/2 on [1, 16) (exact; equality on [2, 3)), so
+Also checks `H2_le` ([H, (5.37)]): T2(S) <= 1/2 on [1, 16) (exact; equality on [2, 3)), so
 H2 <= (4/pi^2)(1/2) = 2/pi^2 there, and H2 = 0.15107 < 2/pi^2 for S >= 16.
 
 Usage: python3 scripts/h2_integral_check.py   (seconds; needs sympy, mpmath)
@@ -69,7 +69,7 @@ d = iv.mpf(0); best = iv.mpf(0); T2max = Fr(0)
 for a, b in zip(bp, bp[1:]):
     al, be = coeffs(a, b)
     assert al + be / b >= 0 and al + be / a >= 0          # T2 >= 0 on [1, 16]
-    # H2_le ([B, (5.37)]): T2 <= 1/2 on [1, 16); T2 = al + be/S is monotone on the piece.
+    # H2_le ([H, (5.37)]): T2 <= 1/2 on [1, 16); T2 = al + be/S is monotone on the piece.
     T2max = max(T2max, al + be / a, al + be / b)
     # on (a, b) the integrand c4(al + be/S) - c changes sign at most once, at S* = c4 be/(c - c4 al);
     # so max_{[a,b]} d is attained at a, b or S*.
@@ -85,7 +85,7 @@ for a, b in zip(bp, bp[1:]):
     if d.b > best.b:
         best = d
     if b == 4:
-        print("d(4) =", d, " (> 0: [B, (5.32)] fails at T = 4)")
+        print("d(4) =", d, " (> 0: [H, (5.32)] fails at T = 4)")
 print("max T2 on [1, 16] =", T2max, "=", float(T2max))
 assert T2max <= Fr(1, 2)
 print("OK (H2_le): T2(S) <= 1/2 on [1, 16), so H2(S) <= 2/pi^2 everywhere")

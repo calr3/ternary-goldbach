@@ -7,7 +7,7 @@ import TernaryGoldbach.CircleMethod
 * `montgomery_ineq`: for squarefree `r` and `a(n)` supported on `n` coprime to `r`,
   `|S(α)|² ≤ φ(r) ∑_{b mod r, (b,r)=1} |S(α + b/r)|²`, where `S(β) = ∑ a(n) e(βn)`.
   This is Montgomery's inequality [Mon68], [IK04, Lemma 7.15] in the case `ω(p) = 1` used by
-  [B, (5.40), (5.46)]; in this case it is just Cauchy–Schwarz plus the Ramanujan sum.
+  [H, (5.40), (5.46)]; in this case it is just Cauchy–Schwarz plus the Ramanujan sum.
 -/
 
 open Finset Complex

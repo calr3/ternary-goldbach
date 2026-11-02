@@ -2,11 +2,11 @@ import TernaryGoldbach.MinorArcs.GBound
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
 /-!
-# `g_x(r)` is non-increasing in `r` [B, Lemma 11.2.4 for `φ = δ₁`]
+# `g_x(r)` is non-increasing in `r` [H, Lemma 11.2.4 for `φ = δ₁`]
 
 `gx x` is antitone on `[670, x^{1/3}/6]` (`gx_antitoneOn`).
 
-We do not follow [B]'s derivative test (11.23)–(11.25).  Instead, writing `s = log r`, each
+We do not follow [H]'s derivative test (11.23)–(11.25).  Instead, writing `s = log r`, each
 term of `g_x(r)` has the form `Q(s) e^{-ps}` (`p = 1/2` or `1`), and such a function is
 antitone wherever `Q' ≤ pQ` (`antitoneOn_mul_exp_neg`).  For the main term
 `Q = (R log 2r + 0.8764) √Ϝ`, the elasticities are `≤ 0.27125/ℓ` for `R` (`ℓ = log(9x^{1/3}/4.008r)
@@ -261,7 +261,7 @@ theorem gx_eq {x r : ℝ} (hx : 0 < x) (hr : 0 < r) :
     Real.log_mul (by norm_num) hr.ne', Real.sqrt_mul (by norm_num)]
   field_simp
 
-/-- **[B, Lemma 11.2.4] for a single scale** (our `g_x`): `r ↦ g_x(r)` is non-increasing on
+/-- **[H, Lemma 11.2.4] for a single scale** (our `g_x`): `r ↦ g_x(r)` is non-increasing on
 `[670, x^{1/3}/6]`. -/
 theorem gx_antitoneOn {x : ℝ} (hx : 2.16e20 ≤ x) : AntitoneOn (gx x) (Icc 670 (x ^ (1 / 3 : ℝ) / 6)) := by
   obtain ⟨hT, -, -, -⟩ := cube_root_facts hx

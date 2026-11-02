@@ -5,15 +5,15 @@ Notes for continuing the formalization. For the overall map, see `BLUEPRINT.md`.
 
 ## Roadmap: the explicit-formula sorries (Props 9.3.2, 9.4.2, 9.5.1) and Dusart
 
-[B]'s proofs: Prop 9.x = Lemma 9.1.1 (explicit formula: shift `∫_{(3/2)} −L'/L G_δ x^s` to `ℜs = −1/2`) +
+[H]'s proofs: Prop 9.x = Lemma 9.1.1 (explicit formula: shift `∫_{(3/2)} −L'/L G_δ x^s` to `ℜs = −1/2`) +
 Lemma 9.1.4 (zeros with `|γ| ≤ T₀`, on the line, Cauchy–Schwarz + Mellin–Plancherel) + Lemma 9.1.3 with
-Cor 8.0.2 (zeros with `|γ| > T₀`). Inputs [B] cites: `N(T,χ) = (T/π)log(qT/2πe) + O*(0.5 log qT + 17.7)`
+Cor 8.0.2 (zeros with `|γ| > T₀`). Inputs [H] cites: `N(T,χ) = (T/π)log(qT/2πe) + O*(0.5 log qT + 17.7)`
 ([Ros41], [McC84a], [Tru]), the functional equation (9.8), digamma bounds (9.10), `|ζ'/ζ(3/2)| ≤ 1.50524`.
 Erratum-ish: Lemma 9.1.3's `N⁺ = N/2` holds only for real `χ`; correct version sums over `χ` and `χ̄` (zeros
 of `L(χ)` with `γ < 0` are conjugates of zeros of `L(χ̄)` with `γ > 0`), which needs `f` to bound
 `|G_δ|` and `|G_{−δ}|` — Cor 8.0.2 (and our rotation bound) is symmetric in the sign of `δ`, so fine.
 1. **Cor 8.0.2 — DONE** (`Explicit/MellinRotate.lean`, no `sorry`): rotate `t = re^{iθ}`; same exponents
-   `0.1598`, `0.1065`, constants `0.892|τ|`, `0.588 y²` (per term; [B]: `5.13`, `1.99` for pairs).
+   `0.1598`, `0.1065`, constants `0.892|τ|`, `0.588 y²` (per term; [H]: `5.13`, `1.99` for pairs).
 **Progress (2026-11-01):** `Explicit/MellinRotate` (Cor 8.0.2), `Explicit/LGrowth` (`L = s∫S(t)t^{-s-1}` and
 `|L| ≤ (q+1)|s|/σ` for `σ > 0`), `Explicit/ZeroCount` (Jensen: zeros in `|s−(2+iT)| ≤ 1.6`),
 `Explicit/Landau` (`|f'/f − Σ_{|ρ−c|<R/2} m/(z−ρ)| ≤ 48 log(B/|f(c)|)/R` on `|z−c| ≤ R/4`) — all sorry-free.
@@ -72,7 +72,7 @@ e^{−c|ℑs|}` on `−1 ≤ ℜs ≤ 2` for `0 ≤ c ≤ 0.6` (`c = 1/400` for 
 `≈ 2.65·10⁻⁹ + 4·10⁻⁹/log x`); Prop 7.1.5 keeps `|E₂| ≤ 2·10⁻⁶ + 366.91/√x` but now for `x ≥ 4.9·10²⁶` (the
 only use, `MinorTotal.T_le`, has that). **Remaining sorry**: Dusart.
 **Prop 9.3.2 for `q ≥ 2` DONE** (`Explicit/LineZeros`, `ZeroSumBound`, `ExplicitBound`, `MajorArcs/Prop932`):
-`|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [B]'s constants) for
+`|S| ≤ E₀ + E₁√x + E₂x + V/(2π√x)`; `prop_9_3_2` now = cited `prop_9_3_2_one` (ζ, [H]'s constants) for
 `q = 1`, proved for `q ≥ 2`. Cor 9.3.3 averages either error (`err933N`); Cor 7.1.3 restated as
 `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/√(qy)`, `y ≥ 10²⁵` (E₁ ≤ 3.42·10⁶/√q, E₂ ≤ 2·10⁻¹⁸, E₀ ≤ 15300, V ≤ 2.1·10¹⁶);
 ArcCharsStar `1.35e-7, 1.21e-7 → 1.49e-6`, resid_star `9.9e-14 → 1.34e-11`, MajorTotal `3.15e-7 → 3.67e-6`
@@ -199,20 +199,20 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     split into ten ranges of 1000.
   * `SmallFsq`: endpoint checks in blocks of 4 values of `n`; for `n = 2` the 3000-term tail is checked
     in 12 blocks.
-  ternary_goldbach now depends on 28 axioms (14 our own, 7 published, 7 from [B]).
+  ternary_goldbach now depends on 28 axioms (14 our own, 7 published, 7 from [H]).
 * `H2_le` ((5.37)) and the corrected (5.36) `integral_H2_le` proved (`MinorArcs/H2Bound.lean`):
   * `T₂ = α_n + β_n/S` on `[n, n+1)` from `integral_g2`; the case split is `2 s max(r₁, r₂) ≤ n`;
   * kernel tables of `μ`, `σ` (`r ≤ 15`), `α_n`, `β_n` (`n ≤ 15`) and `log j` (`j ≤ 16`, `10⁻⁹`);
   * the integral by FTC with antiderivative `k(α log S − β/S)`; the excess at integers from these
     tables; `[2, 15]` by monotonicity (`H₂ ≥ 0.15107`), `[1, 2]` and `[15, 16]` by hand;
   * `g2`, `T2`, `H2` moved to `MinorArcs/T2Defs.lean` so that `TypeIIS1` can import the proofs.
-  ternary_goldbach now depends on 26 axioms (14 our own, 7 published, 5 from [B]).
+  ternary_goldbach now depends on 26 axioms (14 our own, 7 published, 5 from [H]).
 * Rigorous re-checks of all our computation axioms (`scripts/rigorous/`):
   * `rig_checks.c`: MPFR intervals with directed rounding;
   * `moebius_sqrt_rig.c`: IEEE round-down mode, `10¹⁰` terms in 6 min.
   All pass; the values agree with the float scripts. Published equivalents:
   * `mertens_product_small`: [RS62, Thm 15] at primorials;
-  * `moebius_sqrt_small`: [B, (2.24)];
+  * `moebius_sqrt_small`: [H, (2.24)];
   Building needs only `gcc`, `gmpy2` (for the MPFR headers) and the system MPFR.
 * (B.6) and (B.11) proved (`MinorArcs/Eta2Fourier.lean`); new axiom `eta2DD_small` for
   `0 ≤ t ≤ 655`:
@@ -223,28 +223,28 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `norm_Jq_le`: one more integration by parts;
   * `norm_eta2log4_le`: `48 log 2` with no numerics, from FTC for `∫|h''|` (constant sign).
   The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
-  Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 3).
-  ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [B]).
-* (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s constants; inputs `etaO_numerics` (now proved):
+  Found: [H]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 3).
+  ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [H]).
+* (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [H]'s constants; inputs `etaO_numerics` (now proved):
   * expand `(g + D)²` in `u = log t`;
   * cross terms by Parseval (`integral_conj_mul_fourier` via `Lp.inner_fourier_eq`, and Fubini for
     `g_H`), with the general tail bound `tail_fourier_le_deriv2`;
   * weights in the form `W(u) = eᵘ 1_{[0,2]}(eᵘ) k(eᵘ)` (`IF`) for integrability, with `t log t`
     continuous for the `log` weight;
   * computation: `scripts/rigorous/eta_circ_rig.py` (Arb, under a second).
-  ternary_goldbach now depends on 25 axioms (16 our own, 7 published, 2 from [B]).
+  ternary_goldbach now depends on 25 axioms (16 our own, 7 published, 2 from [H]).
 * (5.31) `T2_le` proved (`MinorArcs/T2Bound.lean`):
   * `T₂(S) = S⁻¹ ∫₀^S g₂ N` with `N` the count of odd `s ∈ (S/2y, S/y]`; the counting lemma via
     `#{odd ≤ n} = (n+1)/2`;
   * notation pitfall: the body of `∫ y in a..b, …` absorbs a following `+ …`, so parenthesize;
   * computations: `scripts/rigorous/t2_rig.c` (MPFR, `g₂(n)` for all `n ≤ 10⁸` in 8 min), giving
     `T2_small`, `T2_mid`;
-  * [B, Lemma 5.1.2] is the remaining axiom, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
-    `|m(x)| ≤ 0.03/log x` ([B, (2.21)]): our Lean `0.55/(log x − 0.75)` is about 18 times too weak.
-  ternary_goldbach now depends on 27 axioms (18 our own, 7 published, 2 from [B]).
-* [B, Lemma 5.1.2] proved (`MinorArcs/G2Moebius.lean` → `G2Euler.lean` → `G2Numerics.lean` →
+  * [H, Lemma 5.1.2] is the remaining axiom, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
+    `|m(x)| ≤ 0.03/log x` ([H, (2.21)]): our Lean `0.55/(log x − 0.75)` is about 18 times too weak.
+  ternary_goldbach now depends on 27 axioms (18 our own, 7 published, 2 from [H]).
+* [H, Lemma 5.1.2] proved (`MinorArcs/G2Moebius.lean` → `G2Euler.lean` → `G2Numerics.lean` →
   `G2Bound.lean`): `|g₂(x)| ≤ 0.0215/(log x)² + 528(1 + log x)²/x`, from the new published axiom
-  `ramare_moebius` ([B, (2.21)], Ram13) and `moebius_sqrt_small`:
+  `ramare_moebius` ([H, (2.21)], Ram13) and `moebius_sqrt_small`:
   * one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`, `H_d = f·1_{(·,d)=1} ∗ (1/id) ≥ 0`, via
     `ArithmeticFunction` ring identities and `sum_Ioc_mul_eq_sum_sum`;
   * Rankin weight `u^{1/22}` (valid since `log(x/u) ≥ 22` when Ramaré is used);
@@ -255,23 +255,23 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * the `d`-sum at `s = 1/2` is compared with `τ(d)/d` (multiplicative comparison on prime powers,
     `(t−1)⁴ + 1 ≥ 0`);
   * the tail integral in `T2Bound` is now `≤ 0.0036`.
-  ternary_goldbach now depends on 27 axioms (18 our own, 8 published, 1 from [B]).
-* [B, Prop 12.2.4] proved (`MinorArcs/LSQuot1.lean` … `LSQuot6.lean`); no [B] axiom remains:
+  ternary_goldbach now depends on 27 axioms (18 our own, 8 published, 1 from [H]).
+* [H, Prop 12.2.4] proved (`MinorArcs/LSQuot1.lean` … `LSQuot6.lean`); no [H] axiom remains:
   * inputs: Ramaré's (12.12) (published axiom `ramare_Gq`, stated with an existential
     `c ∈ [1.3325822, 1.3325823]` since `c_E` is not computed in Lean) and the computation
     `prop1224_check` (`scripts/rigorous/p1224_check.c`, 22 min on 22 threads for `q < 2.2·10¹⁰`;
-    [B] needed two weeks single-core, mostly because it recomputed more);
+    [H] needed two weeks single-core, mostly because it recomputed more);
   * structure: `star_suffices` (θ ≤ 0.6274), `regionL` (`R ≥ λ(q)`), `checkC_suffices`, `regionS`
     (`G_q(R) G_P(t) ≤ G_q(tR)`, `G(t) ≤ (P/φ(P)) G_P(t)`, `div_totient_lt`, `G(t) ≥ log t + 1.064`),
     `large_q_hS` (`λ⁷ ≤ (103/120)⁹ q²` by exchange + primorial induction, `ĝ(p)^{21} ≤ p²` for
     `p ≥ 37`);
   * the computation's (S)-branch uses the monotone form `log q + 1.039(n+1) ≤ 0.826 (qn)^{2/9}`, so
     Lean needs no concavity; τ = 2/9 makes the large-`q` condition polynomial;
-  * [B] slips found (AXIOMS.md Finding 4): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
+  * [H] slips found (AXIOMS.md Finding 4): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
     analytic range starts at `4.42·10⁷`, not `4·10⁷`;
   * name clashes to watch: `kap`, `Gq_nonneg`, `ghat`, `sum_moebius_divisors` already exist in
     `MinorArcs`.
-  ternary_goldbach now depends on 28 axioms (19 our own, 9 published, 0 from [B]).
+  ternary_goldbach now depends on 28 axioms (19 our own, 9 published, 0 from [H]).
 * Independent checks of the inputs:
   * `prop1224_check` was re-run in interval arithmetic (`scripts/rigorous/p1224_rig.c`).
   * `ramare_Gq` was checked against Ramaré's 1995 paper (numdam, open access: Lemma 3.4 and (3.6)).
@@ -414,7 +414,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     * The pointwise route (Lemma 5.1.2) cannot reach `10⁴`: even with exact `m(k)` the bound is
       about `36/x`; the mean-square route gains `m(k)²` on average instead of its envelope.
   * `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0045 ≤ 0.3672` for `S ≥ 10⁴`.
-  * [B, Lemma 5.1.2] (`G2Bound.lean`) stays proved but is no longer used.
+  * [H, Lemma 5.1.2] (`G2Bound.lean`) stays proved but is no longer used.
   * 10 axioms (2 own, 8 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
@@ -460,7 +460,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     formula near `10¹⁹` and by the major arcs (`r₀ = 150000`, heights near `10⁸/q`).
   * `buthe_psi`, `buthe_theta`: stay. From `rh_upto` alone the explicit formula gives about
     `√x log²x/(8π)` below `10¹⁹`, 10–80 times `0.94√x`; (2.13), the Mertens product on
-    `[10⁵, 2·10⁸]` and the θ bounds of [B, §2] are tight.
+    `[10⁵, 2·10⁸]` and the θ bounds of [H, §2] are tight.
   * `ramare_moebius`: stays. Its proof rests on computations of `M(x)`; our uses need a constant
     near `0.05/log x` (g₂ tail). `MoebiusBound.lean`'s `0.55/(log x − 0.7521)` is derived from it
     (AXIOMS.md's Outlook called it elementary; fixed).
@@ -477,7 +477,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
 
 Every axiom has been checked against its source or script, and all scripts were re-run. Findings:
 
-* **[B, (5.32)] is false for `v = 2`, so `integral_H2_le` ((5.36)) is false.**
+* **[H, (5.32)] is false for `v = 2`, so `integral_H2_le` ((5.36)) is false.**
   * Exactly, `∫₁⁴ T₂/S = 0.53344 > 0.37273 log 4`.
   * True version: `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` (`scripts/h2_integral_check.py`; the supremum
     of the excess is `0.023059`, constant from `T = 16` on).
@@ -493,11 +493,11 @@ Every axiom has been checked against its source or script, and all scripts were 
   * New checks: `scripts/t2_check.py` ((5.31) on `[16, 10⁵]`, float, max `0.371249`),
     `scripts/eta_plus_check.py` ((9.94) via FFT, float), and `H2_le` exactly in
     `h2_integral_check.py`.
-* **`prime_ladder_input` restated with gaps `≤ 4·10¹⁸`**, as in [HP13] and [B, §1.6]; before, it
+* **`prime_ladder_input` restated with gaps `≤ 4·10¹⁸`**, as in [HP13] and [H, §1.6]; before, it
   said `≤ 4·10¹⁸ − 4`. `ternaryUpTo_of_ladder_two` uses binary Goldbach up to `N`, `N + 2` as a sum
   of two primes, and gaps `≤ N`. `PrattPrime.lean` proves the two primes by kernel-checked Pratt
   certificates (`powModAux` and `lucas_primality`, with `decide +kernel`).
-* Docstrings fixed: `eta2_fourier_bound'` is [B, Lemma B.1.2, (B.6)], and `rh_upto` notes that
+* Docstrings fixed: `eta2_fourier_bound'` is [H, Lemma B.1.2, (B.6)], and `rh_upto` notes that
   `γ ≤ 0` is classical.
 
 ## Dusart replaced: no `sorry` left (2026-11-01)
@@ -544,26 +544,26 @@ Consumers absorb `ε_pl`:
 ## Status (2026-11-01, later)
 
 * `ternary_goldbach` depends on 4 `sorry`s — `dusart_theta` and the three cited explicit formulas
-  [B, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical axioms.
-  **(14.27) is proved** (`MajorArcs/MajorTotal.lean`, constant `1.049` for [B]'s `1.058259`), so all of
+  [H, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical axioms.
+  **(14.27) is proved** (`MajorArcs/MajorTotal.lean`, constant `1.049` for [H]'s `1.058259`), so all of
   `Helfgott/Inputs.lean` is proved; the final margin is `1.049 − 1.0376 = 0.0114 x²/κ`.
 
 ## Status (2026-11-01)
 
 * `ternary_goldbach` depends on 5 `sorry`s — `major_arcs_input` ((14.27)), `dusart_theta`, and the three
-  cited explicit formulas [B, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical
+  cited explicit formulas [H, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical
   axioms. (14.7) is proved (`MajorArcs/L2Major.lean`), with a Cauchy–Schwarz-free error analysis that
-  gives `8.688x … 8.709x` (so [B]'s `0.0754` slip is moot); it brought Prop 9.4.2 onto the main path and
+  gives `8.688x … 8.709x` (so [H]'s `0.0754` slip is moot); it brought Prop 9.4.2 onto the main path and
   added the numerical axiom `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`.
 
 ## Status (2026-10-31)
 
 * `ternary_goldbach` depends only on the 4 `sorry`s in `Helfgott/Inputs.lean`: the major arcs
   (14.27), the minor arcs (14.49), binary Goldbach up to 4·10¹⁸, and the prime ladder.
-* **(14.49) is now stated with `1.0376` instead of [B]'s `1.00948`** (final margin `0.020659`
-  instead of `0.048779`; `final_inequality(_crude)` re-proved). That is what [B, §14.3] gives
+* **(14.49) is now stated with `1.0376` instead of [H]'s `1.00948`** (final margin `0.020659`
+  instead of `0.048779`; `final_inequality(_crude)` re-proved). That is what [H, §14.3] gives
   when re-run with the Theorem 3.1.1 we actually proved (`0.8103`, `3.8 x^{5/6}` instead of
-  `0.5`, `3.36`): `scripts/minor_arc_total_numerics.py` reproduces [B]'s `M ≤ 0.80508` as
+  `0.5`, `3.36`): `scripts/minor_arc_total_numerics.py` reproduces [H]'s `M ≤ 0.80508` as
   `0.80279` (slightly less rounding) and gives `M ≤ 0.82744`, `Z ≤ 1.037499 x²/κ` with the
   corrected constants. The changes come from `g(r₀)` in (14.37) (`0.38491 → 0.39761`), the `+0.5`
   term of `f₁` and `f₂` in (14.47) (`0.11438 → 0.11802`), and (14.43) (`0.30351 → 0.31181`).
@@ -581,17 +581,17 @@ Consumers absorb `ε_pl`:
   dependent types. Then `weight_sum` gives `Σ_{q̃ ≤ X} [c∣q] w/φ(q) = (c/φ(c)) κ_c G_{c̃}(X/c̃)`.
   The arcs part is periodization, covering, and Farey disjointness at level `Q`. Pointwise in `β`,
   the hypothesis on `G` is used with `s = 2Q₀/m_{Q₀}(β)`.
-  **Change from [B]: `δ₀ ≥ 2` instead of `δ₀ ≥ 1`**. The proof needs primes `n > √x` to be coprime
-  to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`. [B] uses `δ₀ = 8`.
+  **Change from [H]: `δ₀ ≥ 2` instead of `δ₀ ≥ 1`**. The proof needs primes `n > √x` to be coprime
+  to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`. [H] uses `δ₀ = 8`.
 * ✅ **Thm 13.2.1, conditional** (`Thm1321.lean`, depends only on Prop 12.2.4):
   `thm_13_2_1_conditional` instantiates Prop 13.1.2 with `M n = 𝔐_{8,n}` at scale `x`, the ℓ²
   bound from Cor 12.2.5 (`Q₀ = n + 1`, `δ₀ = 8`) and Plancherel at the top level `r₁`. The ℓ∞ input
   is a **hypothesis** `hv`: `|S_{η_*}(α,x)| ≤ g(n)` off `𝔐_{8,n}(x)`. `OffArcs.lean` proves the exact
-  arc criterion behind [B]'s ℓ∞ step: `2α = a/q + δ/y` with `q ≤ r`, `|δ|q < δ₀r` ⟹
+  arc criterion behind [H]'s ℓ∞ step: `2α = a/q + δ/y` with `q ≤ r`, `|δ|q < δ₀r` ⟹
   `α ∈ 𝔐_{δ₀,r}(y)`, for every parity case (`mem_majorArcs_of_approx`). So off `𝔐_{δ₀,r}(y)`,
   `r_α ≥ r` (`le_rAlpha_of_not_mem`), giving `norm_S_le_off_arcs`. `hv_of_split` reduces `hv` to that
   plus a bound on the **gap `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`**, the one missing ingredient. (Also still
-  needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [B, §13.2], and the
+  needed for (14.49): splitting `S_{η₊}` into primes `> √x` plus the rest [H, §13.2], and the
   numerics of §14.3 for an explicit `g`.)
 * ✅✅ **(14.49) fully assembled, including the numerics** (2026-10-31). `numerics_M`
   (`MinorArcs/NumericsFinal.lean`) is proved: 9 generated cells for `x ∈ [4.9·10²⁶, 4.9·10¹⁰¹]`
@@ -613,8 +613,8 @@ Consumers absorb `ε_pl`:
   everything at scale `y`, a fresh Dirichlet approximation per scale `wy`, levels up to
   `x^{0.3}`, and Cor 7.1.3 on the base gap). `Z ≤ 0.866 x²/κ < 1.058259`. Formalizing it is the
   current work.
-* (Superseded.) **Blocker for (14.49): [B, Thm 13.2.1] mixes two scales of major arcs** (see the section
-  "Ch. 13: scale erratum" below). As written, [B]'s minor-arc bound covers only the complement
+* (Superseded.) **Blocker for (14.49): [H, Thm 13.2.1] mixes two scales of major arcs** (see the section
+  "Ch. 13: scale erratum" below). As written, [H]'s minor-arc bound covers only the complement
   of the arcs at scale `y = x/κ`, while (14.27) and our `minor_arcs_input` use the arcs at scale
   `x`. The obvious repairs fail numerically. Decide how to proceed before formalizing Ch. 13.
 * **Next: Ch. 11 (Prop 11.2.3), then Ch. 12, Ch. 13 → (14.49).** See the Prop 11.2.3 erratum
@@ -623,20 +623,20 @@ Consumers absorb `ε_pl`:
   (`theorem_3_1_1_scaled(_le_one)`, `EtaStarBound.lean`); (11.11) `norm_S_eta2_le_gx`
   (`GBound.lean`, `q/φ(q) ≤ Ϝ(r)` via the trusted Lemma C.2.2); **`gx_antitoneOn`**: `g_x(r)` is
   non-increasing on `[670, x^{1/3}/6]` (`GMono.lean`, no `sorry`; proved via
-  `Q(log r) r^{-p}` with `Q' ≤ pQ`, not [B]'s (11.23)–(11.25)). **`prop_11_2_3`** (`Prop1123.lean`):
+  `Q(log r) r^{-p}` with `Q' ≤ pQ`, not [H]'s (11.23)–(11.25)). **`prop_11_2_3`** (`Prop1123.lean`):
   Prop 11.2.3 in corrected form, `|S_{η_*}| ≤ y(∫_{w₀}^{w₁} Gφ + 17(∫_0^{w₀}φ + ∫_{w₁}^∞φ))` for
   any integrable majorant `G(w) ≥ g_{wy}(min(1,w) r)` (trivial bound `17z` from Mathlib's
   Chebyshev `ψ ≤ (log 4 + 4)x`; same 20 trusted items as Thm 3.1.1, checked with
   `scripts/sorry_deps.lean`). Still to do: closed-form/numerical majorants `G` (the analogue of
-  [B]'s `g_{y,φ}`, via Lemma 11.2.2 convexity and `C_{φ,2,K}`). Old list, for reference: the region
+  [H]'s `g_{y,φ}`, via Lemma 11.2.2 convexity and `C_{φ,2,K}`). Old list, for reference: the region
   `w < 1/K` (trivial bound `|S_{η₂}(α,z)| ≤ S_{η₂}(0,z) ≤ 1.04488 z`, Cor. C.1.3, trusted), the
   large-`w` tail, and integrating against `φ` (convexity, Lemma 11.2.2; `C_{φ,2,K}`).
 * Part I (minor arcs):
-  * [B, §2.3] proved (`MinorArcs/FourierSums.lean`), [B, §4.1] proved (`MinorArcs/TrigSums.lean`).
-  * [B, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**
+  * [H, §2.3] proved (`MinorArcs/FourierSums.lean`), [H, §4.1] proved (`MinorArcs/TrigSums.lean`).
+  * [H, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**
     (`TypeILogProof.lean: lemma_4_2_3`, the case §6.2.1 uses) are proved. Their only non-standard
-    dependencies are the trusted `eta2_fourier_bound'` ([B, (B.6)]) and `eta2log_fourier_bound`
-    ([B, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
+    dependencies are the trusted `eta2_fourier_bound'` ([H, (B.6)]) and `eta2log_fourier_bound`
+    ([H, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
     `#print axioms`.
   * **Lemma 4.2.4** (`TypeI2Rest.lean: lemma_4_2_4`) is proved, both cases. Its non-standard
     dependencies are `eta2_fourier_bound'`, (2.12), (2.15), (2.20) (checked with a script that
@@ -652,20 +652,20 @@ Consumers absorb `ε_pl`:
     first block, then `log(min(R+(j+1)q, D)) ≤ log y_j + q/y_j` and `∑ log y_j ≤ (G(D)-G(R))/q + …`,
     `G(t) = t(log t - 1)`. Case (a): weight `log M` on `(0, M]` (crude, costs `Bc·M ≤ Bc(1+ε)Y/2`),
     second approximation above `M` (`sum_R3W'`, general `q' ≤ 2(1+ε)M`).
-  * **Errata/changes**: `c₁ = 1 + |η'|₁/(x/D)` (odd `n`; [B] prints the all-`n` value `2x/D`);
+  * **Errata/changes**: `c₁ = 1 + |η'|₁/(x/D)` (odd `n`; [H] prints the all-`n` value `2x/D`);
     (4.59)–(4.60) as printed is garbled ("`≤ x`" for "`≤ log x`") and its constant could not be
     reproduced — our (R2) gives `(2√c₀/π)√(2c₂x)(2 + 12 log 5D) + 5c₀/6π²` instead of
     `(25c₀/4π²)(2c₂)^{3/2}√x log x` (similar size); `log⁺(q/2)` for `log(q/2)` (negative at `q=1`).
-    Leading terms are [B]'s: `(2√(c₀c₁)/π) D log(D/√e)` in (b), `D log(D/e)` in (a); the `q`- and
+    Leading terms are [H]'s: `(2√(c₀c₁)/π) D log(D/√e)` in (b), `D log(D/e)` in (a); the `q`- and
     `x/Q₀`-terms have the same shape but cruder constants (`bound_4_52` keeps `x/Q₀`, which is
     `≤ √x/2` when `Q₀ ≥ 2√x`). Hypotheses: `x ≥ 10`, `UV ≥ 2` (instead of `x ≥ e²c₂/2`);
-    [B]'s `UV + (19/18)Q₀ ≤ x/5.6` is not needed.
-  * **To check in Ch. 6** (§6.2.2): plug our `bound_4_51/52` in place of [B]'s; the lower-order
+    [H]'s `UV + (19/18)Q₀ ≤ x/5.6` is not needed.
+  * **To check in Ch. 6** (§6.2.2): plug our `bound_4_51/52` in place of [H]'s; the lower-order
     changes should be harmless, but the corrected `c₁` and the (R2) constant must be re-run.
 * **Ch. 5, §5.2 (S₂) done** (`MinorArcs/TypeII.lean`, `v = 2`, i.e. `m` odd):
   * Trusted (`Prelim/LargeSieveMV.lean`): optimal large sieve `(N - 1 + δ⁻¹)` (needs `δ ≤ 1` for a
     single point), MV weighted large sieve `∑ (N + (3/2)δ_r⁻¹)⁻¹|S|² ≤ ‖a‖²`, [MV73, Lemma 8]
-    `∑_{r≤R}(1+r/R)⁻¹μ²/φ ≥ log R + 0.25068` (`R ≥ 2`, with [B]'s numerical check below 100).
+    `∑_{r≤R}(1+r/R)⁻¹μ²/φ ≥ log R + 0.25068` (`R ≥ 2`, with [H]'s numerical check below 100).
   * Proved: Montgomery's inequality (ω(p)=1: Ramanujan sum `c_r(n) = μ(r)` + Cauchy–Schwarz),
     (5.41) via `rad`/σ-multiplicativity, Lemma 5.2.1 (both parts), Lemma 5.2.3 (5.50)–(5.52),
     Prop 5.2.4 (5.53)–(5.57).
@@ -680,14 +680,14 @@ Consumers absorb `ε_pl`:
   * Proved: the reduction (5.7)–(5.8) (`S1_eq`, bijection `(m,d₁,d₂) ↔ (s,r₁,r₂,l)`); Lemma 5.1.1
     for `v = 2` (`lemma_5_1_1`; main-term constant `(6/π²)P/σ(P)` from Mathlib's
     `L(χ₀μ, 2) = 1/L(χ₀, 2)`); (5.19) (`integral_g2`); **(5.34) `S1_bound`**.
-  * Numerical axioms: `fsq_le` (`f(X) ≤ 1.27X`, [B p. 83]; provable: reduce to integers `n ≤ 37` using
+  * Numerical axioms: `fsq_le` (`f(X) ≤ 1.27X`, [H p. 83]; provable: reduce to integers `n ≤ 37` using
     `∑ μ²(m)/m² = 15/π²` — the extremal case `n = 2` needs `15/π² ≤ 1.52`, i.e. `π² ≥ 9.8684`);
-    `T2_le` (`T₂(S) ≤ 0.37273` for `S ≥ 16`: Lemma 5.1.2 + the computations of [B pp. 90–92]);
+    `T2_le` (`T₂(S) ≤ 0.37273` for `S ≥ 16`: Lemma 5.1.2 + the computations of [H pp. 90–92]);
     (5.36) `integral_H2_le`, (5.37) `H2_le`.
   * Changes: `S1_bound` assumes `U ≥ 1` (so `x/(WUs) ≤ x/W`; harmless in Ch. 6). `H₂` is defined
     with the exact triple sum `T₂` in place of the book's computable bound `G₂ ≥ T₂`. The error
     constant `1.27(1+1/√2)(1-2^{-3/2})³ ζ(3/2)³ ≈ 0.586 ζ(3/2)³` is rounded up to `1.27 ζ(3/2)³`
-    as in [B]. `T₂(S) = 1 - 1/S` on `[1, 2)` (matches [B]'s `G_v`).
+    as in [H]. `T₂(S) = 1 - 1/S` on `[1, 2)` (matches [H]'s `G_v`).
 * **Ch. 6 in progress.**
   * Step 1 ✅ `MinorArcs/Decomposition.lean`: (3.11) `S_{η₂} = S_{I,1} - S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}`
     (`decomposition`, `U V : ℕ`), from Vaughan via `sum_odd_conv`; `S_{I,1} = typeILog`,
@@ -697,9 +697,9 @@ Consumers absorb `ε_pl`:
     (trusted [RS62, Thm. 13] in `LambdaMu.lean`); `norm_typeII_le` takes any integrable majorant
     `g(W)`. Needs `U ≥ 1`, `V ≥ 2`, `V ≤ x/U`.
   * Step 3a ✅ `MinorArcs/TypeIITools.lean`, `MinorArcs/TypeIITotal.lean`: **`typeII_637`**, our
-    (6.37) (`q ≤ V/2e`, any `δ`, `U, V : ℕ`, `V ≥ 50000`, `Q ≥ 3.5x/U`). Main term exactly [B]'s
+    (6.37) (`q ≤ V/2e`, any `δ`, `U, V : ℕ`, `V ≥ 50000`, `Q ≥ 3.5x/U`). Main term exactly [H]'s
     `x/√(2φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))`; secondary terms cruder:
-    `4√(κ₁qx/2φ)(2√(x/U) + √log 2q (2e√(2q) + 4√((x/U)/log(x/2Uq))))` (vs [B]'s
+    `4√(κ₁qx/2φ)(2√(x/U) + √log 2q (2e√(2q) + 4√((x/U)/log(x/2Uq))))` (vs [H]'s
     `√2κ₂√(q/φ)(1+1.15√…)x/√U`; we replace the numerical (6.22) `2.3√(T/log T)` by a split at `ce²`)
     and `8·1.4262 x√(κ₁(1/2+1/U))/√V` (vs `κ₉x/√V`). `κ₁ = 2/π² + κ₀ζ³√(x/V)/U` kept exact (no
     (6.17) needed). `H₂` now uses `max(T₂, 0)` (so `H₂ ≥ 0`); trusted inputs as listed by
@@ -707,7 +707,7 @@ Consumers absorb `ε_pl`:
   * Step 3b ✅ `MinorArcs/TypeIITotalGen.lean`: `typeII_gen` (any `c`, `m` with
     `S₂ ≤ (m x/(φL) + (q/φ)W/L)Σ`, `L = log(W/c)`), and **`typeII_640`** (our (6.40): `|δ| ≥ 8`,
     `c' = |δ|q(1+ε₁)/4`, `c'e ≤ V`, `x ≤ Q²`), with `S2_le_640` from (5.56)(ii) (`R = √(W/c')`).
-    Main term `2x/√(|δ|φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))` as [B]'s.
+    Main term `2x/√(|δ|φ) √((Λ₀+Φ)(0.60428Λ₀ + 8κ₀ζ³√(x/V)/U))` as [H]'s.
   * Step 3c ✅ `MinorArcs/Eta2LogFourier.lean`: (B.17) `|(log·η₂)^| ≤ 2 - log 4` and (B.18)
     `(2πt)²|(log·η₂)^(t)| ≤ 96 log 2`, **proved** (two integrations by parts on `[1/4,1/2]`, `[1/2,1]`).
   * Step 3d ✅ `MinorArcs/TypeITotal.lean`: **`typeI1_le`** (§6.2.1, `|S_{I,1}|` for `U ≤ Q₀/2`) from
@@ -718,7 +718,7 @@ Consumers absorb `ε_pl`:
     (6.6)–(6.8) `typeI2_le_sum`; (6.9) `∑ Λ(v)(q,v)/v ≤ log N + log q` and
     `∑ Λ(v) v (q,v) ≤ ∑ Λ(v) v + N q log q` (proved via `(q,v) = ∑_{d|(q,v)} φ(d)`);
     **`typeI2_le_small`** ((6.12)+(6.13), `|δ| ≤ 1/2c₂`) and **`typeI2_le_large`** ((6.12)+(6.14)).
-    Needs `V ≥ 2·10⁶` (for (2.14), (2.17)), `16V ≤ Q`, `UV ≤ x`. Differences from [B]:
+    Needs `V ≥ 2·10⁶` (for (2.14), (2.17)), `16V ≤ Q`, `UV ≤ x`. Differences from [H]:
     `U²V log V` → `U²V log q`; the `Q log(U/(q/2))` term → `Q (log⁺(2U/q) + 1/e)` (no `Q ≤ 2UV/e`);
     the `c_{5,I2} max(log(c₁₁q²V/x), 2) Q` term is ours from `bound_4_31`:
     `(2|η₂'|₁/π) max(1, log(c₀e³q²V/4π|η₂'|₁x)) Q` (to compare in §6.3); in (6.14) the `UV/e` term carries a factor `1 + V/Q`, and
@@ -729,13 +729,13 @@ Consumers absorb `ε_pl`:
     `scripts/thm_3_1_1_numerics.py` evaluates the right-hand sides of our Lean bounds at the
     (6.49) parameters (U, V rounded down) against Thm 3.1.1 (corrected constant `0.8103`): worst
     ratio ≈ 0.95 at `x = 2.16·10²⁰`, → 1 slowly as `x → ∞` (along the curve where the AM–GM step
-    (6.77) is tight; there the main terms match [B]'s exactly). Plan for `q ≤ x^{1/3}/6`
+    (6.77) is tight; there the main terms match [H]'s exactly). Plan for `q ≤ x^{1/3}/6`
     (`FirstChoice.lean`, with `T = x^{1/3}`, `t = δ₀q`):
     * ✅ `typeII_main_le`: main term of (6.37)/(6.40) ≤ `√(C_{x,t}(log t + .002) + log(4t)/2)·
       √(0.30214 log t + 0.67506)` (needs `ζ(3/2) ≤ 2.77`, proved);
     * ✅ `FirstChoiceParams.lean`: parameter facts for `U = ⌊T²/9√t⌋`, `V = ⌊9T/2⌋`, `Q = 3T²/4`;
     * ✅ `FirstChoiceTypeII.lean`: `typeII_rest_le` (lower-order Type II terms ≤ `3.2 x^{5/6}`, vs
-      [B]'s 2.74; uses Lemma C.2.2 `q/φ(q) < Ϝ(r)`, trusted, and `e^γ < e^{2/3}`) and
+      [H]'s 2.74; uses Lemma C.2.2 `q/φ(q) < Ϝ(r)`, trusted, and `e^γ < e^{2/3}`) and
       **`typeII_first`**: `|S_{II}| ≤ x/√(δ₀φ) √(C_{x,t}(log t + .002) + log(4t)/2)
       √(0.30214 log t + 0.67506) + 3.2 x^{5/6}` for `q ≤ x^{1/3}/6` (both `|δ| < 8` via (6.37) and
       `|δ| ≥ 8` via (6.40)). So the theorem's `3.36 x^{5/6}` will likely become `≈ 4 x^{5/6}`;
@@ -766,7 +766,7 @@ Consumers absorb `ε_pl`:
     `scripts/gen_a1_pieces.py`, `scripts/gen_b_pieces.py` (exact rational checks first).
   * Re-check numerics for the (4.40), Lemma 4.2.4 and §5.2 corrections, and `U ≥ 1` in (5.34).
 * Optional: prove `fsq_le`; Lemma 5.1.2 (Rankin trick with (2.21)).
-* `Prelim/LambdaMu.lean`: trusted literature bounds [B (2.12), (2.15), (2.16), …]; (2.20) is proved in `Prelim/MoebiusCoprime.lean`.
+* `Prelim/LambdaMu.lean`: trusted literature bounds [H (2.12), (2.15), (2.16), …]; (2.20) is proved in `Prelim/MoebiusCoprime.lean`.
 * Lemma 4.2.3 notes: the last term of (4.41) uses `log(2ex/c₂)` (the book's step needs `q ≥ 2`);
   the weighted sums are in `SumTools.lean` (`S2_le`, `sum_odd_mul_log_le`) and `sum_R3L`.
 
@@ -778,16 +778,16 @@ Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical
 `MajorArcs.prop_9_3_2`, `MajorArcs.prop_9_5_1`) and 32 numerical axioms.
 *Part II split (2026-11-01, user's choice "work on Part II"):* Platt's verification is now the numerical
 axiom pair `platt_odd`/`platt_even` on Mathlib's `DirichletCharacter.LFunction` (`GRHUpTo χ T`); the analytic
-explicit-formula results are cited *conditionally* on GRH up to `T₀` ([B, Prop 9.3.2], [B, Prop 9.5.1]);
-Cor 9.3.3 → Cor 7.1.3 and Prop 7.1.5 are proved (`MajorArcs/`). [B]'s numerics check out:
+explicit-formula results are cited *conditionally* on GRH up to `T₀` ([H, Prop 9.3.2], [H, Prop 9.5.1]);
+Cor 9.3.3 → Cor 7.1.3 and Prop 7.1.5 are proved (`MajorArcs/`). [H]'s numerics check out:
 `(1000/3)·log(10⁸/2π)·6.11·e^{−0.1598·1000/3} = 2.48404·10⁻¹⁹ ≤ 2.485·10⁻¹⁹`; for Prop 7.1.5 we use `T₀ = 440`
 instead of `450` for margin. Thm 7.1.4 is proved from the cited Prop 9.4.2 + Platt (`MajorArcs/Thm714.lean`; book typo: (9.70)'s second line
-has `x^{1/2}` for `x^{-1/2}`; [B]'s general-`q` constants `1.3482·10⁻¹⁴`, `1.617·10⁻¹⁰` are tight to ~10⁻⁵ relative,
+has `x^{1/2}` for `x^{-1/2}`; [H]'s general-`q` constants `1.3482·10⁻¹⁴`, `1.617·10⁻¹⁰` are tight to ~10⁻⁵ relative,
 we use `1.35·10⁻¹⁴`, `1.62·10⁻¹⁰` and `q = 1`: `4.78·10⁻¹¹` — check (14.1), (14.2) margins when used).
 (14.7) needs the *lower* bound (MinorTotal uses `∫_𝔐 |S_{η₊}|² ≥ 8.6298x`), i.e. the full Lemma 10.3.1 with `η◦`.
 **Roadmap for (14.7)** (Lemma 10.3.1 + §14.1), *revised 2026-11-01*: Cauchy–Schwarz on the principal-character
-cross term (`∫_{|β|<w} 2|a||e| ≤ 2 sup|e| · √(2w) · (∫|a|²)^{1/2}` instead of [B]'s `sup|e| · 2w|η|₁`) makes that
-error `≈ 3·10⁻⁴ x` instead of [B]'s `0.0755 x` (`scripts`-style check: lower `8.7029 x`, upper `8.7053 x`), so crude
+cross term (`∫_{|β|<w} 2|a||e| ≤ 2 sup|e| · √(2w) · (∫|a|²)^{1/2}` instead of [H]'s `sup|e| · 2w|η|₁`) makes that
+error `≈ 3·10⁻⁴ x` instead of [H]'s `0.0755 x` (`scripts`-style check: lower `8.7029 x`, upper `8.7053 x`), so crude
 constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under `MajorArcs/`):
 1. *Arcs* — **DONE** (`ArcsEq.lean`): `∫_{(0,1]∩𝔐} g = Σ_{q∈Qset, b∈Bset} ∫_{J_{q,b}} g`.
 2. *`η◦` tail* — **DONE** (`EtaCirc.lean`, `tail_etaO_le`): `η◦(t) = h(t) t e^{-t²/2} = (1−u²)³e^{−u²/2}` (`u = t − 1`, `|u| ≤ 1`); two integrations
@@ -811,12 +811,12 @@ residual terms `≈ 1.2·10⁻⁵` (`ρ₊ = 4.63·10⁻⁸x` in `ℓ²`, `|R_*|
 `final_inequality_crude` with margin `0.0114` needed `v = N^{1/64}` (the `N^{1/16}` + `log u ≤ u/e` argument loses
 a factor `≈ 4.6`, too much at this margin).
 **Roadmap for (14.27)** (Prop 10.4.1 + §14.2), *planned 2026-11-01* (kept for reference). Budget: `final_inequality_crude` only needs
-`(major − 1.0376)/κ·x² > 6.7·10⁶ N^{3/2} log N`, i.e. major `≳ 1.0402` (not [B]'s `1.058259`); [B]'s main term is
+`(major − 1.0376)/κ·x² > 6.7·10⁶ N^{3/2} log N`, i.e. major `≳ 1.0402` (not [H]'s `1.058259`); [H]'s main term is
 `C₀ C_{η◦,η_*} x² ≥ 1.0583 x²/κ`, so ~`0.013 x²/κ` is available for crude constants. Pieces:
 1. *Sharper `‖η₊ − η◦‖₂`* — **DONE** (`HHFourier2.lean`, `integral_sq_etaPlus_sub_etaO_le'`: `≤ 368/(2·200⁴)`): the (10.19) term costs `≈ 5.67 ε` (units `x²/κ`), so need `ε ≲ 5·10⁻⁴` (now `0.0156`): redo
    `HHFourier` with `g''` (`h` is `C²` on `(0,∞)`, `hP''(2) = 0`): `‖g − g_H‖₂ ≤ ‖g''‖₂/H²`, `‖g''‖₂² ≈ 142.6`.
 2. *`C_{η◦,η_*}` (Ch. 11)* — **DONE** (`CMain.lean`, `Cmain_ge`, constant `8.82`; moments `integral_pow_mul_etaU`): polarization, `‖η◦(·+s)‖₂ = ‖η◦‖₂` ⇒ `(η◦∗η◦)(ρ) = ‖η◦‖₂² − ½‖η◦ − η◦(·+2−ρ)‖₂² ≥ ‖η◦‖₂² −
-   ½(2−ρ)²‖η◦'‖₂²` (better than [B]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
+   ½(2−ρ)²‖η◦'‖₂²` (better than [H]'s `2.71`); moments `∫σᵏη_* = κ^{−k−1} Mₖ(η₂)Mₖ(φ)` (`M(η₂) = 1, 9/16, 49/144`;
    `M(φ) = √(π/2), 2, 3√(π/2)`); `N/x = 2 + c₁/κ`, `c₁ = 9/(4√(2π))`; tail of `η_*` beyond `N/x` negligible.
 3. *Fourier identity (10.22)* — **DONE** (`FourierMain.lean`, `fourier_identity`): `h = η◦∗η◦∗η_*` continuous, integrable, `ĥ = η̂◦²η̂_*` (Fubini), `ĥ ∈ L¹` ⇒
    `∫ η̂◦²η̂_* e(tM) dt = h(M)` (`Continuous.fourier_inversion`).
@@ -853,13 +853,13 @@ Ramaré's `1.00303 q/φ(q)`. Downstream: `typeI1_le`/`abs_muSum_log_le` carry `2
 `prelim_sensitivity.py`) still use `1.00303`.
 
 **(14.28): DONE** (`MinorArcs/EBound.lean`, `Helfgott/HHBound.lean`), constant `8·10⁻¹¹` instead of `8.4029·10⁻¹²`.
-[B]'s constant is exactly tight at `x₊ = 4.9·10²⁶` and needs Appendix A's `|η₊|_∞ ≤ 1.079955`, `|tη₊|_∞ ≤ 1.19073`.
+[H]'s constant is exactly tight at `x₊ = 4.9·10²⁶` and needs Appendix A's `|η₊|_∞ ≤ 1.079955`, `|tη₊|_∞ ≤ 1.19073`.
 Our minor-arc assembly only needs `E ≲ 10⁻⁹ x` (`I0_ge` with `t = 10⁻⁵`; `minor_total` with `t = 5·10⁻⁴`: total
 `1.0005·1.037 + 2001·22.75·8·10⁻¹¹ = 1.03752 ≤ 1.0376`). Sup norms: `h_H(t) = ∫_0^2 h(u)F_H(t/u)du/u`; with
 `G_H(z) = ∫_0^z sin(Hv)/(πv)dv`, `|G_H| ≤ 3/π` (bound `1/π` on `[0,1/H]`, integrate by parts beyond), integrate by
 parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε²) = (6/π)e^{1/2} + O(Hε²) ≤ 3.15`.
 
-**(2.22): DONE with constant `2.8`** (for [B]'s `4/5` from [Ramb]; `Prelim/MoebiusBound.lean`, `Liouville.lean`,
+**(2.22): DONE with constant `2.8`** (for [H]'s `4/5` from [Ramb]; `Prelim/MoebiusBound.lean`, `Liouville.lean`,
 `LiouvilleBound.lean`). Ramaré's Liouville route (Ram14 = hal-02572851) with our own `q = 1` input:
 1. `MoebiusBound`: `m(x)(log x + E(x)) = −∑_{n≤x} μ(n)/n (E(x/n) − E(x))` and
    `K = ∑_{n≤x}|E(x/n) − E(x)|/n ≤ 0.4259 + 0.0755 + 0.0378 ≤ 0.54` for `x ≥ 10¹⁰` (fine pieces below `1000`,
@@ -892,7 +892,7 @@ the statement (and GBound/cells) unchanged. Route (Ram14 = hal-02572851, with ou
 4. Lemma 3.2: `m_q(x) = ∑_{u²≤x,(u,q)=1} μ(u)/u² ℓ_q(x/u²)` and the `ρ(U, y)` optimisation ⇒ `C ≈ 2.4–3`.
 5. Refactor `muBound` (`4/5 → C`) through `TypeITotal`, `FirstChoiceTypeI1/I2`, `TypeI2Sum`, `TypeI2Large`.
 
-**(2.22), (2.23): sources (both now proved with weaker constants, above).** [B] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
+**(2.22), (2.23): sources (both now proved with weaker constants, above).** [H] cites [Ramb] = Ramaré, *Explicit estimates on several summatory
 functions involving the Moebius function*, Math. Comp. 84 (2015) 1359–1387, with a **corrigendum** in Math. Comp. 88
 (2019) 2383–2388 (check whether it touches `4/5` or `1.00303` before relying on them). Not on arXiv/HAL; the AMS PDF
 could not be fetched from this environment. Open-access relatives (HAL): Ram13 = hal-02572812 (Acta Arith. 157:
@@ -922,7 +922,7 @@ subtracted from `E₁Λ`: `|E₂Λ(x)| ≤ 2 sup_{t≥x}|E₁Λ(t) − E₁Λ(x)
 finite check (tight only at `x = 23`, margin `2.4·10⁻⁷`). Then the exchange argument (`Finset.induction_on_max`,
 `Nat.nth_lt_of_lt_count`) and monotonicity of `t ↦ e^γ t + c/t` for `t ≥ log 4`.
 
-**(2.13), (2.14), (2.17), (2.19): DONE** (`Prelim/LambdaMu.lean`). All of [B]'s `ψ`/`θ` inputs now rest on one
+**(2.13), (2.14), (2.17), (2.19): DONE** (`Prelim/LambdaMu.lean`). All of [H]'s `ψ`/`θ` inputs now rest on one
 cited result, Dusart's `|θ(x) − x| < x/log³x` for `x ≥ 89 967 803` ([Dus18, Thm 4.2] = arXiv:1002.0442 Thm 5.2;
 the table there also has `η₁ = 0.001` from `x ≥ 908 994 923`), plus finite checks (`scripts/psi_mid_check.py`, a
 segmented sieve to `10¹⁰`, a few minutes, < 1 GB): `ψ ≤ 1.0004n` on `[2·10⁶, 10⁹]` (max 1.0003639), `|ψ − n| ≤ 0.95√n`
@@ -1031,7 +1031,7 @@ The `y`-arcs are `κ = 49` times wider. For `α` outside the `x`-arcs but inside
 
 Repairs tried (`scripts/minor_arc_scale_check.py`; all at `x = 4.9·10²⁶`, our constants):
 1. **Everything at scale `y`**: `c⁻ → c⁻ − log 7`, which gives `M ≈ 0.8497` and
-   `Z ≈ 1.0654 x²/κ > 1.058259`. **Fails.** (With [B]'s `0.5`, `Z ≈ 1.049`, which would pass.)
+   `Z ≈ 1.0654 x²/κ > 1.058259`. **Fails.** (With [H]'s `0.5`, `Z ≈ 1.049`, which would pass.)
    It also needs the major arcs to be `𝔐_{392,r₀}` at scale `x`, beyond Thm 7.1.4's range
    `|δ| ≤ 600000·gcd(q,2)/q`.
 2. **Everything at scale `x`, with Part II on the gap**: Cor 7.1.3 (GRH-verified, `q ≤ 300000`,
@@ -1042,21 +1042,21 @@ Repairs tried (`scripts/minor_arc_scale_check.py`; all at `x = 4.9·10²⁶`, ou
 
 **Resolution (2026-10-31): repair 3 works, with room to spare** (`scripts/minor_arc_y_scale_repair.py`):
 * Prop 13.1.2 with the family `M_{r₀} = 𝔐_{8,r₀}(x)`, `M_n = 𝔐_{8,n}(y) = 𝔐_{392,n}(x)` for
-  `n > r₀` (nested). The base term keeps [B]'s `I₀ ≥ (√J − √E)² ≥ 8.6297x`.
+  `n > r₀` (nested). The base term keeps [H]'s `I₀ ≥ (√J − √E)² ≥ 8.6297x`.
 * ℓ² from (12.42) with `δ₀ = 392`.
 * ℓ∞ off `𝔐_{8,n}(y)` from a **fresh Dirichlet approximation at each scale `wy`** in (11.9). Since
   `𝔐_{8,r}(wy) ⊆ 𝔐_{8,r}(y)` for `w ≥ 1` and `⊆ 𝔐_{8,r/w}(y)` for `w < 1`, this gives
   `r_w ≥ min(1,w) n`. Thm 3.1.1 at scale `wy` then gives `max(g_{wy}(min(1,w)n), h(wy))`.
   The first case always has `r_w ≤ (wy)^{1/3}/6`, so `gx_antitoneOn` applies. This
   "Prop 11.2.3′" also sidesteps the `δ ↦ wδ` erratum.
-* **Levels up to `r₂ ≈ x^{0.3}`** (the range of (12.42)), not [B]'s `r₁ = (3/8)y^{4/15} ≈ 10⁶`.
+* **Levels up to `r₂ ≈ x^{0.3}`** (the range of (12.42)), not [H]'s `r₁ = (3/8)y^{4/15} ≈ 10⁶`.
   The tail (14.43) shrinks from `0.30` to `0.12`.
 * The base gap `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)` (needed: `|S_{η_*}| ≤ |φ|₁ g(r₀) y ≈ 0.0555y`) is
-  covered by [B, Cor 7.1.3]. Its range `q ≤ 300000`, `|δ| ≤ 1.2·10⁶/q` is exactly
+  covered by [H, Cor 7.1.3]. Its range `q ≤ 300000`, `|δ| ≤ 1.2·10⁶/q` is exactly
   `𝔐_{8,r₀}(y)`. In the gap `|δ| ≥ 12245/q`, so `|S_{η_*}| ≤ (|η̂(δ)|/φ(q) + 1.3·10⁻⁷) y ≤ 0.02y`.
 
 Result: `Z ≤ 0.866 x²/κ` at `y = 10²⁵` (decreasing: `0.823` at `10²⁶`, `0.617` at `10⁸⁰`), against
-`1.058259`. That is better than [B]'s own `1.00948`, even with our corrected Thm 3.1.1. With
+`1.058259`. That is better than [H]'s own `1.00948`, even with our corrected Thm 3.1.1. With
 `r₂ = 10⁶` the same scheme gives `1.10`; the book's `r₁` was too small once the scale is handled
 correctly. **So the flaw is fixable**; `minor_arcs_input` (`≤ 1.0376`) is true by this route.
 
@@ -1075,22 +1075,22 @@ Formalization plan (repair 3):
 2. The base-gap bound from Cor 7.1.3 (a new cited Part II input) via the character expansion
    (`Bombieri.lean` tools, `gauss_induced`) and a bound on `η̂_*`.
 3. Thm 13.2.1 assembly with the mixed family (generalize `thm_13_2_1_conditional`). Also the
-   `S_{η₊} = S₁ + S₂` split (14.29)–(14.32), with [B]'s cited Part II constants `J`, `E`, (7.1.5).
+   `S_{η₊} = S₁ + S₂` split (14.29)–(14.32), with [H]'s cited Part II constants `J`, `E`, (7.1.5).
 4. Numerics for all `x ≥ 4.9·10²⁶`: closed-form majorants for `G`, then interval checks.
 
-Earlier conclusion, kept for the record: neither [B]'s argument as written nor repairs 1–2
+Earlier conclusion, kept for the record: neither [H]'s argument as written nor repairs 1–2
 establishes (14.49) over the complement of the scale-`x` arcs. `minor_arcs_input` remains a cited-but-unverified input. Possible ways forward:
 a finer ℓ² accounting of the gap region (by `q` and `δ`), different parameters (`κ`, `r₁`), or
-checking whether a later version of [B] fixes this.
+checking whether a later version of [H] fixes this.
 
 ## Ch. 11: Prop 11.2.3 erratum (the proof ignores that `δ` scales with `w`)
 
-[B]'s proof writes `S_{η_*}(α,x) = ∫ S_{η₂}(α, wx) φ(w) dw/w` (11.9) and applies Thm 3.1.1 to
+[H]'s proof writes `S_{η_*}(α,x) = ∫ S_{η₂}(α, wx) φ(w) dw/w` (11.9) and applies Thm 3.1.1 to
 each `S_{η₂}(α, wx)` with the same `r = max(1, |δ|/8) q`. At scale `wx`, though,
 `2α = a/q + δ_w/(wx)` with **`δ_w = wδ`**, so:
 
 * for `w < 1` the parameter is `r_w = max(1, w|δ|/8) q ≤ r`, and the bound `g_{wx}(r_w)` is
-  *weaker* than the `g_{wx}(r)` [B] uses (`g` is decreasing);
+  *weaker* than the `g_{wx}(r)` [H] uses (`g` is decreasing);
 * for `w > 1`, Thm 3.1.1's hypothesis `|δ_w/(wx)| ≤ 1/(q Q_{wx})` does not follow from
   `|δ/x| ≤ 1/(q Q_x)`, because `Q_{wx} > Q_x`. It holds for `w ≤ ((4/3)x^{1/3}/(8r))^{3/2}`,
   which is `≥ 94` when `r ≤ r₁ = (3/8)x^{4/15}`, `x ≥ 10²⁵`. Beyond that, `φ(w) ≤ e^{-4400}`
@@ -1102,7 +1102,7 @@ The statement survives. For `|δ| ≤ 8`, `r_w = q = r` and nothing changes. For
 for `w > 1` outweighs the loss for `w < 1`; `scripts/prop_11_2_3_check.py`, `r₀ ≤ r ≤ r₁`,
 `y ∈ [10²⁵, 10¹⁰⁰]`). **Plan for Lean:** state Prop 11.2.3 only for `r ≤ r₁` (all that Ch. 13
 needs; for `r > r₁` Ch. 13 uses `g(r₁)`). Prove it with per-`w` bounds `g_{wy,1}(r)` (`|δ| ≤ 8`)
-and `g_{wy,1}(wr)` (`|δ| > 8`). Then either show the `|δ| > 8` integral is `≤` [B]'s closed form
+and `g_{wy,1}(wr)` (`|δ| > 8`). Then either show the `|δ| > 8` integral is `≤` [H]'s closed form
 `g_{y,φ}(r)`, or carry a closed form for `∫ g_{wy,1}(wr)φ(w)dw` into Ch. 13 directly.
 Also note that the case `r > r₁` of Ch. 13 needs, for `w ≤ 1`, `g_{wy}(max(q, wr')) ≤ g_{wy}(w r₁)`.
 That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the same way.
@@ -1111,7 +1111,7 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
 
 * Case (a) uses `second_approx` (Dirichlet via `Real.exists_rat_abs_sub_le_and_den_le`,
   `q' ≥ εQ/(1+ε)`), `sum_A1` (blocks from 0, Lemma 4.1.2) and `sum_R3'` with `(a', q')`.
-  The proof gives (4.32) with the unrounded `x/|δq|` where [B] has `min(⌊x/|δq|⌋ + 1, 2D)`
+  The proof gives (4.32) with the unrounded `x/|δq|` where [H] has `min(⌊x/|δq|⌋ + 1, 2D)`
   (never larger).
 
 * `typeI = mainPart + restPart` (`typeI_eq_main_add_rest`): `mainPart` is `q ∣ m ≤ M`.
@@ -1124,8 +1124,8 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
 
 ## Decisions made
 
-* Follow the book [B] = arXiv:1501.05438v2, not the 2013 papers. Its minor-arc bound is
-  1.00948 (not 0.97392), so [B]'s final margin is 0.048779·x²/κ (ours is 0.020659, see Status).
+* Follow the book [H] = arXiv:1501.05438v2, not the 2013 papers. Its minor-arc bound is
+  1.00948 (not 0.97392), so [H]'s final margin is 0.048779·x²/κ (ours is 0.020659, see Status).
 * Where the final inequality has room, prove cruder constants instead of the book's sharp
   ones (e.g. non-prime terms: 6.7·10⁶ instead of 7.3306). Record each such change in the
   docstrings and the README.
@@ -1141,7 +1141,7 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
   (we use the unrounded `Q`). Lean's `C/0 = 0` makes `min(A, C/sin²)` vanish where `sin = 0`,
   so Lemma 4.1.1 is also proved with the honest summand (`lemma_4_1_1'`, `minA`).
 * Part II/III errata (2026-11-01): (9.70)'s second line has `x^{1/2}` for `x^{-1/2}`. In §14.1 the term
-  `5.19 δ₀ r ET_{η₊,δ₀r/2} (|η₊|₁ + ET/2)` is printed as `≤ 0.075272`, but with [B]'s own (14.1)
+  `5.19 δ₀ r ET_{η₊,δ₀r/2} (|η₊|₁ + ET/2)` is printed as `≤ 0.075272`, but with [H]'s own (14.1)
   (`ET ≤ 1.1405·10⁻⁸`) and (14.3) (`|η₊|₁ ≤ 1.062319`) it is `0.075456`; so (14.7) holds with `O*(0.0756)`, not
   `O*(0.0754)`. We state `l2_major_14_7` with `0.0756`; MinorTotal then uses `∫_𝔐 |S_{η₊}|² ≥ 8.6296x` and
   `I₀ ≥ 8.6294x` (the numerics `Mexpr ≤ 1.037` keep a margin `0.34` in the asymptotic range, cells unchanged).
@@ -1154,21 +1154,21 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
   `δ`-decay is 4× weaker for large `δ` (the prefactor halves), so the final numerics there
   may need re-checking. Note §6.2.1 itself copies the uncorrected (4.40).
   **Theorem 3.1.1's constant `0.5` is not proved**: in §6.4, (6.77), the AM–GM step gives the
-  constant `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020` (ρ = 3.397962), but [B] computes
-  `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911`. [B]'s own (6.63) exceeds the stated bound by up to
+  constant `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020` (ρ = 3.397962), but [H] computes
+  `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911`. [H]'s own (6.63) exceeds the stated bound by up to
   ~2.6% (numerically, `q` prime, `δ₀q ~ 10⁵–10⁷`). `PointwiseBound.lean` now uses `0.8103`.
   ✅ Checked: the effect on Chs. 11, 13, §14.3 is `1.00948 → 1.0376` in (14.49) (see Status).
   **(6.12) understates the μ-sum for odd `q`**: the sum is over `(m, 2q) = 1`, so (2.22) applies
-  with modulus `2q` and gives `(4/5)(2q/φ(2q))/log(M/2q²)`; [B] writes `q/φ(q)`. For odd `q`,
+  with modulus `2q` and gives `(4/5)(2q/φ(2q))/log(M/2q²)`; [H] writes `q/φ(q)`. For odd `q`,
   `2q/φ(2q) = 2q/φ(q)`, so the term `(3/2 log q + 2.74) x/φ(q)` of (6.58) should be doubled.
-  (It doesn't break Thm 3.1.1 numerically, but [B]'s slot-by-slot derivation of
+  (It doesn't break Thm 3.1.1 numerically, but [H]'s slot-by-slot derivation of
   `L_{x,t,q}` doesn't go through as written; we use `min(1, a/ℓ)(ℓ + b) ≤ a + b` to move the `b`
   part into the `x/(δ₀q)` slot.)
 
-  **§6.3.2 uses (5.54) outside its range**: Prop. 5.2.4 assumes `Q ≥ 3.5W`, but with [B]'s
+  **§6.3.2 uses (5.54) outside its range**: Prop. 5.2.4 assumes `Q ≥ 3.5W`, but with [H]'s
   second choice `Q = x/U`, (6.38) applies (5.54) for `W` up to `x/U = Q`. Fix: re-approximate
   with `Q₀ ≥ 3.5x/U` (costs nothing visible; the `Q`-terms of `S_I` are lower order).
-  **§6.3.2's case split has a gap**: [B] says that for the new approximation `a'/q'`, either
+  **§6.3.2's case split has a gap**: [H] says that for the new approximation `a'/q'`, either
   `q' > y` or `|δ'| > 8y/q'`, "since otherwise `a'/q'` would already be a valid approximation under
   the first choice". But Thm 3.1.1's hypothesis is an *arbitrary* approximation `a/q` with
   `q > y`, and two approximations can coexist (e.g. `2α = 1/Q`: `1/1` with `δ = x/Q` and `1/⌊Q⌋`).

@@ -77,7 +77,7 @@ sys	0m0.108s
 m(10^10 - 1) in [-3.396784968367e-06, -3.396782249394e-06]
 max over 2 <= k < 10^10 of |m(k)|/sqrt(2/(k+1)) <= 0.612372 at k = 2 (k = 1: equality)
 moebius_sqrt_small: OK (rigorous)
-cross-check [B, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1): 7727068587; certainly > 1 there: yes; 4 m(k)^2 k in [1.000015637493, 1.000016485432] there
+cross-check [H, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1): 7727068587; certainly > 1 there: yes; 4 m(k)^2 k in [1.000015637493, 1.000016485432] there
 
 real	5m27.744s
 user	5m28.954s
@@ -99,7 +99,7 @@ etaO_numerics: OK (rigorous)
 g2(100000000) in [-8.977082920278e-11, -8.977070375040e-11]
 (3) sum_{j<Z} |g2(j)| <= 10.418693   (need <= 10.5)
 (2) max_{10^5 <= m <= Z} A(m) <= 0.360582066 at m = 4801323   (need <= 0.3607)
-(4) max_{33<=n<=Z} |g2(n)|(n+1) <= 2.0895071 at n = 110;  [B, Lemma 5.1.2] bound on [10^6, Z]: holds
+(4) max_{33<=n<=Z} |g2(n)|(n+1) <= 2.0895071 at n = 110;  [H, Lemma 5.1.2] bound on [10^6, Z]: holds
 (1) max_{16 <= S <= 10^5} T2(S) <= 0.3712486 at S = 16   (need <= 0.37273)
 T2_small: OK (rigorous)
 T2_mid: OK (rigorous)

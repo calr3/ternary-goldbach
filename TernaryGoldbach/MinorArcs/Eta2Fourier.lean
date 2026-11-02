@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.Helfgott.Eta2
 
 /-!
-# `|η̂₂''|_∞ ≤ 31.521` [B, (B.6)]: the analytic part
+# `|η̂₂''|_∞ ≤ 31.521` [H, (B.6)]: the analytic part
 
 Integrating twice by parts on `[1/4, 1/2]` and `[1/2, 1]`, where `η₂ = 4 log 4u` and `η₂ = −4 log u`:
 `(2πt)² η̂₂(t) = eta2DD t`, where
@@ -13,10 +13,10 @@ Integrating twice by parts on `[1/4, 1/2]` and `[1/2, 1]`, where `η₂ = 4 log 
 `31.4821` (`norm_trig_le`: the maximum of `|4z³ − 16z + 16|² = 512c³ − 256c² − 896c + 656`,
 `c = ℜz`, is `991.1189`). One more integration by parts bounds the integrals by `1/(π|t|a²)`, so
 `‖eta2DD t‖ ≤ 31.4821 + 80/(π|t|)`, which is `≤ 31.521` for `|t| ≥ 655` (`norm_eta2DD_large`).
-This is [B]'s argument for `|t| ≥ 655`; the range `|t| ≤ 655` is a finite computation.
+This is [H]'s argument for `|t| ≥ 655`; the range `|t| ≤ 655` is a finite computation.
 
 The same integration by parts gives `‖(2πt)² (η₂ log(4·))^(t)‖ ≤ 48 log 2` with no computation
-(`norm_eta2log4_le`), which gives [B, (B.11)] from (B.6).
+(`norm_eta2log4_le`), which gives [H, (B.11)] from (B.6).
 -/
 
 open Real Complex MeasureTheory FourierTransform
@@ -278,7 +278,7 @@ theorem norm_trig_le (z : ℂ) (hz : ‖z‖ = 1) : ‖4 * z ^ 3 - 16 * z + 16�
   have h0 : 0 ≤ ‖4 * z ^ 3 - 16 * z + 16‖ := norm_nonneg _
   nlinarith
 
-/-- **[B, (B.6)] for `|t| ≥ 655`**: `‖eta2DD t‖ ≤ 31.4821 + 80/(π|t|) ≤ 31.521`. -/
+/-- **[H, (B.6)] for `|t| ≥ 655`**: `‖eta2DD t‖ ≤ 31.4821 + 80/(π|t|) ≤ 31.521`. -/
 theorem norm_eta2DD_large {t : ℝ} (ht : 655 ≤ |t|) : ‖eta2DD t‖ ≤ 31.521 := by
   have ht0 : t ≠ 0 := by intro h; rw [h, abs_zero] at ht; norm_num at ht
   set z := e (-(1 / 4 * t))
@@ -309,7 +309,7 @@ theorem norm_eta2DD_large {t : ℝ} (ht : 655 ≤ |t|) : ‖eta2DD t‖ ≤ 31.5
     _ ≤ 31.4821 + 0.0389 := by nlinarith
     _ ≤ 31.521 := by norm_num
 
-/-! ### `η₂ · log(4·)`: the case `ρ = 4` of [B, (B.11)] -/
+/-! ### `η₂ · log(4·)`: the case `ρ = 4` of [H, (B.11)] -/
 
 theorem fourier_eta2log4_eq (t : ℝ) :
     𝓕 (fun u => ((Real.log (4 * u) * eta2 u : ℝ) : ℂ)) t =

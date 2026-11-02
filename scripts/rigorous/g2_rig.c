@@ -3,7 +3,7 @@
        g2(n) = sum_{d odd} mu(d) (sum_{r <= n, d | r, r odd} f(r))^2,   f(r) = mu(r)/sigma(r),
    updated incrementally: when f(n) != 0, for each d | n, S_d += f(n) and
    g2 += mu(d) (2 S_d^{old} f(n) + f(n)^2).
-   Reports max_{33 <= n <= N} |g2(n)| n  ([B, Lemma 5.1.2]: <= 2.1 for 33 <= x <= 10^6),
+   Reports max_{33 <= n <= N} |g2(n)| n  ([H, Lemma 5.1.2]: <= 2.1 for 33 <= x <= 10^6),
    sum_{n < N} |g2(n)|, and (1/2) int_1^N D(z)/z^2 dz with D(z) = int_{z/2}^z g2.
    Usage: g2_rig N
 */

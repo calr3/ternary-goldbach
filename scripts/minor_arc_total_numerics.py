@@ -1,6 +1,6 @@
-"""Re-run [B, §14.3] (the minor-arc total (14.49)) with our corrected Theorem 3.1.1.
+"""Re-run [H, §14.3] (the minor-arc total (14.49)) with our corrected Theorem 3.1.1.
 
-[B]'s Theorem 3.1.1 has `R log(δ₀q) + 0.5` and `3.36 x^{5/6}`; what we prove
+[H]'s Theorem 3.1.1 has `R log(δ₀q) + 0.5` and `3.36 x^{5/6}`; what we prove
 (`MinorArcs/PointwiseBound.lean`) has `0.8764` and `3.8`.  Both constants enter
 g_{y,φ}(r) (11.19)/(13.10), and through it the three parts of M (13.13):
 
@@ -9,8 +9,8 @@ g_{y,φ}(r) (11.19)/(13.10), and through it the three parts of M (13.13):
 * (14.47)  2S/(log x + 2c⁻) ∫_{r0}^{r1} g(r)/r dr ≤ 1.280418 x (f0 + f1 + f2)   (13.33),
 
 where only f1 (its first term, from the `+0.5`) and f2 (from `3.36`) change; f0 does not
-involve either constant.  Everything else (S, J, E, T, the bound f0 ≤ 0.071498, which [B]
-gets by bisection) is taken from [B] as is.
+involve either constant.  Everything else (S, J, E, T, the bound f0 ≤ 0.071498, which [H]
+gets by bisection) is taken from [H] as is.
 
 Usage: python3 scripts/minor_arc_total_numerics.py
 """
@@ -47,7 +47,7 @@ def M_parts(c, c56, y=mpf(10) ** 25):
     # (14.47): f0 + f1 + f2
     lr0 = log(R0)
     F0 = EG * log(lr0) + CGAMMA
-    J = Fcal(R0)  # J_{r0}: [B] uses the same Ϝ bound as for L_{2r0}
+    J = Fcal(R0)  # J_{r0}: [H] uses the same Ϝ bound as for L_{2r0}
     f1 = sqrt(F0) / sqrt(2 * R0) * (1 + EG / (F0 * lr0)) * (c / mpf("0.5")) \
         + 5 / sqrt(2 * R0) \
         + ((mpf(13) / 4 * log(e * R0) + mpf("11.07")) * J + mpf("13.66") * log(e * R0) + mpf("37.55")) / R0
@@ -74,8 +74,8 @@ def report(c, c56):
 
 
 def lemma_11_2_1(c, c56):
-    """[B, Lemma 11.2.1]: h(x_r) ≥ g_{x_r}(r) at x_r = (6r)³ (r ≥ 11).  Returns the
-    worst ratio g/h on a grid of log x_r (with L_{2r} using Ϝ(r) for q/φ(q), as in [B])."""
+    """[H, Lemma 11.2.1]: h(x_r) ≥ g_{x_r}(r) at x_r = (6r)³ (r ≥ 11).  Returns the
+    worst ratio g/h on a grid of log x_r (with L_{2r} using Ϝ(r) for q/φ(q), as in [H])."""
     worst = (0, None)
     import mpmath
     for i in range(0, 4000):
@@ -96,7 +96,7 @@ def lemma_11_2_1(c, c56):
 
 if __name__ == "__main__":
     Zb = report(mpf("0.5"), mpf("3.36"))
-    print("  ([B] (14.49): 1.00948)\n")
+    print("  ([H] (14.49): 1.00948)\n")
     Zc = report(mpf("0.8764"), mpf("3.8"))
     for c, c56 in [(mpf("0.5"), mpf("3.36")), (mpf("0.8764"), mpf("3.8"))]:
         w, lx = lemma_11_2_1(c, c56)

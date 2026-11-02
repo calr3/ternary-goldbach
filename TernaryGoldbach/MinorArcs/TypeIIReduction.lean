@@ -3,11 +3,11 @@ import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.Prelim.LambdaMu
 
 /-!
-# Type II sums: reduction to `S₁`, `S₂` [B, (5.2)–(5.5)]
+# Type II sums: reduction to `S₁`, `S₂` [H, (5.2)–(5.5)]
 
-* `eta2_eq_integral`: `η₂(mn/x) = 4 ∫ 1[x/2W < m ≤ x/W, W/2 < n ≤ W] dW/W` [B, (5.2)];
-* `typeII_eq_integral`: `S_{II} = 4 ∫_V^{x/U} IIsum(W) dW/W` [B, (5.3)];
-* `norm_IIsum_le`: Cauchy–Schwarz, `|IIsum(W)| ≤ √S₁ (√S₂ + √S₃)` [B, (5.4)–(5.5)], with
+* `eta2_eq_integral`: `η₂(mn/x) = 4 ∫ 1[x/2W < m ≤ x/W, W/2 < n ≤ W] dW/W` [H, (5.2)];
+* `typeII_eq_integral`: `S_{II} = 4 ∫_V^{x/U} IIsum(W) dW/W` [H, (5.3)];
+* `norm_IIsum_le`: Cauchy–Schwarz, `|IIsum(W)| ≤ √S₁ (√S₂ + √S₃)` [H, (5.4)–(5.5)], with
   the trusted [RS62, Thm. 13] `ψ(y) - θ(y) < 1.4262 √y` for `S₃`;
 * `norm_typeII_le`: `|S_{II}| ≤ 4 ∫_V^{x/U} g(W) dW/W` for any integrable majorant `g`.
 -/
@@ -74,7 +74,7 @@ theorem eta2_eq_log {x : ℝ} (hx : 0 < x) {m n : ℝ} (hm : 0 < m) (hn : 0 < n)
       max_lt (lt_min a1 a3) (lt_min a2 (by linarith))
     linarith
 
-/-- **[B, (5.2)–(5.3)]**: `η₂(mn/x) = 4 ∫ 1[x/2W < m ≤ x/W, W/2 < n ≤ W] dW/W` (over any
+/-- **[H, (5.2)–(5.3)]**: `η₂(mn/x) = 4 ∫ 1[x/2W < m ≤ x/W, W/2 < n ≤ W] dW/W` (over any
 `[A, B] ⊇ [max(x/2m, n), min(x/m, 2n)]`, `A > 0`). -/
 theorem eta2_eq_integral {x : ℝ} (hx : 0 < x) {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) {A B : ℝ}
     (hA : 0 < A) (hAB : A ≤ B) (hAlo : A ≤ max (x / (2 * m)) n)
@@ -200,13 +200,13 @@ theorem coefM_eq_zero {U m : ℕ} (hm : m ≤ U) : coefM U m = 0 := by
   have := Nat.le_of_dvd (by omega) hd.1.1; omega
 
 open Classical in
-/-- The integrand of [B, (5.3)]: `∑_{x/2W < m ≤ x/W odd} c_m ∑_{max(V, W/2) < n ≤ W odd}
+/-- The integrand of [H, (5.3)]: `∑_{x/2W < m ≤ x/W odd} c_m ∑_{max(V, W/2) < n ≤ W odd}
 Λ(n) e(αmn)`, `c_m = ∑_{d | m, d > U} μ(d)`. -/
 noncomputable def IIsum (α x : ℝ) (U V : ℕ) (W : ℝ) : ℂ :=
   ∑ m ∈ Ioc ⌊x / (2 * W)⌋₊ ⌊x / W⌋₊, if Odd m then coefM U m *
     ∑ n ∈ Ioc ⌊max (V : ℝ) (W / 2)⌋₊ ⌊W⌋₊, (if Odd n then (Λ n : ℂ) * e (α * m * n) else 0) else 0
 
-/-- **[B, (5.3)]**: `S_{II} = 4 ∫_V^{x/U} IIsum(W) dW/W`. -/
+/-- **[H, (5.3)]**: `S_{II} = 4 ∫_V^{x/U} IIsum(W) dW/W`. -/
 theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U) (hV : 1 ≤ V)
     (hVU : (V : ℝ) ≤ x / U) :
     typeII α x U V = 4 * ∫ W in (V : ℝ)..x / U, IIsum α x U V W / W := by
@@ -302,7 +302,7 @@ theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1
   · rw [sum_eq_zero fun n _ => by rw [if_neg (fun h => hmo h.1)]; simp]; simp
 
 
-/-! ### Cauchy–Schwarz [B, (5.4)–(5.5)] -/
+/-! ### Cauchy–Schwarz [H, (5.4)–(5.5)] -/
 
 theorem sum_Ioc_int_eq_nat {A B : ℝ} (hA : 0 ≤ A) (f : ℤ → ℝ) :
     ∑ m ∈ Ioc ⌊A⌋ ⌊B⌋, f m = ∑ m ∈ Ioc ⌊A⌋₊ ⌊B⌋₊, f m := by
@@ -326,7 +326,7 @@ theorem sum_Ioc_int_eq_nat {A B : ℝ} (hA : 0 ≤ A) (f : ℤ → ℝ) :
   · simp only [mem_Ioc] at hm
     rw [Int.toNat_of_nonneg (by omega)]
 
-/-- [B, (5.4)–(5.5)]: `|IIsum(W)| ≤ √S₁(U, W) (√S₂(U', W', W) + √S₃(W))` with
+/-- [H, (5.4)–(5.5)]: `|IIsum(W)| ≤ √S₁(U, W) (√S₂(U', W', W) + √S₃(W))` with
 `U' = max(U, x/2W)`, `W' = max(V, W/2)`, `S₃(W) ≤ (x/2W + 1)(1.4262 √W)²` ([RS62, Thm. 13]). -/
 theorem norm_IIsum_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hV : 2 ≤ V) {W : ℝ} (hW : 0 < W) :
     ‖IIsum α x U V W‖ ≤ √(S1 x U W) * (√(S2 α x (max U (x / (2 * W))) (max V (W / 2)) W) +
@@ -430,7 +430,7 @@ theorem norm_IIsum_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hV : 2 ≤ 
         gcongr
 
 
-/-- **[B, (5.3)–(5.5)]**: `|S_{II}| ≤ 4 ∫_V^{x/U} g(W) dW/W` for any integrable `g` with
+/-- **[H, (5.3)–(5.5)]**: `|S_{II}| ≤ 4 ∫_V^{x/U} g(W) dW/W` for any integrable `g` with
 `√S₁(U, W) (√S₂(U', W', W) + √S₃(W)) ≤ g(W)` on `[V, x/U]` (`U' = max(U, x/2W)`,
 `W' = max(V, W/2)`, `S₃(W) ≤ (x/2W + 1)(1.4262² W)`). -/
 theorem norm_typeII_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U) (hV : 2 ≤ V)

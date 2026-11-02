@@ -2,28 +2,28 @@ import TernaryGoldbach.MinorArcs.InnerSums
 import TernaryGoldbach.MinorArcs.TrigSums
 
 /-!
-# Type I sums [B, Ch. 4] — blueprint statements
+# Type I sums [H, Ch. 4] — blueprint statements
 
-Statements of the results of [B, Ch. 4] (H. A. Helfgott, *The ternary Goldbach problem*,
+Statements of the results of [H, Ch. 4] (H. A. Helfgott, *The ternary Goldbach problem*,
 arXiv:1501.05438v2) that the minor-arc argument uses.  They are proved in
 `TypeIProof.lean`, `TypeILogProof.lean` and `TypeI2Rest.lean`.  They were transcribed from
 the typeset PDF; equation numbers are the book's.
 
 * §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality and **proved** in
   `MinorArcs/TrigSums.lean`.
-* §4.2, Type I estimates: Lemmas 4.2.2–4.2.4, which [B, §6.2] applies with `η = η₂`,
+* §4.2, Type I estimates: Lemmas 4.2.2–4.2.4, which [H, §6.2] applies with `η = η₂`,
   `c₀ = 31.521`, `|η₂'|₁ = 8 log 2`, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
   smoothing hypotheses ("η continuous, piecewise `C²`, compactly supported, `|η|₁ = 1`,
   `c₀ ≥ |η̂''|_∞`") become separate facts about `η₂` (`eta2_*` below).  Lemma 4.2.1 is only the
   template for these proofs and isn't stated.
 
 Conventions.
-* `O*(X)` in [B] means a quantity of absolute value `≤ X`; we fold such terms into the bound.
-* `min(1, c/δ²)` is `1` at `δ = 0` (`minInv`), as in [B]; Lean's `c / 0 = 0` would make it `0`.
+* `O*(X)` in [H] means a quantity of absolute value `≤ X`; we fold such terms into the bound.
+* `min(1, c/δ²)` is `1` at `δ = 0` (`minInv`), as in [H]; Lean's `c / 0 = 0` would make it `0`.
 * In `C / sin²(παn)`, Lean's `C / 0 = 0` only *decreases* the left side, so the statements
   stay faithful (they are, if anything, slightly weaker).
 * `M = min(Q/2, D)` with `Q = ⌊x/|δq|⌋` (and `M = D` if `δ = 0`), as in the proof of
-  [B, Lemma 4.2.1]; the statements of Lemmas 4.2.2–4.2.3 only record `M ∈ [min(Q₀/2, D), D]`.
+  [H, Lemma 4.2.1]; the statements of Lemmas 4.2.2–4.2.3 only record `M ∈ [min(Q₀/2, D), D]`.
 * Sums over `n` with `η₂(mn/x)` are finite, since `supp η₂ ⊆ [1/4, 1]`; we sum over `n ≤ x`.
 -/
 
@@ -43,20 +43,20 @@ noncomputable def logPlus (x : ℝ) : ℝ := max (Real.log x) 0
 /-- `min(1, c/δ²)`, read as `1` when `δ = 0`. -/
 noncomputable def minInv (c δ : ℝ) : ℝ := if δ = 0 then 1 else min 1 (c / δ ^ 2)
 
-/-- `c₂ = 6π / (5√c₀)` [B, Lemma 4.2.2]. -/
+/-- `c₂ = 6π / (5√c₀)` [H, Lemma 4.2.2]. -/
 noncomputable def c₂ : ℝ := 6 * π / (5 * √c₀)
 
-/-- The Fourier transform `f̂(t) = ∫ e(-xt) f(x) dx` [B, §2.3]. -/
+/-- The Fourier transform `f̂(t) = ∫ e(-xt) f(x) dx` [H, §2.3]. -/
 noncomputable def fourier (f : ℝ → ℝ) (t : ℝ) : ℂ := ∫ x, e (-(x * t)) * f x
 
-/-- `M = min(Q/2, D)` with `Q = x/|δq|` (`M = D` if `δ = 0`).  [B, proof of Lemma 4.2.1] uses
-`Q = ⌊x/|δq|⌋`; the statement of [B, Lemma 4.2.2] only needs `M ∈ [min(Q₀/2, D), D]`, which
+/-- `M = min(Q/2, D)` with `Q = x/|δq|` (`M = D` if `δ = 0`).  [H, proof of Lemma 4.2.1] uses
+`Q = ⌊x/|δq|⌋`; the statement of [H, Lemma 4.2.2] only needs `M ∈ [min(Q₀/2, D), D]`, which
 holds for this `M` too, and the unrounded `Q` avoids an issue with the rounding (with `⌊·⌋`,
 `c₂x/q ≤ Q/2` can fail by less than `1/2` when `|δ| ≤ 1/2c₂`). -/
 noncomputable def Mof (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
   if δ = 0 then D else min (x / (|δ| * q) / 2) D
 
-/-- `2α = a/q + δ/x (mod 1)`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ₀`, `q ≤ Q₀` [B, Lemmas 4.2.2–4.2.4]. -/
+/-- `2α = a/q + δ/x (mod 1)`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ₀`, `q ≤ Q₀` [H, Lemmas 4.2.2–4.2.4]. -/
 def Approx2 (α x δ : ℝ) (a : ℤ) (q : ℕ) (Q₀ : ℝ) : Prop :=
   1 ≤ q ∧ IsCoprime a (q : ℤ) ∧ (∃ k : ℤ, 2 * α = a / q + δ / x + k) ∧
     |δ / x| ≤ 1 / (q * Q₀) ∧ (q : ℝ) ≤ Q₀
@@ -88,13 +88,13 @@ noncomputable def typeI2 (α x U V : ℝ) : ℂ :=
       ∑ n ∈ Icc 1 ⌊x⌋₊,
         (if Odd n then e (α * v * u * n) * (eta2 (v * u * n / x) : ℂ) else 0) else 0) else 0
 
-/-! ## Facts about `η₂` used as hypotheses in [B, Ch. 4] -/
+/-! ## Facts about `η₂` used as hypotheses in [H, Ch. 4] -/
 
-/-- `|η₂|₁ = 1` [B, (6.1)]. -/
+/-- `|η₂|₁ = 1` [H, (6.1)]. -/
 theorem eta2_L1 : ∫ t, |eta2 t| = 1 := Helfgott.integral_abs_eta2
 
-/-- `|η̂₂''|_∞ ≤ 31.521` [B, (B.6), Lemma B.2.3], written via `η̂''(t) = (2πit)² η̂(t)`.
-Follows from the trusted fact `eta2_fourier_bound'` (in [B] a rigorous numerical computation). -/
+/-- `|η̂₂''|_∞ ≤ 31.521` [H, (B.6), Lemma B.2.3], written via `η̂''(t) = (2πit)² η̂(t)`.
+Follows from the trusted fact `eta2_fourier_bound'` (in [H] a rigorous numerical computation). -/
 theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ ≤ c₀ := by
   have h : fourier eta2 t = FourierTransform.fourier (fun u => (eta2 u : ℂ)) t :=
     (fourier_eq_integral_e _ _).symm
@@ -102,7 +102,7 @@ theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ �
 
 /-! ## §4.1 Trigonometric sums -/
 
-/-- **[B, Lemma 4.1.1]**, proved in `MinorArcs/TrigSums.lean` (`TernaryGoldbach.MinorArcs.lemma_4_1_1`). -/
+/-- **[H, Lemma 4.1.1]**, proved in `MinorArcs/TrigSums.lean` (`TernaryGoldbach.MinorArcs.lemma_4_1_1`). -/
 example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
     ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, min A (C / Real.sin (π * α * n) ^ 2) ≤
@@ -110,7 +110,7 @@ example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : 
   lemma_4_1_1 h y hA hC
 
 open Classical in
-/-- **[B, Lemma 4.1.2]**, proved in `MinorArcs/TrigSums.lean`. -/
+/-- **[H, Lemma 4.1.2]**, proved in `MinorArcs/TrigSums.lean`. -/
 example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
@@ -120,7 +120,7 @@ example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
   lemma_4_1_2 h hy hy₁₂ hlen hy₂ hA hC
 
 open Classical in
-/-- **[B, Lemma 4.1.3]**, proved in `MinorArcs/TrigSums.lean` (by a sharper argument than [B]'s;
+/-- **[H, Lemma 4.1.3]**, proved in `MinorArcs/TrigSums.lean` (by a sharper argument than [H]'s;
 see the module docstring there). -/
 example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {B C : ℝ}
@@ -135,12 +135,12 @@ example {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
 
 /-! ## §4.2 Type I estimates (for `η = η₂`) -/
 
-/-- The main term (4.30) of [B, Lemma 4.2.2]. -/
+/-- The main term (4.30) of [H, Lemma 4.2.2]. -/
 noncomputable def bound_4_30 (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
   x / (2 * q) * minInv c₀ (π * δ) * |muSum (Mof x δ q D) q (2 * q) fun _ => 1| +
     c₀ * q / x * (1 / 8 - 1 / (2 * π ^ 2)) * (D / q + 1) ^ 2
 
-/-- The error term (4.31) of [B, Lemma 4.2.2], with `c₁ = 1 + |η'|₁/(x/D)`. -/
+/-- The error term (4.31) of [H, Lemma 4.2.2], with `c₁ = 1 + |η'|₁/(x/D)`. -/
 noncomputable def bound_4_31 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
   let c₁ := 1 + eta2'L1 / (x / D)
   2 * √(c₀ * c₁) / π * D + 3 * c₁ / 2 * (x / q) * logPlus (D / (c₂ * x / q)) +
@@ -148,7 +148,7 @@ noncomputable def bound_4_31 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
     2 * eta2'L1 / π * q * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * x))) +
     (2 * √(3 * c₀ * c₁) / π + 3 * c₁ / (2 * c₂) + 55 * c₀ * c₂ / (6 * π ^ 2)) * q
 
-/-- The error term (4.32) of [B, Lemma 4.2.2] (case `|δ| ≥ 1/2c₂`). -/
+/-- The error term (4.32) of [H, Lemma 4.2.2] (case `|δ| ≥ 1/2c₂`). -/
 noncomputable def bound_4_32 (x δ : ℝ) (q : ℕ) (D Q₀ ε : ℝ) : ℝ :=
   let c₁ := 1 + eta2'L1 / (x / D)
   let y := x / (|δ| * q)
@@ -157,9 +157,9 @@ noncomputable def bound_4_32 (x δ : ℝ) (q : ℕ) (D Q₀ ε : ℝ) : ℝ :=
     3 / 2 * c₁ * (2 + (1 + ε) / ε * logPlus (2 * D / y)) * (x / Q₀) +
     35 * c₀ * c₂ / (3 * π ^ 2) * q
 
--- [B, Lemma 4.2.2] itself is stated and proved in `MinorArcs/TypeIProof.lean`.
+-- [H, Lemma 4.2.2] itself is stated and proved in `MinorArcs/TypeIProof.lean`.
 
-/-- The main term (4.40) of [B, Lemma 4.2.3], **corrected**.  [B] prints
+/-- The main term (4.40) of [H, Lemma 4.2.3], **corrected**.  [H] prints
 `(x/q) min(1, c₀/(2πδ)²) |∑_{m ≤ M/q, (m,q)=1} μ(m)/m · log(x/mq)| + (x/q)|(log·η)^(-δ)| |…|`,
 which are the values for the version with all `n` (cf. (4.9)); its own proof (p. 67) gives, for
 odd `n`, `(x/2q) |η̂(-δ/2)| |∑_{(m,2q)=1} …| + (x/2q) |(log·η)^(-δ/2)| |∑_{(m,2q)=1} …|`, as in
@@ -171,8 +171,8 @@ noncomputable def bound_4_40 (x δ : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
       |muSum (Mof x δ q D) q (2 * q) fun _ => 1| +
     c₀ * (1 / 2 - 2 / π ^ 2) * (D ^ 2 / (4 * q * x) * Real.log (rexp (1 / 2) * x / D) + 1 / rexp 1)
 
-/-- The error term (4.41) of [B, Lemma 4.2.3], with `c₁ = 1 + |η'|₁/(x/D)`.  **Slightly weakened**:
-the last term has `log(2ex/c₂)` where [B] has `log(2√e x/c₂)`; [B]'s final step in (4.47) is only
+/-- The error term (4.41) of [H, Lemma 4.2.3], with `c₁ = 1 + |η'|₁/(x/D)`.  **Slightly weakened**:
+the last term has `log(2ex/c₂)` where [H] has `log(2√e x/c₂)`; [H]'s final step in (4.47) is only
 justified for `q ≥ 2` (for `q = 1` it would need a numerical comparison). -/
 noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
   let c₁ := 1 + eta2'L1 / (x / D)
@@ -184,13 +184,13 @@ noncomputable def bound_4_41 (x : ℝ) (q : ℕ) (D : ℝ) : ℝ :=
     3 * c₁ / 2 * √(2 * x / c₂) * Real.log (2 * x / c₂) +
     20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * x) * Real.log (2 * rexp 1 * x / c₂)
 
--- [B, Lemma 4.2.3] itself is stated and proved in `MinorArcs/TypeILogProof.lean` (the unused bound
+-- [H, Lemma 4.2.3] itself is stated and proved in `MinorArcs/TypeILogProof.lean` (the unused bound
 -- (4.42) is omitted; see there).
 
-/-- `c₄ = 1.03884` [B, Lemma 4.2.4]. -/
+/-- `c₄ = 1.03884` [H, Lemma 4.2.4]. -/
 def c₄ : ℝ := 1.03884
 
-/-- The main term (4.50) of [B, Lemma 4.2.4]. **Corrected**: the last term has a factor `3/2` that [B] lacks. [B, (4.55)] bounds
+/-- The main term (4.50) of [H, Lemma 4.2.4]. **Corrected**: the last term has a factor `3/2` that [H] lacks. [H, (4.55)] bounds
 `∑_{p^α ≤ V, p | q} (log p) p^α` by `V log q`, but `∑_{α : p^α ≤ V} p^α` can exceed `V` (e.g.
 `V = 9`, `p = 3`); it is at most `(3/2) V` for odd `p` (`sum_vonMangoldt_mul_not_coprime_le`). -/
 noncomputable def bound_4_50 (x δ : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
@@ -200,17 +200,17 @@ noncomputable def bound_4_50 (x δ : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
       (D ^ 2 * Real.log V / (2 * q * x) + 3 * c₄ / 2 * (U * V ^ 2 / x) +
         3 / 2 * ((U + 1) ^ 2 * V / (2 * x) * Real.log q))
 
-/-- The error term (4.51) of [B, Lemma 4.2.4] (case (b)), with `D = UV`, **as proved**
-(`TypeI2Rest.lean: norm_restPartI2_le_caseB`). Same leading terms as [B]:
+/-- The error term (4.51) of [H, Lemma 4.2.4] (case (b)), with `D = UV`, **as proved**
+(`TypeI2Rest.lean: norm_restPartI2_le_caseB`). Same leading terms as [H]:
 `(2√(c₀c₁)/π) D log(D/√e) + (3c₁/2)(x/q) log D log⁺(D/(c₂x/q)) + (2√(c₀c₁)/π)(q/2) log D log⁺(D/(q/2))`.
 Changes, all documented in `NOTES.md`:
-* `c₁ = 1 + |η'|₁/(x/D)` (odd `n`, as in Lemma 4.2.2); [B] prints `1 + |η'|₁/(2x/D)`, the all-`n` value.
-* Lower-order `q` terms: `q(√3 log(3D) + 2 log⁺(D/(q/2)))` for [B]'s `√3 q log(c₂x/q)` (we bound
+* `c₁ = 1 + |η'|₁/(x/D)` (odd `n`, as in Lemma 4.2.2); [H] prints `1 + |η'|₁/(2x/D)`, the all-`n` value.
+* Lower-order `q` terms: `q(√3 log(3D) + 2 log⁺(D/(q/2)))` for [H]'s `√3 q log(c₂x/q)` (we bound
   the weight `log m` on each block of length `q` by `log` of its upper end).
-* `log⁺(q/2)` for [B]'s `log(q/2)` (which is negative for `q = 1`).
-* `(3c₁/2)√(2x/c₂)(log(3√(c₂x/2)) + 1)` for [B]'s `(3c₁/2)√(2x/c₂) log √(c₂x/2)`.
-* `(2√c₀/π)√(2c₂x)(2 + 12 log(5D)) + 5c₀/6π²` for [B]'s `(25c₀/4π²)(2c₂)^{3/2} √x log x`
-  (from our own version of [B, (4.59)–(4.60)], whose constant we could not reproduce). -/
+* `log⁺(q/2)` for [H]'s `log(q/2)` (which is negative for `q = 1`).
+* `(3c₁/2)√(2x/c₂)(log(3√(c₂x/2)) + 1)` for [H]'s `(3c₁/2)√(2x/c₂) log √(c₂x/2)`.
+* `(2√c₀/π)√(2c₂x)(2 + 12 log(5D)) + 5c₀/6π²` for [H]'s `(25c₀/4π²)(2c₂)^{3/2} √x log x`
+  (from our own version of [H, (4.59)–(4.60)], whose constant we could not reproduce). -/
 noncomputable def bound_4_51 (x : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
   let D := U * V
   let c₁ := 1 + eta2'L1 / (x / D)
@@ -223,9 +223,9 @@ noncomputable def bound_4_51 (x : ℝ) (q : ℕ) (U V : ℝ) : ℝ :=
     3 * c₁ / 2 * √(2 * x / c₂) * (Real.log (3 * √(c₂ * x / 2)) + 1) +
     (2 * √c₀ / π * √(2 * c₂ * x) * (2 + 12 * Real.log (5 * D)) + 5 * c₀ / (6 * π ^ 2))
 
-/-- The error term (4.52) of [B, Lemma 4.2.4] (case (a), `|δ| ≥ 1/2c₂`), with `D = UV`,
+/-- The error term (4.52) of [H, Lemma 4.2.4] (case (a), `|δ| ≥ 1/2c₂`), with `D = UV`,
 `y = x/|δ|q`, **as proved** (`TypeI2Rest.lean: norm_restPartI2_le_caseA`). Same leading term
-`(2√(c₀c₁)/π) D log(D/e)` as [B]; the other terms have the same shape as [B]'s
+`(2√(c₀c₁)/π) D log(D/e)` as [H]; the other terms have the same shape as [H]'s
 (`(1+ε) (y+1) (… log …)` and `(x/Q₀)(… log …)`, the latter `≤ (√x/2)(…)` since `Q₀ ≥ 2√x`) but
 cruder constants; `c₁ = 1 + |η'|₁/(x/D)` as in `bound_4_51`; `min(y+1, 2D)` as in `bound_4_32`. -/
 noncomputable def bound_4_52 (x δ : ℝ) (q : ℕ) (U V Q₀ ε : ℝ) : ℝ :=
@@ -239,6 +239,6 @@ noncomputable def bound_4_52 (x δ : ℝ) (q : ℕ) (U V Q₀ ε : ℝ) : ℝ :=
     3 * c₁ / 2 * (2 * Real.log (5 * D) + (1 + ε) / ε * Real.log D * logPlus (2 * D / y)) * (x / Q₀) +
     35 * c₀ * c₂ / (3 * π ^ 2) * q * Real.log D
 
--- [B, Lemma 4.2.4] itself is stated and proved in `MinorArcs/TypeI2Rest.lean`.
+-- [H, Lemma 4.2.4] itself is stated and proved in `MinorArcs/TypeI2Rest.lean`.
 
 end TernaryGoldbach.MinorArcs

@@ -1,12 +1,12 @@
 import Mathlib
 
 /-!
-# Lower bounds for `∑ μ(r)²/φ(r)` [B, (5.41)]
+# Lower bounds for `∑ μ(r)²/φ(r)` [H, (5.41)]
 
 * `sum_inv_le_sum_inv_totient`: `∑_{n ≤ N} 1/n ≤ ∑_{r ≤ N, r squarefree} 1/φ(r)`;
 * `sum_sqfree_div_totient_le`: for antitone `w ≥ 0`,
   `∑_{r ≤ N sq-free} w(r)/φ(r) ≤ (q/φ(q)) ∑_{r ≤ N sq-free, (r,q)=1} w(r)/φ(r)`;
-* `log_le_sum_coprime`: `(φ(q)/q) log R ≤ ∑_{r ≤ R, (r,q)=1} μ(r)²/φ(r)` [B, (5.41)].
+* `log_le_sum_coprime`: `(φ(q)/q) log R ≤ ∑_{r ≤ R, (r,q)=1} μ(r)²/φ(r)` [H, (5.41)].
 -/
 
 open Finset
@@ -289,7 +289,7 @@ theorem sum_sqfree_div_totient_le {q : ℕ} (hq : 1 ≤ q) (w : ℕ → ℝ) (hw
         mul_le_mul_of_nonneg_right (sum_sqfree_divisors_inv_totient_le q hq)
           (sum_nonneg fun r _ => div_nonneg (hw0 r) (Nat.cast_nonneg _))
 
-/-- **[B, (5.41)]**: `(φ(q)/q) log R ≤ ∑_{r ≤ R, (r,q)=1} μ(r)²/φ(r)` for `R ≥ 0`. -/
+/-- **[H, (5.41)]**: `(φ(q)/q) log R ≤ ∑_{r ≤ R, (r,q)=1} μ(r)²/φ(r)` for `R ≥ 0`. -/
 theorem log_le_sum_coprime {q : ℕ} (hq : 1 ≤ q) {R : ℝ} (hR : 0 ≤ R) :
     Nat.totient q / q * Real.log R ≤
       ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q),

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuot4
 
 /-!
-# [B, Prop 12.2.4], part 5: `λ(q)⁷ ≤ a⁹ q²` for `q ≥ 2.2·10¹⁰`, and `large_q_hS`
+# [H, Prop 12.2.4], part 5: `λ(q)⁷ ≤ a⁹ q²` for `q ≥ 2.2·10¹⁰`, and `large_q_hS`
 -/
 
 open Real Finset

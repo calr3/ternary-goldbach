@@ -1,7 +1,7 @@
 import TernaryGoldbach.MajorArcs.CMain
 
 /-!
-# [B, (10.22)]: `∫ η̂◦(t)² η̂_*(t) e(tM) dt = C_{η◦,η_*}(M)`
+# [H, (10.22)]: `∫ η̂◦(t)² η̂_*(t) e(tM) dt = C_{η◦,η_*}(M)`
 
 With `F = (η◦ ⋆ η◦) ⋆ η_*`: `F` is integrable and continuous, `𝓕 F = (𝓕 η◦)² 𝓕 η_*`
 (`Real.fourier_mul_convolution_eq`), `𝓕 F` is integrable (`|η̂◦(ξ)| ≤ min(2, 14/(2πξ)²)`), so Fourier
@@ -161,7 +161,7 @@ theorem integrable_fourier_FM : Integrable (𝓕 FM) := by
           (by positivity)
     _ = 8 * (1 + ξ ^ 2)⁻¹ := mul_one _
 
-/-- **[B, (10.22)]**: `∫ η̂◦(ξ)² η̂_*(ξ) e(ξM) dξ = C_{η◦,η_*}(M)`. -/
+/-- **[H, (10.22)]**: `∫ η̂◦(ξ)² η̂_*(ξ) e(ξM) dξ = C_{η◦,η_*}(M)`. -/
 theorem fourier_identity (M : ℝ) :
     ∫ ξ, Complex.exp (↑(2 * π * ξ * M) * I) * (𝓕 etaOC ξ * 𝓕 etaOC ξ * 𝓕 etaSC ξ) = (Cmain M : ℂ) := by
   have h := integrable_FM.fourierInv_fourier_eq integrable_fourier_FM continuous_FM.continuousAt

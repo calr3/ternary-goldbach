@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Definitions for Ramaré's estimate for `G_d(R) = ∑_{r ≤ R, (r,d)=1} μ²(r)/φ(r)` ([Ram95, Lemma 3.4] = [B, (12.12)])
+# Definitions for Ramaré's estimate for `G_d(R) = ∑_{r ≤ R, (r,d)=1} μ²(r)/φ(r)` ([Ram95, Lemma 3.4] = [H, (12.12)])
 
 The estimate itself is `Prelim.ramare_Gq` (`Ramare.lean`), proved in `Ramare*.lean`. The definitions
 agree with `MinorArcs.Gq`, `Sq`, `f1q`.
@@ -24,7 +24,7 @@ noncomputable def f1pP (p : ℕ) : ℝ :=
   (1 + (p : ℝ) ^ (-(2 / 3 : ℝ))) /
     (1 + ((p : ℝ) ^ (1 / 3 : ℝ) + (p : ℝ) ^ (2 / 3 : ℝ)) / ((p : ℝ) * ((p : ℝ) - 1)))
 
-/-- `f₁(q) = ∏_{p ∣ q} f₁(p)` [B, (12.13)]. -/
+/-- `f₁(q) = ∏_{p ∣ q} f₁(p)` [H, (12.13)]. -/
 noncomputable def f1qP (q : ℕ) : ℝ := ∏ p ∈ q.primeFactors, f1pP p
 
 end TernaryGoldbach.Prelim

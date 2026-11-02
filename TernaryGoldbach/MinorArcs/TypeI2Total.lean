@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeIProof
 
 /-!
-# Type I totals [B, §6.2.2]: `S_{I,2}` for `q ≤ Q/V`
+# Type I totals [H, §6.2.2]: `S_{I,2}` for `q ≤ Q/V`
 -/
 
 open Real Finset
@@ -14,7 +14,7 @@ namespace TernaryGoldbach.MinorArcs
 open TernaryGoldbach.Helfgott (eta2)
 
 open Classical in
-/-- [B, (6.5)]: `S_{I,2}(α, x) = ∑_{v ≤ V odd} Λ(v) S_I(vα, x/v)`. -/
+/-- [H, (6.5)]: `S_{I,2}(α, x) = ∑_{v ≤ V odd} Λ(v) S_I(vα, x/v)`. -/
 theorem typeI2_eq_sum (α : ℝ) {x : ℝ} (hx : 0 < x) (U V : ℝ) :
     typeI2 α x U V = ∑ v ∈ Icc 1 ⌊V⌋₊, if Odd v then (Λ v : ℂ) * typeI (v * α) (x / v) U else 0 := by
   unfold typeI2 typeI
@@ -105,7 +105,7 @@ theorem approx2_mul {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a
 
 
 open Classical in
-/-- [B, (6.6)–(6.8)]: for `qV ≤ Q`, applying Lemma 4.2.2 to each `S_I(vα, x/v)`:
+/-- [H, (6.6)–(6.8)]: for `qV ≤ Q`, applying Lemma 4.2.2 to each `S_I(vα, x/v)`:
 `|S_{I,2}| ≤ ∑_{v ≤ V odd} Λ(v) B_v`, where `B_v` is (4.30) + (4.31) (if `|δ| ≤ 1/2c₂`) or
 (4.30) + (4.32) (if `|δ| ≥ 1/2c₂`) for `x/v`, `q_v = q/(q,v)`, `Q/v`. -/
 theorem typeI2_le_sum {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q) (hx : 0 < x)

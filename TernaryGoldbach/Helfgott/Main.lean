@@ -9,7 +9,7 @@ This file derives the ternary Goldbach conjecture from the inputs in
 `TernaryGoldbach.Helfgott.Inputs` and `SmallCases.lean`. There is no `sorry`; the axioms it depends
 on are listed by `#print axioms ternary_goldbach` and audited in `AXIOMS.md`.
 
-The argument follows [H, §7.4]:
+The argument follows [H13, §7.4]:
 
 1. the weighted count equals `∫ = ∫_𝔐 + ∫_𝔪`;
 2. `Re ∫_𝔐 ≥ 1.049 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`;

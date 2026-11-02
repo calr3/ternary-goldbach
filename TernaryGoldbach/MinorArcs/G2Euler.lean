@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.G2Moebius
 
 /-!
-# Euler-product bounds for the sums in [B, Lemma 5.1.2]
+# Euler-product bounds for the sums in [H, Lemma 5.1.2]
 
 For `0 ≤ s < 1`, with `c_s(p) = p/(p − p^s)`, `ℓ_s(p) = 1 + p^s/((p+1)(p − p^s))`,
 `ρ_s(p) = (p+1)/(p+1−p^s)` (so `ℓ_s(p) ρ_s(p) = c_s(p)`):

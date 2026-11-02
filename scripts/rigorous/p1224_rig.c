@@ -1,4 +1,4 @@
-/* Interval-arithmetic version of p1224_check.c: the finite check behind [B, Prop 12.2.4]
+/* Interval-arithmetic version of p1224_check.c: the finite check behind [H, Prop 12.2.4]
    (axiom `prop1224_check`, TernaryGoldbach/MinorArcs/LSQuot2.lean).
 
    Claim, for every 1 <= q < Q1 = 2.2e10 and every integer n >= 1 with n < lam(q): (S) or (C), where

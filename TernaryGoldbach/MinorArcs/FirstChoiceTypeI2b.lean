@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2
 
 /-!
-# [B, §6.3.1, (6.59)]: `S_{I,2}` at the first choice of parameters, assembled
+# [H, §6.3.1, (6.59)]: `S_{I,2}` at the first choice of parameters, assembled
 -/
 
 open Real
@@ -18,7 +18,7 @@ theorem two_sqrt_c0_mul_le {c : ℝ} (hc : 0 ≤ c) : 2 * √(c₀ * c) / π ≤
   nlinarith
 
 set_option maxHeartbeats 1600000 in
-/-- The rest of `S_{I,2}` for `|δ| ≥ 1/2c₂` ([B, (6.14)], `ε = 0.07`) at the parameters:
+/-- The rest of `S_{I,2}` for `|δ| ≥ 1/2c₂` ([H, (6.14)], `ε = 0.07`) at the parameters:
 `≤ 2.4916 x/√t + (13.663 log t + 19.84) · 2x/t + 0.552 x^{5/6}`. -/
 theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3)

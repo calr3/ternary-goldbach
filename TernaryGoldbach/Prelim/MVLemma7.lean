@@ -8,7 +8,7 @@ import TernaryGoldbach.Prelim.Ramare
 # [MV73, Lemma 7]: `G(r) = ∑_{s ≤ r} μ(s)²/φ(s) ≥ log r + 1.07` for `r ≥ 6`
 
 For `r ≥ 21400` this follows from Ramaré's estimate `G(r) = log r + c_E + O*(7.284 r^{−1/3})`
-(`Prelim.ramare_Gq`, [B, (12.12)]); for `6 ≤ r < 21400` it is checked by the kernel
+(`Prelim.ramare_Gq`, [H, (12.12)]); for `6 ≤ r < 21400` it is checked by the kernel
 (`SmallG.lemma7_small`).
 
 The file also proves the asymptotic `|G(N) − log N − κ| ≤ (2 + 3/e + γ) P N^{−1/3}` from the

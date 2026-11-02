@@ -4,7 +4,7 @@ import TernaryGoldbach.MajorArcs.Singular
 import TernaryGoldbach.MajorArcs.FourierMain
 
 /-!
-# [B, (14.27)]: the integral over the major arcs
+# [H, (14.27)]: the integral over the major arcs
 
 `Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(−Nα) dα ≥ 1.045 x²/κ` for odd `N ≥ 10²⁷`.
 
@@ -922,7 +922,7 @@ theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q �
   calc _ ≤ _ := add_le_add hT1 hT2
     _ = _ := by ring
 
-/-! ## Assembly: [B, (14.27)] -/
+/-! ## Assembly: [H, (14.27)] -/
 
 theorem fI_periodic (N : ℕ) {x : ℝ} (hx : 0 < x) : Function.Periodic (fI N x) 1 := by
   intro α
@@ -964,7 +964,7 @@ theorem Cmain_ge_num {x : ℝ} (N : ℝ) (hNx : N / x = 2 + 9 / (8 * √(π / 2)
   linarith
 
 set_option maxHeartbeats 2000000 in
-/-- **[B, (14.27)]** (with `1.049` in place of [B]'s `1.058259`):
+/-- **[H, (14.27)]** (with `1.049` in place of [H]'s `1.058259`):
 `Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α)² S_{η_*}(α) e(−Nα) dα ≥ 1.049 x²/κ`. -/
 theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)
     (hNx : (N : ℝ) / x = 2 + 9 / (8 * √(π / 2)) / κ) :

@@ -3,7 +3,7 @@ import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.SmallMertensProd
 
 /-!
-# [B, Lemma C.2.2]: `q/φ(q) < e^γ log log r + 2.50637/log log r`
+# [H, Lemma C.2.2]: `q/φ(q) < e^γ log log r + 2.50637/log log r`
 
 Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
 * Mertens' second theorem in the form `∑_{d ≤ x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with
@@ -435,7 +435,7 @@ theorem log_sq_le_sqrt {x : ℝ} (hx : 10 ^ 8 ≤ x) : Real.log x ^ 2 ≤ 0.0361
   calc Real.log x ^ 2 ≤ (0.19 * x ^ (1 / 4 : ℝ)) ^ 2 := pow_le_pow_left₀ hL0 hL 2
     _ = 0.0361 * √x := by rw [mul_pow, hq2]; norm_num
 
-/-- **[B, Lemma C.2.2]** for `x ≥ 10⁸`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
+/-- **[H, Lemma C.2.2]** for `x ≥ 10⁸`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
 theorem F_large {x : ℕ} (hx : 2 * 10 ^ 8 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) + 2.50637 / Real.log (thetaN x) := by
@@ -1219,7 +1219,7 @@ theorem bigF_gt {r : ℝ} (hr : 3 ≤ r) :
     nlinarith [sq_nonneg (t - 1.15385)]
   linarith
 
-/-- **[B, Lemma C.2.2]** ([RS62, Thm. 15]): `q/φ(q) < e^γ log log r + 2.50637/log log r` for `q ≥ 1`,
+/-- **[H, Lemma C.2.2]** ([RS62, Thm. 15]): `q/φ(q) < e^γ log log r + 2.50637/log log r` for `q ≥ 1`,
 `r ≥ max(3, q)`. -/
 theorem div_totient_lt {q : ℕ} (hq : 1 ≤ q) {r : ℝ} (hr : 3 ≤ r) (hqr : (q : ℝ) ≤ r) :
     (q : ℝ) / Nat.totient q < Real.exp Real.eulerMascheroniConstant * Real.log (Real.log r) +

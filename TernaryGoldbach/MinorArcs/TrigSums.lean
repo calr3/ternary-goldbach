@@ -1,9 +1,9 @@
 import Mathlib
 
 /-!
-# Trigonometric sums [B, §4.1]
+# Trigonometric sums [H, §4.1]
 
-Proofs of [B, Lemmas 4.1.1, 4.1.2]: for `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q`,
+Proofs of [H, Lemmas 4.1.1, 4.1.2]: for `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q`,
 
 * (4.1.1) `∑_{y < n ≤ y + q} min(A, C/sin²(παn)) ≤ min(2A + (6q²/π²) C, 3A + (4q/π) √(AC))`;
 * (4.1.2) if `0 ≤ y₁ < y₂ ≤ Q/2`, `y₂ - y₁ ≤ q`:
@@ -17,19 +17,19 @@ For 4.1.2 the final step needs `t²/sin²t + (t/2) cot 2t ≤ 5/4` (tight to fou
 `t²/sin²t + t cot(3t/2) ≤ 5/3`; we prove them from `x cot x ≤ 1 - x²/3 (- x⁴/45)` and
 `t²/sin²t ≤ 1 + t²/3 + …`, using alternating Taylor bounds for `sin`, `cos` up to degree 8.
 
-For 4.1.3 we do **not** follow [B]'s proof, which bounds the sum by
+For 4.1.3 we do **not** follow [H]'s proof, which bounds the sum by
 `2 ∑_{r ≤ q/2} min(B/sin(π(r-1/2)/q), C/sin²(π(r-1/2)/q))`: that intermediate quantity can exceed
-the stated `(2Bq/π) max(2, …)` (numerically by ≈7% at `q = 140`, `C ≈ Bπ/2q`), and [B]'s
+the stated `(2Bq/π) max(2, …)` (numerically by ≈7% at `q = 140`, `C ≈ Bπ/2q`), and [H]'s
 treatment of small `C` ("relax the input to `C = B sin π/q`") yields `max(≈2.55, …)`, not
 `max(2, …)`.  The statement itself is true.  We use the sharper fact that the residues lie at
 distance `≥ r` (low) and `≥ k - 1/2` (high), i.e. at most one point per half-integer, so the sum
 is `≤ h(1/2) + (2q/π) ∫_{π/2q}^{π/2} min(B/sin v, C/sin² v) dv`, and then treat the three ranges
 `C ≥ B`, `B sin(π/2q) ≤ C < B`, `C < B sin(π/2q)` separately.
 
-The argument follows [B] for the first bound: reduce to residues `R = 0, …, q-1` with shifts
+The argument follows [H] for the first bound: reduce to residues `R = 0, …, q-1` with shifts
 in a window `[s - 1/2, s + 1/2]`, pair `R = k` with `R = q - 1 - k`, and use convexity of
 `1/sin²` (pairing and the midpoint inequality), `∫ 1/sin² = -cot`, and
-`t²/sin²t + t cot 2t ≤ 3/2` on `(0, π/6]`.  For the second bound we replace [B]'s count of
+`t²/sin²t + t cot 2t ≤ 3/2` on `(0, π/6]`.  For the second bound we replace [H]'s count of
 terms (which uses `arcsin`) by a cleaner estimate: `min(A, C/sin²)` is decreasing, so each run
 of unit-spaced terms is at most `(q/π) ∫₀^{π/2} min(A, C/sin² v) dv ≤ (q/π)(Aw + C/w) = (2q/π)√(AC)`
 with `w = √(C/A)`.
@@ -730,7 +730,7 @@ theorem core_bound₂ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
   core_bound₂' hq hs0 hs1 hA hC τ hτ _ (fun _ => le_min hA (mul_nonneg hC (fq_nonneg _ _)))
     (fun _ => min_le_left _ _) (fun _ _ _ => min_le_right _ _)
 
-/-- `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q` [B, Lemmas 4.1.1–4.1.3]. -/
+/-- `α = a/q + β/qQ`, `(a, q) = 1`, `|β| ≤ 1`, `q ≤ Q` [H, Lemmas 4.1.1–4.1.3]. -/
 def Approx (α : ℝ) (a : ℤ) (q : ℕ) (Q : ℝ) : Prop :=
   1 ≤ q ∧ IsCoprime a (q : ℤ) ∧ ∃ β : ℝ, |β| ≤ 1 ∧ α = a / q + β / (q * Q) ∧ (q : ℝ) ≤ Q
 
@@ -877,7 +877,7 @@ theorem residue_form {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y A
   obtain ⟨s, hs0, hs1, τ, hτ, heq⟩ := residue_formΦ h y (fun t => min A (C / t))
   exact ⟨s, hs0, hs1, τ, hτ, by rw [heq]; simp only [fq, mul_one_div]⟩
 
-/-- **[B, Lemma 4.1.1]** -/
+/-- **[H, Lemma 4.1.1]** -/
 theorem lemma_4_1_1 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
     ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, min A (C / Real.sin (π * α * n) ^ 2) ≤
@@ -902,9 +902,9 @@ theorem min_le_minA {A C t : ℝ} (hA : 0 ≤ A) : min A (C / t) ≤ minA A C t 
   · exact min_le_left _ _
   · exact le_rfl
 
-/-- **[B, Lemma 4.1.1]**, with the summand read as `A` where `sin(παn) = 0` (`minA`).  Since
+/-- **[H, Lemma 4.1.1]**, with the summand read as `A` where `sin(παn) = 0` (`minA`).  Since
 `min A (C / 0) = 0` in Lean, this is stronger than `lemma_4_1_1`, and it is the form needed
-for bounding sums of `|T_m|` [B, (4.13)–(4.14)]. -/
+for bounding sums of `|T_m|` [H, (4.13)–(4.14)]. -/
 theorem lemma_4_1_1' {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : ℝ) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
     ∑ n ∈ Finset.Ioc ⌊y⌋ ⌊y + q⌋, minA A C (Real.sin (π * α * n) ^ 2) ≤
@@ -1526,7 +1526,7 @@ theorem residue_form₂ {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {
     simp only [Finset.mem_Icc]
     exact ⟨hRpos n hn, by have := hRlt n; omega⟩
 
-/-- **[B, Lemma 4.1.2]** -/
+/-- **[H, Lemma 4.1.2]** -/
 theorem lemma_4_1_2 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (_hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) :
@@ -2080,7 +2080,7 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
 
 
 open Classical in
-/-- **[B, Lemma 4.1.3]** -/
+/-- **[H, Lemma 4.1.3]** -/
 theorem lemma_4_1_3 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) {y₁ y₂ : ℝ}
     (hy : 0 ≤ y₁) (_hy₁₂ : y₁ < y₂) (hlen : y₂ - y₁ ≤ q) (hy₂ : y₂ ≤ Q / 2) {B C : ℝ}
     (hB : 0 ≤ B) (hC : 0 ≤ C) :

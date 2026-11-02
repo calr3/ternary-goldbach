@@ -2,7 +2,7 @@ import TernaryGoldbach.Helfgott.Defs
 import TernaryGoldbach.MinorArcs.TypeI
 
 /-!
-# Major arcs and the Dirichlet parameter `r_α` [B, §13.2]
+# Major arcs and the Dirichlet parameter `r_α` [H, §13.2]
 
 If `2α = a/q + δ/y (mod 1)` (`Approx2 α y δ a q _`) with `q ≤ r` and `|δ| q < δ₀ r`, then
 `α ∈ 𝔐_{δ₀,r}` at scale `y` (`mem_majorArcs_of_approx`).  The odd/even radii of (10.5) are
@@ -11,7 +11,7 @@ either `m` is even and `q` odd (`α` is near `(m/2)/q`, odd denominator `q ≤ r
 reduced (even denominator `2q ≤ 2r`).
 
 Contrapositive (`le_rAlpha_of_not_mem`): **off `𝔐_{δ₀,r}` at scale `y`,
-`r_α = max(1, |δ|/δ₀) q ≥ r`**.  This is the ℓ∞ step of [B, Thm 13.2.1] ("Let `α ∉ 𝔐_{8,r}`,
+`r_α = max(1, |δ|/δ₀) q ≥ r`**.  This is the ℓ∞ step of [H, Thm 13.2.1] ("Let `α ∉ 𝔐_{8,r}`,
 where `y` is used instead of `x` …"), and it holds only for the arcs at the scale `y` of the
 approximation.  See NOTES "Ch. 13: scale erratum".
 

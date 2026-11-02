@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.LambdaMu
 
 /-!
-# [B, (2.16)] and [B, (2.18)]
+# [H, (2.16)] and [H, (2.18)]
 
 From (2.17), (2.14) and finite checks (`scripts/psi_extra_check.py`).
 -/
@@ -27,7 +27,7 @@ axiom lambda_sqrt_point :
     ∑ n ∈ Icc 1 6000000, (Λ n : ℝ) / √n - psiN 6000000 / √(6000001 : ℝ) -
       1.0004 * √(6000001 : ℝ) ≤ -2
 
-/-- **[B, (2.16)]**: `∑_{n ≤ y} Λ(n) n < 1.03884 y²/2` for `y > 663`. -/
+/-- **[H, (2.16)]**: `∑_{n ≤ y} Λ(n) n < 1.03884 y²/2` for `y > 663`. -/
 theorem sum_vonMangoldt_mul_lt {y : ℝ} (hy : 663 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.03884 * y ^ 2 / 2 := by
   rcases le_or_gt 2.5e7 y with h | h
@@ -67,7 +67,7 @@ theorem mul_inv_sqrt_sub_le {n : ℝ} (hn : 0 < n) :
   have e3 : (2 * n + 1) / √(n + 1) = √(n + 1) + n / √(n + 1) := by field_simp; linarith
   linarith
 
-/-- **[B, (2.18)]**: `∑_{n ≤ y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`. -/
+/-- **[H, (2.18)]**: `∑_{n ≤ y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`. -/
 theorem sum_vonMangoldt_div_sqrt_lt {y : ℝ} (hy : 1 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) / √n < 2 * 1.0004 * √y := by
   set k := ⌊y⌋₊ with hk

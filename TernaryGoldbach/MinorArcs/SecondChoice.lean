@@ -1,13 +1,13 @@
 import TernaryGoldbach.MinorArcs.TypeI
 
 /-!
-# The second choice of parameters [B, §6.3.2]: re-approximation and case split
+# The second choice of parameters [H, §6.3.2]: re-approximation and case split
 
-For `q > y = x^{1/3}/6`, [B] re-approximates `2α` with a smaller `Q₀` (we take `Q₀ ≥ 3.5x/U`, see
+For `q > y = x^{1/3}/6`, [H] re-approximates `2α` with a smaller `Q₀` (we take `Q₀ ≥ 3.5x/U`, see
 `NOTES.md`). With `a'/q'` the new approximation, either
 * (a) `q' > y`, or
 * (b) `q' ≤ y`, `|δ'| > 8` and `|δ'|q' > 8y`, or
-* (c) `q' ≤ y` and `|δ'| ≤ 8y/q'` (the case [B] overlooks): then `a'/q'` is also an approximation
+* (c) `q' ≤ y` and `|δ'| ≤ 8y/q'` (the case [H] overlooks): then `a'/q'` is also an approximation
   for `Q = (3/4)x^{2/3}`, and the coexistence with `a/q` (`q > y`) forces `δ₀'q' ≥ 2y(1 - y/Q)`.
 
 * `exists_approx2`: Dirichlet's approximation theorem in the form `Approx2`;
@@ -71,7 +71,7 @@ theorem approx_gap {α x δ δ' Q Q' : ℝ} {a a' : ℤ} {q q' : ℕ} (h : Appro
   apply div_le_div_of_nonneg_right _ (by positivity)
   exact_mod_cast Int.one_le_abs hN
 
-/-- **The case split of [B, §6.3.2]**, corrected. Here `x = T³`, `y = T/6`, `Q = (3/4)T²`; `a/q`
+/-- **The case split of [H, §6.3.2]**, corrected. Here `x = T³`, `y = T/6`, `Q = (3/4)T²`; `a/q`
 is the given approximation (`q > y`) and `a'/q'` the new one (any `Q₀`). -/
 theorem second_case_split {α T δ δ' Q₀ : ℝ} {a a' : ℤ} {q q' : ℕ} (hT : 1 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hq : T / 6 < q)

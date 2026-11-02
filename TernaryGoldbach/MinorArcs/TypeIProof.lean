@@ -2,15 +2,15 @@ import TernaryGoldbach.MinorArcs.TypeI
 import TernaryGoldbach.MinorArcs.BlockSums
 
 /-!
-# Proof of [B, Lemma 4.2.2] (Type I sums with odd `m`, `n`; `η = η₂`)
+# Proof of [H, Lemma 4.2.2] (Type I sums with odd `m`, `n`; `η = η₂`)
 
-Building blocks, following [B, proofs of Lemmas 4.2.1–4.2.2]:
+Building blocks, following [H, proofs of Lemmas 4.2.1–4.2.2]:
 * `approx_of`, `sin_sq_two_pi_mul`, `sin_ne_zero_of_approx`: the approximation `2α ≈ a/q`
   in the form taken by Lemmas 4.1.1–4.1.3.
-* `norm_Todd_le_minA`, `norm_Todd_le_min_sin`: [B, (4.36)] in the shapes Lemmas 4.1.1–4.1.3 use.
-* `sum_R1`, `sum_R2`, `sum_R3`: the three ranges of case (b), [B, (4.23)–(4.27)], adapted to
-  odd `n` as described in [B, proof of Lemma 4.2.2].
-* `norm_mainPart_le`: the terms with `q ∣ m ≤ M`, [B, (4.30)].
+* `norm_Todd_le_minA`, `norm_Todd_le_min_sin`: [H, (4.36)] in the shapes Lemmas 4.1.1–4.1.3 use.
+* `sum_R1`, `sum_R2`, `sum_R3`: the three ranges of case (b), [H, (4.23)–(4.27)], adapted to
+  odd `n` as described in [H, proof of Lemma 4.2.2].
+* `norm_mainPart_le`: the terms with `q ∣ m ≤ M`, [H, (4.30)].
 -/
 
 open Real Finset
@@ -64,7 +64,7 @@ theorem sin_ne_zero_of_approx {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a 
   have : (q : ℤ) ∣ a * n := ⟨N, by linarith⟩
   exact hcop.symm.dvd_of_dvd_mul_left this
 
-/-- [B, (4.36)] in the form used with Lemma 4.1.1: `|T_{m,∘}| ≤ minA(x/2m + |η'|₁/2, (m/x)(c₀/2), sin²)`. -/
+/-- [H, (4.36)] in the form used with Lemma 4.1.1: `|T_{m,∘}| ≤ minA(x/2m + |η'|₁/2, (m/x)(c₀/2), sin²)`. -/
 theorem norm_Todd_le_minA {α x δ : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     (h2α : 2 * α = a / q + δ / x + k) {m : ℕ} (hm : 1 ≤ m) {A C : ℝ}
     (hA : x / (2 * m) + eta2'L1 / 2 ≤ A) (hC : m / x * (c₀ / 2) ≤ C) :
@@ -82,7 +82,7 @@ theorem norm_Todd_le_minA {α x δ : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     rw [hs]
     exact div_le_div_of_nonneg_right hC (sq_nonneg _)
 
-/-- [B, (4.36)], second and third bounds, as used with Lemmas 4.1.2–4.1.3. -/
+/-- [H, (4.36)], second and third bounds, as used with Lemmas 4.1.2–4.1.3. -/
 theorem norm_Todd_le_min_sin {α x δ : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     (h2α : 2 * α = a / q + δ / x + k) {m : ℕ} (hm : 1 ≤ m)
     (hne : Real.sin (π * (a / q + δ / x) * (m : ℤ)) ≠ 0) {A B C : ℝ}
@@ -118,7 +118,7 @@ theorem max_log_two_mul_le {X : ℝ} (hX : 0 < X) :
   · rw [max_eq_right h]; apply max_le <;> linarith
   · rw [max_eq_left h.le]; apply max_le <;> linarith
 
-/-- **Range (R1)** of [B, Lemma 4.2.2, case (b)], i.e. [B, (4.23)] doubled:
+/-- **Range (R1)** of [H, Lemma 4.2.2, case (b)], i.e. [H, (4.23)] doubled:
 `∑_{m ≤ q/2} |T_{m,∘}| ≤ (2|η'|₁/π) q max(1, log(c₀e³q²/(4π|η'|₁x)))`. -/
 theorem sum_R1 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
@@ -196,7 +196,7 @@ theorem lt_of_lt_nblocks {a b q : ℝ} (hq : 0 < q) {j : ℕ} (hj : j < ⌈(b - 
     have := Nat.lt_ceil.1 hj; exact this
   rw [lt_div_iff₀ hq] at h1; linarith
 
-/-- One block of range (R2) of [B, Lemma 4.2.2, case (b)]. -/
+/-- One block of range (R2) of [H, Lemma 4.2.2, case (b)]. -/
 theorem block_R2 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
     (hδ : |δ / x| * (q * Q) ≤ 1) {D' : ℝ} (hD'Q : D' ≤ Q / 2) (j : ℕ) :
@@ -251,7 +251,7 @@ theorem block_R2 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 �
   refine (sum_le_sum hterm).trans (h12'.trans ((min_le_left _ _).trans (le_of_eq ?_)))
   simp only [C]; field_simp; ring
 
-/-- **Range (R2)** of [B, Lemma 4.2.2, case (b)], i.e. [B, (4.24)] doubled, before simplifying:
+/-- **Range (R2)** of [H, Lemma 4.2.2, case (b)], i.e. [H, (4.24)] doubled, before simplifying:
 `∑_{q/2 < m ≤ D', q ∤ m} |T_{m,∘}| ≤ (5c₀/3π²)(qD'²/x + 3q²D'/x + 5q³/4x)` for `D' ≤ Q/2`. -/
 theorem sum_R2 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
@@ -291,7 +291,7 @@ theorem sum_R2 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ 
     _ = _ := by field_simp; ring
 
 
-/-- **Range (A1)** of [B, Lemma 4.2.2, case (a)], i.e. [B, (4.16)] doubled, before simplifying:
+/-- **Range (A1)** of [H, Lemma 4.2.2, case (a)], i.e. [H, (4.16)] doubled, before simplifying:
 `∑_{m ≤ M, q ∤ m} |T_{m,∘}| ≤ (5c₀/3π²)(qM²/x + 3q²M/x + 2q³/x)` for `M ≤ Q/2`. -/
 theorem sum_A1 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
@@ -377,7 +377,7 @@ theorem sum_A1 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ 
         gcongr
     _ = _ := by field_simp; ring
 
-/-- One block of range (R3) of [B, Lemma 4.2.2, case (b)]. -/
+/-- One block of range (R3) of [H, Lemma 4.2.2, case (b)]. -/
 theorem block_R3 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
     (hδ : |δ / x| * (q * Q) ≤ 1) {R D : ℝ} (hR0 : 0 < R) (j : ℕ) (hyD : R + j * q < D) :
@@ -449,7 +449,7 @@ theorem block_R3 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 �
           simp only [A, C]; field_simp; norm_num
         rw [hAC]; simp only [A]; field_simp; ring
 
-/-- **Range (R3)** of [B, Lemma 4.2.2, case (b)], i.e. [B, (4.25)–(4.27)] adapted (general form,
+/-- **Range (R3)** of [H, Lemma 4.2.2, case (b)], i.e. [H, (4.25)–(4.27)] adapted (general form,
 also used in case (a) with the second approximation `a'/q'`): for `0 < R < D`, with `c₁ = 1 + |η'|₁/(x/D)`,
 `∑_{R < m ≤ D} |T_{m,∘}| ≤ (3c₁/2)(x/R + (x/q) log(D/R)) +
 (2√(c₀c₁)/π) q (√(1 + q/R) + (D - R)/q + (1/2) log(D/R))`. -/
@@ -575,7 +575,7 @@ theorem moebius_odd_term {q : ℕ} (hq : Odd q) (m : ℕ) :
 noncomputable def mainPart (α x M : ℝ) (q : ℕ) : ℂ :=
   ∑ m' ∈ Icc 1 ⌊M / q⌋₊, if Odd (q * m') then (μ (q * m') : ℂ) * Todd α x (q * m') else 0
 
-/-- **[B, (4.30)]**: the terms with `q ∣ m`, `m ≤ M`. -/
+/-- **[H, (4.30)]**: the terms with `q ∣ m`, `m ≤ M`. -/
 theorem norm_mainPart_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (h2α : 2 * α = a / q + δ / x + k) (hM0 : 0 ≤ M) (hMδ : |δ| * M ≤ x / 2) (hMD : M ≤ D) :
     ‖mainPart α x M q‖ ≤
@@ -794,7 +794,7 @@ theorem c₀_pos : (0 : ℝ) < c₀ := by unfold c₀; norm_num
 
 theorem c₂_pos : 0 < c₂ := by unfold c₂; have := c₀_pos; positivity
 
-/-- [B, (4.37)]: `5c₀c₂/(3π²) = 2√c₀/π`. -/
+/-- [H, (4.37)]: `5c₀c₂/(3π²) = 2√c₀/π`. -/
 theorem c₂_identity : 5 * c₀ * c₂ / (3 * π ^ 2) = 2 * √c₀ / π := by
   have h := c₀_pos
   have hs : √c₀ * √c₀ = c₀ := Real.mul_self_sqrt h.le
@@ -824,7 +824,7 @@ theorem log_le_logPlus {u v : ℝ} (hu : 0 < u) (huv : u ≤ v) : Real.log u ≤
   (Real.log_le_log hu huv).trans (le_max_left _ _)
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, Lemma 4.2.2], case (b), terms other than the main term**: if
+/-- **[H, Lemma 4.2.2], case (b), terms other than the main term**: if
 `D' = min(c₂x/q, D) ≤ Q/2` (`Q` an approximation parameter) and `D' ≤ M`, the terms of (4.29)
 with `¬(q ∣ m ∧ m ≤ M)` contribute at most (4.31). -/
 theorem norm_restPart_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
@@ -1019,7 +1019,7 @@ theorem norm_restPart_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx :
           linarith
       _ = _ := by ring
 
-/-- The second approximation of [B, proof of Lemma 4.2.1]: if `|ξ - a/q| = 1/(qQ)` with `q ≤ Q`,
+/-- The second approximation of [H, proof of Lemma 4.2.1]: if `|ξ - a/q| = 1/(qQ)` with `q ≤ Q`,
 there is `a'/q'` (reduced) with `q' ≤ (1+ε)Q`, `|ξ - a'/q'| ≤ 1/(q'(1+ε)Q)` and
 `q' ≥ εQ/(1+ε)`. -/
 theorem second_approx {ξ Q ε : ℝ} {a : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
@@ -1114,7 +1114,7 @@ theorem norm_restPart_le_sum {α x D M : ℝ} {q : ℕ} (hD : 0 ≤ D) :
   · rw [if_neg h, norm_zero]; split_ifs <;> simp [norm_nonneg]
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, Lemma 4.2.2], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
+/-- **[H, Lemma 4.2.2], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
 of (4.29) with `¬(q ∣ m ∧ m ≤ M)`, `M = Mof x δ q D`, contribute at most (4.32). -/
 theorem norm_restPart_le_caseA {α x δ Q₀ D ε : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k)
@@ -1285,7 +1285,7 @@ theorem norm_restPart_le_caseA {α x δ Q₀ D ε : ℝ} {a k : ℤ} {q : ℕ} (
     ring
   linarith
 
-/-- **[B, Lemma 4.2.2], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.30) + (4.31),
+/-- **[H, Lemma 4.2.2], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.30) + (4.31),
 with `M = Mof x δ q D`.  Proved; it depends only on the trusted bound `eta2_fourier_bound'`. -/
 theorem lemma_4_2_2_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hD : 1 ≤ D) (hDx : D ≤ x) (hcase : |δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) :
@@ -1341,7 +1341,7 @@ theorem lemma_4_2_2_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   · exact norm_mainPart_le hx hq h2α hM0 hMδ hMD
   · exact norm_restPart_le_caseB hx hq hcop h2α hqQ hδ hD hD'Q hMD'
 
-/-- **[B, Lemma 4.2.2], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.30) + (4.32), with
+/-- **[H, Lemma 4.2.2], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.30) + (4.32), with
 `M = Mof x δ q D`.  Proved; it depends only on the trusted bound `eta2_fourier_bound'`. -/
 theorem lemma_4_2_2_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hD : 1 ≤ D) (hDx : D ≤ x) (hδ : 1 / (2 * c₂) ≤ |δ|) {ε : ℝ} (hε : 0 < ε) :
@@ -1368,7 +1368,7 @@ theorem lemma_4_2_2_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   · exact norm_mainPart_le hx hq h2α hM0 hMδ hMD
   · exact norm_restPart_le_caseA hx hq hcop h2α hδQ₀ hqQ₀ hδ hD hε
 
-/-- **[B, Lemma 4.2.2]** for `η = η₂`. -/
+/-- **[H, Lemma 4.2.2]** for `η = η₂`. -/
 theorem lemma_4_2_2 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hQ₀ : 16 ≤ Q₀) (hD : 1 ≤ D) (hDx : D ≤ x) :
     ((|δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) →

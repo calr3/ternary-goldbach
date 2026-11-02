@@ -1,7 +1,7 @@
 import TernaryGoldbach.Helfgott.Numerics
 
 /-!
-# Bounding the non-prime terms [H, (7.50)]
+# Bounding the non-prime terms [H13, (7.50)]
 
 The terms of the weighted count where some `nᵢ` is even or not prime contribute at most
 `3 A₊² A_* · log N · (∑_{n ≤ N, n even or non-prime} Λ(n)) · ψ(N)`, where `A₊ ≥ |η₊|`,
@@ -108,7 +108,7 @@ theorem sum_ΛBad_le (N : ℕ) : ∑ n ∈ range (N + 1), ΛBad n ≤ psi N - th
   · simp only [hp, false_and, ite_false, ite_true]
     split_ifs <;> simp [vonMangoldt_nonneg, h2]
 
-/-- **[H, (7.50)] with the constants as parameters.** -/
+/-- **[H13, (7.50)] with the constants as parameters.** -/
 theorem repSum_sub_le_of_bounds {N : ℕ} (hN : 1 ≤ N) {Ap As : ℝ}
     (hAp : ∀ t, 0 ≤ t → |etaPlus t| ≤ Ap) (hAs : ∀ t, 0 ≤ t → |etaStar t| ≤ As) :
     repSum (fun _ => True) N - repSum Good N ≤

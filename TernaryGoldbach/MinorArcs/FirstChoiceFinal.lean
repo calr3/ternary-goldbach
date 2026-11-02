@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.Assembly
 
 /-!
-# [B, §6.3.1, (6.63) and §6.4]: Theorem 3.1.1 for `q ≤ x^{1/3}/6`
+# [H, §6.3.1, (6.63) and §6.4]: Theorem 3.1.1 for `q ≤ x^{1/3}/6`
 
 With `T = x^{1/3}`, `t = δ₀q`:
 `|S_{η₂}(α, x)| ≤ ((0.27125 C_{x,t} + 0.41415) log t + 0.8764) x/√(δ₀φ(q)) + 2.5 x/√t`
@@ -25,8 +25,8 @@ theorem Cxt_nonneg {T t : ℝ} (ht2 : 2 ≤ t) (htT : t ≤ T / 3) : 0 ≤ Cxt T
                             linarith)
 
 set_option maxHeartbeats 1600000 in
-/-- **[B, Theorem 3.1.1] for `q ≤ x^{1/3}/6`**, in terms of `T = x^{1/3}`, with the corrected
-constant `0.8764` (for [B]'s `0.5`) and `3.8 x^{5/6}` (for [B]'s `3.36 x^{5/6}`). -/
+/-- **[H, Theorem 3.1.1] for `q ≤ x^{1/3}/6`**, in terms of `T = x^{1/3}`, with the corrected
+constant `0.8764` (for [H]'s `0.5`) and `3.8 x^{5/6}` (for [H]'s `3.36 x^{5/6}`). -/
 theorem theorem_3_1_1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
     ‖S eta2 (T ^ 3) α‖ ≤

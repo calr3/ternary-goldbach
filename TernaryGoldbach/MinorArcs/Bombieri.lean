@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.GaussInduced
 
 /-!
-# Bombieri's identity for prime-supported exponential sums [B, §12.1], [Bom74, pp. 24–25]
+# Bombieri's identity for prime-supported exponential sums [H, §12.1], [Bom74, pp. 24–25]
 
 For `aₙ` (in `ℓ¹`) supported on `n` coprime to `q`, `S(α) = Σ aₙ e(αn)`, `S_χ(β) = Σ aₙ χ(n) e(βn)`:
 

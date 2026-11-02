@@ -1,10 +1,10 @@
 import TernaryGoldbach.MinorArcs.TypeI
 
 /-!
-# The Fourier transform of `log · η₂` [B, (B.17), Lemma B.2.4]
+# The Fourier transform of `log · η₂` [H, (B.17), Lemma B.2.4]
 
-* `norm_fourier_logeta2_le`: `|(log·η₂)^(t)| ≤ |log·η₂|₁ = 2 - log 4` [B, (B.17)];
-* `norm_fourier_logeta2_le_decay`: `(2πt)² |(log·η₂)^(t)| ≤ |(log·η₂)''|₁ = 96 log 2` [B, (B.18)].
+* `norm_fourier_logeta2_le`: `|(log·η₂)^(t)| ≤ |log·η₂|₁ = 2 - log 4` [H, (B.17)];
+* `norm_fourier_logeta2_le_decay`: `(2πt)² |(log·η₂)^(t)| ≤ |(log·η₂)''|₁ = 96 log 2` [H, (B.18)].
 -/
 
 open Real Finset MeasureTheory Complex
@@ -217,7 +217,7 @@ theorem norm_integral_lg''_le {a b : ℝ} (hab : a ≤ b) (t : ℝ) (g : ℝ →
   refine intervalIntegral.integral_congr fun u _ => ?_
   rw [norm_mul, norm_e, mul_one, Complex.norm_real, Real.norm_eq_abs]
 
-/-- **[B, Lemma B.2.4]**: `(2πt)² |(log·η₂)^(t)| ≤ |(log·η₂)''|₁ = 96 log 2`. -/
+/-- **[H, Lemma B.2.4]**: `(2πt)² |(log·η₂)^(t)| ≤ |(log·η₂)''|₁ = 96 log 2`. -/
 theorem norm_fourier_logeta2_le_decay (t : ℝ) :
     (2 * π * t) ^ 2 * ‖fourier (fun u => Real.log u * eta2 u) t‖ ≤ 96 * Real.log 2 := by
   have hl := log_two_pos'
@@ -283,7 +283,7 @@ theorem norm_fourier_logeta2_le_decay (t : ℝ) :
     _ ≤ 96 * Real.log 2 := by rw [hA, hB]; linarith
 
 
-/-- **[B, (B.17)]**: `|(log·η₂)^(t)| ≤ |log·η₂|₁ = 2 - log 4`. -/
+/-- **[H, (B.17)]**: `|(log·η₂)^(t)| ≤ |log·η₂|₁ = 2 - log 4`. -/
 theorem norm_fourier_logeta2_le (t : ℝ) :
     ‖fourier (fun u => Real.log u * eta2 u) t‖ ≤ 2 - Real.log 4 := by
   have hp1 : ∀ u ∈ Set.uIcc (1 / 4 : ℝ) (1 / 2), 0 < u := fun u hu => by

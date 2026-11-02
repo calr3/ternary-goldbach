@@ -3,14 +3,14 @@ import TernaryGoldbach.Helfgott.Eta2
 import TernaryGoldbach.MinorArcs.Eta2Fourier
 
 /-!
-# The inner sums of the Type I estimates [B, §4.2]
+# The inner sums of the Type I estimates [H, §4.2]
 
 * `norm_fourier_comp_affine`: `‖𝓕[h(λ· + μ)](t)‖ = λ⁻¹ ‖𝓕h(t/λ)‖`.
-* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 31.521` [B, (B.6)]. The analytic part (`|t| ≥ 655`) is
+* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 31.521` [H, (B.6)]. The analytic part (`|t| ≥ 655`) is
   proved in `Eta2Fourier.lean`; `0 ≤ t ≤ 655` is the numerical axiom `eta2DD_small`.
-* `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [B, (4.35)], and `norm_Todd_le`: the three
-  bounds of [B, (4.36)], from [B, (2.2)] and [B, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
-* `Todd_main`: the main term [B, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
+* `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], and `norm_Todd_le`: the three
+  bounds of [H, (4.36)], from [H, (2.2)] and [H, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
+* `Todd_main`: the main term [H, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
   `T_{m,∘}(α) = κ'((x/2m) η̂₂(-δ/2) + O*((m/x)(c₀/2π²)(π² - 4)))`, `κ' = e((a + k₀q)/2) = ±1`,
   by Poisson summation.
 
@@ -57,17 +57,17 @@ namespace MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2)
 
-/-- The constant `c₀ = 31.521 ≥ |η̂₂''|_∞` [B, (B.6), §6.1]. -/
+/-- The constant `c₀ = 31.521 ≥ |η̂₂''|_∞` [H, (B.6), §6.1]. -/
 def c₀ : ℝ := 31.521
 
-/-- `|η₂'|₁ = 8 log 2` [B, (6.1)]; it is the total variation of `η₂` (`eVariationOn_eta2`). -/
+/-- `|η₂'|₁ = 8 log 2` [H, (6.1)]; it is the total variation of `η₂` (`eVariationOn_eta2`). -/
 noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
 
 theorem eta2'L1_pos : 0 < eta2'L1 := by
   unfold eta2'L1; have := Real.log_pos (by norm_num : (1 : ℝ) < 2); positivity
 
 /-- **Numerical axiom** (our computation, `scripts/rigorous/eta2_fourier_rig.py`, ball arithmetic;
-maximum `31.52065` at `t ≈ 17.415`): [B, (B.6)] on `0 ≤ t ≤ 655`, in the explicit form
+maximum `31.52065` at `t ≈ 17.415`): [H, (B.6)] on `0 ≤ t ≤ 655`, in the explicit form
 `eta2DD t = 16 e(−t/2) − 16 e(−t/4) − 4 e(−t) + 4 ∫_{1/4}^{1/2} e(−ut)/u² du − 4 ∫_{1/2}^1 e(−ut)/u² du`,
 which equals `(2πt)² η̂₂(t)` (`eta2DD_eq`). -/
 axiom eta2DD_small {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 655) : ‖eta2DD t‖ ≤ 31.521
@@ -80,7 +80,7 @@ theorem norm_fourier_eta2_neg (t : ℝ) :
     funext v; rw [map_mul, conj_e, Complex.conj_ofReal, mul_neg, neg_neg]
   rw [this, integral_conj, Complex.norm_conj]
 
-/-- **[B, Lemma B.1.2, (B.6)]**: `|η̂₂''|_∞ ≤ 31.521`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
+/-- **[H, Lemma B.1.2, (B.6)]**: `|η̂₂''|_∞ ≤ 31.521`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
 (`η̂''(t) = (2πit)² η̂(t)`). For `|t| ≥ 655` this is `norm_eta2DD_large`; for `|t| ≤ 655` it is the
 computation `eta2DD_small`. -/
 theorem eta2_fourier_bound' (t : ℝ) :
@@ -100,7 +100,7 @@ theorem eta2_fourier_bound' (t : ℝ) :
   · exact eta2DD_small ht h
   · exact norm_eta2DD_large (by rw [abs_of_pos hpos]; linarith)
 
-/-- `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [B, (4.35)], with `n = 2r + 1`. -/
+/-- `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], with `n = 2r + 1`. -/
 noncomputable def Todd (α x : ℝ) (m : ℕ) : ℂ :=
   ∑' r : ℤ, e (α * m * (2 * r + 1)) * (eta2 (m * (2 * r + 1) / x) : ℂ)
 
@@ -166,7 +166,7 @@ theorem fourier_bound_fodd (t : ℝ) :
   rw [this]
   exact mul_le_mul_of_nonneg_left h hl.le
 
-/-- **[B, (4.36)]**: `|T_{m,∘}(α)| ≤ min(x/2m + |η'|₁/2, (|η'|₁/2)/|sin 2πmα|,
+/-- **[H, (4.36)]**: `|T_{m,∘}(α)| ≤ min(x/2m + |η'|₁/2, (|η'|₁/2)/|sin 2πmα|,
 (m/x)(c₀/2)/sin² 2πmα)`, for `η = η₂`. -/
 theorem norm_Todd_le (α : ℝ) :
     ‖Todd α x m‖ ≤ x / (2 * m) + eta2'L1 / 2 ∧
@@ -208,7 +208,7 @@ theorem norm_eta2hat_le (t : ℝ) (ht : t ≠ 0) : ‖eta2hat t‖ ≤ c₀ / (2
   rw [le_div_iff₀ (by positivity)]; rw [mul_comm]; exact h
 
 
-/-- The phase in [B, proof of Lemma 4.2.2]: if `2α = a/q + δ/x + k₀` and `m = qm'` with `m'` odd,
+/-- The phase in [H, proof of Lemma 4.2.2]: if `2α = a/q + δ/x + k₀` and `m = qm'` with `m'` odd,
 then `e(αm(2r+1)) = κ' e((δm/2x)(2r+1))` with `κ' = e((a + k₀q)/2)` independent of `m'`, `r`. -/
 theorem e_phase {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1 ≤ q) (hm' : Odd m')
     (h2α : 2 * α = a / q + δ / x + k₀) (r : ℤ) :
@@ -225,7 +225,7 @@ theorem e_phase {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1
     rw [hα]; push_cast; field_simp; ring
   rw [this, e_add, e_add, e_intCast, mul_one]
 
-/-- **The main term of [B, (4.33)–(4.34)]**: for `m = qm'` with `m'` odd and `|δ|m/x ≤ 1/2`,
+/-- **The main term of [H, (4.33)–(4.34)]**: for `m = qm'` with `m'` odd and `|δ|m/x ≤ 1/2`,
 `T_{m,∘}(α) = κ'((x/2m) η̂₂(-δ/2) + E)` with `|E| ≤ (m/x)(c₀/2π²)(π² - 4)`. -/
 theorem Todd_main {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1 ≤ q) (hm' : Odd m')
     (h2α : 2 * α = a / q + δ / x + k₀) (hr : |δ * (q * m' : ℕ) / x| ≤ 1 / 2) :

@@ -5,11 +5,11 @@ import TernaryGoldbach.MinorArcs.SecondChoice
 import TernaryGoldbach.MinorArcs.Assembly
 
 /-!
-# [B, §6.3.2]: Theorem 3.1.1 for `q > x^{1/3}/6`
+# [H, §6.3.2]: Theorem 3.1.1 for `q > x^{1/3}/6`
 
 With `T = x^{1/3}`, `L = log T`:
 `|S_{η₂}(α, x)| ≤ 1.4341 T^{5/2} L^{3/2} + 3702 L T²`, i.e.
-`≤ 0.276 x^{5/6} (log x)^{3/2} + 1234 x^{2/3} log x` ([B]'s constants).
+`≤ 0.276 x^{5/6} (log x)^{3/2} + 1234 x^{2/3} log x` ([H]'s constants).
 
 We re-approximate `2α` with `Q₀ = T²/349` (`exists_approx2`) and split as in
 `second_case_split`: (a) `q' > T/6` (Type II via (6.38) if `16q' ≤ x/U`, else (6.39));
@@ -51,7 +51,7 @@ theorem typeII_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     exact h1.trans (mul_le_mul_of_nonneg_right h2 hP)
 
 set_option maxHeartbeats 4000000 in
-/-- **[B, Theorem 3.1.1] for `q > x^{1/3}/6`** (in terms of `T = x^{1/3}`). -/
+/-- **[H, Theorem 3.1.1] for `q > x^{1/3}/6`** (in terms of `T = x^{1/3}`). -/
 theorem theorem_3_1_1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hq : T / 6 < q) :
     ‖S eta2 (T ^ 3) α‖ ≤

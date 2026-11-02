@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.Prop1312
 import TernaryGoldbach.Helfgott.Decay
 
 /-!
-# [B, Thm 13.2.1], conditional on an ℓ∞ bound at scale `x`
+# [H, Thm 13.2.1], conditional on an ℓ∞ bound at scale `x`
 
 Combines (`thm_13_2_1_conditional`)
 * the ℓ² bound over the arcs at scale `x`, Cor 12.2.5 (12.42) with `δ₀ = 8`, for coefficients
@@ -14,9 +14,9 @@ Combines (`thm_13_2_1_conditional`)
 * the abstract combination Prop 13.1.2 (`prop_13_1_2`)
 
 with an **ℓ∞ hypothesis** `hv`: `|S_{η_*}(α, x)| ≤ g(n)` for `α ∉ 𝔐_{8,n}` at **scale `x`**,
-`r₀ ≤ n ≤ r₁`.  The conclusion is the discrete form of [B, (13.6)].
+`r₀ ≤ n ≤ r₁`.  The conclusion is the discrete form of [H, (13.6)].
 
-What [B]'s proof actually supplies for `hv` is the bound off the arcs at scale `y = x/κ`
+What [H]'s proof actually supplies for `hv` is the bound off the arcs at scale `y = x/κ`
 (`le_rAlpha_of_not_mem` at scale `y` + Prop 11.2.3).  The difference, `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`,
 is the open gap described in NOTES "Ch. 13: scale erratum".  This file proves everything else.
 
@@ -36,7 +36,7 @@ noncomputable def Hl2 (x T : ℝ) (r₁ n : ℕ) : ℝ :=
   if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 1.36) / (Real.log (2 * √(x / 16)) + cE) * T
   else T
 
-/-- **[B, Thm 13.2.1], conditional on the ℓ∞ bound at scale `x`** (discrete (13.6)).  For
+/-- **[H, Thm 13.2.1], conditional on the ℓ∞ bound at scale `x`** (discrete (13.6)).  For
 `aₙ` supported on primes `> √x`, `S₁ = Σ aₙ e(nα)`, `T = Σ|aₙ|²`, and levels
 `10⁵ ≤ r₀ ≤ r₁` with `(20000 r₁)² ≤ x/16`, `2r₁ ≤ (2√(x/16))^{0.6}`: if `g` is non-increasing,
 `g(r₁) ≥ 0`, and `|S_{η_*}(α, x)| ≤ g(n)` off `𝔐_{8,n}` (scale `x`) for `r₀ ≤ n ≤ r₁`, then
@@ -88,9 +88,9 @@ theorem thm_13_2_1_conditional {x : ℝ} (hx : 0 < x) {a : ℕ → ℂ} (ha : Pr
     rw [show ∫ α, ‖expTsum a α‖ ^ 2 ∂μ = ∫ α in Ioc (0 : ℝ) 1, ‖expTsum a α‖ ^ 2 from rfl,
       TernaryGoldbach.setIntegral_norm_sq_expTsum ha.2]
 
-/-! ## Splitting the ℓ∞ hypothesis: what [B] proves, and the gap -/
+/-! ## Splitting the ℓ∞ hypothesis: what [H] proves, and the gap -/
 
-/-- **The ℓ∞ step [B] actually proves** (shape): if every approximation
+/-- **The ℓ∞ step [H] actually proves** (shape): if every approximation
 `2α = a/q + δ/y (mod 1)` at scale `y` with `q ≤ Q` gives `|S_{η_*}(α, x)| ≤ B(r_α)`,
 `r_α = max(1, |δ|/8) q`, and `B` is non-increasing on `[r, ∞)`, then `|S_{η_*}(α, x)| ≤ B(r)` off
 `𝔐_{8,r}` **at scale `y`**.  (Prop 11.2.3 supplies such a `B` for small `q`.) -/
@@ -105,7 +105,7 @@ theorem norm_S_le_off_arcs {x y Q r : ℝ} (hy : 0 < y) (hQ : 1 ≤ Q) {B : ℝ 
 
 /-- **The gap.** The hypothesis `hv` of `thm_13_2_1_conditional` at level `n` follows from the
 bound off the `y`-arcs (`norm_S_le_off_arcs`) together with a bound on
-`𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`.  [B] gives no argument for the second, and it is not available from
+`𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`.  [H] gives no argument for the second, and it is not available from
 Thm 3.1.1 (NOTES "Ch. 13: scale erratum"). -/
 theorem hv_of_split {x y n G : ℝ}
     (hoff : ∀ α ∉ majorArcs 8 n y, ‖S etaStar x α‖ ≤ G)
@@ -143,7 +143,7 @@ theorem Mmix_mono {x : ℝ} (hx : 0 < x) (r₀ : ℕ) : Monotone (Mmix x r₀) :
   · rw [majorArcs_div, majorArcs_div]
     exact majorArcs_subset (by rw [hκ]; norm_num) le_rfl (by positivity) hmn' hx
 
-/-- **[B, Thm 13.2.1], repaired** (discrete (13.6), mixed family). For `aₙ` supported on
+/-- **[H, Thm 13.2.1], repaired** (discrete (13.6), mixed family). For `aₙ` supported on
 primes `> √x`, `T = Σ|aₙ|²`, levels `10⁵ ≤ r₀ ≤ r₁` with `(20000 r₁)² ≤ x/784` and
 `2r₁ ≤ (2√(x/784))^{0.6}`, `g` non-increasing with `g(r₁) ≥ 0`: if `|S_{η_*}(α, x)| ≤ g(r₀)` off
 `𝔐_{8,r₀}(x)`, and `|S_{η_*}(α, x)| ≤ g(n)` off `𝔐_{8,n}(x/κ)` for `r₀ < n ≤ r₁`, then

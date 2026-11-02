@@ -9,13 +9,13 @@
    (1) T2(S) <= 0.37273 for 16 <= S < 10^5.  On [n, n+1), T2(S) = alpha_n + beta_n/S with
          alpha_n = sum_{s odd <= n} (g2(n div s)/s - g2(n div 2s)/(2s)),
          beta_n  = sum_{s odd <= n} (Cg(n div s) - Cg(n div 2s)),  Cg(k) = sum_{j<k} g2(j) - k g2(k)
-       ([B, (5.29)]; for n <= 15 this is Lean's `T2_eq`); alpha + beta/S is monotone in S, so both
+       ([H, (5.29)]; for n <= 15 this is Lean's `T2_eq`); alpha + beta/S is monotone in S, so both
        ends of each piece are checked.
    (2) (1/4) int_1^S g2(y)/y dy <= 0.3607 for 10^5 <= S <= Z.  On [m, m+1] the integral is
        A(m) + g2(m) log(S/m)/4, monotone in S, with A(m) = (1/4) sum_{j<m} g2(j) log(1 + 1/j); so it
        suffices that A(m) <= 0.3607 for 10^5 <= m <= Z.
    (3) int_1^Z |g2| = sum_{j<Z} |g2(j)| <= 10.5.
-   (4) For information: max |g2(n)| n on [33, Z], and [B, Lemma 5.1.2]'s bound on [10^6, Z].
+   (4) For information: max |g2(n)| n on [33, Z], and [H, Lemma 5.1.2]'s bound on [10^6, Z].
 
    Usage: t2_rig [Z]   (Z = 10^8 by default; about 10 minutes, ~6 GB)
 */
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
     mpfr_abs(T0, g.lo, U); mpfr_abs(ab, g.hi, U); mpfr_max(ab, ab, T0, U);
     if (n < Z) mpfr_add(sumabs, sumabs, ab, U);
     if (n >= 33) { mpfr_mul_ui(m, ab, n + 1, U); if (mpfr_greater_p(m, worst)) { mpfr_set(worst, m, U); wat = n; } }
-    if (n >= 1000000) {   /* [B, Lemma 5.1.2]: |g2(x)| <= (1634.34 + 817.168 log x)/x on [10^6, 10^10) */
+    if (n >= 1000000) {   /* [H, Lemma 5.1.2]: |g2(x)| <= (1634.34 + 817.168 log x)/x on [10^6, 10^10) */
       double lb = (1634.34 + 817.168 * log((double)n)) / (double)(n + 1);
       if (mpfr_cmp_d(ab, lb * 0.999) > 0) lemma_ok = 0;
     }
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
   mpfr_printf("g2(%ld) in [%.12Re, %.12Re]\n", Z, g.lo, g.hi);
   mpfr_printf("(3) sum_{j<Z} |g2(j)| <= %.6Rf   (need <= 10.5)\n", sumabs);
   mpfr_printf("(2) max_{10^5 <= m <= Z} A(m) <= %.9Rf at m = %ld   (need <= 0.3607)\n", maxA, maxAat);
-  mpfr_printf("(4) max_{33<=n<=Z} |g2(n)|(n+1) <= %.7Rf at n = %ld;  [B, Lemma 5.1.2] bound on [10^6, Z]: %s\n",
+  mpfr_printf("(4) max_{33<=n<=Z} |g2(n)|(n+1) <= %.7Rf at n = %ld;  [H, Lemma 5.1.2] bound on [10^6, Z]: %s\n",
               worst, wat, lemma_ok ? "holds" : "VIOLATED");
   int ok2 = mpfr_cmp_d(maxA, 0.3607) <= 0, ok3 = mpfr_cmp_d(sumabs, 10.5) <= 0;
 

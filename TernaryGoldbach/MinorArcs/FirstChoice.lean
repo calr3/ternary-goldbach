@@ -2,11 +2,11 @@ import TernaryGoldbach.MinorArcs.TypeIITotalGen
 import TernaryGoldbach.MinorArcs.S1Lemma
 
 /-!
-# [B, §6.3.1]: the first choice of parameters — tools
+# [H, §6.3.1]: the first choice of parameters — tools
 
 * `zeta_three_halves_le`: `ζ(3/2) ≤ 2.77` (so `zeta3 ≤ 27`);
 * `typeII_main_le`: the main term of (6.37)/(6.40) at the parameters of (6.49) is at most
-  `√(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)` ([B, (6.60), (6.61)]),
+  `√(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)` ([H, (6.60), (6.61)]),
   where `C_{x,t} = log(1 + log 4t/(2 log(9x^{1/3}/(2.004 t))))`.
 
 We write `T = x^{1/3}`.
@@ -94,7 +94,7 @@ theorem log_le_lin {T : ℝ} (hT : 0 < T) : Real.log T ≤ 15 + T / 6e6 := by
       _ = rexp 16 := by rw [← Real.exp_nat_mul]; norm_num
   linarith
 
-/-- `C_{x,t} = log(1 + log 4t/(2 log(9T/(2.004 t))))` with `T = x^{1/3}` [B, (6.64)]. -/
+/-- `C_{x,t} = log(1 + log 4t/(2 log(9T/(2.004 t))))` with `T = x^{1/3}` [H, (6.64)]. -/
 noncomputable def Cxt (T t : ℝ) : ℝ := Real.log (1 + Real.log (4 * t) / (2 * Real.log (9 * T / (2.004 * t))))
 
 theorem div_one_add_le_log {z : ℝ} (hz : 0 ≤ z) : z / (1 + z) ≤ Real.log (1 + z) := by
@@ -224,7 +224,7 @@ theorem two_le_logL {T t : ℝ} (ht : 0 < t) (htT : t ≤ T / 3) :
   refine this.trans ?_
   rw [le_div_iff₀ (by positivity)]; nlinarith
 
-/-- **The Type II main term at the parameters of [B, (6.49)]** ([B, (6.60), (6.61)], first
+/-- **The Type II main term at the parameters of [H, (6.49)]** ([H, (6.60), (6.61)], first
 lines). Here `T = x^{1/3} ≥ 6·10⁶`, `2 ≤ t ≤ T/3` (`t = δ₀q`), `t ≤ c ≤ 1.0015 t` (`c = 2q`, resp.
 `c = δ₀q(1+ε₁)`), `V ∈ [9T/2 - 1, 9T/2]`, `UV ∈ [(1 - 1/T) x/(2√t), x]`. -/
 theorem typeII_main_le {x T t c U V : ℝ} (hT : 6e6 ≤ T) (hx : x = T ^ 3) (ht2 : 2 ≤ t)

@@ -10,7 +10,7 @@ With `∫_{1/2}^1 g₂(uz) du = z⁻¹ ∫_{z/2}^z g₂`,
 
 `|T₂(S) − ¼ ∫₁^S g₂(y)/y dy| ≤ S⁻¹ ∫₁^S |g₂|`.
 
-This replaces the Euler–Maclaurin argument of [B, (5.29)–(5.30)].
+This replaces the Euler–Maclaurin argument of [H, (5.29)–(5.30)].
 -/
 
 open Real Finset MeasureTheory

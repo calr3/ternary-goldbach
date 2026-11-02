@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# [B, (2.20)]: `|∑_{n ≤ x, (n, q) = 1} μ(n)/n| ≤ 1`
+# [H, (2.20)]: `|∑_{n ≤ x, (n, q) = 1} μ(n)/n| ≤ 1`
 
 The elementary proof. Let `f(d) = μ(d)·[(d, q) = 1]` and `g = f ∗ 1`. Then `g(n) ∈ {0, 1}`
 (it is multiplicative, and `g(p^k) = 1 + f(p)`), and `g(n) = 0` for `n ≥ 2` coprime to `q`
@@ -66,7 +66,7 @@ theorem gCop_of_coprime {q n : ℕ} (hn : n.Coprime q) : gCop q n = if n = 1 the
     rw [muCop_apply, if_pos (Nat.Coprime.coprime_dvd_left (Nat.dvd_of_mem_divisors hd) hn)]
   rw [h, ArithmeticFunction.moebius_mul_coe_zeta, ArithmeticFunction.one_apply]
 
-/-- **[B, (2.20)]** (Granville–Ramaré [GR96, Lemma 10.2]):
+/-- **[H, (2.20)]** (Granville–Ramaré [GR96, Lemma 10.2]):
 `|∑_{n ≤ x, (n, q) = 1} μ(n)/n| ≤ 1` for all `x` and all `q ≥ 1`. -/
 theorem abs_sum_moebius_div_coprime_le_one (x : ℝ) {q : ℕ} (_hq : 1 ≤ q) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤ 1 := by

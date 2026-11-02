@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MinorArcs.LargeSievePrimes
 
 /-!
-# The weights in [B, Prop. 12.1.2]
+# The weights in [H, Prop. 12.1.2]
 
 The major arcs `𝔐_{δ₀,Q₀}` have, around `b/q`, radius `δ₀Q₀/(q̃x)` with `q̃ = q` for even `q`
 (`q ≤ 2Q₀`) and `q̃ = 2q` for odd `q` (`q ≤ Q₀`); so `q` contributes iff `q̃ ≤ min(2Q₀, …)`.
@@ -12,7 +12,7 @@ weight `Σ_{q̃ ≤ X} [c ∣ q] w(q, c)/φ(q)`, which we evaluate (`weight_sum`
 `Σ_{q ≥ 1, q̃ ≤ X} [c ∣ q] w(q, c)/φ(q) = (c/φ(c)) κ_c G_{c̃}(X/c̃)`,
 
 `c̃ = c` and `κ_c = 1` for even `c`, `c̃ = 2c` and `κ_c = 2` for odd `c` (the odd and even `r` in
-`q = cr` give equal sums).  This is the identity behind [B, (12.6)].
+`q = cr` give equal sums).  This is the identity behind [H, (12.6)].
 
 Proved, with no `sorry`.
 -/

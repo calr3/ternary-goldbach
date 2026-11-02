@@ -5,7 +5,7 @@ import TernaryGoldbach.MajorArcs.HHFourier
 
 `h` is `C²` on `(0, ∞)` (`h'' = 0` at `t = 2` too), so `g(u) = h(eᵘ)` has `g'' ∈ L¹ ∩ L²` and
 `∫_{|ξ| > H/2π} |ĝ|² ≤ ‖g''‖₂²/H⁴` with `‖g''‖₂² = ∫₀² t (t h''(t) + h'(t))² dt ≤ 368` (true value `142.6…`).
-Hence `‖η₊ − η◦‖₂² ≤ 368/(2·200⁴) ≤ 1.15·10⁻⁷` (`‖η₊ − η◦‖₂ ≤ 3.4·10⁻⁴`; [B, (14.5)]: `2.43·10⁻⁶`).
+Hence `‖η₊ − η◦‖₂² ≤ 368/(2·200⁴) ≤ 1.15·10⁻⁷` (`‖η₊ − η◦‖₂ ≤ 3.4·10⁻⁴`; [H, (14.5)]: `2.43·10⁻⁶`).
 -/
 
 open Real MeasureTheory FourierTransform Set

@@ -1,14 +1,14 @@
 import TernaryGoldbach.MinorArcs.TypeIITotalGen
 
 /-!
-# Type II total for large `q` [B, §6.2.3, (6.20), (6.38), (6.39)]
+# Type II total for large `q` [H, §6.2.3, (6.20), (6.38), (6.39)]
 
-For `q` large compared to `V`, [B] splits the `W`-integral at `W₀ = min(max(2θq, V), x/U)`:
+For `q` large compared to `V`, [H] splits the `W`-integral at `W₀ = min(max(2θq, V), x/U)`:
 on `[V, W₀]` it uses (5.53) and on `[W₀, x/U]` it uses (5.54) as before.
 
 * `norm_typeII_le_split`: `|S_{II}| ≤ 4(∫_V^A G₁ + ∫_A^{x/U} G₂)` for pointwise majorants on the
   two pieces;
-* `G53`, `pointwise_53`, `integral_G53_le`: the (5.53) piece, our version of [B, (6.20)];
+* `G53`, `pointwise_53`, `integral_G53_le`: the (5.53) piece, our version of [H, (6.20)];
 * **`typeII_split_gen`**: the total, generalising `typeII_gen` (which is the case `A = V`).
 -/
 
@@ -99,7 +99,7 @@ noncomputable def G53 (x U V : ℝ) (M r W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 1000000 in
-/-- The pointwise bound behind [B, (6.20)]. -/
+/-- The pointwise bound behind [H, (6.20)]. -/
 theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (117 : ℝ) ≤ V) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r) {W : ℝ}
     (hW : W ∈ Set.Icc (V : ℝ) (x / U))
@@ -201,7 +201,7 @@ theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : �
     _ = a * √P₁ + a * √P₂ + a * √P₃ + a * √S3 := by ring
     _ ≤ _ := by linarith
 
-/-- [B, §6.2.3]: `∫_V^A √(log W)/W^{3/2} dW ≤ (2/√V)(√(log V) + 1/√(log V))` for `1 < V ≤ A`
+/-- [H, §6.2.3]: `∫_V^A √(log W)/W^{3/2} dW ≤ (2/√V)(√(log V) + 1/√(log V))` for `1 < V ≤ A`
 (via `√(log W) ≤ √(log V) + (log W - log V)/(2√(log V))` and `∫_V^∞ log(W/V) W^{-3/2} dW = 4/√V`). -/
 theorem integral_sqrt_log_div_W32_le {V A : ℝ} (hV : 1 < V) (hVA : V ≤ A) :
     ∫ W in V..A, √(Real.log W) / (W * √W) ≤
@@ -373,7 +373,7 @@ of the shape of (5.53)/(5.57) (see `G53`) on `[V, A]`, and the `typeII_gen` hypo
 With `Λ_A = log(x/UA)`, `Φ_A = log c (log log(x/Uc) - log log(A/c))`, the main term is
 `4x√(m/2φ) √((Λ_A + Φ_A)(0.15107 Λ_A + 2κ₀ζ³√(x/A)/U))`; the (5.53)-range contributes
 `4√κ₁ (√M (2/3)((log A)^{3/2} - (log V)^{3/2}) + √r x √log A/√V + √(xA) √log A)`
-(our version of [B, (6.20)]). -/
+(our version of [H, (6.20)]). -/
 theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (117 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) (hAU : A ≤ x / U) {M r : ℝ} (hM : 0 ≤ M)
     (hr : 0 ≤ r)
@@ -476,7 +476,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
     simp only [c4]; ring
   linarith [hbal, e2, h53, IG4, h]
 
-/-- **Type II total, all of `[V, x/U]` in the (5.53)/(5.57) regime** (used for [B, (6.39)]). -/
+/-- **Type II total, all of `[V, x/U]` in the (5.53)/(5.57) regime** (used for [H, (6.39)]). -/
 theorem typeII_top {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r)
     (hS2a : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
@@ -552,7 +552,7 @@ theorem S2_le_54 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsC
   ring
 
 set_option maxHeartbeats 1000000 in
-/-- **Our version of [B, (6.38)]** (`V ≤ 2θq ≤ x/U`, `θ ≥ e`, any `δ`): (5.53) with `ρ = 1/2`
+/-- **Our version of [H, (6.38)]** (`V ≤ 2θq ≤ x/U`, `θ ≥ e`, any `δ`): (5.53) with `ρ = 1/2`
 on `[V, 2θq]`, (5.54) on `[2θq, x/U]`. -/
 theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
@@ -585,7 +585,7 @@ theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
   rw [Real.sqrt_one, one_mul] at h
   exact h
 
-/-- **Our version of [B, (6.39)]** (`q ≤ Q`, any `δ`): (5.53) with `ρ = 1` on all of `[V, x/U]`. -/
+/-- **Our version of [H, (6.39)]** (`q ≤ Q`, any `δ`): (5.53) with `ρ = 1` on all of `[V, x/U]`. -/
 theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q) (hx : 0 < x) {U V : ℕ}
     (hU : 1 ≤ U) (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) :
@@ -605,7 +605,7 @@ theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
   exact h
 
 set_option maxHeartbeats 1000000 in
-/-- **Our version of [B, (6.41)]** (`|δ| ≥ 8`, `V ≤ θ|δ|q ≤ x/U`, `θ ≥ e(1+ε₁)/4`): (5.57) on
+/-- **Our version of [H, (6.41)]** (`|δ| ≥ 8`, `V ≤ θ|δ|q ≤ x/U`, `θ ≥ e(1+ε₁)/4`): (5.57) on
 `[V, θ|δq|]`, (5.56) (via `S2_le_640'`) on `[θ|δq|, x/U]`. With `c' = |δ|q(1+ε₁)/4`,
 `ε₁ = x/2UQ`. -/
 theorem typeII_641 {α x δ Q ρ θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))

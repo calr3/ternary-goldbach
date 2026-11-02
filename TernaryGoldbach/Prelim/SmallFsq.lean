@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# `f(X) ≤ 1.27 X` ([B, p. 83]), with kernel-checked numerics
+# `f(X) ≤ 1.27 X` ([H, p. 83]), with kernel-checked numerics
 
 `f(X) = #{m ≤ X squarefree} + (X²/2) ∑_{m > X squarefree} 1/m²`. With `n = ⌊X⌋`,
 `f(X) = Q(n) + (X²/2) S(n)`, where `Q(n)` counts the squarefree `m ≤ n` and
@@ -395,7 +395,7 @@ theorem Q_le (n : ℕ) : ∑ m ∈ range (n + 1), sqInd m ≤ ((n - n / 4 : ℕ)
   omega
 
 set_option maxHeartbeats 1000000 in
-/-- **`f(X) ≤ 1.27 X` for `X ≥ 0`** ([B, p. 83]). -/
+/-- **`f(X) ≤ 1.27 X` for `X ≥ 0`** ([H, p. 83]). -/
 theorem fsq_le' {X : ℝ} (hX : 0 ≤ X) : ∑' m, fsqTerm X m ≤ 1.27 * X := by
   rw [fsq_split hX]
   obtain ⟨n, hn⟩ : ∃ n, ⌊X⌋₊ = n := ⟨_, rfl⟩

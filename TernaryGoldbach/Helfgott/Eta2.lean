@@ -4,7 +4,7 @@ import TernaryGoldbach.Helfgott.Decay
 # Explicit formulas for `η₂`
 
 `η₂(t) = 4 log(4t)` on `[1/4, 1/2]`, `η₂(t) = -4 log t` on `[1/2, 1]`, and `|η₂|₁ = 1`
-[B, (6.1)].  `η₂` is continuous and compactly supported, and its total variation is
+[H, (6.1)].  `η₂` is continuous and compactly supported, and its total variation is
 `|η₂'|₁ = 8 log 2` (`eVariationOn_eta2`).
 
 Proved, with no `sorry`.
@@ -114,7 +114,7 @@ theorem antitoneOn_eta2 : AntitoneOn eta2 (Set.Icc (1 / 2) 1) := by
   have := Real.log_le_log (by linarith [hs.1]) hst
   linarith
 
-/-- The total variation of `η₂` is `|η₂'|₁ = 8 log 2` [B, (6.1)]. -/
+/-- The total variation of `η₂` is `|η₂'|₁ = 8 log 2` [H, (6.1)]. -/
 theorem eVariationOn_eta2 : eVariationOn eta2 Set.univ = ENNReal.ofReal (8 * Real.log 2) := by
   -- Reduce to `[1/4, 1]` by clamping.
   set φ : ℝ → ℝ := fun t => max (1 / 4) (min t 1)

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeI2Sum
 
 /-!
-# Type I totals [B, §6.2.2]: the case `|δ| ≥ 1/2c₂` ((6.8), (6.14))
+# Type I totals [H, §6.2.2]: the case `|δ| ≥ 1/2c₂` ((6.8), (6.14))
 -/
 
 open Real Finset
@@ -10,7 +10,7 @@ open scoped ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- [B, p. 106]: `∑_{v ≤ V} Λ(v) min(⌊x/v/|δ|q_v⌋ + 1, 2U)`
+/-- [H, p. 106]: `∑_{v ≤ V} Λ(v) min(⌊x/v/|δ|q_v⌋ + 1, 2U)`
 `≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0004 V`. -/
 theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)
     (hU : 0 < U) (hV : 2.5e7 ≤ V) :
@@ -117,7 +117,7 @@ theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) 
 theorem logPlus_le_logPlus {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) : logPlus a ≤ logPlus b :=
   max_le_max (Real.log_le_log ha hab) le_rfl
 
-/-- [B, (6.8)], per `v`: (4.32) for `x/v`, `q_v = q/(q,v)`, `Q/v`, keeping
+/-- [H, (6.8)], per `v`: (4.32) for `x/v`, `q_v = q/(q,v)`, `Q/v`, keeping
 `m_v = min(⌊x/v/|δ|q_v⌋ + 1, 2U)` (summed in `sum_min_floor_le`). -/
 theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)
     (hδQ : |δ| * q * Q ≤ x) (hU : 0 < U) (hQ : 0 < Q) (hv : 1 ≤ v) (hvV : (v : ℝ) ≤ V)
@@ -209,12 +209,12 @@ theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0
   have t3 : 35 * c₀ * c₂ / (3 * π ^ 2) * s ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * q := by gcongr
   linarith
 
-/-- **[B, (6.12) + (6.14)]**, our version, for `|δ| ≥ 1/2c₂`, `qV ≤ Q` and `0 < ε ≤ 1`:
+/-- **[H, (6.12) + (6.14)]**, our version, for `|δ| ≥ 1/2c₂`, `qV ≤ Q` and `0 < ε ≤ 1`:
 `|S_{I,2}|` is at most the first two lines of `typeI2_le_small` ((6.12)) plus
 `1.0004 (2√(c₀c₊)/π)(1 + (1+ε)(1+V/Q)/e) UV`
 `+ 1.0004 (3c₊/2)(2 + ((1+ε)/ε) log⁺(2UV|δ|q/x)) xV/Q + 1.0004 (35c₀c₂/3π²) Q`
 `+ (2√(c₀c₊)/π)(1+ε)√(3+2ε) ((x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0004 V)`.
-Compared with [B]: the `U/e` term carries a factor `1 + V/Q` (since (4.32) has
+Compared with [H]: the `U/e` term carries a factor `1 + V/Q` (since (4.32) has
 `log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). -/
 theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q)
     (hx : 0 < x) (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V)

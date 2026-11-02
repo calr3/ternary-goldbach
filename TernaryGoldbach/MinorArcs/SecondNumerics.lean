@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Numerical helpers for the second choice of parameters [B, §6.3.2]
+# Numerical helpers for the second choice of parameters [H, §6.3.2]
 
 We compare functions of `L = log T` (`T = x^{1/3} ≥ 6·10⁶`) and `s = log L` with powers of `L` by
 expanding `exp` around a base point: `exp(s/2) ≥ exp(s₀/2)(1 + d/2 + d²/8)`, `d = s - s₀ ≥ 0`.

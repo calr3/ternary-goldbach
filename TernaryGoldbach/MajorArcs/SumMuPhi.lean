@@ -4,7 +4,7 @@ import TernaryGoldbach.Prelim.SmallMuPhi
 /-!
 # `Σ_{q ≤ r, q odd} μ²(q)/φ(q)` for `r = 150000`
 
-* `sum_odd_mu_sq_div_totient` ([B, §14.1]: `= 6.798779…`), a finite sum, checked by the kernel
+* `sum_odd_mu_sq_div_totient` ([H, §14.1]: `= 6.798779…`), a finite sum, checked by the kernel
   (`Prelim/SmallMuPhi.lean`).
 * `sum_Qset_mPhi`: the moduli of `𝔐_{δ₀,r}` (odd `q ≤ r`, even `q ≤ 2r`) give twice the odd sum,
   since `μ²(2q')/φ(2q') = [q' odd] μ²(q')/φ(q')`.
@@ -27,7 +27,7 @@ theorem moebius_sq_eq (q : ℕ) :
     rw [← pow_mul, mul_comm, pow_mul]; norm_num
   · rw [ArithmeticFunction.moebius_eq_zero_of_not_squarefree h]; simp
 
-/-- [B, §14.1]: `Σ_{q ≤ 150000, q odd} μ²(q)/φ(q) = 6.798779…` (kernel-checked,
+/-- [H, §14.1]: `Σ_{q ≤ 150000, q odd} μ²(q)/φ(q) = 6.798779…` (kernel-checked,
 `SmallMuPhi.sum_bounds`; value `6.79877917312…`). -/
 theorem sum_odd_mu_sq_div_totient :
     6.798779 ≤ ∑ q ∈ (Icc 1 150000).filter Odd,

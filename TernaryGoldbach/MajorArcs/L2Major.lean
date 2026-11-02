@@ -2,11 +2,11 @@ import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MajorArcs.SumMuPhi
 
 /-!
-# [B, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` for `x ≥ 4.9·10²⁶`
+# [H, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` for `x ≥ 4.9·10²⁶`
 
-[B, Lemma 10.3.1] for `η₊`, with the Cauchy–Schwarz-free variant of its error terms (each
+[H, Lemma 10.3.1] for `η₊`, with the Cauchy–Schwarz-free variant of its error terms (each
 pointwise square is split as `|u + v|² = (1 ± t)|u|² + O((1 + 1/t)|v|²)` with `t = 10⁻⁴`). Per modulus
-`q` (`ArcChars.lean`): coprime split, Bombieri's identity, [B, Thm 7.1.4]; the main term
+`q` (`ArcChars.lean`): coprime split, Bombieri's identity, [H, Thm 7.1.4]; the main term
 `μ²(q)/φ(q) · x ∫_{|δ| < T_q} |η̂₊(δ)|² dδ` with `T_q = 1.2·10⁶/q̃ ≥ 4` (`EtaPlusL2.lean`); then
 `Σ_q μ²(q)/φ(q) = 2 · 6.798779…` (`SumMuPhi.lean`). Result: `8.675 x ≤ ∫ ≤ 8.786 x`.
 -/
@@ -301,7 +301,7 @@ theorem card_Qset_le : ((Qset r₀).card : ℝ) ≤ 300000 := by
   rw [Nat.card_Icc] at h2
   exact_mod_cast (by omega : (Qset r₀).card ≤ 300000)
 
-/-- **[B, (14.7)], proved**: for `x ≥ 4.9·10²⁶`,
+/-- **[H, (14.7)], proved**: for `x ≥ 4.9·10²⁶`,
 `8.6296 x ≤ ∫_{(0,1] ∩ 𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα ≤ 8.79 x` (in fact `8.675 x … 8.786 x`). -/
 theorem l2_major_bounds {x : ℝ} (hx : 4.9e26 ≤ x) :
     8.6296 * x ≤ ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2 ∧

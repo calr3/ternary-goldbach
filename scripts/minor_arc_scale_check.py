@@ -1,4 +1,4 @@
-"""[B, Thm 13.2.1]: the scale of the major arcs in the ℓ∞ input.
+"""[H, Thm 13.2.1]: the scale of the major arcs in the ℓ∞ input.
 
 Prop 13.1.2 needs, for one family of arcs 𝔐_{8,r}, both an ℓ² bound H(r) for S_{η₊} and an
 ℓ∞ bound |S_{η_*}(α, x)| ≤ g(r) off 𝔐_{8,r}.  In Thm 13.2.1:

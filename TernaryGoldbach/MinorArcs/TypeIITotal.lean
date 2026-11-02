@@ -1,13 +1,13 @@
 import TernaryGoldbach.MinorArcs.TypeIITools
 
 /-!
-# Type II total [B, §6.2.3]
+# Type II total [H, §6.2.3]
 
 * `norm_typeII_le'`: `|S_{II}| ≤ 4 ∫_V^{x/U} G(W) dW` for a pointwise majorant `W·G(W)` of
   `√S₁(√S₂ + √S₃)`;
-* `pointwise_637`, `integral_G637_le`, **`typeII_637`**: our version of [B, (6.37)] (`q ≤ V/2e`,
+* `pointwise_637`, `integral_G637_le`, **`typeII_637`**: our version of [H, (6.37)] (`q ≤ V/2e`,
   any `δ`), from (5.34) (`S1_bound`), (5.54) (`prop_5_2_4_e`), (2.19), (5.36), (5.37).
-  Main term exactly [B]'s; secondary terms with cruder constants (see the docstring).
+  Main term exactly [H]'s; secondary terms with cruder constants (see the docstring).
 -/
 
 open Real Finset MeasureTheory
@@ -37,13 +37,13 @@ theorem logSqSum_le_half {W' W : ℝ} (hW : 117 ≤ W) (hW' : W / 2 ≤ W') :
   exact filter_subset_filter _ (Ioc_subset_Ioc_left (Nat.floor_le_floor hW'))
 
 
-/-- `κ₀ζ(3/2)³ = 1.27 ζ(3/2)³` [B, (6.16)]. -/
+/-- `κ₀ζ(3/2)³ = 1.27 ζ(3/2)³` [H, (6.16)]. -/
 noncomputable def zeta3 : ℝ := 1.27 * (riemannZeta (3 / 2)).re ^ 3
 
 theorem zeta3_nonneg : 0 ≤ zeta3 := by
   unfold zeta3; have := zeta_three_halves_nonneg; positivity
 
-/-- `κ₁ = 2/π² + κ₀ζ(3/2)³ √(x/V)/U` [B, (6.18)] (we keep it as an expression). -/
+/-- `κ₁ = 2/π² + κ₀ζ(3/2)³ √(x/V)/U` [H, (6.18)] (we keep it as an expression). -/
 noncomputable def kap1 (x U V : ℝ) : ℝ := 2 / π ^ 2 + zeta3 * √(x / V) / U
 
 theorem sqrt_le_amgm {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) : √(u * v) ≤ (u + v) / 2 := by
@@ -54,7 +54,7 @@ theorem sqrt_one_add_le {t : ℝ} (ht : 0 ≤ t) : √(1 + t) ≤ 1 + √t := by
   rw [Real.sqrt_le_left (by positivity)]
   nlinarith [Real.sq_sqrt ht, Real.sqrt_nonneg t]
 
-/-- The integrand `G(W)` of our version of [B, (6.20)–(6.37)] (`W·G(W)` bounds
+/-- The integrand `G(W)` of our version of [H, (6.20)–(6.37)] (`W·G(W)` bounds
 `√S₁ (√S₂ + √S₃)` for `q ≤ V/2e`). -/
 noncomputable def G637 (x U V : ℝ) (q : ℕ) (β W : ℝ) : ℝ :=
   x / √(8 * Nat.totient q) * β / 2 * (1 / W) +
@@ -67,7 +67,7 @@ noncomputable def G637 (x U V : ℝ) (q : ℕ) (β W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 2000000 in
-/-- The pointwise bound behind [B, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
+/-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (50000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) (hqV : 2 * rexp 1 * q ≤ V) {β : ℝ} (hβ : 0 < β)
@@ -314,13 +314,13 @@ theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   nlinarith [K3, K4, K5, K6, K7]
 
 set_option maxHeartbeats 2000000 in
-/-- **Type II total, our version of [B, (6.37)]** (`q ≤ V/2e`, any `δ`): with `φ = φ(q)`,
+/-- **Type II total, our version of [H, (6.37)]** (`q ≤ V/2e`, any `δ`): with `φ = φ(q)`,
 `Λ₀ = log(x/UV)`, `Φ = log 2q · (log log(x/2Uq) - log log(V/2q))`, `κ₁ = 2/π² + 1.27ζ(3/2)³√(x/V)/U`,
 `|S_{II}| ≤ x/√(2φ) · √((Λ₀ + Φ)(0.60428 Λ₀ + 8 · 1.27ζ(3/2)³ √(x/V)/U))`
 `+ 4√(κ₁qx/2φ) (2√(x/U) + √(log 2q)(2e√(2q) + 4√((x/U)/log(x/2Uq))))`
 `+ 8 · 1.4262 x √(κ₁(1/2 + 1/U))/√V`.
-The main term is [B]'s `x/√(2φ(q)) √((log x/UV + Φ)(κ₆ log x/UV + 2κ₇))` with the exact
-`κ₀ζ(3/2)³`-term in place of `2κ₇`; the secondary terms have cruder constants than [B]'s
+The main term is [H]'s `x/√(2φ(q)) √((log x/UV + Φ)(κ₆ log x/UV + 2κ₇))` with the exact
+`κ₀ζ(3/2)³`-term in place of `2κ₇`; the secondary terms have cruder constants than [H]'s
 `√2κ₂√(q/φ)(1 + 1.15√(log 2q/log(x/2Uq)))x/√U + κ₉ x/√V`. -/
 theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)

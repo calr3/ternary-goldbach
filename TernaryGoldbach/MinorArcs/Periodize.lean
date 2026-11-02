@@ -7,7 +7,7 @@ For `g` continuous and `1`-periodic and `J ⊆ (−1, 2]` measurable,
 `∫_J g = Σ_{k ∈ {−1, 0, 1}} ∫_{(0,1]} 1_J(α − k) g(α) dα` (`setIntegral_eq_sum_periodize`).
 
 This turns integrals over arcs around `b/q` (lifted to `ℝ`) into integrals over `(0, 1]` of
-`g` times a counting function, which is how [B, Prop. 12.1.1] compares arcs with `ℝ/ℤ`.
+`g` times a counting function, which is how [H, Prop. 12.1.1] compares arcs with `ℝ/ℤ`.
 
 Proved, with no `sorry`.
 -/

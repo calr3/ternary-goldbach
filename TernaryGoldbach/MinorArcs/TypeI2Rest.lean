@@ -1,10 +1,10 @@
 import TernaryGoldbach.MinorArcs.TypeI2Proof
 
 /-!
-# [B, Lemma 4.2.4]: the terms other than the main term (weights `log m`)
+# [H, Lemma 4.2.4]: the terms other than the main term (weights `log m`)
 
 Since `|c(a)| ≤ log a`, the terms of `typeI2` outside the main term are bounded by
-`∑ log m · |T_{m,∘}|` over the ranges of [B, Lemma 4.2.2]. Here we bound these weighted range
+`∑ log m · |T_{m,∘}|` over the ranges of [H, Lemma 4.2.2]. Here we bound these weighted range
 sums, using on each block of length `q` the weight `log` of the block's upper end, and the
 block bounds `block_R2`, `block_R3` of Lemma 4.2.2.
 -/
@@ -116,7 +116,7 @@ theorem sum_R1W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤
   exact mul_le_mul_of_nonneg_left (sum_R1 hx hq hcop h2α hqQ hδ) (logPlus_nonneg _)
 
 set_option maxHeartbeats 1000000 in
-/-- Weighted range (R2) (cf. [B, (4.59)]): for `q/2 < D' ≤ Q/2`,
+/-- Weighted range (R2) (cf. [H, (4.59)]): for `q/2 < D' ≤ Q/2`,
 `∑_{q/2 < m ≤ D', q ∤ m} log m |T_{m,∘}| ≤ (10c₀q/3π²x)(F(D' + 2q) + 1/4)`,
 `F(t) = (t²/2)(log t - 1/2)`. -/
 theorem sum_R2W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
@@ -171,7 +171,7 @@ theorem sum_R2W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤
     _ = _ := by simp only [K]; field_simp
 
 set_option maxHeartbeats 1000000 in
-/-- Weighted range (R3) (cf. [B, (4.61)–(4.62)]), general form: for `1 ≤ R < D`, with
+/-- Weighted range (R3) (cf. [H, (4.61)–(4.62)]), general form: for `1 ≤ R < D`, with
 `c₁ = 1 + |η'|₁/(x/D)`,
 `∑_{R < m ≤ D} log m |T_{m,∘}| ≤ (3c₁/2) x (log(R+q)/R + (log D/q) log(D/R)) +
 (2√(c₀c₁)/π)(√(1+q/R) q log(R+q) + D(log D - 1) - R(log R - 1) + 2q log(D/R) + (q/2) log D log(D/R))`. -/
@@ -341,7 +341,7 @@ theorem sum_R3W' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 �
   linarith
 
 
-/-- Weighted range (R3) for `q/2 ≤ R` (cf. [B, (4.61)–(4.62)]). -/
+/-- Weighted range (R3) for `q/2 ≤ R` (cf. [H, (4.61)–(4.62)]). -/
 theorem sum_R3W {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
     (hδ : |δ / x| * (q * Q) ≤ 1) {R D : ℝ} (hR1 : 1 ≤ R) (hRq : (q : ℝ) / 2 ≤ R) (hRD : R < D) :
@@ -455,7 +455,7 @@ theorem R2W_simp {x D D' : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 2 ≤ x) (hD'q : 
     _ ≤ _ := by nlinarith
 
 set_option maxHeartbeats 4000000 in
-/-- **[B, Lemma 4.2.4], case (b), terms other than the main term**: if
+/-- **[H, Lemma 4.2.4], case (b), terms other than the main term**: if
 `D' = min(c₂x/q, D) ≤ Q/2` and `D' ≤ M` (`D = UV`), the terms of `typeI2` with
 `¬(q ∣ a ∧ a ≤ M)` contribute at most `bound_4_51` (our form of (4.51)). -/
 theorem norm_restPartI2_le_caseB {α x δ Q M U V : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
@@ -777,8 +777,8 @@ theorem three_fifths_le_c₂ : 3 / 5 ≤ c₂ := by
   rw [le_div_iff₀ (by positivity)]
   nlinarith
 
-/-- **[B, Lemma 4.2.4], case (b)** (`|δ| ≤ 1/2c₂` or `UV ≤ Q₀/2`), for `η = η₂`: (4.50) + (4.51),
-in our corrected form (`bound_4_50`, `bound_4_51`), with `M = Mof x δ q (UV)`. Hypotheses: [B]'s
+/-- **[H, Lemma 4.2.4], case (b)** (`|δ| ≤ 1/2c₂` or `UV ≤ Q₀/2`), for `η = η₂`: (4.50) + (4.51),
+in our corrected form (`bound_4_50`, `bound_4_51`), with `M = Mof x δ q (UV)`. Hypotheses: [H]'s
 `x ≥ e²c₂/2` is replaced by `x ≥ 10`, and we need `UV ≥ 2`. -/
 theorem lemma_4_2_4_caseB {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hx : 10 ≤ x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hD2 : 2 ≤ U * V)
@@ -876,7 +876,7 @@ theorem norm_restPartI2_le_sum {α x M U V : ℝ} {q : ℕ} (hU : 0 ≤ U) (hV :
   · rw [if_neg h, norm_zero]; exact mul_nonneg (hlog _) (hg0 _)
 
 set_option maxHeartbeats 4000000 in
-/-- **[B, Lemma 4.2.4], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
+/-- **[H, Lemma 4.2.4], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
 of `typeI2` with `¬(q ∣ a ∧ a ≤ M)`, `M = Mof x δ q (UV)`, contribute at most `bound_4_52`. -/
 theorem norm_restPartI2_le_caseA {α x δ Q₀ U V ε : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k)
@@ -1124,7 +1124,7 @@ theorem norm_restPartI2_le_caseA {α x δ Q₀ U V ε : ℝ} {a k : ℤ} {q : �
     linarith
   linarith
 
-/-- **[B, Lemma 4.2.4], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.50) + (4.52), in our form
+/-- **[H, Lemma 4.2.4], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.50) + (4.52), in our form
 (`bound_4_50`, `bound_4_52`), with `M = Mof x δ q (UV)`. -/
 theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hQ₀2 : 2 ≤ Q₀) (hx : 0 < x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hδ : 1 / (2 * c₂) ≤ |δ|) {ε : ℝ}
@@ -1153,10 +1153,10 @@ theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Appr
   · exact norm_restPartI2_le_caseA hx hq hcop h2α hδQ₀ hqQ₀ hQ₀2 hδ (by linarith) (by linarith)
       hD1 hε hε1
 
-/-- **[B, Lemma 4.2.4]** for `η = η₂`, in our form: the main term `bound_4_50` (factor `3/2`
+/-- **[H, Lemma 4.2.4]** for `η = η₂`, in our form: the main term `bound_4_50` (factor `3/2`
 added) and the error terms `bound_4_51`, `bound_4_52` (corrected `c₁`, cruder lower-order terms;
-see their docstrings). Hypotheses: [B]'s `x ≥ e²c₂/2` is replaced by `x ≥ 10`; we need `UV ≥ 2`;
-[B]'s `UV + (19/18)Q₀ ≤ x/5.6` and `Q₀ ≥ 2√x` are not needed (the latter only to turn `x/Q₀`
+see their docstrings). Hypotheses: [H]'s `x ≥ e²c₂/2` is replaced by `x ≥ 10`; we need `UV ≥ 2`;
+[H]'s `UV + (19/18)Q₀ ≤ x/5.6` and `Q₀ ≥ 2√x` are not needed (the latter only to turn `x/Q₀`
 into `√x/2`). Depends only on the trusted `eta2_fourier_bound'` and the literature bounds
 (2.12), (2.15), (2.20). -/
 theorem lemma_4_2_4 {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)

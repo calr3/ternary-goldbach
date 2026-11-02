@@ -3,7 +3,7 @@ import TernaryGoldbach.MajorArcs.Prop932
 import TernaryGoldbach.Explicit.EtaPlusBound
 
 /-!
-# [B, Prop 9.4.2] (proved, with our constants)
+# [H, Prop 9.4.2] (proved, with our constants)
 
 For `η₊` (`H = 200`), `χ` primitive mod `q`, GRH up to `T₀ ≥ 200 + max(10π|δ|, 50)`, `x ≥ 1`:
 `Σ Λ(n) χ(n) e(δn/x) η₊(n/x) = [q = 1] η̂₊(−δ) x + O*(err942N) x`, from `Explicit.norm_SsumG_fP_le`
@@ -72,7 +72,7 @@ theorem rearrange {x E0 E1 E2 V : ℝ} (hx : 0 < x) :
   rw [← hs]
   field_simp
 
-/-- **[B, Prop 9.4.2]** (proved, with our constants). -/
+/-- **[H, Prop 9.4.2]** (proved, with our constants). -/
 theorem prop_9_4_2 {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hχ : χ.IsPrimitive) {T0 : ℝ} (hT0 : 200 + max (10 * π * |δ|) 50 ≤ T0) (hG : GRHUpTo χ T0) :
     ‖Schar χ (fun n => ((Λ n * etaPlus (n / x) : ℝ) : ℂ)) (δ / x) -

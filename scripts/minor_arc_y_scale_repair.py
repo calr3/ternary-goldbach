@@ -1,10 +1,10 @@
-"""A repair of [B, Thm 13.2.1] / §14.3 that works entirely with the arcs at scale y = x/κ.
+"""A repair of [H, Thm 13.2.1] / §14.3 that works entirely with the arcs at scale y = x/κ.
 
-Background (NOTES "Ch. 13: scale erratum"): [B] derives the ℓ∞ bound for S_{η_*} only off the
+Background (NOTES "Ch. 13: scale erratum"): [H] derives the ℓ∞ bound for S_{η_*} only off the
 arcs 𝔐_{8,r}(y), but uses the ℓ² bound and the major arcs at scale x.  The repair:
 
 * Prop 13.1.2 with the family  M_{r₀} = 𝔐_{8,r₀}(x),  M_n = 𝔐_{8,n}(y) = 𝔐_{392,n}(x) (n > r₀).
-  The base term keeps [B]'s I₀ ≥ (√J − √E)² ≥ 8.6297x over 𝔐_{8,r₀}(x).
+  The base term keeps [H]'s I₀ ≥ (√J − √E)² ≥ 8.6297x over 𝔐_{8,r₀}(x).
 * ℓ²: Cor 12.2.5 (12.42) with δ₀ = 392 (so c⁻ → c⁻ − log 7).
 * ℓ∞ off 𝔐_{8,n}(y) ("Prop 11.2.3'"): for each w take a FRESH Dirichlet approximation
   2α = a_w/q_w + δ_w/(wy) at scale wy.  Since α ∉ 𝔐_{8,n}(y), r_w = max(1,|δ_w|/8) q_w ≥
@@ -13,13 +13,13 @@ arcs 𝔐_{8,r}(y), but uses the ℓ² bound and the major arcs at scale x.  The
   antitonicity of g on [670, (wy)^{1/3}/6] applies; second case: h), or 17 (trivial) where
   wy < 2.16·10²⁰ or min(1,w) n < 670.  No δ ↦ wδ issue arises (cf. the Prop 11.2.3 erratum).
 * Levels up to r₂ ≈ x^{0.3}, the limit of (12.42) (2Q₀ ≤ (2Q)^{0.6}, (20000Q₀)² ≤ x/784),
-  instead of [B]'s r₁ = (3/8)y^{4/15}; this shrinks the tail (14.43), which dominates.
+  instead of [H]'s r₁ = (3/8)y^{4/15}; this shrinks the tail (14.43), which dominates.
 * The base gap 𝔐_{8,r₀}(y) \\ 𝔐_{8,r₀}(x) needs |S_{η_*}| ≤ |φ|₁ g(r₀) y ≈ 0.0555 y there.
-  [B, Cor 7.1.3] (q ≤ 300000, |δ| ≤ 1.2·10⁶/q: exactly the y-arcs at level r₀) gives
+  [H, Cor 7.1.3] (q ≤ 300000, |δ| ≤ 1.2·10⁶/q: exactly the y-arcs at level r₀) gives
   |S_{η_*}| ≤ (|η̂(δ)|/φ(q) + 1.3·10⁻⁷) y with |δ| ≥ 12245/q in the gap: ≤ 0.02 y.
 
 Result (our corrected constants 0.8764, 3.8): Z ≤ 0.871 x²/κ at y = 10²⁵, decreasing in y,
-vs the major arcs' 1.058259 (and vs [B]'s own 1.00948).  With r₂ = r₁ ≈ 10⁶ the same scheme
+vs the major arcs' 1.058259 (and vs [H]'s own 1.00948).  With r₂ = r₁ ≈ 10⁶ the same scheme
 gives Z ≈ 1.11, so extending the levels is essential.
 
 Usage: python3 scripts/minor_arc_y_scale_repair.py   (a few minutes)
@@ -74,4 +74,4 @@ if __name__ == "__main__":
               f"base={float(parts[2]):.4f} mid={float(parts[3]):.4f} tail={float(parts[4]):.4f} "
               f"M={float(M):.4f} Z={float(z):.4f}", flush=True)
     y = mpf(10)**25; M, z, _ = Z(y, mpf('1.04e6'))
-    print(f"for comparison, y=1e25 with r2 = 1.04e6 (≈ [B]'s r₁): Z = {float(z):.4f}")
+    print(f"for comparison, y=1e25 with r2 = 1.04e6 (≈ [H]'s r₁): Z = {float(z):.4f}")

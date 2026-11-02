@@ -2,7 +2,7 @@ import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.FirstChoiceParams
 
 /-!
-# [B, §6.3.1]: the Type II terms at the first choice of parameters
+# [H, §6.3.1]: the Type II terms at the first choice of parameters
 
 The lower-order terms of (6.37)/(6.40) at `U = ⌊T²/(9√t)⌋`, `V = ⌊9T/2⌋` are at most
 `3.2 x^{5/6}` (`typeII_rest_le`), using Lemma C.2.2 (`q/φ(q) < Ϝ(T)`, trusted).
@@ -123,8 +123,8 @@ theorem fourth_root_facts {T : ℝ} (hT : 6e6 ≤ T) :
   norm_num; linarith
 
 set_option maxHeartbeats 1600000 in
-/-- **[B, (6.60), (6.61)], lower-order terms** of `typeII_637`/`typeII_640` at the parameters
-of (6.49): at most `3.2 x^{5/6}` (cf. [B]'s `2.73908 x^{5/6}` in (6.62)). Here `c ∈ [t, 1.0015 t]`
+/-- **[H, (6.60), (6.61)], lower-order terms** of `typeII_637`/`typeII_640` at the parameters
+of (6.49): at most `3.2 x^{5/6}` (cf. [H]'s `2.73908 x^{5/6}` in (6.62)). Here `c ∈ [t, 1.0015 t]`
 (`c = 2q` resp. `δ₀q(1 + ε₁)`). -/
 theorem typeII_rest_le {T t c : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ T / 3)
     (hct : t ≤ c) (hc : c ≤ 1.0015 * t) (hq : 1 ≤ q) (hqT : (q : ℝ) ≤ T) :
@@ -321,7 +321,7 @@ theorem first_choice_t {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     · rw [max_eq_left h]; linarith
 
 set_option maxHeartbeats 1600000 in
-/-- **[B, (6.60), (6.61)]**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
+/-- **[H, (6.60), (6.61)]**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
 `|S_{II}| ≤ x/√(δ₀φ(q)) · √(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)`
 `+ 3.2 x^{5/6}`, `t = δ₀q`. -/
 theorem typeII_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)

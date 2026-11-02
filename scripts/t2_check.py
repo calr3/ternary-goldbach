@@ -1,10 +1,10 @@
-"""Independent float64 check of `T2_le` ([B, (5.31)], MinorArcs/TypeIIS1.lean) on the range that [B]
+"""Independent float64 check of `T2_le` ([H, (5.31)], MinorArcs/TypeIIS1.lean) on the range that [H]
 covers by computation, 16 <= S <= 10^5:
 
     T2(S) = sum_{s <= S odd} (1/s) int_{1/2}^1 g2(uS/s) du <= 0.37273,
 
 g2(x) = sum_{r1, r2 <= x, (r1, r2) = 1, r1 r2 odd} mu(r1) mu(r2)/(sigma(r1) sigma(r2)).
-(For S >= 10^5, [B] derives (5.31) analytically from Lemma 5.1.2 and (5.30).)
+(For S >= 10^5, [H] derives (5.31) analytically from Lemma 5.1.2 and (5.30).)
 
 g2 is a step function, computed at every integer n <= 10^5 from
 g2(n) = sum_d mu(d) (sum_{r <= n, d | r} f(r))^2,  f(r) = mu(r)/sigma(r) for odd r.

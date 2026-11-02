@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.Prelim.Liouville
 
 /-!
-# `g₂` via Möbius inversion of the coprimality condition ([B, (5.20)])
+# `g₂` via Möbius inversion of the coprimality condition ([H, (5.20)])
 
 With `f(r) = μ(r)/σ(r)` for odd `r` (`0` for even `r`) and `S_d(M) = ∑_{r ≤ M, (r, d) = 1} f(r)`:
 
@@ -114,7 +114,7 @@ theorem sum_dvd_fo {d N : ℕ} (hd0 : 1 ≤ d) :
   · rw [if_pos hc, fo_mul_of_coprime hc.symm]
   · rw [if_neg hc, mul_zero, fo_mul_eq_zero (fun h => hc h.symm)]
 
-/-- **[B, (5.20)]**: `g₂(x) = ∑_{d ≤ N} μ(d) f(d)² S_d(N/d)²`, `N = ⌊x⌋`. -/
+/-- **[H, (5.20)]**: `g₂(x) = ∑_{d ≤ N} μ(d) f(d)² S_d(N/d)²`, `N = ⌊x⌋`. -/
 theorem g2_eq_sum_moebius (x : ℝ) :
     g2 x = ∑ d ∈ Icc 1 ⌊x⌋₊, (μ d : ℝ) * fo d ^ 2 * Sd d (⌊x⌋₊ / d) ^ 2 := by
   rw [g2_eq_sum_dvd]

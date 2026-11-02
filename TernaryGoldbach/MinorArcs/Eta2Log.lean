@@ -1,11 +1,11 @@
 import TernaryGoldbach.MinorArcs.InnerSumsGen
 
 /-!
-# The smoothing functions `η_(ρ)(t) = log(ρt) η₂(t)` [B, (4.38), (6.2), App. B.2]
+# The smoothing functions `η_(ρ)(t) = log(ρt) η₂(t)` [H, (4.38), (6.2), App. B.2]
 
 For `ρ ≥ 4`: continuity, compact support, `|η_(ρ)|₁ ≤ log ρ`, total variation
-`≤ log ρ · |η₂'|₁` ([B, Lemma B.2.1]), `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`, and
-`smoothData_eta2log`: [B, (4.38)].  The bound `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` ([B, Lemma B.2.3]) is
+`≤ log ρ · |η₂'|₁` ([H, Lemma B.2.1]), `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`, and
+`smoothData_eta2log`: [H, (4.38)].  The bound `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` ([H, Lemma B.2.3]) is
 `eta2log_fourier_bound`: the case `ρ = 4` is analytic (`norm_eta2log4_le`), and `ρ > 4` follows
 from it and (B.6).
 -/
@@ -100,7 +100,7 @@ theorem antitoneOn_eta2log : AntitoneOn (eta2log ρ) (Set.Icc (1 / 2) 1) := by
   rw [es, et]
   nlinarith
 
-/-- **[B, Lemma B.2.1]**: the total variation of `η_(ρ)` is `8 log 2 · log(ρ/2) ≤ log ρ · |η₂'|₁`. -/
+/-- **[H, Lemma B.2.1]**: the total variation of `η_(ρ)` is `8 log 2 · log(ρ/2) ≤ log ρ · |η₂'|₁`. -/
 theorem eVariationOn_eta2log_le :
     eVariationOn (eta2log ρ) Set.univ ≤ ENNReal.ofReal (eta2'L1 * Real.log ρ) := by
   set f := eta2log ρ
@@ -194,7 +194,7 @@ theorem ghat_eta2log (t : ℝ) :
     integral_sub hint1 (hint2.const_mul _), integral_const_mul]
   ring
 
-/-- **[B, Lemma B.2.3, (B.11)]**: `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` for `ρ ≥ 4`, written as
+/-- **[H, Lemma B.2.3, (B.11)]**: `|η̂_(ρ)''|_∞ ≤ 31.521 log ρ` for `ρ ≥ 4`, written as
 `(2πt)² |η̂_(ρ)(t)| ≤ c₀ log ρ`. By `ghat_eta2log`, `η̂_(ρ) = (log·η₂)^ + log ρ · η̂₂`. For `ρ = 4`,
 `(2πt)² |η̂_(4)| ≤ 48 log 2 = 24 log 4` (`norm_eta2log4_le`, two integrations by parts, no numerics).
 For `ρ > 4`, the extra `(log ρ − log 4) η̂₂` is bounded by (B.6) (`eta2_fourier_bound'`). -/
@@ -236,7 +236,7 @@ theorem eta2log_fourier_bound (t : ℝ) :
         linarith
     _ ≤ c₀ * Real.log ρ := by unfold c₀; nlinarith
 
-/-- `η_(ρ)` satisfies [B, (4.38)]. -/
+/-- `η_(ρ)` satisfies [H, (4.38)]. -/
 theorem smoothData_eta2log : SmoothData (eta2log ρ) (Real.log ρ) (eta2'L1 * Real.log ρ)
     (c₀ * Real.log ρ) :=
   ⟨continuous_eta2log hρ, hasCompactSupport_eta2log, integral_abs_eta2log_le hρ,

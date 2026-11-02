@@ -1,4 +1,4 @@
-"""[B, Prop. 11.2.3]: the w-scaling of δ.
+"""[H, Prop. 11.2.3]: the w-scaling of δ.
 
 The proof of Prop. 11.2.3 writes S_{η_*}(α, x) = ∫ S_{η₂}(α, wx) φ(w) dw/w and applies
 Theorem 3.1.1 to S_{η₂}(α, wx) with the same r = max(1, |δ|/8) q for every w.  But at scale
@@ -8,8 +8,8 @@ smaller than r for w < 1 (a *weaker* bound, since g is decreasing), larger for w
 holds for w ≤ ((4/3) x^{1/3} / (8r))^{3/2}, which is ≥ 94 for r ≤ r₁ = (3/8)x^{4/15}, x ≥ 10²⁵.)
 
 For |δ| ≤ 8, r_w = q = r and nothing changes.  For |δ| > 8, r_w ≥ w r, so the honest integral
-is A(r) = ∫ g_{wy,1}(w r) φ(w) dw, versus [B]'s C(r) = ∫ g_{wy,1}(r) φ(w) dw.  This script
-checks A ≤ C (with our corrected constants 0.8764, 3.8), so [B]'s statement survives.
+is A(r) = ∫ g_{wy,1}(w r) φ(w) dw, versus [H]'s C(r) = ∫ g_{wy,1}(r) φ(w) dw.  This script
+checks A ≤ C (with our corrected constants 0.8764, 3.8), so [H]'s statement survives.
 Result: A/C ≈ 0.87–0.89 for r₀ ≤ r ≤ r₁, y ∈ [10²⁵, 10¹⁰⁰].
 
 Usage: python3 scripts/prop_11_2_3_check.py

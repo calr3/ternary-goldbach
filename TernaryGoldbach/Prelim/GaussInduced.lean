@@ -10,7 +10,7 @@ For `f : ℕ → ℂ` periodic mod `N`, completely multiplicative, vanishing on 
 
 So the Gauss sum of the character mod `Nr` induced by `f` is `μ(r) f(r) τ(f)`; in particular it
 vanishes unless `r` is squarefree and coprime to `N`.  (Montgomery–Vaughan, Thm. 9.10; no
-primitivity is needed here.)  Used for [B, Prop. 12.1.1] via [Bom74, Thm. 7A].
+primitivity is needed here.)  Used for [H, Prop. 12.1.1] via [Bom74, Thm. 7A].
 
 Proved, with no `sorry`.
 -/

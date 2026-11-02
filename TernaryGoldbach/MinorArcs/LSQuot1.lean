@@ -3,12 +3,12 @@ import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.Ramare
 
 /-!
-# [B, Prop 12.2.4], part 1: definitions, Ramaré's estimate, and two inequalities for `G_q`
+# [H, Prop 12.2.4], part 1: definitions, Ramaré's estimate, and two inequalities for `G_q`
 
-* `S_q = ∑_{p ∣ q} log p/p`, `f₁(q) = ∏_{p ∣ q} f₁(p)` [B, (12.13)];
+* `S_q = ∑_{p ∣ q} log p/p`, `f₁(q) = ∏_{p ∣ q} f₁(p)` [H, (12.13)];
 * Ramaré's estimate (12.12) ([Ram95, Lemma 3.4], proved as `Prelim.ramare_Gq`);
 * `G_q(R) G_P(t) ≤ G_q(tR)` if every prime `≤ R` or dividing `q` divides `P` (`Gq_mul_le`);
-* `G(t) ≤ (P/φ(P)) G_P(t)` for squarefree `P` (`G_le_mul_Gq`, the lower half of [B, (12.11)]).
+* `G(t) ≤ (P/φ(P)) G_P(t)` for squarefree `P` (`G_le_mul_Gq`, the lower half of [H, (12.11)]).
 -/
 
 open Real Finset
@@ -19,15 +19,15 @@ namespace TernaryGoldbach.MinorArcs
 /-- `S_q = ∑_{p ∣ q} log p / p`. -/
 noncomputable def Sq (q : ℕ) : ℝ := ∑ p ∈ q.primeFactors, Real.log p / p
 
-/-- The local factor of `f₁` [B, (12.13)]: `(1 + p^{−2/3}) (1 + (p^{1/3} + p^{2/3})/(p(p−1)))⁻¹`. -/
+/-- The local factor of `f₁` [H, (12.13)]: `(1 + p^{−2/3}) (1 + (p^{1/3} + p^{2/3})/(p(p−1)))⁻¹`. -/
 noncomputable def f1p (p : ℕ) : ℝ :=
   (1 + (p : ℝ) ^ (-(2 / 3 : ℝ))) /
     (1 + ((p : ℝ) ^ (1 / 3 : ℝ) + (p : ℝ) ^ (2 / 3 : ℝ)) / ((p : ℝ) * ((p : ℝ) - 1)))
 
-/-- `f₁(q) = ∏_{p ∣ q} f₁(p)` [B, (12.13)]. -/
+/-- `f₁(q) = ∏_{p ∣ q} f₁(p)` [H, (12.13)]. -/
 noncomputable def f1q (q : ℕ) : ℝ := ∏ p ∈ q.primeFactors, f1p p
 
-/-- Ramaré's estimate [B, (12.12)] (`Prelim.ramare_Gq`), for our `Gq`, `Sq`, `f1q`. -/
+/-- Ramaré's estimate [H, (12.12)] (`Prelim.ramare_Gq`), for our `Gq`, `Sq`, `f1q`. -/
 theorem ramare_Gq : ∃ c : ℝ, 1.3325822 ≤ c ∧ c ≤ 1.3325823 ∧ ∀ d : ℕ, 1 ≤ d → ∀ R : ℝ, 1 ≤ R →
     |Gq d R - (Nat.totient d / d) * (Real.log R + c + Sq d)| ≤ 7.284 * R ^ (-(1 / 3 : ℝ)) * f1q d :=
   TernaryGoldbach.Prelim.ramare_Gq
@@ -150,7 +150,7 @@ theorem sum_divisors_gf {P : ℕ} (hP : Squarefree P) :
   field_simp
   ring
 
-/-- **`G(t) ≤ (P/φ(P)) G_P(t)`** for squarefree `P` ([B, (12.11)]). -/
+/-- **`G(t) ≤ (P/φ(P)) G_P(t)`** for squarefree `P` ([H, (12.11)]). -/
 theorem G_le_mul_Gq {P : ℕ} (hP : Squarefree P) {t : ℝ} :
     Gq 1 t ≤ (P : ℝ) / Nat.totient P * Gq P t := by
   rw [← sum_divisors_gf hP, Gq_eq, Gq_eq, sum_mul_sum, ← sum_product']

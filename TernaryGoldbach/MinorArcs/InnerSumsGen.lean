@@ -3,10 +3,10 @@ import TernaryGoldbach.MinorArcs.InnerSums
 /-!
 # Inner sums for a general smoothing function
 
-The results of `MinorArcs/InnerSums.lean` (the bounds [B, (4.36)] on `T_{m,∘}` and the Poisson
-main term [B, (4.33)–(4.34)]) for any continuous, compactly supported `g : ℝ → ℝ` with
+The results of `MinorArcs/InnerSums.lean` (the bounds [H, (4.36)] on `T_{m,∘}` and the Poisson
+main term [H, (4.33)–(4.34)]) for any continuous, compactly supported `g : ℝ → ℝ` with
 `|g|₁ ≤ N`, total variation `≤ V` and `(2πt)² |ĝ(t)| ≤ K` (`SmoothData g N V K`).
-Lemma 4.2.3 applies them to `g = η_(x/m)`, `η_(ρ)(t) = log(ρt) η₂(t)` [B, (4.38)].
+Lemma 4.2.3 applies them to `g = η_(x/m)`, `η_(ρ)(t) = log(ρt) η₂(t)` [H, (4.38)].
 
 Proved, with no `sorry`.
 -/
@@ -15,7 +15,7 @@ open Complex MeasureTheory Real FourierTransform
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- The hypotheses on a smoothing function in [B, Ch. 4]. -/
+/-- The hypotheses on a smoothing function in [H, Ch. 4]. -/
 structure SmoothData (g : ℝ → ℝ) (N V K : ℝ) : Prop where
   cont : Continuous g
   supp : HasCompactSupport g
@@ -103,7 +103,7 @@ theorem fourier_bound_foddG (t : ℝ) :
   rw [this]
   exact mul_le_mul_of_nonneg_left h hl.le
 
-/-- **[B, (4.36)]** for the smoothing `g`. -/
+/-- **[H, (4.36)]** for the smoothing `g`. -/
 theorem norm_ToddG_le (α : ℝ) :
     ‖ToddG g α x m‖ ≤ x / (2 * m) * N + V / 2 ∧
     (Real.sin (2 * π * m * α) ≠ 0 →
@@ -131,7 +131,7 @@ theorem norm_ToddG_le (α : ℝ) :
 
 end SmoothData
 
-/-- **The main term of [B, (4.33)–(4.34)]**: for `m = qm'` with `m'` odd and `|δ|m/x ≤ 1/2`,
+/-- **The main term of [H, (4.33)–(4.34)]**: for `m = qm'` with `m'` odd and `|δ|m/x ≤ 1/2`,
 `T_{m,∘}(α) = κ'((x/2m) ĝ(-δ/2) + E)` with `|E| ≤ (m/x)(K/2π²)(π² - 4)`. -/
 theorem ToddG_main {g : ℝ → ℝ} {N V K : ℝ} (hg : SmoothData g N V K) {α x δ : ℝ} {a k₀ : ℤ} {q m' : ℕ} (hx : 0 < x) (hq : 1 ≤ q) (hm' : Odd m')
     (h2α : 2 * α = a / q + δ / x + k₀) (hr : |δ * (q * m' : ℕ) / x| ≤ 1 / 2) :

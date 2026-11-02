@@ -6,7 +6,7 @@ import TernaryGoldbach.Helfgott.HHBound
 
 With `g(u) = h(eᵘ)`, `h_H(eᵘ) = ∫ g(u − v) sin(Hv)/(πv) dv` is `g` with its Fourier transform cut
 off at `|ξ| ≤ H/2π`. Hence `‖g − g_H‖₂² = ∫_{|ξ| > H/2π} |ĝ|² ≤ ‖g'‖₂²/H²` and
-`‖η₊ − η◦‖₂² ≤ sup(s³e^{−s²}) ‖g − g_H‖₂²` ([B, (A.23)] proves `≤ 274.86²/H⁷` by a finer analysis;
+`‖η₊ − η◦‖₂² ≤ sup(s³e^{−s²}) ‖g − g_H‖₂²` ([H, (A.23)] proves `≤ 274.86²/H⁷` by a finer analysis;
 we only need a crude bound).
 
 This file: `g`, `g'` and `‖g'‖₂² = ∫₀² t h'(t)² dt ≤ 19.5`.
@@ -519,7 +519,7 @@ theorem cube_mul_exp_neg_sq_le {s : ℝ} (hs : 0 ≤ s) : s ^ 3 * Real.exp (-s ^
   nlinarith [mul_nonneg (sq_nonneg (s ^ 2 - 2)) (by positivity : (0:ℝ) ≤ s ^ 2 + 1),
     sq_nonneg (s - s ^ 2)]
 
-/-- **[B, (A.23)]-type bound** (crude): `‖η₊ − η◦‖₂² ≤ 19.5/(2·200²)`. -/
+/-- **[H, (A.23)]-type bound** (crude): `‖η₊ − η◦‖₂² ≤ 19.5/(2·200²)`. -/
 theorem integral_sq_etaPlus_sub_etaO_le :
     ∫ t, (etaPlus t - etaO t) ^ 2 ≤ 19.5 / 2 / 200 ^ 2 := by
   have hz : ∀ t ∉ Ioi (0:ℝ), (etaPlus t - etaO t) ^ 2 = 0 := fun t ht => by

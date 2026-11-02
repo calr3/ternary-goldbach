@@ -1,12 +1,12 @@
 import TernaryGoldbach.Prelim.SqfreeCount
 
 /-!
-# Lemma 5.1.1 [B] (case `v = 2`)
+# Lemma 5.1.1 [H] (case `v = 2`)
 
 * `sum_odd_inv_sqrt_le`: `∑_{t ≤ Y odd} 1/√t ≤ √Y`;
 * `sum_odd_rpow_le_zeta`: `∑_{d ≤ K odd} d^{-3/2} ≤ (1 - 2^{-3/2}) ζ(3/2)`;
 * `sum_odd_divisors_le`: `∑_{r ≤ y odd} ∑_{d | r} 1/√(rd) ≤ (1 - 2^{-3/2}) ζ(3/2) √y`;
-* `lemma_5_1_1`: [B, (5.9)–(5.11)] for `v = 2`.
+* `lemma_5_1_1`: [H, (5.9)–(5.11)] for `v = 2`.
 -/
 
 open Real Finset
@@ -193,14 +193,14 @@ theorem sigma_one_two : σ 1 2 = 3 := by
 theorem sum_divisors_two_inv_sqrt : ∑ d ∈ (2 : ℕ).divisors, 1 / √(d : ℝ) = 1 + 1 / √2 := by
   rw [Nat.Prime.divisors Nat.prime_two, sum_pair (by norm_num)]; simp
 
-/-- Lower end of the `l`-range in [B, (5.9)]: `max(z/(y r₁), z/(y r₂), z/(2 r₁ r₂))`. -/
+/-- Lower end of the `l`-range in [H, (5.9)]: `max(z/(y r₁), z/(y r₂), z/(2 r₁ r₂))`. -/
 noncomputable def aL (y z : ℝ) (r₁ r₂ : ℕ) : ℝ :=
   max (max (z / (y * r₁)) (z / (y * r₂))) (z / (2 * r₁ * r₂))
 
-/-- Upper end of the `l`-range in [B, (5.9)]: `z/(r₁ r₂)`. -/
+/-- Upper end of the `l`-range in [H, (5.9)]: `z/(r₁ r₂)`. -/
 noncomputable def bL (z : ℝ) (r₁ r₂ : ℕ) : ℝ := z / (r₁ * r₂)
 
-/-- The weight `1 - max(1/2, r₁/y, r₂/y)` in [B, (5.10)]. -/
+/-- The weight `1 - max(1/2, r₁/y, r₂/y)` in [H, (5.10)]. -/
 noncomputable def wM (y : ℝ) (r₁ r₂ : ℕ) : ℝ := 1 - max (1 / 2) (max (r₁ / y) (r₂ / y))
 
 /-- `A(r) = ∑_{d | r} 1/√(rd)`. -/
@@ -320,7 +320,7 @@ theorem lemma_5_1_1_term {y z : ℝ} (hy : 0 < y) (hz : 0 < z) {r₁ r₂ : ℕ}
         rw [← mul_sum]
         ring
 
-/-- **Lemma 5.1.1** [B, (5.9)–(5.11)], `v = 2`: for `y, z > 0`,
+/-- **Lemma 5.1.1** [H, (5.9)–(5.11)], `v = 2`: for `y, z > 0`,
 `∑_{r₁, r₂ ≤ y, (r₁,r₂)=1, r₁r₂ odd} μ(r₁)μ(r₂) #{l ∈ (a, b] : l sq-free, (l, 2r₁r₂) = 1}`
 `= (4z/π²) ∑ μ(r₁)μ(r₂)/(σ(r₁)σ(r₂)) (1 - max(1/2, r₁/y, r₂/y))`
 `+ O*(1.27 (1 + 1/√2) ((1 - 2^{-3/2}) ζ(3/2))² y √z)`, where

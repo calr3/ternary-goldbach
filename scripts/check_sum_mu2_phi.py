@@ -1,4 +1,4 @@
-"""Rigorous check of the numerical axiom `sum_odd_mu_sq_div_totient` ([B, §14.1]):
+"""Rigorous check of the numerical axiom `sum_odd_mu_sq_div_totient` ([H, §14.1]):
 
     6.798779 <= sum_{q <= 150000, q odd} mu(q)^2 / phi(q) <= 6.79878.
 

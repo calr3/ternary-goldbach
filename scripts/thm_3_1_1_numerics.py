@@ -61,8 +61,8 @@ def ours(x,d,q,phi,phi2q):
 
 # ---------------------------------------------------------------------------
 # Numerical comparison of our assembled bound (the right-hand sides of the Lean theorems
-# typeI1_le, typeI2_le_small/large, typeII_637/640, plus 3 log x) with [B, Theorem 3.1.1]
-# for q <= x^{1/3}/6, at the parameters of [B, (6.49)] (U, V rounded down).
+# typeI1_le, typeI2_le_small/large, typeII_637/640, plus 3 log x) with [H, Theorem 3.1.1]
+# for q <= x^{1/3}/6, at the parameters of [H, (6.49)] (U, V rounded down).
 # Usage: python3 thm_3_1_1_numerics.py   (needs mpmath, sympy)
 if __name__ == "__main__":
     import sys

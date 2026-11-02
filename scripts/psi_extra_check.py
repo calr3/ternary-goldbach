@@ -1,4 +1,4 @@
-"""Finite checks behind the numerical axioms for [B, (2.16)] and [B, (2.18)] (Prelim/LambdaMuExtra.lean).
+"""Finite checks behind the numerical axioms for [H, (2.16)] and [H, (2.18)] (Prelim/LambdaMuExtra.lean).
 
 * lambda_mul_small:  sum_{n<=k} Lambda(n) n <= 1.03884 k^2/2          for 663 <= k <= 2.5*10^7
 * lambda_sqrt_small: sum_{n<=k} Lambda(n)/sqrt(n) < 2.0008 sqrt(k)     for 1 <= k <= 6*10^6

@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.SecondChoice
 /-!
 # Prop 11.2.3′: the ℓ∞ bound for `S_{η_*}` off the major arcs at scale `y`
 
-A replacement for [B, Prop. 11.2.3] that suits Ch. 13 (NOTES, "Ch. 13: scale erratum", repair 3).
+A replacement for [H, Prop. 11.2.3] that suits Ch. 13 (NOTES, "Ch. 13: scale erratum", repair 3).
 In `S_{η_*}(α, x) = ∫ S_{η₂}(α, wy) φ(w) dw/w`, `y = x/κ`, it takes **a fresh Dirichlet
 approximation `2α = a_w/q_w + δ_w/(wy)` at each scale `wy`** (`exists_approx2`). If
 `α ∉ 𝔐_{8,n}(y)`, then `r_w = max(1, |δ_w|/8) q_w ≥ min(1, w) n`, by `le_rAlpha_of_not_mem` at

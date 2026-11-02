@@ -1,7 +1,7 @@
 import TernaryGoldbach.Helfgott.Defs
 
 /-!
-# The final numerical inequality of [H, §7.4]
+# The final numerical inequality of [H13, §7.4]
 
 Proved, with no `sorry`.
 -/
@@ -19,7 +19,7 @@ theorem xOf_denom_bounds : 0 < 2 + 9 / (196 * √(2 * Real.pi)) ∧
   have h2 : (9 : ℝ) / (196 * 2.4) ≤ 0.02 := by norm_num
   linarith
 
-/-- The final numerical step of [H, §7.4]: for `N ≥ 10²⁷`,
+/-- The final numerical step of [H13, §7.4]: for `N ≥ 10²⁷`,
 `7.3306 N^{3/2} log N < (1.049 - 1.0376) x²/κ`. -/
 theorem final_inequality (N : ℕ) (hN : 10 ^ 27 ≤ N) :
     7.3306 * (N * √N) * Real.log N < (1.049 - 1.0376) * xOf N ^ 2 / κ := by

@@ -3,7 +3,7 @@ import TernaryGoldbach.Prelim.SmallLiouville
 /-!
 # `|∑_{n ≤ k} μ(n)/n| ≤ √(2/(k+1))` for `1 ≤ k < 11815`, checked by the kernel
 
-[B, (2.24)] on the range below Ramaré's `x ≥ 11815`. `μ(n)` is `0` unless `n` is squarefree (trial
+[H, (2.24)] on the range below Ramaré's `x ≥ 11815`. `μ(n)` is `0` unless `n` is squarefree (trial
 division by `d²`, `2 ≤ d ≤ 109`, `sqfN`), and then `μ(n) = λ(n)` (`SmallLiou.lamB`). The kernel
 walks `n ≤ 11814` (`scripts/gen_moebius_small.py`) keeping `P(k) = ∑_{n ≤ k, μ(n) = 1} ⌊10¹²/n⌋`
 and `Q(k)` (the same for `μ(n) = −1`). Then `|10¹² ∑_{n≤k} μ(n)/n − (P − Q)| ≤ k`, and the walk

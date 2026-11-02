@@ -4,7 +4,7 @@ import TernaryGoldbach.MajorArcs.Prop715
 /-!
 # `‖η₊‖₂²` and `∫_{|ξ|<T} |η̂₊(ξ)|² dξ`
 
-* `‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`: from the numerical axiom `integral_etaPlus_sq_log` ([B, (9.94)]),
+* `‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`: from the numerical axiom `integral_etaPlus_sq_log` ([H, (9.94)]),
   letting `x → ∞` (`∫ η₊² log(xt) = (log x) ‖η₊‖₂² + ∫ η₊² log t`).
 * For `T ≥ 4`: `‖η₊‖₂² − 0.001 ≤ ∫_{|ξ|<T} |η̂₊|² ≤ ‖η₊‖₂²` (Plancherel; the tail is at most
   `2·98/(2πT)⁴ + 2‖η₊ − η◦‖₂²`, `EtaCirc.lean`, `HHFourier.lean`).

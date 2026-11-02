@@ -1,14 +1,14 @@
 import TernaryGoldbach.MinorArcs.TypeIIReduction
 
 /-!
-# Integrals for the Type II total [B, §6.2.3]
+# Integrals for the Type II total [H, §6.2.3]
 -/
 
 open Real Finset MeasureTheory
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- `∫_V^{x/U} H₂(x/WU) dW/W = ∫_1^{x/UV} H₂(s) ds/s ≤ 0.15107 log(x/UV) + 0.0231` ([B, (6.25)],
+/-- `∫_V^{x/U} H₂(x/WU) dW/W = ∫_1^{x/UV} H₂(s) ds/s ≤ 0.15107 log(x/UV) + 0.0231` ([H, (6.25)],
 with the corrected (5.36)), and the integrand is integrable. -/
 theorem integral_H2_comp {x U V : ℝ} (hx : 0 < x) (hU : 0 < U) (hV : 0 < V) (hVU : V ≤ x / U) :
     IntervalIntegrable (fun W => H2 (x / (W * U)) / W) volume V (x / U) ∧
@@ -118,8 +118,8 @@ theorem integral_inv_sqrt {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
       Real.continuous_sqrt.continuousOn fun W hW => (Real.sqrt_pos.2 (hpos W hW)).ne')
 
 
-/-- A crude form of [B, (6.22)]: for `ce ≤ a ≤ b`,
-`∫_a^b dW/(√W √(log(W/c))) ≤ 2e√c + 4√(b/log(b/c))`. ([B] has `2.3 √(T/log T)` after a numerical
+/-- A crude form of [H, (6.22)]: for `ce ≤ a ≤ b`,
+`∫_a^b dW/(√W √(log(W/c))) ≤ 2e√c + 4√(b/log(b/c))`. ([H] has `2.3 √(T/log T)` after a numerical
 check; we split at `ce²` instead.) -/
 theorem integral_inv_sqrt_log_le {c a b : ℝ} (hc : 0 < c) (hca : c * rexp 1 ≤ a) (hab : a ≤ b) :
     ∫ W in a..b, 1 / (√W * √(Real.log (W / c))) ≤

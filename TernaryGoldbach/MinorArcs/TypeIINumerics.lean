@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Numerical facts for [B, Lemma 5.2.3, (5.51)]
+# Numerical facts for [H, Lemma 5.2.3, (5.51)]
 -/
 
 open Real

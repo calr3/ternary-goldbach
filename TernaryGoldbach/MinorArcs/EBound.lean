@@ -2,13 +2,13 @@ import TernaryGoldbach.Helfgott.HHBound
 import TernaryGoldbach.Prelim.LambdaMu
 
 /-!
-# [B, (14.28)] with our sup norms: `E ≤ 8·10⁻¹¹ x`
+# [H, (14.28)] with our sup norms: `E ≤ 8·10⁻¹¹ x`
 
 `E = ∑_{n ≤ √x or n not prime} Λ(n)² η₊(n/x)²`.  With `|η₊| ≤ A = 1.94`, `t|η₊(t)| ≤ B = 2.32`
 (`Helfgott/HHBound.lean`), `ψ(y) < 1.03883 y` and `ψ(y) − θ(y) < 1.4262 √y` ((2.15), (5.5)):
 * `n ≤ x`: `≤ A² (log x/2 · ψ(√x) + log x · (ψ − θ)(x))`;
 * `n ∈ (2ʲx, 2ʲ⁺¹x]`, `n` not prime: `Λ(n)² η₊(n/x)² ≤ (ψ−θ)-weight · log(2ʲ⁺¹x) B²/4ʲ`, summed over `j`.
-Total `≤ √x (24.12 log x + 18.01) ≤ 8·10⁻¹¹ x` for `x ≥ 4.9·10²⁶`.  ([B] gets `8.4029·10⁻¹² x`
+Total `≤ √x (24.12 log x + 18.01) ≤ 8·10⁻¹¹ x` for `x ≥ 4.9·10²⁶`.  ([H] gets `8.4029·10⁻¹² x`
 from the sharper Appendix A norms; the minor-arc total tolerates our constant.)
 -/
 
@@ -272,7 +272,7 @@ theorem E_partial {x : ℝ} (hx : 1 ≤ x) (M : ℕ) :
   rw [hsplit] at hstep1
   linarith
 
-/-- **[B, (14.28)], our constant**: `E ≤ 8·10⁻¹¹ x` for `x ≥ 4.9·10²⁶`. -/
+/-- **[H, (14.28)], our constant**: `E ≤ 8·10⁻¹¹ x` for `x ≥ 4.9·10²⁶`. -/
 theorem E_le_14_28 {x : ℝ} (hx : 4.9e26 ≤ x) :
     ∑' n : ℕ, (if n.Prime ∧ √x < n then 0 else (Λ n * etaPlus (n / x)) ^ 2) ≤ 8e-11 * x := by
   have hx1 : 1 ≤ x := by linarith

@@ -1,14 +1,14 @@
 import TernaryGoldbach.CircleMethod
 
 /-!
-# Exponential sums via Fourier analysis [B, §2.3]
+# Exponential sums via Fourier analysis [H, §2.3]
 
 * `hasSum_inv_sq_sub`: `∑_{n ∈ ℤ} 1/(n - s)² = π²/sin²(πs)` for `s ∉ ℤ` (via Parseval for `e(sx)`
-  on `[0, 1]`, rather than by differentiating the cotangent series as in [B, (2.4)]).
-* `tsum_inv_sq_sub_le`: `∑_{n ≠ 0} 1/(n - r)² ≤ π² - 4` for `|r| ≤ 1/2` [B, (4.12)].
-* `norm_tsum_le_of_fourier_bound`: **[B, Lemma 2.3.1]**, by Poisson summation (Mathlib's
+  on `[0, 1]`, rather than by differentiating the cotangent series as in [H, (2.4)]).
+* `tsum_inv_sq_sub_le`: `∑_{n ≠ 0} 1/(n - r)² ≤ π² - 4` for `|r| ≤ 1/2` [H, (4.12)].
+* `norm_tsum_le_of_fourier_bound`: **[H, Lemma 2.3.1]**, by Poisson summation (Mathlib's
   `Real.tsum_eq_tsum_fourier_of_rpow_decay_of_summable`).
-* `norm_tsum_le_variation`, `tsum_norm_le_variation`: the two bounds of [B, (2.2)], with `|f'|₁`
+* `norm_tsum_le_variation`, `tsum_norm_le_variation`: the two bounds of [H, (2.2)], with `|f'|₁`
   replaced by the total variation of `f` (which equals `|f'|₁` for piecewise `C¹` `f`).
 
 Proved, with no `sorry`.
@@ -166,7 +166,7 @@ theorem hasSum_inv_sq_sub_half :
   · funext n; by_cases hn : n = 0 <;> simp [hn, Function.update]
   · norm_num; ring
 
-/-- **[B, (4.12)]**: for `|r| ≤ 1/2`, `∑_{n ≠ 0} 1/(n - r)² ≤ π² - 4` (and the sum converges). -/
+/-- **[H, (4.12)]**: for `|r| ≤ 1/2`, `∑_{n ≠ 0} 1/(n - r)² ≤ π² - 4` (and the sum converges). -/
 theorem tsum_inv_sq_sub_le {r : ℝ} (hr : |r| ≤ 1 / 2) :
     Summable (fun n : ℤ => if n = 0 then 0 else 1 / ((n : ℝ) - r) ^ 2) ∧
       ∑' n : ℤ, (if n = 0 then 0 else 1 / ((n : ℝ) - r) ^ 2) ≤ π ^ 2 - 4 := by
@@ -183,7 +183,7 @@ theorem tsum_inv_sq_sub_le {r : ℝ} (hr : |r| ≤ 1 / 2) :
   exact pair_le_half hn1 hr
 
 
-/-! ## Poisson summation and [B, Lemma 2.3.1] -/
+/-! ## Poisson summation and [H, Lemma 2.3.1] -/
 
 open FourierTransform Filter Asymptotics
 
@@ -208,7 +208,7 @@ theorem isBigO_of_hasCompactSupport {f : ℝ → ℂ} (hf : HasCompactSupport f)
   filter_upwards [hf.isCompact.compl_mem_cocompact] with x hx
   exact image_eq_zero_of_notMem_tsupport hx
 
-/-- **[B, Lemma 2.3.1]**, with `|f̂''|_∞ ≤ K` written as `(2πt)² |f̂(t)| ≤ K` (this is how the
+/-- **[H, Lemma 2.3.1]**, with `|f̂''|_∞ ≤ K` written as `(2πt)² |f̂(t)| ≤ K` (this is how the
 bound on `η̂₂''` is stated, `eta2_fourier_bound`): for `f` continuous and compactly supported,
 `|∑ₙ f(n) e(αn)| ≤ K / (4 sin²(πα))`. -/
 theorem norm_tsum_le_of_fourier_bound {f : ℝ → ℂ} (hf : Continuous f) (hfs : HasCompactSupport f)
@@ -282,7 +282,7 @@ theorem norm_e_sub_one {s : ℝ} : ‖e s - 1‖ = 2 * |Real.sin (π * s)| := by
   rw [show 4 * Real.sin (π * s) ^ 2 = (2 * |Real.sin (π * s)|) ^ 2 by rw [mul_pow, sq_abs]; ring] at h
   exact (pow_left_inj₀ (norm_nonneg _) (by positivity) two_ne_zero).1 h
 
-/-- **[B, (2.2)], second bound**: `|∑ₙ f(n) e(αn)| ≤ V(f) / (2|sin πα|)`, `V(f)` the total
+/-- **[H, (2.2)], second bound**: `|∑ₙ f(n) e(αn)| ≤ V(f) / (2|sin πα|)`, `V(f)` the total
 variation of `f` (`= |f'|₁` for piecewise `C¹` `f`). Proved by summation by parts. -/
 theorem norm_tsum_le_variation {f : ℝ → ℂ} (hfs : HasCompactSupport f) {V : ℝ} (hV0 : 0 ≤ V)
     (hV : eVariationOn f Set.univ ≤ ENNReal.ofReal V) {α : ℝ} (hα : Real.sin (π * α) ≠ 0) :
@@ -337,7 +337,7 @@ theorem norm_tsum_le_variation {f : ℝ → ℂ} (hfs : HasCompactSupport f) {V 
     _ = _ := by ring
 
 
-/-! ## [B, (2.2)], first bound -/
+/-! ## [H, (2.2)], first bound -/
 
 theorem variation_ne_top {f : ℝ → ℂ} {V : ℝ} (hV : eVariationOn f Set.univ ≤ ENNReal.ofReal V)
     (s : Set ℝ) : eVariationOn f s ≠ ⊤ :=
@@ -402,7 +402,7 @@ theorem norm_le_integral_add_variation {f : ℝ → ℂ} (hf : Continuous f) (n 
   simp only [sub_zero, smul_eq_mul] at hint
   linarith
 
-/-- **[B, (2.2)], first bound**: `∑ₙ ‖f(n)‖ ≤ |f|₁ + V(f)/2`, hence `|∑ₙ f(n) e(αn)|` is at most
+/-- **[H, (2.2)], first bound**: `∑ₙ ‖f(n)‖ ≤ |f|₁ + V(f)/2`, hence `|∑ₙ f(n) e(αn)|` is at most
 the same. -/
 theorem tsum_norm_le_variation {f : ℝ → ℂ} (hf : Continuous f) (hfs : HasCompactSupport f)
     {V : ℝ} (hV0 : 0 ≤ V) (hV : eVariationOn f Set.univ ≤ ENNReal.ofReal V) :

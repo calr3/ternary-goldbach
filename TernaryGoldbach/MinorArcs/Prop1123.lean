@@ -2,21 +2,21 @@ import TernaryGoldbach.MinorArcs.GMono
 import Mathlib.NumberTheory.Chebyshev
 
 /-!
-# [B, Prop. 11.2.3]: from `η₂` to `η_* = (η₂ *_M φ)(κ·)` — corrected form
+# [H, Prop. 11.2.3]: from `η₂` to `η_* = (η₂ *_M φ)(κ·)` — corrected form
 
 `S_{η_*}(α, x) = ∫ S_{η₂}(α, wy) φ(w) dw/w` with `y = x/κ` (`S_etaStar_eq`).  If
 `2α = a/q + δ/y`, then at scale `wy` the approximation reads `2α = a/q + (wδ)/(wy)`, so
-Theorem 3.1.1 at scale `wy` is in terms of `r_w = max(1, w|δ|/8) q`, **not** [B]'s
+Theorem 3.1.1 at scale `wy` is in terms of `r_w = max(1, w|δ|/8) q`, **not** [H]'s
 `r = max(1, |δ|/8) q` (see `NOTES.md`, "Prop 11.2.3 erratum").  Since `r_w ≥ min(1, w) r` and
 `g` is non-increasing (`gx_antitoneOn`), the per-scale bound is `g_{wy}(min(1, w) r)`.
 
 `prop_11_2_3` splits the `w`-integral into
 * `(0, w₀)` and `(w₁, ∞)`: the trivial bound `|S_{η₂}(α, z)| ≤ 17 z` (`norm_S_eta2_le_trivial`,
-  from Chebyshev's `ψ(z) ≤ (log 4 + 4) z`; [B] uses `1.04488 z`, Cor. C.1.3);
+  from Chebyshev's `ψ(z) ≤ (log 4 + 4) z`; [H] uses `1.04488 z`, Cor. C.1.3);
 * `[w₀, w₁]`: Theorem 3.1.1 at scale `wy`, with any integrable majorant `G(w)` of
   `g_{wy}(min(1, w) r)` (to be supplied by numerics).
 
-[B]'s `K` is our `1/w₀`; the condition at `w₁` is Thm 3.1.1's `|δ/y| ≤ 1/(q Q_{w₁y})`.
+[H]'s `K` is our `1/w₀`; the condition at `w₁` is Thm 3.1.1's `|δ/y| ≤ 1/(q Q_{w₁y})`.
 
 Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
@@ -100,7 +100,7 @@ theorem integrable_phi : Integrable phi := by
 
 theorem phi_nonneg (t : ℝ) : 0 ≤ phi t := by unfold phi; positivity
 
-/-- **[B, Prop. 11.2.3], corrected** (first case, `q` small).  Let `y = x/κ` and
+/-- **[H, Prop. 11.2.3], corrected** (first case, `q` small).  Let `y = x/κ` and
 `2α = a/q + δ/y` with `(a, q) = 1`, `|δ/y| ≤ 1/(q Q_y)`, `Q_y = (3/4)y^{2/3}`; let
 `r = max(1, |δ|/8) q`.  Let `0 < w₀ ≤ 1 ≤ w₁` with `w₀ y ≥ 2.16·10²⁰`, `q ≤ (w₀y)^{1/3}/6`,
 `w₀ r ≥ 670`, and `|δ/y| ≤ 1/(q Q_{w₁y})`.  If `G(w) ≥ g_{wy}(min(1, w) r)` on `[w₀, w₁]` with

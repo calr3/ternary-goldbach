@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuot2
 
 /-!
-# [B, Prop 12.2.4], part 3: small `R` ([B, Lemmas 12.2.1–12.2.3])
+# [H, Prop 12.2.4], part 3: small `R` ([H, Lemmas 12.2.1–12.2.3])
 
 `regionS`: if `log q + 1.039 R ≤ c' (qR)^{2/9}` and `e^γ log c' + 2.50637/log log q ≤ 0.86`, then
 `G_q(R) ≤ (log Q₀ + 1.36)/(log Q + c_E) · G_q(tR)`.
@@ -69,7 +69,7 @@ theorem poly_regionS {X l L : ℝ} (hX : X ≤ 0.4 * l + 0.86) (hX0 : 0 ≤ X) (
   have hLl : 0 ≤ 0.6 * L - l := by linarith
   nlinarith [mul_nonneg h06 hLl, mul_le_mul_of_nonneg_right hX hLc]
 
-/-- **Small `R`** ([B, Lemmas 12.2.1–12.2.3], with `log Q + c_E` in the denominator). -/
+/-- **Small `R`** ([H, Lemmas 12.2.1–12.2.3], with `log Q + c_E` in the denominator). -/
 theorem regionS {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
     (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs : 1 ≤ s)
     (hR : 1 ≤ Q₀ / (s * q)) {c' : ℝ} (hc' : 0 < c') (hlq : 3 ≤ Real.log q)

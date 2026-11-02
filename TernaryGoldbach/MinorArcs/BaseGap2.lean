@@ -238,7 +238,7 @@ theorem S_etaStar_eq_expTsum {x : ℝ} (hx : 0 < x) (α : ℝ) :
 
 set_option maxHeartbeats 1000000 in
 /-- **The base gap**: on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, `|S_{η_*}(α, x)| ≤ 0.012 y`
-(from [B, Cor 7.1.3]). -/
+(from [H, Cor 7.1.3]). -/
 theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majorArcs 8 r₀ (x / κ))
     (h2 : α ∉ majorArcs 8 r₀ x) : ‖S etaStar x α‖ ≤ 0.012 * (x / κ) := by
   have hκ : (κ : ℝ) = 49 := rfl

@@ -1,11 +1,11 @@
-/* The finite check behind [B, Prop 12.2.4] (axiom `prop1224_check`, TernaryGoldbach/MinorArcs/LSQuot2.lean).
+/* The finite check behind [H, Prop 12.2.4] (axiom `prop1224_check`, TernaryGoldbach/MinorArcs/LSQuot2.lean).
 
    For every 1 <= q < Q1 = 2.2e10 and every integer n >= 1 with n < lam(q), at least one of
      (S)  8.53 <= log q  and  log q + 1.039 (n + 1) <= 0.826 (q n)^(2/9);
      (C)  qphi G_q(n) - log n - 1.3325822 - S_q + 0.1687 qphi f1(q) / n^(1/3)
             <= 0.3726 (max(log q, log(1e5/(n+1))) - S_q) + 0.0274177
    holds.  Here qphi = q/phi(q), S_q = sum_{p | q} log p / p,
-   f1(q) = prod_{p | q} (1 + p^(-2/3)) / (1 + (p^(1/3) + p^(2/3)) / (p (p - 1)))  [B, (12.13)],
+   f1(q) = prod_{p | q} (1 + p^(-2/3)) / (1 + (p^(1/3) + p^(2/3)) / (p (p - 1)))  [H, (12.13)],
    G_q(n) = sum_{r <= n, (r, q) = 1} mu(r)^2 / phi(r),
    kappa(q) = 0.3726 (log q - S_q) + 0.0274177,   lam(q) = (qphi 7.4527 f1(q) / kappa(q))^3.
 

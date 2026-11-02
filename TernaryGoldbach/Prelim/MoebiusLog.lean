@@ -1,13 +1,13 @@
 import TernaryGoldbach.Prelim.MertensProduct
 
 /-!
-# [B, (2.23)], elementary form: `|∑_{n≤x, (n,q)=1} μ(n)/n · log(x/n)| ≤ q/φ(q) + 2.67`
+# [H, (2.23)], elementary form: `|∑_{n≤x, (n,q)=1} μ(n)/n · log(x/n)| ≤ q/φ(q) + 2.67`
 
 `∑_{n ≤ N, (n,q)=1} (μ(n)/n) H(N/n) = ∑_{k ≤ N} c_q(k)/k` with `c_q(k) = ∑_{d | k, (d,q)=1} μ(d)`
 multiplicative, `c_q(p^e) = [p | q]`, so the sum is over `k ≤ N` with all prime factors dividing
 `q` and lies in `[0, q/φ(q)]` (Euler product over `q`-factored numbers).  With
 `H(M) = log y + γ + O*(1/M)` for `y ∈ [M, M+1)`, `|∑ μ(n)/n| ≤ 1` ((2.20)) and `n⌊x/n⌋ ≥ x/2`, the
-bound follows.  ([B] quotes `1.00303 q/φ(q)` from Ramaré; the weaker constant suffices here.)
+bound follows.  ([H] quotes `1.00303 q/φ(q)` from Ramaré; the weaker constant suffices here.)
 -/
 
 open Finset ArithmeticFunction
@@ -168,7 +168,7 @@ theorem harmonic_err {M : ℕ} (hM : 1 ≤ M) {y : ℝ} (h1 : (M : ℝ) ≤ y) (
     linarith
   rw [abs_le]; constructor <;> linarith
 
-/-- **[B, (2.23)], elementary form**: `|∑_{n ≤ x, (n,q)=1} μ(n)/n · log(x/n)| ≤ q/φ(q) + 2.67`. -/
+/-- **[H, (2.23)], elementary form**: `|∑_{n ≤ x, (n,q)=1} μ(n)/n · log(x/n)| ≤ q/φ(q) + 2.67`. -/
 theorem abs_sum_moebius_div_log_coprime_le {x : ℝ} (hx : 0 < x) {q : ℕ} (hq : 1 ≤ q) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n * Real.log (x / n) else 0)| ≤
       q / Nat.totient q + 2.67 := by

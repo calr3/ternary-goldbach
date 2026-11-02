@@ -1,9 +1,9 @@
-"""Float64 check of the numerical axiom `integral_etaPlus_sq_log` ([B, (9.94)], MajorArcs/Prop715.lean):
+"""Float64 check of the numerical axiom `integral_etaPlus_sq_log` ([H, (9.94)], MajorArcs/Prop715.lean):
 
     int_0^inf eta_+(t)^2 log(xt) dt = (0.640206 + O*(1.95e-6)) log x - 0.021095 + O*(5.3e-7),
 
 with eta_+(t) = h_H(t) t e^{-t^2/2}, H = 200, h_H = h *_M F_H, F_H(y) = sin(H log y)/(pi log y),
-h(t) = t^2 (2-t)^3 e^{t-1/2} on [0, 2] (Helfgott/Defs.lean, [B, (7.4)-(7.6)]).
+h(t) = t^2 (2-t)^3 e^{t-1/2} on [0, 2] (Helfgott/Defs.lean, [H, (7.4)-(7.6)]).
 
 In the variable v = log t, h_H(e^v) is the convolution of phi(v) = h(e^v) with sin(Hu)/(pi u), i.e.
 phi with its Fourier transform cut off at |xi| <= H/(2 pi) cycles per unit.  We compute phi on a

@@ -10,7 +10,7 @@ For `q` and `β` on the arc `|β| < w_q`, with `S'_q` the part of `S_{η₊}` ov
 * `|S − S'_q| ≤ D` everywhere, `D = 1.94 K log q + 1` (`x² ≤ 2^K`): only prime powers `p^k`, `p ∣ q`;
 * (Bombieri's identity, `|τ(ψ)|² ≤ cond ψ`) `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|²
   ≤ μ²(q)/φ(q) |S'_q(β)|² + E²`, with `E = max_{ψ ≠ 1} |τ(ψ)| |S'_{q,ψ⁻¹}(β)|`;
-* [B, Thm 7.1.4] for the primitive characters inducing `ψ⁻¹`: `E ≤ 2.41·10⁻⁸ x` and
+* [H, Thm 7.1.4] for the primitive characters inducing `ψ⁻¹`: `E ≤ 2.41·10⁻⁸ x` and
   `|S'_q(β) − η̂₊(−βx) x| ≤ 1.141·10⁻⁸ x` for `x ≥ 4.9·10²⁶`.
 -/
 
@@ -338,7 +338,7 @@ theorem err_scaled_le {x c : ℝ} (hx : 4.9e26 ≤ x) (hc2 : 2 ≤ c) (hc3 : c �
 /-! ## The arcs of modulus `q` -/
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, §10.3] for one modulus `q`** (`q̃ ≤ 3·10⁵`, `|βx| ≤ 1.2·10⁶/q̃`, `x ≥ 4.9·10²⁶`), with
+/-- **[H, §10.3] for one modulus `q`** (`q̃ ≤ 3·10⁵`, `|βx| ≤ 1.2·10⁶/q̃`, `x ≥ 4.9·10²⁶`), with
 `S'_q = Σ_{(n,q)=1} Λ(n) η₊(n/x) e(nα)`:
 `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (4.25·10⁻⁷ x)²` and
 `|S'_q(β) − η̂₊(−βx) x| ≤ 2.83·10⁻⁷ x`. -/
@@ -440,7 +440,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
   · have hsplit := sum_units_sq_bounds ha hcop β hE
     rw [sum_Bset_eq_units (fun t => ‖expTsum a t‖ ^ 2) β]
     exact hsplit
-  · -- the principal character: [B, Thm 7.1.4] for `q = 1`
+  · -- the principal character: [H, Thm 7.1.4] for `q = 1`
     have hδ1 : |β * x| ≤ 600000 := by
       refine hβ.trans ?_
       rw [div_le_iff₀ hqt0]; nlinarith

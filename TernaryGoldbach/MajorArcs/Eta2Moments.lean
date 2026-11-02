@@ -4,7 +4,7 @@ import TernaryGoldbach.Helfgott.Eta2
 # Moments of `η₂`
 
 `∫ η₂ = 1`, `∫ w^{-1/2} η₂ = 24 − 16√2 ≤ 1.37259`, `∫ w^{-1} η₂ = 4 (log 2)² ≤ 1.92182`,
-`∫ w^{-3/2} η₂ = 48 − 32√2 ≤ 2.74517` (all over `w > 0`) — the values used in [B, Cor 9.3.3].
+`∫ w^{-3/2} η₂ = 48 − 32√2 ≤ 2.74517` (all over `w > 0`) — the values used in [H, Cor 9.3.3].
 -/
 
 open Real MeasureTheory Set intervalIntegral

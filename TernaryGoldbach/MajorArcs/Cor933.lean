@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.Prop932
 import TernaryGoldbach.MajorArcs.Eta2Moments
 
 /-!
-# [B, Cor 9.3.3] from [B, Prop 9.3.2]
+# [H, Cor 9.3.3] from [H, Prop 9.3.2]
 
 `η_* = η₂ *_M η` (our `etaU`) with `η(t) = t² e^{-t²/2}`: by (9.59),
 `Σ Λ(n) χ(n) e(δn/x) η_*(n/x) = ∫_{1/4}^1 S_{η,χ}(δ/x, wx) η₂(w) dw/w`, and Prop 9.3.2 at scale `wx`
@@ -184,8 +184,8 @@ theorem norm_fourier_phiPos_le (w : ℝ) : ‖𝓕 (fun u => (phiPos u : ℂ)) w
 
 /-! ### The averaged error term -/
 
-/-- The error term of [B, Cor 9.3.3] as obtained from (9.57) and the `η₂`-moments (we keep the
-coefficient `1.578` on the `δ`-exponential, as [B, §9.6] does). -/
+/-- The error term of [H, Cor 9.3.3] as obtained from (9.57) and the `η₂`-moments (we keep the
+coefficient `1.578` on the `δ`-exponential, as [H, §9.6] does). -/
 noncomputable def err933 (q : ℕ) (T0 δ x : ℝ) : ℝ :=
   T0 * Real.log (q * T0 / (2 * π)) * (6.11 * Real.exp (-0.1598 * T0) + 1.578 * expδ T0 δ) +
     1.37259 * (1.22 * √T0 * Real.log (q * T0) + 5.056 * √T0 + 1.423 * Real.log q + 37.19) / √x +
@@ -483,7 +483,7 @@ theorem eta2_div_nonneg (r : ℝ) : 0 ≤ eta2 r / r := by
 theorem mem_Ioo_of_eta2_ne {r : ℝ} (h : eta2 r ≠ 0) : r ∈ Ioo (1 / 4 : ℝ) 1 := by
   by_contra h'; exact h (TernaryGoldbach.Helfgott.eta2_eq_zero h')
 
-/-- **[B, Cor 9.3.3]** (error `err933N`: [B]'s for `q = 1`, ours for `q ≥ 2`), from [B, Prop 9.3.2]
+/-- **[H, Cor 9.3.3]** (error `err933N`: [H]'s for `q = 1`, ours for `q ≥ 2`), from [H, Prop 9.3.2]
 by averaging over `η₂` (9.59). Let `η_* = η₂ *_M η`,
 `η(t) = t² e^{-t²/2}`, `x ≥ 4`, `χ` primitive mod `q`, GRH for `L(s, χ)` up to `T₀ ≥ max(10π|δ|, 50)`.
 Then `Σ Λ(n) χ(n) e(δn/x) η_*(n/x) = [q = 1] η̂_*(-δ) x + O*(err933) x`. -/

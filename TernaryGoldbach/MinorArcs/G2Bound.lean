@@ -2,15 +2,15 @@ import TernaryGoldbach.MinorArcs.G2Numerics
 import TernaryGoldbach.Prelim.LiouvilleBound
 
 /-!
-# [B, Lemma 5.1.2] for `v = 2` from Ramaré's bound on `∑ μ(n)/n`
+# [H, Lemma 5.1.2] for `v = 2` from Ramaré's bound on `∑ μ(n)/n`
 
 `|g₂(x)| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x` for `x > 1` (`abs_g2_le_large`).
 
-Proof (a version of [B]'s, with cruder constants):
-* `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` ([B, (5.20)], `g2_eq_sum_moebius`);
+Proof (a version of [H]'s, with cruder constants):
+* `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` ([H, (5.20)], `g2_eq_sum_moebius`);
 * `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` with `H_d ≥ 0` multiplicative (`Sd_eq`);
 * `|m(x/u)| ≤ 0.03 u^{1/9}/log x + √(2u/x)` (`abs_m_le`): Ramaré's `|m(y)| ≤ 0.03/log y`
-  ([B, (2.21)], axiom `ramare_moebius`, `Prelim/RamareMoebius.lean`) with Rankin's
+  ([H, (2.21)], axiom `ramare_moebius`, `Prelim/RamareMoebius.lean`) with Rankin's
   `log x/log(x/u) ≤ u^{1/9}` for `x/u ≥ 11815`, and the kernel-checked `|m(y)| ≤ √(2/y)`
   (`Prelim/SmallMoebius.lean`) for `y < 11815`;
 * the Euler products of `G2Euler.lean`, evaluated in `G2Numerics.lean`.
@@ -192,7 +192,7 @@ theorem fo_sq_Sd_sq_le {x : ℝ} (hx : 1 < x) {d : ℕ} (hd1 : 1 ≤ d) :
         · norm_num
         · norm_num
 
-/-- **[B, Lemma 5.1.2] (`v = 2`, our constants)**: `|g₂(x)| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x`
+/-- **[H, Lemma 5.1.2] (`v = 2`, our constants)**: `|g₂(x)| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x`
 for `x > 1`. -/
 theorem abs_g2_le_large {x : ℝ} (hx : 1 < x) :
     |g2 x| ≤ 0.0236 / Real.log x ^ 2 + 528 * (1 + Real.log x) ^ 2 / x := by

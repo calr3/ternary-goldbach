@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Block decompositions and elementary sum bounds for [B, §4.2]
+# Block decompositions and elementary sum bounds for [H, §4.2]
 -/
 
 open Finset Real

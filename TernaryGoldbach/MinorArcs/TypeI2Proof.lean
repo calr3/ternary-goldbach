@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.Prelim.LambdaMu
 
 /-!
-# Proof of [B, Lemma 4.2.4] (the Type I sum with `Λ(v) μ(u)`; `η = η₂`)
+# Proof of [H, Lemma 4.2.4] (the Type I sum with `Λ(v) μ(u)`; `η = η₂`)
 -/
 
 open Real Finset
@@ -13,11 +13,11 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2)
 
-/-- `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)` [B, (4.53)]. -/
+/-- `c(a) = ∑_{v | a, v ≤ V, a/v ≤ U} Λ(v) μ(a/v)` [H, (4.53)]. -/
 noncomputable def coefI2 (U V : ℝ) (a : ℕ) : ℝ :=
   ∑ v ∈ a.divisors, if (v : ℝ) ≤ V ∧ ((a / v : ℕ) : ℝ) ≤ U then (Λ v : ℝ) * (μ (a / v) : ℝ) else 0
 
-/-- `|c(a)| ≤ log a` [B, p. 73]. -/
+/-- `|c(a)| ≤ log a` [H, p. 73]. -/
 theorem abs_coefI2_le (U V : ℝ) (a : ℕ) : |coefI2 U V a| ≤ Real.log a := by
   rw [coefI2, ← ArithmeticFunction.vonMangoldt_sum]
   refine (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun v _ => ?_)
@@ -143,7 +143,7 @@ theorem sum_dvd_reindex {q' : ℕ} (hq' : 1 ≤ q') (R : ℝ) (hR : 0 ≤ R) (f 
     simp only [mem_filter] at hu
     rw [Nat.mul_div_cancel' hu.2.2]
 
-/-- [B, p. 72]: for `q'` odd, `|∑_{u ≤ R, u odd, q' | u} μ(u)/u| ≤ 1/q'` (by (2.20)). -/
+/-- [H, p. 72]: for `q'` odd, `|∑_{u ≤ R, u odd, q' | u} μ(u)/u| ≤ 1/q'` (by (2.20)). -/
 theorem abs_sum_moebius_odd_dvd_le {q' : ℕ} (hq' : Odd q') (R : ℝ) (hR : 0 ≤ R) :
     |∑ u ∈ Icc 1 ⌊R⌋₊, (if Odd u ∧ q' ∣ u then (μ u : ℝ) / u else 0)| ≤ 1 / q' := by
   have hq1 : 1 ≤ q' := hq'.pos
@@ -239,7 +239,7 @@ theorem injOn_div_gcd (q : ℕ) (hq : q ≠ 0) (S : Finset ℕ) :
     Nat.pow_right_injective hp.two_le heq
   congr 1; omega
 
-/-- [B, p. 72]: `∑_{v ≤ V} Λ(v) gcd(q,v)/v ≤ log q + log V` (with (2.12)). -/
+/-- [H, p. 72]: `∑_{v ≤ V} Λ(v) gcd(q,v)/v ≤ log q + log V` (with (2.12)). -/
 theorem sum_vonMangoldt_gcd_le {q : ℕ} (hq : 1 ≤ q) {V : ℝ} (hV : 1 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (Λ v : ℝ) * Nat.gcd q v / v ≤ Real.log q + Real.log V := by
   have hq0 : q ≠ 0 := by omega
@@ -372,7 +372,7 @@ theorem dvd_mul_iff_div_gcd {q v u : ℕ} (hq : 0 < q) :
   · intro h
     exact Nat.mul_dvd_mul_left _ (Dvd.dvd.mul_left h _)
 
-/-- **[B, p. 72]**: `|∑_{a ≤ M, a odd, q | a} c(a)/a| ≤ (log q + log V)/q` for `q` odd. -/
+/-- **[H, p. 72]**: `|∑_{a ≤ M, a odd, q | a} c(a)/a| ≤ (log q + log V)/q` for `q` odd. -/
 theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 0 ≤ M) {q : ℕ}
     (hq : Odd q) :
     |∑ a ∈ Icc 1 ⌊M⌋₊, (if Odd a ∧ q ∣ a then coefI2 U V a * (1 / a) else 0)| ≤
@@ -464,7 +464,7 @@ theorem geom_sum_le_three_halves {p : ℕ} (hp : 3 ≤ p) (L : ℕ) :
     have : (0 : ℝ) ≤ (p : ℝ) ^ L := by positivity
     rw [pow_succ]; nlinarith [ih]
 
-/-- **Lemma D** (cf. [B, (4.55)]): `∑_{v ≤ V, (v, q) > 1} Λ(v) v ≤ (3/2) V log q` for `q` odd. -/
+/-- **Lemma D** (cf. [H, (4.55)]): `∑_{v ≤ V, (v, q) > 1} Λ(v) v ≤ (3/2) V log q` for `q` odd. -/
 theorem sum_vonMangoldt_mul_not_coprime_le {q : ℕ} (hq : Odd q) {V : ℝ} (hV : 1 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (if ¬ Nat.Coprime q v then (Λ v : ℝ) * v else 0) ≤
       3 / 2 * V * Real.log q := by
@@ -552,7 +552,7 @@ theorem sum_vonMangoldt_mul_not_coprime_le {q : ℕ} (hq : Odd q) {V : ℝ} (hV 
     _ ≤ 3 / 2 * V * Real.log q := by gcongr
 
 
-/-- [B, p. 73]: `∑_{u ≤ K, u odd, q | u} u ≤ K²/4q + 3K/4` for `q` odd. -/
+/-- [H, p. 73]: `∑_{u ≤ K, u odd, q | u} u ≤ K²/4q + 3K/4` for `q` odd. -/
 theorem sum_odd_dvd_le {q : ℕ} (hq : Odd q) (K : ℕ) :
     ∑ u ∈ Icc 1 K, (if Odd u ∧ q ∣ u then (u : ℝ) else 0) ≤ (K : ℝ) ^ 2 / (4 * q) + 3 * K / 4 := by
   have hq1 : 1 ≤ q := hq.pos
@@ -583,7 +583,7 @@ theorem sum_odd_dvd_le {q : ℕ} (hq : Odd q) (K : ℕ) :
     _ = (K : ℝ) ^ 2 / (4 * q) + K / 2 + q / 4 := by field_simp; ring
     _ ≤ _ := by linarith
 
-/-- **[B, (4.54)–(4.55)]** (with `3/2` in the last term, see `sum_vonMangoldt_mul_not_coprime_le`):
+/-- **[H, (4.54)–(4.55)]** (with `3/2` in the last term, see `sum_vonMangoldt_mul_not_coprime_le`):
 `∑_{a ≤ M, a odd, q | a} |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`. -/
 theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 0 ≤ M) {q : ℕ}
     (hq : Odd q) :
@@ -778,7 +778,7 @@ noncomputable def mainPartI2 (α x M U V : ℝ) (q : ℕ) : ℂ :=
   ∑ a ∈ Icc 1 ⌊M⌋₊, if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * Todd α x a else 0
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, (4.50)]** (with the factor `3/2`, see `bound_4_50`): the terms with `q | a ≤ M`. -/
+/-- **[H, (4.50)]** (with the factor `3/2`, see `bound_4_50`): the terms with `q | a ≤ M`. -/
 theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (h2α : 2 * α = a₀ / q + δ / x + k) (hU : 1 ≤ U) (hV : 1 ≤ V) (hM0 : 0 ≤ M)
     (hMδ : |δ| * M ≤ x / 2) (hMD : M ≤ U * V) :

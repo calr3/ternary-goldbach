@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuot5
 
 /-!
-# [B, Prop 12.2.4]
+# [H, Prop 12.2.4]
 
 For `Q ≥ 20000 Q₀`, `Q₀ ≥ 10⁵`, `log Q₀ ≤ 0.6 log Q`, `1 ≤ q ≤ Q₀`, `1 ≤ s ≤ Q₀/q`:
 `G_q(Q₀/sq) ≤ (log Q₀ + 1.36)/(log Q + c_E) · G_q(Q/sq)`.
@@ -57,7 +57,7 @@ theorem hcc_small {q : ℕ} (hq : 8.53 ≤ Real.log q) :
   have : (1.625 : ℝ) * (-0.191) + 2.50637 / 2.1435 ≤ 0.86 := by norm_num
   linarith
 
-/-- **[B, Prop 12.2.4]**. -/
+/-- **[H, Prop 12.2.4]**. -/
 theorem prop_12_2_4 {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
     (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) (_hqQ : (q : ℝ) ≤ Q₀) {s : ℝ}
     (hs : 1 ≤ s) (hsQ : s ≤ Q₀ / q) :

@@ -31,7 +31,7 @@ import Mathlib.MeasureTheory.Function.Floor
 `TernaryGoldbach.PNTMertens.sum_mangoldt_div_log_eq`:
 `∑_{d ≤ x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)`, and `E₂Λ.eq`:
 `E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log² t) dt` for `x ≥ 2`, where
-`E₁Λ(x) = ∑_{d ≤ x} Λ(d)/d − log x`.  Used for [B, Lemma C.2.2] in `Prelim/MertensProduct.lean`.
+`E₁Λ(x) = ∑_{d ≤ x} Λ(d)/d − log x`.  Used for [H, Lemma C.2.2] in `Prelim/MertensProduct.lean`.
 -/
 
 

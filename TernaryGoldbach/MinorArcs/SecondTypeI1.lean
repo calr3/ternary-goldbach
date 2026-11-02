@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.SecondTypeIIb
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2b
 
 /-!
-# Type I at the second parameters [B, §6.3.2]: `S_{I,1}` and (4.50)
+# Type I at the second parameters [H, §6.3.2]: `S_{I,1}` and (4.50)
 
 The cases are those of `second_case_split`: (a) `q > T/6`, or (b) `q ≤ T/6`, `|δ| > 8`,
 `|δ|q > 8T/6`. In both cases `x/(2q) · 2/δ₀ ≤ 3T²` and `q/φ(q) ≤ 1.7882 log(2L) + 0.9549`.

@@ -2,10 +2,10 @@ import TernaryGoldbach.Helfgott.Decay
 import TernaryGoldbach.Helfgott.Eta2
 
 /-!
-# `S_{η_*}` as an average of `S_{η₂}` [B, (11.9)]
+# `S_{η_*}` as an average of `S_{η₂}` [H, (11.9)]
 
 `η_*(t) = (η₂ *_M φ)(κt)`, so `S_{η_*}(α, x) = ∫₀^∞ S_{η₂}(α, w x/κ) φ(w) dw/w`
-(`S_etaStar_eq`).  This is how [B, Prop. 11.2.3] transfers Theorem 3.1.1 from `η₂` to `η_*`.
+(`S_etaStar_eq`).  This is how [H, Prop. 11.2.3] transfers Theorem 3.1.1 from `η₂` to `η_*`.
 
 Proved, with no `sorry`.
 -/
@@ -37,7 +37,7 @@ theorem mellinConv_eq_swap (f g : ℝ → ℝ) {t : ℝ} (ht : 0 < t) :
   rw [div_inv_eq_mul, show t / (t * x) = x⁻¹ by field_simp]
   field_simp
 
-/-- [B, (11.9)]: `S_{η_*}(α, x) = ∫₀^∞ S_{η₂}(α, w y) φ(w) dw/w` with `y = x/κ`. -/
+/-- [H, (11.9)]: `S_{η_*}(α, x) = ∫₀^∞ S_{η₂}(α, w y) φ(w) dw/w` with `y = x/κ`. -/
 theorem S_etaStar_eq {x : ℝ} (hx : 0 < x) (α : ℝ) :
     S etaStar x α = ∫ w in Ioi (0:ℝ), S eta2 (w * (x / κ)) α * ((phi w / w : ℝ) : ℂ) := by
   have hκ : (0 : ℝ) < κ := by rw [κ]; norm_num

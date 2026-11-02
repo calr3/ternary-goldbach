@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MinorArcs.BaseGap2
 
 /-!
-# `S_{η_*}` on the arcs of modulus `q`, via characters ([B, Cor 7.1.3])
+# `S_{η_*}` on the arcs of modulus `q`, via characters ([H, Cor 7.1.3])
 
 The analogue of `ArcChars.lean` for `η_*(t) = η(κt)` (`η = η₂ *_M φ`, our `etaU`), at scale `y = x/κ`:
 for `q ∈ Qset r₀` and `|βx| ≤ 1.2·10⁶/q̃`, with `S'_q` the part over `(n, q) = 1`,
@@ -134,7 +134,7 @@ theorem err_scaled_le_star {y c : ℝ} (hy : 1e25 ≤ y) (hc1 : 1 ≤ c) (hc3 : 
   nlinarith [sq_nonneg r]
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, §10.4] for `η_*` and one modulus `q`**: Bombieri's identity and [B, Cor 7.1.3]. -/
+/-- **[H, §10.4] for `η_*` and one modulus `q`**: Bombieri's identity and [H, Cor 7.1.3]. -/
 theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt : (qt q : ℝ) ≤ 300000)
     {β : ℝ} (hβ : |β * x| ≤ 1200000 / qt q) :
     ((if Squarefree q then (1:ℝ) else 0) / q.totient * ‖expTsum (coprimePart q (cU (x / κ))) β‖ ^ 2 ≤

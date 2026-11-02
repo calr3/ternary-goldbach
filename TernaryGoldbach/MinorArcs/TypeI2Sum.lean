@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeI2Total
 import TernaryGoldbach.MinorArcs.GcdSums
 
 /-!
-# Type I totals [B, §6.2.2]: summing over `v` ((6.9)–(6.13))
+# Type I totals [H, §6.2.2]: summing over `v` ((6.9)–(6.13))
 
 We bound the sum over `v` in `typeI2_le_sum` explicitly for the case `|δ| ≤ 1/2c₂`.
 -/
@@ -101,7 +101,7 @@ theorem one_le_div_gcd (q v : ℕ) (hq : 1 ≤ q) : 1 ≤ q / Nat.gcd q v :=
   (Nat.le_div_iff_mul_le (Nat.gcd_pos_of_pos_left v hq)).2
     (by rw [one_mul]; exact Nat.le_of_dvd hq (Nat.gcd_dvd_left q v))
 
-/-- [B, (6.6)], per `v`: (4.30) for `x/v`, `q_v = q/(q,v)`. Here `M₀ = min(Q/2V, U)`. -/
+/-- [H, (6.6)], per `v`: (4.30) for `x/v`, `q_v = q/(q,v)`. Here `M₀ = min(Q/2V, U)`. -/
 theorem bound_4_30_v_le {x δ Q U V : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x)
     (hδQ : |δ| * q * Q ≤ x) (hU : 0 < U) (hQ : 0 < Q) (hv : 1 ≤ v) (hvV : (v : ℝ) ≤ V) :
     bound_4_30 (x / v) δ (q / Nat.gcd q v) U ≤
@@ -168,7 +168,7 @@ theorem bound_4_30_v_le {x δ Q U V : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < 
     q / Nat.gcd q v * v ≤ U ^ 2 / q * v * Nat.gcd q v + (2 * U + q) * v by nlinarith) hc
   linarith
 
-/-- `c₊ = 1 + |η₂'|₁/(x/UV)` [B, (6.7)]. -/
+/-- `c₊ = 1 + |η₂'|₁/(x/UV)` [H, (6.7)]. -/
 noncomputable def cPlus (x U V : ℝ) : ℝ := 1 + eta2'L1 / (x / (U * V))
 
 /-- The coefficient of `UV` in (6.13): `2√(c₀c₊)/π + 3c₊/(2ec₂)`. -/
@@ -182,7 +182,7 @@ noncomputable def coefQ (x : ℝ) (q : ℕ) (U V c : ℝ) : ℝ :=
     2 * eta2'L1 / π * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 * V / (4 * π * eta2'L1 * x))) +
     (2 * √(3 * c₀ * c) / π + 3 * c / (2 * c₂) + 55 * c₀ * c₂ / (6 * π ^ 2))
 
-/-- [B, (6.7)], per `v`: (4.31) for `x/v`, `q_v = q/(q,v)`. -/
+/-- [H, (6.7)], per `v`: (4.31) for `x/v`, `q_v = q/(q,v)`. -/
 theorem bound_4_31_v_le {x U V : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hU : 0 < U)
     (hv : 1 ≤ v) (hvV : (v : ℝ) ≤ V) :
     bound_4_31 (x / v) (q / Nat.gcd q v) U ≤
@@ -287,12 +287,12 @@ theorem coefQ_nonneg (x : ℝ) (q : ℕ) (U V : ℝ) {c : ℝ} (hc : 0 ≤ c) : 
   have : (0 : ℝ) < c₀ := by norm_num [c₀]
   positivity
 
-/-- **[B, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
+/-- **[H, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
 `|S_{I,2}| ≤ (x/2q) min(1, c₀/(πδ)²) μ log(Vq)`
 `+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.5004V² + Vq log q) + 0.5004 (2U + q) V²)`
 `+ 1.0004 (2√(c₀c₊)/π + 3c₊/2ec₂) UV + 1.0004 C_Q Q`,
 with `μ = min(1, (4/5)(2q/φ(2q))/log(M₀/2q²))` (`muBound`), `M₀ = min(Q/2V, U)`,
-`c₊ = 1 + 8 log 2/(x/UV)` and `C_Q = coefQ`.  Compared with [B], the term `U²V log V`
+`c₊ = 1 + 8 log 2/(x/UV)` and `C_Q = coefQ`.  Compared with [H], the term `U²V log V`
 is replaced by `U²V log q`, and `√(c₀c₊)/π · Q log(U/(q/2))` becomes
 `√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). -/
 theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q) (hx : 0 < x)

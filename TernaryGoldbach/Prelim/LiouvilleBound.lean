@@ -30,8 +30,8 @@ theorem m_sqrt {y : ℝ} (h1 : 1 ≤ y) (h2 : y < 11815) :
   apply Real.sqrt_le_sqrt
   exact div_le_div_of_nonneg_left (by norm_num) hy0 (Nat.lt_floor_add_one y).le
 
-/-- **[B, (2.24)]** on our checked range: `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for `0 < x < 11815`
-([B] cites Helfgott's computation for `x ≤ 10¹²`). -/
+/-- **[H, (2.24)]** on our checked range: `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for `0 < x < 11815`
+([H] cites Helfgott's computation for `x ≤ 10¹²`). -/
 theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x < 11815) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
   rcases lt_or_ge x 1 with h | h
@@ -613,7 +613,7 @@ theorem yS_large {y : ℝ} (hy : 80 ≤ y) (N : ℕ) :
     _ ≤ 5 / 3 * 1.32 + 5 / 3 / 274 := by linarith
     _ ≤ 2.8 := by norm_num
 
-/-- **[B, (2.22)] with constant `2.8`** (Ramaré's Liouville route, hal-02572851):
+/-- **[H, (2.22)] with constant `2.8`** (Ramaré's Liouville route, hal-02572851):
 `|∑_{n ≤ x, (n,q)=1} μ(n)/n| ≤ 2.8 (q/φ(q))/log(x/q)` for `1 ≤ q < x`. -/
 theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     |mqs q x| ≤ 2.8 * ((q : ℝ) / Nat.totient q) / Real.log (x / q) := by
@@ -670,7 +670,7 @@ theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     _ ≤ Q * 2.8 := mul_le_mul_of_nonneg_left hyS (by linarith)
     _ = 2.8 * Q := by ring
 
-/-- **[B, (2.22)] with constant `2.8`** (for [B]'s `4/5`, from [Ramb]), in the summatory form. -/
+/-- **[H, (2.22)] with constant `2.8`** (for [H]'s `4/5`, from [Ramb]), in the summatory form. -/
 theorem abs_sum_moebius_div_coprime_le_log {x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqx : (q : ℝ) < x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤
       2.8 * (q / Nat.totient q) / Real.log (x / q) := by

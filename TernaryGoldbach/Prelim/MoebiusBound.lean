@@ -4,9 +4,9 @@ import TernaryGoldbach.Prelim.RamareMoebius
 /-!
 # `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
 
-The `q = 1` input for [B, (2.22)] (Ramaré's Liouville route, hal-02572851, in
+The `q = 1` input for [H, (2.22)] (Ramaré's Liouville route, hal-02572851, in
 `LiouvilleBound.lean`). It follows from Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
-(`ramare_moebius`, [B, (2.21)]); the weaker form is the one `LiouvilleBound.lean` uses.
+(`ramare_moebius`, [H, (2.21)]); the weaker form is the one `LiouvilleBound.lean` uses.
 -/
 
 open Finset

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI1
 
 /-!
-# [B, §6.3.1, (6.57)–(6.59)]: `S_{I,2}` at the first choice of parameters
+# [H, §6.3.1, (6.57)–(6.59)]: `S_{I,2}` at the first choice of parameters
 
 `|S_{I,2}| ≤ 2.4916 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.17 log t + 21.3) · 2x/t + 0.56 x^{5/6}`.
 -/
@@ -89,7 +89,7 @@ theorem log_108_le : Real.log 108 ≤ 4.696 := by
   have := Real.log_two_lt_d9
   push_cast at h; linarith
 
-/-- The `μ`-term of `S_{I,2}` ([B, (6.57)]) at the parameters: with `min(1,a/ℓ)(ℓ + b) ≤ a + b`,
+/-- The `μ`-term of `S_{I,2}` ([H, (6.57)]) at the parameters: with `min(1,a/ℓ)(ℓ + b) ≤ a + b`,
 `≤ 2.8 · 2x/(δ₀φ(q)) + (1.5 log t + 1.309) · 2x/t`. -/
 theorem typeI2_mu_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3) :
@@ -273,7 +273,7 @@ theorem logPlus_le_log_of_le {y Y : ℝ} (hy : 0 < y) (hyY : y ≤ Y) (hY : 1 �
   max_le (Real.log_le_log hy hyY) (Real.log_nonneg hY)
 
 set_option maxHeartbeats 1600000 in
-/-- The rest of `S_{I,2}` for `|δ| ≤ 1/2c₂` ([B, (6.13)]) at the parameters:
+/-- The rest of `S_{I,2}` for `|δ| ≤ 1/2c₂` ([H, (6.13)]) at the parameters:
 `≤ 2.2 x/√t + 1.8105 · 2x/t + 0.0425 x^{5/6}`. -/
 theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ t) (htT : t ≤ T / 3) :

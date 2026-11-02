@@ -1,12 +1,12 @@
 import TernaryGoldbach.MinorArcs.S1Lemma
 
 /-!
-# The functions `g₂`, `T₂` and `H₂` of [B, §5.1]
+# The functions `g₂`, `T₂` and `H₂` of [H, §5.1]
 
-* `integral_g2`: [B, (5.19)], `∫_{1/2}^1 g₂(uy) du = ∑ μ(r₁)μ(r₂)/(σ(r₁)σ(r₂)) (1 - max(1/2, r_i/y))`;
-* `T2`, `H2`: [B, (5.28)] and [B, (5.35)].
+* `integral_g2`: [H, (5.19)], `∫_{1/2}^1 g₂(uy) du = ∑ μ(r₁)μ(r₂)/(σ(r₁)σ(r₂)) (1 - max(1/2, r_i/y))`;
+* `T2`, `H2`: [H, (5.28)] and [H, (5.35)].
 
-The bounds `H₂ ≤ 2/π²` and the corrected [B, (5.36)] are proved in `H2Bound.lean`.
+The bounds `H₂ ≤ 2/π²` and the corrected [H, (5.36)] are proved in `H2Bound.lean`.
 -/
 
 open Real Finset MeasureTheory
@@ -38,7 +38,7 @@ theorem integral_ite_le {M : ℝ} (hM : M ≤ 1) :
       measureReal_def, Measure.restrict_apply_univ, Real.volume_Icc,
       ENNReal.toReal_ofReal (by linarith)]
 
-/-- `g₂(t)` [B, Lemma 5.1.2]. -/
+/-- `g₂(t)` [H, Lemma 5.1.2]. -/
 noncomputable def g2 (t : ℝ) : ℝ :=
   ∑ r₁ ∈ Icc 1 ⌊t⌋₊, ∑ r₂ ∈ Icc 1 ⌊t⌋₊,
     if Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂) then
@@ -49,7 +49,7 @@ theorem monotone_ite_le (M : ℝ) : Monotone fun u : ℝ => if M ≤ u then (1 :
   simp only
   split_ifs with h1 h2 <;> first | exact absurd (h1.trans huv) h2 | rfl | norm_num
 
-/-- [B, (5.19)]: `∫_{1/2}^1 g₂(uy) du = ∑_{r₁,r₂ ≤ y} … (1 - max(1/2, r₁/y, r₂/y))`. -/
+/-- [H, (5.19)]: `∫_{1/2}^1 g₂(uy) du = ∑_{r₁,r₂ ≤ y} … (1 - max(1/2, r₁/y, r₂/y))`. -/
 theorem integral_g2 {y : ℝ} (hy : 0 < y) :
     ∫ u in (1 / 2 : ℝ)..1, g2 (u * y) =
       ∑ r₁ ∈ Icc 1 ⌊y⌋₊, ∑ r₂ ∈ Icc 1 ⌊y⌋₊,
@@ -105,11 +105,11 @@ theorem integral_g2 {y : ℝ} (hy : 0 < y) :
 
 /-! ### The triple sum and `H₂` -/
 
-/-- The triple sum `T₂(S) = ∑_{s ≤ S odd} (1/s) ∫_{1/2}^1 g₂(uS/s) du` [B, (5.28)]. -/
+/-- The triple sum `T₂(S) = ∑_{s ≤ S odd} (1/s) ∫_{1/2}^1 g₂(uS/s) du` [H, (5.28)]. -/
 noncomputable def T2 (S : ℝ) : ℝ :=
   ∑ s ∈ Icc 1 ⌊S⌋₊, if Odd s then (1 / s : ℝ) * ∫ u in (1 / 2 : ℝ)..1, g2 (u * S / s) else 0
 
-/-- `H₂(S)` [B, (5.35)]: `(4/π²) max(T₂(S), 0)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses
+/-- `H₂(S)` [H, (5.35)]: `(4/π²) max(T₂(S), 0)` for `S < 16`, `0.15107` for `S ≥ 16`. (The book uses
 its computable upper bound `G₂(S)` in place of `T₂(S)`; `G₂ ≥ T₂` and `G₂ ≥ 0`, so `G₂ ≥ max(T₂, 0)`,
 and the book's (5.37) about `H₂` remains valid for ours. Its (5.36) is false and is used here
 in corrected form; see `integral_H2_le`.) -/

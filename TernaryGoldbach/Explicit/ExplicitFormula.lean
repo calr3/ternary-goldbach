@@ -3,7 +3,7 @@ import TernaryGoldbach.Explicit.RectResidue
 import TernaryGoldbach.Explicit.LogDerivL
 
 /-!
-# The explicit formula ([B, Lemma 9.1.1] for `η(t) = t² e^{−t²/2}`)
+# The explicit formula ([H, Lemma 9.1.1] for `η(t) = t² e^{−t²/2}`)
 
 Part A: `S = Σ_n Λ(n) χ(n) e(δn/x) η(n/x) = (1/2π) ∫ (−L'/L)(3/2 + it) G_δ(3/2 + it) x^{3/2+it} dt`
 (Mellin inversion for each `n`, then the sum and the integral are interchanged).
@@ -981,7 +981,7 @@ theorem rpow_le_of_mem {x σ : ℝ} (hx : 0 < x) (h1 : -1 / 2 ≤ σ) (h2 : σ �
     have := Real.rpow_nonneg hx.le (3 / 2 : ℝ); linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **The explicit formula** ([B, Lemma 9.1.1] for `η(t) = t² e^{−t²/2}`, `χ` primitive, `χ ≠ 1`):
+/-- **The explicit formula** ([H, Lemma 9.1.1] for `η(t) = t² e^{−t²/2}`, `χ` primitive, `χ ≠ 1`):
 along heights `T_k ∈ [k+1, k+2]`,
 `Σ_{ρ ∈ (−1/2, 3/2) × (−T_k, T_k)} m_ρ G_δ(ρ) x^ρ → −S − (1/2π) ∫ (L'/L)(−1/2+iy) G_δ(−1/2+iy) x^{−1/2+iy} dy`,
 where `S = Σ Λ(n) χ(n) e(δn/x) η(n/x)`. (The sum includes the trivial zero `s = 0` when `χ` is even.) -/

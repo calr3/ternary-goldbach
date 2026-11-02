@@ -1,9 +1,9 @@
 import TernaryGoldbach.Prelim.LambdaMu
 
 /-!
-# Sums of `Λ(v)·(q,v)` [B, §6.2.2]
+# Sums of `Λ(v)·(q,v)` [H, §6.2.2]
 
-The elementary bounds behind [B, (6.9)] and the bound for `∑ Λ(v) v (v,q)` in §6.2.2:
+The elementary bounds behind [H, (6.9)] and the bound for `∑ Λ(v) v (v,q)` in §6.2.2:
 * `∑_{v ≤ N} Λ(v)(q,v)/v ≤ log N + log q` (so `∑ Λ(v)/(v q_v) ≤ log(Nq)/q`, (6.9));
 * `∑_{v ≤ N} Λ(v) v (q,v) ≤ ∑_{v ≤ N} Λ(v) v + N q log q`.
 
@@ -146,7 +146,7 @@ theorem sum_mul_gcd_split {q : ℕ} (hq : q ≠ 0) (s : Finset ℕ) (f : ℕ →
   rw [sum_mul_gcd_eq hq, ← add_sum_erase _ _ (Nat.one_mem_divisors.2 hq)]
   simp
 
-/-- **[B, (6.9)]**: `∑_{v ≤ N} Λ(v)(q,v)/v ≤ log N + log q`. -/
+/-- **[H, (6.9)]**: `∑_{v ≤ N} Λ(v)(q,v)/v ≤ log N + log q`. -/
 theorem sum_vonMangoldt_gcd_div_le {q N : ℕ} (hq : 1 ≤ q) (hN : 1 ≤ N) :
     ∑ v ∈ Icc 1 N, (Λ v : ℝ) * (1 / v) * Nat.gcd q v ≤ Real.log N + Real.log q := by
   rw [sum_mul_gcd_split (by omega)]
@@ -163,7 +163,7 @@ theorem sum_vonMangoldt_gcd_div_le {q N : ℕ} (hq : 1 ≤ q) (hN : 1 ≤ N) :
       _ = Real.log q := ArithmeticFunction.vonMangoldt_sum
   linarith
 
-/-- [B, §6.2.2]: `∑_{v ≤ N} Λ(v) v (q,v) ≤ ∑_{v ≤ N} Λ(v) v + N q log q`. -/
+/-- [H, §6.2.2]: `∑_{v ≤ N} Λ(v) v (q,v) ≤ ∑_{v ≤ N} Λ(v) v + N q log q`. -/
 theorem sum_vonMangoldt_mul_gcd_le {q N : ℕ} (hq : 1 ≤ q) :
     ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤
       ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v + N * q * Real.log q := by

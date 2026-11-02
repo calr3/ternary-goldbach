@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeIITotal
 
 /-!
-# Type II total, general form [B, §6.2.3]
+# Type II total, general form [H, §6.2.3]
 
 `typeII_gen`: if `S₂ ≤ (m x/(φ L) + (q/φ) W/L) Σ(log p)²` with `L = log(W/c)` on `[V, x/U]`, then
 `|S_{II}| ≤ 4x√(m/2φ) √(A B) + …` with `A = log(x/UV) + log c (log log(x/Uc) - log log(V/c))`,
@@ -13,7 +13,7 @@ open Real Finset MeasureTheory
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- The integrand `G(W)` of our version of [B, (6.20)–(6.37)] (`W·G(W)` bounds
+/-- The integrand `G(W)` of our version of [H, (6.20)–(6.37)] (`W·G(W)` bounds
 `√S₁ (√S₂ + √S₃)` for `q ≤ V/2e`). -/
 noncomputable def Ggen (x U V : ℝ) (q : ℕ) (c m β W : ℝ) : ℝ :=
   x * √(m / (2 * Nat.totient q)) * β / 2 * (1 / W) +
@@ -26,7 +26,7 @@ noncomputable def Ggen (x U V : ℝ) (q : ℕ) (c m β W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 2000000 in
-/-- The pointwise bound behind [B, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
+/-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (117 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
     (hcV : c * rexp 1 ≤ A)
@@ -376,7 +376,7 @@ theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
 
 
 set_option maxHeartbeats 2000000 in
-/-- The bound on `S₂` from (5.56)(ii) used for [B, (6.32)]: with `ε₁ = x/2UQ`,
+/-- The bound on `S₂` from (5.56)(ii) used for [H, (6.32)]: with `ε₁ = x/2UQ`,
 `c' = |δ|q(1+ε₁)/4`, `L = log(W/c')`, for `|δ| ≥ 8`, `x ≤ Q²`, `W ∈ [V, x/U]`, `c'e ≤ V`:
 `S₂ ≤ ((2/|δ|) x/(φL) + (q/φ) W/L) Σ(log p)²`. -/
 theorem S2_le_640' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
@@ -490,11 +490,11 @@ theorem S2_le_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop :
         logSqSum (max V (W / 2)) W :=
   S2_le_640' hq hcop h2α hδQ hδ8 hx hQx hU le_rfl hcV hW
 
-/-- **Type II total, our version of [B, (6.40)]** (`|δ| ≥ 8`, `|δq|` small): with
+/-- **Type II total, our version of [H, (6.40)]** (`|δ| ≥ 8`, `|δq|` small): with
 `c' = |δ|q(1+ε₁)/4`, `ε₁ = x/2UQ`, `Λ₀ = log(x/UV)`, `Φ = log c' (log log(x/Uc') - log log(V/c'))`,
 `|S_{II}| ≤ 2x/√(|δ|φ(q)) √((Λ₀ + Φ)(0.60428 Λ₀ + 8κ₀ζ³√(x/V)/U)) + (secondary terms)`.
-Requires `c'e ≤ V` (i.e. `|δq| ≤ V/θ` with `θ = e(1+ε₁)/4`; [B] takes `θ ≥ 3e²/8`) and
-`x ≤ Q²` ([B] assumes `Q ≥ 2√x`). The main term is [B]'s with `Φ` as in (6.34). -/
+Requires `c'e ≤ V` (i.e. `|δq| ≤ V/θ` with `θ = e(1+ε₁)/4`; [H] takes `θ ≥ 3e²/8`) and
+`x ≤ Q²` ([H] assumes `Q ≥ 2√x`). The main term is [H]'s with `Φ` as in (6.34). -/
 theorem typeII_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)
     (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U) (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U)

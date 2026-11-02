@@ -3,7 +3,7 @@ import TernaryGoldbach.MinorArcs.Eta2Log
 import TernaryGoldbach.MinorArcs.SumTools
 
 /-!
-# Proof of [B, Lemma 4.2.3] (Type I sums with `log n`; `η = η₂`)
+# Proof of [H, Lemma 4.2.3] (Type I sums with `log n`; `η = η₂`)
 -/
 
 open Real Finset
@@ -72,7 +72,7 @@ noncomputable def TLn (α x : ℝ) (n : ℤ) : ℝ := ‖ToddG (eta2log (x / n.t
 
 theorem TLn_nonneg (α x : ℝ) (n : ℤ) : 0 ≤ TLn α x n := norm_nonneg _
 
-/-- [B, p. 67]: `|T_{m,∘}| ≤ log(x/m) · minA(x/2m + |η'|₁/2, (m/x)(c₀/2), sin²)` for `x/m ≥ 4`. -/
+/-- [H, p. 67]: `|T_{m,∘}| ≤ log(x/m) · minA(x/2m + |η'|₁/2, (m/x)(c₀/2), sin²)` for `x/m ≥ 4`. -/
 theorem norm_ToddL_le_minA {α x δ : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     (h2α : 2 * α = a / q + δ / x + k) {m : ℕ} (hm : 1 ≤ m) (hmx : 4 * m ≤ x) {A C : ℝ}
     (hA : x / (2 * m) + eta2'L1 / 2 ≤ A) (hC : m / x * (c₀ / 2) ≤ C) :
@@ -178,7 +178,7 @@ noncomputable def mainPartL (α x M : ℝ) (q : ℕ) : ℂ :=
   ∑ m' ∈ Icc 1 ⌊M / q⌋₊, if Odd (q * m') then
     (μ (q * m') : ℂ) * ToddG (eta2log (x / (q * m' : ℕ))) α x (q * m') else 0
 
-/-- **[B, (4.40)], corrected** (see `bound_4_40`): the terms with `q ∣ m ≤ M` of (4.39). -/
+/-- **[H, (4.40)], corrected** (see `bound_4_40`): the terms with `q ∣ m ≤ M` of (4.39). -/
 theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (h2α : 2 * α = a / q + δ / x + k) (hM0 : 0 ≤ M) (hMδ : |δ| * M ≤ x / 2) (hMD : M ≤ D)
     (hD4 : D ≤ x / 4) (hDe : D ≤ x / rexp 1) :
@@ -377,7 +377,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     _ ≤ _ := by linarith
 
 
-/-- **Range (R1)** of [B, Lemma 4.2.3], i.e. [B, (4.46)]:
+/-- **Range (R1)** of [H, Lemma 4.2.3], i.e. [H, (4.46)]:
 `∑_{m ≤ min(q/2, D)} |T_{m,∘}| ≤ (2|η'|₁/π) q max(1, log(c₀e³q²/(4π|η'|₁x))) log x`. -/
 theorem sum_R1L {α x δ Q D : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
@@ -458,7 +458,7 @@ theorem c₂_lt_one : c₂ < 1 := by
   linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **Range (R2)** of [B, Lemma 4.2.3], i.e. [B, (4.47)] (with `log(2ex/c₂)` in the last term,
+/-- **Range (R2)** of [H, Lemma 4.2.3], i.e. [H, (4.47)] (with `log(2ex/c₂)` in the last term,
 see `bound_4_41`): for `q/2 < D' ≤ min(Q/2, c₂x/q, x/4, x/e)`,
 `∑_{q/2 < m ≤ D', q ∤ m} |T_{m,∘}| ≤ (5c₀c₂/3π²)(D' log(√e x/D') + 4√(2c₂x) log(2ex/c₂))`. -/
 theorem sum_R2L {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤ q)
@@ -647,7 +647,7 @@ theorem sum_R2L {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤
 
 
 set_option maxHeartbeats 1000000 in
-/-- **Range (R3)** of [B, Lemma 4.2.3], i.e. [B, (4.25), (4.26), (4.48)] with log weights: for
+/-- **Range (R3)** of [H, Lemma 4.2.3], i.e. [H, (4.25), (4.26), (4.48)] with log weights: for
 `max(c₂x/q, q/2) ≤ R < D ≤ min(x/4, x/e)`, with `c₁ = 1 + |η'|₁/(x/D)`,
 `∑_{R < m ≤ D} |T_{m,∘}| ≤ (3c₁/2)(√(2x/c₂) log(2x/c₂) + (x/q) log(q/c₂) log⁺(D/(c₂x/q)))
 + (2√(c₀c₁)/π)(√3 q log(q/c₂) + D log(ex/D) - R log(ex/R) + (q/2) log(q/c₂) log⁺(D/(q/2)))`. -/
@@ -965,7 +965,7 @@ theorem c₂_rpow : 5 * c₀ * c₂ / (3 * π ^ 2) * (4 * √(2 * c₂ * x)) =
   ring
 
 set_option maxHeartbeats 2000000 in
-/-- **[B, Lemma 4.2.3], case (b), terms other than the main term**: they contribute at most (4.41)
+/-- **[H, Lemma 4.2.3], case (b), terms other than the main term**: they contribute at most (4.41)
 (in the form `bound_4_41`). -/
 theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hqQ : (q : ℝ) ≤ Q)
@@ -1181,7 +1181,7 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
     have hB2' := hB2.1
     nlinarith
 
-/-- **[B, Lemma 4.2.3], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.40) + (4.41)
+/-- **[H, Lemma 4.2.3], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.40) + (4.41)
 in the forms `bound_4_40` (corrected) and `bound_4_41` (slightly weakened). Proved; it depends
 only on the trusted bounds `eta2_fourier_bound'` and `eta2log_fourier_bound`. -/
 theorem lemma_4_2_3_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
@@ -1241,10 +1241,10 @@ theorem lemma_4_2_3_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   · exact norm_mainPartL_le hx0 hq h2α hM0 hMδ hMD hD4 hDe
   · exact norm_restPartL_le_caseB hx hq hcop h2α hqQ hδ hD1 hD4 hDe hD'Q hMD'
 
-/-- **[B, Lemma 4.2.3]** for `η = η₂` (and `ρ₀ = 4`, by [B, (6.2)]), in the form used by [B, §6.2.1]:
+/-- **[H, Lemma 4.2.3]** for `η = η₂` (and `ρ₀ = 4`, by [H, (6.2)]), in the form used by [H, §6.2.1]:
 if `|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`, (4.39) is at most (4.40) + (4.41).
 
-[B]'s second statement, the bound (4.42) for `|δ| ≥ 1/2c₂`, is not formalized: it is never used
+[H]'s second statement, the bound (4.42) for `|δ| ≥ 1/2c₂`, is not formalized: it is never used
 (§6.2.1 takes `D = U ≤ Q₀/2`), and as printed it omits the main term (4.40), which the proof
 (p. 67) separates in both cases. -/
 theorem lemma_4_2_3 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)

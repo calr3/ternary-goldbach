@@ -4,12 +4,12 @@ import TernaryGoldbach.Explicit.EtaPlusCg
 import TernaryGoldbach.MajorArcs.EtaPlusSqLog
 
 /-!
-# [B, Prop 9.5.1] (proved, our constants) and [B, Prop 7.1.5]
+# [H, Prop 9.5.1] (proved, our constants) and [H, Prop 7.1.5]
 
 `Σ Λ(n) (log n) η₊²(n/x) = x ∫ η₊²(t) log(xt) dt + O*(10⁻⁸) x log x` for `x ≥ 4.9·10²⁶`, under RH up to
 `500` (from `platt_odd`, `q = 1`): `log n = log x + log(n/x)` splits the sum into the `ζ` explicit formulas
 for `η₊²` and `η₊² log` (`Explicit/EtaPlusSqBound.lean`, `T₀ = 500`). With the value of the integral
-([B, (9.94)], `EtaPlusSqLog.lean`) this gives [B, Prop 7.1.5].
+([H, (9.94)], `EtaPlusSqLog.lean`) this gives [H, Prop 7.1.5].
 -/
 
 open Real Set MeasureTheory
@@ -30,7 +30,7 @@ theorem log_ge_1e12 {x : ℝ} (hx : 1e12 ≤ x) : 27 ≤ Real.log x := by
       _ ≤ 1e12 := by norm_num
   exact h.trans (Real.log_le_log (by norm_num) hx)
 
-/-! ## [B, Prop 9.5.1] -/
+/-! ## [H, Prop 9.5.1] -/
 
 theorem log_le_of_exp_le' {y c : ℝ} (hy : 0 < y) (h : y ≤ Real.exp c) : Real.log y ≤ c :=
   (Real.log_le_iff_le_exp hy).2 h
@@ -294,7 +294,7 @@ theorem integrableOn_of_mellinConvergent_one {φ : ℝ → ℂ} (h : MellinConve
   refine h.congr_fun (fun t _ => ?_) measurableSet_Ioi
   simp
 
-/-- **[B, Prop 9.5.1]** (proved, our constants): if RH holds up to height `500` and `x ≥ 4.9·10²⁶`, then
+/-- **[H, Prop 9.5.1]** (proved, our constants): if RH holds up to height `500` and `x ≥ 4.9·10²⁶`, then
 `Σ Λ(n) (log n) η₊²(n/x) = x ∫_0^∞ η₊²(t) log(xt) dt + O*(10⁻⁸) x log x`. -/
 theorem prop_9_5_1 {x : ℝ} (hx : 4.9e26 ≤ x) (hG : GRHUpTo (1 : DirichletCharacter ℂ 1) 500) :
     |∑' n : ℕ, Λ n * Real.log n * etaPlus (n / x) ^ 2 -
@@ -350,7 +350,7 @@ theorem prop_9_5_1 {x : ℝ} (hx : 4.9e26 ≤ x) (hG : GRHUpTo (1 : DirichletCha
   have := mul_le_mul_of_nonneg_left h1 hlx0.le
   nlinarith
 
-/-- **[B, Prop 7.1.5]** (for `x ≥ 4.9·10²⁶`), from [B, Prop 9.5.1] (`prop_9_5_1`), Platt's verification at
+/-- **[H, Prop 7.1.5]** (for `x ≥ 4.9·10²⁶`), from [H, Prop 9.5.1] (`prop_9_5_1`), Platt's verification at
 `q = 1` and the numerical value (9.94). -/
 theorem prop_7_1_5' {x : ℝ} (hx : 4.9e26 ≤ x) :
     ∃ E₂ : ℝ, |E₂| ≤ 2e-6 + 366.91 / √x ∧

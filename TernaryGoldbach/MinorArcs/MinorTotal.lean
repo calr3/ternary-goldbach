@@ -10,7 +10,7 @@ Assembles (NOTES, "Ch. 13: scale erratum", repair 3):
 * the ℓ∞ inputs `norm_S_etaStar_le_ghat` (off `𝔐_{8,n}(y)`) and `norm_S_etaStar_le_gap` (base gap);
 * the split `S_{η₊} = S₁ + S₂` (`S₁`: primes `> √x`), with `|a + b|² ≤ (1+t)|a|² + (1+1/t)|b|²`;
 * the cited Part II inputs `l2_major_14_7` (J), `prop_7_1_5` (S); `E_le_14_28` (E, proved in `EBound.lean`
-  with the constant `8·10⁻¹¹` in place of [B]'s `8.4029·10⁻¹²`);
+  with the constant `8·10⁻¹¹` in place of [H]'s `8.4029·10⁻¹²`);
 * the numerics `NumericsGoal` (proved in `NumericsFinal.lean`).
 -/
 

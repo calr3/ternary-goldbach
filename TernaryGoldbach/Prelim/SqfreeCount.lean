@@ -2,7 +2,7 @@ import Mathlib
 import TernaryGoldbach.Prelim.SmallFsq
 
 /-!
-# Squarefree integers coprime to `P` in an interval [B, proof of Lemma 5.1.1]
+# Squarefree integers coprime to `P` in an interval [H, proof of Lemma 5.1.1]
 
 * `sum_moebius_sq_dvd`: `∑_{m² | l} μ(m) = [l squarefree]`;
 * `sum_Ioc_dvd`: the number of multiples of `D` in `(a, b]` is `(b - a)/D + O*(1)`, and `0` when
@@ -222,12 +222,12 @@ theorem sqfree_density {P : ℕ} (hP : Squarefree P) :
 
 /-! ### Counting squarefree `l ∈ (a, b]` coprime to `P` -/
 
-/-- `f(X) = ∑_{m ≤ X sq-free} 1 + ½ ∑_{m > X sq-free} X²/m²` [B, p. 83]. -/
+/-- `f(X) = ∑_{m ≤ X sq-free} 1 + ½ ∑_{m > X sq-free} X²/m²` [H, p. 83]. -/
 noncomputable def fsq (X : ℝ) : ℝ :=
   ∑' m : ℕ, if Squarefree m ∧ m ≠ 0 then (if (m : ℝ) ≤ X then 1 else X ^ 2 / (2 * (m : ℝ) ^ 2))
     else 0
 
-/-- [B, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. Proved in `Prelim/SmallFsq.lean` (kernel-checked
+/-- [H, p. 83]: `f(X) ≤ 1.27 X` for `X ≥ 0`. Proved in `Prelim/SmallFsq.lean` (kernel-checked
 numerics for `⌊X⌋ < 200`, an elementary bound above); the maximum is `f(2)/2 = 15/π² − 1/4 = 1.26982…`. -/
 theorem fsq_le {X : ℝ} (hX : 0 ≤ X) : fsq X ≤ 1.27 * X := Small.fsq_le' hX
 
@@ -275,7 +275,7 @@ noncomputable def cntSq (P : ℕ) (a b : ℝ) : ℝ :=
 theorem abs_moebius_le_one_real (m : ℕ) : |(μ m : ℝ)| ≤ 1 := by
   exact_mod_cast ArithmeticFunction.abs_moebius_le_one
 
-/-- **Squarefree integers coprime to `P` in `(a, b]`** [B, proof of Lemma 5.1.1, (5.12)–(5.17)]:
+/-- **Squarefree integers coprime to `P` in `(a, b]`** [H, proof of Lemma 5.1.1, (5.12)–(5.17)]:
 for squarefree `P` and `b/2 ≤ a ≤ b`,
 `#{l ∈ (a, b] : l sq-free, (l, P) = 1} = (b - a)(6/π²) P/σ(P) + O*(∑_{e | P} f(√(b/e)))`. -/
 theorem cntSq_approx {P : ℕ} (hP : Squarefree P) {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b)

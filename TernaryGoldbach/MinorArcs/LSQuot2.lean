@@ -2,22 +2,22 @@ import TernaryGoldbach.MinorArcs.LSQuot1
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
 /-!
-# [B, Prop 12.2.4], part 2: the reduction
+# [H, Prop 12.2.4], part 2: the reduction
 
 Notation: `R = Q₀/(sq)`, `t = Q/Q₀ ≥ 20000`, `l = log Q₀`, `L = log Q ≥ l/0.6`, `k = φ(q)/q`,
 `e₁ = G_q(R) − k(log R + c + S_q)`, `e₂ = G_q(tR) − k(log tR + c + S_q)` with Ramaré's `c`.
 
-* `star_suffices` ([B, (12.25)–(12.26)]): the conclusion of Prop 12.2.4 follows from
+* `star_suffices` ([H, (12.25)–(12.26)]): the conclusion of Prop 12.2.4 follows from
   `(q/φ(q)) (e₁ + 0.6274 max(0, −e₂)) ≤ 0.3726 (log sq − S_q) + 0.0274177`
   (since `θ = (l + 1.36)/(L + c) ≤ 0.6274`);
-* `regionL`: this holds for `R ≥ λ(q)` by (12.12) ([B, (12.33)]);
+* `regionL`: this holds for `R ≥ λ(q)` by (12.12) ([H, (12.33)]);
 * `checkC_suffices`: it holds if the finite check `checkC q ⌊R⌋` does;
-* `regionS` ([B, Lemmas 12.2.1–12.2.3]): Prop 12.2.4 holds if `log q + 1.039 R ≤ c' (qR)^{2/9}` and
+* `regionS` ([H, Lemmas 12.2.1–12.2.3]): Prop 12.2.4 holds if `log q + 1.039 R ≤ c' (qR)^{2/9}` and
   `e^γ log c' + 2.50637/log log q ≤ 0.86`. Proof: `G_q(R) G_P(t) ≤ G_q(tR)` with
   `P = ∏_{p ≤ R or p ∣ q} p`, `G(t) ≤ (P/φ(P)) G_P(t)`, `G(t) ≥ log t + 1.064`, and
   `P/φ(P) < e^γ log log P + 2.50637/log log P` with `log P ≤ log q + 1.039 R`.
 
-Note: [B]'s Lemma 12.2.3 bounds the quotient by `(log Q₀ + σ)/(log Q + 1.312)`, while (12.23) has
+Note: [H]'s Lemma 12.2.3 bounds the quotient by `(log Q₀ + σ)/(log Q + 1.312)`, while (12.23) has
 `log Q + c_E` in the denominator; with `σ = c₊ = 1.36` the former does not imply the latter. Our
 `regionS` proves the bound with `c_E` directly.
 -/
@@ -27,13 +27,13 @@ open scoped ArithmeticFunction.Moebius
 
 namespace TernaryGoldbach.MinorArcs
 
-/-- `κ(q) = 0.3726 (log q − S_q) + 0.0274177` ([B, (12.31)] with `ω = 0.6274`, `c_Δ = 1.36 − c_E`). -/
+/-- `κ(q) = 0.3726 (log q − S_q) + 0.0274177` ([H, (12.31)] with `ω = 0.6274`, `c_Δ = 1.36 − c_E`). -/
 noncomputable def kapQ (q : ℕ) : ℝ := 0.3726 * (Real.log q - Sq q) + 0.0274177
 
-/-- `λ(q) = ((q/φ(q)) · 7.4527 f₁(q)/κ(q))³` ([B, (12.33)]). -/
+/-- `λ(q) = ((q/φ(q)) · 7.4527 f₁(q)/κ(q))³` ([H, (12.33)]). -/
 noncomputable def lamQ (q : ℕ) : ℝ := ((q : ℝ) / Nat.totient q * 7.4527 * f1q q / kapQ q) ^ 3
 
-/-- The finite check at `R ∈ [n, n+1)` ([B, (12.31)], strengthened by `log sq ≥ log(10⁵/(n+1))`). -/
+/-- The finite check at `R ∈ [n, n+1)` ([H, (12.31)], strengthened by `log sq ≥ log(10⁵/(n+1))`). -/
 def checkC (q n : ℕ) : Prop :=
   (q : ℝ) / Nat.totient q * Gq q n - Real.log n - 1.3325822 - Sq q +
       0.1687 * ((q : ℝ) / Nat.totient q) * f1q q / (n : ℝ) ^ (1 / 3 : ℝ) ≤
@@ -42,7 +42,7 @@ def checkC (q n : ℕ) : Prop :=
 /-- **Numerical axiom** (our computation, `scripts/rigorous/p1224_check.c`): for `1 ≤ q < 2.2·10¹⁰`
 and `1 ≤ n < λ(q)`, either `n` lies in the range of `regionS`
 (`log q ≥ 8.53`, `log q + 1.039(n + 1) ≤ 0.826 (qn)^{2/9}`), or `checkC q n` holds.
-This replaces [B]'s computation for Prop 12.2.4 ([B, p. 242]). -/
+This replaces [H]'s computation for Prop 12.2.4 ([H, p. 242]). -/
 axiom prop1224_check : ∀ q : ℕ, 1 ≤ q → q < 22000000000 → ∀ n : ℕ, 1 ≤ n → (n : ℝ) < lamQ q →
     (8.53 ≤ Real.log q ∧
       Real.log q + 1.039 * ((n : ℝ) + 1) ≤ 0.826 * ((q : ℝ) * n) ^ ((2 : ℝ) / 9)) ∨ checkC q n
@@ -83,7 +83,7 @@ theorem rpow_neg_third_le {t : ℝ} (ht : 20000 ≤ t) : t ^ (-(1 / 3 : ℝ)) �
   calc 1 / t ^ (1 / 3 : ℝ) ≤ 1 / 27.14 := one_div_le_one_div_of_le (by norm_num) h1
     _ ≤ 0.03685 := by norm_num
 
-/-! ### The reduction ([B, (12.25)–(12.26)]) -/
+/-! ### The reduction ([H, (12.25)–(12.26)]) -/
 
 /-- The algebra of the reduction: with `θ = (l + 1.36)/(L + c) ≤ 0.6274`. -/
 theorem star_core {k K l L a S c e1 e2 : ℝ} (hk : 0 < k) (hkK : k * K = 1) (hl : 11.5 ≤ l)
@@ -174,7 +174,7 @@ theorem e2_bound {Q Q₀ s c : ℝ} {q : ℕ} (hq : 1 ≤ q) (hQ : 20000 * Q₀ 
     _ ≤ 7.284 * (0.03685 * R ^ (-(1 / 3 : ℝ))) * f1q q := by gcongr
     _ = _ := by ring
 
-/-! ### Large `R`: Ramaré's estimate suffices ([B, (12.33)]) -/
+/-! ### Large `R`: Ramaré's estimate suffices ([H, (12.33)]) -/
 
 theorem regionL {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
     (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs : 1 ≤ s)

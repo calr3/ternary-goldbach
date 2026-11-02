@@ -2,11 +2,11 @@ import TernaryGoldbach.MinorArcs.TypeI
 import TernaryGoldbach.MinorArcs.Vaughan
 
 /-!
-# The decomposition [B, (3.9), (3.11)] with `f = 1_{odd}` (`v = 2`)
+# The decomposition [H, (3.9), (3.11)] with `f = 1_{odd}` (`v = 2`)
 
 `S_{η₂}(α, x) = S_{I,1} - S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}` (`decomposition`), from Vaughan's
 identity (`MinorArcs/Vaughan.lean`), where `S_{I,1} = typeILog`, `S_{I,2} = typeI2` (the sums of
-[B, Lemmas 4.2.3, 4.2.4]), `S_{II} = typeII` [B, (5.1)], `S_{0,∞} = S0inf`, `S_{0,2} = S0two`.
+[H, Lemmas 4.2.3, 4.2.4]), `S_{II} = typeII` [H, (5.1)], `S_{0,∞} = S0inf`, `S_{0,2} = S0two`.
 Fully proved.
 -/
 
@@ -82,17 +82,17 @@ theorem wt_mul (α x : ℝ) (m n : ℕ) :
   simp only [wt]; push_cast; ring_nf
 
 open Classical in
-/-- `S_{0,∞} = ∑_{n ≤ V odd} Λ(n) e(αn) η₂(n/x)` [B, (3.9)] (with `f = 1_{odd}`). -/
+/-- `S_{0,∞} = ∑_{n ≤ V odd} Λ(n) e(αn) η₂(n/x)` [H, (3.9)] (with `f = 1_{odd}`). -/
 noncomputable def S0inf (α x : ℝ) (V : ℕ) : ℂ :=
   ∑ n ∈ Icc 1 V, if Odd n then (Λ n : ℂ) * wt α x n else 0
 
 open Classical in
-/-- `S_{0,2} = ∑_{n even} Λ(n) e(αn) η₂(n/x)` [B, (3.11)] (only powers of `2` contribute). -/
+/-- `S_{0,2} = ∑_{n even} Λ(n) e(αn) η₂(n/x)` [H, (3.11)] (only powers of `2` contribute). -/
 noncomputable def S0two (α x : ℝ) : ℂ :=
   ∑ n ∈ Icc 1 ⌊x⌋₊, if Odd n then 0 else (Λ n : ℂ) * wt α x n
 
 open Classical in
-/-- The Type II sum [B, (3.9), (5.1)] with `v = 2`:
+/-- The Type II sum [H, (3.9), (5.1)] with `v = 2`:
 `∑_{m odd} (∑_{d > U, d | m} μ(d)) ∑_{n > V odd} Λ(n) e(αmn) η₂(mn/x)`. -/
 noncomputable def typeII (α x : ℝ) (U V : ℕ) : ℂ :=
   ∑ m ∈ Icc 1 ⌊x⌋₊, if Odd m then (∑ d ∈ m.divisors.filter (U < ·), (μ d : ℂ)) *
@@ -239,7 +239,7 @@ theorem odd_part_d (α : ℝ) {x : ℝ} (hx : 0 < x) {U V M : ℕ} (hNM : ⌊x�
       simp [wt_eq_zero hx this]
     · rfl
 
-/-- **The decomposition [B, (3.11)]** with `f = 1_{odd}` (`v = 2`):
+/-- **The decomposition [H, (3.11)]** with `f = 1_{odd}` (`v = 2`):
 `S_{η₂}(α, x) = S_{I,1} - S_{I,2} + S_{II} + S_{0,∞} + S_{0,2}`. -/
 theorem decomposition (α : ℝ) {x : ℝ} (hx : 0 < x) (U V : ℕ) :
     S eta2 x α = typeILog α x U - typeI2 α x U V + typeII α x U V + S0inf α x V + S0two α x := by

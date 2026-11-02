@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 
 /-!
-# Type II sums [B, Ch. 5]: the sum `S₂` via the large sieve [B, §5.2]
+# Type II sums [H, Ch. 5]: the sum `S₂` via the large sieve [H, §5.2]
 
 `S(β) = ∑_{W' < p ≤ W} (log p) e(βp)` (`primeExpSum`), `∑_{W' < p ≤ W} (log p)²` (`logSqSum`).
 The large sieve inequalities used are the trusted sharp forms in `Prelim/LargeSieveMV.lean`.
@@ -128,7 +128,7 @@ theorem sep_odd {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCopr
   push_cast at this ⊢; linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, Lemma 5.2.3], (5.50)**: if `2α = a/q + O*(1/qQ)`, `q ≤ Q`, then
+/-- **[H, Lemma 5.2.3], (5.50)**: if `2α = a/q + O*(1/qQ)`, `q ≤ Q`, then
 `∑_{A₀ < m ≤ A₁, m odd} |S(αm)|² ≤ ⌈(A₁ - A₀)/min(2q, Q)⌉ (W - W' + 2q) ∑ (log p)²`. -/
 theorem lemma_5_2_3_a {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q) {W' W : ℝ} (hW' : 0 ≤ W')
@@ -209,7 +209,7 @@ theorem lemma_5_2_3_a {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : 
       rw [this, mul_min_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 2)]
       exact min_le_min le_rfl (by linarith [Nat.le_ceil (Q / 2)])))
 
-/-- **[B, Lemma 5.2.3], (5.52)** (with `m` odd, as the proof requires; [B]'s display omits it):
+/-- **[H, Lemma 5.2.3], (5.52)** (with `m` odd, as the proof requires; [H]'s display omits it):
 if `A₁ - A₀ ≤ 2ϱq` and `q ≤ ρQ`, `0 ≤ ϱ ≤ 1`, `ϱρ < 1`, then
 `∑_{A₀ < m ≤ A₁, m odd} |S(αm)|² ≤ (W - W' + q/(1 - ϱρ)) ∑ (log p)²`. -/
 theorem lemma_5_2_3_c {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
@@ -253,13 +253,13 @@ theorem lemma_5_2_3_c {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : 
       linarith) hW'
   rwa [inv_div] at hls
 
-/-! ### [B, Lemma 5.2.1] -/
+/-! ### [H, Lemma 5.2.1] -/
 
 /-- Distance to the nearest integer is at least `ν` if it is so for every integer. -/
 theorem le_dist_round_of_forall {t ν : ℝ} (h : ∀ n : ℤ, ν ≤ |t - n|) : ν ≤ |t - round t| :=
   h (round t)
 
-/-- The separation of the angles `a/q + b/r + u` of [B, (5.40)–(5.41)]: for `r, r' ≤ R` coprime
+/-- The separation of the angles `a/q + b/r + u` of [H, (5.40)–(5.41)]: for `r, r' ≤ R` coprime
 to `q`, `(b, r) = (b', r') = 1`, `|u| ≤ υ`, `qR²(ν + υ) ≤ 1`, `ν + υ ≤ 1/q`, the difference
 `t = A/q + b/r - b'/r' + u` has `‖t‖ ≥ ν`, unless `q | A`, `r = r'`, `b = b'` (where we assume
 `|u| ≥ ν`). -/
@@ -369,14 +369,14 @@ theorem sep_triples {q r r' b b' : ℕ} (hq : 1 ≤ q) (hr : 1 ≤ r) (hr' : 1 �
     linarith
 
 set_option maxHeartbeats 2000000 in
-/-- **[B, Lemma 5.2.1]**: let `α_i = a_i/q + u_i` (`i ∈ s`), with `|u_i - u_j| ≤ υ` (the `u_i` in
+/-- **[H, Lemma 5.2.1]**: let `α_i = a_i/q + u_i` (`i ∈ s`), with `|u_i - u_j| ≤ υ` (the `u_i` in
 an interval of length `υ`), and `|u_i - u_j| ≥ ν > 0` whenever `i ≠ j`, `a_i ≡ a_j mod q`; let `ν + υ ≤ 1/q`. Then
 (i) `∑_i |S(α_i)|² ≤ (W - W' + ν⁻¹) ∑ (log p)²`, and
 (ii) for `1 ≤ R ≤ W'` with `qR²(ν + υ) ≤ 1`,
 `(φ(q)/q) log R · ∑_i |S(α_i)|² ≤ (W - W' + ν⁻¹) ∑ (log p)²`.
-With `R = (q(ν+υ))^{-1/2}`, (ii) is [B]'s gain `min(1, 2q/(φ(q) log((q(ν+υ))⁻¹)))`. **Note**: the
+With `R = (q(ν+υ))^{-1/2}`, (ii) is [H]'s gain `min(1, 2q/(φ(q) log((q(ν+υ))⁻¹)))`. **Note**: the
 condition `R ≤ W'` (so that the primes `p > W'` are coprime to all `r ≤ R`, as Montgomery's
-inequality requires) is missing in [B]; it is harmless in the applications. -/
+inequality requires) is missing in [H]; it is harmless in the applications. -/
 theorem lemma_5_2_1 {ι : Type*} (s : Finset ι) {q : ℕ} (hq : 1 ≤ q) (a : ι → ℤ) (u : ι → ℝ)
     {ν υ : ℝ} (hν : 0 < ν) (hυ : 0 ≤ υ) (hνυ : ν + υ ≤ 1 / q)
     (hdiff : ∀ i ∈ s, ∀ j ∈ s, |u i - u j| ≤ υ)
@@ -484,9 +484,9 @@ theorem lemma_5_2_1 {ι : Type*} (s : Finset ι) {q : ℕ} (hq : 1 ≤ q) (a : �
           mul_le_mul_of_nonneg_right hlog hS0
       _ ≤ _ := hsum.trans hLS
 
-/-! ### [B, Proposition 5.2.4] -/
+/-! ### [H, Proposition 5.2.4] -/
 
-/-- `S₂(U', W', W) = ∑_{U' < m ≤ x/W, m odd} |∑_{W' < p ≤ W} (log p) e(αmp)|²` [B, (5.38)], `v = 2`. -/
+/-- `S₂(U', W', W) = ∑_{U' < m ≤ x/W, m odd} |∑_{W' < p ≤ W} (log p) e(αmp)|²` [H, (5.38)], `v = 2`. -/
 noncomputable def S2 (α x U' W' W : ℝ) : ℝ := oddSqSum α W' W U' (x / W)
 
 theorem primeExpSum_add_int (W' W β : ℝ) (n : ℤ) :
@@ -581,10 +581,10 @@ theorem abs_sub_le_of_mem_Ioc {A₀ A₁ : ℝ} {m m' : ℤ} (hm : m ∈ Ioc ⌊
   have : ((|m - m'| : ℤ) : ℝ) ≤ ⌊A₁⌋ - ⌊A₀⌋ - 1 := by exact_mod_cast this
   rw [← Int.cast_abs]; linarith
 
-/-- **[B, (5.56)]**: if `δ ≠ 0` and `x/4W + q ≤ x/|δ|q` (and `U' ≥ x/2W`), then
+/-- **[H, (5.56)]**: if `δ ≠ 0` and `x/4W + q ≤ x/|δ|q` (and `U' ≥ x/2W`), then
 (i) `S₂ ≤ (W - W' + x/|δ|q) ∑ (log p)²`;
 (ii) for `1 ≤ R ≤ W'` with `R² ≤ (x/|δ|q)/(q + x/4W)`,
-`(φ(q)/q) log R · S₂ ≤ (W - W' + x/|δ|q) ∑ (log p)²` ([B]'s gain, with `R` capped at `W'`). -/
+`(φ(q)/q) log R · S₂ ≤ (W - W' + x/|δ|q) ∑ (log p)²` ([H]'s gain, with `R` capped at `W'`). -/
 theorem prop_5_2_4_c {α x δ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hx : 0 < x) (hW : 0 < W)
     (hδ0 : δ ≠ 0) (hcond : x / (4 * W) + q ≤ x / (|δ| * q)) (hU' : x / (2 * W) ≤ U')
@@ -620,7 +620,7 @@ theorem prop_5_2_4_c {α x δ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q
   rw [mul_div_assoc', div_le_one hx]
   nlinarith
 
-/-- **[B, (5.53)]**: for `q ≤ ρQ`, `0 < ρ ≤ 1`, `W' ≥ W/2`, `U' ≥ x/2W`,
+/-- **[H, (5.53)]**: for `q ≤ ρQ`, `0 < ρ ≤ 1`, `W' ≥ W/2`, `U' ≥ x/2W`,
 `S₂ ≤ (max(1, 2ρ)(x/8q + x/2W) + W/2 + 2q) ∑ (log p)²`. -/
 theorem prop_5_2_4_a {α x Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hρ : 0 < ρ)
@@ -667,7 +667,7 @@ theorem prop_5_2_4_a {α x Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤
         gcongr <;> linarith
     _ = _ := by field_simp; ring
 
-/-- **[B, (5.55)]**: if `W > x/4q` (and `q ≤ Q`, `W' ≥ W/2`, `U' ≥ x/2W`),
+/-- **[H, (5.55)]**: if `W > x/4q` (and `q ≤ Q`, `W' ≥ W/2`, `U' ≥ x/2W`),
 `S₂ ≤ (W/2 + q/(1 - x/4Wq)) ∑ (log p)²`. -/
 theorem prop_5_2_4_b {α x Q U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q)
@@ -727,7 +727,7 @@ theorem sum_Ioc_le_blocks_real {G : ℤ → ℝ} (hG : ∀ n, 0 ≤ G n) {h : �
       rw [hsplit]; linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, (5.57)]**: if `δ ≠ 0`, `q ≤ ρQ`, `0 ≤ ρ < 1` (and `|δ/x| ≤ 1/qQ`, `W' ≥ W/2`,
+/-- **[H, (5.57)]**: if `δ ≠ 0`, `q ≤ ρQ`, `0 ≤ ρ < 1` (and `|δ/x| ≤ 1/qQ`, `W' ≥ W/2`,
 `U' ≥ x/2W`), `S₂ ≤ (x/|δq| + W/2 + x/(8(1-ρ)Q) + x/(4(1-ρ)W)) ∑ (log p)²`. -/
 theorem prop_5_2_4_d {α x δ Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q))
@@ -815,7 +815,7 @@ theorem prop_5_2_4_d {α x δ Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 
     _ ≤ Q' + W / 2 + x / (8 * (1 - ρ) * Q) + x / (4 * (1 - ρ) * W) := by
         gcongr
 
-/-! ### [B, Lemma 5.2.3, (5.51)] -/
+/-! ### [H, Lemma 5.2.3, (5.51)] -/
 
 /-- The weighted large sieve for `S(β)`: `∑_r (W - W' + 1 + (3/2)δ_r⁻¹)⁻¹ |S(β_r)|² ≤ ∑ (log p)²`. -/
 theorem large_sieve_primes_weighted {ι : Type*} (s : Finset ι) (β δ : ι → ℝ)
@@ -948,9 +948,9 @@ theorem dist_round_add_int (t : ℝ) (n : ℤ) : |(t + n) - round (t + n)| = |t 
   rw [round_add_intCast]; push_cast; ring_nf
 
 set_option maxHeartbeats 2000000 in
-/-- One block of [B, (5.51)]: for odd `m` in a set of width `< 2q`, with `qR² < Q`, `1 ≤ R ≤ W'`,
+/-- One block of [H, (5.51)]: for odd `m` in a set of width `< 2q`, with `qR² < Q`, `1 ≤ R ≤ W'`,
 `(∑_{r ≤ R, (r,q)=1} μ²(r)/φ(r) · (W - W' + 1 + (3/2)(1/(qrR) - 1/Q)⁻¹)⁻¹) ∑_m |S(αm)|² ≤ ∑ (log p)²`
-(Montgomery's inequality and the weighted large sieve, [B, (5.46)–(5.48)]). -/
+(Montgomery's inequality and the weighted large sieve, [H, (5.46)–(5.48)]). -/
 theorem odd_block_weighted {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) {R : ℝ} (hR1 : 1 ≤ R) (hRQ : q * R ^ 2 < Q)
     {W' W : ℝ} (hW' : 0 ≤ W') (hWW : W' ≤ W) (hRW : R ≤ W') (s : Finset ℤ) (hodd : ∀ m ∈ s, Odd m)
@@ -1136,7 +1136,7 @@ theorem odd_blocks_from_weight {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
   refine (sum_le_sum hblock).trans ?_
   rw [sum_const, card_range, nsmul_eq_mul]
 
-/-- The weight sum for `R = √(σ₀W/q)`, `σ₀ = 0.30286`, `q ≤ W/13.5` [B, p. 96–97]. -/
+/-- The weight sum for `R = √(σ₀W/q)`, `σ₀ = 0.30286`, `q ≤ W/13.5` [H, p. 96–97]. -/
 theorem weight_caseA {Q W' W : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqW : 13.5 * q ≤ W) (hQW : 3.5 * W ≤ Q)
     (hW : 50000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) :
     let R := √(0.30286 * W / q)
@@ -1255,7 +1255,7 @@ theorem aux_weight_eq {W v : ℝ} (hW : W ≠ 0) (hv : v ≠ 0) :
     W * ((1 / 2 + 1 / W) * v + 3 / 2) / v = W / 2 + 1 + 3 / 2 * (W / v) := by
   field_simp
 
-/-- The weight sum for `R = 2`, `W/13.5 < q < W/2`, `q` odd [B, p. 97]. -/
+/-- The weight sum for `R = 2`, `W/13.5 < q < W/2`, `q` odd [H, p. 97]. -/
 theorem weight_caseB {Q W' W : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqodd : Odd q) (hqW : W < 13.5 * q)
     (hqW2 : 2 * q < W) (hQW : 3.5 * W ≤ Q) (hW : 10000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) :
     Nat.totient q / q * Real.log (W / (2 * q)) / W ≤
@@ -1375,11 +1375,11 @@ theorem half_add_inv_mul_log_le {y : ℝ} (hy : 1 ≤ y) (hy2 : y ≤ 6.76) :
           mul_nonneg (mul_nonneg (sub_nonneg.2 hz1) (sub_nonneg.2 hz26)) (sq_nonneg z)]
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, Lemma 5.2.3], (5.51)**: if `2α = a/q + O*(1/qQ)`, `q < W/2`, `Q ≥ 3.5W` (and
+/-- **[H, Lemma 5.2.3], (5.51)**: if `2α = a/q + O*(1/qQ)`, `q < W/2`, `Q ≥ 3.5W` (and
 `W ≥ 50000`, `W/2 ≤ W' ≤ W`),
 `∑_{A₀ < m ≤ A₁, m odd} |S(αm)|² ≤ ⌈(A₁ - A₀)/2q⌉ (q/φ(q)) (W/log(W/2q)) ∑ (log p)²`.
 The condition `W ≥ 50000` is ours: the number of integers in `(W', W]` is `≤ W/2 + 1`, not `≤ W/2`
-as [B] uses, and the slack in [B]'s constants absorbs the `+1` only for `W` large. -/
+as [H] uses, and the slack in [H]'s constants absorbs the `+1` only for `W` large. -/
 theorem lemma_5_2_3_b {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) {W' W : ℝ} (hqW : 2 * q < W) (hQW : 3.5 * W ≤ Q)
     (hW : 50000 ≤ W) (hW'W : W / 2 ≤ W') (hWW : W' ≤ W) (A₀ A₁ : ℝ) :
@@ -1432,7 +1432,7 @@ theorem lemma_5_2_3_b {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : 
         (by linarith) hWW (by linarith) hK₀ hK A₀ A₁
       rwa [hLK] at this
 
-/-- **[B, (5.54)]**: if `q < W/2` and `Q ≥ 3.5W` (and `W ≥ 50000`, `W/2 ≤ W' ≤ W`, `U' ≥ x/2W`),
+/-- **[H, (5.54)]**: if `q < W/2` and `Q ≥ 3.5W` (and `W ≥ 50000`, `W/2 ≤ W' ≤ W`, `U' ≥ x/2W`),
 `S₂ ≤ (x/(4φ(q) log(W/2q)) + (q/φ(q)) W/log(W/2q)) ∑ (log p)²`. -/
 theorem prop_5_2_4_e {α x Q U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q)
     (hcop : IsCoprime a (q : ℤ)) (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x)

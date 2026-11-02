@@ -2,7 +2,7 @@
 
     |m(k)| <= sqrt(2/(k+1))   for 1 <= k < 10^10,   m(k) = sum_{n <= k} mu(n)/n,
 
-i.e. |m(y)| <= sqrt(2/y) for real 1 <= y < 10^10 (cf. [B, (2.24)], checked there to 10^12 by Helfgott).
+i.e. |m(y)| <= sqrt(2/y) for real 1 <= y < 10^10 (cf. [H, (2.24)], checked there to 10^12 by Helfgott).
 Equality holds at k = 1 (m(1) = 1); the script reports the maximum of |m(k)| sqrt((k+1)/2) over k >= 2.
 
 Segmented sieve of mu over [0, 10^10) in blocks of 2*10^7: sign flips and log p accumulations for p <= 10^5,

@@ -2,16 +2,16 @@ import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.SecondFinal
 
 /-!
-# The pointwise minor-arc bound [B, Theorem 3.1.1] — blueprint statement
+# The pointwise minor-arc bound [H, Theorem 3.1.1] — blueprint statement
 
-The main result of Part I of [B]: for `η = η₂` and `2α = a/q + δ/x`, an explicit bound on
+The main result of Part I of [H]: for `η = η₂` and `2α = a/q + δ/x`, an explicit bound on
 `|S_η(α, x)|` that is essentially `x (log q)/√φ(q)`.  Part I (Chs. 3–6) is its proof; it is
-used in [B, Chs. 11, 13] to bound the minor-arc integral (14.49).
+used in [H, Chs. 11, 13] to bound the minor-arc integral (14.49).
 
 **Blueprint node.** Proved, modulo the trusted literature bounds and computations listed by
 `#sorry_deps`: the case `q ≤ x^{1/3}/6` is `theorem_3_1_1_first`, the case `q > x^{1/3}/6`
-([B, §6.3.2], with [B]'s constants `0.276`, `1234`) is `theorem_3_1_1_second` (with two
-corrections to [B]'s argument, see `SecondChoice.lean` and `NOTES.md`). Not yet used by
+([H, §6.3.2], with [H]'s constants `0.276`, `1234`) is `theorem_3_1_1_second` (with two
+corrections to [H]'s argument, see `SecondChoice.lean` and `NOTES.md`). Not yet used by
 `ternary_goldbach`.
 -/
 
@@ -21,12 +21,12 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-/-- `R_{x,t} = 0.27125 log(1 + log(4t) / (2 log(9x^{1/3}/(2.004 t)))) + 0.41415` [B, (3.3)]. -/
+/-- `R_{x,t} = 0.27125 log(1 + log(4t) / (2 log(9x^{1/3}/(2.004 t)))) + 0.41415` [H, (3.3)]. -/
 noncomputable def R (x t : ℝ) : ℝ :=
   0.27125 * Real.log (1 + Real.log (4 * t) /
     (2 * Real.log (9 * x ^ (1 / 3 : ℝ) / (2.004 * t)))) + 0.41415
 
-/-- `L_{x,t,q} = (q/φ(q)) (13/4 log t + 7.82) + 13.66 log t + 37.55` [B, (3.3)]. -/
+/-- `L_{x,t,q} = (q/φ(q)) (13/4 log t + 7.82) + 13.66 log t + 37.55` [H, (3.3)]. -/
 noncomputable def L (t : ℝ) (q : ℕ) : ℝ :=
   q / Nat.totient q * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
@@ -47,17 +47,17 @@ theorem cube_root_facts {x : ℝ} (hx : 2.16e20 ≤ x) :
       ← Real.rpow_add' hx0 (by norm_num)]
     norm_num
 
-/-- **[B, Theorem 3.1.1], corrected** Let `x ≥ 2.16 · 10²⁰`, `η = η₂`, `2α = a/q + δ/x` with
+/-- **[H, Theorem 3.1.1], corrected** Let `x ≥ 2.16 · 10²⁰`, `η = η₂`, `2α = a/q + δ/x` with
 `q ≤ Q`, `(a, q) = 1`, `|δ/x| ≤ 1/qQ`, `Q = (3/4) x^{2/3}`.  Write `δ₀ = max(2, |δ|/4)`.
 
-**Erratum.** [B] states the first term with `R_{x,δ₀q} log δ₀q + 0.5`. Its proof (§6.4, (6.77))
+**Erratum.** [H] states the first term with `R_{x,δ₀q} log δ₀q + 0.5`. Its proof (§6.4, (6.77))
 bounds `√A·√B` by `A/(2√ρ) + (√ρ/2)B` with `B = 0.30214 log δ₀q + 0.67506`, `ρ = 3.397962…`,
-whose constant term is `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020…`; [B] writes
+whose constant term is `log 2/(2√ρ) + (√ρ/2)·0.67506 = 0.81020…`; [H] writes
 `(1/2)(log 2/√ρ + (√ρ/2)·0.67506) = 0.49911` (the `0.67506` term is halved twice). With `0.5`
-the bound does not follow from [B]'s own (6.63) (which exceeds it by up to ~2.6%, e.g. at
+the bound does not follow from [H]'s own (6.63) (which exceeds it by up to ~2.6%, e.g. at
 `x = 10²⁵`, `δ₀q ≈ 1.9·10⁵`, `q` prime).
 
-**Second correction.** [B, (5.36)] is false. Its corrected form (`integral_H2_le`, `+0.0231`) adds
+**Second correction.** [H, (5.36)] is false. Its corrected form (`integral_H2_le`, `+0.0231`) adds
 `0.0924` to the Type II factor, and our `B` is `0.30214 log δ₀q + 0.7468`. That gives the constant
 `log 2/(2√ρ) + (√ρ/2)·0.7468 + 0.0000760 = 0.87639`, so we state it with `0.8764`. -/
 theorem theorem_3_1_1 {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)

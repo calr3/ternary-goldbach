@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.LogWalk
 
 /-!
-# [B, (2.13)] for `3 ≤ N ≤ 10⁴`, and `∑_{m≤X} Λ(m)/m − ψ(X)/(X+1) − log(X+2)` at `X = 10⁴`
+# [H, (2.13)] for `3 ≤ N ≤ 10⁴`, and `∑_{m≤X} Λ(m)/m − ψ(X)/(X+1) − log(X+2)` at `X = 10⁴`
 
 Checked by the kernel (`scripts/gen_mertens_lower.py`). With `D = 10³⁰`, the walk keeps lower and
 upper bounds for `D log n` (`LogWalk.incr_bounds`), `D ∑_{m≤n} Λ(m)/m` and `D ψ(n)`. `Λ(n+1)` comes
@@ -172,7 +172,7 @@ def walkM : ℕ → ℕ → MS → Option MS
 noncomputable def Sm (n : ℕ) : ℝ := ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m
 noncomputable def Pm (n : ℕ) : ℝ := ∑ m ∈ Icc 1 n, (Λ m : ℝ)
 
-/-- [B, (2.13)] at `N`. -/
+/-- [H, (2.13)] at `N`. -/
 def Ok (N : ℕ) : Prop := Real.log ((N : ℝ) + 1) - Real.log (3 / √2) ≤ Sm N
 
 def Inv (n : ℕ) (s : MS) : Prop :=
@@ -280,7 +280,7 @@ theorem inv_9000 : Inv 9000 ⟨9104979856318251180351136343753, 9104979856318392
 theorem inv_10000 : Inv 10000 ⟨9210340371976077481578637322766, 9210340371976219110227839171900, 8634639307925128720361629764850, 8634639307925524955577507951153, 10013396693262983521053440538486993, 10013396693263160145856910841316409⟩ := walkM_spec 1000 9000 _ _ (by norm_num) (by norm_num) inv_9000 wk_10
 theorem inv_10002 : Inv 10002 ⟨9210540351978743748309293324591, 9210540351978885376958495173751, 8634639307925128720361629764850, 8634639307925524955577507951155, 10013396693262983521053440538486993, 10013396693263160145856910841316409⟩ := walkM_spec 2 10000 _ _ (by norm_num) (by norm_num) inv_10000 wk_11
 
-/-- **[B, (2.13)] for `3 ≤ N ≤ 10⁴`**, checked by the kernel. -/
+/-- **[H, (2.13)] for `3 ≤ N ≤ 10⁴`**, checked by the kernel. -/
 theorem mertens_lower_le {N : ℕ} (h1 : 3 ≤ N) (h2 : N ≤ 10 ^ 4) :
     Real.log (N + 1) - Real.log (3 / √2) ≤ ∑ m ∈ Icc 1 N, (Λ m : ℝ) / m :=
   inv_10002.2.2.2.2.2.2 N h1 (by omega)

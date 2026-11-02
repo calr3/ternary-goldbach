@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.G2Moebius
 # `g₂(n)` for `n ≤ 10⁴`, checked by the kernel
 
 With `f(r) = μ(r)/σ(r)` for odd `r` (`fo`), `g₂(n) = ∑_{d ≤ n} μ(d) A_d(n)²`,
-`A_d(n) = ∑_{r ≤ n, d ∣ r} f(r)` ([B, (5.20)], `g2_eq_sum_dvd`). The kernel walks `n = 1, …, 10⁴`
+`A_d(n) = ∑_{r ≤ n, d ∣ r} f(r)` ([H, (5.20)], `g2_eq_sum_dvd`). The kernel walks `n = 1, …, 10⁴`
 with `F(r) = μ(r) ⌊D/σ(r)⌋` (`D = 10³⁰`) in place of `D f(r)`, keeping `Ã_d(n) = ∑_{r ≤ n, d ∣ r} F(r)`
 for odd `d` in a trie and `G̃(n) = ∑_d μ(d) Ã_d(n)²`; at odd squarefree `n` it updates `Ã_d` for
 the divisors `d` of `n` (`dvs`). Then `|G̃(n) − D² g₂(n)| ≤ 2 D n³` (`abs_Gtil_sub_le`).

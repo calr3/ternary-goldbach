@@ -3,7 +3,7 @@ import TernaryGoldbach.Prelim.PlancherelReal
 /-!
 # The approximation `η◦` and the tail of its Fourier transform
 
-`η◦(t) = h(t) t e^{-t²/2} = t³(2 - t)³ e^{t - 1/2 - t²/2}` on `[0, 2]` ([B, (11.3)]), i.e.
+`η◦(t) = h(t) t e^{-t²/2} = t³(2 - t)³ e^{t - 1/2 - t²/2}` on `[0, 2]` ([H, (11.3)]), i.e.
 `(t(2 - t))³ e^{-(t-1)²/2}`. It is `C²` with `η◦ = η◦' = 0` at `0` and `2`, so two integrations by
 parts give `η̂◦(ξ) = (2πiξ)⁻² (η◦''·1_{[0,2]})^(ξ)`, and Plancherel with `|η◦''| ≤ 7` gives
 `∫_{|ξ| ≥ T} |η̂◦(ξ)|² dξ ≤ 98/(2πT)⁴`.
@@ -26,7 +26,7 @@ noncomputable def Q2 (v : ℝ) : ℝ := -7 + 52 * v - 60 * v ^ 2 + 16 * v ^ 3 - 
 
 noncomputable def P2 (t : ℝ) : ℝ := Q2 ((t - 1) ^ 2) * Real.exp (-(t - 1) ^ 2 / 2)
 
-/-- **`η◦`** ([B, (11.3)]): `t³(2 - t)³ e^{t - 1/2 - t²/2}` on `[0, 2]`, `0` elsewhere. -/
+/-- **`η◦`** ([H, (11.3)]): `t³(2 - t)³ e^{t - 1/2 - t²/2}` on `[0, 2]`, `0` elsewhere. -/
 noncomputable def etaO (t : ℝ) : ℝ := (Icc (0 : ℝ) 2).indicator P0 t
 
 theorem hasDerivAt_gauss1 (t : ℝ) :

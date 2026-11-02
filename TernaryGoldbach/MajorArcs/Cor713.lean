@@ -1,11 +1,11 @@
 import TernaryGoldbach.MajorArcs.Cor933
 
 /-!
-# [B, Cor 7.1.3] from [B, Cor 9.3.3] and Platt's verification
+# [H, Cor 7.1.3] from [H, Cor 9.3.3] and Platt's verification
 
 With `T₀ = 10⁸/q` (Platt, `platt_grh`) and `y ≥ 10⁸`, `q ≤ 3·10⁵`, `|δ| ≤ 4·3·10⁵/q`, the error term of
-`cor_9_3_3` is at most `10⁻¹⁷ + 4.7·10⁶/(√q √y)` for `y ≥ 10²⁵` (for `q = 1`, [B]'s
-`2.485·10⁻¹⁹ + (381500 + 76)/√y` ([B, §9.6]); for `q ≥ 2`, our constants).
+`cor_9_3_3` is at most `10⁻¹⁷ + 4.7·10⁶/(√q √y)` for `y ≥ 10²⁵` (for `q = 1`, [H]'s
+`2.485·10⁻¹⁹ + (381500 + 76)/√y` ([H, §9.6]); for `q ≥ 2`, our constants).
 -/
 
 open Real MeasureTheory FourierTransform
@@ -147,7 +147,7 @@ theorem first_line_le {q : ℕ} (hq1 : 1 ≤ q) (hq3 : q ≤ 300000) {δ : ℝ}
 
 
 set_option maxHeartbeats 1000000 in
-/-- [B]'s error term at `T₀ = 10⁸/q`: `err933 ≤ 2.485·10⁻¹⁹ + (381500/√q + 76)/√y` ([B, §9.6]). -/
+/-- [H]'s error term at `T₀ = 10⁸/q`: `err933 ≤ 2.485·10⁻¹⁹ + (381500/√q + 76)/√y` ([H, §9.6]). -/
 theorem err933_le_book {y : ℝ} (hy : 1e8 ≤ y) {q : ℕ} (hq1 : 1 ≤ q) (hq : q ≤ 300000) {δ : ℝ}
     (hδ : |δ| ≤ 4 * 300000 / q) :
     err933 q (1e8 / q) δ y ≤ 2.485e-19 + (381500 / √q + 76) / √y := by
@@ -797,9 +797,9 @@ theorem err933Z_le {y : ℝ} (hy : 1e25 ≤ y) {δ : ℝ} (hδ : |δ| ≤ 1.2e6)
   linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **[B, Cor 7.1.3]** (with our constants for `q ≥ 2`): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
+/-- **[H, Cor 7.1.3]** (with our constants for `q ≥ 2`): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
 `|δ| ≤ 4·3·10⁵/q`, `Σ Λ(n) χ(n) e(δn/y) η_*(n/y) = [q = 1] η̂_*(-δ) y + E y` with
-`|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [B, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (numerical
+`|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [H, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (numerical
 axiom), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
 theorem cor_7_1_3' {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 300000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 4 * 300000 / q) :

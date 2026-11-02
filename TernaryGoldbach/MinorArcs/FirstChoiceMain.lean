@@ -1,11 +1,11 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 
 /-!
-# [B, §6.4, (6.76)–(6.77)]: the main term
+# [H, §6.4, (6.76)–(6.77)]: the main term
 
 `√(C(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468) ≤ 0.27125 C log t + 0.41415 log t
 + 0.8764` (AM–GM with `√ρ = 1.84332`), using `C = C_{x,t} ≤ 0.1 log t + 0.14`.
-[B] writes `0.49911` for the constant; the correct value is `0.81019…` (see `PointwiseBound.lean`).
+[H] writes `0.49911` for the constant; the correct value is `0.81019…` (see `PointwiseBound.lean`).
 -/
 
 open Real
@@ -102,7 +102,7 @@ theorem sqrt_mul_sqrt_le {a b s : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hs : 0 < s
   have : (a / s + s * b) ^ 2 - 4 * (a * b) = (a / s - s * b) ^ 2 := by field_simp; ring
   nlinarith [sq_nonneg (a / s - s * b)]
 
-/-- **[B, (6.77)], corrected**: the main term is at most `R_{x,t} log t + 0.8764`. -/
+/-- **[H, (6.77)], corrected**: the main term is at most `R_{x,t} log t + 0.8764`. -/
 theorem main_amgm {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ T / 3) (hC0 : 0 ≤ Cxt T t) :
     √(Cxt T t * (Real.log t + 0.002) + Real.log (4 * t) / 2) *
         √(0.30214 * Real.log t + 0.7468) ≤

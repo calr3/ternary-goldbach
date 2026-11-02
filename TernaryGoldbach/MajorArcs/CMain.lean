@@ -3,12 +3,12 @@ import TernaryGoldbach.MajorArcs.Cor933
 import TernaryGoldbach.MajorArcs.EtaPlusL2
 
 /-!
-# [B, Ch. 11, (11.6)]: the main-term constant `C_{η◦,η_*}`
+# [H, Ch. 11, (11.6)]: the main-term constant `C_{η◦,η_*}`
 
 `(η◦ ∗ η◦)(ρ) = ⟨η◦, η◦(· + 2 − ρ)⟩` (symmetry `η◦(2 − t) = η◦(t)`), and since translation preserves
 `‖·‖₂`, polarization gives `(η◦ ∗ η◦)(ρ) = ‖η◦‖₂² − ½‖η◦(· + s) − η◦‖₂²` (`s = 2 − ρ`). With the
 Lipschitz bound `|η◦'| ≤ 2.1` and supports of total length `≤ 4`:
-`(η◦ ∗ η◦)(ρ) ≥ ‖η◦‖₂² − 8.82 (2 − ρ)²` ([B, (11.5)] has `2.71 ‖η◦'‖₂²` in place of `8.82`).
+`(η◦ ∗ η◦)(ρ) ≥ ‖η◦‖₂² − 8.82 (2 − ρ)²` ([H, (11.5)] has `2.71 ‖η◦'‖₂²` in place of `8.82`).
 -/
 
 open Real MeasureTheory Set
@@ -135,7 +135,7 @@ theorem integral_sq_etaO_shift_le (s : ℝ) :
 /-- `(η◦ ∗ η◦)(ρ)`. -/
 noncomputable def conv2 (ρ : ℝ) : ℝ := ∫ t, etaO t * etaO (ρ - t)
 
-/-- **[B, (11.5)], with constant `8.82`**: `(η◦ ∗ η◦)(ρ) ≥ ‖η◦‖₂² − 8.82 (2 − ρ)²`. -/
+/-- **[H, (11.5)], with constant `8.82`**: `(η◦ ∗ η◦)(ρ) ≥ ‖η◦‖₂² − 8.82 (2 − ρ)²`. -/
 theorem conv2_ge (ρ : ℝ) : (∫ t, etaO t ^ 2) - 8.82 * (2 - ρ) ^ 2 ≤ conv2 ρ := by
   set s := 2 - ρ
   have hsym : ∀ t, etaO (ρ - t) = etaO (t + s) := fun t => by
@@ -486,10 +486,10 @@ theorem abs_conv2_le (ρ : ℝ) : |conv2 ρ| ≤ 2 := by
         simp only [Real.volume_Icc, measureReal_def]
         rw [ENNReal.toReal_ofReal (by norm_num)]; norm_num
 
-/-- **`C_{η◦,η_*}(M) = ∫∫ η◦(t₁)η◦(t₂)η_*(M − t₁ − t₂) = ∫ (η◦ ∗ η◦)(M − σ) η_*(σ) dσ`** [B, (10.37)]. -/
+/-- **`C_{η◦,η_*}(M) = ∫∫ η◦(t₁)η◦(t₂)η_*(M − t₁ − t₂) = ∫ (η◦ ∗ η◦)(M − σ) η_*(σ) dσ`** [H, (10.37)]. -/
 noncomputable def Cmain (M : ℝ) : ℝ := ∫ σ, conv2 (M - σ) * etaS σ
 
-/-- **[B, (11.6)], with constant `8.82`**: for `M = 2 + c/κ`,
+/-- **[H, (11.6)], with constant `8.82`**: for `M = 2 + c/κ`,
 `C_{η◦,η_*}(M) ≥ ‖η◦‖₂² ∫η_* − 8.82 ∫(σ − c/κ)² η_*(σ) dσ`. -/
 theorem Cmain_ge (c : ℝ) :
     (∫ t, etaO t ^ 2) * (√(π / 2) / κ) -

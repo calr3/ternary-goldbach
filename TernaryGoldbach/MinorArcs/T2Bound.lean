@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.T2Small
 import TernaryGoldbach.MinorArcs.G2Tail
 
 /-!
-# [B, (5.31)]: `T₂(S) ≤ 0.37273` for `S ≥ 16`
+# [H, (5.31)]: `T₂(S) ≤ 0.37273` for `S ≥ 16`
 
 * `16 ≤ S < 10⁴`: the kernel walk over `g₂(n)`, `n ≤ 10⁴` (`SmallG2.lean`, `T2Small.lean`): exactly
   `T₂ = α_n + β_n/S` for `S < 700`, and `T₂(S) ≤ ¼ ∫₁^S g₂/y + S⁻¹ ∫₁^S |g₂|` (`abs_T2_sub_le`) above;
@@ -17,7 +17,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open SmallG2 G2Tail
 
-/-- **[B, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16`. -/
+/-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16`. -/
 theorem T2_le' {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := by
   rcases lt_or_ge S 10000 with h | h
   · exact T2_le_small hS h

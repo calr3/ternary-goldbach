@@ -3,20 +3,20 @@
 A formalization of Helfgott's proof of the ternary Goldbach conjecture in Lean 4 and Mathlib. The
 conjecture says that every odd integer greater than 5 is a sum of three primes:
 `TernaryGoldbach.ternary_goldbach : Statement` (see `TernaryGoldbach/Statement.lean`). The proof
-follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
+follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
 The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 9 explicitly stated
 axioms besides Lean's standard three. They are:
 * 2 finite computations of our own, each checked in rigorous interval arithmetic
-  (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [B, Lemma B.1.2] also contains, and the
-  finite part of [B, Prop 12.2.4];
+  (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [H, Lemma B.1.2] also contains, and the
+  finite part of [H, Prop 12.2.4];
 * 7 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
-  Goldbach up to `2.2·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
+  Goldbach up to `2.2·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
-Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ram95, Lemma 3.4]) is proved,
+Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
 our proof avoids it (`AXIOMS.md`, Finding 5).
 
@@ -65,16 +65,16 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
-[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
+[H]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
 `g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
 above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
-`m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [B, Lemma 5.1.2] is
+`m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
 also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
 
 ## How the proof is organized
 
-The top level is [B, §14.4] (`Helfgott/Main.lean`).
+The top level is [H, §14.4] (`Helfgott/Main.lean`).
 
 * **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
   * binary Goldbach up to `2.2·10¹⁷` ([OeSHP14] verify `4·10¹⁸` and double-checked `3·10¹⁷`);
@@ -84,43 +84,43 @@ The top level is [B, §14.4] (`Helfgott/Main.lean`).
     `3·10¹²`). Then `n − p` is even and at most `2.2·10¹⁷`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
-  * **major arcs**, [B, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
-    * the explicit formulas for Dirichlet `L`-functions, [B, Props 9.3.2, 9.4.2, 9.5.1], proved in
+  * **major arcs**, [H, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
+    * the explicit formulas for Dirichlet `L`-functions, [H, Props 9.3.2, 9.4.2, 9.5.1], proved in
       `Explicit/` with weaker constants (zeros are counted by Jensen's formula in windows);
     * Platt's GRH verification;
-    * [B, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5];
-    * the `ℓ²` norm over the major arcs, [B, (14.7)] (`8.6296x … 8.79x`);
+    * [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5];
+    * the `ℓ²` norm over the major arcs, [H, (14.7)] (`8.6296x … 8.79x`);
     * the singular series and the Chapter 10–11 main term;
-  * **minor arcs**, [B, (14.49)] with constant `1.0376` (`MinorArcs/MinorTotal.lean`). This needs:
-    * Vaughan's identity and the Type I and Type II sums of [B, Chs. 3–6], which give Theorem 3.1.1
+  * **minor arcs**, [H, (14.49)] with constant `1.0376` (`MinorArcs/MinorTotal.lean`). This needs:
+    * Vaughan's identity and the Type I and Type II sums of [H, Chs. 3–6], which give Theorem 3.1.1
       with constants `0.8764` and `3.8x^{5/6}`;
     * the large sieve for primes (Prop 12.1.2 proved; Prop 12.2.4 an axiom);
     * Ch. 11 and a repaired Theorem 13.2.1;
-    * [B, (14.28)] in a weaker form;
-  * **non-prime terms**, [B, (14.51)], with cruder constants;
+    * [H, (14.28)] in a weaker form;
+  * **non-prime terms**, [H, (14.51)], with cruder constants;
   * **final inequality**: `(1.049 − 1.0376) x²/κ = 0.0114 x²/κ > 0` beats the error terms
     (`Helfgott/Numerics.lean`).
-* **Inputs from [B, §2]** (`Prelim/`):
+* **Inputs from [H, §2]** (`Prelim/`):
   * bounds on `ψ`, `θ`, and sums of `Λ` and `μ`;
-  * Mertens products ([B, Lemma C.2.2]);
+  * Mertens products ([H, Lemma C.2.2]);
   * the large sieves of [MV73];
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
   `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 2·10⁸`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
-  `3400 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [B] uses. It comes from:
+  `3400 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [H] uses. It comes from:
   * Büthe's bound up to `10¹⁹`;
   * above `10¹⁹`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹²` and the
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
-[`BLUEPRINT.md`](BLUEPRINT.md) maps [B] chapter by chapter to the Lean files.
+[`BLUEPRINT.md`](BLUEPRINT.md) maps [H] chapter by chapter to the Lean files.
 
-## Differences from [B]
+## Differences from [H]
 
 **Constants.** Ours are weaker where our proofs or corrections require it:
 
-| [B] | Statement | [B]'s constant | ours |
+| [H] | Statement | [H]'s constant | ours |
 |---|---|---|---|
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `3.36 x^{5/6}` | `0.8764`, `3.8 x^{5/6}` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
@@ -133,11 +133,11 @@ The top level is [B, §14.4] (`Helfgott/Main.lean`).
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
 | Lemma 5.1.2 | `\|g₂(x)\|`, `x ≥ 10¹⁰` | `0.038128/(log x)² + 0.2046/√x` | `0.0236/(log x)² + 528 (1 + log x)²/x` (all `x > 1`; not needed) |
 
-The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
+The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 
-**Errors in [B] and how the proof handles them** (details in `NOTES.md`):
+**Errors in [H] and how the proof handles them** (details in `NOTES.md`):
 
-* (6.77) has an arithmetic slip. [B]'s own argument gives the first-case constant `0.8102` in Thm
+* (6.77) has an arithmetic slip. [H]'s own argument gives the first-case constant `0.8102` in Thm
   3.1.1, not `0.5`. With the corrected (5.36) below, ours is `0.8764`.
 * The proof of Thm 13.2.1 mixes two scales of major arcs. Its `ℓ∞` input is derived off the arcs at
   scale `x/κ`, but its `ℓ²` input and (14.27) use scale `x`.
@@ -162,7 +162,7 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
   (`AXIOMS.md`, Finding 4).
-* [B, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
+* [H, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
   `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`, but the product is about `8.0845`. We prove (12.12)
   as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`AXIOMS.md`,
   Finding 5).
@@ -170,7 +170,7 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.
 * The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
-  which [B, §1.6] uses up to `8.875·10³⁰`, and need binary Goldbach only up to `2.2·10¹⁷`.
+  which [H, §1.6] uses up to `8.875·10³⁰`, and need binary Goldbach only up to `2.2·10¹⁷`.
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout
@@ -180,18 +180,18 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 | `Statement.lean` | the statement |
 | `CircleMethod.lean` | the finite circle method and the circle identity for absolutely summable series |
 | `Helfgott/` | Helfgott's smoothings and major arcs (`Defs`), sup norms and decay, the non-prime terms, the top-level inputs (`Inputs`), the small cases (`SmallCases`) and the assembly (`Main`) |
-| `MinorArcs/` | [B, Chs. 3–6, 11–13] and §14.3: Vaughan's identity, Type I and II sums, Thm 3.1.1, the large sieve for primes, the minor-arc total; generated numerics (`scripts/gen_*.py`) |
-| `MajorArcs/` | [B, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
+| `MinorArcs/` | [H, Chs. 3–6, 11–13] and §14.3: Vaughan's identity, Type I and II sums, Thm 3.1.1, the large sieve for primes, the minor-arc total; generated numerics (`scripts/gen_*.py`) |
+| `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
-| `Prelim/` | [B, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
+| `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
 | `scripts/` | the computations behind the numerical axioms; generators of numeric Lean files; exploratory checks |
 | `AXIOMS.md` | the axiom audit |
-| `BLUEPRINT.md`, `NOTES.md` | map from [B] to Lean; working notes |
+| `BLUEPRINT.md`, `NOTES.md` | map from [H] to Lean; working notes |
 
 ## References
 
-* [B] H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015). This is the book
-  version, superseding arXiv:1205.5252, 1305.2897 and 1312.7748 [H].
+* [H] H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015). This is the book
+  version, superseding arXiv:1205.5252, 1305.2897 and 1312.7748 [H13].
 * [HP13] H. A. Helfgott, D. J. Platt, *Numerical verification of the ternary Goldbach conjecture up
   to 8.875·10³⁰*, arXiv:1305.3062.
 * [OeSHP14] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even Goldbach

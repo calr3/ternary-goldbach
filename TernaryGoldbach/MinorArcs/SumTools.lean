@@ -151,7 +151,7 @@ theorem antitoneOn_f₃ (hx : 0 < x) :
 end
 
 
-/-! ## Monotonicity of the antiderivatives, and the sums used in [B, Lemma 4.2.3] -/
+/-! ## Monotonicity of the antiderivatives, and the sums used in [H, Lemma 4.2.3] -/
 
 section
 variable {x : ℝ} (hx : 0 < x)
@@ -183,7 +183,7 @@ theorem F₂_mono {s t : ℝ} (hs : 0 < s) (hst : s ≤ t) (htx : t ≤ x) :
   exact this ⟨hs, hst.trans htx⟩ ⟨hs.trans_le hst, htx⟩ hst
 
 /-- `S₂ = ∑_{j<J} (j + 3/2) log(x/((j+½)q)) ≤ log(2x/q) + (2D'/q + D'²/2q²) log(√e x/D')`
-when `(J - ½)q < D' ≤ x/e` [B, (4.47)]. -/
+when `(J - ½)q < D' ≤ x/e` [H, (4.47)]. -/
 theorem S2_le {q D' : ℝ} (hq : 0 < q) {J : ℕ} (hJ : 1 ≤ J) (hJD : (J - 1 / 2) * q ≤ D')
     (hD'x : D' ≤ x / rexp 1) :
     ∑ j ∈ range J, ((j : ℝ) + 3 / 2) * (Real.log x - Real.log ((j + 1 / 2) * q)) ≤
@@ -285,7 +285,7 @@ theorem sum_Icc_odd_eq' (N : ℕ) (G : ℕ → ℝ) :
   · intro n hn; simp only [mem_filter, mem_Icc] at hn; obtain ⟨_, ⟨j, rfl⟩⟩ := hn
     congr 1; omega
 
-/-- The error sum of the main term of [B, Lemma 4.2.3] (p. 67):
+/-- The error sum of the main term of [H, Lemma 4.2.3] (p. 67):
 `∑_{m' ≤ N odd} qm' log(x/qm') ≤ M log(x/M) + (M²/4q) log(√e x/M)` for `qN ≤ M ≤ x/e`. -/
 theorem sum_odd_mul_log_le {x : ℝ} (hx : 0 < x) {q : ℕ} (hq : 1 ≤ q) {N : ℕ} {M : ℝ}
     (hM0 : 0 < M) (hNM : (q : ℝ) * N ≤ M) (hMx : M ≤ x / rexp 1) :

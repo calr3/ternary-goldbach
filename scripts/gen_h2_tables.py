@@ -1,6 +1,6 @@
 """Generate the data of TernaryGoldbach/MinorArcs/H2Bound.lean and re-run its rational checks.
 
-On [n, n+1), 1 <= n <= 15:  T2(S) = alpha_n + beta_n/S  (exact rationals, from [B, (5.19)]);
+On [n, n+1), 1 <= n <= 15:  T2(S) = alpha_n + beta_n/S  (exact rationals, from [H, (5.19)]);
 log bounds lo_j <= log j < hi_j (units 10^-9) for j <= 16;  k = 4/pi^2 in [kLo, kHi].
 The Lean file re-checks everything with `decide +kernel`.
 

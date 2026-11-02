@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.HHFourier2
 import TernaryGoldbach.MajorArcs.EtaONum
 
 /-!
-# [B, (9.94)]: `∫ η₊² log(xt) dt`, from `η◦` and Parseval
+# [H, (9.94)]: `∫ η₊² log(xt) dt`, from `η◦` and Parseval
 
 With `A = ∫₀^∞ η₊²` and `B = ∫₀^∞ η₊² log t`, `∫ η₊² log(xt) = A log x + B`. Write
 `η₊² = η◦² + 2(η₊ − η◦)η◦ + (η₊ − η◦)²`.
@@ -13,7 +13,7 @@ With `A = ∫₀^∞ η₊²` and `B = ∫₀^∞ η₊² log t`, `∫ η₊² l
 * The cross terms: in `u = log t`, `(η₊ − η◦)η◦ dt = (g_H − g)(u) W(u) du` with
   `W = g · e^{3u − e^{2u}}` (and `u W` for the `log t` weight). Since `g − g_H` has its Fourier
   transform supported on `|ξ| > H/2π`, Parseval gives `|∫ (g_H − g) W| ≤ ∫_{|ξ| > H/2π} |ĝ| |Ŵ|`, and
-  both tails are `O(H⁻⁴)` (`‖g''‖₂`, `‖W''‖₂`). This replaces [B]'s Cauchy–Schwarz on all of `L²`,
+  both tails are `O(H⁻⁴)` (`‖g''‖₂`, `‖W''‖₂`). This replaces [H]'s Cauchy–Schwarz on all of `L²`,
   which loses a factor `10⁶` here.
 -/
 
@@ -849,7 +849,7 @@ theorem W1''_sq_le : ∫ u, W1'' u ^ 2 ≤ 60 := by
 
 /-- The four elementary integrals (proved above and in `EtaONum.lean`):
 * `∫₀² η◦² = 0.6402059973663522…` and `∫₀² η◦² log t = −0.0210947786988671…`, where
-  `η◦ = P0 = (t(2 − t))³ e^{−(t−1)²/2}` ([B] gets the same values with VNODE-LP);
+  `η◦ = P0 = (t(2 − t))³ e^{−(t−1)²/2}` ([H] gets the same values with VNODE-LP);
 * `‖W₀''‖₂² = 35.790…` and `‖W₁''‖₂² = 8.389…` (bounded here by `1000` and `60`), where
   `W₀(u) = g(u) e^{3u − e^{2u}}`, `W₁ = u W₀` and `g(u) = h(eᵘ)`. -/
 theorem etaO_numerics :
@@ -883,9 +883,9 @@ theorem integral_etaPlus_sq_log_eq {x : ℝ} (hx : 0 < x) :
   have hD : gL u + Dg u = hH 200 (Real.exp u) := by unfold Dg; ring
   rw [hD, etaPlus, Ew, exp_sq_eq]; ring
 
-/-- **[B, (9.94)]**: `∫₀^∞ η₊²(t) log(xt) dt = (0.640206 + O*(1.95·10⁻⁶)) log x − 0.021095 + O*(5.3·10⁻⁷)`
+/-- **[H, (9.94)]**: `∫₀^∞ η₊²(t) log(xt) dt = (0.640206 + O*(1.95·10⁻⁶)) log x − 0.021095 + O*(5.3·10⁻⁷)`
 for `x ≥ 1`. The errors here are at most `2.6·10⁻⁷ log x + 3.8·10⁻⁷`: the cross terms are
-`O(H⁻⁴)` by Parseval (`abs_integral_Dg_mul_le`), not `O(H^{−7/2})` as with [B]'s Cauchy–Schwarz. -/
+`O(H⁻⁴)` by Parseval (`abs_integral_Dg_mul_le`), not `O(H^{−7/2})` as with [H]'s Cauchy–Schwarz. -/
 theorem integral_etaPlus_sq_log {x : ℝ} (hx : 1 ≤ x) :
     |(∫ t in Ioi 0, etaPlus t ^ 2 * Real.log (x * t)) - (0.640206 * Real.log x - 0.021095)| ≤
       1.95e-6 * Real.log x + 5.3e-7 := by

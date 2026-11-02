@@ -4,7 +4,7 @@ import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Prelim.MertensProduct
 
 /-!
-# The singular series of [B, §10.2] for `r = 150000`
+# The singular series of [H, §10.2] for `r = 150000`
 
 * `ramanujan_sum`: `c_q(n) = Σ_{a<q, (a,q)=1} e(an/q) = Σ_{d∣q} μ(d) (q/d) [q/d ∣ n]`;
 * for squarefree `q`, `μ(q) c_q(n) = ∏_{p∣q} (1 − [p∣n] p)`, so the main-term coefficient

@@ -12,11 +12,11 @@ import Mathlib.Analysis.Real.Pi.Bounds
 
 For `s = σ + iτ` with `σ > -2` and `δ ∈ ℝ`,
 `G_δ(s) = ∫₀^∞ t^{s+1} e^{-t²/2} e^{2πiδt} dt`
-is the Mellin transform of `η(t) e(δt)`, `η(t) = t² e^{-t²/2}` ([B, Ch. 8], `F_δ(s + 2)` there).
+is the Mellin transform of `η(t) e(δt)`, `η(t) = t² e^{-t²/2}` ([H, Ch. 8], `F_δ(s + 2)` there).
 Substituting `t = r e^{iθ}` (`|θ| < π/4`) does not change the integral: the `θ`-derivative of the
 integrand is `i ∂_r (r · integrand)`, whose integral over `r ∈ (0, ∞)` vanishes. The rotated
 integrand has modulus `r^{σ+1} e^{-θτ} e^{-r² cos 2θ/2 - 2πδ r sin θ}`; completing the square and
-choosing `θ` gives the bounds of [B, Cor 8.0.2] (`k = 2`) with the same exponents `0.1598` and
+choosing `θ` gives the bounds of [H, Cor 8.0.2] (`k = 2`) with the same exponents `0.1598` and
 `0.1065` and smaller constants.
 -/
 
@@ -505,7 +505,7 @@ theorem norm_Gr_le_closed (s : ℂ) (δ : ℝ) {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ
     (b := 2 * π * |δ| * Real.sin θ) (by linarith) (by linarith) hc
   convert h2 using 3 <;> ring
 
-/-! ## The two regimes of [B, Cor 8.0.2] (`k = 2`) -/
+/-! ## The two regimes of [H, Cor 8.0.2] (`k = 2`) -/
 
 theorem sin_028_le : Real.sin 0.28 ≤ 0.27635855 := by
   have h := Real.sin_bound (x := 0.28) (by norm_num [abs_of_pos])
@@ -527,7 +527,7 @@ theorem sqrt_consts {c : ℝ} (hc1 : 0.84725 ≤ c) :
     rw [div_le_iff₀ (by positivity)]
     nlinarith [mul_le_mul hc1 h2 (by norm_num) hc0.le]
 
-/-- **Regime `|τ| ≥ (3/2)(πδ)²`** ([B, Cor 8.0.2], `κ_{2,1}`): `|G_δ(s)| ≤ 0.892 |τ| e^{-0.1598|τ|}`. -/
+/-- **Regime `|τ| ≥ (3/2)(πδ)²`** ([H, Cor 8.0.2], `κ_{2,1}`): `|G_δ(s)| ≤ 0.892 |τ| e^{-0.1598|τ|}`. -/
 theorem norm_G_le_regimeB (s : ℂ) (δ : ℝ) (hs0 : -1 ≤ s.re) (hs1 : s.re ≤ 1) (hτ : 50 ≤ |s.im|)
     (hδ : 3 / 2 * (π * δ) ^ 2 ≤ |s.im|) :
     ‖Gr s δ 0‖ ≤ 0.892 * |s.im| * Real.exp (-0.1598 * |s.im|) := by
@@ -577,7 +577,7 @@ theorem norm_G_le_regimeB (s : ℂ) (δ : ℝ) (hs0 : -1 ≤ s.re) (hs1 : s.re �
     _ = _ := by ring
 
 set_option maxHeartbeats 1000000 in
-/-- **Regime `|τ| < (3/2)(πδ)²`** ([B, Cor 8.0.2], `κ_{2,0}`): with `y = |τ|/(π|δ|) ≥ 10`,
+/-- **Regime `|τ| < (3/2)(πδ)²`** ([H, Cor 8.0.2], `κ_{2,0}`): with `y = |τ|/(π|δ|) ≥ 10`,
 `|G_δ(s)| ≤ 0.588 y² e^{-0.1065 y²}`. -/
 theorem norm_G_le_regimeA (s : ℂ) (δ : ℝ) (hs0 : -1 ≤ s.re) (hs1 : s.re ≤ 1)
     (hy : 10 * π * |δ| ≤ |s.im|) (hm : |s.im| < 3 / 2 * (π * δ) ^ 2) :

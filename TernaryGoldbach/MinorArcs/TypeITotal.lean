@@ -5,7 +5,7 @@ import TernaryGoldbach.Prelim.MoebiusLog
 import TernaryGoldbach.Prelim.LiouvilleBound
 
 /-!
-# Type I totals [B, §6.2.1]: `S_{I,1}`
+# Type I totals [H, §6.2.1]: `S_{I,1}`
 -/
 
 open Real Finset
@@ -17,7 +17,7 @@ namespace TernaryGoldbach.MinorArcs
 open TernaryGoldbach.Helfgott (eta2)
 
 /-- The bound on `|∑_{m ≤ U/q, (m,2q)=1} μ(m)/m|` from (2.20), (2.22):
-`min(1, 2.8(2q/φ(2q))/log(U/2q²))` (the second only if `2q² < U`; [B] has `4/5` from [Ramb], we prove
+`min(1, 2.8(2q/φ(2q))/log(U/2q²))` (the second only if `2q² < U`; [H] has `4/5` from [Ramb], we prove
 `2.8` in `Prelim/LiouvilleBound.lean`). -/
 noncomputable def muBound (U : ℝ) (q : ℕ) : ℝ :=
   if 2 * (q : ℝ) ^ 2 < U then
@@ -89,8 +89,8 @@ theorem norm_fourier_logeta2_half_le (δ : ℝ) :
         = (2 * π * -(δ / 2)) ^ 2 * ‖fourier (fun t => Real.log t * eta2 t) (-(δ / 2))‖ := by ring
       _ ≤ _ := hd
 
-/-- **[B, §6.2.1]**, our version of (6.3)/(6.4): for `U ≤ Q₀/2`,
-`|S_{I,1}| ≤ (x/2q) min(1, c₀/(πδ)²) (2q/φ(2q) + 2.67 + log(x/U) μ_U)` ([B]: `1.00303 (2q/φ(2q))`)
+/-- **[H, §6.2.1]**, our version of (6.3)/(6.4): for `U ≤ Q₀/2`,
+`|S_{I,1}| ≤ (x/2q) min(1, c₀/(πδ)²) (2q/φ(2q) + 2.67 + log(x/U) μ_U)` ([H]: `1.00303 (2q/φ(2q))`)
 `+ (x/2q) min(2 - log 4, 96 log 2/(πδ)²) μ_U + c₀(1/2 - 2/π²)(U²/(4qx) log(√e x/U) + 1/e)`
 `+ (4.41)`, with `μ_U = min(1, 2.8(2q/φ(2q))/log(U/2q²))`. -/
 theorem typeI1_le {α x δ Q₀ U : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)

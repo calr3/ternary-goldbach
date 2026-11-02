@@ -4,7 +4,7 @@ import TernaryGoldbach.Prelim.SmallPsi
 /-!
 # [MV73, Lemma 8]: `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) ≥ log R + 0.25068` for `R ≥ 2`
 
-[B, p. 97]: true for `R ≥ 100` by [MV73, Lemma 8], "and easily verifiable numerically for
+[H, p. 97]: true for `R ≥ 100` by [MV73, Lemma 8], "and easily verifiable numerically for
 `2 ≤ R < 100`". We prove it
 
 * for `2 ≤ R < 6` from the exact values at `n = ⌊R⌋ ≤ 5`: the endpoint value

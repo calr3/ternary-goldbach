@@ -1,8 +1,8 @@
-"""Rigorous check of the numerical axiom `fsq_le` (Prelim/SqfreeCount.lean, [B, p. 83]):
+"""Rigorous check of the numerical axiom `fsq_le` (Prelim/SqfreeCount.lean, [H, p. 83]):
 
     f(X) <= 1.27 X  for all X >= 0,   f(X) = #{m <= X sq-free} + (X^2/2) sum_{m > X sq-free} 1/m^2.
 
-Reduction (as in [B]):
+Reduction (as in [H]):
 * 0 <= X < 1: f(X)/X = (X/2) * 15/pi^2 < 0.76.
 * Between consecutive square-free integers m_k <= X < m_{k+1}, f(X)/X = k/X + (X/2) S_k is convex,
   and f jumps up by 1/2 at each square-free integer, so sup f(X)/X = max over square-free m of f(m)/m.

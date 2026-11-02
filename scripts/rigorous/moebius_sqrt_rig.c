@@ -2,7 +2,7 @@
 
        |m(k)| <= sqrt(2/(k+1))  for 1 <= k < 10^10,   m(k) = sum_{n <= k} mu(n)/n,
 
-   i.e. [B, (2.24)] |m(x)| <= sqrt(2/x) for real x < 10^10 (Helfgott checked x <= 10^12 in interval
+   i.e. [H, (2.24)] |m(x)| <= sqrt(2/x) for real x < 10^10 (Helfgott checked x <= 10^12 in interval
    arithmetic; Ramare earlier x <= 10^10).
 
    mu(n) comes from a segmented sieve (exact integers).  The sum is enclosed in [lo, hi] using IEEE
@@ -11,7 +11,7 @@
    so lo <= m(k) <= hi exactly.  The test M^2 (k+1) <= 2 with M = max(|lo|, |hi|) is done with upward
    rounding (as -((-a) b) in round-down mode).
 
-   Cross-check with [B, p. 38]: the stronger bound |m(x)| <= 1/(2 sqrt x) holds for 3 <= x <= 7727068587
+   Cross-check with [H, p. 38]: the stronger bound |m(x)| <= 1/(2 sqrt x) holds for 3 <= x <= 7727068587
    but not for x = 7727068588 - eps; i.e. 4 m(k)^2 (k+1) <= 1 for 3 <= k <= 7727068586 and > 1 at
    k = 7727068587.
 
@@ -75,7 +75,7 @@ int main(void) {
   printf("max over 2 <= k < 10^10 of |m(k)|/sqrt(2/(k+1)) <= %.6f at k = %llu (k = 1: equality)\n",
          sqrt(worst) * (1 + 1e-15), (unsigned long long)wat);
   printf("moebius_sqrt_small: %s\n", ok ? "OK (rigorous)" : "FAILED");
-  printf("cross-check [B, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1): %llu; "
+  printf("cross-check [H, p. 38]: first k >= 3 with 4 m(k)^2 (k+1) > 1 (not certified <= 1): %llu; "
          "certainly > 1 there: %s; 4 m(k)^2 k in [%.12f, %.12f] there\n",
          (unsigned long long)first_strong, strong_fails_there ? "yes" : "no", e_lo, e_hi);
   return ok ? 0 : 1;

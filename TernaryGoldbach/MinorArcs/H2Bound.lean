@@ -2,9 +2,9 @@ import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.Prelim.SmallMertens
 
 /-!
-# `H₂ ≤ 2/π²` [B, (5.37)] and the corrected [B, (5.36)], checked by the kernel
+# `H₂ ≤ 2/π²` [H, (5.37)] and the corrected [H, (5.36)], checked by the kernel
 
-By [B, (5.19)] (`integral_g2`), `T₂(S)` is a finite sum over `(s, r₁, r₂)` with `s max(r₁, r₂) ≤ S`
+By [H, (5.19)] (`integral_g2`), `T₂(S)` is a finite sum over `(s, r₁, r₂)` with `s max(r₁, r₂) ≤ S`
 of `c(r₁, r₂)/s · (1 − max(1/2, s max(r₁, r₂)/S))`. On `[n, n+1)` each term is either constant or
 of the form `a + b/S`, so `T₂(S) = α_n + β_n/S` with rationals `α_n, β_n` (`T2_eq`); the kernel
 evaluates them for `n ≤ 15` (`ab_tab`, data from `scripts/gen_h2_tables.py`).
@@ -168,7 +168,7 @@ theorem H2_piece {n : ℕ} (hn1 : 1 ≤ n) (hn : n ≤ 15) {S : ℝ} (h1 : (n : 
 end H2B
 
 open H2B in
-/-- **[B, (5.37)]**: `H₂(S) ≤ 2/π²`, i.e. `T₂(S) ≤ 1/2` on `[1, 16)` (kernel-checked). -/
+/-- **[H, (5.37)]**: `H₂(S) ≤ 2/π²`, i.e. `T₂(S) ≤ 1/2` on `[1, 16)` (kernel-checked). -/
 theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
   have hpi : 0 < π ^ 2 := by positivity
   rcases lt_or_ge S 1 with hS | hS
@@ -366,9 +366,9 @@ theorem D_le {m : ℕ} (h3 : 3 ≤ m) (h16 : m ≤ 16) :
 end H2B
 
 open H2B in
-/-- **[B, (5.36)], corrected**: `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for `T ≥ 1`.
+/-- **[H, (5.36)], corrected**: `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for `T ≥ 1`.
 
-[B, (5.36)] states this without the `+ 0.0231`. That is false: it inherits an error in [B, (5.32)]
+[H, (5.36)] states this without the `+ 0.0231`. That is false: it inherits an error in [H, (5.32)]
 for `v = 2`, where `∫₁⁴ T₂(S)/S dS = 0.53344 > 0.37273 log 4` (see `AXIOMS.md`). The supremum of
 `∫₁ᵀ H₂/S − 0.15107 log T` is `0.023059…`, at `T ≈ 15.58`. -/
 theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :

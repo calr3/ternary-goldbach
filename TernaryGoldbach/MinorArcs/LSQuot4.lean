@@ -1,10 +1,10 @@
 import TernaryGoldbach.MinorArcs.LSQuot3
 
 /-!
-# [B, Prop 12.2.4], part 4: large `q`
+# [H, Prop 12.2.4], part 4: large `q`
 
 For `q ≥ 2.2·10¹⁰` and `1 ≤ R < λ(q)`: `log q + 1.039 R ≤ 1.03 (qR)^{2/9}` (`large_q_hS`), so
-`regionS` applies. This replaces [B, (12.34)–(12.40)].
+`regionS` applies. This replaces [H, (12.34)–(12.40)].
 
 * `λ(q)^7 ≤ a⁹ q²` (`a = 1.03/1.2`; `lamQ_pow_le`), from `λ(q)^{1/3} = 7.4527 ∏_{p∣q} g(p)/κ(q)`,
   `g(p) = (p/(p−1)) f₁(p)`, an antitone majorant `ĝ` of `g` and the exchange argument (the `k`

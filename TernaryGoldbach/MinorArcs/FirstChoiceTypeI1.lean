@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI
 
 /-!
-# [B, §6.3.1, (6.53)–(6.56)]: `S_{I,1}` at the first choice of parameters
+# [H, §6.3.1, (6.53)–(6.56)]: `S_{I,1}` at the first choice of parameters
 -/
 
 open Real
@@ -219,9 +219,9 @@ theorem typeI1_c0_term_le {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) 
         nlinarith
 
 set_option maxHeartbeats 1600000 in
-/-- **[B, (6.56)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
+/-- **[H, (6.56)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
 `|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q` (with the
-elementary (2.23); [B]'s `1.00303` would give `1.63`). -/
+elementary (2.23); [H]'s `1.00303` would give `1.63`). -/
 theorem typeI1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
     ‖typeILog α (T ^ 3) (U1 T (delta0 δ * q))‖ ≤

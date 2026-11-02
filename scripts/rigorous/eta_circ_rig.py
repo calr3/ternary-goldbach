@@ -1,5 +1,5 @@
 """Rigorous check of the axiom `etaO_numerics` (MajorArcs/EtaPlusSqLog.lean), the numerical input
-of [B, (9.94)]:
+of [H, (9.94)]:
 
     0.640205997 <= int_0^2 P0(t)^2 dt <= 0.640205998,
     -0.0210947787 <= int_0^2 P0(t)^2 log t dt <= -0.0210947786,
@@ -13,7 +13,7 @@ with the explicit
     k0'(t)  = (t h'(t) + h(t) (3 - 2t^2)) t^2 e^{-t^2},
     k1''(t) = 2 k0'(t) + log t * k0''(t),
     h'(t) = e^{t-1/2} p(t), h''(t) = e^{t-1/2} (p(t) + p'(t)), p(t) = t (2-t)^2 (1-t)(4+t).
-The first two values agree with [B, p. 197] (VNODE-LP): 0.64020599736635 and -0.021094778698867.
+The first two values agree with [H, p. 197] (VNODE-LP): 0.64020599736635 and -0.021094778698867.
 
 Method: python-flint (Arb) rigorous integration (acb.integral).  The log t integrands are integrated
 from eps = 2^-20; on [0, eps], sup |P0|^2, sup |k0'|, sup |k0''| are enclosed by evaluating on the ball

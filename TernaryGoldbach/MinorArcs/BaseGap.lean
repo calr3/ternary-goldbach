@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MinorArcs.LargeSieveProof
 
 /-!
-# The base gap of repair 3: `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, via [B, Cor 7.1.3]
+# The base gap of repair 3: `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, via [H, Cor 7.1.3]
 
 * `totient_mul_norm_le`: the character expansion
   `φ(q) |S(b/q + β)| ≤ Σ_ψ |τ(ψ)| |S_{ψ⁻¹}(β)|` for coefficients supported on `(n, q) = 1`.

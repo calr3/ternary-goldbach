@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.GcdSums
 
 /-!
-# Assembling the minor-arc bound [B, §6.1]: `S_{0,∞}`, `S_{0,2}`
+# Assembling the minor-arc bound [H, §6.1]: `S_{0,∞}`, `S_{0,2}`
 
 `S_{0,∞} = 0` for `V ≤ x/4`, `|S_{0,2}| ≤ 3 log x` (only powers of `2` contribute), and so
 `|S_{η₂}| ≤ |S_{I,1}| + |S_{I,2}| + |S_{II}| + 3 log x`.
@@ -21,7 +21,7 @@ theorem norm_wt_le (α x : ℝ) (n : ℕ) : ‖wt α x n‖ ≤ 3 := by
     abs_of_nonneg (Helfgott.eta2_nonneg _)]
   exact Helfgott.eta2_le _
 
-/-- [B, §6.1]: `S_{0,∞} = 0` for `V ≤ x/4`. -/
+/-- [H, §6.1]: `S_{0,∞} = 0` for `V ≤ x/4`. -/
 theorem S0inf_eq_zero (α : ℝ) {x : ℝ} (hx : 0 < x) {V : ℕ} (hV : (V : ℝ) ≤ x / 4) :
     S0inf α x V = 0 := by
   refine sum_eq_zero fun n hn => ?_
@@ -30,7 +30,7 @@ theorem S0inf_eq_zero (α : ℝ) {x : ℝ} (hx : 0 < x) {V : ℕ} (hV : (V : ℝ
     have := h.1; rw [lt_div_iff₀ hx] at this; linarith
   simp [wt, this]
 
-/-- [B, §6.1]: `|S_{0,2}| ≤ 3 log x` (crude: `η₂ ≤ 3`, `∑_{2^k ≤ x} log 2 ≤ log x`). -/
+/-- [H, §6.1]: `|S_{0,2}| ≤ 3 log x` (crude: `η₂ ≤ 3`, `∑_{2^k ≤ x} log 2 ≤ log x`). -/
 theorem norm_S0two_le (α : ℝ) {x : ℝ} (hx : 1 ≤ x) : ‖S0two α x‖ ≤ 3 * Real.log x := by
   set N := ⌊x⌋₊
   have hN : 1 ≤ N := Nat.le_floor (by exact_mod_cast hx)
@@ -61,7 +61,7 @@ theorem norm_S0two_le (α : ℝ) {x : ℝ} (hx : 1 ≤ x) : ‖S0two α x‖ ≤
   simp only [pow_one, Nat.cast_ofNat] at h2
   linarith
 
-/-- [B, (3.11)] in norm: `|S_{η₂}| ≤ |S_{I,1}| + |S_{I,2}| + |S_{II}| + 3 log x` for `V ≤ x/4`. -/
+/-- [H, (3.11)] in norm: `|S_{η₂}| ≤ |S_{I,1}| + |S_{I,2}| + |S_{II}| + 3 log x` for `V ≤ x/4`. -/
 theorem norm_S_le_parts (α : ℝ) {x : ℝ} (hx : 1 ≤ x) (U V : ℕ) (hV : (V : ℝ) ≤ x / 4) :
     ‖S eta2 x α‖ ≤ ‖typeILog α x U‖ + ‖typeI2 α x U V‖ + ‖typeII α x U V‖ + 3 * Real.log x := by
   rw [decomposition α (by linarith) U V, S0inf_eq_zero α (by linarith) hV, add_zero]

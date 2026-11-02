@@ -3,7 +3,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
 /-!
-# The "bridge" case of [B, §6.3.2]
+# The "bridge" case of [H, §6.3.2]
 
 Case (c) of `second_case_split`: the new approximation `a'/q'` has `q' ≤ y`, `|δ'| ≤ 8y/q'`, so it
 is an approximation for `Q = (3/4)x^{2/3}`, and `δ₀'q' ∈ [2y(1 - y/Q), 2y]`. The first case of

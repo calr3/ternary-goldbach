@@ -8,7 +8,7 @@ import TernaryGoldbach.Helfgott.SupNorms
 `h_H(t) = ∫_0^2 h(u) F_H(t/u) du/u`; integrate by parts against `Γ(u) = -G_H(log(t/u))`, where
 `G_H(z) = ∫_0^z sin(Hv)/(πv) dv` satisfies `|G_H| ≤ 3/π` (a second integration by parts beyond
 `1/H`), and use that `h` has total variation `2h(1) = 2e^{1/2}`.  Hence `|h₂₀₀| ≤ 3.15`,
-`|η₊| ≤ 1.94` and `t|η₊(t)| ≤ 2.32` ([B, (14.3), (14.24)] have `1.079955` and `1.19073`, from the
+`|η₊| ≤ 1.94` and `t|η₊(t)| ≤ 2.32` ([H, (14.3), (14.24)] have `1.079955` and `1.19073`, from the
 finer analysis of Appendix A; ours suffice for (14.28) as used here).
 -/
 
@@ -428,7 +428,7 @@ theorem abs_hH200_le {t : ℝ} (ht : 0 ≤ t) : |hH 200 t| ≤ 3.15 := by
     rw [div_mul_eq_mul_div, div_le_iff₀ (by linarith)]; nlinarith
   linarith
 
-/-- `|η₊(t)| ≤ 1.94` for `t ≥ 0` (cf. [B, (14.3)]: `1.079955`). -/
+/-- `|η₊(t)| ≤ 1.94` for `t ≥ 0` (cf. [H, (14.3)]: `1.079955`). -/
 theorem abs_etaPlus_le_A {t : ℝ} (ht : 0 ≤ t) : |etaPlus t| ≤ 1.94 := by
   unfold etaPlus
   rw [abs_mul, abs_mul, abs_of_nonneg ht, abs_of_pos (Real.exp_pos _)]
@@ -441,7 +441,7 @@ theorem abs_etaPlus_le_A {t : ℝ} (ht : 0 ≤ t) : |etaPlus t| ≤ 1.94 := by
     _ ≤ 3.15 * (1 / 1.625) := mul_le_mul h1 h2 h3 (by norm_num)
     _ ≤ 1.94 := by norm_num
 
-/-- `t |η₊(t)| ≤ 2.32` for `t ≥ 0` (cf. [B, (14.24)]: `1.19073`). -/
+/-- `t |η₊(t)| ≤ 2.32` for `t ≥ 0` (cf. [H, (14.24)]: `1.19073`). -/
 theorem mul_abs_etaPlus_le_B {t : ℝ} (ht : 0 ≤ t) : t * |etaPlus t| ≤ 2.32 := by
   unfold etaPlus
   rw [abs_mul, abs_mul, abs_of_nonneg ht, abs_of_pos (Real.exp_pos _)]

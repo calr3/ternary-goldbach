@@ -1,10 +1,10 @@
 import TernaryGoldbach.MinorArcs.FirstChoice
 
 /-!
-# [B, (6.49)]: the first choice of parameters
+# [H, (6.49)]: the first choice of parameters
 
 With `T = x^{1/3}`, `t = δ₀q ∈ [2, T/3]`: `U = ⌊T²/(9√t)⌋`, `V = ⌊9T/2⌋`, `Q = 3T²/4`
-(so `UV ≈ x/(2√t)`, [B]'s `κ = 1/2`).
+(so `UV ≈ x/(2√t)`, [H]'s `κ = 1/2`).
 -/
 
 open Real
@@ -14,10 +14,10 @@ namespace TernaryGoldbach.MinorArcs
 /-- `δ₀ = max(2, |δ|/4)`. -/
 noncomputable def delta0 (δ : ℝ) : ℝ := max 2 (|δ| / 4)
 
-/-- `U = ⌊T²/(9√t)⌋` [B, (6.49)] (rounded down). -/
+/-- `U = ⌊T²/(9√t)⌋` [H, (6.49)] (rounded down). -/
 noncomputable def U1 (T t : ℝ) : ℕ := ⌊T ^ 2 / (9 * √t)⌋₊
 
-/-- `V = ⌊9T/2⌋` [B, (6.49)] (rounded down). -/
+/-- `V = ⌊9T/2⌋` [H, (6.49)] (rounded down). -/
 noncomputable def V1 (T : ℝ) : ℕ := ⌊9 * T / 2⌋₊
 
 section

@@ -3,13 +3,13 @@ import TernaryGoldbach.MinorArcs.Plancherel
 import TernaryGoldbach.MinorArcs.LSQuot6
 
 /-!
-# Proof of [B, Prop. 12.1.2] and [B, Cor. 12.2.5]
+# Proof of [H, Prop. 12.1.2] and [H, Cor. 12.2.5]
 
 `prop_12_1_2`: for `aₙ` supported on primes `> √x` (in `ℓ¹`), `δ₀ ≥ 2`, `Q₀ ≥ 1`,
 `δ₀Q₀² ≤ x/2`, `Q = √(x/2δ₀)`, and `C` with `G_q(2Q₀/sq) ≤ C G_q(2Q/sq)` for even `q ≤ 2Q₀`,
 `1 ≤ s ≤ 2Q₀/q`:  `∫_{𝔐_{δ₀,Q₀}} |S|² ≤ C Σ |aₙ|²`.
 
-Proof ([B, §12.1], [Bom74, Thm. 7A]):
+Proof ([H, §12.1], [Bom74, Thm. 7A]):
 1. `∫_{(0,1] ∩ 𝔐_{Q₀}} |S|² ≤ ∫_ℝ F_{Q₀}` (`integral_majorArcs_le`), where
    `F_R(β) = Σ_{q̃ ≤ 2R, |β| < w_q(R)} Σ_{b mod q}^* |S(b/q + β)|²`;
 2. `∫_ℝ F_Q ≤ ∫_0^1 |S|² = Σ |aₙ|²` (`sum_arcs_le_integral`, Plancherel);
@@ -18,8 +18,8 @@ Proof ([B, §12.1], [Bom74, Thm. 7A]):
    `F_R(β)`, with `m_R(β)` the largest `n ≤ 2R` with `n|β|x < δ₀R`; then use `hC` with
    `s = 2Q₀/m_{Q₀}(β)` and `⌊m_{Q₀} Q/Q₀⌋ ≤ m_Q`.
 
-**Change from [B]:** we assume `δ₀ ≥ 2` (not `δ₀ ≥ 1`): the proof needs every prime `n > √x` to be
-coprime to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`.  [B] applies the result with
+**Change from [H]:** we assume `δ₀ ≥ 2` (not `δ₀ ≥ 1`): the proof needs every prime `n > √x` to be
+coprime to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`.  [H] applies the result with
 `δ₀ = 8`.
 -/
 
@@ -288,7 +288,7 @@ theorem sum_arcs_eq_integral_Farc {a : ℕ → ℂ} (ha : Summable fun n => ‖a
 
 /-! ## The proposition -/
 
-/-- **[B, Prop. 12.1.2]** (with `δ₀ ≥ 2`, see the module docstring).  Let `aₙ` be supported on
+/-- **[H, Prop. 12.1.2]** (with `δ₀ ≥ 2`, see the module docstring).  Let `aₙ` be supported on
 primes `> √x`, in `ℓ¹`; `δ₀ ≥ 2`, `Q₀ ≥ 1`, `δ₀Q₀² ≤ x/2`, `Q = √(x/2δ₀)`.  If
 `G_q(2Q₀/sq) ≤ C G_q(2Q/sq)` for every even `q ≤ 2Q₀` and `1 ≤ s ≤ 2Q₀/q`, then
 `∫_{𝔐_{δ₀,Q₀}} |S(α)|² dα ≤ C Σ |aₙ|²`. -/
@@ -371,7 +371,7 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
         mul_le_mul_of_nonneg_left (sum_arcs_le_integral hg hper hg0 hx0 hδ0 hQ0 hδQ2.le hδQ) hC0
     _ = C * ∑' n, ‖a n‖ ^ 2 := by rw [TernaryGoldbach.setIntegral_norm_sq_expTsum hsum]
 
-/-- **[B, Cor. 12.2.5, (12.42)]** (with `δ₀ ≥ 2`).  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 2`,
+/-- **[H, Cor. 12.2.5, (12.42)]** (with `δ₀ ≥ 2`).  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 2`,
 `(20000 Q₀)² ≤ x/2δ₀`, `Q = √(x/2δ₀)`, `2Q₀ ≤ (2Q)^{0.6}`.  Then
 `∫_{𝔐_{δ₀,Q₀}} |S|² ≤ (log 2Q₀ + 1.36)/(log 2Q + c_E) Σ|aₙ|²`. -/
 theorem cor_12_2_5 {x δ₀ Q₀ : ℝ} {a : ℕ → ℂ} (ha : PrimeSupported x a)

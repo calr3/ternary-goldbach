@@ -8,9 +8,9 @@ import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
 
 /-!
-# Explicit bounds on sums of `Λ` and `μ` [B, §2.5]
+# Explicit bounds on sums of `Λ` and `μ` [H, §2.5]
 
-[B] quotes these from the literature (with some supplementary computations).
+[H] quotes these from the literature (with some supplementary computations).
 
 * The bounds on `ψ` and `θ` used here — (2.12)–(2.15), (2.17), (2.19), (5.5) — are **proved** from
   the explicit prime number theorem `theta_explicit` (`Prelim/ThetaExplicit.lean`:
@@ -287,7 +287,7 @@ theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (6000000 ≤ n → psi
 
 /-! ### (2.14), (2.15) -/
 
-/-- **[B, (2.14)]**, for `y ≥ 6·10⁶` ([B] states it for `y ≥ 2·10⁶`; we use it only for
+/-- **[H, (2.14)]**, for `y ≥ 6·10⁶` ([H] states it for `y ≥ 2·10⁶`; we use it only for
 `y ≥ 2.7·10⁷`): `∑_{n ≤ y} Λ(n) ≤ 1.0004 y`.  Proved from Büthe's bound and `theta_explicit`
 (`psi_bounds`). -/
 theorem sum_vonMangoldt_le_10004 {y : ℝ} (hy : 6e6 ≤ y) :
@@ -297,7 +297,7 @@ theorem sum_vonMangoldt_le_10004 {y : ℝ} (hy : 6e6 ≤ y) :
   have hy' : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le (by linarith)
   unfold psiN at h; linarith
 
-/-- **[B, (2.15)]** ([RS62, Thm. 12]): `ψ(y) = ∑_{n ≤ y} Λ(n) < 1.03883 y` for `y > 0`.
+/-- **[H, (2.15)]** ([RS62, Thm. 12]): `ψ(y) = ∑_{n ≤ y} Λ(n) < 1.03883 y` for `y > 0`.
 Proved from (2.14) and `psi_lt_small'`. -/
 theorem sum_vonMangoldt_lt {y : ℝ} (hy : 0 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) < 1.03883 * y := by
@@ -381,7 +381,7 @@ theorem sum_inv_le_log {a b : ℕ} (ha : 1 ≤ a) (hab : a ≤ b) :
     · have : a = b + 1 := by omega
       subst this; simp
 
-/-- **[B, (2.12)]** for integer `N ≥ 30`. -/
+/-- **[H, (2.12)]** for integer `N ≥ 30`. -/
 theorem sum_vonMangoldt_div_le_log_large {N : ℕ} (hN : 30 ≤ N) :
     ∑ n ∈ Icc 1 N, (Λ n : ℝ) / n ≤ Real.log N := by
   have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
@@ -490,7 +490,7 @@ theorem sum_vonMangoldt_div_le_log_large {N : ℕ} (hN : 30 ≤ N) :
   rw [← hmain] at hfin
   exact le_of_mul_le_mul_left (by linarith) hN0
 
-/-- **[B, (2.12)]** ([RS62, (3.23)]): `∑_{n ≤ x} Λ(n)/n ≤ log x` for `x ≥ 1`.
+/-- **[H, (2.12)]** ([RS62, (3.23)]): `∑_{n ≤ x} Λ(n)/n ≤ log x` for `x ≥ 1`.
 Proved from (2.15) (Chebyshev's identity `∑ Λ(n)⌊N/n⌋ = log N!` and summation by parts) and the
 finite check `mertens_small`. -/
 theorem sum_vonMangoldt_div_le_log {x : ℝ} (hx : 1 ≤ x) :
@@ -712,7 +712,7 @@ theorem nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 10 ^ 12) :
   · exact TernaryGoldbach.Prelim.SmallNP.nonprime_small_kernel n h1 h6
   · exact nonprime_mid h6.le h
 
-/-- **[B, (5.5)]** ([RS62, Thm. 13]): `ψ(y) − θ(y) = ∑_{n ≤ y, n not prime} Λ(n) < 1.4262 √y`
+/-- **[H, (5.5)]** ([RS62, Thm. 13]): `ψ(y) − θ(y) = ∑_{n ≤ y, n not prime} Λ(n) < 1.4262 √y`
 for `y > 0`. Proved from (2.15) (`ψ − θ ≤ ψ(√y) + y^{1/3} log y`) for `y > 10¹²` and
 `nonprime_small` below. -/
 theorem sum_vonMangoldt_nonprime_lt {y : ℝ} (hy : 0 < y) :
@@ -893,7 +893,7 @@ theorem abel_term_ge {n : ℕ} (hn : 12 ≤ n) :
     rw [sub_mul, sub_mul, sub_mul, mul_assoc, e1, e2, e3, e4]
   linarith
 
-/-- **[B, (2.13)]** for integers: `∑_{n ≤ N} Λ(n)/n ≥ log(N+1) − log(3/√2)`, `N ≥ 1`. -/
+/-- **[H, (2.13)]** for integers: `∑_{n ≤ N} Λ(n)/n ≥ log(N+1) − log(3/√2)`, `N ≥ 1`. -/
 theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
     Real.log (N + 1) - Real.log (3 / √2) ≤ ∑ n ∈ Icc 1 N, (Λ n : ℝ) / n := by
   have hlog32 : Real.log (3 / √2) = Real.log 3 - Real.log 2 / 2 := by
@@ -986,7 +986,7 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
   have hcast : ((N : ℕ) : ℝ) + 1 = (N : ℝ) + 1 := rfl
   linarith
 
-/-- **[B, (2.13)]**: `∑_{n ≤ x} Λ(n)/n ≥ log x − log(3/√2)` for `x ≥ 1`. -/
+/-- **[H, (2.13)]**: `∑_{n ≤ x} Λ(n)/n ≥ log x − log(3/√2)` for `x ≥ 1`. -/
 theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
     Real.log x - Real.log (3 / √2) ≤ ∑ n ∈ Icc 1 ⌊x⌋₊, (Λ n : ℝ) / n := by
   have hN : 1 ≤ ⌊x⌋₊ := Nat.le_floor (by exact_mod_cast hx)
@@ -997,7 +997,7 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 
 /-! ### (2.16)–(2.18) -/
 
-/- [B, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). -/
+/- [H, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). -/
 
 /-- `ψ(m) ≥ (1 − 1/12000) m − 0.95 √m − 11` for all `m`. -/
 theorem psi_lower_all (m : ℕ) :
@@ -1043,7 +1043,7 @@ theorem psi_upper_all {N : ℕ} (hN : 11 ≤ N) :
     have he := mul_le_mul_of_nonneg_right (epl_le N) hN0
     nlinarith
 
-/-- **[B, (2.17)]**, `N ≥ 10⁸`. -/
+/-- **[H, (2.17)]**, `N ≥ 10⁸`. -/
 theorem psi_mul_large {N : ℕ} (hN : 10 ^ 8 ≤ N) :
     ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.0008 * (N : ℝ) ^ 2 / 2 := by
   have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
@@ -1088,7 +1088,7 @@ theorem psi_lower_buthe {m : ℕ} (hm : m ≤ 10 ^ 19) :
   · have := (abs_le.1 (buthe_psi m h hm)).1
     unfold psiN; linarith
 
-/-- **[B, (2.17)]** for `2.5·10⁷ ≤ N ≤ 10¹⁹`, from Büthe's bound by partial summation. -/
+/-- **[H, (2.17)]** for `2.5·10⁷ ≤ N ≤ 10¹⁹`, from Büthe's bound by partial summation. -/
 theorem psi_mul_buthe {N : ℕ} (hN : 25000000 ≤ N) (hN19 : N ≤ 10 ^ 19) :
     ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.0008 * (N : ℝ) ^ 2 / 2 := by
   have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
@@ -1130,7 +1130,7 @@ theorem psi_mul_buthe {N : ℕ} (hN : 25000000 ≤ N) (hN19 : N ≤ 10 ^ 19) :
     nlinarith
   nlinarith
 
-/-- **[B, (2.17)]**, for `y ≥ 2.5·10⁷` ([B] states it for `y > 1.6·10⁶`; we use it only for
+/-- **[H, (2.17)]**, for `y ≥ 2.5·10⁷` ([H] states it for `y > 1.6·10⁶`; we use it only for
 `y ≥ 2.7·10⁷`): `∑_{n ≤ y} Λ(n) n < 1.0008 y²/2`. From Büthe's bound up to `10⁸` and
 `theta_explicit` above. -/
 theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
@@ -1145,7 +1145,7 @@ theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
   · exact (psi_mul_buthe hN (h.trans (by norm_num))).trans_le hmono
   · exact (psi_mul_large h.le).trans_le hmono
 
-/- [B, (2.18)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.14) by summation by parts and finite
+/- [H, (2.18)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.14) by summation by parts and finite
 checks). -/
 
 /-! ### (2.19) -/
@@ -1178,7 +1178,7 @@ theorem sum_logsq_le_mul (a b : ℕ) :
   nlinarith
 
 set_option maxHeartbeats 800000 in
-/-- **[B, (2.19)]** for integers `N > 10⁶`. -/
+/-- **[H, (2.19)]** for integers `N > 10⁶`. -/
 theorem logsq_large {N : ℕ} (hN : 10 ^ 6 < N) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
   set a := N / 2 with ha
@@ -1393,7 +1393,7 @@ theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 *
   rw [hs, div_le_div_iff₀ hsN (by norm_num)] at hanti
   nlinarith
 
-/-- **[B, (2.19)] for `40000 ≤ N ≤ 10⁶`**, by Abel summation from [Büthe] and `nonprime_small`. -/
+/-- **[H, (2.19)] for `40000 ≤ N ≤ 10⁶`**, by Abel summation from [Büthe] and `nonprime_small`. -/
 theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 6) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
   set a := N / 2 with ha
@@ -1498,7 +1498,7 @@ theorem logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 6) :
   · exact TernaryGoldbach.Prelim.SmallLS.logsq_kernel n h1 h
   · exact logsq_mid h h2
 
-/-- **[B, (2.19)]** ([RS75, Cor. 2] for `y ≥ 2·758699`, a computation for `117 ≤ y < 2·758699`):
+/-- **[H, (2.19)]** ([RS75, Cor. 2] for `y ≥ 2·758699`, a computation for `117 ≤ y < 2·758699`):
 `∑_{y/2 < p ≤ y} (log p)² ≤ (1/2) y log y` for `y ≥ 117`. -/
 theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
     ∑ p ∈ (Ioc ⌊y / 2⌋₊ ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * y * Real.log y := by
@@ -1524,14 +1524,14 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 
 /-! ### Sums of `μ` (trusted) -/
 
-/- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
+/- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
 axiom `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for the same range. -/
 
-/- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
+/- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
 (Acta Arith. 165 (2014)) from the `q = 1` bound of `Prelim/MoebiusBound.lean`. -/
 
-/- [B, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 10¹⁰` in
+/- [H, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 10¹⁰` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`) from our own sieve. -/
 
 end TernaryGoldbach.Prelim

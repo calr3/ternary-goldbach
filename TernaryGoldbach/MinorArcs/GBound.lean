@@ -2,15 +2,15 @@ import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.EtaStarBound
 
 /-!
-# Theorem 3.1.1 as a function of `r = max(1, |δ|/8) q` [B, (11.11)–(11.13)]
+# Theorem 3.1.1 as a function of `r = max(1, |δ|/8) q` [H, (11.11)–(11.13)]
 
-[B, §11.2] restates the first case of Theorem 3.1.1 as `|S_{η₂}(α, x)| ≤ g_x(r) x` with
+[H, §11.2] restates the first case of Theorem 3.1.1 as `|S_{η₂}(α, x)| ≤ g_x(r) x` with
 `r = max(1, |δ|/8) q` (so `δ₀q = 2r`), bounding `q/φ(q)` by `Ϝ(r)` (Lemma C.2.2, trusted):
 
 `g_x(r) = ((R_{x,2r} log 2r + 0.8764) √Ϝ(r) + 2.5)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
 `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55`.
 
-The constants `0.8764`, `3.8` are those of our corrected Theorem 3.1.1 ([B]: `0.5`, `3.36`).
+The constants `0.8764`, `3.8` are those of our corrected Theorem 3.1.1 ([H]: `0.5`, `3.36`).
 
 Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
@@ -21,15 +21,15 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-/-- `Ϝ(r) = e^γ log log r + 2.50637 / log log r` [B, Lemma C.2.2]. -/
+/-- `Ϝ(r) = e^γ log log r + 2.50637 / log log r` [H, Lemma C.2.2]. -/
 noncomputable def Fr (r : ℝ) : ℝ :=
   rexp eulerMascheroniConstant * Real.log (Real.log r) + 2.50637 / Real.log (Real.log r)
 
-/-- `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55` [B, (11.13)]. -/
+/-- `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55` [H, (11.13)]. -/
 noncomputable def Lg (t : ℝ) : ℝ :=
   Fr (t / 2) * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
-/-- `g_x(r)` [B, (11.12)], with our constants `0.8764` and `3.8`. -/
+/-- `g_x(r)` [H, (11.12)], with our constants `0.8764` and `3.8`. -/
 noncomputable def gx (x r : ℝ) : ℝ :=
   ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √(Fr r) + 2.5) / √(2 * r) + Lg (2 * r) / r +
     3.8 * x ^ (-1 / 6 : ℝ)
@@ -47,7 +47,7 @@ theorem R_nonneg {x t : ℝ} (ht1 : 1 ≤ t) (ht : t ≤ x ^ (1 / 3 : ℝ) / 3) 
       linarith)
   linarith
 
-/-- **[B, (11.11)]** (first case of Theorem 3.1.1, in terms of `r = max(1, |δ|/8) q`). -/
+/-- **[H, (11.11)]** (first case of Theorem 3.1.1, in terms of `r = max(1, |δ|/8) q`). -/
 theorem norm_S_eta2_le_gx {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ x)
     (h : Approx2 α x δ a q (3 / 4 * x ^ (2 / 3 : ℝ))) (hq : (q : ℝ) ≤ x ^ (1 / 3 : ℝ) / 6)
     (hr3 : 3 ≤ max 1 (|δ| / 8) * q) :

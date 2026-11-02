@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Periodize
 import TernaryGoldbach.MinorArcs.LargeSieveWeights
 
 /-!
-# Major arcs as sums over arcs [B, Props. 12.1.1, 12.1.2]
+# Major arcs as sums over arcs [H, Props. 12.1.1, 12.1.2]
 
 Uniform description of `𝔐_{δ₀,R}` ((10.5), `majorArcs δ₀ R x`): `q ≥ 1` contributes iff
 `q̃ ≤ 2R` (`q̃ = q` for even `q`, `2q` for odd `q`), with radius `w_q = δ₀R/(q̃x)` around `a/q`,

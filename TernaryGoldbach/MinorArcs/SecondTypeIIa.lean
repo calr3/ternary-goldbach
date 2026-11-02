@@ -6,7 +6,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 /-!
 # Type II for `q > y` at the second parameters: reduction to functions of `L = log T`
 
-Case (a1) of [B, §6.3.2]: `T/6 < q`, `16q ≤ x/U` (our `θ = 8`), via `typeII_638`. With
+Case (a1) of [H, §6.3.2]: `T/6 < q`, `16q ≤ x/U` (our `θ = 8`), via `typeII_638`. With
 `u = 6q/T ≥ 1`, `ℓ = log u`, every term is bounded by its value at `u = 1` (up to a factor
 `1.03` in one place) times `T^{5/2}`:
 `|S_{II}| ≤ (√(12 F₀ X₀ B₀) + SEC(L)) T^{5/2}` (`typeII_a1`), where

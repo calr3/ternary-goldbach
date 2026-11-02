@@ -1,7 +1,7 @@
 import Mathlib
 
 /-!
-# Combining ℓ² bounds over arcs with ℓ∞ bounds [B, Lemma 13.1.1, Prop. 13.1.2]
+# Combining ℓ² bounds over arcs with ℓ∞ bounds [H, Lemma 13.1.1, Prop. 13.1.2]
 
 Abstract form, over any measure space.  `u = |S₁|²`, `v = |S₂|`, `M n` a non-decreasing family of
 measurable sets ("the major arcs `𝔐_{δ₀,n}`"), `v ≤ g n` off `M n`, `∫_{M(n+1)} u ≤ H n`.  Then
@@ -9,9 +9,9 @@ measurable sets ("the major arcs `𝔐_{δ₀,n}`"), `v ≤ g n` off `M n`, `∫
 
 `∫_{(M r₀)ᶜ} u v ≤ g(r₀)(H(r₀) − I₀) + Σ_{r₀ < n ≤ r₁} g(n)(H(n) − H(n−1))`, `I₀ = ∫_{M r₀} u`,
 
-the discrete form of [B, (13.6)] (`∫ g H'` becomes `Σ g(n)(H(n) − H(n−1))`, which is at most
+the discrete form of [H, (13.6)] (`∫ g H'` becomes `Σ g(n)(H(n) − H(n−1))`, which is at most
 `∫_{r₀}^{r₁} g H'` for non-increasing `g` and non-decreasing `H`).  The levels are integers, as in
-[B]'s proof.  The discrete Abel summation step is `abel_le` (the core of Lemma 13.1.1).
+[H]'s proof.  The discrete Abel summation step is `abel_le` (the core of Lemma 13.1.1).
 
 Proved, with no `sorry`.
 -/
@@ -85,7 +85,7 @@ theorem layer_le {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable (fu
         g k * ∫ ω in M (k + 1) \ M k, u ω ∂μ := by rw [e2]; ring
     linarith
 
-/-- **[B, Prop. 13.1.2]**, discrete form (see the module docstring). -/
+/-- **[H, Prop. 13.1.2]**, discrete form (see the module docstring). -/
 theorem prop_13_1_2 {u v : Ω → ℝ} (hu : Integrable u μ) (huv : Integrable (fun ω => u ω * v ω) μ)
     (hu0 : ∀ ω, 0 ≤ u ω) {M : ℕ → Set Ω} (hM : ∀ n, MeasurableSet (M n)) (hmono : Monotone M)
     {g H : ℕ → ℝ} {r₀ r₁ : ℕ} (h01 : r₀ ≤ r₁)

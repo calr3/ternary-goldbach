@@ -1,17 +1,17 @@
 # Blueprint: from Helfgott's book to Lean
 
 Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), 327 pp.
-This is the book version, and it supersedes the three papers. References `[B, …]` are to it.
+This is the book version, and it supersedes the three papers. References `[H, …]` are to it.
 
-This is a chapter-level map from [B] to the Lean files. There is no `sorry`. `ternary_goldbach`
-depends on 28 axioms, which are listed and audited in `AXIOMS.md`. [B, (5.36)] is used in corrected
-form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status is in the README.
+This is a chapter-level map from [H] to the Lean files. There is no `sorry`. `ternary_goldbach`
+depends on 28 axioms, which are listed and audited in `AXIOMS.md`. [H, (5.36)] is used in corrected
+form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status is in the README.
 
-## Top level ([B, §14.4]) — done
+## Top level ([H, §14.4]) — done
 
-`ternary_goldbach` follows [B, §14.4] and is proved in Lean from:
+`ternary_goldbach` follows [H, §14.4] and is proved in Lean from:
 
-| [B] | Lean | Status |
+| [H] | Lean | Status |
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
 | (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses numerical axioms) |
@@ -56,9 +56,9 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │        MinorArcs/TypeIIReduction.lean; §6.2: S_I1 ✅ TypeITotal, S_I2 (qV ≤ Q) ✅ TypeI2Sum/Large,
      │        S_II (6.37), (6.40) ✅ TypeIITotal(Gen); (6.38), (6.39), (6.41) ✅ TypeIILarge;
      │        §6.3.1 + §6.4 ✅ FirstChoice*: Thm 3.1.1 for q ≤ x^{1/3}/6 (corrected constants);
-     │        §6.3.2 ✅ Second*: Thm 3.1.1 for q > x^{1/3}/6 ([B]'s constants; corrected case split)]
+     │        §6.3.2 ✅ Second*: Thm 3.1.1 for q > x^{1/3}/6 ([H]'s constants; corrected case split)]
      │   ⇒ Thm 3.1.1 ✅ PointwiseBound `theorem_3_1_1` (modulo the trusted inputs)
-     ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [B]'s proof ignores δ_w = wδ, statement
+     ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [H]'s proof ignores δ_w = wδ, statement
      │   survives for r ≤ r₁, see NOTES and scripts/prop_11_2_3_check.py)
      │   [(11.9) ✅ MinorArcs/EtaStar.lean; Thm 3.1.1 at scale wy ✅ MinorArcs/EtaStarBound.lean;
      │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean;
@@ -108,8 +108,8 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
 
 1. [OeSHP14] binary Goldbach up to `4·10¹⁸` (we use `2.2·10¹⁷`, inside their double-checked `3·10¹⁷`).
 2. ~~[HP13] the prime ladder up to `8.875694·10³⁰`~~: replaced by the bounds for `θ` (`Helfgott/SmallCases.lean`).
-3. Platt's GRH verification [B, §9.6].
-4. The "rigorous computations" (interval arithmetic, [B, §2.6]) used inside proofs. These
+3. Platt's GRH verification [H, §9.6].
+4. The "rigorous computations" (interval arithmetic, [H, §2.6]) used inside proofs. These
    still need to be catalogued while we formalize the chapters. Each will be either
    formalized or stated as a small trusted fact.
 

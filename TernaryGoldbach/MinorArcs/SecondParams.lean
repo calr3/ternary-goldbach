@@ -1,10 +1,10 @@
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
 /-!
-# The second choice of parameters [B, (6.65)], modified
+# The second choice of parameters [H, (6.65)], modified
 
-With `T = x^{1/3} ≥ 6·10⁶`: `U = ⌊1225 T⌋` ([B]: `500√6 T = 1224.74… T`), `V = ⌊T/3⌋`, and the
-re-approximation parameter `Q₀ = T²/349 ≥ 3.5 x/U` ([B]: `Q = x/U`; see `NOTES.md`).
+With `T = x^{1/3} ≥ 6·10⁶`: `U = ⌊1225 T⌋` ([H]: `500√6 T = 1224.74… T`), `V = ⌊T/3⌋`, and the
+re-approximation parameter `Q₀ = T²/349 ≥ 3.5 x/U` ([H]: `Q = x/U`; see `NOTES.md`).
 -/
 
 open Real

@@ -9,15 +9,15 @@ import TernaryGoldbach.MajorArcs.MajorTotal
 /-!
 # The top-level inputs
 
-The four analytic inputs of [B, §14.4] (circle identity, major arcs (14.27), minor arcs (14.49),
+The four analytic inputs of [H, §14.4] (circle identity, major arcs (14.27), minor arcs (14.49),
 non-prime terms (14.51)) are proved here from the rest of the development.  The computational
 input for the small cases, `binary_goldbach_input` [OeSHP14], is a numerical axiom; the small
 cases themselves are in `SmallCases.lean`.  All numerical axioms are listed and audited in `AXIOMS.md`.
 
-[B]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
-       version, which supersedes [H], [Hela], [Helb].  **This is the reference the blueprint
+[H]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
+       version, which supersedes [H13], [Hela], [Helb].  **This is the reference the blueprint
        follows**; equation numbers below are the book's.
-[H]    H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748.
+[H13]  H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748.
 [Hela] H. A. Helfgott, *Major arcs for Goldbach's problem*, arXiv:1305.2897.
 [Helb] H. A. Helfgott, *Minor arcs for Goldbach's problem*, arXiv:1205.5252.
 [HP]   H. A. Helfgott, D. Platt, *Numerical verification of the ternary Goldbach conjecture
@@ -32,7 +32,7 @@ namespace TernaryGoldbach.Helfgott
 
 /-! ## Analytic inputs (for odd `N ≥ 10²⁷`, with `x = xOf N`) -/
 
-/-- **Circle method identity** [B, (10.3), (14.50)].  The sums `S_{η₊}`, `S_{η_*}` converge
+/-- **Circle method identity** [H, (10.3), (14.50)].  The sums `S_{η₊}`, `S_{η_*}` converge
 absolutely because `η₊` and `η_*` decay rapidly (`TernaryGoldbach.Helfgott.Decay`), and the
 integral over `[0, 1]` picks out the representations of `N` (`circle_identity_tsum`).
 
@@ -66,10 +66,10 @@ theorem xOf_ge (N : ℕ) (hN27 : 10 ^ 27 ≤ N) : (4.9e26 : ℝ) ≤ xOf N := by
   rw [le_div_iff₀ h0]
   nlinarith
 
-/-- **Major arcs** [B, (14.27)], with `1.049` in place of [B]'s `1.058259`:
+/-- **Major arcs** [H, (14.27)], with `1.049` in place of [H]'s `1.058259`:
 `Re ∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.049 x²/κ` with `r₀ = 150000`.
 
-*Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [B, §§14.1–14.2]. On the
+*Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [H, §§14.1–14.2]. On the
 arcs of modulus `q` the sums are compared with `μ(q)/φ(q) η̂(−βx)x` by Cor 7.1.3 and Prop 7.1.5
 (the cited Part II inputs in `MinorArcs/PartIICited.lean`); the singular series is bounded below
 with the Mertens axiom; and `C_{η◦,η_*}(N/x)` is computed. -/
@@ -90,31 +90,31 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     ring
   exact MajorArcs.major_total hN hx hNx
 
-/-- **Minor arcs** [B, (14.49)]:
+/-- **Minor arcs** [H, (14.49)]:
 `∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
-(true for `x = xOf N` when `N ≥ 10²⁷`, [B, (14.15)]).
+(true for `x = xOf N` when `N ≥ 10²⁷`, [H, (14.15)]).
 
-*Proved* (`MinorArcs/MinorTotal.lean: minor_total`) by "repair 3" of [B, Thm 13.2.1] (NOTES, "Ch. 13:
-scale erratum"): [B]'s proof derives its ℓ∞ input only off the arcs at scale `x/κ`; we run
+*Proved* (`MinorArcs/MinorTotal.lean: minor_total`) by "repair 3" of [H, Thm 13.2.1] (NOTES, "Ch. 13:
+scale erratum"): [H]'s proof derives its ℓ∞ input only off the arcs at scale `x/κ`; we run
 Prop 13.1.2 with the arcs at scale `x/κ` above the base level, take a fresh Dirichlet
 approximation at each scale in (11.9), extend the levels to `≈ x^{0.3}`, and bound the base gap
-with [B, Cor 7.1.3]. It depends on the trusted inputs of Theorem 3.1.1, the trusted computation
+with [H, Cor 7.1.3]. It depends on the trusted inputs of Theorem 3.1.1, the trusted computation
 Prop 12.2.4, the cited Part II results `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`
 (`MinorArcs/PartIICited.lean`). The numerics (`numerics_M`) are proved: generated cells for
 `x ≤ 4.9·10¹⁰¹` (`scripts/gen_cells.py`) and an analytic argument beyond.
 
-(Our constant `1.0376` is weaker than [B]'s `1.00948`. [B]'s Theorem 3.1.1 has `0.5` where its
-proof gives `0.8102`; with the corrected [B, (5.36)] our Theorem 3.1.1 has `0.8764`.) -/
+(Our constant `1.0376` is weaker than [H]'s `1.00948`. [H]'s Theorem 3.1.1 has `0.5` where its
+proof gives `0.8102`; with the corrected [H, (5.36)] our Theorem 3.1.1 has `0.8764`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
         ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by
   have hx := xOf_ge N hN27
   exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
 
-/-- **Non-prime and even terms**, a weaker form of [B, (14.51)]: the terms where some `nᵢ` is
+/-- **Non-prime and even terms**, a weaker form of [H, (14.51)]: the terms where some `nᵢ` is
 even or not prime contribute at most `6.7 · 10⁶ · N^{3/2} log N`.
 
-[B] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
+[H] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
 `|η_*|_∞ ≤ 1.414` and the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x`,
 `ψ(x) - θ(x) < 1.4262 √x`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
 (`Helfgott/SupNorms.lean`) and the elementary `ψ(N) ≤ 1.387 N`, `ψ(N) - θ(N) ≤ 1.6 √N`
