@@ -22,7 +22,7 @@ erratum"). We state them as [B] does.
   we state `(8.7098 + O*(0.0802)) x` (same lower end `8.6296 x`; our Thm 7.1.4 constants are weaker)
   for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.675 x … 8.786 x`)
   from [B, Thm 7.1.4] (Prop 9.4.2, proved, + Platt), Plancherel, the bound on `‖η₊ − η◦‖₂` and the numerical
-  axioms `integral_etaPlus_sq_log` ((9.94)) and `sum_odd_mu_sq_div_totient` (`Σ μ²/φ = 6.798779…`).
+  results `integral_etaPlus_sq_log` ((9.94)) and `sum_odd_mu_sq_div_totient` (`Σ μ²/φ = 6.798779…`).
   [B] writes `0.0754`, but its term `5.19 δ₀ r ET (|η₊|₁ + ET/2)` evaluates to `0.075456` with (14.1),
   (14.3) ([B] prints `0.075272`); our proof splits the cross term differently and has a much smaller
   error, so the statement holds as given.

@@ -295,6 +295,9 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     (`Prelim/SmallLiouville.lean`, 4.7 min, 8.2 GB). 23 axioms (14 own).
   * Item 5: `lemma8_numeric` was removed: `lemma8_large` from `R ≥ 1000`, a weighted DFS lower bound
     for `6 ≤ R < 1000` (`Prelim/SmallW.lean`, 18 blocks), exact rationals for `R < 6`. 22 axioms (13 own).
+  * Item 6: `sum_odd_mu_sq_div_totient` was removed: trial division for `φ` and squarefreeness, a
+    kernel walk with 150 certified chunk states (`Prelim/SmallMuPhi.lean`, about 10 min, the slowest
+    file). A DFS over the 13847 primes would recurse too deeply in the kernel. 21 axioms (12 own).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

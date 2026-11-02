@@ -84,7 +84,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │   [§10.3 + §14.1, i.e. (14.7) ✅ MajorArcs/L2Major.lean `l2_major_bounds` (8.688x … 8.709x):
      │    arcs (ArcsEq), η◦ tail (EtaCirc), ‖η₊ − η◦‖₂ via h_H in log coordinates (HHFourier),
      │    ‖η₊‖₂ from (9.94) (EtaPlusL2), per-modulus characters + Thm 7.1.4 (ArcChars),
-     │    Σ_{q≤r odd} μ²/φ (numerical axiom, SumMuPhi); Plancherel for L¹∩L² (Prelim/PlancherelReal)]
+     │    Σ_{q≤r odd} μ²/φ (kernel check, SumMuPhi + Prelim/SmallMuPhi); Plancherel for L¹∩L² (Prelim/PlancherelReal)]
      ├─ Thm 7.1.1, Thm 7.1.2, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5   ← Part II
      │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 ✅
      │    (MajorArcs/Prop932.lean: q ≥ 2 from Explicit/ExplicitBound, q = 1 from Explicit/ZetaBound;

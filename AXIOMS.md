@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 22 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 21 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -82,7 +82,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (13)
+### Our own computations (12)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -110,7 +110,6 @@ contain the axiom.
 | `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`scripts/rigorous/t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
 | `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
 | `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`scripts/rigorous/p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | replaces [B]'s computation for Prop 12.2.4 (`q < 3.3·10⁹`, two weeks single-core) |
-| `MajorArcs.sum_odd_mu_sq_div_totient` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | `check_sum_mu2_phi.py` (directed rounding, 40 digits; rigorous) | `6.7987791731…` | |
 
 Cross-checks:
 * The rigorous values agree with the float scripts to the digits printed.
@@ -151,7 +150,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (13):** all are checked rigorously in `scripts/rigorous/` (interval
+* **Our own computations (12):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Two are also contained in
   published results: `mertens_product_small` [RS62, Thm 15] and `moebius_sqrt_small` [B, (2.24)].
 * **Published results (9):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
@@ -326,6 +325,12 @@ The Lean definitions that the axioms above refer to were compared with the book'
     below by a weighted depth-first search over subsets of primes (`Prelim/SmallW.lean`, kernel).
   * For `2 ≤ R < 6`: the two sums at `n = ⌊R⌋ ≤ 5` are exact rationals (margin `1.1·10⁻⁶` at `n = 4`,
     with `log 5 < 1.609437913` by `chkStep`).
+
+* `sum_odd_mu_sq_div_totient` (`6.798779 ≤ ∑_{q ≤ 150000 odd} μ²(q)/φ(q) ≤ 6.79878`, [B, §14.1]) is now
+  checked by the kernel (`Prelim/SmallMuPhi.lean`, about 10 min). Trial division (`phiTD`, proved
+  correct) decides squarefreeness and computes `φ(q)`; the kernel accumulates
+  `L = ∑ ⌊10¹⁸/φ(q)⌋` over odd squarefree `q`, certified every 1000 steps, and
+  `L ≤ 10¹⁸ S ≤ L + 150000` with `L = 6798779173123473292`.
 
 ## Candidates for proofs in Lean
 
