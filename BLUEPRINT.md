@@ -18,7 +18,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
-| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `2.8·10¹⁷` (`binary_goldbach_input`) and a prime in `(n − 2.8·10¹⁷, n − 4]` from the bounds for `θ` (`buthe_theta`, `psi_plateau`) instead of the ladder | ✅ proved (uses published axioms) |
+| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `2.2·10¹⁷` (`binary_goldbach_input`) and a prime in `(n − 2.2·10¹⁷, n − 4]` from the bounds for `θ` (`buthe_theta`, `psi_plateau`) instead of the ladder | ✅ proved (uses published axioms) |
 
 ## Minor arcs: (14.49) ⟸ Thm 13.2.1
 
@@ -106,7 +106,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
 
 ## Trusted computations (planned `axiom`s)
 
-1. [OeSHP14] binary Goldbach up to `4·10¹⁸` (we use `2.8·10¹⁷`, inside their double-checked `3·10¹⁷`).
+1. [OeSHP14] binary Goldbach up to `4·10¹⁸` (we use `2.2·10¹⁷`, inside their double-checked `3·10¹⁷`).
 2. ~~[HP13] the prime ladder up to `8.875694·10³⁰`~~: replaced by the bounds for `θ` (`Helfgott/SmallCases.lean`).
 3. Platt's GRH verification [B, §9.6].
 4. The "rigorous computations" (interval arithmetic, [B, §2.6]) used inside proofs. These

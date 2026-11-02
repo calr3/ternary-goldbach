@@ -4,12 +4,12 @@ import TernaryGoldbach.Prelim.ThetaExplicit
 /-!
 # The small cases `5 < n ≤ 10²⁷` from binary Goldbach and bounds for `θ`
 
-For odd `n ≤ 2.8·10¹⁷ + 3`, `n = 3 + (n − 3)` and binary Goldbach up to `2.8·10¹⁷` (`binary_goldbach_input`,
-[OeSHP14] go to `4·10¹⁸` and double-checked `3·10¹⁷`) applies. For odd `2.8·10¹⁷ + 3 < n ≤ 10²⁷` there is a
-prime `p` with `n − 2.8·10¹⁷ < p ≤ n − 4`, since `−1.413·10¹⁷ ≤ θ(m) − m ≤ 1.373·10¹⁷` for
+For odd `n ≤ 2.2·10¹⁷ + 3`, `n = 3 + (n − 3)` and binary Goldbach up to `2.2·10¹⁷` (`binary_goldbach_input`,
+[OeSHP14] go to `4·10¹⁸` and double-checked `3·10¹⁷`) applies. For odd `2.2·10¹⁷ + 3 < n ≤ 10²⁷` there is a
+prime `p` with `n − 2.2·10¹⁷ < p ≤ n − 4`, since `−1.111·10¹⁷ ≤ θ(m) − m ≤ 1.071·10¹⁷` for
 `1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_theta`) below `10¹⁹`, and the explicit formula
 (`psi_plateau`, from `rh_upto`) with `ψ − θ ≤ 2.001 log m √m` above. Then `n − p` is even and at most
-`2.8·10¹⁷`.
+`2.2·10¹⁷`.
 
 This replaces the Helfgott–Platt prime ladder [HP13], whose gaps are `≤ 4·10¹⁸`.
 -/
@@ -54,9 +54,9 @@ theorem log_1e27_le : Real.log (10 ^ 27 : ℝ) ≤ 63 := by
   calc (10 ^ 27 : ℝ) ≤ (2.7182818283 : ℝ) ^ 63 := by norm_num
     _ ≤ Real.exp 1 ^ 63 := pow_le_pow_left₀ (by norm_num) h1.le 63
 
-/-- **`−1.413·10¹⁷ ≤ θ(n) − n ≤ 1.373·10¹⁷` for `1423 ≤ n ≤ 10²⁷`**. -/
+/-- **`−1.111·10¹⁷ ≤ θ(n) − n ≤ 1.071·10¹⁷` for `1423 ≤ n ≤ 10²⁷`**. -/
 theorem theta_bound {n : ℕ} (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 27) :
-    -1.413e17 ≤ th n - n ∧ th n - n ≤ 1.373e17 := by
+    -1.111e17 ≤ th n - n ∧ th n - n ≤ 1.071e17 := by
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   rcases le_or_gt n (10 ^ 19) with h | h
   · have hB := abs_le.1 (buthe_theta n h1 h)
@@ -86,16 +86,16 @@ theorem theta_bound {n : ℕ} (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 27) :
 theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
   intro n hn h5 hle
   have hBG := binary_goldbach_input
-  by_cases hsmall : n ≤ 28 * 10 ^ 16 + 3
+  by_cases hsmall : n ≤ 22 * 10 ^ 16 + 3
   · -- `n = 3 + (n − 3)`
     have hev : Even (n - 3) := Nat.Odd.sub_odd hn (by decide)
     obtain ⟨p, q, hp, hq, hpq⟩ := hBG (n - 3) hev (by obtain ⟨k, hk⟩ := hn; omega) (by omega)
     exact ⟨3, p, q, Nat.prime_three, hp, hq, by omega⟩
-  · -- a prime `p ∈ (n − 2.8·10¹⁷, n − 4]`
+  · -- a prime `p ∈ (n − 2.2·10¹⁷, n − 4]`
     push Not at hsmall
-    set a := n - 28 * 10 ^ 16 with ha
+    set a := n - 22 * 10 ^ 16 with ha
     set b := n - 4 with hb
-    have hab : (b : ℝ) - a = 28 * 10 ^ 16 - 4 := by
+    have hab : (b : ℝ) - a = 22 * 10 ^ 16 - 4 := by
       rw [ha, hb, Nat.cast_sub (by omega), Nat.cast_sub (by omega)]; push_cast; ring
     have hb1 : 1423 ≤ b := by omega
     have hb2 : b ≤ 10 ^ 27 := by omega
@@ -113,7 +113,7 @@ theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
           have e : ((1423 : ℕ) : ℝ) = 1423 := by norm_num
           rw [e] at this hs
           linarith
-        have hbR : (28 * 10 ^ 16 : ℝ) ≤ b := by exact_mod_cast (show 28 * 10 ^ 16 ≤ b by omega)
+        have hbR : (22 * 10 ^ 16 : ℝ) ≤ b := by exact_mod_cast (show 22 * 10 ^ 16 ≤ b by omega)
         linarith
     obtain ⟨p, hp, hap, hpb⟩ := exists_prime_of_th_lt hlt
     have hp2 : p ≠ 2 := by omega

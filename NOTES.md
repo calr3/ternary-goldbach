@@ -420,7 +420,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
-## Binary Goldbach needed only to `2.8·10¹⁷` (2026-11-02)
+## Binary Goldbach needed only to `2.2·10¹⁷` (2026-11-02)
 
 * The θ error at `10²⁷` sets the range: binary Goldbach up to `N` suffices if
   `(θ − x)⁺ + (x − θ)⁺ < N − 4` there. With `psi_plateau`'s old `15000√x` this was `9.96·10¹⁷`.
@@ -431,16 +431,19 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `2e^{|a|}` → `e^{a/2} + e^{b/2}` with `e^{b/2} = √(y₀/x) ≤ 3.2·10⁻⁵` (`norm_Mg_line_le'`), ×0.5;
   * window height `h` and Jensen radius `r ≥ √(1.5² + (h/2)²)` as parameters (`line_sum_leH`,
     `count_line_windowH`): `ZL(h)(4 + 2(1 + log J)/h)` is smallest near `h = 6`, `r = 3.36`
-    (`ZL ≤ 274.7`, `log J ≤ 26.94`), ×0.88.
-  `LineB2 ≤ 3658`, so `psi_plateau`: `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 3660√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`).
-* `theta_bound`: `−1.413·10¹⁷ ≤ θ(n) − n ≤ 1.373·10¹⁷` on `[1423, 10²⁷]` (the lower side has
-  `ψ − θ ≤ 2.001·63·√n`); sum `2.786·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (28 * 10 ^ 16)`.
+    (`ZL ≤ 274.7`, `log J ≤ 26.94`), ×0.88 (`LineB2 ≤ 3658`, binary Goldbach to `2.8·10¹⁷`);
+  * the two windows next to the real axis (`|γ| ≤ 6`, weight `2` each) are counted by Jensen at
+    their centres `±3` (`count_line_windowC`, `ZL0 6 3.36 ≤ 35.9` from `log(B(3)/0.355) ≤ 39.15`)
+    instead of at height `3·10¹²` (`274.7`).
+  `LineB2 = C(4 ZL₀ + 2 ZL (1 + log J)/6) ≤ 2703`, so `psi_plateau`:
+  `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 2705√x + 4.2·10¹⁰` (`x ≥ 10¹⁹`).
+* `theta_bound`: `−1.111·10¹⁷ ≤ θ(n) − n ≤ 1.071·10¹⁷` on `[1423, 10²⁷]` (the lower side has
+  `ψ − θ ≤ 2.001·63·√n`); sum `2.181·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (22 * 10 ^ 16)`.
 * [OeSHP14] (PDF in hand): verification to `4·10¹⁸`, full double-check to `3·10¹⁷` (Table 1, §1.3;
-  AXIOMS.md had `4·10¹⁷` from the project page). `2.8·10¹⁷` is inside the double-checked range.
+  AXIOMS.md had `4·10¹⁷` from the project page). `2.2·10¹⁷` is inside the double-checked range.
 * Further levers, not done (estimates for `N`):
-  * the two `d = 0` windows (`|γ| ≤ 6`, weight `2`) cost `4·274.7 ≈ 1100` of `3658`; Jensen at height
-    `≈ 3` gives `≈ 36` zeros per window: `LineB2 ≈ 2700`, `N ≈ 2.2·10¹⁷`;
-  * height-dependent counts in every window (`log B(t)` instead of `log B(H)`): about ×0.5 more;
+  * height-dependent counts in every window (`log B(t)` instead of `log B(H)`, i.e.
+    `count_line_windowC` everywhere): the remaining `2558` becomes about `1370`, `LineB2 ≈ 1510`, `N ≈ 1.45·10¹⁷`;
   * the `x` term `2.15·10⁻¹¹x` (`Kδ = 64/H`) alone forces `N ≳ 4.3·10¹⁶`.
 * Other papers checked against the PDFs: Platt–Trudgian (abstract), Platt GRH (Thm 7.1), Büthe
   (Thm 2), Ramaré–Zuniga-Alterman (Cor. 1.2, 1.3), [Ram95] Lemma 3.4 and (3.9) (Finding 5 confirmed;

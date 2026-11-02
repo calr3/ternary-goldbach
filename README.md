@@ -13,7 +13,7 @@ axioms besides Lean's standard three. They are:
   (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [B, Lemma B.1.2] also contains, and the
   finite part of [B, Prop 12.2.4];
 * 7 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
-  Goldbach up to `2.8·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
+  Goldbach up to `2.2·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ram95, Lemma 3.4]) is proved,
@@ -77,11 +77,11 @@ also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
 The top level is [B, §14.4] (`Helfgott/Main.lean`).
 
 * **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
-  * binary Goldbach up to `2.8·10¹⁷` ([OeSHP14] verify `4·10¹⁸` and double-checked `3·10¹⁷`);
-  * for `n > 2.8·10¹⁷ + 3`, a prime `p` with `n − 2.8·10¹⁷ < p ≤ n − 4`, from
-    `−1.413·10¹⁷ ≤ θ(m) − m ≤ 1.373·10¹⁷` for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁹`, and above
-    it `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 3660√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
-    `3·10¹²`). Then `n − p` is even and at most `2.8·10¹⁷`.
+  * binary Goldbach up to `2.2·10¹⁷` ([OeSHP14] verify `4·10¹⁸` and double-checked `3·10¹⁷`);
+  * for `n > 2.2·10¹⁷ + 3`, a prime `p` with `n − 2.2·10¹⁷ < p ≤ n − 4`, from
+    `−1.111·10¹⁷ ≤ θ(m) − m ≤ 1.071·10¹⁷` for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁹`, and above
+    it `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 2705√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
+    `3·10¹²`). Then `n − p` is even and at most `2.2·10¹⁷`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [B, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
@@ -170,7 +170,7 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.
 * The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
-  which [B, §1.6] uses up to `8.875·10³⁰`, and need binary Goldbach only up to `2.8·10¹⁷`.
+  which [B, §1.6] uses up to `8.875·10³⁰`, and need binary Goldbach only up to `2.2·10¹⁷`.
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout
