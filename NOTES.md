@@ -225,7 +225,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
   Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 5).
   ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [B]).
-* (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s constants; new axiom `etaO_numerics`:
+* (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s constants; inputs `etaO_numerics` (now proved):
   * expand `(g + D)²` in `u = log t`;
   * cross terms by Parseval (`integral_conj_mul_fourier` via `Lp.inner_fourier_eq`, and Fubini for
     `g_H`), with the general tail bound `tail_fourier_le_deriv2`;
@@ -298,6 +298,9 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * Item 6: `sum_odd_mu_sq_div_totient` was removed: trial division for `φ` and squarefreeness, a
     kernel walk with 150 certified chunk states (`Prelim/SmallMuPhi.lean`, about 10 min, the slowest
     file). A DFS over the 13847 primes would recurse too deeply in the kernel. 21 axioms (12 own).
+  * Item 7: `etaO_numerics` was removed: Taylor sandwich of `e^{−(t−1)²}` and exact polynomial and
+    `tᵐ log t` integrals (`MajorArcs/EtaONum.lean`); crude polynomial bounds for `‖W₀''‖₂² ≤ 1000` and
+    `‖W₁''‖₂² ≤ 60`, which still fit (9.94) after re-choosing `λ`. 20 axioms (11 own, 9 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

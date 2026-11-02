@@ -12,6 +12,7 @@ import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallLiouville
 import TernaryGoldbach.Prelim.SmallW
 import TernaryGoldbach.Prelim.SmallMuPhi
+import TernaryGoldbach.MajorArcs.EtaONum
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallProdAp
 import TernaryGoldbach.Prelim.SmallFsq

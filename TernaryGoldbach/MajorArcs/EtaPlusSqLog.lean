@@ -1,4 +1,5 @@
 import TernaryGoldbach.MajorArcs.HHFourier2
+import TernaryGoldbach.MajorArcs.EtaONum
 
 /-!
 # [B, (9.94)]: `∫ η₊² log(xt) dt`, from `η◦` and Parseval
@@ -563,17 +564,301 @@ theorem integral_gL_mul_W1 : ∫ u, gL u * W1 u = ∫ t in (0:ℝ)..2, P0 t ^ 2 
     rw [smul_eq_mul, etaO_eq (Real.exp_pos u), W1, W0, Ew, gL, exp_sq_eq, Real.log_exp]; ring
   rw [e, integral_comp_exp (fun t => etaO t ^ 2 * Real.log t), integral_Ioi_etaO_sq_mul]
 
-/-- **Numerical axiom** (our computation, `scripts/rigorous/eta_circ_rig.py`, Arb): four elementary
-integrals.
+/-! ### `‖W₀''‖₂²` and `‖W₁''‖₂²` -/
+
+open TernaryGoldbach.MajorArcs.PolyNum (pH pI continuous_pH integral_pow_mul_pH)
+
+theorem IF.integral {W k : ℝ → ℝ} (h : IF W k) : ∫ u, W u = ∫ t in (0:ℝ)..2, k t := by
+  have e : W = fun u => Real.exp u • (Icc (0 : ℝ) 2).indicator k (Real.exp u) := by
+    ext u; rw [h u, smul_eq_mul]
+  have hset : Ioi (0:ℝ) ∩ Icc 0 2 = Ioc 0 2 := by
+    ext t; simp only [mem_inter_iff, mem_Ioi, mem_Icc, mem_Ioc]
+    constructor
+    · rintro ⟨h1, -, h3⟩; exact ⟨h1, h3⟩
+    · rintro ⟨h1, h3⟩; exact ⟨h1, h1.le, h3⟩
+  rw [e, integral_comp_exp ((Icc (0 : ℝ) 2).indicator k), setIntegral_indicator measurableSet_Icc,
+    hset, intervalIntegral.integral_of_le (by norm_num)]
+
+/-- The polynomial parts: `k₀' = p₀' X`, `k₀'' = p₀'' X`, `k₁'' = 2 p₀' X + (t log t) q X`,
+`X = e^{t−1/2} e^{−t²}`. -/
+def L0d : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (40 : ℚ), (-64 : ℚ), (14 : ℚ), (22 : ℚ), (-13 : ℚ), (2 : ℚ)]
+def L0dd : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (200 : ℚ), (-344 : ℚ), (-46 : ℚ), (318 : ℚ), (-123 : ℚ), (-37 : ℚ), (28 : ℚ), (-4 : ℚ)]
+def Lq : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (200 : ℚ), (-344 : ℚ), (-46 : ℚ), (318 : ℚ), (-123 : ℚ), (-37 : ℚ), (28 : ℚ), (-4 : ℚ)]
+/-- `t p₀''² = t pH LC`. -/
+def LC : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (40000 : ℚ), (-137600 : ℚ), (99936 : ℚ), (158848 : ℚ), (-265868 : ℚ), (40568 : ℚ), (149096 : ℚ), (-95688 : ℚ), (-8227 : ℚ), (27278 : ℚ), (-8063 : ℚ), (-1088 : ℚ), (1080 : ℚ), (-224 : ℚ), (16 : ℚ)]
+/-- `t (8 p₀'² + 2 (1 − t)² q²) = t pH LQ1`. -/
+def LQ1 : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (80000 : ℚ), (-435200 : ℚ), (843072 : ℚ), (-398208 : ℚ), (-925528 : ℚ), (1462048 : ℚ), (-425096 : ℚ), (-687104 : ℚ), (663402 : ℚ), (-108040 : ℚ), (-139636 : ℚ), (84216 : ℚ), (-9582 : ℚ), (-6944 : ℚ), (3088 : ℚ), (-512 : ℚ), (32 : ℚ)]
+/-- `t (8 p₀'² + 2 t² (t − 1)² q²) = t pH LQ2`. -/
+def LQ2 : List ℚ := [(0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (0 : ℚ), (92800 : ℚ), (-476160 : ℚ), (872000 : ℚ), (-357504 : ℚ), (-996536 : ℚ), (1481824 : ℚ), (-396904 : ℚ), (-710752 : ℚ), (666546 : ℚ), (-104328 : ℚ), (-141660 : ℚ), (84632 : ℚ), (-9614 : ℚ), (-6944 : ℚ), (3088 : ℚ), (-512 : ℚ), (32 : ℚ)]
+
+theorem k0''_eq (t : ℝ) : k0'' t = pH L0dd t * (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) := by
+  unfold k0'' hP hP' hP'' pP pP'; simp only [L0dd, pH]; push_cast; ring
+
+theorem k1''_eq (t : ℝ) : k1'' t = 2 * (pH L0d t * (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2))) +
+    (t * Real.log t) * (pH Lq t * (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2))) := by
+  unfold k1'' k0' hP hP' hP'' pP pP'; simp only [L0d, Lq, pH]; push_cast; ring
+
+theorem X_sq (t : ℝ) : (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) ^ 2 = Real.exp (2 * t - 1 - 2 * t ^ 2) := by
+  rw [← Real.exp_add, sq, ← Real.exp_add]; congr 1; ring
+
+/-- **`‖W₀''‖₂² ≤ 1000`** (value `35.79`; here `e^{2t−1−2t²} ≤ 1`). -/
+theorem W0''_sq_le : ∫ u, W0'' u ^ 2 ≤ 1000 := by
+  rw [IF_W0''.sq.integral]
+  have hmono : ∫ t in (0:ℝ)..2, t * k0'' t ^ 2 ≤ ∫ t in (0:ℝ)..2, t ^ 1 * pH LC t := by
+    refine intervalIntegral.integral_mono_on (by norm_num) ?_ ?_ fun t ht => ?_
+    · exact (continuous_id.mul (continuous_k0''.pow 2)).intervalIntegrable _ _
+    · exact ((continuous_pow 1).mul (continuous_pH LC)).intervalIntegrable _ _
+    · rw [k0''_eq]
+      have hid : t ^ 1 * pH LC t = t * pH L0dd t ^ 2 := by simp only [LC, L0dd, pH]; push_cast; ring
+      rw [hid]
+      have hX : (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) ^ 2 ≤ 1 := by
+        rw [X_sq, Real.exp_le_one_iff]; nlinarith [sq_nonneg (t - 1 / 2)]
+      have ht0 : 0 ≤ t := ht.1
+      calc t * (pH L0dd t * (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2))) ^ 2 =
+            t * pH L0dd t ^ 2 * (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) ^ 2 := by ring
+        _ ≤ t * pH L0dd t ^ 2 * 1 := mul_le_mul_of_nonneg_left hX (by positivity)
+        _ = _ := by ring
+  have hI := integral_pow_mul_pH 0 2 LC 1
+  push_cast at hI
+  rw [hI] at hmono
+  have hq : (pI 0 2 LC 1 : ℚ) ≤ 1000 := by decide +kernel
+  have := (Rat.cast_le (K := ℝ)).2 hq
+  push_cast at this
+  linarith
+
+/-- `|t log t| ≤ 1 − t` on `[0, 1]`. -/
+theorem tlog_sq_le_one {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) : (t * Real.log t) ^ 2 ≤ (1 - t) ^ 2 := by
+  rcases eq_or_lt_of_le h0 with h | h
+  · subst h; simp
+  have hl := Real.log_nonpos h0 h1
+  have hl2 := Real.one_sub_inv_le_log_of_pos h
+  have : t - 1 ≤ t * Real.log t := by
+    have := mul_le_mul_of_nonneg_left hl2 h0
+    rw [mul_sub, mul_one, mul_inv_cancel₀ h.ne'] at this; linarith
+  have : t * Real.log t ≤ 0 := mul_nonpos_of_nonneg_of_nonpos h0 hl
+  nlinarith
+
+/-- `0 ≤ t log t ≤ t (t − 1)` on `[1, 2]`. -/
+theorem tlog_sq_le_two {t : ℝ} (h1 : 1 ≤ t) : (t * Real.log t) ^ 2 ≤ (t * (t - 1)) ^ 2 := by
+  have h0 : 0 < t := by linarith
+  have hl := Real.log_nonneg h1
+  have hl2 := Real.log_le_sub_one_of_pos h0
+  have a : 0 ≤ t * Real.log t := mul_nonneg h0.le hl
+  have b : t * Real.log t ≤ t * (t - 1) := mul_le_mul_of_nonneg_left hl2 h0.le
+  nlinarith
+
+theorem k1''_pt (t : ℝ) (ht0 : 0 ≤ t) (P : ℝ) (hP : (t * Real.log t) ^ 2 ≤ P) :
+    t * k1'' t ^ 2 ≤ (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) ^ 2 *
+      (t * (8 * pH L0d t ^ 2 + 2 * P * pH Lq t ^ 2)) := by
+  rw [k1''_eq]
+  set X := Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)
+  set a := pH L0d t
+  set b := pH Lq t
+  set l := t * Real.log t
+  have h1 : (2 * (a * X) + l * (b * X)) ^ 2 ≤ 8 * (a * X) ^ 2 + 2 * (l * (b * X)) ^ 2 := by
+    nlinarith [sq_nonneg (2 * (a * X) - l * (b * X))]
+  have h2 : 2 * (l * (b * X)) ^ 2 ≤ 2 * (P * (b * X) ^ 2) := by
+    have : (l * (b * X)) ^ 2 = l ^ 2 * (b * X) ^ 2 := by ring
+    rw [this]; nlinarith [sq_nonneg (b * X)]
+  have := mul_le_mul_of_nonneg_left (h1.trans (by linarith : 8 * (a * X) ^ 2 + 2 * (l * (b * X)) ^ 2 ≤
+    8 * (a * X) ^ 2 + 2 * (P * (b * X) ^ 2))) ht0
+  calc t * (2 * (a * X) + l * (b * X)) ^ 2 ≤ t * (8 * (a * X) ^ 2 + 2 * (P * (b * X) ^ 2)) := this
+    _ = X ^ 2 * (t * (8 * a ^ 2 + 2 * P * b ^ 2)) := by ring
+
+theorem LQ1_eq (t : ℝ) : t ^ 1 * pH LQ1 t = t * (8 * pH L0d t ^ 2 + 2 * (1 - t) ^ 2 * pH Lq t ^ 2) := by
+  simp only [LQ1, L0d, Lq, pH]; push_cast; ring
+
+theorem LQ2_eq (t : ℝ) :
+    t ^ 1 * pH LQ2 t = t * (8 * pH L0d t ^ 2 + 2 * (t * (t - 1)) ^ 2 * pH Lq t ^ 2) := by
+  simp only [LQ2, L0d, Lq, pH]; push_cast; ring
+
+/-- `∑_{i<8} rⁱ/i! ≤ eʳ`. -/
+def expS (r : ℚ) : ℚ := ∑ i ∈ Finset.range 8, r ^ i / (Nat.factorial i : ℚ)
+
+theorem exp_neg_le {r : ℚ} (hr : 0 ≤ r) : Real.exp (-(r : ℝ)) ≤ (((expS r)⁻¹ : ℚ) : ℝ) := by
+  have h := Real.sum_le_exp_of_nonneg (x := (r : ℝ)) (by exact_mod_cast hr) 8
+  have he : ((expS r : ℚ) : ℝ) = ∑ i ∈ Finset.range 8, (r : ℝ) ^ i / (Nat.factorial i : ℝ) := by
+    simp [expS]
+  have hpos : (0 : ℝ) < ((expS r : ℚ) : ℝ) := by
+    rw [he, Finset.sum_range_succ']; simp only [pow_zero, Nat.factorial_zero, Nat.cast_one, div_one]
+    have : 0 ≤ ∑ i ∈ Finset.range 7, (r : ℝ) ^ (i + 1) / (Nat.factorial (i + 1) : ℝ) :=
+      Finset.sum_nonneg fun i _ => by have : (0 : ℝ) ≤ r := by exact_mod_cast hr
+                                      positivity
+    linarith
+  rw [Real.exp_neg, Rat.cast_inv]
+  exact inv_anti₀ hpos (he ▸ h)
+
+theorem piece_le {lo hi r : ℚ} {L : List ℚ} (hlohi : (lo : ℝ) ≤ hi) (hr : 0 ≤ r)
+    (hexp : ∀ t ∈ Icc (lo : ℝ) hi, 2 * t - 1 - 2 * t ^ 2 ≤ -(r : ℝ))
+    (hpt : ∀ t ∈ Icc (lo : ℝ) hi,
+      t * k1'' t ^ 2 ≤ (Real.exp (t - 1 / 2) * Real.exp (-t ^ 2)) ^ 2 * (t ^ 1 * pH L t))
+    (hnn : ∀ t ∈ Icc (lo : ℝ) hi, 0 ≤ t ^ 1 * pH L t) :
+    ∫ t in (lo : ℝ)..hi, t * k1'' t ^ 2 ≤ (((expS r)⁻¹ * pI lo hi L 1 : ℚ) : ℝ) := by
+  have hm := exp_neg_le hr
+  have hmono : ∫ t in (lo : ℝ)..hi, t * k1'' t ^ 2 ≤
+      ∫ t in (lo : ℝ)..hi, (((expS r)⁻¹ : ℚ) : ℝ) * (t ^ 1 * pH L t) := by
+    refine intervalIntegral.integral_mono_on hlohi ?_ ?_ fun t ht => ?_
+    · exact (continuous_id.mul (continuous_k1''.pow 2)).intervalIntegrable _ _
+    · exact (continuous_const.mul ((continuous_pow 1).mul (continuous_pH L))).intervalIntegrable _ _
+    · refine (hpt t ht).trans (mul_le_mul_of_nonneg_right ?_ (hnn t ht))
+      rw [X_sq]
+      exact (Real.exp_le_exp.2 (hexp t ht)).trans hm
+  rw [intervalIntegral.integral_const_mul, integral_pow_mul_pH] at hmono
+  push_cast at hmono ⊢
+  exact hmono
+
+theorem piece_0 : ∫ t in (((0 : ℚ) : ℚ) : ℝ)..(((1 / 4 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (5 / 8 : ℚ))⁻¹ * pI (0 : ℚ) (1 / 4 : ℚ) LQ1 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.2) (show (0 : ℝ) ≤ (1 - 1 / 4) - t by linarith [ht.2])])
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h1 : t ≤ 1 := le_trans ht.2 (by norm_num)
+      rw [LQ1_eq]; exact k1''_pt t h0 _ (tlog_sq_le_one h0 h1)))
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ1_eq]; positivity))
+
+theorem piece_1 : ∫ t in (((1 / 4 : ℚ) : ℚ) : ℝ)..(((1 / 2 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (1 / 2 : ℚ))⁻¹ * pI (1 / 4 : ℚ) (1 / 2 : ℚ) LQ1 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.2) (show (0 : ℝ) ≤ (1 - 1 / 2) - t by linarith [ht.2])])
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h1 : t ≤ 1 := le_trans ht.2 (by norm_num)
+      rw [LQ1_eq]; exact k1''_pt t h0 _ (tlog_sq_le_one h0 h1)))
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ1_eq]; positivity))
+
+theorem piece_2 : ∫ t in (((1 / 2 : ℚ) : ℚ) : ℝ)..(((3 / 4 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (1 / 2 : ℚ))⁻¹ * pI (1 / 2 : ℚ) (3 / 4 : ℚ) LQ1 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 1 / 2) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h1 : t ≤ 1 := le_trans ht.2 (by norm_num)
+      rw [LQ1_eq]; exact k1''_pt t h0 _ (tlog_sq_le_one h0 h1)))
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ1_eq]; positivity))
+
+theorem piece_3 : ∫ t in (((3 / 4 : ℚ) : ℚ) : ℝ)..(((1 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (5 / 8 : ℚ))⁻¹ * pI (3 / 4 : ℚ) (1 : ℚ) LQ1 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 3 / 4) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h1 : t ≤ 1 := le_trans ht.2 (by norm_num)
+      rw [LQ1_eq]; exact k1''_pt t h0 _ (tlog_sq_le_one h0 h1)))
+    (by push_cast; exact (fun t ht => by
+      have h0 : (0 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ1_eq]; positivity))
+
+theorem piece_4 : ∫ t in (((1 : ℚ) : ℚ) : ℝ)..(((5 / 4 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (1 : ℚ))⁻¹ * pI (1 : ℚ) (5 / 4 : ℚ) LQ2 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 1 / 1) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ2_eq]; exact k1''_pt t (by linarith) _ (tlog_sq_le_two h1)))
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h0 : (0 : ℝ) ≤ t := by linarith
+      rw [LQ2_eq]; positivity))
+
+theorem piece_5 : ∫ t in (((5 / 4 : ℚ) : ℚ) : ℝ)..(((3 / 2 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (13 / 8 : ℚ))⁻¹ * pI (5 / 4 : ℚ) (3 / 2 : ℚ) LQ2 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 5 / 4) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ2_eq]; exact k1''_pt t (by linarith) _ (tlog_sq_le_two h1)))
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h0 : (0 : ℝ) ≤ t := by linarith
+      rw [LQ2_eq]; positivity))
+
+theorem piece_6 : ∫ t in (((3 / 2 : ℚ) : ℚ) : ℝ)..(((7 / 4 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (5 / 2 : ℚ))⁻¹ * pI (3 / 2 : ℚ) (7 / 4 : ℚ) LQ2 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 3 / 2) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ2_eq]; exact k1''_pt t (by linarith) _ (tlog_sq_le_two h1)))
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h0 : (0 : ℝ) ≤ t := by linarith
+      rw [LQ2_eq]; positivity))
+
+theorem piece_7 : ∫ t in (((7 / 4 : ℚ) : ℚ) : ℝ)..(((2 : ℚ) : ℚ) : ℝ), t * k1'' t ^ 2 ≤
+    ((((expS (29 / 8 : ℚ))⁻¹ * pI (7 / 4 : ℚ) (2 : ℚ) LQ2 1 : ℚ)) : ℝ) :=
+  piece_le (by norm_num) (by norm_num)
+    (fun t ht => by
+      push_cast at ht ⊢
+      nlinarith [ht.1, ht.2, mul_nonneg (sub_nonneg.2 ht.1) (show (0 : ℝ) ≤ t - (1 - 7 / 4) by linarith [ht.1])])
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      rw [LQ2_eq]; exact k1''_pt t (by linarith) _ (tlog_sq_le_two h1)))
+    (by push_cast; exact (fun t ht => by
+      have h1 : (1 : ℝ) ≤ t := le_trans (by norm_num) ht.1
+      have h0 : (0 : ℝ) ≤ t := by linarith
+      rw [LQ2_eq]; positivity))
+
+theorem pieces_sum : (expS (5 / 8 : ℚ))⁻¹ * pI (0 : ℚ) (1 / 4 : ℚ) LQ1 1 + (expS (1 / 2 : ℚ))⁻¹ * pI (1 / 4 : ℚ) (1 / 2 : ℚ) LQ1 1 + (expS (1 / 2 : ℚ))⁻¹ * pI (1 / 2 : ℚ) (3 / 4 : ℚ) LQ1 1 + (expS (5 / 8 : ℚ))⁻¹ * pI (3 / 4 : ℚ) (1 : ℚ) LQ1 1 + (expS (1 : ℚ))⁻¹ * pI (1 : ℚ) (5 / 4 : ℚ) LQ2 1 + (expS (13 / 8 : ℚ))⁻¹ * pI (5 / 4 : ℚ) (3 / 2 : ℚ) LQ2 1 + (expS (5 / 2 : ℚ))⁻¹ * pI (3 / 2 : ℚ) (7 / 4 : ℚ) LQ2 1 + (expS (29 / 8 : ℚ))⁻¹ * pI (7 / 4 : ℚ) (2 : ℚ) LQ2 1 ≤ 60 := by decide +kernel
+
+/-- **`‖W₁''‖₂² ≤ 60`** (value `8.389`): `(a + b)² ≤ 2a² + 2b²`, `|t log t| ≤ 1 − t` resp. `t(t − 1)`,
+and `e^{2t−1−2t²}` bounded on 8 pieces of `[0, 2]`. -/
+theorem W1''_sq_le : ∫ u, W1'' u ^ 2 ≤ 60 := by
+  rw [IF_W1''.sq.integral]
+  have hc : Continuous fun t => t * k1'' t ^ 2 := continuous_id.mul (continuous_k1''.pow 2)
+  have hi : ∀ a b : ℝ, IntervalIntegrable (fun t => t * k1'' t ^ 2) volume a b :=
+    fun a b => hc.intervalIntegrable a b
+  have s0 := intervalIntegral.integral_add_adjacent_intervals (hi (((0 : ℚ) : ℚ) : ℝ) (((1 / 4 : ℚ) : ℚ) : ℝ)) (hi (((1 / 4 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s1 := intervalIntegral.integral_add_adjacent_intervals (hi (((1 / 4 : ℚ) : ℚ) : ℝ) (((1 / 2 : ℚ) : ℚ) : ℝ)) (hi (((1 / 2 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s2 := intervalIntegral.integral_add_adjacent_intervals (hi (((1 / 2 : ℚ) : ℚ) : ℝ) (((3 / 4 : ℚ) : ℚ) : ℝ)) (hi (((3 / 4 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s3 := intervalIntegral.integral_add_adjacent_intervals (hi (((3 / 4 : ℚ) : ℚ) : ℝ) (((1 : ℚ) : ℚ) : ℝ)) (hi (((1 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s4 := intervalIntegral.integral_add_adjacent_intervals (hi (((1 : ℚ) : ℚ) : ℝ) (((5 / 4 : ℚ) : ℚ) : ℝ)) (hi (((5 / 4 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s5 := intervalIntegral.integral_add_adjacent_intervals (hi (((5 / 4 : ℚ) : ℚ) : ℝ) (((3 / 2 : ℚ) : ℚ) : ℝ)) (hi (((3 / 2 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have s6 := intervalIntegral.integral_add_adjacent_intervals (hi (((3 / 2 : ℚ) : ℚ) : ℝ) (((7 / 4 : ℚ) : ℚ) : ℝ)) (hi (((7 / 4 : ℚ) : ℚ) : ℝ) ((2 : ℚ) : ℝ))
+  have p0 := piece_0
+  have p1 := piece_1
+  have p2 := piece_2
+  have p3 := piece_3
+  have p4 := piece_4
+  have p5 := piece_5
+  have p6 := piece_6
+  have p7 := piece_7
+  have hs := (Rat.cast_le (K := ℝ)).2 pieces_sum
+  push_cast at hs s0 s1 s2 s3 s4 s5 s6 p0 p1 p2 p3 p4 p5 p6 p7 ⊢
+  linarith
+
+/-- The four elementary integrals (proved above and in `EtaONum.lean`):
 * `∫₀² η◦² = 0.6402059973663522…` and `∫₀² η◦² log t = −0.0210947786988671…`, where
   `η◦ = P0 = (t(2 − t))³ e^{−(t−1)²/2}` ([B] gets the same values with VNODE-LP);
-* `‖W₀''‖₂² = 35.790…` and `‖W₁''‖₂² = 8.389…`, where `W₀(u) = g(u) e^{3u − e^{2u}}`, `W₁ = u W₀` and
-  `g(u) = h(eᵘ)`. In `t = eᵘ` these are `∫₀² k(t)² t dt` with `k` explicit (`k0''`, `k1''`). -/
-axiom etaO_numerics :
+* `‖W₀''‖₂² = 35.790…` and `‖W₁''‖₂² = 8.389…` (bounded here by `1000` and `60`), where
+  `W₀(u) = g(u) e^{3u − e^{2u}}`, `W₁ = u W₀` and `g(u) = h(eᵘ)`. -/
+theorem etaO_numerics :
     (0.640205997 ≤ ∫ t in (0:ℝ)..2, P0 t ^ 2 * 1 ∧ ∫ t in (0:ℝ)..2, P0 t ^ 2 * 1 ≤ 0.640205998) ∧
-    (-0.0210947787 ≤ ∫ t in (0:ℝ)..2, P0 t ^ 2 * Real.log t ∧
-      ∫ t in (0:ℝ)..2, P0 t ^ 2 * Real.log t ≤ -0.0210947786) ∧
-    ∫ u, W0'' u ^ 2 ≤ 36 ∧ ∫ u, W1'' u ^ 2 ≤ 8.4
+    (-0.02109479 ≤ ∫ t in (0:ℝ)..2, P0 t ^ 2 * Real.log t ∧
+      ∫ t in (0:ℝ)..2, P0 t ^ 2 * Real.log t ≤ -0.02109477) ∧
+    ∫ u, W0'' u ^ 2 ≤ 1000 ∧ ∫ u, W1'' u ^ 2 ≤ 60 :=
+  ⟨TernaryGoldbach.MajorArcs.PolyNum.integral_P0_sq, TernaryGoldbach.MajorArcs.PolyNum.integral_P0_sq_log,
+    W0''_sq_le, W1''_sq_le⟩
 
 theorem continuous_Ew : Continuous Ew := by unfold Ew; fun_prop
 
@@ -642,9 +927,9 @@ theorem integral_etaPlus_sq_log {x : ℝ} (hx : 1 ≤ x) :
   -- bounds
   have hD2 := integral_Dg_sq_le
   have hC0 := abs_integral_Dg_mul_le hasDerivAt_W0 hasDerivAt_W0' integrable_W0 integrable_W0'
-    integrable_W0'' integrable_W0''_sq memLp_W0 continuous_W0 m0 (lam := 0.3) (by norm_num)
+    integrable_W0'' integrable_W0''_sq memLp_W0 continuous_W0 m0 (lam := 1.6) (by norm_num)
   have hC1 := abs_integral_Dg_mul_le hasDerivAt_W1 hasDerivAt_W1' integrable_W1 integrable_W1'
-    integrable_W1'' integrable_W1''_sq memLp_W1 continuous_W1 m1 (lam := 0.15) (by norm_num)
+    integrable_W1'' integrable_W1''_sq memLp_W1 continuous_W1 m1 (lam := 0.4) (by norm_num)
   have hQ0 : |∫ u, Dg u ^ 2 * Ew u| ≤ 368 / 200 ^ 4 / 2 := by
     rw [abs_of_nonneg (integral_nonneg fun u => mul_nonneg (sq_nonneg _) (Ew_nonneg u))]
     calc ∫ u, Dg u ^ 2 * Ew u ≤ ∫ u, Dg u ^ 2 * (1 / 2) :=

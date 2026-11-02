@@ -90,7 +90,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │    (MajorArcs/Prop932.lean: q ≥ 2 from Explicit/ExplicitBound, q = 1 from Explicit/ZetaBound;
      │    weaker constants) + Platt (numerical axioms platt_odd/platt_even, MajorArcs/GRH.lean);
      │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 ✅ (same file, from Explicit/EtaPlusSqBound) + Platt (q = 1, T₀ = 500)
-     │    + (9.94) (numerical axiom); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 ✅
+     │    + (9.94) (proved: EtaPlusSqLog + EtaONum); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 ✅
      │    (MajorArcs/Prop942.lean from Explicit/EtaPlusBound; weaker constants) + Platt]
      │   (explicit bounds on Sη(δ/x, x) twisted by primitive χ, for η = Gaussian, t²e^{-t²/2},
      │    η_*, η₊)

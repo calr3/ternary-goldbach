@@ -7,9 +7,9 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 21 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 20 explicitly stated
 axioms besides Lean's standard three. They are:
-* 12 finite computations of our own, each checked in rigorous interval arithmetic
+* 11 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
 * 9 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
@@ -41,7 +41,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.Helfgott.prime_ladder_input,
- TernaryGoldbach.MajorArcs.etaO_numerics,
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
  TernaryGoldbach.MinorArcs.T2_mid,
@@ -70,7 +69,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 
 (B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
-proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`, `etaO_numerics`);
+proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
+exact polynomial integration, `MajorArcs/EtaONum.lean`);
 [B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5). (5.31) `T2_le` is proved from
 `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2, which is
 proved from Ramaré's bound by Euler products (`MinorArcs/G2Bound.lean`).

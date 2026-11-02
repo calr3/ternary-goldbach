@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 21 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 20 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -67,8 +67,8 @@ as in the README.
      [B]'s argument does not prove them.
    * `integral_etaPlus_sq_log` is now proved (`MajorArcs/EtaPlusSqLog.lean`) with the stated
      constants. The proof bounds the cross terms by Parseval in `u = log t` instead of Cauchy–Schwarz
-     on all of `L²`. It needs only our Lean bound `‖g''‖₂² ≤ 368` and four elementary integrals
-     (`etaO_numerics`, see "Removed axioms").
+     on all of `L²`. It needs only our Lean bound `‖g''‖₂² ≤ 368` and four elementary integrals,
+     now also proved (`etaO_numerics`, see "Removed axioms").
 6. **Two slips in [B]'s proof of Prop 12.2.4 (neither affects the result; it is now proved).**
    * Lemma 12.2.3 bounds the quotient by `(log Q₀ + σ)/(log Q + 1.312)`, and the proof of Prop 12.2.4
      uses it with `σ = c₊ = 1.36` for the range (12.29) of small `R`. But (12.23) has
@@ -82,7 +82,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (12)
+### Our own computations (11)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -106,7 +106,6 @@ contain the axiom.
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | equality at `k = 1`; otherwise max ratio `0.612372` at `k = 2` | [B, (2.24)] (Helfgott, interval arithmetic, `x ≤ 10¹²`; Ramaré earlier `x ≤ 10¹⁰`) |
 | `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | max `2.742169` at `i = 0` | |
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`scripts/rigorous/eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
-| `MajorArcs.etaO_numerics` | `∫₀² η◦² ∈ [0.640205997, 0.640205998]`, `∫₀² η◦² log t ∈ [−0.0210947787, −0.0210947786]`, `‖W₀''‖₂² ≤ 36`, `‖W₁''‖₂² ≤ 8.4` (elementary integrals) | — | `0.64020599736635…`, `−0.02109477869887…`, `35.790`, `8.389` (`scripts/rigorous/eta_circ_rig.py`, Arb integration) | first two: [B, p. 197] (VNODE-LP) |
 | `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`scripts/rigorous/t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
 | `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
 | `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`scripts/rigorous/p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | replaces [B]'s computation for Prop 12.2.4 (`q < 3.3·10⁹`, two weeks single-core) |
@@ -150,7 +149,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (12):** all are checked rigorously in `scripts/rigorous/` (interval
+* **Our own computations (11):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Two are also contained in
   published results: `mertens_product_small` [RS62, Thm 15] and `moebius_sqrt_small` [B, (2.24)].
 * **Published results (9):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
@@ -223,11 +222,12 @@ The Lean definitions that the axioms above refer to were compared with the book'
     `(log ρ − log 4) η̂₂` is bounded by (B.6). Since `24 ≤ 31.521`, (B.11) follows.
 
 * (9.94) `integral_etaPlus_sq_log` is now a proof (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s
-  constants `1.95·10⁻⁶ log x + 5.3·10⁻⁷`. The computation is the new axiom `etaO_numerics`:
+  constants `1.95·10⁻⁶ log x + 5.3·10⁻⁷`. Its inputs are four elementary integrals (`etaO_numerics`, now
+  a theorem; see the end of this section):
   * `∫₀^∞ η₊² log(xt) dt = A log x + B` with, in `u = log t`, `A = ∫ (g + D)² E`, `B = ∫ (g + D)² E u`.
     Here `g(u) = h(eᵘ)`, `D = g_H − g`, and `E(u) = e^{3u − e^{2u}}`.
   * The main terms `∫ g² E = ∫₀² η◦²` and `∫ g² E u = ∫₀² η◦² log t` are elementary integrals
-    (`etaO_numerics`; [B] gets the same values with VNODE-LP).
+    ([B] gets the same values with VNODE-LP).
   * `∫ D² E ≤ ½ ‖D‖₂²` and `|∫ D² E u| ≤ 0.37 ‖D‖₂²`, with
     `‖D‖₂² = ∫_{|ξ| > H/2π} |ĝ|² ≤ 368/H⁴` (`HHFourier2.lean`).
   * The cross terms `∫ D W` (`W = gE`, `ugE`): `D` has its Fourier transform on `|ξ| > H/2π`, so
@@ -331,6 +331,17 @@ The Lean definitions that the axioms above refer to were compared with the book'
   correct) decides squarefreeness and computes `φ(q)`; the kernel accumulates
   `L = ∑ ⌊10¹⁸/φ(q)⌋` over odd squarefree `q`, certified every 1000 steps, and
   `L ≤ 10¹⁸ S ≤ L + 150000` with `L = 6798779173123473292`.
+
+* `etaO_numerics` (the four integrals behind (9.94)) is now a theorem.
+  * `∫₀² η◦² ∈ [0.640205997, 0.640205998]` and `∫₀² η◦² log t ∈ [−0.02109479, −0.02109477]`
+    (`MajorArcs/EtaONum.lean`): `η◦² = (t(2−t))⁶ e^{−(t−1)²}` with `e^x` to 14 Taylor terms
+    (`Real.exp_bound`, error `1.3·10⁻¹¹`), the polynomial integrated exactly, with
+    `∫₀² tᵐ log t = 2^{m+1}/(m+1)·(log 2 − 1/(m+1))` and Mathlib's `log 2` to `5·10⁻¹⁰`. The second
+    interval is wider than before (`[−0.0210947787, −0.0210947786]`); (9.94) needs only `5·10⁻⁸`.
+  * `‖W₀''‖₂² ≤ 1000` (value `35.79`) and `‖W₁''‖₂² ≤ 60` (value `8.39`), from polynomial bounds
+    in `t = eᵘ`: `e^{2t−1−2t²} ≤ 1`, resp. `|t log t| ≤ 1 − t` or `t(t − 1)`, `(a+b)² ≤ 2a² + 2b²` and
+    `e^{2t−1−2t²}` bounded on 8 pieces. The cross terms of (9.94) still fit, with `λ = 1.6` and
+    `0.4`: the errors are `8.7·10⁻⁷ log x + 5.0·10⁻⁷`.
 
 ## Candidates for proofs in Lean
 
