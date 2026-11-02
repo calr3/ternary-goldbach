@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 24 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 23 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -82,7 +82,7 @@ as in the README.
 
 ## The axioms
 
-### Our own computations (15)
+### Our own computations (14)
 
 Each of these was first checked by a float script in `scripts/`, then re-checked by an independent
 rigorous program in `scripts/rigorous/` (see its README):
@@ -104,7 +104,6 @@ contain the axiom.
 | `Prelim.K_pieces` | piecewise sum `≤ 0.4035` | `moebius_K_check.py` | `0.4034195` | |
 | `Prelim.K_blocks` | block bounds `hblk j`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | all 20 blocks hold; e.g. block 19: `2.55663·10⁻⁵ ≤ 2.567·10⁻⁵` | |
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | equality at `k = 1`; otherwise max ratio `0.612372` at `k = 2` | [B, (2.24)] (Helfgott, interval arithmetic, `x ≤ 10¹²`; Ramaré earlier `x ≤ 10¹⁰`) |
-| `Prelim.liouville_small` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `1 ≤ k ≤ 10⁵` | `liouville_small_check.py` | max `0.783122` at `k = 10` | |
 | `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | max `2.742169` at `i = 0` | |
 | `Prelim.MV.lemma8_numeric` | two finite sums, `2 ≤ n ≤ 10⁴` | `mv_lemma8_check.py` | min margin `1.1352·10⁻⁶` at `n = 4`; second sum max `0.638395` | first sum: [MV73, Lemma 8] for `R ≥ 100`, as cited in [B, p. 97] |
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`scripts/rigorous/eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
@@ -153,7 +152,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
 
 ## Summary by kind
 
-* **Our own computations (15):** all are checked rigorously in `scripts/rigorous/` (interval
+* **Our own computations (14):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Three are also contained in
   published results: `mertens_product_small` [RS62, Thm 15],
   `moebius_sqrt_small` [B, (2.24)] and the first half of `lemma8_numeric` for `R ≥ 100`
@@ -317,6 +316,12 @@ The Lean definitions that the axioms above refer to were compared with the book'
   * For `117 ≤ n < 40000` the kernel checks it (`Prelim/SmallLogSq.lean`, 78 s). The primes below
     `40000` are listed in 40 chunks (complete by `scan`) with `log p < u_p/10⁶`, and 225 blocks
     `[A, B)` satisfy `∑_{A/2<p<B} u_p²/10¹² ≤ ½ A log A`.
+
+* `liouville_small` (`|∑_{n≤k} λ(n)/n| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵`) is now checked by the kernel
+  (`Prelim/SmallLiouville.lean`, 4.7 min). `λ(n) = (−1)^{Ω(n)}`, with `Ω(n)` by trial division
+  (`omTD`, proved correct); the kernel walks `n ≤ 10⁵` keeping `P(k), Q(k) = ∑_{n≤k, λ(n)=±1} ⌊10¹²/n⌋`
+  (so `|10¹² ∑ λ(n)/n − (P − Q)| ≤ k`) and checks `100 (|P − Q| + k) u ≤ 99·10¹⁸` at every `k`, with
+  `log(k+1) < u/10⁶` on each of 104 chunks.
 
 ## Candidates for proofs in Lean
 

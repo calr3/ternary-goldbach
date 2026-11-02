@@ -31,7 +31,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `logsq` | (former axiom `logsq_small`; now proved) | `n ≤ 10⁶` | 2 s |
 | `mertens_product` | `mertens_product_small` | primes `≤ 2·10⁸` | 70 s |
 | `K` | `K_blocks`, `K_pieces` | prime powers `≤ 10⁹` | 2 min |
-| `liouville` | `liouville_small` | `k ≤ 10⁵` | < 1 s |
+| `liouville` | (former axiom `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
 | `C_grid` | `C_grid` | 7720 grid points × 3000 terms | 25 s |
 | `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
 | `lemma8` | `lemma8_numeric` | `n ≤ 10⁴` | 10 s |

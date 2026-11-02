@@ -291,6 +291,9 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     (`logsq_mid`), kernel below (`Prelim/SmallLogSq.lean`, 225 blocks, 78 s). 24 axioms (15 own).
     Kernel lesson: a single `decide` over a 4203-element `IsChain` hits deep recursion, so the
     table is kept in chunks and only upper bounds are used (no sortedness needed).
+  * Item 4: `liouville_small` was removed: `Ω(n)` by trial division (proved correct), a kernel walk
+    over `n ≤ 10⁵` with fixed-point partial sums and the state certified at 105 chunk boundaries
+    (`Prelim/SmallLiouville.lean`, 4.7 min, 8.2 GB). 23 axioms (14 own).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
@@ -689,7 +692,7 @@ parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε�
    `|m(x)| ≤ 0.54/(log x − 0.7521)` ((2.13) for `E(x) ≥ −log(3/√2)`).
 2. `Liouville`: `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` (multiplicativity, prime powers), `(Fχ_q) ∗ (Gχ_q) =
    (F ∗ G)χ_q`, and the `1/n`-weighted partial sums: Lemmas 2.3, 3.2, 2.5 of Ram14 for every `q`.
-3. `LiouvilleBound`: `|ℓ(z)| log z ≤ 0.99` for all `z > 1` — `z ≤ 10⁵` by the numerical axiom `liouville_small`
+3. `LiouvilleBound`: `|ℓ(z)| log z ≤ 0.99` for all `z > 1` — `z ≤ 10⁵` by the kernel check `liouville_small` (`Prelim/SmallLiouville.lean`)
    (max `0.7831` at `z → 11⁻`); `10⁵ ≤ z < 10¹⁰` from `|m(y)| ≤ √(2/y)` (numerical axiom `moebius_sqrt_small`,
    a Möbius sieve to `10¹⁰`; max of `|m(k)|√((k+1)/2)` over `2 ≤ k < 10¹⁰` is `0.612` at `k = 2`, equality at
    `k = 1`); `z ≥ 10¹⁰` from step 1 for `z/u² ≥ 10¹⁰` (`∑ 1/u² ≤ 5/3`, `∑ log u/u² ≤ 1.0117`, total `0.984`).

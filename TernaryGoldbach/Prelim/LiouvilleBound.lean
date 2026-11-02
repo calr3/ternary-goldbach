@@ -1,5 +1,6 @@
 import TernaryGoldbach.Prelim.MoebiusBound
 import TernaryGoldbach.Prelim.Liouville
+import TernaryGoldbach.Prelim.SmallLiouville
 
 /-!
 # `|ℓ(z)| ≤ 0.99/log z`, `|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`
@@ -15,10 +16,11 @@ namespace TernaryGoldbach.Prelim
 axiom moebius_sqrt_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k < 10 ^ 10) :
     |∑ n ∈ Icc 1 k, (μ n : ℝ) / n| ≤ √(2 / (k + 1))
 
-/-- **Numerical axiom** (`scripts/liouville_small_check.py`; maximum `0.7831` at `k = 10`):
-`|∑_{n≤k} λ(n)/n| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵`. -/
-axiom liouville_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ 10 ^ 5) :
-    |∑ n ∈ Icc 1 k, lam n / n| * Real.log (k + 1) ≤ 0.99
+/-- `|∑_{n≤k} λ(n)/n| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵` (maximum `0.7831` at `k = 10`), checked by
+the kernel (`Prelim/SmallLiouville.lean`). -/
+theorem liouville_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ 10 ^ 5) :
+    |∑ n ∈ Icc 1 k, lam n / n| * Real.log (k + 1) ≤ 0.99 :=
+  TernaryGoldbach.Prelim.SmallLiou.liouville_kernel k h1 h2
 
 theorem m_sqrt {y : ℝ} (h1 : 1 ≤ y) (h2 : y < 1e10) :
     |∑ n ∈ Icc 1 ⌊y⌋₊, (μ n : ℝ) / n| ≤ √2 / √y := by
