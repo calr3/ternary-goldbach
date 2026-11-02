@@ -39,7 +39,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `moebius_sqrt_rig` | (former axiom `moebius_sqrt_small`; now proved for `k < 11815`) | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | former axiom `etaO_numerics` (input of [B, (9.94)]; now proved) | four integrals over `[0, 2]` | < 1 s |
-| `t2_rig.c` | `T2_small`, `T2_mid` (inputs of [B, (5.31)]) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
+| `t2_rig.c` | (former axioms `T2_small`, `T2_mid`; (5.31) is now proved, kernel to `10⁴`) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
 | `p1224_rig.c` | `prop1224_check` (the finite part of [B, Prop 12.2.4]) | every `q < 2.2·10¹⁰`, every `n < λ(q)`: 87 972 745 explicit checks for 2 102 258 values of `q` | about 40 min on 22 threads |
 | `ramare_check.c` | (former published axiom `ramare_Gq`; now proved) | `c_E`; `d ≤ 2000` and three primorials, `X ≤ 2·10⁶` | 2 min |
 | `g2_rig.c` | (exploration: `g₂` and `max \|g₂(n)\| n`) | `n ≤ N` | seconds |

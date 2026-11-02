@@ -7,10 +7,11 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 12 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 10 explicitly stated
 axioms besides Lean's standard three. They are:
-* 4 finite computations of our own, each checked in rigorous interval arithmetic
-  (`scripts/rigorous/`); two of them are also contained in published results;
+* 2 finite computations of our own, each checked in rigorous interval arithmetic
+  (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [B, Lemma B.1.2] also contains, and the
+  finite part of [B, Prop 12.2.4];
 * 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
   `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([B, (2.21)]),
@@ -46,8 +47,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Helfgott.prime_ladder_input,
  TernaryGoldbach.MajorArcs.platt_even,
  TernaryGoldbach.MajorArcs.platt_odd,
- TernaryGoldbach.MinorArcs.T2_mid,
- TernaryGoldbach.MinorArcs.T2_small,
  TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
  TernaryGoldbach.Prelim.buthe_psi,
@@ -64,15 +63,20 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
   `SmallMertensProd.lean`;
 * the products and sums behind Ramaré's (12.12) and `c_E` in `Prelim/RamareBound.lean` and
   `RamareWalk.lean`;
-* the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`.
+* the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`;
+* `g₂(n)` for `n ≤ 10⁴` and `T₂ ≤ 0.37273` on `[16, 10⁴)` in `MinorArcs/SmallG2.lean`, and the sums
+  behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`.
 
 (B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
 [B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
-`T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2, which is
-proved from Ramaré's bound by Euler products (`MinorArcs/G2Bound.lean`).
+`g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
+above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
+Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
+`m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [B, Lemma 5.1.2] is
+also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
 
 ## How the proof is organized
 
@@ -132,7 +136,7 @@ The top level is [B, §14.4] (`Helfgott/Main.lean`).
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` |
 | Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker (Jensen windows) |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
-| Lemma 5.1.2 | `\|g₂(x)\|`, `x ≥ 10¹⁰` | `0.038128/(log x)² + 0.2046/√x` | `0.0236/(log x)² + 528 (1 + log x)²/x` (all `x > 1`) |
+| Lemma 5.1.2 | `\|g₂(x)\|`, `x ≥ 10¹⁰` | `0.038128/(log x)² + 0.2046/√x` | `0.0236/(log x)² + 528 (1 + log x)²/x` (all `x > 1`; not needed) |
 
 The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 

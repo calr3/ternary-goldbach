@@ -1,8 +1,8 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 12 further axioms (`#print axioms`):
-* 4 finite computations of our own;
+`Quot.sound`) and on 10 further axioms (`#print axioms`):
+* 2 finite computations of our own;
 * 8 published results;
 * no result of Helfgott's book [B].
 
@@ -15,11 +15,11 @@ So each axiom has been checked:
 Sources: [B] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Our own computations (4)
+## Our own computations (2)
 
 Each computation has an independent rigorous check in `scripts/rigorous/` (see its README):
-`eta2_fourier_rig.py` (Arb ball arithmetic), `t2_rig.c` (MPFR) and `p1224_rig.c` (interval arithmetic
-with directed rounding). Most also have a float script in `scripts/`.
+`eta2_fourier_rig.py` (Arb ball arithmetic) and `p1224_rig.c` (interval arithmetic with directed
+rounding).
 
 A check passes only if it holds for the whole interval. All pass; the reference output is
 `scripts/rigorous/output.txt`. "Also published" lists results in the literature that contain the
@@ -28,11 +28,7 @@ axiom.
 | Axiom | Statement | Float script | Rigorous re-check: worst case | Also published |
 |---|---|---|---|---|
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
-| `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
-| `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
 | `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | [B]'s computation for Prop 12.2.4 covers `q < 3.3·10⁹` |
-
-The Lean definitions of `T2` and `g2` agree with [B, (5.19)] and [B, Lemma 5.1.2].
 
 The rigorous values agree with the float scripts to the digits printed.
 
@@ -55,9 +51,9 @@ from `psi_extra_check.py`:
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([B, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ 0.010032/log X` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
-The axioms are stated as in the papers or weaker. `ramare_moebius` is used for [B, Lemma 5.1.2]
-(`MinorArcs/G2Bound.lean`) and for the Liouville bound behind [B, (2.22)]
-(`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`).
+The axioms are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
+behind [B, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
+`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
 ## Errors found in the sources
 
@@ -113,8 +109,8 @@ These inputs are theorems:
 | Result | File | Method |
 |---|---|---|
 | Ramaré's (12.12) ([Ram95, Lemma 3.4]), with `c_E ∈ [1.33258227, 1.33258229]` | `Prelim/Ramare.lean` | `g_d = h_d ∗ [odd]/n`; `∑ \|h_d(a)\| a^{1/3} ≤ 11 f₁(d)` by Euler products; `c_E = γ + log 2 + 2X/ζ(2) + ∑_p log p/(p³ − p)` via Mathlib's `L(Λ, s) = −ζ'(s)/ζ(s)` and a kernel walk (`RamareWalk.lean`) |
-| (5.31) `T2_le` | `MinorArcs/T2Bound.lean` | `T₂(S) = ¼ ∫₁^S g₂/y + O*(S⁻¹ ∫₁^S \|g₂\|)`; `T2_small`, `T2_mid`, and Lemma 5.1.2 above `10⁸` |
-| Lemma 5.1.2: `\|g₂(x)\| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x` | `MinorArcs/G2Bound.lean` and `G2*.lean` | one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`; `ramare_moebius` for `x/u ≥ 11815` (Rankin weight `u^{1/9}`), [B, (2.24)] below; Euler products |
+| (5.31) `T2_le` | `MinorArcs/T2Bound.lean`, `T2Small.lean`, `G2Tail.lean` | `g₂(n)` for `n ≤ 10⁴` by the kernel; `T₂ = α_n + β_n/S` exactly for `S < 700`; `T₂(S) = ¼ ∫₁^S g₂/y + O*(S⁻¹ ∫₁^S \|g₂\|)` above; `∫_{10⁴}^S \|g₂\|/y ≤ 0.0045` by Cauchy–Schwarz with weights `H_d(a) λ(da)`, which reduces it to `∫ m(⌊t⌋)²/t` (`m(k)` for `k < 11815` from the kernel, `ramare_moebius` beyond) and an Euler product `∏_{p>2} p²/(p²−1) ≤ π²/8` |
+| Lemma 5.1.2: `\|g₂(x)\| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x` (not used by `ternary_goldbach`) | `MinorArcs/G2Bound.lean` and `G2*.lean` | one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`; `ramare_moebius` for `x/u ≥ 11815` (Rankin weight `u^{1/9}`), [B, (2.24)] below; Euler products |
 | (5.36) corrected, (5.37) | `MinorArcs/H2Bound.lean` | `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel for `n ≤ 15` |
 | Prop 12.2.4 | `MinorArcs/LSQuot1–6.lean` | (12.12) and `prop1224_check`; `regionS`, and `λ(q)⁷ ≤ (103/120)⁹ q²` for `q ≥ 2.2·10¹⁰` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
@@ -146,6 +142,8 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallMertensProd.lean` | [RS62, Thm 15] for primes `5 ≤ x ≤ 10⁵`, `log θ(x)` to `10⁻²⁵` (tightest at `x = 23`, margin `2.4·10⁻⁷`) | 5.5 min |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
+| `MinorArcs/SmallG2.lean` | `g₂(n)` for `n ≤ 10⁴` in fixed point (a trie of the sums `A_d(n)`); `T₂ ≤ 0.37273` on `[16, 10⁴)`; `∫₁^{10⁴} g₂/y`, `∫₁^{10⁴} \|g₂\|` | 54 s |
+| `MinorArcs/G2TailNum.lean` | `∫_k^∞ m(⌊t⌋)²/t` for `k ≤ 10⁴` (from `m(j)`, `j < 11815`), and the sum over `d ≤ 10⁴`, `a ≤ 10⁴/d` of the `g₂` tail bound | 82 s |
 | `PrattPrime.lean` | Pratt certificates for the two primes of the ladder's last case | seconds |
 
 ## Outlook
@@ -157,9 +155,6 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
   (about `43.5`) has a short proof. But `c₀ = 31.521` enters the minor-arc numerics of about 15
   files, some of them tightly; for example, `BaseGap2.fourier_const_le` needs
   `c₀ √(2π)/(8π²) ≤ 1.0007`.
-* `T2_small`, `T2_mid` need `g₂(n)` up to `10⁸` because Lemma 5.1.2's second term
-  `528 (1 + log x)²/x` is crude. A term like [B]'s `0.2/√x` would let the switch move to about
-  `10⁴`.
 * `ramare_moebius` (`|m(x)| ≤ 0.03/log x`, `m(x) = ∑_{n≤x} μ(n)/n`, `x ≥ 11815`) is not a
   realistic target:
   * Ramaré's proof (Acta Arith. 157, hal-02572812) and its improvement arXiv:2408.05969 both start
@@ -170,4 +165,5 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
   * Near `x = 10¹⁰`, `x/4345` is the operative input: the analytic bound `0.013 x/log x` is weaker
     until `log x ≈ 56`.
   * Our elementary bound, `|m(x)| ≤ 0.55/(log x − 0.7521)` (`Prelim/MoebiusBound.lean`), does not
-    use the cancellation in `μ`. (5.31), through Lemma 5.1.2, would need about `0.1/log x`.
+    use the cancellation in `μ`. The tail of (5.31) and the Liouville bound would need about
+    `0.1/log x`.

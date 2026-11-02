@@ -50,7 +50,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), sharp large
      │   │    sieves ✅ (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved;
      │   │    §5.1: Lemma 5.1.1, (5.7)–(5.8), (5.34) ✅ MinorArcs/TypeIIS1.lean; trusted f(X) ≤ 1.27X,
-     │   │    T₂(S) ≤ 0.37273 (S ≥ 16) proved in MinorArcs/T2Bound.lean from computations + Lemma 5.1.2 (proved, MinorArcs/G2Bound.lean, from Ramaré (2.21)); (5.36) corrected and (5.37) proved, MinorArcs/H2Bound.lean]
+     │   │    T₂(S) ≤ 0.37273 (S ≥ 16) proved in MinorArcs/T2Bound.lean: kernel g₂(n), n ≤ 10⁴ (SmallG2, T2Small) + mean-square tail ∫_{10⁴}^S |g₂|/y ≤ 0.0045 (G2Tail, from Ramaré (2.21)); (5.36) corrected and (5.37) proved, MinorArcs/H2Bound.lean]
      │   └─ Ch 6  minor-arc totals; parameter choices (§6.3)
      │       [(3.11) decomposition ✅ MinorArcs/Decomposition.lean; (5.2)–(5.5) Type II reduction ✅
      │        MinorArcs/TypeIIReduction.lean; §6.2: S_I1 ✅ TypeITotal, S_I2 (qV ≤ Q) ✅ TypeI2Sum/Large,

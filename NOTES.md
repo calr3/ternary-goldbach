@@ -384,6 +384,38 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
       beta-redex is reduced). Fix: state the step lemma for an arbitrary `r` (`Inv_stepR`) and
       instantiate it.
   * 12 axioms (4 own, 8 published).
+* Own computations 4 → 2 (2026-11-02): `T2_small` and `T2_mid` removed; (5.31) `T2_le` is proved.
+  * `MinorArcs/SmallG2.lean` (kernel, 54 s): walks `n ≤ 10⁴` with `F(r) = μ(r)⌊10³⁰/σ(r)⌋` for odd
+    `r`, a binary trie (`T2Kernel.Tr`) of `Ã_d(n) = ∑_{r≤n, d∣r} F(r)` keyed by `d/2`, and
+    `G̃(n) = ∑_d μ(d) Ã_d(n)²`, updated at odd squarefree `n` through the divisors of `n` (trial
+    division `oddPrimes`, subset products `dvs`). `|G̃(n) − 10⁶⁰ g₂(n)| ≤ 2·10³⁰ n³`.
+    * `16 ≤ S < 700`: `T₂(S) = a(n) − a(n/2)/2 + (c(n) − c(n/2))/S` on `[n, n+1)` (`T2_eq_ac`), with
+      `a(k) = ∑_{s≤k odd} g₂(k/s)/s`, `c(k) = ∑_{s≤k odd} (∑_{j<k/s} g₂(j) − (k/s) g₂(k/s))`.
+      Both change only at odd `k`, by `∓∑_{t ∣ rad k} t Δg₂(t)` (`/k` for `a`); so the kernel needs
+      `Δg₂` at squarefree divisors only. Max `0.3712486` at `S = 16`.
+    * `700 ≤ S < 10⁴`: `¼ I(S) + J(S)/S`, `I`, `J` at the integers with 6-term artanh bounds for
+      `log(1 + 1/n)`. Tightest at `n = 700`.
+    * A first version with `O(n)` lookups per `n` for `α_n` hit the kernel's heartbeat limit at
+      23 GB; the divisor form needs a few lookups per odd `n`.
+  * `MinorArcs/G2Tail.lean`: `∫_{10⁴}^S |g₂|/y ≤ 0.0045` for all `S ≥ 10⁴`.
+    * Pointwise `|g₂(y)| ≤ ∑_d f(d)² S_d(N/d)²` and `S_d = ∑_a H_d(a) m(·/a)`; Cauchy–Schwarz with
+      weights `H_d(a) λ(da)` (Sedrakyan's form) gives
+      `∫_X^S |g₂|/y ≤ ∑_d f(d)² (∑_a H_d(a) λ(da)) (∑_a H_d(a) V(X/(da))/λ(da))`,
+      `V(Y) = ∫_Y^∞ m(⌊t⌋)²/t`; with `λ ≈ √V` this is Minkowski's inequality.
+    * `V(k)` for `k ≤ 10⁴` (`G2TailNum.lean`, kernel 82 s together with the double sum) from `m(j)`,
+      `j < 11815` (as in `SmallMoebius`), and Ramaré's `0.03/log j` beyond (telescoping
+      `∑ log(1+1/j)/log²j ≤ 1.00001/log 11815`). `λ(k)` is a power of 2 near `√V(k)` (`Nat.log2`).
+    * The kernel sums over odd squarefree `d ≤ 10⁴`, `a ≤ 10⁴/d` (`H_d(a) = σ((a,d))/den₁(a)`), and
+      bounds `a > 10⁴/d` by `∑_a H_d(a) ≤ 2 ∏_{p>2} p²/(p²−1) σ(d)/d`, `∏ ≤ π²/8 < 1.2338`
+      (Euler product over smooth numbers and `ζ(2) = π²/6`). Total `0.0039975 + 0.0004963` (`d > 10⁴`
+      by `∑ 1/d² ≤ 10⁻⁴`).
+    * The slack in `∏ p²/(p²−1)` matters: with `1.27` instead of `1.2338` the double sum is
+      `0.0158` (the slack is weighted by `V(1) = 0.815`).
+    * The pointwise route (Lemma 5.1.2) cannot reach `10⁴`: even with exact `m(k)` the bound is
+      about `36/x`; the mean-square route gains `m(k)²` on average instead of its envelope.
+  * `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0045 ≤ 0.3672` for `S ≥ 10⁴`.
+  * [B, Lemma 5.1.2] (`G2Bound.lean`) stays proved but is no longer used.
+  * 10 axioms (2 own, 8 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

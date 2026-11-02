@@ -102,6 +102,12 @@ import TernaryGoldbach.MinorArcs.G2Moebius
 import TernaryGoldbach.MinorArcs.G2Euler
 import TernaryGoldbach.MinorArcs.G2Numerics
 import TernaryGoldbach.MinorArcs.G2Bound
+import TernaryGoldbach.MinorArcs.T2Kernel
+import TernaryGoldbach.MinorArcs.T2Basic
+import TernaryGoldbach.MinorArcs.SmallG2
+import TernaryGoldbach.MinorArcs.T2Small
+import TernaryGoldbach.MinorArcs.G2TailNum
+import TernaryGoldbach.MinorArcs.G2Tail
 import TernaryGoldbach.MinorArcs.T2Bound
 import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.MinorArcs.TypeIIReduction
