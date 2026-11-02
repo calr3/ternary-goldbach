@@ -7,12 +7,12 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 9 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 8 explicitly stated
 axioms besides Lean's standard three. They are:
 * 2 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [H, Lemma B.1.2] also contains, and the
   finite part of [H, Prop 12.2.4];
-* 7 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+* 6 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
   Goldbach up to `1.45·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
@@ -40,8 +40,7 @@ echo 'import TernaryGoldbach
  Quot.sound,
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
- TernaryGoldbach.MajorArcs.platt_even,
- TernaryGoldbach.MajorArcs.platt_odd,
+ TernaryGoldbach.MajorArcs.platt_verification,
  TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
  TernaryGoldbach.Prelim.buthe_psi,

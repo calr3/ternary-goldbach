@@ -420,6 +420,13 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
+## One axiom per cited theorem (2026-11-02)
+
+* `platt_odd`, `platt_even` → one axiom `platt_verification` (Platt's Thm 7.1, the two parities as a
+  conjunction); `platt_odd`, `platt_even` are now theorems with the same statements. 8 axioms.
+* Still possible (not done): derive `buthe_theta` from `buthe_psi` (`|θ − n| ≤ 0.94√n + (ψ − θ)(n)`);
+  the tight use is `ThetaExplicit` at `n = 2·10⁸` (needs `ψ − θ ≤ 1.08√n`, margin under 1%).
+
 ## Binary Goldbach needed only to `1.45·10¹⁷` (2026-11-02)
 
 * The θ error at `10²⁷` sets the range: binary Goldbach up to `N` suffices if

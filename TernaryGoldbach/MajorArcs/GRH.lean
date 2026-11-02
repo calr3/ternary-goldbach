@@ -11,8 +11,9 @@ height `T_q` for all primitive characters of conductor `q ≤ 4·10⁵` [H, §9.
 
 * `GRHUpTo χ T`: every zero `ρ` of `L(s, χ)` with `0 < ℜρ < 1`, `|ℑρ| ≤ T`, has `ℜρ = 1/2`
   (Mathlib's `DirichletCharacter.LFunction`; for `q = 1` this is `ζ`).
-* **`platt_odd`, `platt_even`** (numerical axioms): [H, §9.6] — `T_q = 10⁸/q` for odd `q ≤ 3·10⁵`,
-  `T_q = max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵`.
+* **`platt_verification`** (numerical axiom, Platt's Theorem 7.1): [H, §9.6] — `T_q = 10⁸/q` for odd
+  `q ≤ 3·10⁵`, `T_q = max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵`; `platt_odd` and `platt_even`
+  are its two halves.
 * [H, Prop 9.3.2] (the explicit-formula bound for `Σ Λ(n) χ(n) e(δn/x) η(n/x)`, `η(t) = t² e^{-t²/2}`,
   conditional on `GRHUpTo χ T₀`) is proved in `MajorArcs/Prop932.lean` (from `Explicit/`), with our
   constants.
@@ -35,15 +36,23 @@ theorem GRHUpTo.mono {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {T T' 
     (hT : T' ≤ T) : GRHUpTo χ T' :=
   fun ρ h0 h1 h2 h3 => h ρ h0 h1 h2 (h3.trans hT)
 
-/-- **Numerical axiom** (D. Platt [Plab], [H, §9.6]): for every primitive character `χ` of odd
-conductor `q ≤ 3·10⁵`, GRH holds for `L(s, χ)` up to height `10⁸/q`. -/
-axiom platt_odd {q : ℕ} [NeZero q] (hq : Odd q) (hq3 : q ≤ 300000) (χ : DirichletCharacter ℂ q)
-    (hχ : χ.IsPrimitive) : GRHUpTo χ (1e8 / q)
+/-- **Numerical axiom** (D. Platt [Plab, Thm 7.1], [H, §9.6]): for every primitive character `χ` of
+conductor `q`, GRH holds for `L(s, χ)` up to height `10⁸/q` if `q ≤ 3·10⁵` is odd, and up to height
+`max(10⁸/q, 200 + 7.5·10⁷/q)` if `q ≤ 4·10⁵` is even. (Platt's theorem covers every `q ≤ 4·10⁵`, odd `q`
+to `max(10⁸/q, 200 + 3.75·10⁷/q)`.) -/
+axiom platt_verification {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
+    (Odd q → q ≤ 300000 → GRHUpTo χ (1e8 / q)) ∧
+      (Even q → q ≤ 400000 → GRHUpTo χ (max (1e8 / q) (200 + 7.5e7 / q)))
 
-/-- **Numerical axiom** (D. Platt [Plab], [H, §9.6]): for every primitive character `χ` of even
-conductor `q ≤ 4·10⁵`, GRH holds for `L(s, χ)` up to height `max(10⁸/q, 200 + 7.5·10⁷/q)`. -/
-axiom platt_even {q : ℕ} [NeZero q] (hq : Even q) (hq4 : q ≤ 400000) (χ : DirichletCharacter ℂ q)
-    (hχ : χ.IsPrimitive) : GRHUpTo χ (max (1e8 / q) (200 + 7.5e7 / q))
+/-- Platt's verification for odd conductors `q ≤ 3·10⁵`, up to height `10⁸/q`. -/
+theorem platt_odd {q : ℕ} [NeZero q] (hq : Odd q) (hq3 : q ≤ 300000) (χ : DirichletCharacter ℂ q)
+    (hχ : χ.IsPrimitive) : GRHUpTo χ (1e8 / q) :=
+  (platt_verification χ hχ).1 hq hq3
+
+/-- Platt's verification for even conductors `q ≤ 4·10⁵`, up to height `max(10⁸/q, 200 + 7.5·10⁷/q)`. -/
+theorem platt_even {q : ℕ} [NeZero q] (hq : Even q) (hq4 : q ≤ 400000) (χ : DirichletCharacter ℂ q)
+    (hχ : χ.IsPrimitive) : GRHUpTo χ (max (1e8 / q) (200 + 7.5e7 / q)) :=
+  (platt_verification χ hχ).2 hq hq4
 
 /-- Platt's verification at height `10⁸/q` for every `q ≤ 3·10⁵`. -/
 theorem platt_grh {q : ℕ} [NeZero q] (hq3 : q ≤ 300000) (χ : DirichletCharacter ℂ q)

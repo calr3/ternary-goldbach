@@ -13,7 +13,7 @@ erratum"). We state them as [H] does.
 * **`cor_7_1_3`** — [H, Cor 7.1.3]: twisted sums for `η = φ *_M η₂` (our `etaU`). **Proved**
   (`MajorArcs/Cor713.lean`) from [H, Prop 9.3.2] (`MajorArcs.prop_9_3_2`: proved for `q ≥ 2` with our
   constants, cited for `q = 1`; conditional on GRH up to height `T₀`) and Platt's verification
-  (numerical axioms `platt_odd`, `platt_even`), via [H, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
+  (numerical axiom `platt_verification`, via `platt_odd`, `platt_even`), via [H, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
 * **`prop_7_1_5`** — [H, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)` (for `x ≥ 4.9·10²⁶`). **Proved**
   (`MajorArcs/Prop715.lean`) from [H, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, proved: `ζ` explicit formulas for
   `η₊²` and `η₊² log`, RH up to `500`), Platt's verification at `q = 1` and the numerical axiom
