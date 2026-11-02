@@ -424,6 +424,8 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
 
 * `platt_odd`, `platt_even` → one axiom `platt_verification` (Platt's Thm 7.1, the two parities as a
   conjunction); `platt_odd`, `platt_even` are now theorems with the same statements. 8 axioms.
+* `buthe_psi`, `buthe_theta` → one axiom `buthe_bounds` (Büthe's Thm 2: (1.5) and (1.6)–(1.7)); the two
+  are now theorems with the same statements. 7 axioms (2 own, 5 published).
 * Still possible (not done): derive `buthe_theta` from `buthe_psi` (`|θ − n| ≤ 0.94√n + (ψ − θ)(n)`);
   the tight use is `ThetaExplicit` at `n = 2·10⁸` (needs `ψ − θ ≤ 1.08√n`, margin under 1%).
 

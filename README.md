@@ -7,13 +7,13 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 8 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 7 explicitly stated
 axioms besides Lean's standard three. They are:
 * 2 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [H, Lemma B.1.2] also contains, and the
   finite part of [H, Prop 12.2.4];
-* 6 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
-  Goldbach up to `1.45·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
+* 5 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
+  Goldbach up to `1.45·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹`, and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
@@ -43,8 +43,7 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.MajorArcs.platt_verification,
  TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
- TernaryGoldbach.Prelim.buthe_psi,
- TernaryGoldbach.Prelim.buthe_theta,
+ TernaryGoldbach.Prelim.buthe_bounds,
  TernaryGoldbach.Prelim.ramare_moebius]
 ```
 
