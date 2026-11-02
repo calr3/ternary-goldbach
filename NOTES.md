@@ -420,14 +420,58 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
-## One axiom per cited theorem (2026-11-02)
+## How small can the small-case computation be? (2026-11-02)
+
+Binary Goldbach up to `B` covers odd `n ≤ C` (the start of the circle method) iff every `x ≤ C` has a
+provable prime in `(x − B, x − 4]`. Needed `B` at the top of each range (`scripts`-style estimates):
+
+| `x` | Büthe (`≤ 10¹⁹`) | our explicit formula | RH to `H = 3·10¹²`, ideal |
+|---|---|---|---|
+| `10¹⁹` | `1.5·10¹⁰` | `1.0·10¹³` | `4.8·10¹¹` |
+| `10²¹` | — | `1.0·10¹⁴` | `5.9·10¹²` |
+| `10²³` | — | `1.0·10¹⁵` | `7.1·10¹³` |
+| `10²⁵` | — | `1.05·10¹⁶` | `8.3·10¹⁴` |
+| `10²⁷` | — | `1.44·10¹⁷` | `1.0·10¹⁶` |
+
+(ideal = `max(30x/H, √x log²x/(4π))`: unverified zeros force a smoothing width `≳ 1/H`, and the zero
+sum is `≍ √x log² x` even under RH.) So `B ≈ 10¹⁰–10¹²` needs the circle method to start near
+`10¹⁹–10²⁰`.
+
+How low can the circle method start?
+* [H]'s scheme (`minor_arc_total_numerics.py` at smaller `y`): minor arcs `1.04` at `N = 10²⁷`,
+  `1.15` at `10²⁶`, `1.29` at `10²⁵` (needs `< 1.049`). The growing term is the tail (14.43) at
+  `r₁ = (3/8)y^{4/15}`.
+* Our repair 3 (levels up to `r₂ ≈ x^{0.3}`, `minor_arc_y_scale_repair.py`, ideal closed form):
+  `Z = 0.873` (`N ≈ 10²⁷`), `0.929` (`10²⁶`), `1.004` (`10²⁵`), `1.109` (`10²⁴`), `2.65` (`10²³`).
+  The Lean majorants (cells) lose about `0.09` at `10²⁵`, so realistically `C ≈ 10²⁶`, perhaps `10²⁵`.
+  Major arcs, (14.7) and the non-prime terms would also have to be redone below `10²⁷`.
+* Hard floors: `r₀ = 150000` is fixed by Platt's GRH range (`q ≤ 3·10⁵`); Thm 3.1.1 (as formalized)
+  needs scale `≥ 2.16·10²⁰` and `r ≤ y^{1/3}/6`, so `y ≥ (6r₀)³ ≈ 7·10¹⁷` at the very least.
+* No elementary bridge: one prime from a short interval plus binary Goldbach is the only route
+  (ternary = binary on average needs the circle method again); a prime ladder with gaps `≤ B` up to
+  `10²⁷` needs `10²⁷/B` certified primes (`10¹⁵` for `B = 10¹²`).
+
+Conclusion: `B` can come down to about `10¹⁶` (start the circle method at `10²⁵–10²⁶`) and perhaps
+`10¹⁵` (with a short-window smoothing near the RH-to-`H` floor), each a large rework; `10¹⁰–10¹²` is
+out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc method.
+
+## One axiom per cited theorem; Büthe's θ bounds dropped (2026-11-02)
 
 * `platt_odd`, `platt_even` → one axiom `platt_verification` (Platt's Thm 7.1, the two parities as a
   conjunction); `platt_odd`, `platt_even` are now theorems with the same statements. 8 axioms.
-* `buthe_psi`, `buthe_theta` → one axiom `buthe_bounds` (Büthe's Thm 2: (1.5) and (1.6)–(1.7)); the two
-  are now theorems with the same statements. 7 axioms (2 own, 5 published).
-* Still possible (not done): derive `buthe_theta` from `buthe_psi` (`|θ − n| ≤ 0.94√n + (ψ − θ)(n)`);
-  the tight use is `ThetaExplicit` at `n = 2·10⁸` (needs `ψ − θ ≤ 1.08√n`, margin under 1%).
+* `buthe_psi`, `buthe_theta` → one axiom `buthe_bounds` (Büthe's Thm 2: (1.5) and (1.6)–(1.7)). 7 axioms.
+* Then **Büthe's `θ` bounds (1.6)–(1.7) dropped**: the axiom is (1.5) alone (`buthe_psi`), and every `θ`
+  bound is derived from it via `|θ − n| ≤ 0.94√n + (ψ − θ)(n)`:
+  * `ψ(N) − θ(N) ≤ √N (1.0054 + 0.048 log N)` on `[10⁹, 10¹⁹]` (`psi_sub_theta_le_buthe`: the squares
+    give `θ(⌊√N⌋)`; a prime with `m³ ≤ N` has `961 m² ≤ N`, so `m ≤ ⌊√N⌋/31`; Büthe at both). With
+    `cube_div_sqrt_le`/`quart_div_sqrt_le` at `log 10⁹`: `1.9454 L³/√x + 0.048 L⁴/√x ≤ 0.83 < 1`, so
+    `theta_explicit` now starts at `10⁹` (was `2·10⁸`, where `n/log³n` is only `2.03 √n`).
+  * `|θ(n) − n| ≤ 2.37 √n` for `12 ≤ n ≤ 10¹²` (`thetaN_close_small`, from `nonprime_small`).
+  * `F_mid` covers `[10⁵, 10⁹]` with `2.37` (worst side condition `2.305 < 2.5`); `F_large`, `psi_err`,
+    `E1_diff`, `thetaN_large`, `psi_upper_of` start at `10⁹`.
+  * (2.19): `logsq_mid` (Abel summation with `thetaN_ge`) now covers `[40000, 10¹²]`; `logsq_large` only
+    `N > 10¹²` (with `2.37` it would fail near `10⁶`: room `0.003N`), where `thetaN_close` is `thetaN_large`.
+  * `SmallCases`: `θ ≤ ψ` and `ψ − θ ≤ 2.001 log n √n` below `10¹⁹`.
 
 ## Binary Goldbach needed only to `1.45·10¹⁷` (2026-11-02)
 

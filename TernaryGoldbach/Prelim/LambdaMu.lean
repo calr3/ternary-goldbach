@@ -78,7 +78,7 @@ theorem thetaN_le_psiN (n : ℕ) : thetaN n ≤ psiN n := by
     sum_nonneg fun m _ => by split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
   linarith
 
-theorem thetaN_large {n : ℕ} (hn : 200000000 ≤ n) :
+theorem thetaN_large {n : ℕ} (hn : 1000000000 ≤ n) :
     |thetaN n - n| < n / Real.log n ^ 3 + epl n * n := by
   unfold thetaN; exact theta_explicit hn
 
@@ -224,8 +224,8 @@ theorem log_ge_23 {x : ℝ} (hx : 10 ^ 10 ≤ x) : 23 ≤ Real.log x := by
   have := nat_le_log (N := x) (k := 23) (by norm_num; linarith)
   exact_mod_cast this
 
-/-- `ψ(N) ≤ N + N/log³N + 7.04 √N` for `N ≥ 2·10⁸`, given `ψ(√N) ≤ 1.03883 √N`. -/
-theorem psi_upper_of {N : ℕ} (hN : 200000000 ≤ N)
+/-- `ψ(N) ≤ N + N/log³N + 7.04 √N` for `N ≥ 10⁹`, given `ψ(√N) ≤ 1.03883 √N`. -/
+theorem psi_upper_of {N : ℕ} (hN : 1000000000 ≤ N)
     (h : psiN (Nat.sqrt N) ≤ 1.03883 * (Nat.sqrt N : ℝ)) :
     psiN N ≤ N + N / Real.log N ^ 3 + epl N * N + 7.04 * √(N : ℝ) := by
   rw [psiN_eq]
@@ -1150,20 +1150,13 @@ checks). -/
 
 /-! ### (2.19) -/
 
-/-- `|θ(n) − n| ≤ 1.95 √n + n/log³ n` for `n ≥ 5·10⁵`. -/
-theorem thetaN_close {n : ℕ} (hn : 500000 ≤ n) :
+/-- `|θ(n) − n| ≤ 1.95 √n + n/log³ n + ε_pl(n) n` for `n > 10¹⁰` (from `thetaN_large`; the `√n` term is
+slack). -/
+theorem thetaN_close {n : ℕ} (hn : 10 ^ 10 < n) :
     |thetaN n - n| ≤ 1.95 * √(n : ℝ) + n / Real.log n ^ 3 + epl n * n := by
-  have hepl := mul_nonneg (epl_nonneg n) (Nat.cast_nonneg n)
-  have hl : 0 ≤ (n : ℝ) / Real.log n ^ 3 := by
-    have : 0 ≤ Real.log n := Real.log_natCast_nonneg n
-    positivity
   have hs := Real.sqrt_nonneg (n : ℝ)
-  rcases le_or_gt n (10 ^ 10) with h | h
-  · -- [Büthe 2018, Thm 2] (`buthe_theta`, `1423 ≤ n ≤ 10¹⁹`)
-    have := buthe_theta n (by omega) (h.trans (by norm_num))
-    unfold thetaN; linarith
-  · have := thetaN_large (n := n) (by omega)
-    linarith
+  have := thetaN_large (n := n) (by omega)
+  linarith
 
 theorem sum_logsq_le_mul (a b : ℕ) :
     ∑ p ∈ (Ioc a b).filter Nat.Prime, Real.log p ^ 2 ≤
@@ -1178,15 +1171,15 @@ theorem sum_logsq_le_mul (a b : ℕ) :
   nlinarith
 
 set_option maxHeartbeats 800000 in
-/-- **[H, (2.19)]** for integers `N > 10⁶`. -/
-theorem logsq_large {N : ℕ} (hN : 10 ^ 6 < N) :
+/-- **[H, (2.19)]** for integers `N > 10¹²`. -/
+theorem logsq_large {N : ℕ} (hN : 10 ^ 12 < N) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
   set a := N / 2 with ha
   set b := 3 * N / 4 with hb
   have hab : a ≤ b := by omega
   have hbN : b ≤ N := by omega
   have ha5 : 500000 ≤ a := by omega
-  have hNr : (1000000 : ℝ) < N := by exact_mod_cast hN
+  have hNr : (1000000 : ℝ) < N := by exact_mod_cast (show 10 ^ 6 < N by omega)
   have har1 : (a : ℝ) ≤ N / 2 := by
     have : 2 * a ≤ N := by omega
     have : (2 : ℝ) * a ≤ N := by exact_mod_cast this
@@ -1281,7 +1274,7 @@ theorem logsq_large {N : ℕ} (hN : 10 ^ 6 < N) :
       · have : 20000 ≤ Real.log n := by
           push Not at hL2; exact hL2.trans (Real.log_le_log ha0 (by exact_mod_cast hn))
         rw [epl_eq_zero this, zero_mul]
-    have h := thetaN_close (le_trans ha5 hn)
+    have h := thetaN_close (n := n) (by omega)
     have hs : √(n : ℝ) ≤ √(N : ℝ) := Real.sqrt_le_sqrt hnN'
     have hLn : L ≤ Real.log n := Real.log_le_log ha0 (by exact_mod_cast hn)
     have : (n : ℝ) / Real.log n ^ 3 ≤ N / L ^ 3 := by
@@ -1368,6 +1361,16 @@ theorem thetaN_ge {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 12) :
   have := (abs_le.1 hb).1
   linarith
 
+/-- **`|θ(n) − n| ≤ 2.37 √n` for `12 ≤ n ≤ 10¹²`**: `θ ≤ ψ ≤ n + 0.94 √n` (Büthe) and `thetaN_ge`. -/
+theorem thetaN_close_small {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 12) :
+    |thetaN n - n| ≤ 2.37 * √(n : ℝ) := by
+  have hlo := thetaN_ge h1 h2
+  have hb := (abs_le.1 (buthe_psi n h1 (by omega))).2
+  have hθψ := thetaN_le_psiN n
+  unfold psiN at hθψ
+  have hs := Real.sqrt_nonneg (n : ℝ)
+  rw [abs_le]; constructor <;> linarith
+
 /-- `log N ≤ 0.0535 √N` for `N ≥ 40000`. -/
 theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 * √N := by
   have he2 : Real.exp 2 ≤ (40000 : ℝ) := by
@@ -1393,8 +1396,8 @@ theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 *
   rw [hs, div_le_div_iff₀ hsN (by norm_num)] at hanti
   nlinarith
 
-/-- **[H, (2.19)] for `40000 ≤ N ≤ 10⁶`**, by Abel summation from [Büthe] and `nonprime_small`. -/
-theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 6) :
+/-- **[H, (2.19)] for `40000 ≤ N ≤ 10¹²`**, by Abel summation from [Büthe] and `nonprime_small`. -/
+theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
   set a := N / 2 with ha
   have ha1 : 20000 ≤ a := by omega
@@ -1490,9 +1493,9 @@ theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 6) :
     linarith
   linarith [F1, F2, F3, F3', F4, F6, F7, hsum, hsN2, har1]
 
-/-- **`∑_{n/2 < p ≤ n} (log p)² ≤ ½ n log n` for `117 ≤ n ≤ 10⁶`**: kernel-checked for `n < 40000`
+/-- **`∑_{n/2 < p ≤ n} (log p)² ≤ ½ n log n` for `117 ≤ n ≤ 10¹²`**: kernel-checked for `n < 40000`
 (`SmallLS.logsq_kernel`), by Abel summation above. -/
-theorem logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 6) :
+theorem logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 12) :
     ∑ p ∈ (Ioc (n / 2) n).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * n * Real.log n := by
   rcases lt_or_ge n 40000 with h | h
   · exact TernaryGoldbach.Prelim.SmallLS.logsq_kernel n h1 h
@@ -1518,7 +1521,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
     have h2 : 0 ≤ Real.log N := Real.log_natCast_nonneg N
     nlinarith
   refine hmono.trans (le_trans ?_ hrhs)
-  rcases le_or_gt N (10 ^ 6) with h | h
+  rcases le_or_gt N (10 ^ 12) with h | h
   · exact logsq_small N hN h
   · exact logsq_large h
 

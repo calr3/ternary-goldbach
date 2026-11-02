@@ -18,7 +18,7 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
-| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `1.45·10¹⁷` (`binary_goldbach_input`) and a prime in `(n − 1.45·10¹⁷, n − 4]` from the bounds for `θ` (`buthe_theta`, `psi_plateau`) instead of the ladder | ✅ proved (uses published axioms) |
+| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `1.45·10¹⁷` (`binary_goldbach_input`) and a prime in `(n − 1.45·10¹⁷, n − 4]` from the bounds for `θ` (`buthe_psi`, `psi_plateau`) instead of the ladder | ✅ proved (uses published axioms) |
 
 ## Minor arcs: (14.49) ⟸ Thm 13.2.1
 

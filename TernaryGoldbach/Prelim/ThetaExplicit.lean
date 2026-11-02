@@ -3,12 +3,13 @@ import TernaryGoldbach.Explicit.PsiAsymp
 /-!
 # An explicit prime number theorem for `θ` (replacing Dusart's bound)
 
-`|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 2·10⁸`, where `ε_pl(n) = 2.2·10⁻¹¹` if
+`|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 10⁹`, where `ε_pl(n) = 2.2·10⁻¹¹` if
 `3400 < log n < 20000` and `0` otherwise.
 
-Inputs: [Büthe 2018] for `n ≤ 10¹⁹` (numerical axiom `buthe_bounds`; `buthe_theta`, `buthe_psi`), where
-`1.95 √n < n/log³n` for `n ≥ 2·10⁸`, and the explicit formula with the zero-free region
-(`Explicit/Psi*`) above.
+Inputs: for `n ≤ 10¹⁹`, Büthe's `|ψ(n) − n| ≤ 0.94 √n` (numerical axiom `buthe_psi`) and
+`ψ(n) − θ(n) ≤ √n (1.0054 + 0.048 log n)` (`psi_sub_theta_le_buthe`: Büthe at `⌊√n⌋` and `⌊√n⌋/31`), whose
+sum is `< n/log³n` for `n ≥ 10⁹`; above `10¹⁹`, the explicit formula with the zero-free region
+(`Explicit/Psi*`).
 -/
 
 open Finset Real
@@ -20,23 +21,11 @@ open TernaryGoldbach.Explicit (psiR psi_plateau psi_range1 psi_asymp)
 open TernaryGoldbach.Helfgott (psi theta psi_sub_theta_le_sum sum_pow_le_theta)
 
 /-- **Numerical axiom** ([Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018),
-1991–2009, arXiv:1511.02032, Thm 2): (1.5) `|x − ψ(x)| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`, used at integers
-`12 ≤ n ≤ 10¹⁹`; and (1.6)–(1.7) `0.05 √x < x − θ(x) ≤ 1.95 √x` for `1423 ≤ x ≤ 10¹⁹`, used as
-`|θ(n) − n| ≤ 1.95 √n`. -/
-axiom buthe_bounds :
-    (∀ n : ℕ, 12 ≤ n → n ≤ 10 ^ 19 → |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ)) ∧
-      (∀ n : ℕ, 1423 ≤ n → n ≤ 10 ^ 19 →
-        |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| ≤ 1.95 * √(n : ℝ))
-
-/-- [Büthe 2018, Thm 2, (1.6)–(1.7)]: `|θ(n) − n| ≤ 1.95 √n` for `1423 ≤ n ≤ 10¹⁹`. -/
-theorem buthe_theta (n : ℕ) (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 19) :
-    |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| ≤ 1.95 * √(n : ℝ) :=
-  buthe_bounds.2 n h1 h2
-
-/-- [Büthe 2018, Thm 2, (1.5)]: `|ψ(n) − n| ≤ 0.94 √n` for `12 ≤ n ≤ 10¹⁹`. -/
-theorem buthe_psi (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
-    |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ) :=
-  buthe_bounds.1 n h1 h2
+1991–2009, arXiv:1511.02032, Thm 2, (1.5)): `|x − ψ(x)| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`; we use it at
+integers `12 ≤ n ≤ 10¹⁹`. (Büthe's bounds (1.6)–(1.7) for `θ` are not used: the `θ` bounds here are
+derived from this one.) -/
+axiom buthe_psi (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
+    |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ)
 
 /-- The plateau. -/
 noncomputable def epl (x : ℝ) : ℝ := if 3400 < Real.log x ∧ Real.log x < 20000 then 2.2e-11 else 0
@@ -138,6 +127,120 @@ theorem theta_le_psi' (N : ℕ) : theta N ≤ psi N := by
   refine sum_le_sum fun n _ => ?_
   split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
 
+theorem psi_eq_Icc (n : ℕ) : psi n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
+  rw [psi, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n)]
+  simp [Finset.Ico_add_one_right_eq_Icc]
+
+open Classical in
+/-- The prime-power terms with exponent `k` are at most `θ(M)` if every prime `m` with `mᵏ ≤ N` has
+`m ≤ M`. -/
+theorem sum_pow_le_theta' {N k M : ℕ} (hMN : M ≤ N) (hM : ∀ m, m.Prime → m ^ k ≤ N → m ≤ M) :
+    (∑ m ∈ range (N + 1), if m.Prime ∧ m ^ k ≤ N then Real.log m else 0) ≤ theta M := by
+  have hfilt : (range (N + 1)).filter (· ≤ M) = range (M + 1) := by
+    ext m; simp only [mem_filter, mem_range]; omega
+  rw [theta, ← hfilt, sum_filter]
+  refine sum_le_sum fun m _ => ?_
+  by_cases hp : m.Prime
+  · by_cases hk : m ^ k ≤ N
+    · simp [hp, hk, hM m hp hk, ArithmeticFunction.vonMangoldt_apply_prime hp]
+    · simp only [hp, hk, and_false, ite_false, true_and]
+      split_ifs <;> simp [ArithmeticFunction.vonMangoldt_apply_prime hp,
+        Real.log_nonneg, hp.one_lt.le]
+  · simp [hp]
+
+/-- `θ(M) ≤ M + 0.94 √M` for `12 ≤ M ≤ 10¹⁹` (Büthe's bound for `ψ`). -/
+theorem theta_le_buthe {M : ℕ} (h1 : 12 ≤ M) (h2 : M ≤ 10 ^ 19) :
+    theta M ≤ M + 0.94 * √(M : ℝ) := by
+  have hb := (abs_le.1 (buthe_psi M h1 h2)).2
+  rw [← psi_eq_Icc] at hb
+  have := theta_le_psi' M
+  linarith
+
+open Classical in
+/-- **`ψ(N) − θ(N) ≤ √N (1.0054 + 0.048 log N)` for `10⁹ ≤ N ≤ 10¹⁹`**: the squares contribute
+`θ(⌊√N⌋)`, and every prime `m` with `m³ ≤ N` has `961 m² ≤ N`, so `m ≤ ⌊√N⌋/31`; both `θ`s are bounded
+by Büthe's bound for `ψ`. -/
+theorem psi_sub_theta_le_buthe {N : ℕ} (h1 : 10 ^ 9 ≤ N) (h2 : N ≤ 10 ^ 19) :
+    psi N - theta N ≤ √(N : ℝ) * (1.0054 + 0.048 * Real.log N) := by
+  have hsum := psi_sub_theta_le_sum N
+  set s := Nat.sqrt N with hs
+  set M := s / 31 with hM
+  set K := Nat.log 2 N with hK
+  have hsN : s ≤ N := Nat.sqrt_le_self N
+  have hs1 : 31622 ≤ s := by rw [hs, Nat.le_sqrt]; omega
+  have hM1 : 1020 ≤ M := by rw [hM]; omega
+  have hMs : M ≤ s := Nat.div_le_self s 31
+  have hK2 : 2 ≤ K := by
+    rw [hK]; exact Nat.le_log_of_pow_le (by norm_num) (by omega)
+  rw [← Finset.insert_Icc_add_one_left_eq_Icc hK2, Finset.sum_insert (by simp)] at hsum
+  -- the squares
+  have hS2 : (∑ m ∈ range (N + 1), if m.Prime ∧ m ^ 2 ≤ N then Real.log m else 0) ≤ theta s :=
+    sum_pow_le_theta' hsN fun m _ hm2 => by rw [hs, Nat.le_sqrt]; nlinarith
+  -- the higher powers
+  have hS3 : ∀ k ∈ Icc (2 + 1) K,
+      (∑ m ∈ range (N + 1), if m.Prime ∧ m ^ k ≤ N then Real.log m else 0) ≤ theta M := by
+    intro k hk
+    have hk3 : 3 ≤ k := (mem_Icc.1 hk).1
+    refine sum_pow_le_theta' (hMs.trans hsN) fun m hmp hmk => ?_
+    have hm3 : m ^ 3 ≤ N := le_trans (Nat.pow_le_pow_right hmp.pos hk3) hmk
+    have h961 : 961 * m ^ 2 ≤ N := by
+      rcases le_or_gt 961 m with hm | hm
+      · calc 961 * m ^ 2 ≤ m * m ^ 2 := Nat.mul_le_mul_right _ hm
+          _ = m ^ 3 := by ring
+          _ ≤ N := hm3
+      · have : m ^ 2 ≤ 960 ^ 2 := Nat.pow_le_pow_left (by omega) 2
+        omega
+    rw [hM, Nat.le_div_iff_mul_le (by norm_num), hs, Nat.le_sqrt]
+    nlinarith
+  have hS3' := sum_le_sum hS3
+  rw [sum_const, Nat.card_Icc, nsmul_eq_mul] at hS3'
+  -- Büthe at `s` and `M`
+  have hθs := theta_le_buthe (M := s) (by omega) (by omega)
+  have hθM := theta_le_buthe (M := M) (by omega) (by omega)
+  have hθM0 : 0 ≤ theta M := by
+    rw [theta]; exact sum_nonneg fun n _ => by
+      split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
+  set sN := √(N : ℝ) with hsNdef
+  have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
+  have hssN : (s : ℝ) ≤ sN := Real.nat_sqrt_le_real_sqrt
+  have hMr : (M : ℝ) ≤ sN / 31 := by
+    have : (M : ℝ) ≤ (s : ℝ) / 31 := by rw [hM]; exact_mod_cast Nat.cast_div_le
+    linarith
+  have hs177 : (177 : ℝ) ≤ √(s : ℝ) :=
+    Real.le_sqrt_of_sq_le (by have : (31622 : ℝ) ≤ s := by exact_mod_cast hs1
+                              linarith)
+  have hM319 : (31.9 : ℝ) ≤ √(M : ℝ) :=
+    Real.le_sqrt_of_sq_le (by have : (1020 : ℝ) ≤ M := by exact_mod_cast hM1
+                              linarith)
+  have hsq_s : √(s : ℝ) * √(s : ℝ) = s := Real.mul_self_sqrt (Nat.cast_nonneg s)
+  have hsq_M : √(M : ℝ) * √(M : ℝ) = M := Real.mul_self_sqrt (Nat.cast_nonneg M)
+  have hbs : 0.94 * √(s : ℝ) ≤ 0.00532 * s := by nlinarith
+  have hbM : 0.94 * √(M : ℝ) ≤ 0.02947 * M := by nlinarith
+  -- the number of exponents
+  have hKr : ((K + 1 - (2 + 1) : ℕ) : ℝ) ≤ K := by exact_mod_cast (by omega : K + 1 - (2 + 1) ≤ K)
+  have hKL : (K : ℝ) * 0.6931 ≤ Real.log N := by
+    have hkN : 2 ^ K ≤ N := Nat.pow_log_le_self 2 (by omega)
+    have h1 : (K : ℝ) * Real.log 2 ≤ Real.log N := by
+      rw [← Real.log_pow]; exact Real.log_le_log (by positivity) (by exact_mod_cast hkN)
+    have := Real.log_two_gt_d9
+    have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
+    nlinarith
+  have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
+  have hsN0 : 0 ≤ sN := Real.sqrt_nonneg _
+  -- assemble: `ψ − θ ≤ 1.00532 √N + K · 1.02947 √N/31`
+  have hA : theta s ≤ 1.00532 * sN := by linarith
+  have hB : ((K + 1 - (2 + 1) : ℕ) : ℝ) * theta M ≤ K * (1.02947 * (sN / 31)) := by
+    have h1 : theta M ≤ 1.02947 * (sN / 31) := by linarith
+    have h2 := mul_le_mul_of_nonneg_right hKr hθM0
+    have h3 := mul_le_mul_of_nonneg_left h1 hK0
+    linarith
+  have hC : K * (1.02947 * (sN / 31)) ≤ 0.048 * (Real.log N * sN) := by
+    have := mul_le_mul_of_nonneg_left hKL hsN0
+    nlinarith
+  have e : sN * (1.0054 + 0.048 * Real.log N) = 1.0054 * sN + 0.048 * (Real.log N * sN) := by ring
+  rw [e]
+  linarith
+
 /-- `L³/√x ≤ L₀³ e^{−L₀/2}` for `log x ≥ L₀ ≥ 6`. -/
 theorem cube_div_sqrt_le {x L0 : ℝ} (hx : 0 < x) (h6 : 6 ≤ L0) (hL : L0 ≤ Real.log x) :
     Real.log x ^ 3 * (√x)⁻¹ ≤ L0 ^ 3 * Real.exp (-(1 / 2 * L0)) := by
@@ -171,6 +274,13 @@ theorem log_2e8_le : Real.log 2e8 ≤ 19.12 := by
   rw [e] at h; refine le_trans ?_ h
   norm_num [Finset.sum_range_succ, Nat.factorial]
 
+theorem log_1e9_le : Real.log 1e9 ≤ 20.73 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 20 (u := 0.73) (by norm_num) 8
+  have e : ((20 : ℕ) : ℝ) + 0.73 = 20.73 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
 theorem log_1e19_le : Real.log 1e19 ≤ 43.75 := by
   refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
   have h := TernaryGoldbach.Explicit.exp_split_ge' 43 (u := 0.75) (by norm_num) 8
@@ -182,8 +292,8 @@ theorem log_ge_of_le {x c : ℝ} (hx : 0 < x) (h : Real.exp c ≤ x) : c ≤ Rea
   (Real.le_log_iff_exp_le hx).2 h
 
 set_option maxHeartbeats 1000000 in
-/-- **Explicit PNT for `θ`** (replaces Dusart): `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 2·10⁸`. -/
-theorem theta_explicit {n : ℕ} (hn : 200000000 ≤ n) :
+/-- **Explicit PNT for `θ`** (replaces Dusart): `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. -/
+theorem theta_explicit {n : ℕ} (hn : 1000000000 ≤ n) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3 + epl n * n := by
   obtain ⟨x, hxdef⟩ : ∃ x : ℝ, x = n := ⟨_, rfl⟩
   rw [← hxdef]
@@ -198,41 +308,70 @@ theorem theta_explicit {n : ℕ} (hn : 200000000 ≤ n) :
     calc x * (√x)⁻¹ = √x * √x * (√x)⁻¹ := by rw [hss]
       _ = √x := by field_simp
   rcases le_or_gt n (10 ^ 19) with h2 | h2
-  · -- Büthe
-    have hB := buthe_theta n (by omega) h2
-    rw [← hxdef] at hB
-    have hx8 : (2e8 : ℝ) ≤ x := by
+  · -- Büthe's bound for `ψ`, and `ψ − θ ≤ √x (1.0054 + 0.048 log x)`
+    have hB := buthe_psi n (by omega) h2
+    rw [← psi_eq_Icc] at hB
+    have hD := psi_sub_theta_le_buthe (N := n) hn h2
+    have hθψ := theta_le_psi' n
+    have hθt : θ = theta n := (theta_eq n).symm
+    rw [← hxdef] at hB hD
+    have hx9 : (1e9 : ℝ) ≤ x := by
       rw [hxdef]
-      have : ((200000000 : ℕ) : ℝ) ≤ n := by exact_mod_cast hn
+      have : ((1000000000 : ℕ) : ℝ) ≤ n := by exact_mod_cast hn
       norm_num at this ⊢; linarith
-    have hL0 : Real.log 2e8 ≤ Real.log x := Real.log_le_log (by norm_num) hx8
-    have h6 : 6 ≤ Real.log 2e8 := log_ge_of_le (by norm_num) (by
+    have hL0 : Real.log 1e9 ≤ Real.log x := Real.log_le_log (by norm_num) hx9
+    have h8 : 8 ≤ Real.log 1e9 := log_ge_of_le (by norm_num) (by
       have h := Real.exp_one_lt_d9
-      have : Real.exp 6 = Real.exp 1 ^ 6 := by rw [← Real.exp_nat_mul]; norm_num
+      have : Real.exp 8 = Real.exp 1 ^ 8 := by rw [← Real.exp_nat_mul]; norm_num
       rw [this]
-      calc Real.exp 1 ^ 6 ≤ 2.7182818286 ^ 6 := pow_le_pow_left₀ (Real.exp_pos 1).le h.le 6
-        _ ≤ 2e8 := by norm_num)
-    have hc := cube_div_sqrt_le hx0 h6 hL0
-    rw [exp_neg_half_log (by norm_num)] at hc
-    have hs8 : (14142 : ℝ) ≤ √(2e8 : ℝ) := Real.le_sqrt_of_sq_le (by norm_num)
-    have hl8 := log_2e8_le
-    have hl0 : 0 ≤ Real.log 2e8 := by linarith
-    have hc' : Real.log x ^ 3 * (√x)⁻¹ ≤ 0.4943 := by
+      calc Real.exp 1 ^ 8 ≤ 2.7182818286 ^ 8 := pow_le_pow_left₀ (Real.exp_pos 1).le h.le 8
+        _ ≤ 1e9 := by norm_num)
+    have hc := cube_div_sqrt_le hx0 (by linarith) hL0
+    have hq := quart_div_sqrt_le hx0 h8 hL0
+    rw [exp_neg_half_log (by norm_num)] at hc hq
+    have hs9 : (31622 : ℝ) ≤ √(1e9 : ℝ) := Real.le_sqrt_of_sq_le (by norm_num)
+    have hl9 := log_1e9_le
+    have hl0 : 0 ≤ Real.log 1e9 := by linarith
+    have h4 : (√(1e9 : ℝ))⁻¹ ≤ 1 / 31622 := by
+      rw [inv_eq_one_div]; exact one_div_le_one_div_of_le (by norm_num) hs9
+    have hc' : Real.log x ^ 3 * (√x)⁻¹ ≤ 0.2818 := by
       refine hc.trans ?_
-      have h3 : Real.log 2e8 ^ 3 ≤ 19.12 ^ 3 := pow_le_pow_left₀ hl0 hl8 3
-      have h4 : (√(2e8 : ℝ))⁻¹ ≤ 1 / 14142 := by
-        rw [inv_eq_one_div]; exact one_div_le_one_div_of_le (by norm_num) hs8
-      calc Real.log 2e8 ^ 3 * (√(2e8 : ℝ))⁻¹ ≤ 19.12 ^ 3 * (1 / 14142) :=
+      have h3 : Real.log 1e9 ^ 3 ≤ 20.73 ^ 3 := pow_le_pow_left₀ hl0 hl9 3
+      calc Real.log 1e9 ^ 3 * (√(1e9 : ℝ))⁻¹ ≤ 20.73 ^ 3 * (1 / 31622) :=
             mul_le_mul h3 h4 (by positivity) (by norm_num)
-        _ ≤ 0.4943 := by norm_num
-    -- `1.95 √x < x/L³`
-    have hkey : 1.95 * √x * Real.log x ^ 3 < x := by
-      have : Real.log x ^ 3 ≤ 0.4943 * √x := by
-        have := mul_le_mul_of_nonneg_right hc' hs0.le
-        rwa [mul_assoc, inv_mul_cancel₀ hs0.ne', mul_one] at this
-      nlinarith
-    have : 1.95 * √x < x / Real.log x ^ 3 := by rw [lt_div_iff₀ hL3]; exact hkey
-    linarith
+        _ ≤ 0.2818 := by norm_num
+    have hq' : Real.log x ^ 4 * (√x)⁻¹ ≤ 5.84 := by
+      refine hq.trans ?_
+      have h3 : Real.log 1e9 ^ 4 ≤ 20.73 ^ 4 := pow_le_pow_left₀ hl0 hl9 4
+      calc Real.log 1e9 ^ 4 * (√(1e9 : ℝ))⁻¹ ≤ 20.73 ^ 4 * (1 / 31622) :=
+            mul_le_mul h3 h4 (by positivity) (by norm_num)
+        _ ≤ 5.84 := by norm_num
+    have hL3' : Real.log x ^ 3 ≤ 0.2818 * √x := by
+      have := mul_le_mul_of_nonneg_right hc' hs0.le
+      rwa [mul_assoc, inv_mul_cancel₀ hs0.ne', mul_one] at this
+    have hL4' : Real.log x ^ 4 ≤ 5.84 * √x := by
+      have := mul_le_mul_of_nonneg_right hq' hs0.le
+      rwa [mul_assoc, inv_mul_cancel₀ hs0.ne', mul_one] at this
+    -- `√x (1.9454 + 0.048 L) < x/L³`
+    have hkey : √x * (1.9454 + 0.048 * Real.log x) * Real.log x ^ 3 < x := by
+      have e : √x * (1.9454 + 0.048 * Real.log x) * Real.log x ^ 3 =
+          1.9454 * (√x * Real.log x ^ 3) + 0.048 * (√x * Real.log x ^ 4) := by ring
+      rw [e]
+      have h1 := mul_le_mul_of_nonneg_left hL3' hs0.le
+      have h2 := mul_le_mul_of_nonneg_left hL4' hs0.le
+      have e1 : √x * (0.2818 * √x) = 0.2818 * x := by
+        rw [show √x * (0.2818 * √x) = 0.2818 * (√x * √x) by ring, hss]
+      have e2 : √x * (5.84 * √x) = 5.84 * x := by
+        rw [show √x * (5.84 * √x) = 5.84 * (√x * √x) by ring, hss]
+      rw [e1] at h1; rw [e2] at h2
+      linarith
+    have hlt : √x * (1.9454 + 0.048 * Real.log x) < x / Real.log x ^ 3 := by
+      rw [lt_div_iff₀ hL3]; exact hkey
+    have hpos : 0 ≤ √x * (1.0054 + 0.048 * Real.log x) := by positivity
+    have e3 : 0.94 * √x + √x * (1.0054 + 0.048 * Real.log x) = √x * (1.9454 + 0.048 * Real.log x) := by
+      ring
+    rw [hθt, abs_lt]
+    constructor <;> linarith [(abs_le.1 hB).1, (abs_le.1 hB).2]
   -- above `10¹⁹`
   have hx19 : (1e19 : ℝ) < x := by
     rw [hxdef]

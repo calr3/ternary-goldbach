@@ -44,12 +44,12 @@ Acta Arith. 157 paper, for which the later papers and the float check below stan
 | `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The axiom also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 1.45·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked" (we earlier cited `4·10¹⁷` from the project page). `SmallCases.lean` needs only `1.45·10¹⁷`, inside the double-checked range |
-| `Prelim.buthe_bounds` | `\|ψ(n) − n\| ≤ 0.94 √n` for `12 ≤ n ≤ 10¹⁹`, and `\|θ(n) − n\| ≤ 1.95 √n` for `1423 ≤ n ≤ 10¹⁹` (`buthe_psi`, `buthe_theta` are its two halves) | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`; (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
+| `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The axioms are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
-`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_theta` and `rh_upto` (through
+`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_psi` and `rh_upto` (through
 `Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 1.45·10¹⁷, n − 4]` for
 `1.45·10¹⁷ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`). This replaces the Helfgott–Platt prime ladder
 (arXiv:1305.3062), formerly the axiom `prime_ladder_input`.
@@ -118,9 +118,9 @@ These inputs are theorems:
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
 | [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
-| [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: `theta_explicit` above `2·10⁸`, Büthe's bounds and a sharper prime-power tail on `[10⁵, 2·10⁸]`, kernel for primes `≤ 10⁵` |
+| [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: `theta_explicit` above `10⁹`, Büthe's `ψ` bound, `|θ(x) − x| ≤ 2.37 √x` and a sharper prime-power tail on `[10⁵, 10⁹]`, kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi`, `buthe_theta` up to `10¹⁹`, our explicit prime number theorem beyond; kernel for small `n` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi` up to `10¹⁹` (with `ψ − θ` bounded from it for `θ`), our explicit prime number theorem beyond; kernel for small `n` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 

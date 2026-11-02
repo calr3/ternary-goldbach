@@ -13,7 +13,7 @@ axioms besides Lean's standard three. They are:
   (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [H, Lemma B.1.2] also contains, and the
   finite part of [H, Prop 12.2.4];
 * 5 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
-  Goldbach up to `1.45·10¹⁷`, Büthe's bounds on `θ` and `ψ` up to `10¹⁹`, and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
+  Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
@@ -43,7 +43,7 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.MajorArcs.platt_verification,
  TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
- TernaryGoldbach.Prelim.buthe_bounds,
+ TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.ramare_moebius]
 ```
 
@@ -105,9 +105,11 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
-  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 2·10⁸`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
+  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
   `3400 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [H] uses. It comes from:
-  * Büthe's bound up to `10¹⁹`;
+  * Büthe's bound for `ψ` up to `10¹⁹`, with `ψ − θ ≤ √n (1.0054 + 0.048 log n)` (from the same
+    bound at `⌊√n⌋` and `⌊√n⌋/31`); below `10¹²` we use `|θ(n) − n| ≤ 2.37 √n` (Büthe and
+    `ψ − θ < 1.4262 √n`). Büthe's separate bounds for `θ` are not used;
   * above `10¹⁹`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹²` and the
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.

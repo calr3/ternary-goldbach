@@ -7,7 +7,7 @@ import TernaryGoldbach.Prelim.ThetaExplicit
 For odd `n ≤ 1.45·10¹⁷ + 3`, `n = 3 + (n − 3)` and binary Goldbach up to `1.45·10¹⁷` (`binary_goldbach_input`,
 [OeSHP14] go to `4·10¹⁸` and double-checked `3·10¹⁷`) applies. For odd `1.45·10¹⁷ + 3 < n ≤ 10²⁷` there is a
 prime `p` with `n − 1.45·10¹⁷ < p ≤ n − 4`, since `−7.401·10¹⁶ ≤ θ(m) − m ≤ 7.003·10¹⁶` for
-`1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_theta`) below `10¹⁹`, and the explicit formula
+`1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_psi`, with `ψ − θ ≤ 2.001 log m √m`) below `10¹⁹`, and the explicit formula
 (`psi_plateau`, from `rh_upto`) with `ψ − θ ≤ 2.001 log m √m` above. Then `n − p` is even and at most
 `1.45·10¹⁷`.
 
@@ -18,7 +18,8 @@ open Finset Real
 
 namespace TernaryGoldbach.Helfgott
 
-open TernaryGoldbach.Prelim (buthe_theta theta_eq psi_sub_theta_le' theta_le_psi' psiR_nat)
+open TernaryGoldbach.Prelim (buthe_psi psi_eq_Icc theta_eq psi_sub_theta_le' theta_le_psi' psiR_nat
+  log_1e19_le)
 open TernaryGoldbach.Explicit (psi_plateau)
 
 /-- `θ(n) = ∑_{p ≤ n} log p`. -/
@@ -59,10 +60,22 @@ theorem theta_bound {n : ℕ} (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 27) :
     -7.401e16 ≤ th n - n ∧ th n - n ≤ 7.003e16 := by
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   rcases le_or_gt n (10 ^ 19) with h | h
-  · have hB := abs_le.1 (buthe_theta n h1 h)
+  · -- Büthe's bound for `ψ`, and `ψ − θ ≤ 2.001 log n √n`
+    have hB := abs_le.1 (buthe_psi n (by omega) h)
+    rw [← psi_eq_Icc] at hB
+    have hT : th n = theta n := by rw [theta_eq]; rfl
+    have hle := theta_le_psi' n
+    have hge := psi_sub_theta_le' (N := n) (by omega)
     have hs : √(n : ℝ) ≤ 4e9 :=
       sqrt_le_of_sq (by norm_num) ((Nat.cast_le.2 h).trans_eq' (by norm_num) |>.trans (by norm_num))
-    unfold th
+    have hl : Real.log n ≤ 43.75 :=
+      (Real.log_le_log (by exact_mod_cast (by omega : 0 < n)) (by
+        have : (n : ℝ) ≤ 10 ^ 19 := by exact_mod_cast h
+        norm_num at this ⊢; linarith)).trans log_1e19_le
+    have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
+    have hl0 : 0 ≤ Real.log n := Real.log_natCast_nonneg n
+    have hls : Real.log n * √(n : ℝ) ≤ 43.75 * 4e9 := mul_le_mul hl hs hs0 (by norm_num)
+    rw [hT]
     constructor <;> nlinarith
   · have hn19 : (1e19 : ℝ) ≤ n := by
       have : (10 ^ 19 : ℝ) ≤ n := by exact_mod_cast h.le
@@ -105,14 +118,15 @@ theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
       · have haa := (theta_bound h (by omega)).2
         linarith
       · have h1 : th a ≤ th 1423 := th_mono h.le
-        have h2 : |th 1423 - ((1423 : ℕ) : ℝ)| ≤ 1.95 * √((1423 : ℕ) : ℝ) :=
-          buthe_theta 1423 le_rfl (by norm_num)
+        have h2 := (abs_le.1 (buthe_psi 1423 (by norm_num) (by norm_num))).2
+        rw [← psi_eq_Icc] at h2
         have hs : √((1423 : ℕ) : ℝ) ≤ 38 := sqrt_le_of_sq (by norm_num) (by norm_num)
         have h3 : th 1423 ≤ 1500 := by
-          have := (abs_le.1 h2).2
+          have hT : th 1423 = theta 1423 := by rw [theta_eq]; rfl
+          have hle := theta_le_psi' 1423
           have e : ((1423 : ℕ) : ℝ) = 1423 := by norm_num
-          rw [e] at this hs
-          linarith
+          rw [e] at h2 hs
+          rw [hT]; linarith
         have hbR : (145 * 10 ^ 15 : ℝ) ≤ b := by exact_mod_cast (show 145 * 10 ^ 15 ≤ b by omega)
         linarith
     obtain ⟨p, hp, hap, hpb⟩ := exists_prime_of_th_lt hlt

@@ -12,8 +12,9 @@ Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
   by summation by parts from `theta_explicit` (`|θ(n) − n| < n/log³ n + ε_pl(n) n`, `Prelim/ThetaExplicit.lean`;
   the plateau adds `P(M) = 3.7·10⁻⁷` to `D` while `log M < 20000`);
 * `log ∏_{p ≤ x} p/(p−1) ≤ ∑_{d ≤ x} Λ(d)/(d log d) + 3/⌊√x⌋` (the log series);
-* hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 2·10⁸` (`F_large`);
-* for `10⁵ ≤ x ≤ 2·10⁸` the same argument with Büthe's `ψ` and `θ` bounds (`E1_var`, `F_mid`) and the
+* hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10⁹` (`F_large`);
+* for `10⁵ ≤ x ≤ 10⁹` the same argument with Büthe's `ψ` bound and `|θ(x) − x| ≤ 2.37 √x`
+  (`thetaN_close_small`) (`E1_var`, `F_mid`) and the
   sharper prime-power tail `7/(6⌊√x⌋)` (`logF_le'`); for primes `5 ≤ x ≤ 10⁵` the kernel
   (`Prelim/SmallMertensProd.lean`);
 * the exchange argument: `q/φ(q) ≤ ∏_{p ≤ p_k} p/(p−1)` and `p_1 ⋯ p_k ≤ q` for `k = ω(q)`.
@@ -57,8 +58,8 @@ theorem E2_le_of {x c D : ℝ} (hx : 2 ≤ x) (h : ∀ t, x < t → |E₁Λ t - 
   have e1 : (c + D) / Real.log x - (c - D) / Real.log x = 2 * D / Real.log x := by ring
   rw [abs_le]; constructor <;> linarith
 
-/-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 2·10⁸`. -/
-theorem psi_err {n : ℕ} (hn : 200000000 ≤ n) :
+/-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 10⁹`. -/
+theorem psi_err {n : ℕ} (hn : 1000000000 ≤ n) :
     |psiN n - n| ≤ n / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ) := by
   have h1 := psi_upper_of hn (psi_bounds _).1
   have h2 := (abs_lt.1 (thetaN_large hn)).1
@@ -88,7 +89,7 @@ theorem sum_inv_succ_le {a b : ℕ} (hab : a < b) :
       push_cast; simp
 
 /-- The Abel summation term, centred: `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ …`. -/
-theorem abel_term_err {n : ℕ} (hn : 200000000 ≤ n) :
+theorem abel_term_err {n : ℕ} (hn : 1000000000 ≤ n) :
     |psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1)| ≤
       1 / ((n + 1) * Real.log n ^ 3) + 7.04 * (1 / (√(n : ℝ) * (n + 1))) + epl n / ((n : ℝ) + 1) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
@@ -108,8 +109,8 @@ theorem abel_term_err {n : ℕ} (hn : 200000000 ≤ n) :
     rw [add_mul, add_mul, mul_assoc (7.04 : ℝ), this, e3]; field_simp; ring
   linarith
 
-/-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 2·10⁸`. -/
-theorem E1_diff {M : ℕ} (hM : 200000000 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
+/-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 10⁹`. -/
+theorem E1_diff {M : ℕ} (hM : 1000000000 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
       (2 / Real.log M ^ 2 + 14.08 / √(M : ℝ)) + Pth M := by
   have hPth := Pth_nonneg (M : ℝ)
@@ -436,7 +437,7 @@ theorem log_sq_le_sqrt {x : ℝ} (hx : 10 ^ 8 ≤ x) : Real.log x ^ 2 ≤ 0.0361
     _ = 0.0361 * √x := by rw [mul_pow, hq2]; norm_num
 
 /-- **[H, Lemma C.2.2]** for `x ≥ 10⁸`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
-theorem F_large {x : ℕ} (hx : 2 * 10 ^ 8 ≤ x) :
+theorem F_large {x : ℕ} (hx : 10 ^ 9 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) + 2.50637 / Real.log (thetaN x) := by
   have hx0 : (0 : ℝ) < x := by exact_mod_cast (by omega : 0 < x)
@@ -593,7 +594,7 @@ theorem F_large {x : ℕ} (hx : 2 * 10 ^ 8 ≤ x) :
     rw [hk]; linarith only [a1, a2]
   linarith only [hF, hGL, hc, key]
 
-/-! ### `10⁵ ≤ x ≤ 2·10⁸`: Büthe's bounds and the sharper prime-power tail -/
+/-! ### `10⁵ ≤ x ≤ 10⁹`: Büthe's `ψ` bound and the sharper prime-power tail -/
 
 /-- `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ 0.94/(√n (n+1))` for `12 ≤ n ≤ 10¹⁹` (Büthe). -/
 theorem abel_term_err_B {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
@@ -914,11 +915,11 @@ theorem logF_le' (x : ℕ) (hx : 4 ≤ x) :
 set_option maxHeartbeats 1000000 in
 /-- **[RS62, Thm 15] for `10⁵ ≤ x ≤ 10¹⁹`**, given numerical conditions on `S₀ ≤ ⌊√x⌋` and
 `L_m ≥ log x`. -/
-theorem F_mid_gen {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 10 ^ 19) {S0 : ℕ} {Lm : ℝ}
+theorem F_mid_gen {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 10 ^ 12) {S0 : ℕ} {Lm : ℝ}
     (hS0 : 316 ≤ S0) (hS : S0 ≤ Nat.sqrt x) (hLm : Real.log x ≤ Lm)
     (hc1 : 2 * (3 / (S0 : ℝ) ^ 2 + 3.76 / S0 + 0.0013) / 11 + 7 / (6 * S0) ≤ 0.0196)
     (hc2 : 1.95 * (1.02 * (2 * (3 / (S0 : ℝ) ^ 2 + 3.76 / S0 + 0.0013) * Lm + 7 / (6 * S0) * Lm ^ 2) +
-      2 * (1.95 / S0 * Lm)) < 2.5) :
+      2 * (2.37 / S0 * Lm)) < 2.5) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) + 2.50637 / Real.log (thetaN x) := by
   have hx0 : (0 : ℝ) < x := by exact_mod_cast (by omega : 0 < x)
@@ -1008,15 +1009,15 @@ theorem F_mid_gen {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 10 ^ 19) {S0 : ℕ
       _ = L * G * Real.exp η := by rw [Real.exp_add, Real.exp_add, Real.exp_log hL0]
       _ ≤ L * G * (1 + 1.02 * η) := mul_le_mul_of_nonneg_left hexp (by positivity)
       _ = G * L + 1.02 * (G * η * L) := by ring
-  -- `θ(x)` bounds (Büthe)
-  have hθ := abs_le.1 (show |thetaN x - x| ≤ 1.95 * sx from buthe_theta x (by omega) hx2)
-  set u := 1.95 / sx with hu
+  -- `θ(x)` bounds (`thetaN_close_small`)
+  have hθ := abs_le.1 (show |thetaN x - x| ≤ 2.37 * sx from thetaN_close_small (by omega) hx2)
+  set u := 2.37 / sx with hu
   have hu0 : 0 < u := by positivity
-  have hu1 : u ≤ 1.95 / 316 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) (by linarith)
-  have hθx : 1.95 * sx = x * u := by
+  have hu1 : u ≤ 2.37 / 316 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) (by linarith)
+  have hθx : 2.37 * sx = x * u := by
     have hss2 : sx * sx = x := Real.mul_self_sqrt hx0.le
     rw [hu, mul_div_assoc', eq_div_iff hsx0.ne']
-    linear_combination 1.95 * hss2
+    linear_combination 2.37 * hss2
   rw [hθx] at hθ
   have hθ0 : 0 < thetaN x := by nlinarith only [hθ.1, hx0, hu1, hu0]
   have hlθ1 : L - 2 * u ≤ Real.log (thetaN x) := by
@@ -1046,19 +1047,19 @@ theorem F_mid_gen {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 10 ^ 19) {S0 : ℕ
     have e : G * (L - 2 * u) = G * L - 2 * (G * u) := by ring
     linarith
   have hsxS : (S0 : ℝ) ≤ sx := hSs.trans hssx
-  have huL : u * L ≤ 1.95 / S0 * Lm := by
-    have h1 : u ≤ 1.95 / S0 := div_le_div_of_nonneg_left (by norm_num) (by positivity) hsxS
+  have huL : u * L ≤ 2.37 / S0 * Lm := by
+    have h1 : u ≤ 2.37 / S0 := div_le_div_of_nonneg_left (by norm_num) (by positivity) hsxS
     exact mul_le_mul h1 hLLm hL0.le (by positivity)
   have key : 1.02 * (G * η * L) + 2 * (G * u) < 2.5 / L := by
     rw [lt_div_iff₀ hL0]
     have hk : (1.02 * (G * η * L) + 2 * (G * u)) * L = G * (1.02 * (η * L ^ 2) + 2 * (u * L)) := by ring
     rw [hk]
     have hb : 1.02 * (η * L ^ 2) + 2 * (u * L) ≤
-        1.02 * (2 * D0 * Lm + 7 / (6 * S0) * Lm ^ 2) + 2 * (1.95 / S0 * Lm) := by
+        1.02 * (2 * D0 * Lm + 7 / (6 * S0) * Lm ^ 2) + 2 * (2.37 / S0 * Lm) := by
       linarith
     have hb0 : 0 ≤ 1.02 * (η * L ^ 2) + 2 * (u * L) := by positivity
     calc G * (1.02 * (η * L ^ 2) + 2 * (u * L)) ≤
-          1.95 * (1.02 * (2 * D0 * Lm + 7 / (6 * S0) * Lm ^ 2) + 2 * (1.95 / S0 * Lm)) :=
+          1.95 * (1.02 * (2 * D0 * Lm + 7 / (6 * S0) * Lm ^ 2) + 2 * (2.37 / S0 * Lm)) :=
           mul_le_mul hG1.le hb hb0 (by norm_num)
       _ < 2.5 := hc2
   linarith only [hF, hGL, hc, key]
@@ -1069,12 +1070,12 @@ theorem log_le_of_exp {x : ℝ} {k : ℕ} (hx : 0 < x) (h : x ≤ 2.7182818283 ^
     _ ≤ Real.exp 1 ^ k := pow_le_pow_left₀ (by norm_num) Real.exp_one_gt_d9.le k
     _ = Real.exp k := by rw [← Real.exp_nat_mul, mul_one]
 
-/-- **[RS62, Thm 15] for `10⁵ ≤ x ≤ 2·10⁸`.** -/
-theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 2 * 10 ^ 8) :
+/-- **[RS62, Thm 15] for `10⁵ ≤ x ≤ 10⁹`.** -/
+theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 10 ^ 9) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) + 2.50637 / Real.log (thetaN x) := by
   have hx0 : (0 : ℝ) < x := by exact_mod_cast (by omega : 0 < x)
-  have hx19 : x ≤ 10 ^ 19 := by omega
+  have hx19 : x ≤ 10 ^ 12 := by omega
   rcases lt_or_ge x 300000 with h1 | h1
   · refine F_mid_gen (S0 := 316) (Lm := 13) hx1 hx19 le_rfl ?_ ?_ (by norm_num) (by norm_num)
     · rw [Nat.le_sqrt]; omega
@@ -1087,11 +1088,11 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x ≤ 2 * 10 ^ 8) :
     · exact_mod_cast log_le_of_exp hx0 (by
         have : (x : ℝ) ≤ 1000000 := by exact_mod_cast h2.le
         linarith [show (1000000 : ℝ) ≤ 2.7182818283 ^ 14 by norm_num])
-  · refine F_mid_gen (S0 := 1000) (Lm := 20) hx1 hx19 (by norm_num) ?_ ?_ (by norm_num) (by norm_num)
+  · refine F_mid_gen (S0 := 1000) (Lm := 21) hx1 hx19 (by norm_num) ?_ ?_ (by norm_num) (by norm_num)
     · rw [Nat.le_sqrt]; omega
     · exact_mod_cast log_le_of_exp hx0 (by
-        have : (x : ℝ) ≤ 2 * 10 ^ 8 := by exact_mod_cast hx2
-        linarith [show (2 * 10 ^ 8 : ℝ) ≤ 2.7182818283 ^ 20 by norm_num])
+        have : (x : ℝ) ≤ 10 ^ 9 := by exact_mod_cast hx2
+        linarith [show (10 ^ 9 : ℝ) ≤ 2.7182818283 ^ 21 by norm_num])
 
 /-- `q/φ(q) = ∏_{p ∣ q} p/(p−1)`. -/
 theorem div_totient_eq_prod {q : ℕ} (hq : 1 ≤ q) :
@@ -1190,7 +1191,7 @@ theorem F_all {x : ℕ} (hx : x.Prime) (h5 : 5 ≤ x) :
         2.50637 / Real.log (thetaN x) := by
   rcases le_or_gt x (10 ^ 5) with h | h
   · exact MertProd.mertens_product_kernel x hx h5 h
-  rcases le_or_gt x (2 * 10 ^ 8) with h' | h'
+  rcases le_or_gt x (10 ^ 9) with h' | h'
   · exact F_mid (by omega) h'
   · exact F_large h'.le
 
