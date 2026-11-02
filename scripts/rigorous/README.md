@@ -28,12 +28,12 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | Check | Axiom | Range | Time |
 |---|---|---|---|
 | `nonprime` | (former axiom `nonprime_small`; now proved) | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
-| `mertens_lower` | `mertens_lower_small`, `mertens_point` | `n ≤ 10⁶` | 1 s |
+| `mertens_lower` | (former axioms `mertens_lower_small`, `mertens_point`; now proved, kernel to `10⁴`) | `n ≤ 10⁶` | 1 s |
 | `logsq` | (former axiom `logsq_small`; now proved) | `n ≤ 10⁶` | 2 s |
 | `mertens_product` | `mertens_product_small` | primes `≤ 2·10⁸` | 70 s |
-| `K` | `K_blocks`, `K_pieces` | prime powers `≤ 10⁹` | 2 min |
+| `K` | (former axioms `K_blocks`, `K_pieces`; replaced by `ramare_moebius`) | prime powers `≤ 10⁹` | 2 min |
 | `liouville` | (former axiom `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
-| `C_grid` | `C_grid` | 7720 grid points × 3000 terms | 25 s |
+| `C_grid` | (former axiom `C_grid`; now kernel-checked on 17 intervals) | 7720 grid points × 3000 terms | 25 s |
 | `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
 | `lemma8` | (former axiom `lemma8_numeric`; now proved) | `n ≤ 10⁴` | 10 s |
 | `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
@@ -50,8 +50,6 @@ How the ranges are covered:
 * Step functions (`ψ − θ`, `∑ Λ(m)/m`, `G(r)`, `Ψ(k)`) are constant between consecutive jump points.
   Each check is made at the worst point of each run, using the monotonicity of the other side
   (`√n`, `log(n+1)`, `log t`).
-* `K_blocks` takes the maximum over each run `[a, b)` of `|Ψ(k) − log t − E(10⁹)|`, `t ∈ {k, k+1}`, at
-  `t = a` or `t = b`, splitting runs at the block boundaries `1000·2ʲ`.
 * The other checks are made at every point of their range.
 
 Build (needs `gcc`; the MPFR/GMP headers come with the Python package `gmpy2`, the libraries are the

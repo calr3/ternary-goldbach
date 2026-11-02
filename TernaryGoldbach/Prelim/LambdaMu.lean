@@ -5,6 +5,7 @@ import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallNonprime
 import TernaryGoldbach.Prelim.SmallLogSq
+import TernaryGoldbach.Prelim.SmallMertensLower
 
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [B, §2.5]
@@ -40,18 +41,6 @@ namespace TernaryGoldbach.Prelim
 theorem mertens_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 100) :
     ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m ≤ Real.log n :=
   Small.mertens_small' h1 h
-
-/-- **Numerical axiom** (`scripts/psi_checks.py`; minimum margin `0.0141` at `n = 6`):
-`∑_{m ≤ n} Λ(m)/m ≥ log(n+1) − log(3/√2)` for `3 ≤ n ≤ 10⁶` (at `n = 2` this is an equality,
-proved below). -/
-axiom mertens_lower_small (n : ℕ) (h1 : 3 ≤ n) (h2 : n ≤ 10 ^ 6) :
-    Real.log (n + 1) - Real.log (3 / √2) ≤ ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m
-
-/-- **Numerical axiom** (`scripts/psi_checks.py`; value `−1.57721`): at `X = 10⁶`,
-`∑_{m ≤ X} Λ(m)/m − ψ(X)/(X+1) − log(X+2) ≥ −1.5776`. -/
-axiom mertens_point :
-    -1.5776 ≤ ∑ m ∈ Icc 1 (10 ^ 6), (Λ m : ℝ) / m -
-      (∑ m ∈ Icc 1 (10 ^ 6), (Λ m : ℝ)) / (10 ^ 6 + 1) - Real.log (10 ^ 6 + 2)
 
 /-! ### The explicit prime number theorem
 
@@ -925,10 +914,10 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
           ArithmeticFunction.vonMangoldt_apply_prime Nat.prime_two]
         push_cast; ring
       rw [hs, hlog32, show ((2 : ℕ) : ℝ) + 1 = 3 by norm_num]; linarith
-  rcases le_or_gt N (10 ^ 6) with h6 | h6
-  · exact mertens_lower_small N h3 h6
-  -- `N > 10⁶`: summation by parts from `X = 10⁶`
-  set X : ℕ := 10 ^ 6 with hX
+  rcases le_or_gt N (10 ^ 4) with h6 | h6
+  · exact MertWalk.mertens_lower_le h3 h6
+  -- `N > 10⁴`: summation by parts from `X = 10⁴`
+  set X : ℕ := 10 ^ 4 with hX
   have hsplit : ∑ n ∈ Icc 1 N, (Λ n : ℝ) / n =
       ∑ n ∈ Icc 1 X, (Λ n : ℝ) / n + ∑ n ∈ Ioc X N, (Λ n : ℝ) * (fun n : ℕ => 1 / (n : ℝ)) n := by
     simp only [mul_one_div]
@@ -948,24 +937,24 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
   have h3' := sum_inv_log_cube_le (a := X) (by norm_num) h6
   have hb2 : 0 ≤ 2 / √(N : ℝ) := by positivity
   have hb3 : 0 ≤ 2 / Real.log (N : ℝ) ^ 2 := by positivity
-  -- numerical bounds at `X + 1 = 10⁶ + 1`
-  have hX1 : ((X : ℕ) : ℝ) + 1 = 1000001 := by norm_num [hX]
-  have hsX : 2 / √(((X : ℕ) : ℝ) + 1) ≤ 0.002 := by
+  -- numerical bounds at `X + 1 = 10⁴ + 1`
+  have hX1 : ((X : ℕ) : ℝ) + 1 = 10001 := by norm_num [hX]
+  have hsX : 2 / √(((X : ℕ) : ℝ) + 1) ≤ 0.02 := by
     rw [hX1, div_le_iff₀ (by positivity)]
-    have : (1000 : ℝ) ≤ √1000001 := Real.le_sqrt_of_sq_le (by norm_num)
+    have : (100 : ℝ) ≤ √10001 := Real.le_sqrt_of_sq_le (by norm_num)
     linarith
-  have hlX : (13 : ℝ) ≤ Real.log (((X : ℕ) : ℝ) + 1) := by
-    rw [hX1]; exact_mod_cast nat_le_log (N := 1000001) (k := 13) (by norm_num)
-  have hlX2 : 2 / Real.log (((X : ℕ) : ℝ) + 1) ^ 2 ≤ 2 / 169 :=
+  have hlX : (9 : ℝ) ≤ Real.log (((X : ℕ) : ℝ) + 1) := by
+    rw [hX1]; exact_mod_cast nat_le_log (N := 10001) (k := 9) (by norm_num)
+  have hlX2 : 2 / Real.log (((X : ℕ) : ℝ) + 1) ^ 2 ≤ 2 / 81 :=
     div_le_div_of_nonneg_left (by norm_num) (by norm_num)
-      (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 13) hlX 2])
+      (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 9) hlX 2])
   -- the boundary term at `N`
-  have hNb : 1 - 0.95 / 1000 - 1 / 2197 - 2.2e-11 ≤ psiN N * (1 / (N : ℝ)) := by
+  have hNb : 1 - 0.95 / 100 - 1 / 729 - 2.2e-11 ≤ psiN N * (1 / (N : ℝ)) := by
     have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
     have hl := psi_lower2 (n := N) (by omega)
-    have hlN : (13 : ℝ) ≤ Real.log N :=
+    have hlN : (9 : ℝ) ≤ Real.log N :=
       le_trans hlX (Real.log_le_log (by positivity) (by rw [hX1]; exact_mod_cast h6))
-    have hsN : (1000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by exact_mod_cast (by omega : 10 ^ 6 ≤ N))
+    have hsN : (100 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by exact_mod_cast (by omega : 10 ^ 4 ≤ N))
     have hss : √(N : ℝ) * √(N : ℝ) = N := Real.mul_self_sqrt hN0.le
     have e : ((N : ℝ) - 0.95 * √(N : ℝ) - N / Real.log N ^ 3 - epl N * N) * (1 / (N : ℝ)) =
         1 - 0.95 / √(N : ℝ) - 1 / Real.log N ^ 3 - epl N := by
@@ -976,18 +965,18 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
       have e3 : (N : ℝ) / Real.log N ^ 3 * (1 / N) = 1 / Real.log N ^ 3 := by field_simp
       have e4 : epl N * N * (1 / (N : ℝ)) = epl N := by field_simp
       rw [sub_mul, sub_mul, sub_mul, e1, e2, e3, e4]
-    have h1' : 0.95 / √(N : ℝ) ≤ 0.95 / 1000 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsN
-    have h2' : 1 / Real.log N ^ 3 ≤ 1 / 2197 :=
+    have h1' : 0.95 / √(N : ℝ) ≤ 0.95 / 100 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsN
+    have h2' : 1 / Real.log N ^ 3 ≤ 1 / 729 :=
       div_le_div_of_nonneg_left (by norm_num) (by norm_num)
-        (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 13) hlN 3])
+        (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 9) hlN 3])
     have := mul_le_mul_of_nonneg_right hl (by positivity : (0 : ℝ) ≤ 1 / (N : ℝ))
     have := epl_le (N : ℝ)
     linarith
-  have hpt := mertens_point
+  have hpt := MertWalk.mertens_point_le
   have hpX : psiN X * (1 / ((X + 1 : ℕ) : ℝ)) =
-      (∑ m ∈ Icc 1 (10 ^ 6), (Λ m : ℝ)) / (10 ^ 6 + 1) := by
+      (∑ m ∈ Icc 1 (10 ^ 4), (Λ m : ℝ)) / (10 ^ 4 + 1) := by
     rw [psiN, hX]; push_cast; ring
-  have hlog2 : Real.log ((X : ℕ) + 2 : ℝ) = Real.log (10 ^ 6 + 2) := by rw [hX]; push_cast; ring_nf
+  have hlog2 : Real.log ((X : ℕ) + 2 : ℝ) = Real.log (10 ^ 4 + 2) := by rw [hX]; push_cast; ring_nf
   have hl32 : Real.log 2 ≤ Real.log (3 / √2) := by
     apply Real.log_le_log (by norm_num)
     rw [le_div_iff₀ (by positivity)]
@@ -1535,13 +1524,12 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 
 /-! ### Sums of `μ` (trusted) -/
 
-/- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is not used by the
-formalization and is not stated here; our weaker substitute is `MoebiusBound.abs_sum_moebius_div_le`
-(`0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`). -/
+/- [B, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
+axiom `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for `x ≥ 10¹⁰`. -/
 
 /- [B, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
-(Acta Arith. 165 (2014)) from our own `q = 1` bound (`Prelim/MoebiusBound.lean`). -/
+(Acta Arith. 165 (2014)) from the `q = 1` bound of `Prelim/MoebiusBound.lean`. -/
 
 /- [B, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 10¹⁰` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`) from our own sieve. -/

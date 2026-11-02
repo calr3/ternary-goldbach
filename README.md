@@ -7,9 +7,9 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 19 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 14 explicitly stated
 axioms besides Lean's standard three. They are:
-* 11 finite computations of our own, each checked in rigorous interval arithmetic
+* 6 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
 * 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
@@ -50,13 +50,8 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.MinorArcs.T2_small,
  TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
- TernaryGoldbach.Prelim.C_grid,
- TernaryGoldbach.Prelim.K_blocks,
- TernaryGoldbach.Prelim.K_pieces,
  TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.buthe_theta,
- TernaryGoldbach.Prelim.mertens_lower_small,
- TernaryGoldbach.Prelim.mertens_point,
  TernaryGoldbach.Prelim.mertens_product_small,
  TernaryGoldbach.Prelim.moebius_sqrt_small,
  TernaryGoldbach.Prelim.ramare_moebius]
@@ -66,7 +61,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 `native_decide`. The kernel itself evaluates the computations that replace former axioms:
 * the primality certificates in `PrattPrime.lean`;
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
-  `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean` and `SmallMuPhi.lean`;
+  `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean`,
+  `SmallMuPhi.lean`, `SmallMertensLower.lean` and `SmallCGrid.lean`;
 * the products and sums behind Ramaré's (12.12) and `c_E` in `Prelim/RamareBound.lean` and
   `RamareWalk.lean`;
 * the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`.

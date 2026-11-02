@@ -10,7 +10,7 @@ Proof (a version of [B]'s, with cruder constants):
 * `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` ([B, (5.20)], `g2_eq_sum_moebius`);
 * `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` with `H_d ≥ 0` multiplicative (`Sd_eq`);
 * `|m(x/u)| ≤ 0.03 u^{1/22}/log x + √(2u/x)` (`abs_m_le`): Ramaré's `|m(y)| ≤ 0.03/log y`
-  ([B, (2.21)], axiom `ramare_moebius`) with Rankin's `log x/log(x/u) ≤ u^{1/22}` for
+  ([B, (2.21)], axiom `ramare_moebius`, `Prelim/RamareMoebius.lean`) with Rankin's `log x/log(x/u) ≤ u^{1/22}` for
   `x/u ≥ 10¹⁰`, and our `|m(y)| ≤ √(2/y)` (`moebius_sqrt_small`) for `y < 10¹⁰`;
 * the Euler products of `G2Euler.lean`, evaluated in `G2Numerics.lean`.
 -/
@@ -18,20 +18,6 @@ Proof (a version of [B]'s, with cruder constants):
 open Real Finset
 open ArithmeticFunction (moebius sigma)
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.sigma
-
-namespace TernaryGoldbach.Prelim
-
-/-- **Published result**: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 10¹⁰` (the only range used).
-* O. Ramaré, *From explicit estimates for primes to explicit estimates for the Moebius function*,
-  Acta Arith. 157 (2013), 365–379: this bound for `x ≥ 11815`, as cited in [B, (2.21)];
-* O. Ramaré, *Explicit estimates on several summatory functions involving the Moebius function*,
-  Math. Comp. 84 (2015), Thm 1.2: `|m(X)| ≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`,
-  re-derived in O. Ramaré, S. Zuniga-Alterman, arXiv:2408.05969, which also proves
-  `|m(X)| ≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2). -/
-axiom ramare_moebius {x : ℝ} (hx : 1e10 ≤ x) :
-    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.03 / Real.log x
-
-end TernaryGoldbach.Prelim
 
 namespace TernaryGoldbach.MinorArcs
 

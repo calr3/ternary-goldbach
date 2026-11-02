@@ -1,8 +1,8 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 19 further axioms (`#print axioms`):
-* 11 finite computations of our own;
+`Quot.sound`) and on 14 further axioms (`#print axioms`):
+* 6 finite computations of our own;
 * 8 published results;
 * no result of Helfgott's book [B].
 
@@ -15,7 +15,7 @@ So each axiom has been checked:
 Sources: [B] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Our own computations (11)
+## Our own computations (6)
 
 Each computation has a float script in `scripts/` and an independent rigorous re-check in
 `scripts/rigorous/` (see its README):
@@ -32,25 +32,16 @@ axiom.
 
 | Axiom | Statement | Float script | Rigorous re-check: worst case | Also published |
 |---|---|---|---|---|
-| `Prelim.mertens_lower_small` | `∑_{m≤n} Λ(m)/m ≥ log(n+1) − log(3/√2)`, `3 ≤ n ≤ 10⁶` | `psi_checks.py` | min margin `0.0140806` at `n = 6` | |
-| `Prelim.mertens_point` | `∑_{m≤X} Λ(m)/m − ψ(X)/(X+1) − log(X+2) ≥ −1.5776` at `X = 10⁶` | `psi_checks.py` | `−1.5772056` | |
 | `Prelim.mertens_product_small` | `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, primes `5 ≤ x ≤ 2·10⁸` | `mertens_product_check.py` | min margin `2.4367·10⁻⁷` at `x = 23`; `≥ 0.13088` above `10⁴` | [RS62, Thm 15, (3.42)] at `n = ∏_{p≤x} p` (`log n = θ(x)`), as cited in [B, (C.19)] |
-| `Prelim.K_pieces` | piecewise integral of `\|E(y) − E(10⁹)\| dy/y` over `[1, 1000)` `≤ 0.4035` | `moebius_K_check.py` | `0.4034195` | |
-| `Prelim.K_blocks` | block bounds `hblk j` for `\|E(y) − E(10⁹)\|`, `1000 ≤ k < 10⁹` | `moebius_K_check.py` | all 20 blocks hold; e.g. block 19: `2.55663·10⁻⁵ ≤ 2.567·10⁻⁵` | |
 | `Prelim.moebius_sqrt_small` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `1 ≤ k < 10¹⁰` | `moebius_sqrt_check.py` | equality at `k = 1`; otherwise max ratio `0.612372` at `k = 2` | [B, (2.24)] (Helfgott, interval arithmetic, `x ≤ 10¹²`; Ramaré earlier `x ≤ 10¹⁰`) |
-| `Prelim.C_grid` | `(2.8 + (i+1)/100) G(2.8 + i/100) ≤ 2.8`, `i < 7720` | `moebius_C_grid.py` | max `2.742169` at `i = 0` | |
 | `MinorArcs.eta2DD_small` | [B, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [B, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
 | `MinorArcs.T2_small` | `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁵` | `t2_check.py` (float, grid) | max `0.3712486` at `S = 16` (`t2_rig.c`, MPFR; exact pieces `α_n + β_n/S`) | [B, (5.31)] (computation) |
 | `MinorArcs.T2_mid` | `¼ ∫₁^S g₂(y)/y dy ≤ 0.3607` for `10⁵ ≤ S ≤ 10⁸`; `∫₁^{10⁸} \|g₂\| ≤ 10.5` | — | `0.360582066`; `10.4187` (`t2_rig.c`, `g₂(n)` exactly for every `n ≤ 10⁸`) | `0.360576` is [B]'s main term (5.31) |
 | `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([B, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | [B]'s computation for Prop 12.2.4 covers `q < 3.3·10⁹` |
 
-Here `E(y) = ∑_{m≤y} Λ(m)/m − log y`. The Lean definitions of `T2` and `g2` agree with [B, (5.19)]
-and [B, Lemma 5.1.2].
+The Lean definitions of `T2` and `g2` agree with [B, (5.19)] and [B, Lemma 5.1.2].
 
-Cross-checks:
-* The rigorous values agree with the float scripts to the digits printed.
-* `rig_checks` gives `∑_{n≤10⁹} Λ(n)/n ∈ [20.146051364519, 20.146051364606]`. So
-  `E(10⁹) ≈ −0.5772144724`, close to `−γ = −0.5772156649` (Mertens).
+The rigorous values agree with the float scripts to the digits printed.
 
 Three further axioms in `Prelim/LambdaMuExtra.lean` are not used by `ternary_goldbach`. They come
 from `psi_extra_check.py`:
@@ -71,7 +62,8 @@ from `psi_extra_check.py`:
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 10¹⁰` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([B, (2.21)]) | implied by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969. That paper also proves `≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2) |
 
-The axioms are stated as in the papers or weaker.
+The axioms are stated as in the papers or weaker. `ramare_moebius` is used for [B, Lemma 5.1.2]
+(`MinorArcs/G2Bound.lean`) and for the `q = 1` input of [B, (2.22)] (`Prelim/MoebiusBound.lean`).
 
 ## Errors found in the sources
 
@@ -133,6 +125,8 @@ These inputs are theorems:
 | Prop 12.2.4 | `MinorArcs/LSQuot1–6.lean` | (12.12) and `prop1224_check`; `regionS`, and `λ(q)⁷ ≤ (103/120)⁹ q²` for `q ≥ 2.2·10¹⁰` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
 | (B.6), (B.11) | `MinorArcs/Eta2Fourier.lean` | integration by parts for `\|t\| ≥ 655`; `eta2DD_small` below |
+| [B, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
+| [B, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 10¹⁰`, `moebius_sqrt_small` and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
 | the `ψ`, `θ` bounds of [B, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi`, `buthe_theta` up to `10¹⁹`, our explicit prime number theorem beyond; kernel for small `n` |
 
@@ -150,6 +144,8 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` | 78 s |
 | `Prelim/SmallLiouville.lean` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `k ≤ 10⁵` | 4.7 min |
 | `Prelim/SmallMuPhi.lean` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | about 10 min |
+| `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |
+| `Prelim/SmallCGrid.lean` | `y ∑_{u≤3000} \|μ(u)\|/u² β(y, u) ≤ 2.8` on `[2.8, 80)` | 21 s |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
 | `PrattPrime.lean` | Pratt certificates for the two primes of the ladder's last case | seconds |
@@ -159,6 +155,14 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 * Each remaining computation covers a range too large for the kernel as stated. A kernel check
   handles about `10⁵` simple steps per declaration, and `Nat.primesBelow 10⁴` already runs out of
   memory. Larger checks would need `native_decide`, which means trusting Lean's compiler.
+* `eta2DD_small` is nearly sharp: the maximum is `31.52065` against `31.521`. A weaker bound
+  (about `43.5`) has a short proof. But `c₀ = 31.521` enters the minor-arc numerics of about 15
+  files, some of them tightly; for example, `BaseGap2.fourier_const_le` needs
+  `c₀ √(2π)/(8π²) ≤ 1.0007`.
+* `mertens_product_small` could be shortened to about `10⁵`, by Büthe's bound for `θ` with a
+  sharper prime-power term above and a kernel product below. The margin is `0.6 %` above `10⁴`.
+* `moebius_sqrt_small` could follow from `ramare_moebius` over its published range (`x ≥ 11815`)
+  and a kernel check below, if Lemma 5.1.2's numerics are redone with a weaker Rankin weight.
 * `ramare_moebius` (`|m(x)| ≤ 0.03/log x`, `m(x) = ∑_{n≤x} μ(n)/n`, `x ≥ 10¹⁰`) is not a
   realistic target:
   * Ramaré's proof (Acta Arith. 157, hal-02572812) and its improvement arXiv:2408.05969 both start

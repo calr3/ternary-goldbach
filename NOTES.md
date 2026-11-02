@@ -345,6 +345,23 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     * Pari/GP computations of `R₂*(D)` up to `1.8·10⁹` (Lemma 6.3), and Lemma 7.1 with
       `K = 462 848`.
   * Not feasible without large external computations.
+* Own computations 11 → 6 (2026-11-02, items 1–3 of the follow-up):
+  * Item 1: `K_pieces` and `K_blocks` were removed. `MoebiusBound.abs_sum_moebius_div_le` (`0.55/(log x −
+    0.7521)`, `x ≥ 10¹⁰`) now follows from `ramare_moebius`, which moved to `Prelim/RamareMoebius.lean`
+    so that `LiouvilleBound` can import it. The `K` route was deleted (old version in git history).
+  * Item 2: `mertens_lower_small` and `mertens_point` were removed. (2.13)'s summation by parts now
+    starts at `X = 10⁴`, with `buthe_psi`; the base value is `−1.57714` (needed `−1.6987`).
+    `Prelim/SmallMertensLower.lean` (about 1 min) walks `n ≤ 10002`: `log n`, `∑ Λ(m)/m` and `ψ(n)`
+    at `D = 10³⁰`. `Λ` comes from trial division and a kernel-complete table of the 51 proper prime
+    powers. Generic walk lemmas (`incr_bounds`, `isPr_iff`, `floor_div_bounds`) moved to
+    `Prelim/LogWalk.lean`. Generator: `scripts/gen_mertens_lower.py`.
+  * Item 3: `eta2DD_small` was assessed and kept. The bound is nearly sharp (`31.52065`), and
+    `c₀ = 31.521` is hard-coded in about 15 minor-arc files (e.g. `BaseGap2.fourier_const_le ≤ 1.0007`).
+    `C_grid` was removed: `y G(y)` drops from `2.73` to `1.57`, so 17 adaptive intervals `[a, b]` with
+    `b G(a) ≤ 2.8` suffice. `Prelim/SmallCGrid.lean` (21 s) runs one walk over `u ≤ 3000`: an upper
+    bound for `log u`, squarefreeness by trial division, and fixed-point upper bounds for every grid
+    point. Generator: `scripts/gen_c_grid.py`.
+  * 14 axioms (6 own, 8 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

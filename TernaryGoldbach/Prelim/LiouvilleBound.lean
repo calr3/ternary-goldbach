@@ -1,6 +1,7 @@
 import TernaryGoldbach.Prelim.MoebiusBound
 import TernaryGoldbach.Prelim.Liouville
 import TernaryGoldbach.Prelim.SmallLiouville
+import TernaryGoldbach.Prelim.SmallCGrid
 
 /-!
 # `|ℓ(z)| ≤ 0.99/log z`, `|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`
@@ -529,9 +530,7 @@ theorem abs_lqs_mul_log_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) <
 
 /-! ### The optimisation -/
 
-/-- `β(a, u) = min(5/3, 0.99/(a − 2 log u))` if `2 log u < a`, else `5/3`. -/
-noncomputable def betaf (a : ℝ) (u : ℕ) : ℝ :=
-  if 2 * Real.log u < a then min (5 / 3) (0.99 / (a - 2 * Real.log u)) else 5 / 3
+/- `betaf` (`β(a, u)`) and the grid sum `Gs` are defined in `SmallCGrid.lean`. -/
 
 theorem betaf_nonneg (a : ℝ) (u : ℕ) : 0 ≤ betaf a u := by
   unfold betaf; split_ifs with h
@@ -551,14 +550,6 @@ theorem betaf_anti {a y : ℝ} (hay : a ≤ y) (u : ℕ) : betaf y u ≤ betaf a
   · rw [if_neg h1]; split_ifs
     · exact min_le_left _ _
     · exact le_rfl
-
-/-- The grid sum `G(a)`. -/
-noncomputable def Gs (a : ℝ) : ℝ :=
-  ∑ u ∈ Icc 1 3000, |(μ u : ℝ)| / (u * u : ℕ) * betaf a u + 5 / 3 / (3000 + 1 / 2)
-
-/-- **Numerical axiom** (`scripts/moebius_C_grid.py`; maximum `2.7422` at `i = 0`): the optimisation of
-Ramaré's `ρ(U, y)` on a grid of `[2.8, 80]`. -/
-axiom C_grid (i : ℕ) (hi : i < 7720) : (2.8 + (i + 1) / 100) * Gs (2.8 + i / 100) ≤ 2.8
 
 theorem sum_inv_sq_Ioc_le (M N : ℕ) : ∑ u ∈ Ioc M N, (1 : ℝ) / (u * u : ℕ) ≤ 1 / (M + 1 / 2) := by
   have key : ∀ k : ℕ, ∑ u ∈ Ioc M (M + k), (1 : ℝ) / (u * u : ℕ) ≤
@@ -618,17 +609,11 @@ theorem Gs_nonneg (a : ℝ) : 0 ≤ Gs a := by
     sum_nonneg fun u _ => by have := betaf_nonneg a u; positivity
   positivity
 
-/-- `y ∑_u |μ(u)|/u² β(y, u) ≤ 2.8` for `2.8 ≤ y < 80` (grid). -/
+/-- `y ∑_u |μ(u)|/u² β(y, u) ≤ 2.8` for `2.8 ≤ y < 80` (kernel-checked grid, `SmallCGrid.lean`). -/
 theorem yS_grid {y : ℝ} (h1 : 2.8 ≤ y) (h2 : y < 80) (N : ℕ) :
     y * ∑ u ∈ Icc 1 N, |(μ u : ℝ)| / (u * u : ℕ) * betaf y u ≤ 2.8 := by
-  set i := ⌊(y - 2.8) * 100⌋₊ with hi
-  have h0 : 0 ≤ (y - 2.8) * 100 := by nlinarith
-  have hfl := Nat.floor_le h0
-  have hlt := Nat.lt_floor_add_one ((y - 2.8) * 100)
-  have hi7 : i < 7720 := (Nat.floor_lt h0).2 (by push_cast; nlinarith)
-  set a : ℝ := 2.8 + i / 100 with ha
-  have hay : a ≤ y := by rw [ha]; rw [← hi] at hfl; linarith
-  have hyb : y ≤ 2.8 + (i + 1) / 100 := by rw [← hi] at hlt; linarith
+  obtain ⟨t, ht, hay, hyb⟩ := CGrid.C_cover h1 h2
+  set a : ℝ := (t.1 : ℝ) / 1000 with ha
   have hS : ∑ u ∈ Icc 1 N, |(μ u : ℝ)| / (u * u : ℕ) * betaf y u ≤ Gs a := by
     refine (S_split y N 3000).trans ?_
     unfold Gs
@@ -639,8 +624,8 @@ theorem yS_grid {y : ℝ} (h1 : 2.8 ≤ y) (h2 : y < 80) (N : ℕ) :
   have hy0 : 0 ≤ y := by linarith
   calc y * ∑ u ∈ Icc 1 N, |(μ u : ℝ)| / (u * u : ℕ) * betaf y u ≤ y * Gs a :=
         mul_le_mul_of_nonneg_left hS hy0
-    _ ≤ (2.8 + (i + 1) / 100) * Gs a := mul_le_mul_of_nonneg_right hyb hG
-    _ ≤ 2.8 := C_grid i hi7
+    _ ≤ ((t.2.1 : ℝ) / 1000) * Gs a := mul_le_mul_of_nonneg_right hyb hG
+    _ ≤ 2.8 := CGrid.grid_ok ht
 
 /-- `y ∑_u |μ(u)|/u² β(y, u) ≤ 2.8` for `y ≥ 80` (split at `e^{y/8}`). -/
 theorem yS_large {y : ℝ} (hy : 80 ≤ y) (N : ℕ) :
