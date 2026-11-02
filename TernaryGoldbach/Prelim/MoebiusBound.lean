@@ -24,7 +24,7 @@ theorem sqrt2_bounds : (1.414213 : ℝ) ≤ √2 ∧ √2 ≤ 1.414214 := by
 theorem abs_sum_moebius_div_le {x : ℝ} (hx : 1e10 ≤ x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.55 / (Real.log x - 0.7521) := by
   have hlx := log_ge_23 (x := x) (by norm_num at hx ⊢; linarith)
-  refine (ramare_moebius hx).trans ?_
+  refine (ramare_moebius (le_trans (by norm_num) hx)).trans ?_
   rw [div_le_div_iff₀ (by linarith) (by linarith)]
   nlinarith
 

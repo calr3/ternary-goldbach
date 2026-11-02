@@ -306,19 +306,19 @@ theorem integrableOn_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) :
       rw [Real.norm_eq_abs, abs_of_pos (by positivity)]; exact inv_le_one_of_one_le₀ this.le))
   |>.congr (Filter.Eventually.of_forall fun y => by simp [div_eq_mul_inv])
 
-/-- The tail `∫_{10⁸}^S |g₂(y)|/y dy ≤ 0.0036`, from `abs_g2_le_large` ([B, Lemma 5.1.2]). The
-antiderivative of `(0.0215/(log y)² + 528 (1 + log y)²/y)/y` is
-`−0.0215/log y − 528 ((log y)² + 4 log y + 5)/y`. -/
-theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| / y ≤ 0.0036 := by
+/-- The tail `∫_{10⁸}^S |g₂(y)|/y dy ≤ 0.0037`, from `abs_g2_le_large` ([B, Lemma 5.1.2]). The
+antiderivative of `(0.0236/(log y)² + 528 (1 + log y)²/y)/y` is
+`−0.0236/log y − 528 ((log y)² + 4 log y + 5)/y`. -/
+theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| / y ≤ 0.0037 := by
   have hF : ∀ y ∈ Set.uIcc (1e8 : ℝ) S, HasDerivAt
-      (fun y => -0.0215 * (Real.log y)⁻¹ -
+      (fun y => -0.0236 * (Real.log y)⁻¹ -
         528 * (Real.log y * Real.log y + 4 * Real.log y + 5) / y)
-      ((0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y) y := by
+      ((0.0236 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y) y := by
     intro y hy; rw [Set.uIcc_of_le hS] at hy
     have hy0 : 0 < y := by linarith [hy.1]
     have hly : 0 < Real.log y := Real.log_pos (by linarith [hy.1])
     have hl := Real.hasDerivAt_log hy0.ne'
-    have h1 := (hl.inv hly.ne').const_mul (-0.0215)
+    have h1 := (hl.inv hly.ne').const_mul (-0.0236)
     have hq := (((hl.mul hl).add (hl.const_mul 4)).add_const 5).const_mul 528
     have h2 := hq.div (hasDerivAt_id' y) hy0.ne'
     have := h1.sub h2
@@ -326,7 +326,7 @@ theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| 
     simp only [Pi.add_apply, Pi.mul_apply]
     field_simp
     ring
-  have hcont : ContinuousOn (fun y => (0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y)
+  have hcont : ContinuousOn (fun y => (0.0236 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y)
       (Set.uIcc (1e8 : ℝ) S) := by
     intro y hy; rw [Set.uIcc_of_le hS] at hy
     have hy0 : y ≠ 0 := by linarith [hy.1]
@@ -335,18 +335,18 @@ theorem tail_g2_le {S : ℝ} (hS : 1e8 ≤ S) : ∫ y in (1e8 : ℝ)..S, |g2 y| 
   have hl8 := log_1e8_le
   have hl8' := log_1e8_ge
   calc ∫ y in (1e8 : ℝ)..S, |g2 y| / y
-      ≤ ∫ y in (1e8 : ℝ)..S, (0.0215 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y :=
+      ≤ ∫ y in (1e8 : ℝ)..S, (0.0236 / Real.log y ^ 2 + 528 * (1 + Real.log y) ^ 2 / y) / y :=
         intervalIntegral.integral_mono_on hS (integrableOn_abs_g2_div (by norm_num) hS)
           hcont.intervalIntegrable fun y hy => div_le_div_of_nonneg_right
             (abs_g2_le_large (by linarith [hy.1])) (by linarith [hy.1])
-    _ = (-0.0215 * (Real.log S)⁻¹ - 528 * (Real.log S * Real.log S + 4 * Real.log S + 5) / S) -
-        (-0.0215 * (Real.log 1e8)⁻¹ -
+    _ = (-0.0236 * (Real.log S)⁻¹ - 528 * (Real.log S * Real.log S + 4 * Real.log S + 5) / S) -
+        (-0.0236 * (Real.log 1e8)⁻¹ -
           528 * (Real.log 1e8 * Real.log 1e8 + 4 * Real.log 1e8 + 5) / 1e8) :=
         intervalIntegral.integral_eq_sub_of_hasDerivAt hF hcont.intervalIntegrable
-    _ ≤ 0.0036 := by
+    _ ≤ 0.0037 := by
         have hlS : 0 < Real.log S := Real.log_pos (by linarith)
         have hS0 : 0 < S := by linarith
-        have h1 : 0 ≤ 0.0215 * (Real.log S)⁻¹ := by positivity
+        have h1 : 0 ≤ 0.0236 * (Real.log S)⁻¹ := by positivity
         have h2 : 0 ≤ 528 * (Real.log S * Real.log S + 4 * Real.log S + 5) / S := by positivity
         have h3 : (Real.log 1e8)⁻¹ ≤ 1 / 18 := by
           rw [← one_div]; exact one_div_le_one_div_of_le (by norm_num) hl8'

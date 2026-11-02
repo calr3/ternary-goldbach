@@ -10,6 +10,8 @@ import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallNonprime
 import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
+import TernaryGoldbach.Prelim.SmallMertensProd
+import TernaryGoldbach.Prelim.SmallMoebius
 import TernaryGoldbach.Prelim.SmallCGrid
 import TernaryGoldbach.Prelim.LogWalk
 import TernaryGoldbach.Prelim.RamareMoebius

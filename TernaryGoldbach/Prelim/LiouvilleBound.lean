@@ -2,6 +2,7 @@ import TernaryGoldbach.Prelim.MoebiusBound
 import TernaryGoldbach.Prelim.Liouville
 import TernaryGoldbach.Prelim.SmallLiouville
 import TernaryGoldbach.Prelim.SmallCGrid
+import TernaryGoldbach.Prelim.SmallMoebius
 
 /-!
 # `|ℓ(z)| ≤ 0.99/log z`, `|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`
@@ -12,30 +13,26 @@ open scoped ArithmeticFunction.Moebius
 
 namespace TernaryGoldbach.Prelim
 
-/-- **Numerical axiom** (`scripts/moebius_sqrt_check.py`; cf. [B, (2.24)], checked there to `10¹²`):
-`|∑_{n≤k} μ(n)/n| ≤ √(2/(k+1))` for `1 ≤ k < 10¹⁰`. -/
-axiom moebius_sqrt_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k < 10 ^ 10) :
-    |∑ n ∈ Icc 1 k, (μ n : ℝ) / n| ≤ √(2 / (k + 1))
-
 /-- `|∑_{n≤k} λ(n)/n| log(k+1) ≤ 0.99` for `1 ≤ k ≤ 10⁵` (maximum `0.7831` at `k = 10`), checked by
 the kernel (`Prelim/SmallLiouville.lean`). -/
 theorem liouville_small (k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ 10 ^ 5) :
     |∑ n ∈ Icc 1 k, lam n / n| * Real.log (k + 1) ≤ 0.99 :=
   TernaryGoldbach.Prelim.SmallLiou.liouville_kernel k h1 h2
 
-theorem m_sqrt {y : ℝ} (h1 : 1 ≤ y) (h2 : y < 1e10) :
+/-- `|∑_{n≤y} μ(n)/n| ≤ √2/√y` for `1 ≤ y < 11815` (kernel, `Prelim/SmallMoebius.lean`). -/
+theorem m_sqrt {y : ℝ} (h1 : 1 ≤ y) (h2 : y < 11815) :
     |∑ n ∈ Icc 1 ⌊y⌋₊, (μ n : ℝ) / n| ≤ √2 / √y := by
   have hy0 : 0 < y := by linarith
   have hk1 : 1 ≤ ⌊y⌋₊ := Nat.le_floor (by exact_mod_cast h1)
-  have hk2 : ⌊y⌋₊ < 10 ^ 10 := (Nat.floor_lt hy0.le).2 (by norm_num; linarith)
-  refine (moebius_sqrt_small _ hk1 hk2).trans ?_
+  have hk2 : ⌊y⌋₊ < 11815 := (Nat.floor_lt hy0.le).2 (by norm_num; linarith)
+  refine (SmallMoeb.moebius_sqrt_kernel _ hk1 hk2).trans ?_
   rw [← Real.sqrt_div (by norm_num)]
   apply Real.sqrt_le_sqrt
   exact div_le_div_of_nonneg_left (by norm_num) hy0 (Nat.lt_floor_add_one y).le
 
-/-- **[B, (2.24)]** on our checked range: `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for `0 < x < 10¹⁰`
+/-- **[B, (2.24)]** on our checked range: `|∑_{n ≤ x} μ(n)/n| ≤ √(2/x)` for `0 < x < 11815`
 ([B] cites Helfgott's computation for `x ≤ 10¹²`). -/
-theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x < 1e10) :
+theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x < 11815) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
   rcases lt_or_ge x 1 with h | h
   · have : ⌊x⌋₊ = 0 := Nat.floor_eq_zero.2 h
@@ -174,9 +171,9 @@ theorem sqrt_floor_le {z : ℝ} (hz : 0 ≤ z) : (Nat.sqrt ⌊z⌋₊ : ℝ) ≤
   have : ((Nat.sqrt ⌊z⌋₊ * Nat.sqrt ⌊z⌋₊ : ℕ) : ℝ) ≤ z := (Nat.cast_le.2 h1).trans (Nat.floor_le hz)
   push_cast at this; nlinarith
 
-/-- The term bound `|m(z/u²)|/u² ≤ √2/(u√z)` when `z/u² < 10¹⁰`. -/
+/-- The term bound `|m(z/u²)|/u² ≤ √2/(u√z)` when `z/u² < 11815`. -/
 theorem term_sqrt_le {z : ℝ} (hz : 0 < z) {u : ℕ} (hu : u ∈ Icc 1 (Nat.sqrt ⌊z⌋₊))
-    (hlt : z / (u * u : ℕ) < 1e10) :
+    (hlt : z / (u * u : ℕ) < 11815) :
     |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) ≤ √2 / √z * (1 / u) := by
   obtain ⟨h1, hpos⟩ := one_le_div_sq hz.le hu
   have hm := m_sqrt h1 hlt
@@ -202,95 +199,6 @@ theorem div_sq_le {z : ℝ} (hz : 0 ≤ z) {u N : ℕ} (hu : u ∈ Icc 1 N) : z 
   have h1 : 1 ≤ u * u := Nat.mul_pos (mem_Icc.1 hu).1 (mem_Icc.1 hu).1
   exact div_le_self hz (by exact_mod_cast h1)
 
-/-- `|ℓ(z)| ≤ (√2/√z)(1 + log z/2)` for `1 ≤ z < 10¹⁰`. -/
-theorem abs_ls_le_sqrt {z : ℝ} (h1 : 1 ≤ z) (h2 : z < 1e10) :
-    |ls z| ≤ √2 / √z * (1 + Real.log z / 2) := by
-  have hz : 0 < z := by linarith
-  have hN1 : 1 ≤ Nat.sqrt ⌊z⌋₊ := by
-    rw [Nat.le_sqrt]; exact Nat.le_floor (by norm_num; linarith)
-  refine (abs_ls_le z).trans ?_
-  calc _ ≤ ∑ u ∈ Icc 1 (Nat.sqrt ⌊z⌋₊), √2 / √z * (1 / (u : ℝ)) := sum_le_sum fun u hu =>
-        term_sqrt_le hz hu ((div_sq_le hz.le hu).trans_lt h2)
-    _ = √2 / √z * ∑ u ∈ Icc 1 (Nat.sqrt ⌊z⌋₊), (1 : ℝ) / u := by rw [mul_sum]
-    _ ≤ √2 / √z * (1 + Real.log z / 2) := by
-        refine mul_le_mul_of_nonneg_left ((harm_le hN1).trans ?_) (by positivity)
-        have hNz := sqrt_floor_le hz.le
-        have hN0 : (0 : ℝ) < Nat.sqrt ⌊z⌋₊ := by exact_mod_cast hN1
-        have := Real.log_le_log hN0 hNz
-        rw [Real.log_sqrt hz.le] at this
-        linarith
-
-/-- On `[a, b)`, `(√2/√z)(1 + log z/2) log z ≤ (√2/√a)(1 + log b/2) log b`. -/
-theorem f_mid_le {a b z : ℝ} (ha : 1 ≤ a) (h1 : a ≤ z) (h2 : z < b) :
-    √2 / √z * (1 + Real.log z / 2) * Real.log z ≤ √2 / √a * (1 + Real.log b / 2) * Real.log b := by
-  have hz : 0 < z := by linarith
-  have hl0 : 0 ≤ Real.log z := Real.log_nonneg (by linarith)
-  have hlb : Real.log z ≤ Real.log b := Real.log_le_log hz h2.le
-  have hs : √2 / √z ≤ √2 / √a :=
-    div_le_div_of_nonneg_left (by positivity) (Real.sqrt_pos.2 (by linarith)) (Real.sqrt_le_sqrt h1)
-  have hs0 : 0 ≤ √2 / √z := by positivity
-  have hab : (1 + Real.log z / 2) * Real.log z ≤ (1 + Real.log b / 2) * Real.log b :=
-    mul_le_mul (by linarith) hlb hl0 (by linarith)
-  rw [mul_assoc, mul_assoc]
-  exact mul_le_mul hs hab (by positivity) (by positivity)
-
-/-- Middle range: `|ℓ(z)| log z ≤ 0.99` for `10⁵ ≤ z < 10¹⁰`. -/
-theorem abs_ls_mid {z : ℝ} (h1 : 1e5 ≤ z) (h2 : z < 1e10) : |ls z| * Real.log z ≤ 0.99 := by
-  have hz : 0 < z := by linarith
-  have hl0 : 0 ≤ Real.log z := Real.log_nonneg (by linarith)
-  have hb := mul_le_mul_of_nonneg_right (abs_ls_le_sqrt (by linarith) h2) hl0
-  refine hb.trans ?_
-  obtain ⟨-, hs2⟩ := sqrt2_bounds
-  rcases lt_or_ge z 1e6 with h | h
-  · refine (f_mid_le (by norm_num) h1 h).trans ?_
-    have hl := log_le_of_le_two_pow (y := 1e6) (k := 20) (by norm_num) (by norm_num)
-    have hsa : (316.2 : ℝ) ≤ √1e5 := Real.le_sqrt_of_sq_le (by norm_num)
-    have hl' : 0 ≤ Real.log 1e6 := Real.log_nonneg (by norm_num)
-    calc √2 / √1e5 * (1 + Real.log 1e6 / 2) * Real.log 1e6
-        ≤ 1.414214 / 316.2 * (1 + 20 * 0.6931471808 / 2) * (20 * 0.6931471808) := by
-          gcongr
-          · norm_num at hl; linarith
-          · norm_num at hl; linarith
-      _ ≤ 0.99 := by norm_num
-  rcases lt_or_ge z 1e8 with h' | h'
-  · refine (f_mid_le (by norm_num) h h').trans ?_
-    have hl := log_le_of_le_two_pow (y := 1e8) (k := 27) (by norm_num) (by norm_num)
-    have hsa : (1000 : ℝ) ≤ √1e6 := Real.le_sqrt_of_sq_le (by norm_num)
-    have hl' : 0 ≤ Real.log 1e8 := Real.log_nonneg (by norm_num)
-    calc √2 / √1e6 * (1 + Real.log 1e8 / 2) * Real.log 1e8
-        ≤ 1.414214 / 1000 * (1 + 27 * 0.6931471808 / 2) * (27 * 0.6931471808) := by
-          gcongr
-          · norm_num at hl; linarith
-          · norm_num at hl; linarith
-      _ ≤ 0.99 := by norm_num
-  · refine (f_mid_le (by norm_num) h' h2).trans ?_
-    have hl := log_le_of_le_two_pow (y := 1e10) (k := 34) (by norm_num) (by norm_num)
-    have hsa : (10000 : ℝ) ≤ √1e8 := Real.le_sqrt_of_sq_le (by norm_num)
-    have hl' : 0 ≤ Real.log 1e10 := Real.log_nonneg (by norm_num)
-    calc √2 / √1e8 * (1 + Real.log 1e10 / 2) * Real.log 1e10
-        ≤ 1.414214 / 10000 * (1 + 34 * 0.6931471808 / 2) * (34 * 0.6931471808) := by
-          gcongr
-          · norm_num at hl; linarith
-          · norm_num at hl; linarith
-      _ ≤ 0.99 := by norm_num
-
-theorem log_1e10_ge : (23 : ℝ) ≤ Real.log 1e10 := by
-  rw [Real.le_log_iff_exp_le (by norm_num)]
-  have h1 := Real.exp_one_lt_d9
-  have : Real.exp 23 = Real.exp 1 ^ 23 := by rw [← Real.exp_nat_mul]; norm_num
-  rw [this]
-  calc Real.exp 1 ^ 23 ≤ (2.7182818286 : ℝ) ^ 23 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 23
-    _ ≤ 1e10 := by norm_num
-
-theorem log_le_sqrt_big {z : ℝ} (hz : 1e10 ≤ z) : Real.log z ≤ 2.4e-4 * √z := by
-  have hz0 : 0 < z := by linarith
-  have hs : (1e5 : ℝ) ≤ √z := Real.le_sqrt_of_sq_le (by norm_num; linarith)
-  have hl := Real.log_le_sub_one_of_pos (x := √z / 1e5) (by positivity)
-  rw [Real.log_div (by positivity) (by norm_num)] at hl
-  have h5 := log_le_of_le_two_pow (y := 1e5) (k := 17) (by norm_num) (by norm_num)
-  have e : Real.log z = 2 * Real.log √z := by rw [Real.log_sqrt hz0.le]; ring
-  rw [e]; norm_num at h5 hl ⊢; linarith
-
 /-- `∑_{u ≤ N} 1/u² ≤ π²/6 < 1.64495` (`hasSum_zeta_two`). -/
 theorem sum_inv_sq_le_pi (N : ℕ) : ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) ≤ 1.64495 := by
   have h := sum_le_hasSum (Icc 1 N) (fun i _ => by positivity) hasSum_zeta_two
@@ -302,68 +210,92 @@ theorem sum_inv_sq_le_pi (N : ℕ) : ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ
   have : Real.pi ^ 2 / 6 ≤ 1.64495 := by nlinarith
   linarith
 
-/-- The term bound for `z/u² ≥ 10¹⁰`. -/
-theorem term_big_le {z : ℝ} (hz : 1e10 ≤ z) {u N : ℕ} (hu : u ∈ Icc 1 N)
-    (hge : 1e10 ≤ z / (u * u : ℕ)) :
-    |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) ≤
-      0.55 / Real.log z * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
+theorem log_11815_ge_nine : (9 : ℝ) ≤ Real.log 11815 := by
+  rw [Real.le_log_iff_exp_le (by norm_num)]
+  have h1 := Real.exp_one_lt_d9
+  have : Real.exp 9 = Real.exp 1 ^ 9 := by rw [← Real.exp_nat_mul]; norm_num
+  rw [this]
+  calc Real.exp 1 ^ 9 ≤ (2.7182818286 : ℝ) ^ 9 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 9
+    _ ≤ 11815 := by norm_num
+
+/-- `log z ≤ 0.04 √z` for `z ≥ 10⁵`. -/
+theorem log_le_sqrt_mid {z : ℝ} (hz : 1e5 ≤ z) : Real.log z ≤ 0.04 * √z := by
   have hz0 : 0 < z := by linarith
+  have hs5 : (316.2 : ℝ) ≤ √1e5 := Real.le_sqrt_of_sq_le (by norm_num)
+  have h5pos : (0 : ℝ) < √1e5 := by positivity
+  set s := √z / √1e5 with hs
+  have hs1 : 1 ≤ s := by
+    rw [hs, le_div_iff₀ h5pos, one_mul]; exact Real.sqrt_le_sqrt hz
+  have hl := Real.log_le_sub_one_of_pos (x := s) (by linarith)
+  have e : Real.log z = Real.log 1e5 + 2 * Real.log s := by
+    rw [hs, Real.log_div (by positivity) h5pos.ne', Real.log_sqrt hz0.le, Real.log_sqrt (by norm_num)]
+    ring
+  have h5 := log_le_of_le_two_pow (y := 1e5) (k := 17) (by norm_num) (by norm_num)
+  have hsz : √z = √1e5 * s := by rw [hs]; field_simp
+  rw [e, hsz]
+  norm_num at h5
+  nlinarith [mul_le_mul_of_nonneg_right hs5 (by linarith : (0 : ℝ) ≤ s)]
+
+/-- The term bound for `z/u² ≥ 11815` (Ramaré). -/
+theorem term_big_le {z : ℝ} (hz : 0 < z) {u N : ℕ} (hu : u ∈ Icc 1 N)
+    (hge : 11815 ≤ z / (u * u : ℕ)) :
+    |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) ≤
+      0.03 / Real.log z * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
   have hu1 : (1 : ℝ) ≤ u := by exact_mod_cast (mem_Icc.1 hu).1
   have hpos : (0 : ℝ) < (u * u : ℕ) := by push_cast; positivity
-  have hm := abs_sum_moebius_div_le hge
+  have hm := ramare_moebius hge
   set w := Real.log (z / (u * u : ℕ)) with hw
-  have hw23 : 23 ≤ w := log_1e10_ge.trans (Real.log_le_log (by norm_num) hge)
+  have hw9 : 9 ≤ w := log_11815_ge_nine.trans (Real.log_le_log (by norm_num) hge)
   have hlu : 0 ≤ Real.log u := Real.log_nonneg hu1
   have hL : Real.log z = w + 2 * Real.log u := by
-    rw [hw, Real.log_div hz0.ne' hpos.ne']; push_cast
+    rw [hw, Real.log_div hz.ne' hpos.ne']; push_cast
     rw [Real.log_mul (by positivity) (by positivity)]; ring
   have hLpos : 0 < Real.log z := by linarith
-  have key : 1 / (w - 0.7521) ≤ (1.034 + 0.09 * Real.log u) / Real.log z := by
+  have key : 1 / w ≤ (1 + 2 / 9 * Real.log u) / Real.log z := by
     rw [div_le_div_iff₀ (by linarith) hLpos, hL]
-    nlinarith [mul_nonneg hlu (by linarith : (0 : ℝ) ≤ w - 23)]
+    nlinarith [mul_nonneg hlu (by linarith : (0 : ℝ) ≤ w - 9)]
   calc |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ)
-      ≤ 0.55 / (w - 0.7521) / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
-    _ = 0.55 * (1 / (w - 0.7521)) * (1 / (u * u : ℕ)) := by ring
-    _ ≤ 0.55 * ((1.034 + 0.09 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
+      ≤ 0.03 / w / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
+    _ = 0.03 * (1 / w) * (1 / (u * u : ℕ)) := by ring
+    _ ≤ 0.03 * ((1 + 2 / 9 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
     _ = _ := by ring
 
-/-- Large range: `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10¹⁰`. -/
-theorem abs_ls_big {z : ℝ} (hz : 1e10 ≤ z) : |ls z| * Real.log z ≤ 0.99 := by
+/-- `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10⁵`: Ramaré's bound for `z/u² ≥ 11815`, the kernel-checked
+`√(2/y)` below. -/
+theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 := by
   have hz0 : 0 < z := by linarith
   set L := Real.log z with hLdef
-  have hL : 23 ≤ L := log_1e10_ge.trans (Real.log_le_log (by norm_num) hz)
+  have hLpos : 0 < L := Real.log_pos (by linarith)
   set N := Nat.sqrt ⌊z⌋₊ with hN
-  set U := Nat.sqrt ⌊z / 1e10⌋₊ with hU
+  set U := Nat.sqrt ⌊z / 11815⌋₊ with hU
   have hU1 : 1 ≤ U := by
     rw [hU, Nat.le_sqrt]; exact Nat.le_floor (by rw [le_div_iff₀ (by norm_num)]; norm_num; linarith)
   have hUN : U ≤ N := Nat.sqrt_le_sqrt (Nat.floor_mono (div_le_self hz0.le (by norm_num)))
   set t : ℕ → ℝ := fun u => |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) with ht
   have h0 := abs_ls_le z
-  rw [← sum_filter_add_sum_filter_not _ (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ))] at h0
+  rw [← sum_filter_add_sum_filter_not _ (fun u : ℕ => 11815 ≤ z / (u * u : ℕ))] at h0
   -- first part
-  have hA : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ)), t u ≤
-      0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) := by
-    calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 1e10 ≤ z / (u * u : ℕ)),
-          0.55 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) :=
-          sum_le_sum fun u hu => term_big_le hz (mem_filter.1 hu).1 (mem_filter.1 hu).2
-      _ ≤ ∑ u ∈ Icc 1 N, 0.55 / L * ((1.034 + 0.09 * Real.log u) * (1 / (u * u : ℕ))) := by
+  have hA : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 11815 ≤ z / (u * u : ℕ)), t u ≤
+      0.03 / L * (1.64495 + 2 / 9 * 1.0117) := by
+    calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 11815 ≤ z / (u * u : ℕ)),
+          0.03 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) :=
+          sum_le_sum fun u hu => term_big_le hz0 (mem_filter.1 hu).1 (mem_filter.1 hu).2
+      _ ≤ ∑ u ∈ Icc 1 N, 0.03 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
           refine sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun u hu _ => ?_
           have : 0 ≤ Real.log u := Real.log_nonneg (by exact_mod_cast (mem_Icc.1 hu).1)
-          have : 0 < L := by linarith
           positivity
-      _ = 0.55 / L * (1.034 * ∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
-            0.09 * ∑ u ∈ Icc 1 N, Real.log u / (u * u : ℕ)) := by
-          rw [mul_sum, mul_sum, ← sum_add_distrib, mul_sum]
+      _ = 0.03 / L * (∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
+            2 / 9 * ∑ u ∈ Icc 1 N, Real.log u / (u * u : ℕ)) := by
+          rw [mul_sum, ← sum_add_distrib, mul_sum]
           exact sum_congr rfl fun u _ => by ring
-      _ ≤ 0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) := by
+      _ ≤ 0.03 / L * (1.64495 + 2 / 9 * 1.0117) := by
           have := sum_inv_sq_le_pi N
           have := sum_log_div_sq_le N
-          have : 0 < L := by linarith
           gcongr
   -- second part
-  have hB : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => ¬ 1e10 ≤ z / (u * u : ℕ)), t u ≤
-      √2 / √z * 12.48 := by
-    calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => ¬ 1e10 ≤ z / (u * u : ℕ)), √2 / √z * (1 / (u : ℝ)) :=
+  have hB : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => ¬ 11815 ≤ z / (u * u : ℕ)), t u ≤
+      √2 / √z * 5.6 := by
+    calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => ¬ 11815 ≤ z / (u * u : ℕ)), √2 / √z * (1 / (u : ℝ)) :=
           sum_le_sum fun u hu => term_sqrt_le hz0 (mem_filter.1 hu).1 (not_le.1 (mem_filter.1 hu).2)
       _ ≤ ∑ u ∈ Ioc U N, √2 / √z * (1 / (u : ℝ)) := by
           refine sum_le_sum_of_subset_of_nonneg (fun u hu => ?_) fun u _ _ => by positivity
@@ -371,53 +303,52 @@ theorem abs_ls_big {z : ℝ} (hz : 1e10 ≤ z) : |ls z| * Real.log z ≤ 0.99 :=
           refine mem_Ioc.2 ⟨?_, (mem_Icc.1 hu1).2⟩
           by_contra! hle
           apply hu2
-          have h1 : u * u ≤ ⌊z / 1e10⌋₊ := Nat.le_sqrt.1 hle
-          have h2 : ((u * u : ℕ) : ℝ) ≤ z / 1e10 :=
+          have h1 : u * u ≤ ⌊z / 11815⌋₊ := Nat.le_sqrt.1 hle
+          have h2 : ((u * u : ℕ) : ℝ) ≤ z / 11815 :=
             (Nat.cast_le.2 h1).trans (Nat.floor_le (by positivity))
           have hp : (0 : ℝ) < (u * u : ℕ) := by
             have := (mem_Icc.1 hu1).1; exact_mod_cast Nat.mul_pos this this
           rw [le_div_iff₀ hp]; rw [le_div_iff₀ (by norm_num)] at h2; linarith
       _ = √2 / √z * ∑ u ∈ Ioc U N, (1 : ℝ) / u := by rw [mul_sum]
-      _ ≤ √2 / √z * 12.48 := by
+      _ ≤ √2 / √z * 5.6 := by
           refine mul_le_mul_of_nonneg_left ?_ (by positivity)
           refine (sum_inv_le_log hU1 hUN).trans ?_
-          -- `N² ≤ z < 10¹⁰ (U+1)² ≤ 4·10¹⁰ U²`
+          -- `N² ≤ z < 11815 (U+1)² ≤ 47260 U²`
           have hU0 : (0 : ℝ) < U := by exact_mod_cast hU1
           have hN0 : (0 : ℝ) < N := by exact_mod_cast hU1.trans hUN
           have hNz : (N : ℝ) * N ≤ z := by
             have : ((N * N : ℕ) : ℝ) ≤ z := (Nat.cast_le.2 (Nat.sqrt_le _)).trans (Nat.floor_le hz0.le)
             push_cast at this; exact this
-          have hzU : z < 1e10 * ((U + 1) * (U + 1)) := by
-            have h1 := Nat.lt_succ_sqrt ⌊z / 1e10⌋₊
-            have h2 : z / 1e10 < ⌊z / 1e10⌋₊ + 1 := Nat.lt_floor_add_one _
-            have h3 : ((⌊z / 1e10⌋₊ + 1 : ℕ) : ℝ) ≤ ((U.succ * U.succ : ℕ) : ℝ) := by exact_mod_cast h1
+          have hzU : z < 11815 * ((U + 1) * (U + 1)) := by
+            have h1 := Nat.lt_succ_sqrt ⌊z / 11815⌋₊
+            have h2 : z / 11815 < ⌊z / 11815⌋₊ + 1 := Nat.lt_floor_add_one _
+            have h3 : ((⌊z / 11815⌋₊ + 1 : ℕ) : ℝ) ≤ ((U.succ * U.succ : ℕ) : ℝ) := by exact_mod_cast h1
             push_cast at h3
             rw [div_lt_iff₀ (by norm_num)] at h2
             nlinarith
-          have hNU : (N : ℝ) * N ≤ (4e10 * U * U) := by
+          have hNU : (N : ℝ) * N ≤ (47260 * U * U) := by
             have : (U : ℝ) + 1 ≤ 2 * U := by
               have : (1 : ℝ) ≤ U := by exact_mod_cast hU1
               linarith
             nlinarith
-          have hlog : Real.log ((N : ℝ) * N) ≤ Real.log (4e10 * U * U) :=
+          have hlog : Real.log ((N : ℝ) * N) ≤ Real.log (47260 * U * U) :=
             Real.log_le_log (by positivity) hNU
           rw [Real.log_mul hN0.ne' hN0.ne', Real.log_mul (by positivity) hU0.ne',
             Real.log_mul (by norm_num) hU0.ne'] at hlog
-          have h4 := log_le_of_le_two_pow (y := 4e10) (k := 36) (by norm_num) (by norm_num)
+          have h4 := log_le_of_le_two_pow (y := 47260) (k := 16) (by norm_num) (by norm_num)
           norm_num at h4
           linarith
-  have hsum : |ls z| ≤ 0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 / √z * 12.48 := by
+  have hsum : |ls z| ≤ 0.03 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6 := by
     refine h0.trans ?_
     exact add_le_add hA hB
-  have hLpos : 0 < L := by linarith
   have hsz : 0 < √z := Real.sqrt_pos.2 hz0
-  have hlz := log_le_sqrt_big hz
+  have hlz := log_le_sqrt_mid hz
   obtain ⟨-, hs2⟩ := sqrt2_bounds
-  calc |ls z| * L ≤ (0.55 / L * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 / √z * 12.48) * L :=
+  calc |ls z| * L ≤ (0.03 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6) * L :=
         mul_le_mul_of_nonneg_right hsum hLpos.le
-    _ = 0.55 * (1.034 * 1.64495 + 0.09 * 1.0117) + √2 * 12.48 * (L / √z) := by
+    _ = 0.03 * (1.64495 + 2 / 9 * 1.0117) + √2 * 5.6 * (L / √z) := by
         field_simp
-    _ ≤ 0.55 * (1.034 * 1.64495 + 0.09 * 1.0117) + 1.414214 * 12.48 * 2.4e-4 := by
+    _ ≤ 0.03 * (1.64495 + 2 / 9 * 1.0117) + 1.414214 * 5.6 * 0.04 := by
         gcongr
         rw [div_le_iff₀ hsz]; exact hlz
     _ ≤ 0.99 := by norm_num
@@ -438,9 +369,7 @@ theorem abs_ls_mul_log_le {z : ℝ} (hz : 1 < z) : |ls z| * Real.log z ≤ 0.99 
         ≤ |∑ n ∈ Icc 1 ⌊z⌋₊, lam n / n| * Real.log (⌊z⌋₊ + 1) :=
           mul_le_mul_of_nonneg_left hl (abs_nonneg _)
       _ ≤ 0.99 := hax
-  rcases lt_or_ge z 1e10 with h' | h'
-  · exact abs_ls_mid h h'
-  · exact abs_ls_big h'
+  exact abs_ls_large h
 
 /-! ### `ℓ_q` and `m_q` -/
 

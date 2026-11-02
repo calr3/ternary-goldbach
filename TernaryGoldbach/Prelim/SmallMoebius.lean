@@ -1,0 +1,315 @@
+import TernaryGoldbach.Prelim.SmallLiouville
+
+/-!
+# `|∑_{n ≤ k} μ(n)/n| ≤ √(2/(k+1))` for `1 ≤ k < 11815`, checked by the kernel
+
+[B, (2.24)] on the range below Ramaré's `x ≥ 11815`. `μ(n)` is `0` unless `n` is squarefree (trial
+division by `d²`, `2 ≤ d ≤ 109`, `sqfN`), and then `μ(n) = λ(n)` (`SmallLiou.lamB`). The kernel
+walks `n ≤ 11814` (`scripts/gen_moebius_small.py`) keeping `P(k) = ∑_{n ≤ k, μ(n) = 1} ⌊10¹²/n⌋`
+and `Q(k)` (the same for `μ(n) = −1`). Then `|10¹² ∑_{n≤k} μ(n)/n − (P − Q)| ≤ k`, and the walk
+checks `(k + 1)(|P − Q| + k)² ≤ 2·10²⁴` at every `2 ≤ k`. At `k = 1` the bound is an equality.
+-/
+
+open Finset ArithmeticFunction
+open scoped ArithmeticFunction.Moebius
+
+namespace TernaryGoldbach.Prelim.SmallMoeb
+
+open TernaryGoldbach.Prelim (lam)
+open TernaryGoldbach.Prelim.SmallLiou (lamB lamB_spec natAbs_cast)
+
+/-! ### `μ` by trial division -/
+
+/-- No square `d²`, `2 ≤ d ≤ 109`, divides `v`. -/
+def sqfN (v : ℕ) : Bool := (List.range' 2 108).all (fun d => v % (d * d) != 0)
+
+theorem moebius_zero_of_sqfN {v : ℕ} (h : sqfN v = false) : μ v = 0 := by
+  have hn : ¬ (∀ d ∈ List.range' 2 108, v % (d * d) ≠ 0) := by
+    intro hall
+    have : sqfN v = true := by
+      unfold sqfN; rw [List.all_eq_true]; intro d hd; simpa using hall d hd
+    rw [h] at this; exact Bool.false_ne_true this
+  push_neg at hn
+  obtain ⟨d, hd, hmod⟩ := hn
+  rw [List.mem_range'_1] at hd
+  apply moebius_eq_zero_of_not_squarefree
+  intro hsq
+  have := hsq d (Nat.dvd_of_mod_eq_zero hmod)
+  rw [Nat.isUnit_iff] at this
+  omega
+
+theorem squarefree_of_sqfN {v : ℕ} (hv1 : 1 ≤ v) (hv : v < 12100) (h : sqfN v = true) :
+    Squarefree v := by
+  rw [Nat.squarefree_iff_prime_squarefree]
+  intro p hp hdvd
+  have hp' : p.Prime := hp
+  have hle : p * p ≤ v := Nat.le_of_dvd (by omega) hdvd
+  have hp2 := hp'.two_le
+  have hp109 : p ≤ 109 := by nlinarith
+  unfold sqfN at h
+  rw [List.all_eq_true] at h
+  have := h p (List.mem_range'_1.2 ⟨hp2, by omega⟩)
+  simp only [bne_iff_ne, ne_eq] at this
+  exact this (Nat.mod_eq_zero_of_dvd hdvd)
+
+/-- `μ(n)`: `none` for `0`, `some b` for `±1`. -/
+def muB (n : ℕ) : Option (Option Bool) :=
+  if sqfN n then (lamB n).map some else some none
+
+theorem muB_spec {n : ℕ} (hn : 1 ≤ n) (hn' : n < 12100) {r : Option Bool} (h : muB n = some r) :
+    (μ n : ℝ) = match r with
+      | none => 0
+      | some b => if b then 1 else -1 := by
+  unfold muB at h
+  split_ifs at h with hs
+  · obtain ⟨b, hb, rfl⟩ := Option.map_eq_some_iff.1 h
+    have hl := lamB_spec hn hb
+    have hsq := squarefree_of_sqfN hn hn' hs
+    have e : (μ n : ℝ) = lam n := by
+      rw [moebius_apply_of_squarefree hsq, lam, intCoe_apply, liouville_apply (by omega)]
+    rw [e, hl]
+  · simp only [Option.some.injEq] at h
+    subst h
+    rw [moebius_zero_of_sqfN (by simpa using hs)]
+    simp
+
+/-! ### The walk -/
+
+noncomputable def Pt (k : ℕ) : ℕ := ∑ m ∈ Icc 1 k, if (μ m : ℝ) = 1 then 1000000000000 / m else 0
+noncomputable def Qt (k : ℕ) : ℕ := ∑ m ∈ Icc 1 k, if (μ m : ℝ) = -1 then 1000000000000 / m else 0
+
+/-- The check at `k`: `(k + 1)(|P − Q| + k)² ≤ 2·10²⁴`. -/
+def chk (k P Q : ℕ) : Bool := (k + 1) * ((P - Q) + (Q - P) + k) ^ 2 ≤ 2 * 10 ^ 24
+
+def stepPQ (n P Q : ℕ) (r : Option Bool) : ℕ × ℕ :=
+  match r with
+  | none => (P, Q)
+  | some true => (P + 1000000000000 / (n + 1), Q)
+  | some false => (P, Q + 1000000000000 / (n + 1))
+
+/-- Processes `n + 1, …, n + len` from the state `(P, Q)` at `n`, checking each `k`. -/
+def walk : ℕ → ℕ → ℕ → ℕ → Option (ℕ × ℕ)
+  | _, P, Q, 0 => some (P, Q)
+  | n, P, Q, len + 1 =>
+    match muB (n + 1) with
+    | none => none
+    | some r =>
+      let s := stepPQ n P Q r
+      if chk (n + 1) s.1 s.2 then walk (n + 1) s.1 s.2 len else none
+
+theorem step_spec {n : ℕ} (hn : n + 1 < 12100) {r : Option Bool} (h : muB (n + 1) = some r) :
+    stepPQ n (Pt n) (Qt n) r = (Pt (n + 1), Qt (n + 1)) := by
+  have hm := muB_spec (by omega) hn h
+  rw [Pt, Pt, Qt, Qt, sum_Icc_succ_top (by omega), sum_Icc_succ_top (by omega)]
+  rcases r with _ | _ | _ <;> simp only [stepPQ] at hm ⊢ <;> rw [hm] <;> norm_num
+
+theorem walk_spec : ∀ (len n : ℕ) (r : ℕ × ℕ), n + len < 12100 → walk n (Pt n) (Qt n) len = some r →
+    r = (Pt (n + len), Qt (n + len)) ∧ ∀ k, n < k → k ≤ n + len → chk k (Pt k) (Qt k) = true := by
+  intro len
+  induction len with
+  | zero => intro n r _ h; simp only [walk, Option.some.injEq] at h; exact ⟨h.symm, fun k h1 h2 => by omega⟩
+  | succ len ih =>
+    intro n r hl h
+    rw [walk] at h
+    rcases hb : muB (n + 1) with _ | r'
+    · rw [hb] at h; simp at h
+    rw [hb] at h
+    simp only at h
+    rw [step_spec (by omega) hb] at h
+    split_ifs at h with hc
+    obtain ⟨h1, h2⟩ := ih (n + 1) r (by omega) h
+    refine ⟨by rw [h1, show n + 1 + len = n + (len + 1) by omega], fun k hk1 hk2 => ?_⟩
+    rcases Nat.eq_or_lt_of_le (show n + 1 ≤ k by omega) with e | e
+    · rw [← e]; exact hc
+    · exact h2 k e (by omega)
+
+theorem mu_cases (m : ℕ) : (μ m : ℝ) = 1 ∨ (μ m : ℝ) = -1 ∨ (μ m : ℝ) = 0 := by
+  rcases moebius_eq_or m with h | h | h <;> simp [h]
+
+/-- `|10¹² ∑_{n ≤ k} μ(n)/n − (P(k) − Q(k))| ≤ k`. -/
+theorem sum_approx (k : ℕ) :
+    |1000000000000 * ∑ n ∈ Icc 1 k, (μ n : ℝ) / n - ((Pt k : ℝ) - Qt k)| ≤ (k : ℝ) := by
+  induction k with
+  | zero => simp [Pt, Qt]
+  | succ k ih =>
+    rw [sum_Icc_succ_top (by omega), Pt, Qt, sum_Icc_succ_top (by omega), sum_Icc_succ_top (by omega),
+      ← Pt, ← Qt]
+    have hk : (0 : ℝ) < (k : ℝ) + 1 := by positivity
+    have hf1 : (((1000000000000 / (k + 1) : ℕ) : ℝ)) ≤ 1000000000000 / ((k : ℝ) + 1) := by
+      have := Nat.cast_div_le (α := ℝ) (m := 1000000000000) (n := k + 1)
+      push_cast at this; exact this
+    have hf2 : 1000000000000 / ((k : ℝ) + 1) < (((1000000000000 / (k + 1) : ℕ) : ℝ)) + 1 := by
+      rw [div_lt_iff₀ hk]
+      have h2 := Nat.lt_mul_div_succ 1000000000000 (show 0 < k + 1 by omega)
+      have := (Nat.cast_lt (α := ℝ)).2 h2
+      push_cast at this
+      linarith
+    rw [abs_le] at ih ⊢
+    rcases mu_cases (k + 1) with h | h | h
+    · rw [h, if_pos rfl, if_neg (by norm_num)]
+      push_cast
+      have e : (1000000000000 : ℝ) * (1 / ((k : ℝ) + 1)) = 1000000000000 / ((k : ℝ) + 1) := by ring
+      constructor <;> linarith [ih.1, ih.2]
+    · rw [h, if_neg (by norm_num), if_pos rfl]
+      push_cast
+      have e : (1000000000000 : ℝ) * (-1 / ((k : ℝ) + 1)) = -(1000000000000 / ((k : ℝ) + 1)) := by ring
+      constructor <;> linarith [ih.1, ih.2]
+    · rw [h, if_neg (by norm_num), if_neg (by norm_num)]
+      simp only [zero_div, add_zero, Nat.cast_add, Nat.cast_zero]
+      constructor <;> linarith [ih.1, ih.2]
+
+/-- The bound at `k` from the check at `k`. -/
+theorem bound_of_chk {k : ℕ} (hc : chk k (Pt k) (Qt k) = true) :
+    |∑ n ∈ Icc 1 k, (μ n : ℝ) / n| ≤ √(2 / (k + 1)) := by
+  unfold chk at hc
+  rw [decide_eq_true_eq] at hc
+  have hc' : ((k : ℝ) + 1) * ((((Pt k - Qt k) + (Qt k - Pt k) : ℕ) : ℝ) + k) ^ 2 ≤ 2 * 10 ^ 24 := by
+    exact_mod_cast hc
+  rw [natAbs_cast] at hc'
+  have ha := sum_approx k
+  set S := ∑ n ∈ Icc 1 k, (μ n : ℝ) / n
+  have hS : |S| * 10 ^ 12 ≤ |(Pt k : ℝ) - Qt k| + k := by
+    have := abs_sub_abs_le_abs_sub (1000000000000 * S) ((Pt k : ℝ) - Qt k)
+    rw [abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 1000000000000)] at this
+    linarith
+  have hk : (0 : ℝ) < (k : ℝ) + 1 := by positivity
+  rw [Real.le_sqrt (abs_nonneg _) (by positivity), le_div_iff₀ hk]
+  have h0 : 0 ≤ |S| * 10 ^ 12 := by positivity
+  have h1 : (|S| * 10 ^ 12) ^ 2 ≤ (|(Pt k : ℝ) - Qt k| + k) ^ 2 := pow_le_pow_left₀ h0 hS 2
+  have h2 : ((k : ℝ) + 1) * (|S| * 10 ^ 12) ^ 2 ≤ 2 * 10 ^ 24 :=
+    (mul_le_mul_of_nonneg_left h1 hk.le).trans hc'
+  nlinarith [sq_abs S]
+
+theorem w_1 : walk 1 1000000000000 0 999 = some (2623402499216, 2618990629438) := by decide +kernel
+theorem w_2 : walk 1000 2623402499216 2618990629438 1000 = some (2833569654830, 2830250099383) := by decide +kernel
+theorem w_3 : walk 2000 2833569654830 2830250099383 1000 = some (2954597696219, 2956257351138) := by decide +kernel
+theorem w_4 : walk 3000 2954597696219 2956257351138 1000 = some (3042257380990, 3043908473603) := by decide +kernel
+theorem w_5 : walk 4000 3042257380990 3043908473603 1000 = some (3111413092929, 3110634875454) := by decide +kernel
+theorem w_6 : walk 5000 3111413092929 3110634875454 1000 = some (3166296636706, 3165823716275) := by decide +kernel
+theorem w_7 : walk 6000 3166296636706 3165823716275 1000 = some (3211317672488, 3214720632461) := by decide +kernel
+theorem w_8 : walk 7000 3211317672488 3214720632461 1000 = some (3253761338569, 3253732895538) := by decide +kernel
+theorem w_9 : walk 8000 3253761338569 3253732895538 1000 = some (3289812464700, 3289314991195) := by decide +kernel
+theorem w_10 : walk 9000 3289812464700 3289314991195 1000 = some (3320665230571, 3322747930336) := by decide +kernel
+theorem w_11 : walk 10000 3320665230571 3322747930336 1000 = some (3350103827551, 3350882278162) := by decide +kernel
+theorem w_12 : walk 11000 3350103827551 3350882278162 814 = some (3373768577726, 3370538571941) := by decide +kernel
+
+theorem s_1 : Pt 1 = 1000000000000 ∧ Qt 1 = 0 := by
+  constructor <;> simp [Pt, Qt] <;> norm_num
+theorem c_1 : (Pt 1000 = 2623402499216 ∧ Qt 1000 = 2618990629438) ∧ ∀ k, 1 < k → k ≤ 1000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_1
+  rw [← s_1.1, ← s_1.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 999 1 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_1000 : Pt 1000 = 2623402499216 ∧ Qt 1000 = 2618990629438 := c_1.1
+theorem c_2 : (Pt 2000 = 2833569654830 ∧ Qt 2000 = 2830250099383) ∧ ∀ k, 1000 < k → k ≤ 2000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_2
+  rw [← s_1000.1, ← s_1000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 1000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_2000 : Pt 2000 = 2833569654830 ∧ Qt 2000 = 2830250099383 := c_2.1
+theorem c_3 : (Pt 3000 = 2954597696219 ∧ Qt 3000 = 2956257351138) ∧ ∀ k, 2000 < k → k ≤ 3000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_3
+  rw [← s_2000.1, ← s_2000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 2000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_3000 : Pt 3000 = 2954597696219 ∧ Qt 3000 = 2956257351138 := c_3.1
+theorem c_4 : (Pt 4000 = 3042257380990 ∧ Qt 4000 = 3043908473603) ∧ ∀ k, 3000 < k → k ≤ 4000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_4
+  rw [← s_3000.1, ← s_3000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 3000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_4000 : Pt 4000 = 3042257380990 ∧ Qt 4000 = 3043908473603 := c_4.1
+theorem c_5 : (Pt 5000 = 3111413092929 ∧ Qt 5000 = 3110634875454) ∧ ∀ k, 4000 < k → k ≤ 5000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_5
+  rw [← s_4000.1, ← s_4000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 4000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_5000 : Pt 5000 = 3111413092929 ∧ Qt 5000 = 3110634875454 := c_5.1
+theorem c_6 : (Pt 6000 = 3166296636706 ∧ Qt 6000 = 3165823716275) ∧ ∀ k, 5000 < k → k ≤ 6000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_6
+  rw [← s_5000.1, ← s_5000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 5000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_6000 : Pt 6000 = 3166296636706 ∧ Qt 6000 = 3165823716275 := c_6.1
+theorem c_7 : (Pt 7000 = 3211317672488 ∧ Qt 7000 = 3214720632461) ∧ ∀ k, 6000 < k → k ≤ 7000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_7
+  rw [← s_6000.1, ← s_6000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 6000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_7000 : Pt 7000 = 3211317672488 ∧ Qt 7000 = 3214720632461 := c_7.1
+theorem c_8 : (Pt 8000 = 3253761338569 ∧ Qt 8000 = 3253732895538) ∧ ∀ k, 7000 < k → k ≤ 8000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_8
+  rw [← s_7000.1, ← s_7000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 7000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_8000 : Pt 8000 = 3253761338569 ∧ Qt 8000 = 3253732895538 := c_8.1
+theorem c_9 : (Pt 9000 = 3289812464700 ∧ Qt 9000 = 3289314991195) ∧ ∀ k, 8000 < k → k ≤ 9000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_9
+  rw [← s_8000.1, ← s_8000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 8000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_9000 : Pt 9000 = 3289812464700 ∧ Qt 9000 = 3289314991195 := c_9.1
+theorem c_10 : (Pt 10000 = 3320665230571 ∧ Qt 10000 = 3322747930336) ∧ ∀ k, 9000 < k → k ≤ 10000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_10
+  rw [← s_9000.1, ← s_9000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 9000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_10000 : Pt 10000 = 3320665230571 ∧ Qt 10000 = 3322747930336 := c_10.1
+theorem c_11 : (Pt 11000 = 3350103827551 ∧ Qt 11000 = 3350882278162) ∧ ∀ k, 10000 < k → k ≤ 11000 → chk k (Pt k) (Qt k) = true := by
+  have h := w_11
+  rw [← s_10000.1, ← s_10000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 1000 10000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_11000 : Pt 11000 = 3350103827551 ∧ Qt 11000 = 3350882278162 := c_11.1
+theorem c_12 : (Pt 11814 = 3373768577726 ∧ Qt 11814 = 3370538571941) ∧ ∀ k, 11000 < k → k ≤ 11814 → chk k (Pt k) (Qt k) = true := by
+  have h := w_12
+  rw [← s_11000.1, ← s_11000.2] at h
+  obtain ⟨h1, h2⟩ := walk_spec 814 11000 _ (by norm_num) h
+  simp only [Prod.mk.injEq] at h1
+  exact ⟨⟨h1.1.symm, h1.2.symm⟩, fun k hk1 hk2 => h2 k hk1 (by omega)⟩
+theorem s_11814 : Pt 11814 = 3373768577726 ∧ Qt 11814 = 3370538571941 := c_12.1
+
+
+/-- **`|∑_{n≤k} μ(n)/n| ≤ √(2/(k+1))` for `1 ≤ k < 11815`.** -/
+theorem moebius_sqrt_kernel (k : ℕ) (h1 : 1 ≤ k) (h2 : k < 11815) :
+    |∑ n ∈ Icc 1 k, (μ n : ℝ) / n| ≤ √(2 / (k + 1)) := by
+  rcases Nat.eq_or_lt_of_le h1 with e | e
+  · subst e
+    norm_num
+  by_cases h1 : k ≤ 1000
+  · exact bound_of_chk (c_1.2 k (by omega) h1)
+  by_cases h2 : k ≤ 2000
+  · exact bound_of_chk (c_2.2 k (by omega) h2)
+  by_cases h3 : k ≤ 3000
+  · exact bound_of_chk (c_3.2 k (by omega) h3)
+  by_cases h4 : k ≤ 4000
+  · exact bound_of_chk (c_4.2 k (by omega) h4)
+  by_cases h5 : k ≤ 5000
+  · exact bound_of_chk (c_5.2 k (by omega) h5)
+  by_cases h6 : k ≤ 6000
+  · exact bound_of_chk (c_6.2 k (by omega) h6)
+  by_cases h7 : k ≤ 7000
+  · exact bound_of_chk (c_7.2 k (by omega) h7)
+  by_cases h8 : k ≤ 8000
+  · exact bound_of_chk (c_8.2 k (by omega) h8)
+  by_cases h9 : k ≤ 9000
+  · exact bound_of_chk (c_9.2 k (by omega) h9)
+  by_cases h10 : k ≤ 10000
+  · exact bound_of_chk (c_10.2 k (by omega) h10)
+  by_cases h11 : k ≤ 11000
+  · exact bound_of_chk (c_11.2 k (by omega) h11)
+  exact bound_of_chk (c_12.2 k (by omega) (by omega))
+
+
+end TernaryGoldbach.Prelim.SmallMoeb

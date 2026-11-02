@@ -363,4 +363,119 @@ theorem prod_ellh_le (M : ℕ) :
     have := tailh M
     linarith
 
+/-! ### `s = 1/9` -/
+
+theorem two_rpow9 : (2 : ℝ) ^ ((1 : ℝ) / 9) ≤ 1.0801 :=
+  rpow_le_of_pow_le (k := 9) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+theorem cfac9_two : cfac (1 / 9) 2 ≤ 2.175 := by
+  have := cfac_le_of (p := 2) (by exact_mod_cast two_rpow9) (by norm_num)
+  refine this.trans ?_; norm_num
+
+theorem rpow9_30 : (30 : ℝ) ^ ((1 : ℝ) / 9) / 30 ≤ 0.0487 := by
+  have : (30 : ℝ) ^ ((1 : ℝ) / 9) ≤ 1.4593 :=
+    rpow_le_of_pow_le (k := 9) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  rw [div_le_iff₀ (by norm_num)]; linarith
+
+/-- `∑_{30 ≤ n < M} n^{−(2 − 1/9)} ≤ 0.0566`. -/
+theorem tail9_a (M : ℕ) : ∑ n ∈ Ico 30 M, (n : ℝ) ^ (-(2 - (1 : ℝ) / 9)) ≤ 0.0566 := by
+  have h := TernaryGoldbach.Prelim.MV.sum_rpow_neg_le (s := 2 - 1 / 9) (by norm_num)
+    (P0 := 30) (by norm_num) M
+  have e : ((30 : ℕ) : ℝ) - 1 = 29 := by norm_num
+  rw [e] at h
+  have hb : (19.88 : ℝ) ≤ (29 : ℝ) ^ ((8 : ℕ) / (9 : ℕ) : ℝ) :=
+    le_rpow_frac (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  have e2 : (29 : ℝ) ^ (1 - (2 - (1 : ℝ) / 9)) = ((29 : ℝ) ^ ((8 : ℕ) / (9 : ℕ) : ℝ))⁻¹ := by
+    rw [← Real.rpow_neg (by norm_num)]; congr 1; push_cast; ring
+  rw [e2] at h
+  refine h.trans ?_
+  rw [div_le_iff₀ (by norm_num)]
+  have : ((29 : ℝ) ^ ((8 : ℕ) / (9 : ℕ) : ℝ))⁻¹ ≤ 1 / 19.88 := by
+    rw [← one_div]; exact one_div_le_one_div_of_le (by norm_num) hb
+  linarith
+
+/-- `∑_{30 ≤ n < M} n^{−(2 − 2/9)} ≤ 0.0939`. -/
+theorem tail9_b (M : ℕ) : ∑ n ∈ Ico 30 M, (n : ℝ) ^ (-(2 - 2 * ((1 : ℝ) / 9))) ≤ 0.0939 := by
+  have h := TernaryGoldbach.Prelim.MV.sum_rpow_neg_le (s := 2 - 2 * (1 / 9)) (by norm_num)
+    (P0 := 30) (by norm_num) M
+  have e : ((30 : ℕ) : ℝ) - 1 = 29 := by norm_num
+  rw [e] at h
+  have hb : (13.70 : ℝ) ≤ (29 : ℝ) ^ ((7 : ℕ) / (9 : ℕ) : ℝ) :=
+    le_rpow_frac (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  have e2 : (29 : ℝ) ^ (1 - (2 - 2 * ((1 : ℝ) / 9))) = ((29 : ℝ) ^ ((7 : ℕ) / (9 : ℕ) : ℝ))⁻¹ := by
+    rw [← Real.rpow_neg (by norm_num)]; congr 1; push_cast; ring
+  rw [e2] at h
+  refine h.trans ?_
+  rw [div_le_iff₀ (by norm_num)]
+  have : ((29 : ℝ) ^ ((7 : ℕ) / (9 : ℕ) : ℝ))⁻¹ ≤ 1 / 13.70 := by
+    rw [← one_div]; exact one_div_le_one_div_of_le (by norm_num) hb
+  linarith
+
+/-- Upper bounds for `p^{1/9}`, odd `p < 30`. -/
+noncomputable def U9 (p : ℕ) : ℝ :=
+  if p = 3 then 1.1299 else if p = 5 then 1.1959 else if p = 7 then 1.2414 else
+  if p = 11 then 1.3053 else if p = 13 then 1.3298 else if p = 17 then 1.37 else
+  if p = 19 then 1.3871 else if p = 23 then 1.4168 else 1.4538
+
+theorem rpow9_le_U {p : ℕ} (hp : p ∈ ({3, 5, 7, 11, 13, 17, 19, 23, 29} : Finset ℕ)) :
+    (p : ℝ) ^ ((1 : ℝ) / 9) ≤ U9 p ∧ U9 p < p := by
+  simp only [mem_insert, mem_singleton] at hp
+  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    exact ⟨rpow_le_of_pow_le (k := 9) (by norm_num) (by norm_num) (by norm_num [U9])
+      (by norm_num [U9]), by norm_num [U9]⟩
+
+/-- **`∏_{2 < p < M} ℓ_{1/9}(p) ≤ 1.367`**. -/
+theorem prod_ell9_le (M : ℕ) :
+    ∏ p ∈ (Nat.primesBelow M).filter (· ≠ 2), ell (1 / 9) p ≤ 1.367 := by
+  have hT2 : ∀ p ∈ ({3, 5, 7, 11, 13, 17, 19, 23, 29} : Finset ℕ), 2 ≤ p := by decide
+  have hA : ∏ p ∈ ({3, 5, 7, 11, 13, 17, 19, 23, 29} : Finset ℕ), ell (1 / 9) p ≤ 1.2852 := by
+    refine (prod_le_prod₀ (g := fun p => 1 + U9 p / ((p + 1) * (p - U9 p)))
+      (fun p hp => by linarith [one_le_ell (s := 1 / 9) (by norm_num) (hT2 p hp)])
+      fun p hp => ell_le_of (rpow9_le_U hp).1 (rpow9_le_U hp).2).trans ?_
+    rw [prod_insert (by decide), prod_insert (by decide), prod_insert (by decide),
+      prod_insert (by decide), prod_insert (by decide), prod_insert (by decide),
+      prod_insert (by decide), prod_insert (by decide), prod_singleton]
+    norm_num [U9]
+  have h := prod_split_le (f := ell (1 / 9)) (M := M) (P0 := 30) (A := 1.2852) (τ := 0.0596)
+    odd_primes_lt_30 (fun p hp => one_le_ell (by norm_num) hp) hT2 hA ?_ (by norm_num)
+    (by norm_num)
+  · exact h.trans (by norm_num)
+  · have hb : ∀ n ∈ Ico 30 M, ell (1 / 9) n - 1 ≤
+        (n : ℝ) ^ (-(2 - (1 : ℝ) / 9)) / (1 - 0.0487) := fun n hn =>
+      ell_sub_one_le (by norm_num) (P0 := 30) (by norm_num) (mem_Ico.1 hn).1
+        (by exact_mod_cast rpow9_30) (by norm_num)
+    refine (sum_le_sum hb).trans ?_
+    rw [← sum_div, div_le_iff₀ (by norm_num)]
+    have := tail9_a M
+    linarith
+
+/-- **`∏_{2 < p < M} (1 + b_{1/9}(p)) ≤ 1.48`**. -/
+theorem prod_bterm9_le (M : ℕ) :
+    ∏ p ∈ (Nat.primesBelow M).filter (· ≠ 2), (1 + bterm (1 / 9) p) ≤ 1.48 := by
+  have hT2 : ∀ p ∈ ({3, 5, 7, 11, 13, 17, 19, 23, 29} : Finset ℕ), 2 ≤ p := by decide
+  have hb0 : ∀ p, 0 ≤ bterm (1 / 9) p := fun p => by unfold bterm; positivity
+  have hA : ∏ p ∈ ({3, 5, 7, 11, 13, 17, 19, 23, 29} : Finset ℕ), (1 + bterm (1 / 9) p) ≤ 1.3258 := by
+    refine (prod_le_prod₀ (g := fun p => 1 + (U9 p / (p + 1 - U9 p)) ^ 2)
+      (fun p _ => by linarith [hb0 p])
+      fun p hp => by
+        have := bterm_le_of (rpow9_le_U hp).1 (by linarith [(rpow9_le_U hp).2])
+        linarith).trans ?_
+    rw [prod_insert (by decide), prod_insert (by decide), prod_insert (by decide),
+      prod_insert (by decide), prod_insert (by decide), prod_insert (by decide),
+      prod_insert (by decide), prod_insert (by decide), prod_singleton]
+    norm_num [U9]
+  have h := prod_split_le (f := fun p => 1 + bterm (1 / 9) p) (M := M) (P0 := 30) (A := 1.3258)
+    (τ := 0.1038) odd_primes_lt_30 (fun p _ => by linarith [hb0 p]) hT2 hA ?_ (by norm_num)
+    (by norm_num)
+  · exact h.trans (by norm_num)
+  · have hb : ∀ n ∈ Ico 30 M, (1 + bterm (1 / 9) n) - 1 ≤
+        (n : ℝ) ^ (-(2 - 2 * ((1 : ℝ) / 9))) / (1 - 0.0487) ^ 2 := fun n hn => by
+      rw [add_sub_cancel_left]
+      exact bterm_le_tail (by norm_num) (P0 := 30) (by norm_num) (mem_Ico.1 hn).1
+        (by exact_mod_cast rpow9_30) (by norm_num)
+    refine (sum_le_sum hb).trans ?_
+    rw [← sum_div, div_le_iff₀ (by norm_num)]
+    have := tail9_b M
+    linarith
+
 end TernaryGoldbach.MinorArcs

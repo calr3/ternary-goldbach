@@ -9,7 +9,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
   `λ` are exact integer computations. A check passes only if it holds for the whole interval.
 * `eta2_fourier_rig.py` (python-flint/Arb ball arithmetic) checks `eta2DD_small` with the
   closed form in Si/Ci and a rigorous Lipschitz bound (see its docstring).
-* `moebius_sqrt_rig.c` (`moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
+* `moebius_sqrt_rig.c` (former axiom `moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
   rounding mode set to round-down; upper bounds are computed as `−((−a) ∘ b)`. Each operation is a
   correctly rounded IEEE operation (compiled with `-frounding-math`, no contraction to FMA).
 * `p1224_rig.c` (`prop1224_check`, `2.2·10¹⁰` values of `q`) is interval arithmetic. The arithmetic
@@ -30,13 +30,13 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `nonprime` | (former axiom `nonprime_small`; now proved) | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
 | `mertens_lower` | (former axioms `mertens_lower_small`, `mertens_point`; now proved, kernel to `10⁴`) | `n ≤ 10⁶` | 1 s |
 | `logsq` | (former axiom `logsq_small`; now proved) | `n ≤ 10⁶` | 2 s |
-| `mertens_product` | `mertens_product_small` | primes `≤ 2·10⁸` | 70 s |
+| `mertens_product` | (former axiom `mertens_product_small`; now proved, kernel to `10⁵`) | primes `≤ 2·10⁸` | 70 s |
 | `K` | (former axioms `K_blocks`, `K_pieces`; replaced by `ramare_moebius`) | prime powers `≤ 10⁹` | 2 min |
 | `liouville` | (former axiom `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
 | `C_grid` | (former axiom `C_grid`; now kernel-checked on 17 intervals) | 7720 grid points × 3000 terms | 25 s |
 | `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
 | `lemma8` | (former axiom `lemma8_numeric`; now proved) | `n ≤ 10⁴` | 10 s |
-| `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
+| `moebius_sqrt_rig` | (former axiom `moebius_sqrt_small`; now proved for `k < 11815`) | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | former axiom `etaO_numerics` (input of [B, (9.94)]; now proved) | four integrals over `[0, 2]` | < 1 s |
 | `t2_rig.c` | `T2_small`, `T2_mid` (inputs of [B, (5.31)]) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |

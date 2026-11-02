@@ -475,10 +475,14 @@ theorem one_le_prod_of_one_le {s : Finset ℕ} {f : ℕ → ℝ} (h : ∀ i ∈ 
   calc (1 : ℝ) = ∏ i ∈ s, (1 : ℝ) := by simp
     _ ≤ ∏ i ∈ s, f i := Finset.prod_le_prod₀ (fun _ _ => by norm_num) h
 
-/-- `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5` (from the numerical axiom `mertens_product_small` at `150001`). -/
+/-- `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5` (from [RS62, Thm 15], `Prelim.F_all`, at `150001`). -/
 theorem prod_p_div_le : ∏ p ∈ oddPrimes 150000, ((p : ℝ) / (p - 1)) ≤ 15.5 := by
   have hpr : Nat.Prime 150001 := by norm_num
-  have hM := TernaryGoldbach.Prelim.mertens_product_small 150001 hpr (by norm_num) (by norm_num)
+  have hM : ∏ p ∈ (Icc 1 150001).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
+      Real.exp Real.eulerMascheroniConstant *
+          Real.log (∑ p ∈ (Icc 1 150001).filter Nat.Prime, Real.log p) +
+        2.50637 / Real.log (∑ p ∈ (Icc 1 150001).filter Nat.Prime, Real.log p) :=
+    TernaryGoldbach.Prelim.F_all hpr (by norm_num)
   set A := (Icc 1 150001).filter Nat.Prime with hA
   set θ := ∑ p ∈ A, Real.log p with hθ
   have hsub : insert 2 (oddPrimes 150000) ⊆ A := by

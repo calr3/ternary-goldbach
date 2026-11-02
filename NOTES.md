@@ -362,6 +362,28 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     bound for `log u`, squarefreeness by trial division, and fixed-point upper bounds for every grid
     point. Generator: `scripts/gen_c_grid.py`.
   * 14 axioms (6 own, 8 published).
+* Own computations 6 → 4 (2026-11-02, follow-up):
+  * `moebius_sqrt_small` removed. `ramare_moebius` is now stated over its published range `x ≥ 11815`
+    (Ram13 Cor. 1.4; float check `scripts/moebius_ramare_check.py`: max `0.029496` at `k = 11820`).
+    Below 11815 the kernel checks `(k+1) m(k)² ≤ 2` (`Prelim/SmallMoebius.lean`, 51 s; `μ` from
+    trial division by squares and `SmallLiou.lamB`).
+    * `LiouvilleBound`: `abs_ls_large` covers all `z ≥ 10⁵` with Ramaré for `z/u² ≥ 11815`
+      (`log z/log(z/u²) ≤ 1 + (2/9) log u`), giving `0.056 + 0.32 ≤ 0.99`.
+    * `G2Bound`: Rankin weight `u^{1/9}` instead of `u^{1/22}`. The `s = 1/9` Euler products are in
+      `G2Numerics` (`P₀ = 30`, `p^{1/9}` table), and Lemma 5.1.2 becomes `0.0236/(log x)²`. The (5.31)
+      tail is `0.0037`.
+  * `mertens_product_small` removed.
+    * `F_mid` (`10⁵ ≤ x ≤ 2·10⁸`, three subranges) uses `E1_var` (Büthe's `ψ` to `10¹⁹`, then `E1_diff`
+      at `10¹⁹`) and `logF_le'`. The tail of `−log(1 − 1/p)` keeps its `1/(K+1)` factor, giving
+      `7/(6⌊√x⌋)`. It also uses `e^η ≤ 1 + 1.02η` instead of `1 + 2η`.
+    * Kernel for primes `≤ 10⁵` (`Prelim/SmallMertensProd.lean`, 5.5 min). `log θ = log m +
+      log(θ/m)` uses an integer `m` advanced with `θ` and an artanh series for `log(1 + b/a)`.
+      `e^γ` comes from a 22-term Taylor sum at `γ ≥ 0.5772156646` (from `RamareWalk`).
+    * Kernel pitfall: if a proof term needs `(⟨…, (adv 30 …).1, …⟩).m = (adv 30 …).1`, the kernel
+      evaluates `adv` with symbolic arguments and runs out of memory, even after `generalize` (the
+      beta-redex is reduced). Fix: state the step lemma for an arbitrary `r` (`Inv_stepR`) and
+      instantiate it.
+  * 12 axioms (4 own, 8 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
