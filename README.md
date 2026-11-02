@@ -20,9 +20,6 @@ Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ra
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
 our proof avoids it (`AXIOMS.md`, Finding 5).
 
-None of the axioms is a result of [B]: every step taken from the book is proved from them (some
-with weaker constants; see "Differences from [B]").
-
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 axioms.
 
