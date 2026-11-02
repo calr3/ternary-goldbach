@@ -7,15 +7,18 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [B].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 20 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 19 explicitly stated
 axioms besides Lean's standard three. They are:
 * 11 finite computations of our own, each checked in rigorous interval arithmetic
   (`scripts/rigorous/`); four of them are also contained in published results;
-* 9 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
+* 8 published results: RH up to `3·10¹²`, Platt's GRH verification (2 axioms), binary
   Goldbach up to `4·10¹⁸`, the Helfgott–Platt prime ladder, Büthe's bounds on `θ` and `ψ` up to
-  `10¹⁹` (2 axioms), and two explicit estimates of Ramaré: `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for
-  `x ≥ 10¹⁰` ([B, (2.21)]) and his asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)]);
-  both are checked independently (`AXIOMS.md`).
+  `10¹⁹` (2 axioms), and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 10¹⁰` ([B, (2.21)]),
+  which is checked against a later published bound (`AXIOMS.md`).
+
+Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ram95, Lemma 3.4]) is proved,
+including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
+our proof avoids it (`AXIOMS.md`, Finding 8).
 
 None of the axioms is a result of [B]: every step taken from the book is proved from them (some
 with weaker constants; see "Differences from [B]").
@@ -56,7 +59,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Prelim.mertens_point,
  TernaryGoldbach.Prelim.mertens_product_small,
  TernaryGoldbach.Prelim.moebius_sqrt_small,
- TernaryGoldbach.Prelim.ramare_Gq,
  TernaryGoldbach.Prelim.ramare_moebius]
 ```
 
@@ -65,6 +67,8 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 * the primality certificates in `PrattPrime.lean`;
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
   `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean` and `SmallMuPhi.lean`;
+* the products and sums behind Ramaré's (12.12) and `c_E` in `Prelim/RamareBound.lean` and
+  `RamareWalk.lean`;
 * the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`.
 
 (B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
@@ -166,6 +170,10 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
   (`AXIOMS.md`, Finding 6).
 * The prime ladder's gaps are at most `4·10¹⁸`, as [HP13] and [B, §1.6] state. The case
   `n − p = 4·10¹⁸ + 2` uses [B]'s explicit decomposition.
+* [B, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
+  `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`, but the product is about `8.0845`. We prove (12.12)
+  as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`AXIOMS.md`,
+  Finding 8).
 
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.
@@ -202,6 +210,8 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
 * [RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,
   Illinois J. Math. 6 (1962).
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
+* [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
+  (1995), 645–706.
 * O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius
   bound).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0; see

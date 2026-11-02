@@ -1,12 +1,12 @@
 import TernaryGoldbach.MinorArcs.LargeSievePrimes
 import TernaryGoldbach.Prelim.MertensProduct
-import TernaryGoldbach.Prelim.RamareGq
+import TernaryGoldbach.Prelim.Ramare
 
 /-!
 # [B, Prop 12.2.4], part 1: definitions, Ramaré's estimate, and two inequalities for `G_q`
 
 * `S_q = ∑_{p ∣ q} log p/p`, `f₁(q) = ∏_{p ∣ q} f₁(p)` [B, (12.13)];
-* Ramaré's estimate (12.12) ([Ram95, Lemma 3.4], published axiom `Prelim.ramare_Gq`);
+* Ramaré's estimate (12.12) ([Ram95, Lemma 3.4], proved as `Prelim.ramare_Gq`);
 * `G_q(R) G_P(t) ≤ G_q(tR)` if every prime `≤ R` or dividing `q` divides `P` (`Gq_mul_le`);
 * `G(t) ≤ (P/φ(P)) G_P(t)` for squarefree `P` (`G_le_mul_Gq`, the lower half of [B, (12.11)]).
 -/
@@ -27,7 +27,7 @@ noncomputable def f1p (p : ℕ) : ℝ :=
 /-- `f₁(q) = ∏_{p ∣ q} f₁(p)` [B, (12.13)]. -/
 noncomputable def f1q (q : ℕ) : ℝ := ∏ p ∈ q.primeFactors, f1p p
 
-/-- Ramaré's estimate [B, (12.12)] (the published axiom `Prelim.ramare_Gq`), for our `Gq`, `Sq`, `f1q`. -/
+/-- Ramaré's estimate [B, (12.12)] (`Prelim.ramare_Gq`), for our `Gq`, `Sq`, `f1q`. -/
 theorem ramare_Gq : ∃ c : ℝ, 1.3325822 ≤ c ∧ c ≤ 1.3325823 ∧ ∀ d : ℕ, 1 ≤ d → ∀ R : ℝ, 1 ≤ R →
     |Gq d R - (Nat.totient d / d) * (Real.log R + c + Sq d)| ≤ 7.284 * R ^ (-(1 / 3 : ℝ)) * f1q d :=
   TernaryGoldbach.Prelim.ramare_Gq

@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on the 20 axioms below (`#print axioms`). A false axiom makes the axiom set
+`Quot.sound`) and on the 19 axioms below (`#print axioms`). A false axiom makes the axiom set
 inconsistent, and then the formal proof says nothing. So each axiom has been checked against its
 source:
 
@@ -10,8 +10,8 @@ source:
 * For published results, against the paper.
 
 All scripts were re-run. The audit was done on 2026-11-01. Sources: [B] = Helfgott, *The ternary
-Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv number. [RS62] and [MV73] are
-as in the README.
+Goldbach problem*, arXiv:1501.05438v2. The papers below are cited by arXiv number. [RS62], [MV73] and
+[Ram95] are as in the README.
 
 ## Findings
 
@@ -79,6 +79,17 @@ as in the README.
      `c_E − 7.284 R^{−1/3} ≥ 1.312` only from `R ≈ 4.42·10⁷` on. We do not use (12.15).
 7. **Binary Goldbach was double-checked only to `4·10¹⁷`.** [OeSHP14] verified binary Goldbach up to
    `4·10¹⁸`; according to the project page, the independent double-check reaches `4·10¹⁷`.
+8. **[Ram95, (3.9)] understates a product. Lemma 3.4 still holds; it is now proved in Lean.**
+   * Ramaré's proof of Lemma 3.4 uses (3.9),
+     `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`. The product over the primes below `10⁷` is already
+     `8.0775`, and the full product is about `8.0845`.
+     The constant `7.284 = 0.9105·8` comes from (3.9); with `8.0845`, the same argument gives about
+     `7.36`.
+   * The lemma with `7.284` is still true. Our proof (`Prelim/Ramare*.lean`) writes
+     `g_d = h_d ∗ v` with `g_d(n) = [(n, d) = 1] μ(n)²/φ(n)` and `v(n) = [n odd]/n`. It uses `|∑_{b≤x, b odd} 1/b − ½ log x − (γ + log 2)/2| ≤
+     0.64 x^{−1/3}` and `∑_a |h_d(a)| a^{1/3} ≤ 11 f₁(d)`. The second bound uses the exact local
+     factors at `2` and a kernel evaluation of the product over the primes `≤ 1000`. The resulting
+     constant is `0.64·11 = 7.04`.
 
 ## The axioms
 
@@ -126,7 +137,7 @@ Unused (in `Prelim/LambdaMuExtra.lean`, not on the path of `ternary_goldbach`):
 
 All three come from `psi_extra_check.py`.
 
-### Published results (9)
+### Published results (8)
 
 | Axiom | Statement | Source | Check |
 |---|---|---|---|
@@ -136,31 +147,50 @@ All three come from `psi_extra_check.py`.
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | [B, §1.6]; the project page says "all consecutive even numbers up to `4·10¹⁸`" (the journal page returned 403) |
 | `Helfgott.prime_ladder_input` | odd primes from `3` to `≥ 8.875694·10³⁰`, gaps `≤ 4·10¹⁸` | Helfgott–Platt, arXiv:1305.3062 | §4 and Thm 4.1 (top `8 875 694 145 621 773 516 800 000 000 000`); see Finding 2 |
 | `Prelim.buthe_theta` | `\|θ(n) − n\| ≤ 1.95 √n`, `1423 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.6) `x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; (1.7) `x − θ(x) > 0.05√x`; this combines an analytic method with a computation |
-| `Prelim.ramare_Gq` | `G_d(R) = (φ(d)/d)(log R + c + ∑_{p∣d} log p/p) + O*(7.284 R^{−1/3} f₁(d))` for all `d, R ≥ 1`, some `c ∈ [1.3325822, 1.3325823]` | Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22 (1995) 645–706, Lemma 3.4 (open access: numdam ASNSP_1995_4_22_4_645_0) | checked against the paper: Lemma 3.4 states this for all `X > 0`, `d ≥ 1`, with this `f₁`; (3.6) gives `c = γ + ∑_p log p/(p(p−1)) = 1.332582275332…`. `scripts/rigorous/ramare_check.c`: `c ∈ [1.332582274733, 1.332582276813]` (MPFR, primes `≤ 10⁹`, tail via our `ψ(t) ≤ 1.03883 t`); the estimate holds for all `d ≤ 2000`, three primorials and all `X ≤ 2·10⁶` (interval arithmetic), using at most `0.18` of the error bound |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 10¹⁰` (the range used) | Ramaré, Acta Arith. 157 (2013) 365–379, for `x ≥ 11815` ([B, (2.21)]) | implied by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²` for `X ≥ 463 421`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969. That paper also proves `≤ 0.010032/log X` for `X ≥ 617 990` (Cor. 1.2). |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹` (same theorem as `buthe_theta`) |
 
 ### Results of Helfgott's book [B] (0)
 
 None: the last ones, (5.31), Lemma 5.1.2 and Prop 12.2.4, are now proved (see "Removed axioms").
-The Lean definitions that the axioms above refer to were compared with the book's:
-* `T2` and `g2` with (5.19) and Lemma 5.1.2;
-* `Gq`, `Sq`, `f1q` and `cE` with (12.2), (12.12)–(12.14).
+The Lean definitions that the axioms above refer to were compared with the book's: `T2` and `g2`
+with (5.19) and Lemma 5.1.2.
 
 ## Summary by kind
 
 * **Our own computations (11):** all are checked rigorously in `scripts/rigorous/` (interval
   arithmetic with directed rounding); most also have a float script in `scripts/`. Two are also contained in
   published results: `mertens_product_small` [RS62, Thm 15] and `moebius_sqrt_small` [B, (2.24)].
-* **Published results (9):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
+* **Published results (8):** RH to `3·10¹²`, Platt's GRH check (2 axioms), binary Goldbach to
   `4·10¹⁸`, the Helfgott–Platt ladder, Büthe's bounds for `θ` and `ψ` (2 axioms), and Ramaré's
-  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` and his estimate for `G_d(R)`. They are stated as in the papers
-  (or weaker). The two Ramaré axioms are also checked independently: (12.12) against the original
-  paper and numerically on a finite range, with `c_E` recomputed; the Möbius bound is implied by a
-  later published bound that is re-derived on arXiv.
+  `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`. They are stated as in the papers (or weaker). The Ramaré bound
+  is implied by a later published bound that is re-derived on arXiv.
 * **Results of [B]:** none.
 
 ## Removed axioms
+
+* `ramare_Gq` (Ramaré's (12.12), [Ram95, Lemma 3.4], a published result) is now a theorem
+  (`Prelim/Ramare.lean`, from `Prelim/RamareConv.lean` … `RamareNum.lean`), for all `d ≥ 1` and
+  `R > 0`.
+  * `g_d = h_d ∗ v`, where `g_d(n) = [(n, d) = 1] μ(n)²/φ(n)` (so `G_d(R) = ∑_{n≤R} g_d(n)`),
+    `v(n) = [n odd]/n` and `h_d = g_d ∗ (μ·v)`. `h_d` is multiplicative and vanishes on `p^e` for
+    `e ≥ 3`.
+  * `V(x) = ∑_{b≤x, b odd} 1/b = ½ log x + (γ + log 2)/2 + O*(0.64 x^{−1/3})` for all `x > 0`.
+  * `∑_a |h_d(a)| a^{1/3} ≤ 11 f₁(d)`, by Euler products. The odd primes `≤ 1000` use
+    kernel-checked rational bounds for `p^{1/3}`; the tail uses `∑_{n>1000} n^{−4/3} ≤ 0.3`.
+  * The main terms are `∑_a h_d(a) = 2φ(d)/d` and
+    `∑_a h_d(a) log a = (2φ(d)/d)(log 2 − ∑_p log p/(p(p−1)) − S_d)`, from Euler products and
+    `log a = ∑_{p^k ∣ a} log p`. The error is `7.04 R^{−1/3} f₁(d) ≤ 7.284 R^{−1/3} f₁(d)`.
+    Ramaré's own route needs his (3.9), which is false (Finding 8).
+  * `c_E = γ + ∑_p log p/(p(p−1)) ∈ [1.33258227, 1.33258229]` (`RamareNum.cR_bounds`):
+    * `c_E = γ + log 2 + 2X/ζ(2) + ∑_p log p/(p³ − p)`, with `X = ∑_n (−1)^{n+1} log n/n²`. This
+      uses `∑_p log p/(p² − 1) = ∑ Λ(n)/n² = −ζ'(2)/ζ(2)`, from Mathlib's `L(Λ, s) = −ζ'(s)/ζ(s)`.
+    * One kernel walk (`Prelim/RamareWalk.lean`, about 2 min) bounds the following to `10⁻²⁰`:
+      `log n` (artanh series), `H_{20000}`, the partial sums of `X` to `2000`, and
+      `∑_{p ≤ 20000} log p/(p³ − p)` (primality by trial division).
+    * The tail of `X` lies between `c₀/2` and `c₀ − c₁/2` (convexity of `log t/t²`). The prime tail
+      is at most `(log 20001 + ½)/(2·20000·20001)` (telescoping). `γ` comes from
+      `1/(2(n+1)) ≤ H_n − log n − γ ≤ 1/(2n)`.
 
 * `theta_sqrt` (`|θ(n) − n| ≤ 1.95 √n`, `5·10⁵ ≤ n ≤ 10¹⁰`, our computation) was a special case of
   `buthe_theta` (same bound, `1423 ≤ n ≤ 10¹⁹`); it is now derived from it.
@@ -271,7 +301,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
     `∫_{10⁸}^∞ |g₂|/y ≤ 0.0036`, which (5.31) can afford (it allows `0.0096`).
 
 * `prop_12_2_4` ([B, Prop 12.2.4]) is now a proof (`MinorArcs/LSQuot1.lean`–`LSQuot6.lean`). Its
-  inputs are Ramaré's (12.12) (published axiom `ramare_Gq`) and our computation `prop1224_check`.
+  inputs are Ramaré's (12.12) (`ramare_Gq`, now proved) and our computation `prop1224_check`.
   With `R = Q₀/sq`, `t = Q/Q₀`:
   * The reduction [B, (12.25)–(12.26)] (`star_suffices`) uses
     `θ = (log Q₀ + 1.36)/(log Q + c_E) ≤ 0.6274`.
@@ -289,7 +319,7 @@ The Lean definitions that the axioms above refer to were compared with the book'
   * See Finding 6 for two slips in [B]'s argument.
 
 * `lemma7_numeric` and `GS_N0` ([MV73, Lemma 7], `Prelim/MVLemma7.lean`) are gone.
-  * Ramaré's (12.12) at `d = 1` (`Prelim.ramare_Gq`, moved to `Prelim/RamareGq.lean`) gives
+  * Ramaré's (12.12) at `d = 1` (`Prelim.ramare_Gq`, now proved in `Prelim/Ramare.lean`) gives
     `G(r) ≥ log r + c_E − 7.284 r^{−1/3} ≥ log r + 1.07` for `r ≥ 21400`. This also makes the constant
     `κ = c_E` known, which `GS_N0` used to provide.
   * For `6 ≤ r < 21400` the kernel checks `G(r) ≥ log r + 1.07` (`Prelim/SmallG.lean`, 23 s).
@@ -350,3 +380,19 @@ No finite axiom small enough for the kernel remains.
 The checks over large ranges (`10⁸`–`10¹⁰`) are beyond what the kernel can evaluate. A kernel
 check handles about `10⁵` simple steps per declaration, and `Nat.primesBelow 10⁴` already runs out
 of memory. They would need `native_decide`, which means trusting Lean's compiler.
+
+Of the published results, `ramare_Gq` is now proved (see "Removed axioms"). `ramare_moebius`
+(`|m(x)| ≤ 0.03/log x`, `m(x) = ∑_{n≤x} μ(n)/n`, `x ≥ 10¹⁰`) was assessed and is not a realistic
+target:
+* Ramaré's proof (Acta Arith. 157, hal-02572812) and its improvement arXiv:2408.05969 both start
+  from bounds for `M(x) = ∑_{n≤x} μ(n)` that rest on large computations:
+  * `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El Marraki);
+  * `|M(x)| ≤ 0.571√x` for `33 ≤ x ≤ 10¹²` (Dress), or `|M(x)| ≤ √x` for `x ≤ 10¹⁶` (Hurst).
+
+  Ramaré's paper also uses Pari/GP computations up to `1.8·10⁹` (its Lemma 6.3).
+* Near `x = 10¹⁰`, `x/4345` is the operative input: the analytic bound `0.013 x/log x` is weaker
+  until `log x ≈ 56`.
+* Our elementary bound, `|m(x)| ≤ 0.55/(log x − 0.7521)` (`Prelim/MoebiusBound.lean`), does not use
+  the cancellation in `μ`. (5.31), through Lemma 5.1.2, would need about `0.1/log x`.
+* So a proof would replace one published bound by these computations, which are far beyond the
+  kernel.

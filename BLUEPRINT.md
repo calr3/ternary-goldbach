@@ -65,7 +65,7 @@ form (`+0.0231`), because [B, (5.32)] is false for `v = 2`. The current status i
      │    Prop 11.2.3 (corrected, with a majorant G) ✅ Prop1123.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   [Prop 12.1.2 ✅ MinorArcs/LargeSieveProof.lean (δ₀ ≥ 2; Bombieri's identity, arcs, Plancherel);
-     │    Prop 12.2.4 ✅ MinorArcs/LSQuot1–6.lean (Ramaré (12.12) + our computation prop1224_check); Cor 12.2.5 ✅ from the two;
+     │    Prop 12.2.4 ✅ MinorArcs/LSQuot1–6.lean (Ramaré (12.12), proved in Prelim/Ramare*.lean, + our computation prop1224_check); Cor 12.2.5 ✅ from the two;
      │    Gauss sums ✅ Prelim/GaussInduced.lean]
      │   (✅ a basic large sieve is in MinorArcs/LargeSieve.lean; Ch 12 needs sharper weighted versions)
      └─ Appendices B (Fourier transforms of η₂''), C (sums with Λ and φ)

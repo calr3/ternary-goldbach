@@ -1,0 +1,367 @@
+import TernaryGoldbach.Prelim.RamareConst
+import TernaryGoldbach.Prelim.RamareWalk
+
+/-!
+# `1.3325822 ≤ c_E ≤ 1.3325823`
+
+`c_E = γ + ∑_p log p/(p(p−1)) = γ + log 2 + 2X/ζ(2) + T` (`cR_eq`), where
+* `X = ∑_{n odd} log n/n² − ∑_{n even} log n/n²`, since `∑ log n/n² = 2X + ζ(2) log 2` (`L_eq`). The
+  sums up to `2000` come from the kernel walk. The tail `∑_{j ≥ 0} (−1)^j c_j`, with
+  `c_j = log(2001+j)/(2001+j)²` convex (`aL_convex`), lies between `c₀/2` and `c₀ − c₁/2` (`tail_bounds`).
+* `T = ∑_p log p/(p³ − p)`: the primes `≤ 20000` come from the walk. The tail is at most
+  `(log 20001 + 1/2)/(2·20000·20001)`, by telescoping (`Ft_step`).
+* `γ` comes from `H_{20000}` and `log 20000` (`harm_bounds`).
+-/
+
+open Finset Real
+
+namespace TernaryGoldbach.Prelim.RamPf
+
+/-- `a(n) = log n/n²`. -/
+noncomputable def aL (n : ℕ) : ℝ := Real.log n / (n : ℝ) ^ 2
+
+theorem aL_nonneg (n : ℕ) : 0 ≤ aL n := div_nonneg (Real.log_natCast_nonneg n) (by positivity)
+
+theorem summable_aL : Summable aL := by
+  have hs : Summable fun n : ℕ => 2 * (n : ℝ) ^ (-(3 / 2 : ℝ)) :=
+    (Real.summable_nat_rpow.2 (by norm_num)).mul_left 2
+  refine Summable.of_nonneg_of_le aL_nonneg (fun n => ?_) hs
+  rcases Nat.eq_zero_or_pos n with h | h
+  · subst h; simp [aL]
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast h
+  have hr := Real.rpow_pos_of_pos hn0 ((1 : ℝ) / 2)
+  have hlog : Real.log n ≤ 2 * (n : ℝ) ^ ((1 : ℝ) / 2) := by
+    have := Real.log_le_sub_one_of_pos hr
+    rw [Real.log_rpow hn0] at this; linarith
+  have e : 2 * (n : ℝ) ^ (-(3 / 2 : ℝ)) = 2 * (n : ℝ) ^ ((1 : ℝ) / 2) / (n : ℝ) ^ 2 := by
+    rw [show (-(3 / 2 : ℝ)) = (1 / 2) - 2 by norm_num, Real.rpow_sub hn0, Real.rpow_two]; ring
+  rw [e]
+  exact div_le_div_of_nonneg_right hlog (by positivity)
+
+theorem summable_aL_comp (a b : ℕ) (ha : 0 < a) : Summable fun j => aL (a * j + b) :=
+  summable_aL.comp_injective (fun x y h => by
+    exact Nat.eq_of_mul_eq_mul_left ha (Nat.add_right_cancel h))
+
+theorem aL_even (m : ℕ) : aL (2 * m) = (Real.log 2 * (1 / (m : ℝ) ^ 2) + aL m) / 4 := by
+  rcases Nat.eq_zero_or_pos m with h | h
+  · subst h; simp [aL]
+  · have hm : (0 : ℝ) < m := by exact_mod_cast h
+    simp only [aL]; push_cast
+    rw [Real.log_mul (by norm_num) hm.ne']
+    field_simp
+    ring
+
+/-- **`∑ log n/n² = 2(∑_{odd} − ∑_{even}) + log 2 · π²/6`.** -/
+theorem L_eq : ∑' n, aL n =
+    2 * (∑' m, aL (2 * m + 1) - ∑' m, aL (2 * m)) + Real.log 2 * (π ^ 2 / 6) := by
+  have he : Summable fun m => aL (2 * m) := by simpa using summable_aL_comp 2 0 (by norm_num)
+  have ho : Summable fun m => aL (2 * m + 1) := summable_aL_comp 2 1 (by norm_num)
+  have h1 := tsum_even_add_odd he ho
+  have h2 : HasSum (fun m : ℕ => aL (2 * m)) ((Real.log 2 * (π ^ 2 / 6) + ∑' n, aL n) / 4) := by
+    have := ((hasSum_zeta_two.mul_left (Real.log 2)).add summable_aL.hasSum).div_const 4
+    convert this using 1
+    funext m; exact aL_even m
+  rw [h2.tsum_eq] at h1 ⊢
+  linarith
+
+/-! ### Convexity and the alternating tail -/
+
+theorem aL_convex {m : ℕ} (hm : 2001 ≤ m) : 0 ≤ aL m - 2 * aL (m + 1) + aL (m + 2) := by
+  have hm' : (2001 : ℝ) ≤ m := by exact_mod_cast hm
+  set x : ℝ := (m : ℝ) + 1 with hx
+  have e1 : ((m : ℕ) : ℝ) = x - 1 := by rw [hx]; ring
+  have e2 : ((m + 1 : ℕ) : ℝ) = x := by rw [hx]; push_cast; ring
+  have e3 : ((m + 2 : ℕ) : ℝ) = x + 1 := by rw [hx]; push_cast; ring
+  simp only [aL]; rw [e1, e2, e3]
+  have hx2 : (2002 : ℝ) ≤ x := by rw [hx]; linarith
+  have hxpos : 0 < x - 1 := by linarith
+  have hL : 2 ≤ Real.log x := by
+    have h8 : Real.log 8 ≤ Real.log x := Real.log_le_log (by norm_num) (by linarith)
+    have : Real.log 8 = 3 * Real.log 2 := by
+      rw [show (8 : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]; norm_num
+    linarith [Real.log_two_gt_d9]
+  set L := Real.log x with hLdef
+  have hm1 : L - 1 / (x - 1) ≤ Real.log (x - 1) := by
+    have := Real.one_sub_inv_le_log_of_pos (show 0 < (x - 1) / x by positivity)
+    rw [Real.log_div hxpos.ne' (by linarith)] at this
+    have e : 1 - ((x - 1) / x)⁻¹ = -(1 / (x - 1)) := by field_simp; ring
+    linarith
+  have hp1 : L + 1 / (x + 1) ≤ Real.log (x + 1) := by
+    have := Real.one_sub_inv_le_log_of_pos (show 0 < (x + 1) / x by positivity)
+    rw [Real.log_div (by linarith) (by linarith)] at this
+    have e : 1 - ((x + 1) / x)⁻¹ = 1 / (x + 1) := by field_simp; ring
+    linarith
+  have h1 : (L - 1 / (x - 1)) / (x - 1) ^ 2 ≤ Real.log (x - 1) / (x - 1) ^ 2 :=
+    div_le_div_of_nonneg_right hm1 (by positivity)
+  have h2 : (L + 1 / (x + 1)) / (x + 1) ^ 2 ≤ Real.log (x + 1) / (x + 1) ^ 2 :=
+    div_le_div_of_nonneg_right hp1 (by positivity)
+  have hx21 : 0 < x ^ 2 - 1 := by nlinarith
+  have key : 0 ≤ (L - 1 / (x - 1)) / (x - 1) ^ 2 - 2 * (L / x ^ 2) + (L + 1 / (x + 1)) / (x + 1) ^ 2 := by
+    have e : (L - 1 / (x - 1)) / (x - 1) ^ 2 - 2 * (L / x ^ 2) + (L + 1 / (x + 1)) / (x + 1) ^ 2 =
+        (L * (6 * x ^ 2 - 2) * (x ^ 2 - 1) - (6 * x ^ 2 + 2) * x ^ 2) / (x ^ 2 * (x ^ 2 - 1) ^ 3) := by
+      have : x - 1 ≠ 0 := by linarith
+      have : x + 1 ≠ 0 := by linarith
+      have : x ^ 2 - 1 ≠ 0 := hx21.ne'
+      have : x ≠ 0 := by linarith
+      field_simp
+      ring
+    rw [e]
+    refine div_nonneg ?_ (by positivity)
+    have hP : 0 ≤ (6 * x ^ 2 - 2) * (x ^ 2 - 1) :=
+      mul_nonneg (by nlinarith) hx21.le
+    nlinarith [mul_le_mul_of_nonneg_right hL hP]
+  linarith
+
+theorem tail_bounds :
+    aL 2001 / 2 ≤ (∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002) ∧
+    (∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002) ≤ (2 * aL 2001 - aL 2002) / 2 := by
+  have hc : ∀ m, 2001 ≤ m → aL (m + 1) - aL (m + 2) ≤ aL m - aL (m + 1) := fun m hm => by
+    have := aL_convex hm; linarith
+  have s0 := summable_aL_comp 2 2001 (by norm_num)
+  have s1 := summable_aL_comp 2 2002 (by norm_num)
+  have s2 := summable_aL_comp 2 2003 (by norm_num)
+  have s3 := summable_aL_comp 2 2004 (by norm_num)
+  have e0 : ∑' j, aL (2 * j + 2001) = aL 2001 + ∑' j, aL (2 * j + 2003) := by
+    rw [s0.tsum_eq_zero_add]
+    congr 1
+  have e1 : ∑' j, aL (2 * j + 2002) = aL 2002 + ∑' j, aL (2 * j + 2004) := by
+    rw [s1.tsum_eq_zero_add]
+    congr 1
+  have hl : ∑' j, (aL (2 * j + 2002) - aL (2 * j + 2003)) ≤
+      ∑' j, (aL (2 * j + 2001) - aL (2 * j + 2002)) :=
+    Summable.tsum_le_tsum (fun j => hc (2 * j + 2001) (by omega)) (s1.sub s2) (s0.sub s1)
+  have hu : ∑' j, (aL (2 * j + 2003) - aL (2 * j + 2004)) ≤
+      ∑' j, (aL (2 * j + 2002) - aL (2 * j + 2003)) :=
+    Summable.tsum_le_tsum (fun j => hc (2 * j + 2002) (by omega)) (s2.sub s3) (s1.sub s2)
+  rw [s1.tsum_sub s2, s0.tsum_sub s1] at hl
+  rw [s2.tsum_sub s3, s1.tsum_sub s2] at hu
+  constructor <;> linarith
+
+/-! ### The walk's partial sums -/
+
+theorem AP_AN_eq : ∀ N, N ≤ 1000 →
+    AP (2 * N) = ∑ m ∈ range N, aL (2 * m + 1) ∧ AN (2 * N) = ∑ m ∈ range (N + 1), aL (2 * m)
+  | 0, _ => by simp [AP, AN, aL]
+  | N + 1, h => by
+    obtain ⟨h1, h2⟩ := AP_AN_eq N (by omega)
+    have eP : AP (2 * N + 1 + 1) = AP (2 * N) + aL (2 * N + 1) := by
+      unfold AP
+      rw [sum_Icc_succ_top (show 1 ≤ 2 * N + 1 + 1 by omega),
+        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), if_pos ⟨by omega, by omega⟩,
+        if_neg (by omega)]
+      simp only [aL, add_zero]
+    have eN : AN (2 * N + 1 + 1) = AN (2 * N) + aL (2 * N + 1 + 1) := by
+      unfold AN
+      rw [sum_Icc_succ_top (show 1 ≤ 2 * N + 1 + 1 by omega),
+        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), if_neg (by omega),
+        if_pos ⟨by omega, by omega⟩]
+      simp only [aL, add_zero]
+    rw [show 2 * (N + 1) = 2 * N + 1 + 1 by ring, eP, eN, h1, h2, sum_range_succ,
+      sum_range_succ (fun m => aL (2 * m)) (N + 1)]
+    exact ⟨rfl, by rw [show 2 * (N + 1) = 2 * N + 1 + 1 by ring]⟩
+
+/-! ### `T = ∑_p log p/(p³ − p)` -/
+
+/-- The terms of `T`. -/
+noncomputable def tT (q : ℕ) : ℝ := if q.Prime then Real.log q / ((q : ℝ) ^ 3 - q) else 0
+
+theorem cube_sub_pos {x : ℝ} (hx : 1 < x) : 0 < x ^ 3 - x := by
+  have := mul_pos (by linarith : (0 : ℝ) < x) (by nlinarith : (0 : ℝ) < x ^ 2 - 1)
+  nlinarith
+
+theorem tT_nonneg (q : ℕ) : 0 ≤ tT q := by
+  unfold tT
+  split_ifs with hq
+  · have hq1 : (1 : ℝ) < q := by exact_mod_cast hq.one_lt
+    exact div_nonneg (Real.log_natCast_nonneg q) (cube_sub_pos hq1).le
+  · exact le_rfl
+
+theorem summable_tT : Summable tT := by
+  refine Summable.of_nonneg_of_le tT_nonneg (fun q => ?_) summable_sumP
+  unfold tT
+  split_ifs with hq
+  · have hq2 : (2 : ℝ) ≤ q := by exact_mod_cast hq.two_le
+    have h1 : 0 < (q : ℝ) * ((q : ℝ) - 1) := by nlinarith
+    have h2 : (q : ℝ) * ((q : ℝ) - 1) ≤ (q : ℝ) ^ 3 - q := by
+      have := mul_nonneg (by nlinarith : (0 : ℝ) ≤ (q : ℝ) ^ 2) (by linarith : (0 : ℝ) ≤ (q : ℝ) - 1)
+      nlinarith
+    exact div_le_div_of_nonneg_left (Real.log_natCast_nonneg q) h1 h2
+  · exact le_rfl
+
+/-- `F(n) = (log n + 1/2)/(2(n−1)n)`. -/
+noncomputable def Ft (n : ℕ) : ℝ := (Real.log n + 1 / 2) / (2 * ((n : ℝ) - 1) * n)
+
+theorem Ft_nonneg {n : ℕ} (hn : 2 ≤ n) : 0 ≤ Ft n := by
+  have hx : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  unfold Ft
+  have := Real.log_natCast_nonneg n
+  exact div_nonneg (by linarith) (mul_nonneg (by linarith) (by linarith))
+
+/-- **`log n/(n³ − n) ≤ F(n) − F(n+1)`**, from `log(1 + 1/n) ≤ 1/n`. -/
+theorem Ft_step {n : ℕ} (hn : 2 ≤ n) : Real.log n / ((n : ℝ) ^ 3 - n) ≤ Ft n - Ft (n + 1) := by
+  have hx : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  unfold Ft
+  have e1 : ((n + 1 : ℕ) : ℝ) = (n : ℝ) + 1 := by push_cast; ring
+  rw [e1]
+  set x : ℝ := (n : ℝ)
+  have hl : Real.log (x + 1) - Real.log x ≤ 1 / x := by
+    have := Real.log_le_sub_one_of_pos (show 0 < (x + 1) / x by positivity)
+    rw [Real.log_div (by linarith) (by linarith)] at this
+    have e : (x + 1) / x - 1 = 1 / x := by field_simp; ring
+    linarith
+  have hd : 0 < 2 * (x - 1) * x * (x + 1) := by
+    have : 0 < x - 1 := by linarith
+    positivity
+  rw [← sub_nonneg]
+  have e : (Real.log x + 1 / 2) / (2 * (x - 1) * x) - (Real.log (x + 1) + 1 / 2) / (2 * (x + 1 - 1) * (x + 1)) -
+      Real.log x / (x ^ 3 - x) = (1 - (x - 1) * (Real.log (x + 1) - Real.log x)) / (2 * (x - 1) * x * (x + 1)) := by
+    have : x - 1 ≠ 0 := by linarith
+    have : x + 1 ≠ 0 := by linarith
+    have : x ≠ 0 := by linarith
+    have : x + 1 - 1 ≠ 0 := by linarith
+    rw [show x ^ 3 - x = (x - 1) * x * (x + 1) by ring, show x + 1 - 1 = x by ring]
+    field_simp
+    ring
+  rw [e]
+  refine div_nonneg ?_ hd.le
+  have h1 : (x - 1) * (Real.log (x + 1) - Real.log x) ≤ (x - 1) * (1 / x) :=
+    mul_le_mul_of_nonneg_left hl (by linarith)
+  have h2 : (x - 1) * (1 / x) ≤ 1 := by
+    rw [mul_one_div, div_le_one (by linarith)]; linarith
+  linarith
+
+theorem tail_T_partial {P : ℕ} (hP : 2 ≤ P) : ∀ M,
+    ∑ j ∈ range M, Real.log ((j + P : ℕ) : ℝ) / (((j + P : ℕ) : ℝ) ^ 3 - ((j + P : ℕ) : ℝ)) ≤
+      Ft P - Ft (M + P)
+  | 0 => by simp
+  | M + 1 => by
+    rw [sum_range_succ]
+    have := Ft_step (n := M + P) (by omega)
+    have h := tail_T_partial hP M
+    rw [show M + 1 + P = M + P + 1 by ring]
+    linarith
+
+theorem T_tail_le {P : ℕ} (hP : 2 ≤ P) : ∑' j, tT (j + P) ≤ Ft P := by
+  apply Real.tsum_le_of_sum_range_le (fun j => tT_nonneg _)
+  intro M
+  have hle : ∑ j ∈ range M, tT (j + P) ≤
+      ∑ j ∈ range M, Real.log ((j + P : ℕ) : ℝ) / (((j + P : ℕ) : ℝ) ^ 3 - ((j + P : ℕ) : ℝ)) := by
+    refine sum_le_sum fun j _ => ?_
+    unfold tT
+    split_ifs
+    · exact le_rfl
+    · have h1 : (1 : ℝ) < ((j + P : ℕ) : ℝ) := by exact_mod_cast (show 1 < j + P by omega)
+      exact div_nonneg (Real.log_natCast_nonneg _) (cube_sub_pos h1).le
+  have := tail_T_partial hP M
+  have := Ft_nonneg (show 2 ≤ M + P by omega)
+  linarith
+
+theorem sum_range_eq_Icc (f : ℕ → ℝ) : ∀ N, ∑ k ∈ range (N + 1), f k = f 0 + ∑ k ∈ Icc 1 N, f k
+  | 0 => by simp
+  | N + 1 => by
+    rw [sum_range_succ, sum_range_eq_Icc f N, sum_Icc_succ_top (by omega)]; ring
+
+theorem T_bounds : TP 20000 ≤ ∑' q, tT q ∧ ∑' q, tT q ≤ TP 20000 + Ft 20001 := by
+  have hTP : TP 20000 = ∑ k ∈ Icc 1 20000, tT k := rfl
+  constructor
+  · rw [hTP]; exact Summable.sum_le_tsum _ (fun q _ => tT_nonneg q) summable_tT
+  · rw [← summable_tT.sum_add_tsum_nat_add 20001, sum_range_eq_Icc tT 20000, hTP]
+    have h0 : tT 0 = 0 := by simp [tT, Nat.not_prime_zero]
+    have := T_tail_le (P := 20001) (by norm_num)
+    linarith
+
+/-! ### `c_E` in terms of `γ`, `X`, `T` -/
+
+theorem harmonic_eq_Hn : ∀ n, ((harmonic n : ℚ) : ℝ) = Hn n
+  | 0 => by simp [Hn]
+  | n + 1 => by
+    rw [harmonic_succ, Rat.cast_add, harmonic_eq_Hn n, Hn, Hn, sum_Icc_succ_top (by omega)]
+    push_cast; ring
+
+theorem cR_eq : cR = eulerMascheroniConstant + Real.log 2 +
+    2 * (AP 2000 - AN 2000 + ((∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002))) / (π ^ 2 / 6) +
+      ∑' q, tT q := by
+  have he : Summable fun m => aL (2 * m) := by simpa using summable_aL_comp 2 0 (by norm_num)
+  have ho : Summable fun m => aL (2 * m + 1) := summable_aL_comp 2 1 (by norm_num)
+  have hO : ∑' m, aL (2 * m + 1) = AP 2000 + ∑' j, aL (2 * j + 2001) := by
+    rw [← ho.sum_add_tsum_nat_add 1000, (AP_AN_eq 1000 le_rfl).1, add_right_inj]
+    exact tsum_congr fun j => by rw [show 2 * (j + 1000) + 1 = 2 * j + 2001 by ring]
+  have hE : ∑' m, aL (2 * m) = AN 2000 + ∑' j, aL (2 * j + 2002) := by
+    rw [← he.sum_add_tsum_nat_add 1001, (AP_AN_eq 1000 le_rfl).2, add_right_inj]
+    exact tsum_congr fun j => by rw [show 2 * (j + 1001) = 2 * j + 2002 by ring]
+  have hL := L_eq
+  rw [hO, hE] at hL
+  have hS := sumP_eq
+  rw [← tsum_vonMangoldt_eq, tsum_vonMangoldt_sq] at hS
+  have hS' : sumP = (∑' n, aL n) / (π ^ 2 / 6) + ∑' q, tT q := hS
+  have hZ : (0 : ℝ) < π ^ 2 / 6 := by positivity
+  rw [cR, hS', hL]
+  field_simp
+  ring
+
+/-! ### Numerics -/
+
+theorem gamma_bounds : (@G_LO@ : ℝ) ≤ eulerMascheroniConstant ∧ eulerMascheroniConstant ≤ @G_HI@ := by
+  obtain ⟨b1, b2⟩ := harm_bounds (n := 20000) (by norm_num)
+  rw [harmonic_eq_Hn] at b1 b2
+  obtain ⟨l1, l2, h1, h2, -⟩ := inv_20000
+  dsimp only at l1 l2 h1 h2
+  push_cast at b1 b2 l1 l2 h1 h2
+  constructor <;> linarith
+
+theorem X_bounds : (@X_LO@ : ℝ) ≤ AP 2000 - AN 2000 + ((∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002)) ∧
+    AP 2000 - AN 2000 + ((∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002)) ≤ @X_HI@ := by
+  obtain ⟨t1, t2⟩ := tail_bounds
+  obtain ⟨-, -, -, -, p1, p2, q1, q2, -⟩ := inv_2000
+  obtain ⟨a1, a2, -⟩ := inv_2001
+  obtain ⟨c1, -, -⟩ := inv_2002
+  dsimp only at p1 p2 q1 q2 a1 a2 c1
+  have e1 : aL 2001 = Real.log 2001 / 4004001 := by simp only [aL]; norm_num
+  have e2 : aL 2002 = Real.log 2002 / 4008004 := by simp only [aL]; norm_num
+  rw [e1] at t1
+  rw [e1, e2] at t2
+  push_cast at p1 p2 q1 q2 a1 a2 c1
+  constructor <;> linarith
+
+theorem T_num : (@T_LO@ : ℝ) ≤ ∑' q, tT q ∧ ∑' q, tT q ≤ @T_HI@ := by
+  obtain ⟨b1, b2⟩ := T_bounds
+  obtain ⟨-, -, -, -, -, -, -, -, t1, t2⟩ := inv_20000
+  obtain ⟨-, l2, -⟩ := inv_20001
+  dsimp only at t1 t2 l2
+  have e : Ft 20001 = (Real.log 20001 + 1 / 2) / 800040000 := by simp only [Ft]; norm_num
+  rw [e] at b2
+  push_cast at t1 t2 l2
+  constructor <;> linarith
+
+/-- **`1.3325822 ≤ c_E ≤ 1.3325823`.** -/
+theorem cR_bounds : (1.3325822 : ℝ) ≤ cR ∧ cR ≤ 1.3325823 := by
+  obtain ⟨g1, g2⟩ := gamma_bounds
+  obtain ⟨x1, x2⟩ := X_bounds
+  obtain ⟨t1, t2⟩ := T_num
+  rw [cR_eq]
+  set X := AP 2000 - AN 2000 + ((∑' j, aL (2 * j + 2001)) - ∑' j, aL (2 * j + 2002))
+  have hp1 := Real.pi_gt_d20
+  have hp2 := Real.pi_lt_d20
+  set Z := π ^ 2 / 6 with hZ
+  have hZ1 : (3.14159265358979323846 : ℝ) ^ 2 / 6 ≤ Z := by
+    rw [hZ]; have := mul_le_mul hp1.le hp1.le (by norm_num) (by linarith); nlinarith
+  have hZ2 : Z ≤ (3.14159265358979323847 : ℝ) ^ 2 / 6 := by
+    rw [hZ]; have := mul_le_mul hp2.le hp2.le (by linarith) (by norm_num); nlinarith
+  have hZ0 : (0 : ℝ) < (3.14159265358979323846 : ℝ) ^ 2 / 6 := by norm_num
+  have hZpos : 0 < Z := lt_of_lt_of_le hZ0 hZ1
+  have hXneg : X < 0 := by linarith
+  have hXZ1 : 2 * (@X_LO@ : ℝ) / ((3.14159265358979323846 : ℝ) ^ 2 / 6) ≤ 2 * X / Z := by
+    rw [div_le_div_iff₀ hZ0 hZpos]
+    nlinarith [mul_le_mul_of_nonneg_left x1 hZ0.le]
+  have hXZ2 : 2 * X / Z ≤ 2 * (@X_HI@ : ℝ) / ((3.14159265358979323847 : ℝ) ^ 2 / 6) := by
+    rw [div_le_div_iff₀ hZpos (by norm_num)]
+    nlinarith [mul_le_mul_of_nonneg_left x2 hZpos.le]
+  have hl1 := Real.log_two_gt_d9
+  have hl2 := Real.log_two_lt_d9
+  have c1 : (1.3325822 : ℝ) ≤ @G_LO@ + 0.6931471803 +
+      2 * (@X_LO@ : ℝ) / ((3.14159265358979323846 : ℝ) ^ 2 / 6) + @T_LO@ := by norm_num
+  have c2 : (@G_HI@ : ℝ) + 0.6931471808 +
+      2 * (@X_HI@ : ℝ) / ((3.14159265358979323847 : ℝ) ^ 2 / 6) + @T_HI@ ≤ 1.3325823 := by norm_num
+  constructor <;> linarith
+
+end TernaryGoldbach.Prelim.RamPf
