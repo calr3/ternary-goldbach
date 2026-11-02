@@ -18,7 +18,7 @@ axioms besides Lean's standard three. They are:
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([B, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
-our proof avoids it (`AXIOMS.md`, Finding 8).
+our proof avoids it (`AXIOMS.md`, Finding 5).
 
 None of the axioms is a result of [B]: every step taken from the book is proved from them (some
 with weaker constants; see "Differences from [B]").
@@ -75,7 +75,7 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
-[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 5). (5.31) `T2_le` is proved from
+[B]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
 `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy` (`MinorArcs/T2Bound.lean`), our computations, and Lemma 5.1.2, which is
 proved from Ramaré's bound by Euler products (`MinorArcs/G2Bound.lean`).
 
@@ -167,13 +167,13 @@ The final margin is `0.0114 x²/κ`, against [B]'s `0.04877 x²/κ`.
   * (14.49) stays `1.0376`, because repair 3 below has room.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
-  (`AXIOMS.md`, Finding 6).
+  (`AXIOMS.md`, Finding 4).
 * The prime ladder's gaps are at most `4·10¹⁸`, as [HP13] and [B, §1.6] state. The case
   `n − p = 4·10¹⁸ + 2` uses [B]'s explicit decomposition.
 * [B, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
   `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`, but the product is about `8.0845`. We prove (12.12)
   as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`AXIOMS.md`,
-  Finding 8).
+  Finding 5).
 
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.

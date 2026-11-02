@@ -223,7 +223,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `norm_Jq_le`: one more integration by parts;
   * `norm_eta2log4_le`: `48 log 2` with no numerics, from FTC for `∫|h''|` (constant sign).
   The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
-  Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 5).
+  Found: [B]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 3).
   ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [B]).
 * (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [B]'s constants; inputs `etaO_numerics` (now proved):
   * expand `(g + D)²` in `u = log t`;
@@ -267,7 +267,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `p ≥ 37`);
   * the computation's (S)-branch uses the monotone form `log q + 1.039(n+1) ≤ 0.826 (qn)^{2/9}`, so
     Lean needs no concavity; τ = 2/9 makes the large-`q` condition polynomial;
-  * [B] slips found (AXIOMS.md Finding 6): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
+  * [B] slips found (AXIOMS.md Finding 4): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
     analytic range starts at `4.42·10⁷`, not `4·10⁷`;
   * name clashes to watch: `kap`, `Gq_nonneg`, `ghat`, `sum_moebius_divisors` already exist in
     `MinorArcs`.
@@ -318,7 +318,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `∑' h_d log a` via `log a = ∑_q v_q(a) log q`, a fiberwise sum over `a = q^k b`, and `Bp` (the
     sum over `b` coprime to `q`).
   * Found [Ram95, (3.9)] false: `∏_p (1 + (p^{1/3}+p^{2/3})/(p(p−1))) ≈ 8.0845 > 8` (AXIOMS.md
-    Finding 8). Ramaré's route would give about `7.36`.
+    Finding 5). Ramaré's route would give about `7.36`.
   * `c_E ∈ [1.3325822734, 1.3325822894]` (`cR_bounds`; needed `[1.3325822, 1.3325823]`; the upper
     margin is `1.07·10⁻⁸`):
     * `∑ Λ(n)/n² = (∑ log n/n²)/ζ(2)` from `LSeries_vonMangoldt_eq_deriv_riemannZeta_div`,
