@@ -1,16 +1,17 @@
 import Mathlib
+import TernaryGoldbach.Prelim.SmallPsi
 
 /-!
 # [MV73, Lemma 8]: `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) ≥ log R + 0.25068` for `R ≥ 2`
 
 [B, p. 97]: true for `R ≥ 100` by [MV73, Lemma 8], "and easily verifiable numerically for
-`2 ≤ R < 100`". We prove it from
+`2 ≤ R < 100`". We prove it
 
-* a **numerical axiom** for `2 ≤ R ≤ 10⁴`, the book's finite check (for each integer `n`, the
-  endpoint value `∑_{r≤n} g(r)(n+1)/(n+1+r) > log(n+1) + 0.25068`), together with the finite
-  condition `∑_{r≤n} g(r) r(n+1)/((n+1+r)(n+r)) ≤ 1`, which makes `R ↦ W(R) − log R` reach its
-  minimum over `[n, n+1)` at the right end;
-* for `R > 10⁴`, Abel summation against [MV73, Lemma 7], `G(r) = ∑_{s≤r} μ(s)²/φ(s) ≥
+* for `2 ≤ R < 6` from the exact values at `n = ⌊R⌋ ≤ 5`: the endpoint value
+  `∑_{r≤n} g(r)(n+1)/(n+1+r) > log(n+1) + 0.25068`, and `∑_{r≤n} g(r) r(n+1)/((n+1+r)(n+r)) ≤ 1`,
+  which makes `R ↦ W(R) − log R` reach its minimum over `[n, n+1)` at the right end;
+* for `6 ≤ R < 1000` by a kernel check (`Prelim/SmallW.lean`);
+* for `R ≥ 1000`, Abel summation against [MV73, Lemma 7], `G(r) = ∑_{s≤r} μ(s)²/φ(s) ≥
   log r + 1.07` (`r ≥ 6`), comparing `∑ f(r) log(r/(r−1))` with `Φ(t) = log(t/(R+t))`.
 
 Here `g(r) = μ(r)²/φ(r)` and `f(r) = (1 + r/R)⁻¹`.
@@ -27,13 +28,6 @@ noncomputable def gS (r : ℕ) : ℝ := if Squarefree r then 1 / (Nat.totient r 
 noncomputable def GS (n : ℕ) : ℝ := ∑ r ∈ Icc 1 n, gS r
 
 theorem gS_nonneg (r : ℕ) : 0 ≤ gS r := by unfold gS; split_ifs <;> positivity
-
-/-- **Numerical axiom** ([B, p. 97], extended to `n ≤ 10⁴`; checked with
-`scripts/mv_lemma8_check.py`, minimal margin `1.1·10⁻⁶` at `n = 4`): for `2 ≤ n ≤ 10⁴`,
-`∑_{r≤n} g(r)(n+1)/(n+1+r) > log(n+1) + 0.25068` and `∑_{r≤n} g(r) r(n+1)/((n+1+r)(n+r)) ≤ 1`. -/
-axiom lemma8_numeric (n : ℕ) (hn2 : 2 ≤ n) (hn : n ≤ 10000) :
-    Real.log (n + 1) + 0.25068 < ∑ r ∈ Icc 1 n, gS r * ((n + 1) / (n + 1 + r)) ∧
-      ∑ r ∈ Icc 1 n, gS r * (r * (n + 1) / ((n + 1 + r) * (n + r))) ≤ 1
 
 /-- Summation by parts: `∑_{r=1}^N f(r)(a(r) − a(r−1)) = f(N)a(N) + ∑_{r=1}^{N−1}(f(r)−f(r+1))a(r)`
 (with `a(0) = 0`). -/
@@ -109,20 +103,16 @@ theorem mul_log_one_add_inv_mono {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
 /-- `W(R) = ∑_{r ≤ R} g(r) R/(R + r)`. -/
 noncomputable def WR (R : ℝ) : ℝ := ∑ r ∈ Icc 1 ⌊R⌋₊, gS r * (R / (R + r))
 
-/-- Lemma 8 for `2 ≤ R < 10001`, from the numerical axiom. -/
-theorem lemma8_small {R : ℝ} (hR2 : 2 ≤ R) (hR : R < 10001) : Real.log R + 0.25068 < WR R := by
+/-- Lemma 8 on `[n, n+1)`, `n = ⌊R⌋`, from the two finite sums at `n`. -/
+theorem lemma8_of_num {R : ℝ} (hR2 : 2 ≤ R)
+    (hA : Real.log (⌊R⌋₊ + 1) + 0.25068 < ∑ r ∈ Icc 1 ⌊R⌋₊, gS r * ((⌊R⌋₊ + 1) / (⌊R⌋₊ + 1 + r)))
+    (hB : ∑ r ∈ Icc 1 ⌊R⌋₊, gS r * (r * (⌊R⌋₊ + 1) / ((⌊R⌋₊ + 1 + r) * (⌊R⌋₊ + r))) ≤ 1) :
+    Real.log R + 0.25068 < WR R := by
   set n := ⌊R⌋₊ with hn
   have hR0 : 0 < R := by linarith
   have hnR : (n : ℝ) ≤ R := Nat.floor_le hR0.le
   have hRn : R < n + 1 := Nat.lt_floor_add_one R
   have hn2 : 2 ≤ n := Nat.le_floor (by exact_mod_cast hR2)
-  have hn10 : n ≤ 10000 := by
-    have : (n : ℝ) < 10001 := lt_of_le_of_lt hnR hR
-    exact_mod_cast (show (n : ℝ) ≤ 10000 by
-      have h := Nat.floor_lt (hR0.le) |>.2 hR
-      have : n < 10001 := by exact_mod_cast h
-      exact_mod_cast Nat.lt_succ_iff.1 this)
-  obtain ⟨hA, hB⟩ := lemma8_numeric n hn2 hn10
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
   -- `A − W(R) ≤ (n+1−R)/(n+1) · B`
   have hdiff : ∑ r ∈ Icc 1 n, gS r * ((n + 1) / (n + 1 + r)) - WR R ≤
@@ -171,7 +161,37 @@ theorem GS_five : GS 5 = 11 / 4 := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := gS_small
   simp [GS, sum_Icc_succ_top, h1, h2, h3, h4, h5]; norm_num
 
-theorem f_bounds {R : ℝ} (hR : 10001 ≤ R) {k : ℝ} (hk0 : 0 ≤ k) (hk6 : k ≤ 6) :
+theorem log_lt_chk {u L : ℕ} (hL : 0 < L) (h : TernaryGoldbach.Prelim.Small.chkStep u (10 ^ 9) 1 L = true) :
+    Real.log L < (u : ℝ) / 10 ^ 9 := by
+  have := TernaryGoldbach.Prelim.Small.log_lt_of_chk (by norm_num) hL h
+  push_cast at this; linarith
+
+/-- The two finite sums for `2 ≤ n ≤ 5` (minimal margin `1.1·10⁻⁶`, at `n = 4`). -/
+theorem lemma8_tiny_num (n : ℕ) (hn2 : 2 ≤ n) (hn : n ≤ 5) :
+    Real.log (n + 1) + 0.25068 < ∑ r ∈ Icc 1 n, gS r * ((n + 1) / (n + 1 + r)) ∧
+      ∑ r ∈ Icc 1 n, gS r * (r * (n + 1) / ((n + 1 + r) * (n + r))) ≤ 1 := by
+  obtain ⟨g1, g2, g3, g4, g5⟩ := gS_small
+  have l3 := log_lt_chk (u := 1098612289) (L := 3) (by norm_num) (by decide +kernel)
+  have l4 := log_lt_chk (u := 1386294362) (L := 4) (by norm_num) (by decide +kernel)
+  have l5 := log_lt_chk (u := 1609437913) (L := 5) (by norm_num) (by decide +kernel)
+  have l6 := log_lt_chk (u := 1791759470) (L := 6) (by norm_num) (by decide +kernel)
+  interval_cases n
+  · norm_num [sum_Icc_succ_top, g1, g2] at l3 ⊢; (try constructor) <;> linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3] at l4 ⊢; (try constructor) <;> linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4] at l5 ⊢; (try constructor) <;> linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4, g5] at l6 ⊢; (try constructor) <;> linarith
+
+/-- Lemma 8 for `2 ≤ R < 6`. -/
+theorem lemma8_tiny {R : ℝ} (hR2 : 2 ≤ R) (hR : R < 6) : Real.log R + 0.25068 < WR R := by
+  have hR0 : 0 < R := by linarith
+  have hn2 : 2 ≤ ⌊R⌋₊ := Nat.le_floor (by exact_mod_cast hR2)
+  have hn5 : ⌊R⌋₊ ≤ 5 := by
+    have h := (Nat.floor_lt hR0.le).2 (show R < ((6 : ℕ) : ℝ) by norm_num; linarith)
+    omega
+  obtain ⟨hA, hB⟩ := lemma8_tiny_num ⌊R⌋₊ hn2 hn5
+  exact lemma8_of_num hR2 hA hB
+
+theorem f_bounds {R : ℝ} (hR : 1000 ≤ R) {k : ℝ} (hk0 : 0 ≤ k) (hk6 : k ≤ 6) :
     1 - 6 / R ≤ R / (R + k) ∧ R / (R + k) ≤ 1 := by
   have hR0 : 0 < R := by linarith
   constructor
@@ -183,8 +203,8 @@ theorem f_bounds {R : ℝ} (hR : 10001 ≤ R) {k : ℝ} (hk0 : 0 ≤ k) (hk6 : k
   · rw [div_le_one (by linarith)]; linarith
 
 set_option maxHeartbeats 2000000 in
-/-- Lemma 8 for `R ≥ 10001`, from Lemma 7. -/
-theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) {R : ℝ} (hR : 10001 ≤ R) :
+/-- Lemma 8 for `R ≥ 1000`, from Lemma 7. -/
+theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) {R : ℝ} (hR : 1000 ≤ R) :
     Real.log R + 0.25068 ≤ WR R := by
   set N := ⌊R⌋₊ with hN
   have hR0 : 0 < R := by linarith
@@ -335,8 +355,8 @@ theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) 
   obtain ⟨a3, -⟩ := fk 3 (by norm_num)
   obtain ⟨a5, -⟩ := fk 5 (by norm_num)
   obtain ⟨a6, b6⟩ := fk 6 (by norm_num)
-  have h6R : 6 / R ≤ 6 / 10001 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hR
-  have h2R : 2 / R ≤ 2 / 10001 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hR
+  have h6R : 6 / R ≤ 6 / 1000 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hR
+  have h2R : 2 / R ≤ 2 / 1000 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hR
   have h6R0 : 0 ≤ 6 / R := by positivity
   have hp : f 6 * Real.log 6 ≥ Real.log 6 - 6 / R * 2.21 := by
     have : (1 - f 6) * Real.log 6 ≤ 6 / R * 2.21 :=

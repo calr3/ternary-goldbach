@@ -213,7 +213,6 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   All pass; the values agree with the float scripts. Published equivalents:
   * `mertens_product_small`: [RS62, Thm 15] at primorials;
   * `moebius_sqrt_small`: [B, (2.24)];
-  * `lemma8_numeric` (first sum, `R ≥ 100`): [MV73, Lemma 8].
   Building needs only `gcc`, `gmpy2` (for the MPFR headers) and the system MPFR.
 * (B.6) and (B.11) proved (`MinorArcs/Eta2Fourier.lean`); new axiom `eta2DD_small` for
   `0 ≤ t ≤ 655`:
@@ -294,6 +293,8 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * Item 4: `liouville_small` was removed: `Ω(n)` by trial division (proved correct), a kernel walk
     over `n ≤ 10⁵` with fixed-point partial sums and the state certified at 105 chunk boundaries
     (`Prelim/SmallLiouville.lean`, 4.7 min, 8.2 GB). 23 axioms (14 own).
+  * Item 5: `lemma8_numeric` was removed: `lemma8_large` from `R ≥ 1000`, a weighted DFS lower bound
+    for `6 ≤ R < 1000` (`Prelim/SmallW.lean`, 18 blocks), exact rationals for `R < 6`. 22 axioms (13 own).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.

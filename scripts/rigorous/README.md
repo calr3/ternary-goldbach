@@ -34,7 +34,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
 | `liouville` | (former axiom `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
 | `C_grid` | `C_grid` | 7720 grid points × 3000 terms | 25 s |
 | `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
-| `lemma8` | `lemma8_numeric` | `n ≤ 10⁴` | 10 s |
+| `lemma8` | (former axiom `lemma8_numeric`; now proved) | `n ≤ 10⁴` | 10 s |
 | `moebius_sqrt_rig` | `moebius_sqrt_small` | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([B, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | `etaO_numerics` (input of [B, (9.94)]) | four integrals over `[0, 2]` | < 1 s |

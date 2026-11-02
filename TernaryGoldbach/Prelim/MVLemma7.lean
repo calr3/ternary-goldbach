@@ -1,6 +1,7 @@
 import TernaryGoldbach.Prelim.MVLemma8
 import TernaryGoldbach.Prelim.SmallProdAp
 import TernaryGoldbach.Prelim.SmallG
+import TernaryGoldbach.Prelim.SmallW
 import TernaryGoldbach.Prelim.RamareGq
 
 /-!
@@ -646,11 +647,13 @@ theorem lemma7 (r : ℕ) (h6 : 6 ≤ r) : Real.log r + 1.07 ≤ GS r := by
   rw [GS_eq_GqP]
   nlinarith
 
-/-- **[MV73, Lemma 8]** (with the numerical check for small `R`): for `R ≥ 2`,
+/-- **[MV73, Lemma 8]** (with kernel checks for `R < 1000`): for `R ≥ 2`,
 `∑_{r ≤ R} (1 + r/R)⁻¹ μ(r)²/φ(r) > log R + 0.25068`. -/
 theorem lemma8 {R : ℝ} (hR : 2 ≤ R) : Real.log R + 0.25068 ≤ WR R := by
-  rcases lt_or_ge R 10001 with h | h
-  · exact (lemma8_small hR h).le
-  · exact lemma8_large lemma7 h
+  rcases lt_or_ge R 6 with h | h
+  · exact (lemma8_tiny hR h).le
+  rcases lt_or_ge R 1000 with h' | h'
+  · exact (TernaryGoldbach.Prelim.SmallW.lemma8_mid h h').le
+  · exact lemma8_large lemma7 h'
 
 end TernaryGoldbach.Prelim.MV
