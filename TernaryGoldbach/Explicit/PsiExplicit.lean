@@ -2,6 +2,8 @@ import TernaryGoldbach.Explicit.ZetaZeroSums
 import TernaryGoldbach.Explicit.PsiSandwich
 import TernaryGoldbach.Explicit.ExplicitBoundGen
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # The explicit-formula bound for the Gaussian-smoothed prime sum
 

@@ -3,6 +3,9 @@ import TernaryGoldbach.MinorArcs.TypeIILarge
 import TernaryGoldbach.MinorArcs.SecondParams
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type II for `q > y` at the second parameters: reduction to functions of `L = log T`
 

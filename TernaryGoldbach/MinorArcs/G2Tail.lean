@@ -4,6 +4,9 @@ import TernaryGoldbach.MinorArcs.G2Euler
 import TernaryGoldbach.Prelim.RamareMoebius
 import Mathlib.NumberTheory.ZetaValues
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.00449`
 

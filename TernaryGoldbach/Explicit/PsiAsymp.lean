@@ -1,5 +1,7 @@
 import TernaryGoldbach.Explicit.PsiRange1
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # `|ψ(x) − x| ≤ 0.2 x/log³x` for `x ≥ e^{35000}`
 

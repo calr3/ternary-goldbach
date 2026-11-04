@@ -1,6 +1,9 @@
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Prelim.ThetaExplicit
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput]
+  [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # The small cases `5 < n ≤ 10²⁷` from binary Goldbach and bounds for `θ`
 

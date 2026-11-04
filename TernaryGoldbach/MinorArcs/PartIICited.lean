@@ -3,6 +3,9 @@ import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MajorArcs.Prop715
 import TernaryGoldbach.MajorArcs.L2Major
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Results from [H, Part II] used by the repaired minor-arc bound
 

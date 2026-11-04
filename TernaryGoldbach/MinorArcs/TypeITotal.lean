@@ -4,6 +4,9 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.MoebiusLog
 import TernaryGoldbach.Prelim.LiouvilleBound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I totals [H, §6.2.1]: `S_{I,1}`
 -/

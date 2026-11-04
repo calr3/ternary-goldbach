@@ -1,6 +1,8 @@
 import TernaryGoldbach.Explicit.PsiExplicit
 import TernaryGoldbach.Explicit.LogNumerics
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # `|ψ(x) − x| ≤ 2.15·10⁻¹¹ x + 1533 √x + 4.2·10¹⁰` for `x ≥ 10¹⁹`
 

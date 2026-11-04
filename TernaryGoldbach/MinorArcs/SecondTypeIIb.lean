@@ -1,6 +1,9 @@
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.SecondTypeIIaPieces
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type II at the second parameters: cases (a2) and (b)
 

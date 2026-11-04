@@ -1,5 +1,7 @@
 import TernaryGoldbach.Explicit.PsiPlateau
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # The explicit bound for large `x`: zeros above `H` via the zero-free region
 

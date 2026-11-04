@@ -2,6 +2,8 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.SmallMertensProd
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, Lemma C.2.2]: `q/φ(q) < e^γ log log r + 2.50637/log log r`
 

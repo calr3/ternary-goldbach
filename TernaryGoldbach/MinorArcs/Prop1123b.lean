@@ -2,6 +2,9 @@ import TernaryGoldbach.MinorArcs.Prop1123
 import TernaryGoldbach.MinorArcs.OffArcs
 import TernaryGoldbach.MinorArcs.SecondChoice
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Prop 11.2.3′: the ℓ∞ bound for `S_{η_*}` off the major arcs at scale `y`
 

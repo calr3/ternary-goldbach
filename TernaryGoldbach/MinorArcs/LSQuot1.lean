@@ -2,6 +2,8 @@ import TernaryGoldbach.MinorArcs.LargeSievePrimes
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.Ramare
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, Prop 12.2.4], part 1: definitions, Ramaré's estimate, and two inequalities for `G_q`
 

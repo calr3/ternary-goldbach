@@ -2,6 +2,8 @@ import TernaryGoldbach.MinorArcs.T2Kernel
 import TernaryGoldbach.Prelim.SmallMoebius
 import TernaryGoldbach.MinorArcs.SmallG2
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # The kernel part of the `g₂` tail bound (`G2Tail.lean`)
 

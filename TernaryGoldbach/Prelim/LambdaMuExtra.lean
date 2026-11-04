@@ -1,5 +1,7 @@
 import TernaryGoldbach.Prelim.LambdaMu
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, (2.16)] and [H, (2.18)]
 

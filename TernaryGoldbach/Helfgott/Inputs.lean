@@ -6,6 +6,9 @@ import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The top-level inputs
 
@@ -148,10 +151,16 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Numerical axiom: binary Goldbach up to `1.45 · 10¹⁷`** [OeSHP]. An exhaustive computer
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)) shows that every even
 `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes; the range up to `3·10¹⁷` was double-checked
 ([OeSHP, Table 1 and §1.3]). `SmallCases.lean` needs only `1.45·10¹⁷`. -/
-axiom binary_goldbach_input : BinaryGoldbachUpTo (145 * 10 ^ 15)
+theorem binary_goldbach_input [h : Fact BinaryGoldbachInput] :
+    BinaryGoldbachUpTo (145 * 10 ^ 15) :=
+  h.out
+
+variable [Fact TernaryGoldbach.BinaryGoldbachInput]
 
 end TernaryGoldbach.Helfgott

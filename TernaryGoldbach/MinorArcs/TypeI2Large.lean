@@ -1,5 +1,8 @@
 import TernaryGoldbach.MinorArcs.TypeI2Sum
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I totals [H, §6.2.2]: the case `|δ| ≥ 1/2c₂` ((6.8), (6.14))
 -/

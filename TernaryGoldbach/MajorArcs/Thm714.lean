@@ -2,6 +2,9 @@ import TernaryGoldbach.MajorArcs.Prop942
 import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Explicit.EtaPlusCg
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, Thm 7.1.4] from [H, Prop 9.4.2] (proved) and Platt's verification
 

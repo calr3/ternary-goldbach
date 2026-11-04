@@ -1,5 +1,7 @@
 import TernaryGoldbach.Explicit.PsiAsymp
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # An explicit prime number theorem for `θ` (replacing Dusart's bound)
 
@@ -20,12 +22,16 @@ namespace TernaryGoldbach.Prelim
 open TernaryGoldbach.Explicit (psiR psi_plateau psi_range1 psi_asymp)
 open TernaryGoldbach.Helfgott (psi theta psi_sub_theta_le_sum sum_pow_le_theta)
 
-/-- **Numerical axiom** ([Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018),
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- **Numerical hypothesis** ([Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018),
 1991–2009, arXiv:1511.02032, Thm 2, (1.5)): `|x − ψ(x)| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`; we use it at
 integers `12 ≤ n ≤ 10¹⁹`. (Büthe's bounds (1.6)–(1.7) for `θ` are not used: the `θ` bounds here are
 derived from this one.) -/
-axiom buthe_psi (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
-    |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ)
+theorem buthe_psi [h : Fact ButhePsi] (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 19) :
+    |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ) :=
+  h.out n h1 h2
+
+variable [Fact TernaryGoldbach.ButhePsi]
 
 /-- The plateau. -/
 noncomputable def epl (x : ℝ) : ℝ := if 3400 < Real.log x ∧ Real.log x < 20000 then 2.2e-11 else 0

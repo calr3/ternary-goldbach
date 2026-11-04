@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.SecondTypeI1
 import TernaryGoldbach.MinorArcs.TypeI2Rest
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I at the second parameters: (4.51), (4.52) and the totals
 

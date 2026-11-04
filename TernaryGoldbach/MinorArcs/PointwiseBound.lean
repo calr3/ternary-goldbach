@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.SecondFinal
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The pointwise minor-arc bound [H, Theorem 3.1.1] — blueprint statement
 

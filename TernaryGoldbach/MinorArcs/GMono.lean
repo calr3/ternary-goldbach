@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.GBound
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # `g_x(r)` is non-increasing in `r` [H, Lemma 11.2.4 for `φ = δ₁`]
 

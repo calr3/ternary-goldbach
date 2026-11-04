@@ -1,5 +1,8 @@
 import TernaryGoldbach.MinorArcs.TypeIIReduction
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Integrals for the Type II total [H, §6.2.3]
 -/

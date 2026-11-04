@@ -4,6 +4,9 @@ import TernaryGoldbach.Prelim.SmallLiouville
 import TernaryGoldbach.Prelim.SmallCGrid
 import TernaryGoldbach.Prelim.SmallMoebius
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # `|ℓ(z)| ≤ 0.99/log z`, `|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`
 -/

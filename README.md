@@ -7,20 +7,39 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 5 explicitly stated
-axioms besides Lean's standard three, all of them published results: RH up to `3·10¹²`, Platt's
-GRH verification, binary Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and
-Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]), which is checked against a
-later published bound (see `AXIOMS.md`).
+The proof is complete: there is no `sorry`, and the main theorems use only Lean's standard three
+axioms. They take 5 published numerical results as explicit hypotheses, stated in
+`TernaryGoldbach/Statement.lean`:
+
+* `RHUpTo`: RH up to `3·10¹²`;
+* `PlattGRH`: Platt's GRH verification;
+* `BinaryGoldbachInput`: binary Goldbach up to `1.45·10¹⁷`;
+* `ButhePsi`: Büthe's bound on `ψ` up to `10¹⁹`;
+* `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
+  is checked against a later published bound (see `AXIOMS.md`).
+
+```lean
+theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
+    (hBG : BinaryGoldbachInput) (hψ : ButhePsi) (hμ : RamareMoebius) : Statement
+theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
+    (hψ : ButhePsi) (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27)
+```
+
+(`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
+Inside the development, the hypotheses are `Fact` instances, declared as section variables
+(`variable [Fact RHUpTo] …`). The theorems they used to be axioms for keep their names
+(`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input`,
+`Prelim.buthe_psi`, `Prelim.ramare_moebius`) and are now proved from the instances.
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
 our proof avoids it (`AXIOMS.md`, Finding 5).
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
-axioms.
+hypotheses.
 
-Every axiom has been checked against its source or script ([`AXIOMS.md`](AXIOMS.md)).
+Every hypothesis has been checked against its source ([`AXIOMS.md`](AXIOMS.md)). The project's
+metadata are in [`formalization.yaml`](formalization.yaml).
 
 ## Checking it
 
@@ -28,21 +47,18 @@ Every axiom has been checked against its source or script ([`AXIOMS.md`](AXIOMS.
 lake exe cache get
 lake build
 echo 'import TernaryGoldbach
-#print axioms TernaryGoldbach.ternary_goldbach' > /tmp/ax.lean && lake env lean /tmp/ax.lean
+#print axioms TernaryGoldbach.ternary_goldbach_of_hypotheses' > /tmp/ax.lean && lake env lean /tmp/ax.lean
 ```
 
 ```
-'TernaryGoldbach.ternary_goldbach' depends on axioms: [propext,
- Classical.choice,
- Quot.sound,
- TernaryGoldbach.Explicit.rh_upto,
- TernaryGoldbach.Helfgott.binary_goldbach_input,
- TernaryGoldbach.MajorArcs.platt_verification,
- TernaryGoldbach.Prelim.buthe_psi,
- TernaryGoldbach.Prelim.ramare_moebius]
+'TernaryGoldbach.ternary_goldbach_of_hypotheses' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
-Beyond these axioms, the trust base is the Lean kernel and Mathlib. The development uses no
+The theorems can also be checked with [Comparator](https://github.com/leanprover/comparator)
+against `Challenge.lean`, which states them with Mathlib-only definitions (see
+[`comparator/README.md`](comparator/README.md)).
+
+Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the computations that replace former axioms:
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
   `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean`,
@@ -231,3 +247,6 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   `licenses/`).
 
 Toolchain: Lean `v4.35.0`, Mathlib `v4.35.0`.
+
+License: MIT (see [`LICENSE`](LICENSE)), except for code ported from PrimeNumberTheoremAnd,
+which is under Apache 2.0 (see `licenses/`).

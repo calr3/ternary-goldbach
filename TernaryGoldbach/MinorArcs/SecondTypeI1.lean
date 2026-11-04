@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.SecondTypeIIb
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2b
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I at the second parameters [H, §6.3.2]: `S_{I,1}` and (4.50)
 

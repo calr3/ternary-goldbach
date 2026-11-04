@@ -1,0 +1,173 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Ternary Goldbach in Lean 4"
+  description: >-
+    A formalization of Helfgott's proof of the ternary Goldbach conjecture: every odd integer
+    greater than 5 is a sum of three primes. The proof is complete (no `sorry`), conditional on
+    five published numerical results that are stated as explicit hypotheses (`Prop`s in
+    `TernaryGoldbach/Statement.lean`), not as axioms. The main theorems use only Lean's standard
+    axioms.
+  authors: ["Charlie Reams", "Harald Helfgott"]
+  responsible_maintainers: ["Charlie Reams"]
+  license: "MIT"  # except `Prelim/PNTMertens.lean`, ported under Apache-2.0 (see `licenses/`)
+
+sources:
+  - title: "The ternary Goldbach problem"
+    authors: ["H. A. Helfgott"]
+    id: "arXiv:1501.05438v2"
+    type: "article"
+    location: "whole book-length preprint; main argument §7.4"
+    relationship: "formalizes"
+    note: >-
+      The proof follows [H] closely. Some constants are re-derived or re-tuned. For example,
+      Prop. 12.2.4 is proved with c₊ = 2. See BLUEPRINT.md and NOTES.md.
+    author_endorsement: "participated"
+  - title: "The Riemann hypothesis is true up to 3·10¹²"
+    authors: ["D. J. Platt", "T. S. Trudgian"]
+    id: "arXiv:2004.09765"
+    type: "article"
+    location: "Bull. LMS 53 (2021); main theorem"
+    relationship: "background"
+    note: "Assumed as the hypothesis `TernaryGoldbach.RHUpTo`."
+  - title: "Numerical computations concerning the GRH"
+    authors: ["D. J. Platt"]
+    id: "arXiv:1305.3087"
+    type: "article"
+    location: "Math. Comp. 85 (2016), Thm 7.1; as used in [H, §9.6]"
+    relationship: "background"
+    note: "Assumed as the hypothesis `TernaryGoldbach.PlattGRH`."
+  - title: "Empirical verification of the even Goldbach conjecture and computation of prime gaps up to 4·10¹⁸"
+    authors: ["T. Oliveira e Silva", "S. Herzog", "S. Pardi"]
+    id: "doi:10.1090/S0025-5718-2013-02787-1"
+    type: "article"
+    location: "Math. Comp. 83 (2014), Table 1 and §1.3"
+    relationship: "background"
+    note: "Assumed (up to 1.45·10¹⁷) as the hypothesis `TernaryGoldbach.BinaryGoldbachInput`."
+  - title: "An analytic method for bounding ψ(x)"
+    authors: ["J. Büthe"]
+    id: "arXiv:1511.02032"
+    type: "article"
+    location: "Math. Comp. 87 (2018), Thm 2, (1.5)"
+    relationship: "background"
+    note: "Assumed as the hypothesis `TernaryGoldbach.ButhePsi`."
+  - title: "From explicit estimates for primes to explicit estimates for the Moebius function"
+    authors: ["O. Ramaré"]
+    id: "doi:10.4064/aa157-4-4"
+    type: "article"
+    location: "Acta Arith. 157 (2013), Cor. 1.4; as cited in [H, (2.21)]"
+    relationship: "background"
+    note: "Assumed as the hypothesis `TernaryGoldbach.RamareMoebius`."
+  - title: "PrimeNumberTheoremAnd"
+    type: "formalization"
+    id: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd"
+    location: "Prelim/PNTMertens.lean"
+    relationship: "adapts"
+    license: "Apache-2.0"
+    note: "Ported code; license in `licenses/`."
+    author_endorsement: "n/a"
+
+related_formalizations: []
+
+classification:
+  arxiv: ["math.NT"]
+  msc2020: ["11P32", "11N05", "11M26", "11L20", "11N35"]
+
+status:
+  scope: >-
+    The complete proof of the ternary Goldbach conjecture following [H], relative to five
+    published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), four
+    hypotheses are used: RH to 3·10¹², Platt's GRH verification, Büthe's ψ bound, and Ramaré's
+    Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 1.45·10¹⁷.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  # The main results use only the standard axioms. The off-path module
+  # `TernaryGoldbach/Prelim/LambdaMuExtra.lean` ([H, (2.16), (2.18)], not used by the main
+  # results) also declares three numerical axioms checked by `scripts/psi_extra_check.py`.
+  axioms:
+    - "propext"
+    - "Classical.choice"
+    - "Quot.sound"
+    - "TernaryGoldbach.Prelim.lambda_mul_small"
+    - "TernaryGoldbach.Prelim.lambda_sqrt_small"
+    - "TernaryGoldbach.Prelim.lambda_sqrt_point"
+  main_results:
+    - declaration: "TernaryGoldbach.ternary_goldbach_of_hypotheses"
+      file: "TernaryGoldbach/MainTheorems.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/config.json"
+      literature_dependencies:
+        - statement: "`RHUpTo`: every zero of ζ in the critical strip with |ℑρ| ≤ 3·10¹² has ℜρ = 1/2"
+          source: "Platt–Trudgian, arXiv:2004.09765"
+        - statement: "`PlattGRH`: GRH for primitive χ mod q to height 10⁸/q (odd q ≤ 3·10⁵) or max(10⁸/q, 200 + 7.5·10⁷/q) (even q ≤ 4·10⁵)"
+          source: "Platt, arXiv:1305.3087, Thm 7.1"
+        - statement: "`BinaryGoldbachInput`: every even 4 ≤ n ≤ 1.45·10¹⁷ is a sum of two primes"
+          source: "Oliveira e Silva–Herzog–Pardi, Math. Comp. 83 (2014)"
+        - statement: "`ButhePsi`: |ψ(n) − n| ≤ 0.94 √n for 12 ≤ n ≤ 10¹⁹"
+          source: "Büthe, arXiv:1511.02032, Thm 2"
+        - statement: "`RamareMoebius`: |∑_{n≤x} μ(n)/n| ≤ 0.03/log x for x ≥ 11815"
+          source: "Ramaré, Acta Arith. 157 (2013), Cor. 1.4"
+    - declaration: "TernaryGoldbach.ternary_goldbach_large_of_hypotheses"
+      file: "TernaryGoldbach/MainTheorems.lean"
+      sorry_count: 0
+      axioms: ["propext", "Classical.choice", "Quot.sound"]
+      comparator_config: "comparator/config.json"
+      literature_dependencies:
+        - statement: "`RHUpTo`"
+          source: "Platt–Trudgian, arXiv:2004.09765"
+        - statement: "`PlattGRH`"
+          source: "Platt, arXiv:1305.3087, Thm 7.1"
+        - statement: "`ButhePsi`"
+          source: "Büthe, arXiv:1511.02032, Thm 2"
+        - statement: "`RamareMoebius`"
+          source: "Ramaré, Acta Arith. 157 (2013), Cor. 1.4"
+
+automation:
+  methods:
+    - method: "agent"
+      models: []
+      framework: "Claude Code"
+      tool_setup: "Claude Code (Anthropic) with a Lean 4 / Mathlib toolchain, run in cloud sessions"
+      prompting_notes: >-
+        The maintainer directed the work at the level of goals, such as "remove this axiom" or
+        "follow [H, §12]". The agent wrote the Lean code, the generator scripts in `scripts/`,
+        and the documentation.
+  spend_usd: "unknown"
+  notes: "Most of the Lean code was written by an AI agent under the maintainer's direction."
+
+fidelity:
+  divergences: >-
+    Some constants and intermediate statements differ from [H]. For example, Prop. 12.2.4 is
+    proved with c₊ = 2 instead of a finite check, and θ bounds are derived from Büthe's ψ bound
+    instead of Dusart's. One step of Ramaré's 1995 proof ((3.9) of [Ram95]) is false, and the
+    formal proof avoids it. NOTES.md and AXIOMS.md list these.
+
+review:
+  status: "agent-reviewed"
+  reviewers: []
+  notes: >-
+    The proof is kernel-checked. The hypothesis statements were checked against their sources
+    (AXIOMS.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
+    leanprover/comparator. Comparator accepted both theorems on 2026-11-04 (comparator/README.md).
+
+alignment:
+  namespace: "TernaryGoldbach"
+  statements:
+    - source: "[H, Main Theorem]"
+      lean: "TernaryGoldbach.ternary_goldbach_of_hypotheses"
+      module: "TernaryGoldbach.MainTheorems"
+      status: "proved"
+      note: "Conditional on the five hypotheses above."
+    - source: "[H, §7.4] (n ≥ 10²⁷)"
+      lean: "TernaryGoldbach.ternary_goldbach_large_of_hypotheses"
+      module: "TernaryGoldbach.MainTheorems"
+      status: "proved"
+    - source: "[H, Prop. 12.2.4]"
+      lean: "TernaryGoldbach.MinorArcs.prop_12_2_4"
+      module: "TernaryGoldbach.MinorArcs.LSQuot6"
+      status: "proved"
+      note: "With c₊ = 2."
+
+acknowledgements: "Mathlib; PrimeNumberTheoremAnd (Prelim/PNTMertens.lean)."

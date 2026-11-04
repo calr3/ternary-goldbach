@@ -1,5 +1,7 @@
 import TernaryGoldbach.Prelim.SmallLiouville
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # `|∑_{n ≤ k} μ(n)/n| ≤ √(2/(k+1))` for `1 ≤ k < 11815`, checked by the kernel
 

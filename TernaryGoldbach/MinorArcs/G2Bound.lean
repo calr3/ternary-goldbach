@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.G2Numerics
 import TernaryGoldbach.Prelim.LiouvilleBound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, Lemma 5.1.2] for `v = 2` from Ramaré's bound on `∑ μ(n)/n`
 

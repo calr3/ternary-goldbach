@@ -1,26 +1,29 @@
 # Axiom audit
 
-`ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 5 further axioms (`#print axioms`), all published results. None is a
-computation of our own. Each axiom has been checked against its source.
+`ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
+`Classical.choice`, `Quot.sound`) and takes 5 hypotheses, all published results. They are defined in
+`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `ButhePsi`,
+`RamareMoebius`). Inside the development they are `Fact` instances, and the theorems below (formerly
+axioms) are proved from them. None is a computation of our own. Each has been checked against its
+source.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Published results (5)
+## Published results (5 hypotheses)
 
 Each row was re-checked against the paper on 2026-11-02 (PDFs of all the sources except Ramaré's
 Acta Arith. 157 paper, for which the later papers and the float check below stand in).
 
-| Axiom | Statement | Source | Check |
+| Theorem (hypothesis) | Statement | Source | Check |
 |---|---|---|---|
-| `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The axiom also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
+| `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 1.45·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` needs only `1.45·10¹⁷`, inside the double-checked range |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
-The axioms are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
+The hypotheses are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
 `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_psi` and `rh_upto` (through
 `Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 1.45·10¹⁷, n − 4]` for
@@ -124,7 +127,7 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 ## Outlook
 
-What could replace the remaining axioms:
+What could replace the remaining hypotheses:
 
 * **`buthe_psi` is stronger than needed above `10¹²`.** Its `√x`-quality is used only for
   `n ≤ 10¹²`:
@@ -153,7 +156,7 @@ What could replace the remaining axioms:
      `(log(T/2π))²/(2π) ≈ 115`, so the loss is in our zero counting (Jensen windows). A sharp explicit
      `N(T)` would remove it.
 
-  The axiom count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
+  The hypothesis count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
   Büthe's analytic theorem up to `10¹⁹`.
 * **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
   be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded

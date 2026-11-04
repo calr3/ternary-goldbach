@@ -2,6 +2,9 @@ import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The "bridge" case of [H, §6.3.2]
 

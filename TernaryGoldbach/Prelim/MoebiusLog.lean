@@ -1,5 +1,7 @@
 import TernaryGoldbach.Prelim.MertensProduct
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, (2.23)], elementary form: `|∑_{n≤x, (n,q)=1} μ(n)/n · log(x/n)| ≤ q/φ(q) + 2.67`
 

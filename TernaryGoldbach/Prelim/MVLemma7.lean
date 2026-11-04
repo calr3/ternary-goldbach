@@ -4,6 +4,8 @@ import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallW
 import TernaryGoldbach.Prelim.Ramare
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [MV73, Lemma 7]: `G(r) = ∑_{s ≤ r} μ(s)²/φ(s) ≥ log r + 1.07` for `r ≥ 6`
 

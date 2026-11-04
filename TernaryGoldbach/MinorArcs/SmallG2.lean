@@ -1,6 +1,8 @@
 import TernaryGoldbach.MinorArcs.T2Kernel
 import TernaryGoldbach.MinorArcs.G2Moebius
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # `g₂(n)` for `n ≤ 10⁴`, checked by the kernel
 

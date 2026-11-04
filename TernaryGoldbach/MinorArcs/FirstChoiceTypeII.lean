@@ -1,6 +1,9 @@
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.FirstChoiceParams
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, §6.3.1]: the Type II terms at the first choice of parameters
 

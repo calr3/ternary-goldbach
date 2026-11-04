@@ -4,6 +4,9 @@ import TernaryGoldbach.MinorArcs.SecondBridge
 import TernaryGoldbach.MinorArcs.SecondChoice
 import TernaryGoldbach.MinorArcs.Assembly
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, §6.3.2]: Theorem 3.1.1 for `q > x^{1/3}/6`
 

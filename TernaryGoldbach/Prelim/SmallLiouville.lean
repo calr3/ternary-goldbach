@@ -1,6 +1,8 @@
 import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.Liouville
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # `|∑_{n ≤ k} λ(n)/n| log(k + 1) ≤ 0.99` for `1 ≤ k ≤ 10⁵`, checked by the kernel
 

@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.GMono
 import Mathlib.NumberTheory.Chebyshev
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, Prop. 11.2.3]: from `η₂` to `η_* = (η₂ *_M φ)(κ·)` — corrected form
 

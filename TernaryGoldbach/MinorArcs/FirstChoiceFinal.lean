@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.Assembly
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, §6.3.1, (6.63) and §6.4]: Theorem 3.1.1 for `q ≤ x^{1/3}/6`
 

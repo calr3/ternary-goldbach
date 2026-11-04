@@ -3,6 +3,9 @@ import TernaryGoldbach.MajorArcs.Thm714
 import TernaryGoldbach.MajorArcs.ArcsEq
 import TernaryGoldbach.MinorArcs.BaseGap
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # `S_{η₊}` on the arcs of modulus `q`, via characters
 

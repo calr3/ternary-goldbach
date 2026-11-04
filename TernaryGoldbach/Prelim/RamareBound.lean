@@ -1,6 +1,8 @@
 import TernaryGoldbach.Prelim.RamareLocal
 import TernaryGoldbach.Prelim.SmallProdAp
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # `∑_a |h_d(a)| a^{1/3} ≤ 11 f₁(d)`
 

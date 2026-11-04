@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.PointwiseBound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Theorem 3.1.1 at the scales `w y` of (11.9) — towards [H, Prop. 11.2.3]
 

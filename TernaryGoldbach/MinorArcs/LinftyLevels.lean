@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.Prop1123b
 import TernaryGoldbach.MinorArcs.PhiIntegrals
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The ℓ∞ input of the repaired Thm 13.2.1, level by level
 

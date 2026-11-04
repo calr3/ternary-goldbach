@@ -1,5 +1,8 @@
 import TernaryGoldbach.MinorArcs.FirstChoice
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, (6.49)]: the first choice of parameters
 

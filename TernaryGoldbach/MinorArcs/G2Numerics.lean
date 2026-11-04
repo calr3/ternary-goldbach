@@ -1,6 +1,8 @@
 import TernaryGoldbach.MinorArcs.G2Euler
 import TernaryGoldbach.Prelim.MVLemma7
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Numerical values of the Euler products for `g₂`
 

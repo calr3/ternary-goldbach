@@ -1,5 +1,8 @@
 import TernaryGoldbach.MinorArcs.TypeIITotal
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type II total, general form [H, §6.2.3]
 

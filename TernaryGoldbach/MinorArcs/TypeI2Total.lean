@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeIProof
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I totals [H, §6.2.2]: `S_{I,2}` for `q ≤ Q/V`
 -/

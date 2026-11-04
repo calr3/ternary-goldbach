@@ -2,6 +2,9 @@ import TernaryGoldbach.MinorArcs.TypeII
 import TernaryGoldbach.MinorArcs.H2Bound
 import TernaryGoldbach.MinorArcs.T2Bound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type II sums [H, §5.1]: the sum `S₁`
 

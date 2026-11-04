@@ -2,6 +2,8 @@ import TernaryGoldbach.MinorArcs.LargeSieveArcs
 import TernaryGoldbach.MinorArcs.Plancherel
 import TernaryGoldbach.MinorArcs.LSQuot6
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Proof of [H, Prop. 12.1.2] and [H, Cor. 12.2.5]
 

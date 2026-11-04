@@ -1,6 +1,9 @@
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.EtaStarBound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Theorem 3.1.1 as a function of `r = max(1, |δ|/8) q` [H, (11.11)–(11.13)]
 

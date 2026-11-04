@@ -2,6 +2,9 @@ import TernaryGoldbach.MajorArcs.GRH
 import TernaryGoldbach.Explicit.ExplicitBound
 import TernaryGoldbach.Explicit.ZetaBound
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # [H, Prop 9.3.2]: the case `q ≥ 2` (proved), and the combined statement
 

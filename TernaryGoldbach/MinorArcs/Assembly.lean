@@ -1,6 +1,8 @@
 import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.GcdSums
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Assembling the minor-arc bound [H, §6.1]: `S_{0,∞}`, `S_{0,2}`
 

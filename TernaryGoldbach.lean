@@ -60,6 +60,7 @@ import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.SmallCases
 import TernaryGoldbach.Helfgott.Main
+import TernaryGoldbach.MainTheorems
 import TernaryGoldbach.MinorArcs.Vaughan
 import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.Eta2LogFourier

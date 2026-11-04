@@ -2,6 +2,9 @@ import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.Prelim.LambdaMu
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type II sums: reduction to `S₁`, `S₂` [H, (5.2)–(5.5)]
 

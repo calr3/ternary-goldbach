@@ -1,5 +1,8 @@
 import TernaryGoldbach.MinorArcs.MinorTotal
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Generic lemmas for the numerics of the minor-arc total (`numerics_M`)
 

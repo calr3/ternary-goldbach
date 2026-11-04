@@ -1,5 +1,7 @@
 import TernaryGoldbach.Prelim.LambdaMu
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Sums of `Λ(v)·(q,v)` [H, §6.2.2]
 

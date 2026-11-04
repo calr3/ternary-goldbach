@@ -2,6 +2,9 @@ import TernaryGoldbach.MinorArcs.EtaU
 import TernaryGoldbach.MinorArcs.Bombieri
 import Mathlib.NumberTheory.LSeries.DirichletContinuation
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Platt's GRH verification and [H, Prop 9.3.2]
 
@@ -36,13 +39,19 @@ theorem GRHUpTo.mono {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {T T' 
     (hT : T' ≤ T) : GRHUpTo χ T' :=
   fun ρ h0 h1 h2 h3 => h ρ h0 h1 h2 (h3.trans hT)
 
-/-- **Numerical axiom** (D. Platt [Plab, Thm 7.1], [H, §9.6]): for every primitive character `χ` of
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius] in
+/-- **Numerical hypothesis** (D. Platt [Plab, Thm 7.1], [H, §9.6]): for every primitive character `χ` of
 conductor `q`, GRH holds for `L(s, χ)` up to height `10⁸/q` if `q ≤ 3·10⁵` is odd, and up to height
 `max(10⁸/q, 200 + 7.5·10⁷/q)` if `q ≤ 4·10⁵` is even. (Platt's theorem covers every `q ≤ 4·10⁵`, odd `q`
 to `max(10⁸/q, 200 + 3.75·10⁷/q)`.) -/
-axiom platt_verification {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
+theorem platt_verification [h : Fact PlattGRH] {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hχ : χ.IsPrimitive) :
     (Odd q → q ≤ 300000 → GRHUpTo χ (1e8 / q)) ∧
-      (Even q → q ≤ 400000 → GRHUpTo χ (max (1e8 / q) (200 + 7.5e7 / q)))
+      (Even q → q ≤ 400000 → GRHUpTo χ (max (1e8 / q) (200 + 7.5e7 / q))) :=
+  h.out q χ hχ
+
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-- Platt's verification for odd conductors `q ≤ 3·10⁵`, up to height `10⁸/q`. -/
 theorem platt_odd {q : ℕ} [NeZero q] (hq : Odd q) (hq3 : q ≤ 300000) (χ : DirichletCharacter ℂ q)

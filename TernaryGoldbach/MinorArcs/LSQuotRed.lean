@@ -1,5 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuot7
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, Prop 12.2.4] with `c₊ = 2`, part 2: removing large primes from `q`
 

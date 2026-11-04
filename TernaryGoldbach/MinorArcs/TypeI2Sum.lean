@@ -1,6 +1,9 @@
 import TernaryGoldbach.MinorArcs.TypeI2Total
 import TernaryGoldbach.MinorArcs.GcdSums
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # Type I totals [H, §6.2.2]: summing over `v` ((6.9)–(6.13))
 

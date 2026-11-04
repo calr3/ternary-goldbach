@@ -1,5 +1,7 @@
 import TernaryGoldbach.Explicit.PsiLarge
 
+variable [Fact TernaryGoldbach.RHUpTo]
+
 /-!
 # `|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x` for `x ≥ e^{20000}`
 

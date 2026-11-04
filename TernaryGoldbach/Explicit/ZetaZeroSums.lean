@@ -17,12 +17,16 @@ open scoped Real Interval Topology
 
 namespace TernaryGoldbach.Explicit
 
-/-- **Numerical axiom** ([Platt–Trudgian 2021], *The Riemann hypothesis is true up to 3·10¹²*,
+/-- **Numerical hypothesis** ([Platt–Trudgian 2021], *The Riemann hypothesis is true up to 3·10¹²*,
 Bull. LMS 53 (2021), arXiv:2004.09765): every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹²`
 lies on the critical line. [PT21] state it for `0 < ℑρ ≤ 3·10¹²`. Zeros with `ℑρ < 0` are the
 conjugates of those (`ζ(s̄) = conj ζ(s)`), and there are none with `ℑρ = 0`, since `ζ(σ) < 0` for
 `0 < σ < 1` (classical). -/
-axiom rh_upto : ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e12 → ρ.re = 1 / 2
+theorem rh_upto [h : Fact RHUpTo] :
+    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e12 → ρ.re = 1 / 2 :=
+  h.out
+
+variable [Fact TernaryGoldbach.RHUpTo]
 
 theorem zetaF_zero_ne_zero : zetaF 0 ≠ 0 := by
   rw [zetaF_of_ne (by norm_num), riemannZeta_zero]; norm_num

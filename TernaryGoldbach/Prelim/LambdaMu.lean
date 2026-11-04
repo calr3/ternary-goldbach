@@ -7,6 +7,8 @@ import TernaryGoldbach.Prelim.SmallNonprime
 import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [H, §2.5]
 

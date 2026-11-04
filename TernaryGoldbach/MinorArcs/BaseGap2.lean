@@ -4,6 +4,9 @@ import TernaryGoldbach.MinorArcs.BaseGap
 import TernaryGoldbach.MinorArcs.LinftyLevels
 import TernaryGoldbach.Helfgott.SupNorms
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The base gap: `|S_{η_*}(α, x)| ≤ 0.0121 y` on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`
 

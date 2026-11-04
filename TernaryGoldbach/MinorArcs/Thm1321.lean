@@ -4,6 +4,8 @@ import TernaryGoldbach.MinorArcs.LargeSieveProof
 import TernaryGoldbach.MinorArcs.Prop1312
 import TernaryGoldbach.Helfgott.Decay
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # [H, Thm 13.2.1], conditional on an ℓ∞ bound at scale `x`
 

@@ -1,6 +1,9 @@
 import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.RamareMoebius
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+  [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
 

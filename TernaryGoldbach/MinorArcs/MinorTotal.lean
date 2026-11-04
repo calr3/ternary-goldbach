@@ -2,6 +2,9 @@ import TernaryGoldbach.MinorArcs.BaseGap2
 import TernaryGoldbach.MinorArcs.EBound
 import TernaryGoldbach.MinorArcs.Thm1321
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+
 /-!
 # The minor-arc total (14.49), via repair 3
 

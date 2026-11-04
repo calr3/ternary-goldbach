@@ -1,5 +1,7 @@
 import TernaryGoldbach.Prelim.RamareFo
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+
 /-!
 # Local data of `h_d` at a prime
 
