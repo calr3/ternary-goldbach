@@ -33,7 +33,7 @@ open TernaryGoldbach (expTsum)
 /-- The ℓ² majorant: (12.42) for the arcs `𝔐_{8,n+1}` at scale `x` below the top level `r₁`,
 and the total `T = Σ|aₙ|²` at `r₁`. -/
 noncomputable def Hl2 (x T : ℝ) (r₁ n : ℕ) : ℝ :=
-  if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 1.36) / (Real.log (2 * √(x / 16)) + cE) * T
+  if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 2) / (Real.log (2 * √(x / 16)) + cE) * T
   else T
 
 /-- **[H, Thm 13.2.1], conditional on the ℓ∞ bound at scale `x`** (discrete (13.6)).  For
@@ -124,7 +124,7 @@ gap `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)` (from Part II, Cor 7.1.3). -/
 
 /-- The ℓ² majorant for the `y`-arcs: (12.42) with `δ₀ = 392` below `r₁`, `T` at `r₁`. -/
 noncomputable def Hl2y (x T : ℝ) (r₁ n : ℕ) : ℝ :=
-  if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 1.36) / (Real.log (2 * √(x / 784)) + cE) * T
+  if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 2) / (Real.log (2 * √(x / 784)) + cE) * T
   else T
 
 /-- The mixed family. -/

@@ -373,12 +373,12 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
 
 /-- **[H, Cor. 12.2.5, (12.42)]** (with `δ₀ ≥ 2`).  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 2`,
 `(20000 Q₀)² ≤ x/2δ₀`, `Q = √(x/2δ₀)`, `2Q₀ ≤ (2Q)^{0.6}`.  Then
-`∫_{𝔐_{δ₀,Q₀}} |S|² ≤ (log 2Q₀ + 1.36)/(log 2Q + c_E) Σ|aₙ|²`. -/
+`∫_{𝔐_{δ₀,Q₀}} |S|² ≤ (log 2Q₀ + 2)/(log 2Q + c_E) Σ|aₙ|²`. -/
 theorem cor_12_2_5 {x δ₀ Q₀ : ℝ} {a : ℕ → ℂ} (ha : PrimeSupported x a)
     (hQ₀ : 1e5 ≤ Q₀) (hδ₀ : 2 ≤ δ₀) (hx : (20000 * Q₀) ^ 2 ≤ x / (2 * δ₀))
     (hρ : 2 * Q₀ ≤ (2 * √(x / (2 * δ₀))) ^ (0.6 : ℝ)) :
     ∫ α in Ioc (0 : ℝ) 1 ∩ majorArcs δ₀ Q₀ x, ‖expTsum a α‖ ^ 2 ≤
-      (Real.log (2 * Q₀) + 1.36) / (Real.log (2 * √(x / (2 * δ₀))) + cE) * ∑' n, ‖a n‖ ^ 2 := by
+      (Real.log (2 * Q₀) + 2) / (Real.log (2 * √(x / (2 * δ₀))) + cE) * ∑' n, ‖a n‖ ^ 2 := by
   set Q := √(x / (2 * δ₀)) with hQdef
   have hQ0 : 0 ≤ x / (2 * δ₀) := le_trans (by positivity) hx
   have hQ : 20000 * Q₀ ≤ Q := by

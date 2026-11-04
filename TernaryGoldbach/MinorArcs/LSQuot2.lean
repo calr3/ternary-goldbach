@@ -39,14 +39,6 @@ def checkC (q n : ℕ) : Prop :=
       0.1687 * ((q : ℝ) / Nat.totient q) * f1q q / (n : ℝ) ^ (1 / 3 : ℝ) ≤
     0.3726 * (max (Real.log q) (Real.log (1e5 / ((n : ℝ) + 1))) - Sq q) + 0.0274177
 
-/-- **Numerical axiom** (our computation, `scripts/rigorous/p1224_check.c`): for `1 ≤ q < 2.2·10¹⁰`
-and `1 ≤ n < λ(q)`, either `n` lies in the range of `regionS`
-(`log q ≥ 8.53`, `log q + 1.039(n + 1) ≤ 0.826 (qn)^{2/9}`), or `checkC q n` holds.
-This replaces [H]'s computation for Prop 12.2.4 ([H, p. 242]). -/
-axiom prop1224_check : ∀ q : ℕ, 1 ≤ q → q < 22000000000 → ∀ n : ℕ, 1 ≤ n → (n : ℝ) < lamQ q →
-    (8.53 ≤ Real.log q ∧
-      Real.log q + 1.039 * ((n : ℝ) + 1) ≤ 0.826 * ((q : ℝ) * n) ^ ((2 : ℝ) / 9)) ∨ checkC q n
-
 /-! ### Elementary facts -/
 
 theorem f1p_pos (p : ℕ) : 0 < f1p p := by

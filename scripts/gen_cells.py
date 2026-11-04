@@ -146,10 +146,10 @@ def cell(k, Y, Ylit, Y2, Y2lit, rho):
     nA, fA = log_lb(X); L0 = nA + fA
     nB, fB = log_ub(X2); L1 = nB + fB
     # cL bounds
-    nC, fC = log_ub(Fr(2 * 150001)); cl0 = nC + fC + Fr('1.36')
-    nD, fD = log_lb(Fr(2 * r2)); clt = nD + fD + Fr('1.36')
+    nC, fC = log_ub(Fr(2 * 150001)); cl0 = nC + fC + Fr('2')
+    nD, fD = log_lb(Fr(2 * r2)); clt = nD + fD + Fr('2')
     nE, fE = log_ub(Fr(2 * r2)); lr = nE + fE
-    assert lr + Fr('1.36') <= L0 / 2 - Fr('1.3066')
+    assert lr + Fr('2') <= L0 / 2 - Fr('1.3066')
     a = Fr('0.640208000017'); b = Fr('0.021095')
     sD = up((a * L0 - b) / (L0 / 2 - Fr('1.3066')), 7)
     tau = up((a * L1 - b) * (1 - clt / (L1 / 2 - Fr('1.3064'))), 7)

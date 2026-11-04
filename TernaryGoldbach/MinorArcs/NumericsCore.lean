@@ -415,7 +415,7 @@ cell. -/
 theorem cell_conditions {x X ℓr L₀ : ℝ} {r₂ : ℕ} (hXx : X ≤ x) (hX : 0 < X) (hr : 1 ≤ r₂)
     (c1 : (20000 * (r₂ : ℝ)) ^ 2 ≤ X / 784) (c2 : (2 * (r₂ : ℝ)) ^ 10 ≤ (4 * X / 784) ^ 3)
     (c3 : (6 * (r₂ : ℝ)) ^ 3 ≤ X / 49) (c4 : 2.16e20 * (r₂ : ℝ) ≤ 670 * (X / 49))
-    (c5 : Real.log (2 * r₂) ≤ ℓr) (c6 : ℓr + 1.36 ≤ L₀ / 2 - 1.3066) (hL₀ : L₀ ≤ Real.log x) :
+    (c5 : Real.log (2 * r₂) ≤ ℓr) (c6 : ℓr + 2 ≤ L₀ / 2 - 1.3066) (hL₀ : L₀ ≤ Real.log x) :
     (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧ 2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧
       (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧ 2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x := by
   have hκ : (κ : ℝ) = 49 := rfl
@@ -445,13 +445,13 @@ theorem cell_conditions {x X ℓr L₀ : ℝ} {r₂ : ℕ} (hXx : X ≤ x) (hX :
     unfold cE
     linarith
 
-theorem le_cL_pred {r : ℕ} (hr : 1 ≤ r) {c : ℝ} (h : c ≤ Real.log (2 * (r : ℝ)) + 1.36) :
+theorem le_cL_pred {r : ℕ} (hr : 1 ≤ r) {c : ℝ} (h : c ≤ Real.log (2 * (r : ℝ)) + 2) :
     c ≤ cL (r - 1) := by
   unfold cL
   rw [Nat.cast_sub hr]; push_cast
   simpa using h
 
-theorem cL_le {n : ℕ} {c : ℝ} (h : Real.log (2 * ((n : ℝ) + 1)) + 1.36 ≤ c) : cL n ≤ c := h
+theorem cL_le {n : ℕ} {c : ℝ} (h : Real.log (2 * ((n : ℝ) + 1)) + 2 ≤ c) : cL n ≤ c := h
 
 /-- The block chain, for any `y ≥ Y`. -/
 theorem chain_le {y Y : ℝ} {k : ℕ} (p : ℕ → ℕ) (G ℓ : ℕ → ℝ) (hY : 1e25 ≤ Y) (hYy : Y ≤ y)

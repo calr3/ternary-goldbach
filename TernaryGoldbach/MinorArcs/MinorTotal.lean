@@ -72,7 +72,7 @@ noncomputable def sig (x : ℝ) : ℝ := (0.640208 + 366.91 / √x) * Real.log x
 /-- The denominator of (12.42) with `δ₀ = 392`. -/
 noncomputable def Dx (x : ℝ) : ℝ := Real.log (2 * √(x / 784)) + cE
 
-noncomputable def cL (n : ℕ) : ℝ := Real.log (2 * ((n : ℝ) + 1)) + 1.36
+noncomputable def cL (n : ℕ) : ℝ := Real.log (2 * ((n : ℝ) + 1)) + 2
 
 /-- The bound for `Z₁/(x · x/κ)` produced by `thm_13_2_1_repaired`. -/
 noncomputable def Mexpr (x : ℝ) (r₂ : ℕ) : ℝ :=

@@ -7,13 +7,11 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 6 explicitly stated
-axioms besides Lean's standard three. They are:
-* 1 finite computation of our own, checked in rigorous interval arithmetic
-  (`scripts/rigorous/`): the finite part of [H, Prop 12.2.4];
-* 5 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
-  Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
-  which is checked against a later published bound (`AXIOMS.md`).
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 5 explicitly stated
+axioms besides Lean's standard three, all of them published results: RH up to `3·10¹²`, Platt's
+GRH verification, binary Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and
+Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]), which is checked against a
+later published bound (`AXIOMS.md`). None of our own computations is assumed any more.
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -40,7 +38,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.MajorArcs.platt_verification,
- TernaryGoldbach.MinorArcs.prop1224_check,
  TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.ramare_moebius]
 ```
@@ -57,6 +54,15 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
 * `g₂(n)` for `n ≤ 10⁴` and `T₂ ≤ 0.37273` on `[16, 10⁴)` in `MinorArcs/SmallG2.lean`, and the sums
   behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`;
 * the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`.
+
+[H, Prop 12.2.4] is proved with `c₊ = 2` in place of [H]'s `1.36`. [H]'s argument covers
+`q ≥ 2.2·10¹⁰`; for smaller `q`, [H] (and our former axiom `prop1224_check`) needed a computation
+over all `q < 2.2·10¹⁰`. With `c₊ = 2` there is room for a structural argument instead: removing a
+prime `p ≥ 17` from `q` never makes the required inequality fail (`MinorArcs/LSQuotRed.lean`), so
+everything reduces to the 64 divisors of `30030`, checked by the kernel for `4 ≤ n < 2600`
+(`LSQuot8g.lean`, about 90 s), plus a short exchange argument for `n ≤ 3` (`LSQuot9.lean`). The
+cost downstream is small: the worst cell of the final minor-arc inequality goes from `0.96534` to
+`1.00666` (against `1.037`).
 
 (B.6) is proved with the constant `c₀ = 32` in place of [H]'s `31.521` (the true maximum is
 `31.52065`, at `t ≈ 17.4`), as Helfgott suggested; (B.11) follows. For `t ≥ 2`, three integrations
@@ -97,7 +103,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * **minor arcs**, [H, (14.49)] with constant `1.0376` (`MinorArcs/MinorTotal.lean`). This needs:
     * Vaughan's identity and the Type I and Type II sums of [H, Chs. 3–6], which give Theorem 3.1.1
       with constants `0.8764` and `3.8x^{5/6}`;
-    * the large sieve for primes (Prop 12.1.2 proved; Prop 12.2.4 an axiom);
+    * the large sieve for primes (Props 12.1.2 and 12.2.4 proved; 12.2.4 with `c₊ = 2`);
     * Ch. 11 and a repaired Theorem 13.2.1;
     * [H, (14.28)] in a weaker form;
   * **non-prime terms**, [H, (14.51)], with cruder constants;
@@ -128,6 +134,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | [H] | Statement | [H]'s constant | ours |
 |---|---|---|---|
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
+| Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computation axiom) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |

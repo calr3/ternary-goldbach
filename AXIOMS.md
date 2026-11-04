@@ -1,8 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 6 further axioms (`#print axioms`): 1 finite computation of our own
-and 5 published results. Each axiom has been checked:
+`Quot.sound`) and on 5 further axioms (`#print axioms`), all published results. Each axiom has been checked:
 
 * our computations against their scripts: range, edge cases, the exact Lean definitions involved,
   rounding, and margin;
@@ -11,28 +10,15 @@ and 5 published results. Each axiom has been checked:
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Our own computation (1)
+## Our own computations (none left)
 
-The computation has an independent rigorous check in `scripts/rigorous/` (see its README):
-`p1224_rig.c` (interval arithmetic with directed rounding). The former second axiom,
-`eta2DD_small` ([H, (B.6)] for `0 ≤ t ≤ 655` with `31.521`), is now a theorem with `32`
-(`MinorArcs/Eta2DDBound.lean`); `eta2_fourier_rig.py` remains as a check of the true maximum.
-
-A check passes only if it holds for the whole interval. All pass; the reference output is
-`scripts/rigorous/output.txt`. "Also published" lists results in the literature that contain the
-axiom.
-
-| Axiom | Statement | Float script | Rigorous re-check: worst case | Also published |
-|---|---|---|---|---|
-| `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([H, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | [H]'s computation for Prop 12.2.4 covers `q < 3.3·10⁹` |
-
-The rigorous values agree with the float scripts to the digits printed.
-
-Three further axioms in `Prelim/LambdaMuExtra.lean` are not used by `ternary_goldbach`. They come
-from `psi_extra_check.py`:
-* `lambda_mul_small` (`k ≤ 2.5·10⁷`): max ratio `1.03583`;
-* `lambda_sqrt_small` (`k ≤ 6·10⁶`): max ratio `1.99906`;
-* `lambda_sqrt_point` (at `6·10⁶`): value `−3.6619`.
+The two former computation axioms are now theorems:
+* `eta2DD_small` ([H, (B.6)] for `0 ≤ t ≤ 655` with `31.521`) is proved with `32`
+  (`MinorArcs/Eta2DDBound.lean`); `scripts/rigorous/eta2_fourier_rig.py` remains as a check of the
+  true maximum `31.52065`;
+* `prop1224_check` (the finite part of [H, Prop 12.2.4]: `87 972 745` checks over `q < 2.2·10¹⁰`) is
+  replaced by a proof of Prop 12.2.4 with `c₊ = 2` (see "Proved in Lean" below);
+  `scripts/rigorous/p1224_rig.c` remains as the record of the old check.
 
 ## Published results (5)
 
@@ -112,7 +98,7 @@ These inputs are theorems:
 | (5.31) `T2_le` | `MinorArcs/T2Bound.lean`, `T2Small.lean`, `G2Tail.lean` | `g₂(n)` for `n ≤ 10⁴` by the kernel; `T₂ = α_n + β_n/S` exactly for `S < 700`; `T₂(S) = ¼ ∫₁^S g₂/y + O*(S⁻¹ ∫₁^S \|g₂\|)` above; `∫_{10⁴}^S \|g₂\|/y ≤ 0.0045` by Cauchy–Schwarz with weights `H_d(a) λ(da)`, which reduces it to `∫ m(⌊t⌋)²/t` (`m(k)` for `k < 11815` from the kernel, `ramare_moebius` beyond) and an Euler product `∏_{p>2} p²/(p²−1) ≤ π²/8` |
 | Lemma 5.1.2: `\|g₂(x)\| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x` (not used by `ternary_goldbach`) | `MinorArcs/G2Bound.lean` and `G2*.lean` | one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`; `ramare_moebius` for `x/u ≥ 11815` (Rankin weight `u^{1/9}`), [H, (2.24)] below; Euler products |
 | (5.36) corrected, (5.37) | `MinorArcs/H2Bound.lean` | `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel for `n ≤ 15` |
-| Prop 12.2.4 | `MinorArcs/LSQuot1–6.lean` | (12.12) and `prop1224_check`; `regionS`, and `λ(q)⁷ ≤ (103/120)⁹ q²` for `q ≥ 2.2·10¹⁰` |
+| Prop 12.2.4 with `c₊ = 2` (for [H]'s `1.36`) | `MinorArcs/LSQuot1–9.lean`, `LSQuotRed.lean`, `LSQuot8g.lean` | `q ≥ 2.2·10¹⁰`: [H]'s argument, (12.12), `regionS` and `λ(q)⁷ ≤ (103/120)⁹ q²`. `q < 2.2·10¹⁰`: with `R ∈ [n, n+1)` it suffices that `Φ(q, n) ≤ 0`; removing a prime `p ≥ 17` from `q` keeps `Φ ≤ 0` (`G_{q'}(n) = G_{q'p}(n) + G_{q'p}(n/p)/(p−1)`, `(q/φ(q)) G_q(x) ≥ G(x) ≥ log x`), which reduces `n ≥ 4` to the 64 divisors of `30030` (kernel walks over `r < 2600`, Ramaré beyond); `n ≤ 3` by an exchange argument with `log sq ≥ log(10⁵/(n+1))` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
 | (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. (`Eta2Fourier.lean`'s bound for `\|t\| ≥ 655` is no longer used.) |
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
@@ -190,7 +176,8 @@ Helfgott's comments (2026-11) on the axioms, and what follows from the code:
   `1.0076`, so Theorem 3.1.1's `2.5 x/√t` becomes `2.511 x/√t`, Type I constants move in the third
   or fourth digit, the base gap becomes `0.0121 y` (was `0.012 y`), and the worst cell of the final
   minor-arc inequality goes from `0.96499` to `0.96534` (against `1.037`).
-* Each remaining computation covers a range too large for the kernel as stated. Larger checks would
-  need `native_decide`, which means trusting Lean's compiler.
+* No computation of our own is assumed any more. The remaining axioms are published results; the
+  computational ones (RH and GRH to given heights, binary Goldbach, Büthe's `ψ`) are far beyond the
+  kernel without `native_decide`.
 * The other published results are large computations: binary Goldbach, and RH and GRH to the heights
   used.
