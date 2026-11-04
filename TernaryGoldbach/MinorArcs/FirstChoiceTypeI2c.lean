@@ -10,12 +10,12 @@ namespace TernaryGoldbach.MinorArcs
 
 set_option maxHeartbeats 1600000 in
 /-- **[H, (6.59)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
-`|S_{I,2}| ≤ 2.4916 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.163 log t + 21.296) · 2x/t + 0.553 x^{5/6}`. -/
+`|S_{I,2}| ≤ 2.5106 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.267 log t + 21.446) · 2x/t + 0.553 x^{5/6}`. -/
 theorem typeI2_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (3 / 4 * T ^ 2)) (hqT : (q : ℝ) ≤ T / 6) :
     ‖typeI2 α (T ^ 3) (U1 T (delta0 δ * q)) (V1 T)‖ ≤
-      2.4916 * (T ^ 3 / √(delta0 δ * q)) + 2.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
-        (15.163 * Real.log (delta0 δ * q) + 21.296) * (2 * T ^ 3 / (delta0 δ * q)) +
+      2.5106 * (T ^ 3 / √(delta0 δ * q)) + 2.8 * (2 * T ^ 3 / (delta0 δ * Nat.totient q)) +
+        (15.267 * Real.log (delta0 δ * q) + 21.446) * (2 * T ^ 3 / (delta0 δ * q)) +
         0.553 * (T ^ 2 * √T) := by
   obtain ⟨hδq, ht2, htT⟩ := first_choice_t hT h hqT
   have hq : 1 ≤ q := h.1

@@ -12,13 +12,13 @@ open Real
 
 namespace TernaryGoldbach.MinorArcs
 
-theorem sqrt_c₀_bounds : 5.6143 ≤ √c₀ ∧ √c₀ ≤ 5.6144 := by
+theorem sqrt_c₀_bounds : 5.6568 ≤ √c₀ ∧ √c₀ ≤ 5.6569 := by
   unfold c₀
   constructor
   · rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
   · rw [Real.sqrt_le_left (by norm_num)]; norm_num
 
-theorem c₂_bounds : 0.67 ≤ c₂ ∧ c₂ ≤ 0.672 := by
+theorem c₂_bounds : 0.6664 ≤ c₂ ∧ c₂ ≤ 0.6665 := by
   obtain ⟨h1, h2⟩ := sqrt_c₀_bounds
   have hp1 := Real.pi_gt_d4
   have hp2 := Real.pi_lt_d4
@@ -64,7 +64,7 @@ theorem log_le_tangent16 {a : ℝ} (ha : 0 < a) : Real.log a ≤ 2.7726 + (a / 1
   have := log_sixteen_le
   linarith
 
-set_option maxHeartbeats 1600000 in
+set_option maxHeartbeats 4000000 in
 /-- (4.41) at the parameters of (6.49): at most `0.0139 x^{5/6}`. -/
 theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqT : (q : ℝ) ≤ T / 6)
     (hU1 : 0.1924 * (T * √T) ≤ U) (hU2 : U ≤ 0.0786 * T ^ 2) :
@@ -114,17 +114,17 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
         nlinarith [pow_pos hS0' 6]
       nlinarith [pow_pos hS0' 2]
     linarith
-  have hsq1 : √(c₀ * c₁) ≤ 5.6145 := by
+  have hsq1 : √(c₀ * c₁) ≤ 5.657 := by
     rw [Real.sqrt_le_left (by norm_num)]
     have : c₀ = √c₀ ^ 2 := (Real.sq_sqrt (by norm_num [c₀])).symm
-    have : √c₀ ^ 2 ≤ 5.6144 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
+    have : √c₀ ^ 2 ≤ 5.6569 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
     have hc00 : (0 : ℝ) < c₀ := by norm_num [c₀]
     nlinarith
-  have hA : 2 * √(c₀ * c₁) / π ≤ 3.5745 := by
+  have hA : 2 * √(c₀ * c₁) / π ≤ 3.6015 := by
     rw [div_le_iff₀ (by linarith)]; nlinarith
   have hA0 : 0 ≤ 2 * √(c₀ * c₁) / π := by positivity
   -- Term a.
-  have ta : 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * S ^ 6 / U) ≤ 0.01287 * S ^ 5 := by
+  have ta : 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * S ^ 6 / U) ≤ 0.01297 * S ^ 5 := by
     have hl : Real.log (rexp 1 * S ^ 6 / U) ≤ 2.66 + 0.0447 * S := by
       have h1 : rexp 1 * S ^ 6 / U ≤ 14.13 * S ^ 3 := by
         rw [div_le_iff₀ hU0]
@@ -142,8 +142,8 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
       have h3 : 0 ≤ S ^ 4 := by positivity
       linarith)
     calc 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * S ^ 6 / U)
-        ≤ 3.5745 * (0.0786 * S ^ 4) * (2.66 + 0.0447 * S) := by gcongr
-      _ ≤ 0.01287 * S ^ 5 := by nlinarith [pow_pos hS0' 4]
+        ≤ 3.6015 * (0.0786 * S ^ 4) * (2.66 + 0.0447 * S) := by gcongr
+      _ ≤ 0.01297 * S ^ 5 := by nlinarith [pow_pos hS0' 4]
   -- Term b vanishes.
   have tb : 3 * c₁ / 2 * (S ^ 6 / q) * logPlus (U / (c₂ * S ^ 6 / q)) * Real.log (q / c₂) = 0 := by
     rw [logPlus_eq_zero (by positivity)]
@@ -154,7 +154,7 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
   -- Term c.
   have tc : (2 * eta2'L1 / π * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * S ^ 6))) *
       Real.log (S ^ 6) + 2 * √(c₀ * c₁) / π * (√3 + 1 / 2 * logPlus (U / (q / 2))) *
-        Real.log (q / c₂)) * q ≤ 0.0001 * S ^ 5 := by
+        Real.log (q / c₂)) * q ≤ 0.00004 * S ^ 5 := by
     have hmax : max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * S ^ 6))) = 1 := by
       refine max_eq_left ?_
       have harg : c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * S ^ 6) ≤ 2 := by
@@ -164,8 +164,8 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
             _ ≤ 2.7182818286 ^ 3 := pow_le_pow_left₀ (Real.exp_pos 1).le he.le 3
             _ ≤ 20.1 := by norm_num
         have hq2 : (q : ℝ) ^ 2 ≤ S ^ 4 := by nlinarith
-        have : c₀ * rexp 3 * q ^ 2 ≤ 31.521 * 20.1 * S ^ 4 := by
-          have : c₀ = 31.521 := rfl
+        have : c₀ * rexp 3 * q ^ 2 ≤ 32 * 20.1 * S ^ 4 := by
+          have : c₀ = 32 := rfl
           rw [this]; gcongr
         have : 2 * (4 * π * eta2'L1 * S ^ 6) ≥ 2 * (4 * 3.1415 * 5.5 * S ^ 6) := by
           have : (5.5 : ℝ) ≤ eta2'L1 := by unfold eta2'L1; have := Real.log_two_gt_d9; linarith
@@ -194,52 +194,54 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
     have hs3 : √3 ≤ 1.7321 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
     calc (2 * eta2'L1 / π * 1 * Real.log (S ^ 6) + 2 * √(c₀ * c₁) / π *
           (√3 + 1 / 2 * logPlus (U / (q / 2))) * Real.log (q / c₂)) * q
-        ≤ (3.5304 * 1 * (0.0894 * S) + 3.5745 * (1.7321 + 1 / 2 * (0.0596 * S)) * (0.0298 * S)) *
+        ≤ (3.5304 * 1 * (0.0894 * S) + 3.6015 * (1.7321 + 1 / 2 * (0.0596 * S)) * (0.0298 * S)) *
             (S ^ 2 / 6) := by
           have : 0 ≤ Real.log (S ^ 6) := Real.log_nonneg (one_le_pow₀ (by linarith))
           have : 0 ≤ logPlus (U / (q / 2)) := logPlus_nonneg _
           gcongr
-      _ ≤ 0.0001 * S ^ 5 := by nlinarith [pow_pos hS0' 3, pow_pos hS0' 4, pow_pos hS0' 5]
+      _ ≤ 0.00004 * S ^ 5 := by nlinarith [pow_pos hS0' 3, pow_pos hS0' 4, pow_pos hS0' 5]
   -- Term d.
   have td : 3 * c₁ / 2 * √(2 * S ^ 6 / c₂) * Real.log (2 * S ^ 6 / c₂) ≤ 0.0001 * S ^ 5 := by
-    have h1 : √(2 * S ^ 6 / c₂) ≤ 1.7278 * S ^ 3 := by
+    have h1 : √(2 * S ^ 6 / c₂) ≤ 1.7325 * S ^ 3 := by
       rw [Real.sqrt_le_left (by positivity), div_le_iff₀ (by linarith)]
       nlinarith [pow_pos hS0' 6]
-    have h2 : Real.log (2 * S ^ 6 / c₂) ≤ 1.1 + 0.0894 * S := by
-      have : 2 * S ^ 6 / c₂ ≤ 2.9851 * S ^ 6 := by
+    have h2 : Real.log (2 * S ^ 6 / c₂) ≤ 1.11 + 0.0894 * S := by
+      have : 2 * S ^ 6 / c₂ ≤ 3.0013 * S ^ 6 := by
         rw [div_le_iff₀ (by linarith)]; nlinarith [pow_pos hS0' 6]
       refine (Real.log_le_log (by positivity) this).trans ?_
       rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow]
-      have := log_le_div_exp (show (0 : ℝ) < 2.9851 by norm_num)
-      have : 2.9851 / rexp 1 ≤ 2.9851 / 2.7182818283 := div_le_div_of_nonneg_left (by norm_num)
+      have := log_le_div_exp (show (0 : ℝ) < 3.0013 by norm_num)
+      have : 3.0013 / rexp 1 ≤ 3.0013 / 2.7182818283 := div_le_div_of_nonneg_left (by norm_num)
         (by norm_num) he'.le
       push_cast; nlinarith
     have h0 : 0 ≤ Real.log (2 * S ^ 6 / c₂) := Real.log_nonneg (by
       rw [le_div_iff₀ (by linarith)]; nlinarith [pow_pos hS0' 6])
     calc 3 * c₁ / 2 * √(2 * S ^ 6 / c₂) * Real.log (2 * S ^ 6 / c₂)
-        ≤ 3 * 1.0000001 / 2 * (1.7278 * S ^ 3) * (1.1 + 0.0894 * S) := by gcongr
+        ≤ 3 * 1.0000001 / 2 * (1.7325 * S ^ 3) * (1.11 + 0.0894 * S) := by gcongr
       _ ≤ 0.0001 * S ^ 5 := by nlinarith [pow_pos hS0' 3, pow_pos hS0' 4]
   -- Term e.
   have te : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * S ^ 6) *
-      Real.log (2 * rexp 1 * S ^ 6 / c₂) ≤ 0.00075 * S ^ 5 := by
-    have hc32 : c₂ ^ (3 / 2 : ℝ) ≤ 0.672 := by
-      have : c₂ ^ (3 / 2 : ℝ) ≤ c₂ ^ (1 : ℝ) :=
-        Real.rpow_le_rpow_of_exponent_ge (by linarith) (by linarith) (by norm_num)
-      rw [Real.rpow_one] at this; linarith
-    have h1 : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 14.31 := by
+      Real.log (2 * rexp 1 * S ^ 6 / c₂) ≤ 0.00062 * S ^ 5 := by
+    have hc32 : c₂ ^ (3 / 2 : ℝ) ≤ 0.545 := by
+      have hc0 : 0 ≤ c₂ := by linarith
+      rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add' hc0 (by norm_num), Real.rpow_one,
+        ← Real.sqrt_eq_rpow]
+      have : √c₂ ≤ 0.8165 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
+      nlinarith [Real.sqrt_nonneg c₂]
+    have h1 : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 11.8 := by
       rw [div_le_iff₀ (by positivity)]
-      have : c₀ = 31.521 := rfl
+      have : c₀ = 32 := rfl
       rw [this]
       have : (0 : ℝ) ≤ c₂ ^ (3 / 2 : ℝ) := by positivity
       nlinarith
     have h2 : √(2 * S ^ 6) ≤ 1.4143 * S ^ 3 := by
       rw [Real.sqrt_le_left (by positivity)]; nlinarith [pow_pos hS0' 6]
     have h3 : Real.log (2 * rexp 1 * S ^ 6 / c₂) ≤ 2.1 + 0.0894 * S := by
-      have : 2 * rexp 1 * S ^ 6 / c₂ ≤ 8.115 * S ^ 6 := by
+      have : 2 * rexp 1 * S ^ 6 / c₂ ≤ 8.16 * S ^ 6 := by
         rw [div_le_iff₀ (by linarith)]; nlinarith [pow_pos hS0' 6]
       refine (Real.log_le_log (by positivity) this).trans ?_
       rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow]
-      have h8 := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 8.115 / 8 by norm_num)
+      have h8 := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 8.16 / 8 by norm_num)
       rw [Real.log_div (by norm_num) (by norm_num), show (8 : ℝ) = 2 ^ 3 by norm_num,
         Real.log_pow] at h8
       have := Real.log_two_lt_d9
@@ -249,8 +251,8 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
     have : (0 : ℝ) ≤ 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) := by
       have : (0 : ℝ) < c₀ := by norm_num [c₀]
       positivity
-    calc _ ≤ 14.31 * (1.4143 * S ^ 3) * (2.1 + 0.0894 * S) := by gcongr
-      _ ≤ 0.00075 * S ^ 5 := by nlinarith [pow_pos hS0' 3, pow_pos hS0' 4]
+    calc _ ≤ 11.8 * (1.4143 * S ^ 3) * (2.1 + 0.0894 * S) := by gcongr
+      _ ≤ 0.00062 * S ^ 5 := by nlinarith [pow_pos hS0' 3, pow_pos hS0' 4]
   have := pow_pos hS0' 5
   linarith
 

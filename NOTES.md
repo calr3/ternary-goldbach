@@ -1143,6 +1143,12 @@ checking whether a later version of [H] fixes this.
 
 ## Ch. 11: Prop 11.2.3 erratum (the proof ignores that `δ` scales with `w`)
 
+Helfgott found this erratum himself around 2016 and reported it to the publisher and colleagues;
+it is not new. He notes that the quickest repair is "dirty and duct-tape-y". Ours, Prop 11.2.3′
+(`Prop1123b.lean`), is quick: a fresh Dirichlet approximation per scale `wy`, plus the crude majorant
+`max(1, 1/w) g_y(n)`, which loses a factor `1.398`. A cleaner repair would follow the analysis below:
+`r_w ≥ w r` for `|δ| > 8`, and the gain for `w > 1` offsets the loss for `w < 1`.
+
 [H]'s proof writes `S_{η_*}(α,x) = ∫ S_{η₂}(α, wx) φ(w) dw/w` (11.9) and applies Thm 3.1.1 to
 each `S_{η₂}(α, wx)` with the same `r = max(1, |δ|/8) q`. At scale `wx`, though,
 `2α = a/q + δ_w/(wx)` with **`δ_w = wδ`**, so:
@@ -1164,6 +1170,30 @@ and `g_{wy,1}(wr)` (`|δ| > 8`). Then either show the `|δ| > 8` integral is `�
 `g_{y,φ}(r)`, or carry a closed form for `∫ g_{wy,1}(wr)φ(w)dw` into Ch. 13 directly.
 Also note that the case `r > r₁` of Ch. 13 needs, for `w ≤ 1`, `g_{wy}(max(q, wr')) ≤ g_{wy}(w r₁)`.
 That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the same way.
+
+## Lemma B.1.2 with `c₀ = 32` (removes `eta2DD_small`)
+
+Helfgott suggested a slightly weaker constant. `|η̂₂''|_∞ ≤ 32` is now proved
+(`Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean`), and `c₀ := 32` (`InnerSums.lean`).
+* `t ≥ 2`: `eta2DD t = F(z, w) + O*(6120 w³)`, `z = e(−t/4)`, `w = 1/2πt`, by three integrations by
+  parts of `Jq`. `F` is a polynomial in `z, w` (`Fz`); `z` is treated as free on the circle,
+  parametrised by `zm m = ((1−m²) + 2mi)/(1+m²)` for `m ∈ [−1, 1]` and sign `±`. `chk` bisects
+  `(m, w) ∈ [−1,1] × [0, 2/25]` with Lipschitz constants `LzQ`, `LwQ` (`chk_sound`).
+* `t ≤ 2`: `x = 2πt ≤ 12.6`, Taylor polynomials of degree `< 50` (`Complex.exp_bound'`), error
+  `120 |x|^50/50!`; the coefficients `β_j` are rational (`βR_eq`), `PQ` evaluates the polynomial
+  exactly over `ℚ`, and `chkC` bisects with the 24-Lipschitz bound `norm_eta2DD_sub_le`.
+* The three `decide +kernel` checks take about 4 minutes in all.
+* Downstream re-tuning (`√c₀ ∈ [5.6568, 5.6569]`, `c₂ ∈ [0.6664, 0.6665]`, `2√c₀/π ≤ 3.6015`):
+  * `FirstChoiceTypeI`: `c₂^{3/2} ≤ √c₂·c₂ ≤ 0.545` (was `≤ c₂`) keeps `0.0139 x^{5/6}`.
+  * `FirstChoiceTypeI2`/`2b`/`2c`: the `x/√t` coefficient of `S_{I,2}` is `2.5106` (was `2.4916`),
+    the `2x/t` part `15.267 log t + 21.446` (was `15.163`, `21.296`).
+  * Theorem 3.1.1 (first case): `2.511 x/√t` (was `2.5`); hence `gx`, `NumericsCore`,
+    `LinftyLevels`, `EtaStarBound`, `PointwiseBound`, `MinorTotal`, `NumericsAsymp` and
+    `scripts/gen_cells.py` (cells regenerated: worst total `0.96534` against `1.037`).
+    `SecondBridge`: `2.511 √3.0001 ≤ 4.35`.
+  * `BaseGap2`: `fourier_const_le ≤ 1.016`, gap `≤ 0.0121 y` (was `0.012 y`; `ghatY_r0_ge` has room).
+  * Second case: `typeI_second ≤ (0.0717 L² + 3199.9 L + 8471.0) T²` (was `0.0716`, `3175.9`,
+    `8407.2`); `SecondFinal` absorbs it with `502.1 L` for `526.1 L`.
 
 ## How the 4.2.2 proof is organised (reuse for 4.2.3, 4.2.4)
 

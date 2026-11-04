@@ -26,7 +26,7 @@ theorem minInv_le_delta0 (δ : ℝ) : minInv c₀ (π * δ) ≤ 2 / delta0 δ :=
     refine (min_le_right _ _).trans ?_
     have hδ2 : |δ| ^ 2 = δ ^ 2 := sq_abs δ
     rw [div_le_div_iff₀ (by positivity) (by positivity), mul_pow, ← hδ2]
-    have : c₀ = 31.521 := rfl
+    have : c₀ = 32 := rfl
     rw [this]
     have h8 : 8 * |δ| ≤ |δ| ^ 2 := by nlinarith
     have hp2 : 9.8 ≤ π ^ 2 := by nlinarith
@@ -190,8 +190,9 @@ theorem typeI1_c0_term_le {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) 
   have hlog := log_le_sqrt_mul hT
   have hpi := Real.pi_gt_three
   have hc : c₀ * (1 / 2 - 2 / π ^ 2) ≤ 15.8 := by
-    have : 0 ≤ 2 / π ^ 2 := by positivity
-    have : c₀ = 31.521 := rfl
+    have : 0.1 ≤ 2 / π ^ 2 := by
+      rw [le_div_iff₀ (by positivity)]; nlinarith [Real.pi_lt_d2, Real.pi_pos]
+    have : c₀ = 32 := rfl
     rw [this]; nlinarith
   have hc0 : 0 ≤ c₀ * (1 / 2 - 2 / π ^ 2) := by
     have : 2 / π ^ 2 ≤ 1 / 2 := by rw [div_le_div_iff₀ (by positivity) (by norm_num)]; nlinarith

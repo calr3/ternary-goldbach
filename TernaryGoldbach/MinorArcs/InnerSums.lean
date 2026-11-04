@@ -1,20 +1,21 @@
 import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.Helfgott.Eta2
 import TernaryGoldbach.MinorArcs.Eta2Fourier
+import TernaryGoldbach.MinorArcs.Eta2DDBound
 
 /-!
 # The inner sums of the Type I estimates [H, §4.2]
 
 * `norm_fourier_comp_affine`: `‖𝓕[h(λ· + μ)](t)‖ = λ⁻¹ ‖𝓕h(t/λ)‖`.
-* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 31.521` [H, (B.6)]. The analytic part (`|t| ≥ 655`) is
-  proved in `Eta2Fourier.lean`; `0 ≤ t ≤ 655` is the numerical axiom `eta2DD_small`.
+* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 32` ([H, (B.6)] has `31.521`), from `norm_eta2DD_le`
+  (`Eta2DDBound.lean`).
 * `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], and `norm_Todd_le`: the three
   bounds of [H, (4.36)], from [H, (2.2)] and [H, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
 * `Todd_main`: the main term [H, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
   `T_{m,∘}(α) = κ'((x/2m) η̂₂(-δ/2) + O*((m/x)(c₀/2π²)(π² - 4)))`, `κ' = e((a + k₀q)/2) = ±1`,
   by Poisson summation.
 
-Everything here except `eta2DD_small` is proved.
+Everything here is proved.
 -/
 
 open Complex MeasureTheory Real FourierTransform
@@ -57,20 +58,14 @@ namespace MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2)
 
-/-- The constant `c₀ = 31.521 ≥ |η̂₂''|_∞` [H, (B.6), §6.1]. -/
-def c₀ : ℝ := 31.521
+/-- The constant `c₀ = 32 ≥ |η̂₂''|_∞` ([H, (B.6)] has `31.521`; `norm_eta2DD_le`). -/
+def c₀ : ℝ := 32
 
 /-- `|η₂'|₁ = 8 log 2` [H, (6.1)]; it is the total variation of `η₂` (`eVariationOn_eta2`). -/
 noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
 
 theorem eta2'L1_pos : 0 < eta2'L1 := by
   unfold eta2'L1; have := Real.log_pos (by norm_num : (1 : ℝ) < 2); positivity
-
-/-- **Numerical axiom** (our computation, `scripts/rigorous/eta2_fourier_rig.py`, ball arithmetic;
-maximum `31.52065` at `t ≈ 17.415`): [H, (B.6)] on `0 ≤ t ≤ 655`, in the explicit form
-`eta2DD t = 16 e(−t/2) − 16 e(−t/4) − 4 e(−t) + 4 ∫_{1/4}^{1/2} e(−ut)/u² du − 4 ∫_{1/2}^1 e(−ut)/u² du`,
-which equals `(2πt)² η̂₂(t)` (`eta2DD_eq`). -/
-axiom eta2DD_small {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 655) : ‖eta2DD t‖ ≤ 31.521
 
 theorem norm_fourier_eta2_neg (t : ℝ) :
     ‖𝓕 (fun u => (eta2 u : ℂ)) (-t)‖ = ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ := by
@@ -80,9 +75,8 @@ theorem norm_fourier_eta2_neg (t : ℝ) :
     funext v; rw [map_mul, conj_e, Complex.conj_ofReal, mul_neg, neg_neg]
   rw [this, integral_conj, Complex.norm_conj]
 
-/-- **[H, Lemma B.1.2, (B.6)]**: `|η̂₂''|_∞ ≤ 31.521`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
-(`η̂''(t) = (2πit)² η̂(t)`). For `|t| ≥ 655` this is `norm_eta2DD_large`; for `|t| ≤ 655` it is the
-computation `eta2DD_small`. -/
+/-- **[H, Lemma B.1.2, (B.6)] with `32`**: `|η̂₂''|_∞ ≤ 32`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
+(`η̂''(t) = (2πit)² η̂(t)`), from `norm_eta2DD_le`. -/
 theorem eta2_fourier_bound' (t : ℝ) :
     (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ ≤ c₀ := by
   wlog ht : 0 ≤ t generalizing t
@@ -96,9 +90,7 @@ theorem eta2_fourier_bound' (t : ℝ) :
     rw [show ((2 * π * t) ^ 2 : ℂ) = (((2 * π * t) ^ 2 : ℝ) : ℂ) by push_cast; ring,
       Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
   rw [hn]; unfold c₀
-  rcases le_or_gt t 655 with h | h
-  · exact eta2DD_small ht h
-  · exact norm_eta2DD_large (by rw [abs_of_pos hpos]; linarith)
+  exact norm_eta2DD_le ht
 
 /-- `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], with `n = 2r + 1`. -/
 noncomputable def Todd (α x : ℝ) (m : ℕ) : ℂ :=

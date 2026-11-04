@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.LinftyLevels
 import TernaryGoldbach.Helfgott.SupNorms
 
 /-!
-# The base gap: `|S_{η_*}(α, x)| ≤ 0.012 y` on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`
+# The base gap: `|S_{η_*}(α, x)| ≤ 0.0121 y` on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`
 
 * `sum_noncoprime_le`: `Σ_{(n,q) > 1} Λ(n) |η(n/y)| ≤ 6.2 K log q + 1` if `y² ≤ 2^K`
   (prime powers `n ≤ y²` with `(n, q) > 1` divide `q^K`, and `Σ_{d ∣ m} Λ(d) = log m`; the tail
@@ -167,7 +167,7 @@ theorem Fr_300000_le : Fr 300000 ≤ 5.53 := by
     mul_le_mul hg h3 hl0.le (by norm_num)
   norm_num at *; linarith
 
-theorem fourier_const_le : c₀ * (√(π / (1 / 2)) / 2) / (2 * π) ^ 2 ≤ 1.0007 := by
+theorem fourier_const_le : c₀ * (√(π / (1 / 2)) / 2) / (2 * π) ^ 2 ≤ 1.016 := by
   have hpi1 := Real.pi_gt_d6
   have hpi2 := Real.pi_lt_d6
   have hs : √(π / (1 / 2)) ≤ 2.50664 := by
@@ -237,10 +237,10 @@ theorem S_etaStar_eq_expTsum {x : ℝ} (hx : 0 < x) (α : ℝ) :
     congr 3; field_simp
 
 set_option maxHeartbeats 1000000 in
-/-- **The base gap**: on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, `|S_{η_*}(α, x)| ≤ 0.012 y`
+/-- **The base gap**: on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, `|S_{η_*}(α, x)| ≤ 0.0121 y`
 (from [H, Cor 7.1.3]). -/
 theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majorArcs 8 r₀ (x / κ))
-    (h2 : α ∉ majorArcs 8 r₀ x) : ‖S etaStar x α‖ ≤ 0.012 * (x / κ) := by
+    (h2 : α ∉ majorArcs 8 r₀ x) : ‖S etaStar x α‖ ≤ 0.0121 * (x / κ) := by
   have hκ : (κ : ℝ) = 49 := rfl
   have hr₀ : (r₀ : ℝ) = 150000 := rfl
   have hx0 : 0 < x := by linarith
@@ -327,7 +327,7 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
   have hδpos : 0 < |δ| := lt_of_lt_of_le (by positivity) hδ0
   have hδne : -δ ≠ 0 := by
     intro h; rw [neg_eq_zero] at h; rw [h, abs_zero] at hδpos; exact lt_irrefl 0 hδpos
-  have hM : ‖𝓕 (fun u => (etaU u : ℂ)) (-δ) * (y : ℂ)‖ ≤ 1.0007 / δ ^ 2 * y := by
+  have hM : ‖𝓕 (fun u => (etaU u : ℂ)) (-δ) * (y : ℂ)‖ ≤ 1.016 / δ ^ 2 * y := by
     rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hy0]
     refine mul_le_mul_of_nonneg_right ?_ hy0.le
     refine (norm_fourier_etaU_le hδne).trans ?_
@@ -344,17 +344,17 @@ theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majo
     unfold Fr at h
     linarith
   have htot : (0:ℝ) < q.totient := by exact_mod_cast Nat.totient_pos.2 (by omega)
-  have hMφ : ‖𝓕 (fun u => (etaU u : ℂ)) (-δ) * (y : ℂ)‖ / q.totient ≤ 0.01108 * y := by
+  have hMφ : ‖𝓕 (fun u => (etaU u : ℂ)) (-δ) * (y : ℂ)‖ / q.totient ≤ 0.01125 * y := by
     have hδsq : (600000 / (49 * q)) ^ 2 ≤ δ ^ 2 := by
       rw [← sq_abs δ]; exact pow_le_pow_left₀ (by positivity) hδ0 2
-    have h1 : 1.0007 / δ ^ 2 ≤ 1.0007 / (600000 / (49 * q)) ^ 2 :=
+    have h1 : 1.016 / δ ^ 2 ≤ 1.016 / (600000 / (49 * q)) ^ 2 :=
       div_le_div_of_nonneg_left (by norm_num) (by positivity) hδsq
     have h2 : ‖𝓕 (fun u => (etaU u : ℂ)) (-δ) * (y : ℂ)‖ / q.totient ≤
-        1.0007 / (600000 / (49 * q)) ^ 2 * y / q.totient :=
+        1.016 / (600000 / (49 * q)) ^ 2 * y / q.totient :=
       div_le_div_of_nonneg_right (hM.trans (mul_le_mul_of_nonneg_right h1 hy0.le)) htot.le
     refine h2.trans ?_
-    have e : 1.0007 / (600000 / (49 * q)) ^ 2 * y / q.totient =
-        1.0007 * 2401 / 3.6e11 * y * q * (q / q.totient) := by field_simp; ring
+    have e : 1.016 / (600000 / (49 * q)) ^ 2 * y / q.totient =
+        1.016 * 2401 / 3.6e11 * y * q * (q / q.totient) := by field_simp; ring
     rw [e]
     have : (q : ℝ) * (q / q.totient) ≤ 300000 * 5.53 :=
       mul_le_mul hq3 hφ.le (by positivity) (by norm_num)

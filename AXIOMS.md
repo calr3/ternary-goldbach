@@ -1,7 +1,7 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 7 further axioms (`#print axioms`): 2 finite computations of our own, 
+`Quot.sound`) and on 6 further axioms (`#print axioms`): 1 finite computation of our own
 and 5 published results. Each axiom has been checked:
 
 * our computations against their scripts: range, edge cases, the exact Lean definitions involved,
@@ -11,11 +11,12 @@ and 5 published results. Each axiom has been checked:
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Our own computations (2)
+## Our own computation (1)
 
-Each computation has an independent rigorous check in `scripts/rigorous/` (see its README):
-`eta2_fourier_rig.py` (Arb ball arithmetic) and `p1224_rig.c` (interval arithmetic with directed
-rounding).
+The computation has an independent rigorous check in `scripts/rigorous/` (see its README):
+`p1224_rig.c` (interval arithmetic with directed rounding). The former second axiom,
+`eta2DD_small` ([H, (B.6)] for `0 ≤ t ≤ 655` with `31.521`), is now a theorem with `32`
+(`MinorArcs/Eta2DDBound.lean`); `eta2_fourier_rig.py` remains as a check of the true maximum.
 
 A check passes only if it holds for the whole interval. All pass; the reference output is
 `scripts/rigorous/output.txt`. "Also published" lists results in the literature that contain the
@@ -23,7 +24,6 @@ axiom.
 
 | Axiom | Statement | Float script | Rigorous re-check: worst case | Also published |
 |---|---|---|---|---|
-| `MinorArcs.eta2DD_small` | [H, (B.6)] on `0 ≤ t ≤ 655` in explicit form: `‖eta2DD t‖ ≤ 31.521`, `eta2DD t = (2πt)² η̂₂(t)` | — | max `31.52065207` at `t ≈ 17.4148` (`eta2_fourier_rig.py`, Arb ball arithmetic, Si/Ci closed form, Lipschitz stepping: 137334 steps) | [H, Lemma B.1.2] (interval arithmetic, `\|t\| < 655`) |
 | `MinorArcs.prop1224_check` | for `1 ≤ q < 2.2·10¹⁰` and `1 ≤ n < λ(q)`: `n` is in the range of `regionS`, or `checkC q n` ([H, (12.31)] at `R ∈ [n, n+1)`) | `p1224_check.c` (long double) | no failures; `87 972 745` explicit checks for `2 102 258` values of `q`; min margin of `checkC` `0.0236` at `q = 1` (`p1224_rig.c`, interval arithmetic: directed rounding, MPFR tables, rigorous series for `log` and `exp`) | [H]'s computation for Prop 12.2.4 covers `q < 3.3·10⁹` |
 
 The rigorous values agree with the float scripts to the digits printed.
@@ -114,7 +114,7 @@ These inputs are theorems:
 | (5.36) corrected, (5.37) | `MinorArcs/H2Bound.lean` | `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel for `n ≤ 15` |
 | Prop 12.2.4 | `MinorArcs/LSQuot1–6.lean` | (12.12) and `prop1224_check`; `regionS`, and `λ(q)⁷ ≤ (103/120)⁹ q²` for `q ≥ 2.2·10¹⁰` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
-| (B.6), (B.11) | `MinorArcs/Eta2Fourier.lean` | integration by parts for `\|t\| ≥ 655`; `eta2DD_small` below |
+| (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. (`Eta2Fourier.lean`'s bound for `\|t\| ≥ 655` is no longer used.) |
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
 | [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
@@ -147,25 +147,47 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 ## Outlook
 
-* Each remaining computation covers a range too large for the kernel as stated. A kernel check
-  handles about `10⁵` simple steps per declaration, and `Nat.primesBelow 10⁴` already runs out of
-  memory. Larger checks would need `native_decide`, which means trusting Lean's compiler.
-* `eta2DD_small` is nearly sharp: the maximum is `31.52065` against `31.521`. A weaker bound
-  (about `43.5`) has a short proof. But `c₀ = 31.521` enters the minor-arc numerics of about 15
-  files, some of them tightly; for example, `BaseGap2.fourier_const_le` needs
-  `c₀ √(2π)/(8π²) ≤ 1.0007`.
-* `ramare_moebius` (`|m(x)| ≤ 0.03/log x`, `m(x) = ∑_{n≤x} μ(n)/n`, `x ≥ 11815`) is not a
-  realistic target:
-  * Ramaré's proof (Acta Arith. 157, hal-02572812) and its improvement arXiv:2408.05969 both start
-    from bounds for `M(x) = ∑_{n≤x} μ(n)` that rest on large computations:
-    * `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El Marraki);
-    * `|M(x)| ≤ 0.571√x` for `33 ≤ x ≤ 10¹²` (Dress), or `|M(x)| ≤ √x` for `x ≤ 10¹⁶` (Hurst).
-  * Ramaré's paper also uses Pari/GP computations up to `1.8·10⁹` (its Lemma 6.3).
-  * Near `x = 10¹⁰`, `x/4345` is the operative input: the analytic bound `0.013 x/log x` is weaker
-    until `log x ≈ 56`.
-  * `|m(x)| ≤ 0.55/(log x − 0.7521)` (`Prelim/MoebiusBound.lean`) is derived from
-    `ramare_moebius`. Without the cancellation in `μ` only `|m(x)| ≤ 1` is available, far from the
-    `c/log x` that the tail of (5.31) and the Liouville bound need.
-* The other published results are large computations (binary Goldbach, RH and GRH to the heights
-  used, Büthe's bounds). From `rh_upto` alone the explicit formula gives about `√x log²x/(8π)` below
-  `10¹⁹`, 10 to 80 times Büthe's `0.94√x`, too weak for its uses in [H, §2].
+Helfgott's comments (2026-11) on the axioms, and what follows from the code:
+
+* **`buthe_psi` is stronger than needed above `10¹²`.** Its `√x`-quality is used only for
+  `n ≤ 10¹²`:
+  * `psi_lower2`, `psi_lower_all` and `psi_upper_all` switch to `theta_explicit` at `10¹⁰`;
+  * `MertensProduct` uses it on `[10⁵, 10⁹]`, `psi_mul_buthe` up to `10⁸`, and
+    `psi_sub_theta_le_buthe` at `√N ≤ 3.2·10⁹`;
+  * `nonprime_mid`, `logsq_mid`, `thetaN_ge` and `thetaN_close_small` go up to `10¹²`.
+
+  On `[10¹², 10¹⁹]`, three uses remain, and none needs `√x` quality:
+  * `theta_explicit` needs `|θ(n) − n| < n/log³n`, that is
+    `|ψ(n) − n| ≤ c √n` with `c` allowed up to `45` at `10¹²`, `296` at `10¹⁴` and `2000` at `10¹⁶`
+    (after `ψ − θ ≤ √n (1.0054 + 0.048 log n)`);
+  * `psi_bounds` needs only `ψ ≤ 1.0004 n`;
+  * `SmallCases` needs only `|θ(m) − m| ≤ 7·10¹⁶`.
+
+  So Büthe can be replaced by:
+  1. a direct computation, `|ψ(x) − x| ≤ c√x` for `x ≤ X₀`, with `c ≤ 0.94` (or the downstream
+     constants retuned). The brute-force bound up to `10¹⁴` in Chirre–Helfgott (arXiv:2512.15709, Dec.
+     2025; updated version forthcoming) is this kind of input;
+  2. our explicit formula from `rh_upto` on `[X₀, 10¹⁹]`, proved in Lean. As it stands, `psi_plateau`
+     gives `1533 √x + 2.15·10⁻¹¹ x + 4 y₀` (`y₀ = 10¹⁰`). With `y₀` lowered, that covers `x ≳ 10¹⁶`.
+     Reaching `X₀ = 10¹⁴` needs `c ≲ 296`. The zeros up to `3·10¹²` allow about
+     `(log(T/2π))²/(2π) ≈ 115`, so the loss is in our zero counting (Jensen windows). A sharp explicit
+     `N(T)` would remove it.
+
+  The axiom count stays the same. But the input becomes a sieve computation up to `10¹⁴` instead of
+  Büthe's analytic theorem up to `10¹⁹`.
+* **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
+  be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
+  arithmetic functions"). Proving it in Lean is still not realistic: every known proof rests on large
+  computations of `M(x)`:
+  * `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El Marraki);
+  * `|M(x)| ≤ 0.571√x` up to `10¹²` (Dress), or `|M(x)| ≤ √x` up to `10¹⁶` (Hurst);
+  * Ramaré's own Pari/GP check up to `1.8·10⁹`.
+* **`eta2DD_small` ([H, Lemma B.1.2]) is gone.** Following Helfgott's suggestion, it is replaced by
+  the slightly weaker `|η̂₂''|_∞ ≤ 32`, proved in Lean. The cost downstream: `√c₀` grows by
+  `1.0076`, so Theorem 3.1.1's `2.5 x/√t` becomes `2.511 x/√t`, Type I constants move in the third
+  or fourth digit, the base gap becomes `0.0121 y` (was `0.012 y`), and the worst cell of the final
+  minor-arc inequality goes from `0.96499` to `0.96534` (against `1.037`).
+* Each remaining computation covers a range too large for the kernel as stated. Larger checks would
+  need `native_decide`, which means trusting Lean's compiler.
+* The other published results are large computations: binary Goldbach, and RH and GRH to the heights
+  used.

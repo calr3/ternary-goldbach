@@ -59,7 +59,7 @@ theorem ghatY_le_num {Y M u a₁ b₁ b₂ ρ c₁ c₂ s₁ s₂ t₁ h₁ G : 
     (h6 : c₂ ≤ Real.log (Real.log M)) (hc₂ : 0 < c₂)
     (h7 : 1.7882 * c₁ + 2.50637 / c₂ ≤ s₁ ^ 2) (hs₁ : 0 ≤ s₁) (h8 : s₂ ^ 2 ≤ 2 * M) (hs₂ : 0 < s₂)
     (h9 : Y ^ (-1 / 6 : ℝ) ≤ t₁) (h10 : hfun Y ≤ h₁)
-    (hGa : 1.398 * ((((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.5) / s₂ +
+    (hGa : 1.398 * ((((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.511) / s₂ +
         ((1.7882 * c₁ + 2.50637 / c₂) * (13 / 4 * a₁ + 7.82) + 13.66 * a₁ + 37.55) / M + 3.8 * t₁) +
         17 * (670 / M) ^ 3 / 3 ≤ G)
     (hGb : 1.398 * h₁ + 17 * (670 / M) ^ 3 / 3 ≤ G) :
@@ -99,10 +99,10 @@ theorem ghatY_le_num {Y M u a₁ b₁ b₂ ρ c₁ c₂ s₁ s₂ t₁ h₁ G : 
   have hsF : √(Fr M) ≤ s₁ := by
     rw [Real.sqrt_le_left hs₁]; linarith
   have hs2M : s₂ ≤ √(2 * M) := Real.le_sqrt_of_sq_le h8
-  have hA : ((R Y (2 * M) * Real.log (2 * M) + 0.8764) * √(Fr M) + 2.5) / √(2 * M) ≤
-      (((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.5) / s₂ := by
-    have hnum : (R Y (2 * M) * Real.log (2 * M) + 0.8764) * √(Fr M) + 2.5 ≤
-        ((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.5 := by
+  have hA : ((R Y (2 * M) * Real.log (2 * M) + 0.8764) * √(Fr M) + 2.511) / √(2 * M) ≤
+      (((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.511) / s₂ := by
+    have hnum : (R Y (2 * M) * Real.log (2 * M) + 0.8764) * √(Fr M) + 2.511 ≤
+        ((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.511 := by
       have : R Y (2 * M) * Real.log (2 * M) ≤ (0.27125 * ρ + 0.41415) * a₁ :=
         mul_le_mul hR h1 hl2 (hR0.trans hR)
       have := mul_le_mul (add_le_add_right this 0.8764) hsF (Real.sqrt_nonneg _)
@@ -119,7 +119,7 @@ theorem ghatY_le_num {Y M u a₁ b₁ b₂ ρ c₁ c₂ s₁ s₂ t₁ h₁ G : 
     have := mul_le_mul hF (show 13 / 4 * Real.log (2 * M) + 7.82 ≤ 13 / 4 * a₁ + 7.82 by linarith)
       (by linarith) (by linarith [hFpos.le.trans hF])
     linarith
-  have hgx : gx Y M ≤ (((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.5) / s₂ +
+  have hgx : gx Y M ≤ (((0.27125 * ρ + 0.41415) * a₁ + 0.8764) * s₁ + 2.511) / s₂ +
       ((1.7882 * c₁ + 2.50637 / c₂) * (13 / 4 * a₁ + 7.82) + 13.66 * a₁ + 37.55) / M + 3.8 * t₁ := by
     unfold gx; linarith
   unfold ghatY

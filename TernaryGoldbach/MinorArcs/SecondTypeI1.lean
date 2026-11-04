@@ -81,7 +81,7 @@ set_option maxHeartbeats 4000000 in
 /-- (4.41) at the second parameters (`U = ⌊1225T⌋`, `q ≤ Q₀ = T²/349`). -/
 theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (q : ℝ) ≤ T ^ 2 / 349) :
     bound_4_41 (T ^ 3) q (U2 T) ≤
-      (0.0406 * Real.log T ^ 2 + 0.1408 * Real.log T + 0.0154) * T ^ 2 := by
+      (0.0407 * Real.log T ^ 2 + 0.1417 * Real.log T + 0.0155) * T ^ 2 := by
   have hT0 : 0 < T := by linarith
   set L := Real.log T with hLdef
   have hL := fifteen_six_le_log hT
@@ -114,19 +114,19 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
       have : T ^ 3 = T * T ^ 2 := by ring
       nlinarith [pow_pos hT0 2]
     linarith
-  have hsq1 : √(c₀ * c₁) ≤ 5.6145 := by
+  have hsq1 : √(c₀ * c₁) ≤ 5.657 := by
     rw [Real.sqrt_le_left (by norm_num)]
     have : c₀ = √c₀ ^ 2 := (Real.sq_sqrt (by norm_num [c₀])).symm
-    have : √c₀ ^ 2 ≤ 5.6144 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
+    have : √c₀ ^ 2 ≤ 5.6569 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
     have hc00 : (0 : ℝ) < c₀ := by norm_num [c₀]
     nlinarith
-  have hA : 2 * √(c₀ * c₁) / π ≤ 3.5745 := by rw [div_le_iff₀ (by linarith)]; nlinarith
+  have hA : 2 * √(c₀ * c₁) / π ≤ 3.6015 := by rw [div_le_iff₀ (by linarith)]; nlinarith
   have hA0 : 0 ≤ 2 * √(c₀ * c₁) / π := by positivity
   have hLT : 1225 * T * L ≤ 0.000205 * L * T ^ 2 := by
     have : 1225 * T ≤ 0.000205 * T ^ 2 := by nlinarith
     nlinarith
   -- Term a.
-  have ta : 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * T ^ 3 / U) ≤ 0.00146 * L * T ^ 2 := by
+  have ta : 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * T ^ 3 / U) ≤ 0.00148 * L * T ^ 2 := by
     have hl : Real.log (rexp 1 * T ^ 3 / U) ≤ 2 * L := by
       have h1 : rexp 1 * T ^ 3 / U ≤ T ^ 2 := by
         rw [div_le_iff₀ hU0]
@@ -142,8 +142,8 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
         rw [this]; nlinarith [pow_pos hT0 2]
       nlinarith [pow_pos hT0 3])
     calc 2 * √(c₀ * c₁) / π * U * Real.log (rexp 1 * T ^ 3 / U)
-        ≤ 3.5745 * (1225 * T) * (2 * L) := by gcongr
-      _ ≤ 0.00146 * L * T ^ 2 := by nlinarith
+        ≤ 3.6015 * (1225 * T) * (2 * L) := by gcongr
+      _ ≤ 0.00148 * L * T ^ 2 := by nlinarith
   -- Term b, via `logPlus z / z ≤ 0.368`.
   have tb : 3 * c₁ / 2 * (T ^ 3 / q) * logPlus (U / (c₂ * T ^ 3 / q)) * Real.log (q / c₂) ≤
       0.00034 * L * T ^ 2 := by
@@ -163,17 +163,17 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
     rw [e]
     calc 3 * c₁ / 2 * (U / c₂ / z) * logPlus z * Real.log (q / c₂)
         = 3 * c₁ / 2 * (U / c₂) * (logPlus z / z) * Real.log (q / c₂) := by field_simp
-      _ ≤ 3 * 1.000001 / 2 * (1225 * T / 0.67) * 0.368 * (2 * L) := by
+      _ ≤ 3 * 1.000001 / 2 * (1225 * T / 0.6664) * 0.368 * (2 * L) := by
           gcongr
       _ ≤ 0.00034 * L * T ^ 2 := by
-          have h1 : 1225 * T / 0.67 ≤ 1828.4 * T := by rw [div_le_iff₀ (by norm_num)]; nlinarith
-          have h2 : 2018.6 * T ≤ 0.00034 * T ^ 2 := by nlinarith
+          have h1 : 1225 * T / 0.6664 ≤ 1838.3 * T := by rw [div_le_iff₀ (by norm_num)]; nlinarith
+          have h2 : 2029.7 * T ≤ 0.00034 * T ^ 2 := by nlinarith
           have hL0 : 0 ≤ L := by linarith
           nlinarith [mul_le_mul_of_nonneg_right h1 hL0, mul_le_mul_of_nonneg_right h2 hL0]
   -- Term c.
   have tc : (2 * eta2'L1 / π * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * T ^ 3))) *
       Real.log (T ^ 3) + 2 * √(c₀ * c₁) / π * (√3 + 1 / 2 * logPlus (U / (q / 2))) *
-        Real.log (q / c₂)) * q ≤ (0.04059 * L ^ 2 + 0.11542 * L) * T ^ 2 := by
+        Real.log (q / c₂)) * q ≤ (0.04067 * L ^ 2 + 0.11629 * L) * T ^ 2 := by
     have hmax : max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * T ^ 3))) ≤ L := by
       refine max_le (by linarith) ?_
       have he3 : rexp 3 ≤ 20.1 := by
@@ -185,8 +185,8 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
         have hq2 : (q : ℝ) ^ 2 ≤ T ^ 4 / 121801 := by
           have : (q : ℝ) * 349 ≤ T ^ 2 := by rwa [le_div_iff₀ (by norm_num)] at hqQ
           rw [le_div_iff₀ (by norm_num)]; nlinarith
-        have : c₀ * rexp 3 * q ^ 2 ≤ 31.521 * 20.1 * (T ^ 4 / 121801) := by
-          have : c₀ = 31.521 := rfl
+        have : c₀ * rexp 3 * q ^ 2 ≤ 32 * 20.1 * (T ^ 4 / 121801) := by
+          have : c₀ = 32 := rfl
           rw [this]; gcongr
         have : (5.5 : ℝ) ≤ eta2'L1 := by unfold eta2'L1; have := Real.log_two_gt_d9; linarith
         have : T * (4 * π * eta2'L1 * T ^ 3) ≥ T * (4 * 3.1415 * 5.5 * T ^ 3) := by gcongr
@@ -223,51 +223,51 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
     calc (2 * eta2'L1 / π * max 1 (Real.log (c₀ * rexp 3 * q ^ 2 / (4 * π * eta2'L1 * T ^ 3))) *
           (3 * L) + 2 * √(c₀ * c₁) / π * (√3 + 1 / 2 * logPlus (U / (q / 2))) *
             Real.log (q / c₂)) * q
-        ≤ (3.5304 * L * (3 * L) + 3.5745 * (1.7321 + 1 / 2 * (L + 7.8039)) * (2 * L)) *
+        ≤ (3.5304 * L * (3 * L) + 3.6015 * (1.7321 + 1 / 2 * (L + 7.8039)) * (2 * L)) *
             (T ^ 2 / 349) := by
           have : 0 ≤ logPlus (U / (q / 2)) := logPlus_nonneg _
           gcongr
       _ ≤ _ := by nlinarith [sq_nonneg T, sq_nonneg L]
   -- Terms d, e.
-  have hlx2 : Real.log (2 * T ^ 3 / c₂) ≤ 3 * L + 1.094 := by
-    have h1 : 2 * T ^ 3 / c₂ ≤ 2.9851 * T ^ 3 := by
+  have hlx2 : Real.log (2 * T ^ 3 / c₂) ≤ 3 * L + 1.1 := by
+    have h1 : 2 * T ^ 3 / c₂ ≤ 3.0013 * T ^ 3 := by
       rw [div_le_iff₀ (by linarith)]; nlinarith [pow_pos hT0 3]
     have := Real.log_le_log (by positivity) h1
     rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow] at this
-    have h2 := log_le_num (z := 2.9851) 1 0.094 (by norm_num) (by norm_num) (by norm_num [taylor6])
+    have h2 := log_le_num (z := 3.0013) 1 0.1 (by norm_num) (by norm_num) (by norm_num [taylor6])
     norm_num at h2; push_cast at this; linarith
-  have hsx : √(2 * T ^ 3 / c₂) ≤ 1.7278 * (T * √T) := by
+  have hsx : √(2 * T ^ 3 / c₂) ≤ 1.7325 * (T * √T) := by
     rw [Real.sqrt_le_left (by positivity), mul_pow, mul_pow, sq (√T), hss, div_le_iff₀ (by linarith)]
     nlinarith [pow_pos hT0 3]
   have td : 3 * c₁ / 2 * √(2 * T ^ 3 / c₂) * Real.log (2 * T ^ 3 / c₂) ≤
-      (0.003175 * L + 0.001158) * T ^ 2 := by
+      (0.003184 * L + 0.001168) * T ^ 2 := by
     have hl0 : 0 ≤ Real.log (2 * T ^ 3 / c₂) := Real.log_nonneg (by
       rw [le_div_iff₀ (by linarith)]; nlinarith [pow_pos hT0 3])
     calc 3 * c₁ / 2 * √(2 * T ^ 3 / c₂) * Real.log (2 * T ^ 3 / c₂)
-        ≤ 3 * 1.000001 / 2 * (1.7278 * (T * √T)) * (3 * L + 1.094) := by gcongr
+        ≤ 3 * 1.000001 / 2 * (1.7325 * (T * √T)) * (3 * L + 1.1) := by gcongr
       _ ≤ _ := by
           have : T * √T * 2449 ≤ T ^ 2 := by nlinarith
           nlinarith
-  have hc232 : c₂ ^ (3 / 2 : ℝ) ≤ 0.5509 := by
+  have hc232 : c₂ ^ (3 / 2 : ℝ) ≤ 0.5443 := by
     rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add (by linarith), Real.rpow_one,
       ← Real.sqrt_eq_rpow]
-    have : √c₂ ≤ 0.81976 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
+    have : √c₂ ≤ 0.8165 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
     nlinarith [Real.sqrt_nonneg c₂]
-  have hlx3 : Real.log (2 * rexp 1 * T ^ 3 / c₂) ≤ 3 * L + 2.094 := by
-    have h1 : 2 * rexp 1 * T ^ 3 / c₂ ≤ 8.1145 * T ^ 3 := by
+  have hlx3 : Real.log (2 * rexp 1 * T ^ 3 / c₂) ≤ 3 * L + 2.1 := by
+    have h1 : 2 * rexp 1 * T ^ 3 / c₂ ≤ 8.159 * T ^ 3 := by
       rw [div_le_iff₀ (by linarith)]; nlinarith [pow_pos hT0 3]
     have := Real.log_le_log (by positivity) h1
     rw [Real.log_mul (by norm_num) (by positivity), Real.log_pow] at this
-    have h2 := log_le_num (z := 8.1145) 2 0.094 (by norm_num) (by norm_num) (by norm_num [taylor6])
+    have h2 := log_le_num (z := 8.159) 2 0.1 (by norm_num) (by norm_num) (by norm_num [taylor6])
     norm_num at h2; push_cast at this; linarith
   have te : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * T ^ 3) * Real.log (2 * rexp 1 * T ^ 3 / c₂) ≤
-      (0.0204 * L + 0.0142) * T ^ 2 := by
+      (0.0204 * L + 0.0143) * T ^ 2 := by
     have hl0 : 0 ≤ Real.log (2 * rexp 1 * T ^ 3 / c₂) := Real.log_nonneg (by
       rw [le_div_iff₀ (by linarith)]; nlinarith [pow_pos hT0 3])
     have hsx2 : √(2 * T ^ 3) ≤ 1.41422 * (T * √T) := by
       rw [Real.sqrt_le_left (by positivity), mul_pow, mul_pow, sq (√T), hss]; nlinarith [pow_pos hT0 3]
-    have hk : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 11.74 := by
-      have : c₀ = 31.521 := rfl
+    have hk : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 11.77 := by
+      have : c₀ = 32 := rfl
       rw [this, div_le_iff₀ (by positivity)]
       have : 0 ≤ c₂ ^ (3 / 2 : ℝ) := by positivity
       nlinarith
@@ -275,7 +275,7 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
       have : (0 : ℝ) < c₀ := by norm_num [c₀]
       positivity
     calc 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * T ^ 3) * Real.log (2 * rexp 1 * T ^ 3 / c₂)
-        ≤ 11.74 * (1.41422 * (T * √T)) * (3 * L + 2.094) := by gcongr
+        ≤ 11.77 * (1.41422 * (T * √T)) * (3 * L + 2.1) := by gcongr
       _ ≤ _ := by
           have : T * √T * 2449 ≤ T ^ 2 := by nlinarith
           nlinarith
@@ -308,11 +308,11 @@ theorem logFB_nonneg (δ : ℝ) : 0 ≤ logFourierBound δ := by
   · exact le_min hl4 (by positivity)
 
 set_option maxHeartbeats 4000000 in
-/-- **`S_{I,1}` at the second parameters**: `≤ (0.0406 L² + 14.1 L + 15.7) T²`. -/
+/-- **`S_{I,1}` at the second parameters**: `≤ (0.0407 L² + 14.1 L + 15.7) T²`. -/
 theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :
     ‖typeILog α (T ^ 3) (U2 T)‖ ≤
-      (0.0406 * Real.log T ^ 2 + 14.1 * Real.log T + 15.7) * T ^ 2 := by
+      (0.0407 * Real.log T ^ 2 + 14.1 * Real.log T + 15.7) * T ^ 2 := by
   have hT0 : 0 < T := by linarith
   set L := Real.log T with hLdef
   have hL := fifteen_six_le_log hT
@@ -383,8 +383,9 @@ theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have tC : c₀ * (1 / 2 - 2 / π ^ 2) * ((U2 T : ℝ) ^ 2 / (4 * q * T ^ 3) *
       Real.log (rexp (1 / 2) * T ^ 3 / U2 T) + 1 / rexp 1) ≤ 0.001 * L * T ^ 2 := by
     have hk : c₀ * (1 / 2 - 2 / π ^ 2) ≤ 15.761 := by
-      have h0 : 0 ≤ 2 / π ^ 2 := by positivity
-      have hc : c₀ = 31.521 := rfl
+      have h0 : 0.1 ≤ 2 / π ^ 2 := by
+        rw [le_div_iff₀ (by positivity)]; nlinarith [Real.pi_lt_d2, Real.pi_pos]
+      have hc : c₀ = 32 := rfl
       rw [hc]; nlinarith
     have hk0 : 0 ≤ c₀ * (1 / 2 - 2 / π ^ 2) :=
       mul_nonneg (by norm_num [c₀]) (by linarith [pi_two_div_sq_le])
@@ -485,12 +486,12 @@ theorem b450_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
         linarith
       exact mul_le_mul hxm h2 hlV0 (by positivity)
   -- Second term: negligible.
-  have hk : (1 / 4 - 1 / π ^ 2) * c₀ ≤ 4.6876 := by
+  have hk : (1 / 4 - 1 / π ^ 2) * c₀ ≤ 4.7584 := by
     have : 0.1013 ≤ 1 / π ^ 2 := by
       have h := Real.pi_lt_d4
       have h2 : π ^ 2 < 3.1416 ^ 2 := pow_lt_pow_left₀ h Real.pi_pos.le (by norm_num)
       rw [le_div_iff₀ (by positivity)]; nlinarith
-    have : c₀ = 31.521 := rfl
+    have : c₀ = 32 := rfl
     nlinarith
   have hk0 : 0 ≤ (1 / 4 - 1 / π ^ 2) * c₀ := by
     have : 1 / π ^ 2 ≤ 1 / 4 := by
@@ -533,14 +534,14 @@ theorem b450_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     unfold c₄; positivity
   have t2 : (1 / 4 - 1 / π ^ 2) * c₀ * (((U2 T : ℝ) * V2 T) ^ 2 * Real.log (V2 T) / (2 * q * T ^ 3) +
       3 * c₄ / 2 * ((U2 T : ℝ) * V2 T ^ 2 / T ^ 3) +
-      3 / 2 * (((U2 T : ℝ) + 1) ^ 2 * V2 T / (2 * T ^ 3) * Real.log q)) ≤ 8.67 * T ^ 2 + 0.07 * L * T ^ 2 := by
-    have h1 : 83368.1 * T * L + 213 + 750400 * L ≤ 0.0149 * L * T ^ 2 + 1.84 * T ^ 2 := by
+      3 / 2 * (((U2 T : ℝ) + 1) ^ 2 * V2 T / (2 * T ^ 3) * Real.log q)) ≤ 0.0001 * T ^ 2 + 0.07 * L * T ^ 2 := by
+    have h1 : 83368.1 * T * L + 213 + 750400 * L ≤ 0.0141 * L * T ^ 2 + 0.00001 * T ^ 2 := by
       have : 83368.1 * T ≤ 0.0139 * T ^ 2 := by nlinarith
-      have : 750400 ≤ 0.001 * T ^ 2 := by nlinarith
-      have : 213 ≤ 1.84 * T ^ 2 := by nlinarith
+      have : 750400 ≤ 0.0002 * T ^ 2 := by nlinarith
+      have : 213 ≤ 0.00001 * T ^ 2 := by nlinarith
       have hL0 : 0 ≤ L := by linarith
       nlinarith
-    have h2 := mul_le_mul hk (show _ ≤ 0.0149 * L * T ^ 2 + 1.84 * T ^ 2 by linarith) s0 (by norm_num)
+    have h2 := mul_le_mul hk (show _ ≤ 0.0141 * L * T ^ 2 + 0.00001 * T ^ 2 by linarith) s0 (by norm_num)
     have hL0 : 0 ≤ L := by linarith
     nlinarith [mul_nonneg hL0 (sq_nonneg T), sq_nonneg T]
   have hL0 : 0 ≤ L := by linarith

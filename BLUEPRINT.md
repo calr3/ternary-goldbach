@@ -45,7 +45,7 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
      │   │    §4.2: Lemma 4.2.2 ✅ MinorArcs/TypeIProof.lean; Lemma 4.2.3 ✅ MinorArcs/TypeILogProof.lean
      │   │          ((4.40) corrected; unused (4.42) omitted); Lemma 4.2.4 ✅ MinorArcs/TypeI2Rest.lean
      │   │          ((4.50)–(4.52) corrected, see NOTES); (2.12), (2.15) ✅ (`theta_explicit` + finite checks); (2.20) ✅;
-     │   │    trusted (App. B): |η̂₂''|_∞ ≤ 31.521, |η̂_(ρ)''|_∞ ≤ 31.521 log ρ]
+     │   │    App. B: |η̂₂''|_∞ ≤ 32 ✅ MinorArcs/Eta2DDBound.lean (kernel grids; [H] has 31.521), |η̂_(ρ)''|_∞ ≤ 32 log ρ ✅]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2), sharp large
      │   │    sieves ✅ (Prelim/LargeSieveMV.lean); Montgomery's inequality, (5.41) proved;

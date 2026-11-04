@@ -116,17 +116,17 @@ theorem ghatY_le_asym {y n : ℝ} (hy : 1e100 ≤ y) (hn : 8e16 ≤ n) (hny : n 
       nlinarith)
     exact R_nonneg (by linarith) (by linarith)
   have hl2n0 : 0 ≤ Real.log (2 * n) := Real.log_nonneg (by linarith)
-  have hA : (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.5 ≤ 22 * t ^ 3 := by
+  have hA : (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 ≤ 22 * t ^ 3 := by
     have h1 : R y (2 * n) * Real.log (2 * n) ≤ 0.6628 * (8.73 * t ^ 2) :=
       mul_le_mul hR hlog2n hl2n0 (by norm_num)
     have h2 := mul_le_mul (add_le_add_right h1 0.8764) hsF (Real.sqrt_nonneg _) (by positivity)
     nlinarith [pow_pos ht0 3]
-  have hA' : ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.5) / √(2 * n) ≤
+  have hA' : ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511) / √(2 * n) ≤
       1.415 * (t ^ 4)⁻¹ := by
     have hpos : 0 < 1.414 * t ^ 8 := by positivity
-    have hnum0 : 0 ≤ (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.5 := by
+    have hnum0 : 0 ≤ (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 := by
       have := mul_nonneg hR0 hl2n0; positivity
-    calc ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.5) / √(2 * n)
+    calc ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511) / √(2 * n)
         ≤ 22 * t ^ 3 / (1.414 * t ^ 8) := div_le_div₀ (by positivity) hA hpos hs2n
       _ ≤ 1.415 * (t ^ 4)⁻¹ := by
           rw [div_le_iff₀ hpos]
@@ -485,7 +485,7 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
   have hcl00 : 0 ≤ cL 150000 := by
     unfold cL; exact add_nonneg (Real.log_nonneg (by push_cast; norm_num)) (by norm_num)
   have hbase : ghatY y 150000 * (cL 150000 * sig x / Dx x - 8.6294) ≤
-      0.0510077 * (13.97155 * sD' - 8.6294) := by
+      0.0510358 * (13.97155 * sD' - 8.6294) := by
     have h1 : cL 150000 * sig x / Dx x ≤ 13.97155 * sD' := by
       rw [mul_div_assoc]; exact mul_le_mul hcl0 hsD' hsD0 (by norm_num)
     have h2 : (0:ℝ) ≤ 13.97155 * sD' - 8.6294 := by norm_num
@@ -538,7 +538,7 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
     nlinarith
   have hmid1 := chain8 (y := y) (by linarith)
   have hmid : ∑ n ∈ Finset.Ioo 150000 r₂, ghatY y n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) ≤
-      sD' * (0.165081609237130943 + (8.4e-4 + 1.398 * 1e-10)) := by
+      sD' * (0.165166588766518519 + (8.4e-4 + 1.398 * 1e-10)) := by
     have e : ∑ n ∈ Finset.Ioo 150000 r₂, ghatY y n * (Real.log (((n : ℝ) + 1) / n) * sig x / Dx x) =
         sig x / Dx x * (∑ n ∈ Finset.Ico (150001 : ℕ) 82861350433499550,
           ghatY y n * Real.log (((n : ℝ) + 1) / n) +
@@ -602,8 +602,8 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
       _ ≤ 2.2e-4 := by norm_num
   unfold Mexpr
   rw [← hy_def]
-  have : 0.0510077 * (13.97155 * sD' - 8.6294) +
-      sD' * (0.165081609237130943 + (8.4e-4 + 1.398 * 1e-10)) + 2.2e-4 ≤ 1.037 := by norm_num
+  have : 0.0510358 * (13.97155 * sD' - 8.6294) +
+      sD' * (0.165166588766518519 + (8.4e-4 + 1.398 * 1e-10)) + 2.2e-4 ≤ 1.037 := by norm_num
   linarith
 
 end TernaryGoldbach.MinorArcs

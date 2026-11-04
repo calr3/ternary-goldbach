@@ -7,11 +7,10 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 
 ## Status
 
-The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 7 explicitly stated
+The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 6 explicitly stated
 axioms besides Lean's standard three. They are:
-* 2 finite computations of our own, each checked in rigorous interval arithmetic
-  (`scripts/rigorous/`): (B.6) for `0 ≤ t ≤ 655`, which [H, Lemma B.1.2] also contains, and the
-  finite part of [H, Prop 12.2.4];
+* 1 finite computation of our own, checked in rigorous interval arithmetic
+  (`scripts/rigorous/`): the finite part of [H, Prop 12.2.4];
 * 5 published results: RH up to `3·10¹²`, Platt's GRH verification, binary
   Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]),
   which is checked against a later published bound (`AXIOMS.md`).
@@ -41,7 +40,6 @@ echo 'import TernaryGoldbach
  TernaryGoldbach.Explicit.rh_upto,
  TernaryGoldbach.Helfgott.binary_goldbach_input,
  TernaryGoldbach.MajorArcs.platt_verification,
- TernaryGoldbach.MinorArcs.eta2DD_small,
  TernaryGoldbach.MinorArcs.prop1224_check,
  TernaryGoldbach.Prelim.buthe_psi,
  TernaryGoldbach.Prelim.ramare_moebius]
@@ -57,10 +55,17 @@ Beyond these axioms, the trust base is the Lean kernel and Mathlib. The developm
   `RamareWalk.lean`;
 * the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`;
 * `g₂(n)` for `n ≤ 10⁴` and `T₂ ≤ 0.37273` on `[16, 10⁴)` in `MinorArcs/SmallG2.lean`, and the sums
-  behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`.
+  behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`;
+* the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`.
 
-(B.6) and (B.11) are proved by integration by parts (`MinorArcs/Eta2Fourier.lean`), except for the
-range `0 ≤ t ≤ 655` of (B.6), which is checked in ball arithmetic (`eta2DD_small`). (9.94) is
+(B.6) is proved with the constant `c₀ = 32` in place of [H]'s `31.521` (the true maximum is
+`31.52065`, at `t ≈ 17.4`), as Helfgott suggested; (B.11) follows. For `t ≥ 2`, three integrations
+by parts give `(2πt)² η̂₂(t) = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)` with `F` a polynomial, and the
+kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/25`. For `t ≤ 2`, it checks
+Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
+`Eta2DDBound.lean`; about 4 minutes in all). The cost of `32` downstream is small: Theorem 3.1.1's
+`2.5 x/√t` becomes `2.511 x/√t`, a few Type I constants move in the third or fourth digit, and the
+final minor-arc inequality's worst cell goes from `0.96499` to `0.96534` (against `1.037`). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
 [H]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
@@ -122,7 +127,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 
 | [H] | Statement | [H]'s constant | ours |
 |---|---|---|---|
-| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `3.36 x^{5/6}` | `0.8764`, `3.8 x^{5/6}` |
+| Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
+| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -145,8 +151,14 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
     approximation is redone at each scale, the levels are extended to `≈ x^{0.3}`, and the base gap
     is bounded with Cor 7.1.3.
   * Numerically this gives `≤ 0.965 x²/κ` (with `0.8764`); we state `1.0376`.
-* The proof of Prop 11.2.3 does not rescale `δ` to `wδ`. The statement still holds, with about 11% to
-  spare (`scripts/prop_11_2_3_check.py`).
+* The proof of Prop 11.2.3 does not rescale `δ` to `wδ`. This erratum is Helfgott's own: he found
+  it around 2016 and reported it to the publisher. A float check suggests the statement still holds,
+  with about 11% to spare (`scripts/prop_11_2_3_check.py`), but we do not use it. We use a variant,
+  Prop 11.2.3′ (`MinorArcs/Prop1123b.lean`). It is stated off the major arcs at scale `y = x/κ`, and it
+  takes a fresh Dirichlet approximation at each scale `wy` in (11.9). The majorant is crude:
+  `g_{wy}(min(1, w) n) ≤ max(1, 1/w) g_y(n)`. That costs a factor `∫ max(1, 1/w) φ ≤ 1.398` in `ℓ∞`,
+  which repair 3 of Thm 13.2.1 (levels up to `x^{0.3}`) absorbs. So it is a quick repair rather than a
+  clean one.
 * (4.40) states the main term of the all-`n` version. The corrected statement has `x/2q`,
   `η̂(−δ/2)` and `(m, 2q) = 1`. (4.50)–(4.52) (Lemma 4.2.4) are also corrected; see NOTES.
 * The proof of Lemma 4.1.3 has a gap. The lemma is proved by a sharper argument.
