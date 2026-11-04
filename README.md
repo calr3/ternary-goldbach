@@ -11,7 +11,7 @@ The proof is complete: there is no `sorry`, and `ternary_goldbach` depends on 5 
 axioms besides Lean's standard three, all of them published results: RH up to `3·10¹²`, Platt's
 GRH verification, binary Goldbach up to `1.45·10¹⁷`, Büthe's bound on `ψ` up to `10¹⁹`, and
 Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]), which is checked against a
-later published bound (`AXIOMS.md`). None of our own computations is assumed any more.
+later published bound (see `AXIOMS.md`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
