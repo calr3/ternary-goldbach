@@ -191,7 +191,8 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     * `theta_explicit` from `2·10⁸`, using `1.95√n < n/log³n` there;
     * the Type I hypotheses `V ≥ 2.5·10⁷` (the actual `V ≥ 2.7·10⁷`);
     * `F_large` from `2·10⁸`, with `mertens_product_small` re-run to `2·10⁸`.
-  * The unused `LambdaMuExtra` axioms were re-checked on their extended ranges.
+  * The unused `LambdaMuExtra` axioms were re-checked on their extended ranges (that file has
+    since been deleted).
 * Step 3: `mertens_small`, `prod_ap_le` and `fsq_le` proved, with the kernel doing the numerics:
   * `SmallMertens`: per-prime upper bounds on log p, per-`n` lower bounds on log n, and a rational
     check for each `n ≤ 100`.
@@ -893,7 +894,7 @@ a factor `≈ 4.6`, too much at this margin).
    `∫_{|β|<w}` to `ℝ` costs `≲ 10⁻³ x²/κ`; `x²·C_{η◦,η_*}(N/x)·1.314 ≥ 1.0521 x²/κ`. Target `(14.27)` with `1.045`.
    *Book note*: (14.17) prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip; harmless).
 Remaining `sorry`: `dusart_theta` (Props 9.3.2, 9.4.2, 9.5.1 proved since). No other `sorry`s: (2.16), (2.18) proved (`LambdaMuExtra.lean`,
-three unused finite checks), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
+three unused finite checks; since deleted), (2.24) proved for `x < 10¹⁰`, (2.21) (unused) not stated.
 *Dusart (checked 2026-10-31):* PNT+ (same Mathlib commit 56a0058) now has `PrimeNumberTheoremAnd/IEANTN`
 (Tao et al.'s explicit-ANT project). `TMEEMT.theta_improv_2` states exactly our `dusart_theta`, but it is
 derived from `Dusart.theorem_4_2`, which is `sorry` there. Their sorry-free BKLNW chain (`thm_1a_table`,

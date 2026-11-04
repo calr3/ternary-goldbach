@@ -82,8 +82,6 @@ status:
     Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 1.45·10¹⁷.
   sorry_count: 0
   sorry_in_definitions: 0
-  # `TernaryGoldbach/Prelim/LambdaMuExtra.lean` ([H, (2.16), (2.18)], not needed by the main
-  # results) declares three numerical axioms; it is not imported, so it is not part of the build.
   axioms:
     - "propext"
     - "Classical.choice"

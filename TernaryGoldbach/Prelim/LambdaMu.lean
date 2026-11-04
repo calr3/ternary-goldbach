@@ -22,7 +22,7 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
   `n ≤ 586` (`Prelim/SmallPsi.lean`), and finite computer checks stated as numerical axioms
   (`scripts/psi_checks.py`).
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
-  each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are stated but unused.  Lemma C.2.2 (`div_totient_lt`) is
+  each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are not formalized (unused).  Lemma C.2.2 (`div_totient_lt`) is
   proved in `Prelim/MertensProduct.lean`.
 
 Two remarks.
@@ -999,8 +999,8 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 
 /-! ### (2.16)–(2.18) -/
 
-/- [H, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). That
-file is not built: its finite checks are numerical axioms, and the main theorems do not need it. -/
+/- [H, (2.16)] (`∑_{n≤y} Λ(n) n < 1.03884 y²/2` for `y > 663`) is not formalized: the main theorems do
+not need it. (It follows from (2.17) and a finite check.) -/
 
 /-- `ψ(m) ≥ (1 − 1/12000) m − 0.95 √m − 11` for all `m`. -/
 theorem psi_lower_all (m : ℕ) :
@@ -1148,8 +1148,8 @@ theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
   · exact (psi_mul_buthe hN (h.trans (by norm_num))).trans_le hmono
   · exact (psi_mul_large h.le).trans_le hmono
 
-/- [H, (2.18)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.14) by summation by parts and finite
-checks), which is not built (see above). -/
+/- [H, (2.18)] (`∑_{n≤y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`) is not formalized either: the main
+theorems do not need it. (It follows from (2.14) by summation by parts and finite checks.) -/
 
 /-! ### (2.19) -/
 
