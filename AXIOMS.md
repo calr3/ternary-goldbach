@@ -165,15 +165,18 @@ Helfgott's comments (2026-11) on the axioms, and what follows from the code:
 
   So Büthe can be replaced by:
   1. a direct computation, `|ψ(x) − x| ≤ c√x` for `x ≤ X₀`, with `c ≤ 0.94` (or the downstream
-     constants retuned). The brute-force bound up to `10¹⁴` in Chirre–Helfgott (arXiv:2512.15709, Dec.
-     2025; updated version forthcoming) is this kind of input;
+     constants retuned). Chirre–Helfgott, "Optimal bounds for sums of non-negative arithmetic
+     functions" (arXiv:2512.15709, Dec. 2025), Lemma 9.2, is this kind of input: by brute force,
+     `−√2 < (ψ(x) − x)/√x ≤ 0.7906` for `1 ≤ x ≤ 10¹³` (and `≥ −0.7510` on `[10⁴, 10¹³]`). Their
+     Cor. 1.3 gives `|ψ(x) − x| ≤ πx/(3·10¹²) + 113.67√x` for all `x ≥ 1`, from RH up to
+     `3·10¹² + 1 + π/3` alone;
   2. our explicit formula from `rh_upto` on `[X₀, 10¹⁹]`, proved in Lean. As it stands, `psi_plateau`
      gives `1533 √x + 2.15·10⁻¹¹ x + 4 y₀` (`y₀ = 10¹⁰`). With `y₀` lowered, that covers `x ≳ 10¹⁶`.
      Reaching `X₀ = 10¹⁴` needs `c ≲ 296`. The zeros up to `3·10¹²` allow about
      `(log(T/2π))²/(2π) ≈ 115`, so the loss is in our zero counting (Jensen windows). A sharp explicit
      `N(T)` would remove it.
 
-  The axiom count stays the same. But the input becomes a sieve computation up to `10¹⁴` instead of
+  The axiom count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
   Büthe's analytic theorem up to `10¹⁹`.
 * **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
   be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
