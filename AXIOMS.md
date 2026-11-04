@@ -1,24 +1,11 @@
 # Axiom audit
 
 `ternary_goldbach` depends on the three standard Lean axioms (`propext`, `Classical.choice`,
-`Quot.sound`) and on 5 further axioms (`#print axioms`), all published results. Each axiom has been checked:
-
-* our computations against their scripts: range, edge cases, the exact Lean definitions involved,
-  rounding, and margin;
-* published results against the papers.
+`Quot.sound`) and on 5 further axioms (`#print axioms`), all published results. None is a
+computation of our own. Each axiom has been checked against its source.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
-
-## Our own computations (none left)
-
-The two former computation axioms are now theorems:
-* `eta2DD_small` ([H, (B.6)] for `0 ≤ t ≤ 655` with `31.521`) is proved with `32`
-  (`MinorArcs/Eta2DDBound.lean`); `scripts/rigorous/eta2_fourier_rig.py` remains as a check of the
-  true maximum `31.52065`;
-* `prop1224_check` (the finite part of [H, Prop 12.2.4]: `87 972 745` checks over `q < 2.2·10¹⁰`) is
-  replaced by a proof of Prop 12.2.4 with `c₊ = 2` (see "Proved in Lean" below);
-  `scripts/rigorous/p1224_rig.c` remains as the record of the old check.
 
 ## Published results (5)
 
@@ -29,7 +16,7 @@ Acta Arith. 157 paper, for which the later papers and the float check below stan
 |---|---|---|---|
 | `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The axiom also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
-| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 1.45·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked" (we earlier cited `4·10¹⁷` from the project page). `SmallCases.lean` needs only `1.45·10¹⁷`, inside the double-checked range |
+| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 1.45·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` needs only `1.45·10¹⁷`, inside the double-checked range |
 | `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
@@ -37,8 +24,8 @@ The axioms are stated as in the papers or weaker. `ramare_moebius` is used for t
 behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
 `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_psi` and `rh_upto` (through
 `Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 1.45·10¹⁷, n − 4]` for
-`1.45·10¹⁷ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`). This replaces the Helfgott–Platt prime ladder
-(arXiv:1305.3062), formerly the axiom `prime_ladder_input`.
+`1.45·10¹⁷ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), in place of the Helfgott–Platt prime ladder
+(arXiv:1305.3062).
 
 ## Errors found in the sources
 
@@ -100,7 +87,7 @@ These inputs are theorems:
 | (5.36) corrected, (5.37) | `MinorArcs/H2Bound.lean` | `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel for `n ≤ 15` |
 | Prop 12.2.4 with `c₊ = 2` (for [H]'s `1.36`) | `MinorArcs/LSQuot1–9.lean`, `LSQuotRed.lean`, `LSQuot8g.lean` | `q ≥ 2.2·10¹⁰`: [H]'s argument, (12.12), `regionS` and `λ(q)⁷ ≤ (103/120)⁹ q²`. `q < 2.2·10¹⁰`: with `R ∈ [n, n+1)` it suffices that `Φ(q, n) ≤ 0`; removing a prime `p ≥ 17` from `q` keeps `Φ ≤ 0` (`G_{q'}(n) = G_{q'p}(n) + G_{q'p}(n/p)/(p−1)`, `(q/φ(q)) G_q(x) ≥ G(x) ≥ log x`), which reduces `n ≥ 4` to the 64 divisors of `30030` (kernel walks over `r < 2600`, Ramaré beyond); `n ≤ 3` by an exchange argument with `log sq ≥ log(10⁵/(n+1))` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
-| (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. (`Eta2Fourier.lean`'s bound for `\|t\| ≥ 655` is no longer used.) |
+| (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. |
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
 | [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
@@ -130,10 +117,14 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
 | `MinorArcs/SmallG2.lean` | `g₂(n)` for `n ≤ 10⁴` in fixed point (a trie of the sums `A_d(n)`); `T₂ ≤ 0.37273` on `[16, 10⁴)`; `∫₁^{10⁴} g₂/y`, `∫₁^{10⁴} \|g₂\|` | 54 s |
 | `MinorArcs/G2TailNum.lean` | `∫_k^∞ m(⌊t⌋)²/t` for `k ≤ 10⁴` (from `m(j)`, `j < 11815`), and the sum over `d ≤ 10⁴`, `a ≤ 10⁴/d` of the `g₂` tail bound | 82 s |
+| `MinorArcs/Eta2DDBound.lean` | (B.6) with `32`: bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` (two grids) and of the Taylor bound on `[0, 12.6]` | about 4 min |
+| `MinorArcs/LSQuotRed.lean` | `H_n ≤ G(n)` for `n ≤ 199` (so `G(x) ≥ log x`) | seconds |
+| `MinorArcs/LSQuot8.lean`, `LSQuot8g.lean` | Prop 12.2.4: Ramaré's tail for the divisors of `30030`; for each divisor `A`, a walk over `r < 2600` (`φ` by trial division) with 82 block checks | about 90 s |
+| `MinorArcs/LSQuot9.lean` | Prop 12.2.4 for `n ≤ 3`: 72 rational checks | seconds |
 
 ## Outlook
 
-Helfgott's comments (2026-11) on the axioms, and what follows from the code:
+What could replace the remaining axioms:
 
 * **`buthe_psi` is stronger than needed above `10¹²`.** Its `√x`-quality is used only for
   `n ≤ 10¹²`:
@@ -171,13 +162,5 @@ Helfgott's comments (2026-11) on the axioms, and what follows from the code:
   * `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El Marraki);
   * `|M(x)| ≤ 0.571√x` up to `10¹²` (Dress), or `|M(x)| ≤ √x` up to `10¹⁶` (Hurst);
   * Ramaré's own Pari/GP check up to `1.8·10⁹`.
-* **`eta2DD_small` ([H, Lemma B.1.2]) is gone.** Following Helfgott's suggestion, it is replaced by
-  the slightly weaker `|η̂₂''|_∞ ≤ 32`, proved in Lean. The cost downstream: `√c₀` grows by
-  `1.0076`, so Theorem 3.1.1's `2.5 x/√t` becomes `2.511 x/√t`, Type I constants move in the third
-  or fourth digit, the base gap becomes `0.0121 y` (was `0.012 y`), and the worst cell of the final
-  minor-arc inequality goes from `0.96499` to `0.96534` (against `1.037`).
-* No computation of our own is assumed any more. The remaining axioms are published results; the
-  computational ones (RH and GRH to given heights, binary Goldbach, Büthe's `ψ`) are far beyond the
-  kernel without `native_decide`.
-* The other published results are large computations: binary Goldbach, and RH and GRH to the heights
-  used.
+* The other published results are large computations (binary Goldbach, and RH and GRH to the heights
+  used), far beyond the kernel without `native_decide`.
