@@ -6,6 +6,10 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
 # [H, (2.16)] and [H, (2.18)]
 
 From (2.17), (2.14) and finite checks (`scripts/psi_extra_check.py`).
+
+**Not imported by `TernaryGoldbach.lean`, so not built by `lake build`.** It declares three numerical
+axioms (the finite checks), and the main theorems need neither them nor (2.16), (2.18). To check
+it, run `lake env lean TernaryGoldbach/Prelim/LambdaMuExtra.lean`.
 -/
 
 open Finset ArithmeticFunction

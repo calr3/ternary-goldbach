@@ -999,7 +999,8 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 
 /-! ### (2.16)–(2.18) -/
 
-/- [H, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). -/
+/- [H, (2.16)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.17) and a finite check). That
+file is not built: its finite checks are numerical axioms, and the main theorems do not need it. -/
 
 /-- `ψ(m) ≥ (1 − 1/12000) m − 0.95 √m − 11` for all `m`. -/
 theorem psi_lower_all (m : ℕ) :
@@ -1148,7 +1149,7 @@ theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
   · exact (psi_mul_large h.le).trans_le hmono
 
 /- [H, (2.18)] is proved in `Prelim/LambdaMuExtra.lean` (from (2.14) by summation by parts and finite
-checks). -/
+checks), which is not built (see above). -/
 
 /-! ### (2.19) -/
 
@@ -1530,7 +1531,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
 /-! ### Sums of `μ` (trusted) -/
 
 /- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
-axiom `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for the same range. -/
+result `ramare_moebius` (a hypothesis, `Prelim/RamareMoebius.lean`), stated for the same range. -/
 
 /- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

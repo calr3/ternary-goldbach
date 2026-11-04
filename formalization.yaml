@@ -82,16 +82,12 @@ status:
     Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 1.45·10¹⁷.
   sorry_count: 0
   sorry_in_definitions: 0
-  # The main results use only the standard axioms. The off-path module
-  # `TernaryGoldbach/Prelim/LambdaMuExtra.lean` ([H, (2.16), (2.18)], not used by the main
-  # results) also declares three numerical axioms checked by `scripts/psi_extra_check.py`.
+  # `TernaryGoldbach/Prelim/LambdaMuExtra.lean` ([H, (2.16), (2.18)], not needed by the main
+  # results) declares three numerical axioms; it is not imported, so it is not part of the build.
   axioms:
     - "propext"
     - "Classical.choice"
     - "Quot.sound"
-    - "TernaryGoldbach.Prelim.lambda_mul_small"
-    - "TernaryGoldbach.Prelim.lambda_sqrt_small"
-    - "TernaryGoldbach.Prelim.lambda_sqrt_point"
   main_results:
     - declaration: "TernaryGoldbach.ternary_goldbach_of_hypotheses"
       file: "TernaryGoldbach/MainTheorems.lean"

@@ -803,7 +803,7 @@ set_option maxHeartbeats 1000000 in
 /-- **[H, Cor 7.1.3]** (with our constants for `q ≥ 2`): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
 `|δ| ≤ 4·3·10⁵/q`, `Σ Λ(n) χ(n) e(δn/y) η_*(n/y) = [q = 1] η̂_*(-δ) y + E y` with
 `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [H, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (numerical
-axiom), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
+hypothesis), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
 theorem cor_7_1_3' {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 300000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 4 * 300000 / q) :
     ‖Schar χ (fun n => ((Λ n * etaU (n / y) : ℝ) : ℂ)) (δ / y) -
