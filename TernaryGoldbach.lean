@@ -213,3 +213,5 @@ import TernaryGoldbach.Explicit.PsiAsymp
 import TernaryGoldbach.Explicit.PsiRange1
 import TernaryGoldbach.Explicit.PsiLarge
 import TernaryGoldbach.Explicit.PsiPlateau
+import TernaryGoldbach.Explicit.WeilTest
+import TernaryGoldbach.Explicit.WeilPrime
