@@ -574,7 +574,21 @@ Consequences:
       (`WeilArch`, `WeilPhiBound`: `Re ψ(¼+iy) ≤ ψ_N(y)` and
       `Φ(t) + Off ≤ Φ⁺(t) = P(t) + (1/π)[A_N(|t|+R) B_R + (c_N + ½ log(1+|t|)) I₀ + I₁] + Off`).
       No sorry; standard axioms only.
-      * Next: the zero-free region `|γ| < 2.39` (`Izeta` by parts once); then P8. P8 needs:
+      * Done too: `ZetaLowZeroFree` proves `zetaF(½+it) ≠ 0` for `|t| < 2.39`, and with RH every
+        nontrivial zero has `|γ| ≥ 2.39` (`abs_im_ge_of_zero`).
+      * P8 plan:
+        * (a) `‖Mg(½+iγ)‖ ≤ C ĝ(|γ|)`, with `C = e^{δ²/8}(e^{a/2} + e^{b/2})` and
+          `ĝ(u) = e^{−δ² max(u,t₀)²/2}/max(u, t₀)`, `t₀ = 2.39`. This is nonincreasing, as
+          `weil_weighted` needs.
+        * (b) Split the line zeros into `|γ| ≤ 10¹⁰` (`weil_weighted`) and `10¹⁰ < |γ| ≤ 3·10¹⁰`
+          (crude count; the Gaussian factor makes them negligible for `δ ≥ 10⁻⁹`).
+        * (c) Closed-form bounds for `∫ ĝ(max(0,|t|−R)) Φ⁺(t) dt`. Split at `R`, `R + t₀`,
+          `R + A` with `A = K₁/δ`, and use `log(u+c) ≤ log u + c/u` with `∫ log u/u = ½ log²u`. For
+          the main term use the sharp `A_N(y) ≤ −½ log π + ½ log(N+¼) + ½ log(1 + |y|/(2(N−¾)))`, not
+          `aN_le_log`, which loses `½ log(2N)`.
+        * (d) Numerical lower bound for `B_R`, upper bounds for `I₀`, `I₁`.
+        * (e) `SsumG_gsm_err` with the new line bound, and `psi_upper/lower_explicit` with `δ` chosen
+          for each `x` range. P8 needs:
         `‖Mg(½+iγ)‖ ≤ C e^{−δ²γ²/2}/max(½,|γ|)`; a lower bound `B_R ≥ c (2ℓ)^{2m}` from
         `sin x ≥ x − x³/6`, polynomial in `u`; closed forms for `I₀`, `I₁` (rays and rpow); and
         closed-form bounds for `∫ G(t) A_N(|t|+R) dt` (`log`² antiderivatives, a Gaussian tail) and
