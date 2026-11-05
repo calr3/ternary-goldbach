@@ -216,3 +216,5 @@ import TernaryGoldbach.Explicit.PsiPlateau
 import TernaryGoldbach.Explicit.WeilTest
 import TernaryGoldbach.Explicit.WeilPrime
 import TernaryGoldbach.Explicit.WeilRect
+import TernaryGoldbach.Explicit.WeilSplit
+import TernaryGoldbach.Explicit.WeilLines
