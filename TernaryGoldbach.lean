@@ -225,3 +225,4 @@ import TernaryGoldbach.Explicit.WeilWeights
 import TernaryGoldbach.Explicit.WeilArch
 import TernaryGoldbach.Explicit.WeilPhiBound
 import TernaryGoldbach.Explicit.ZetaLowZeroFree
+import TernaryGoldbach.Explicit.WeilLineSum
