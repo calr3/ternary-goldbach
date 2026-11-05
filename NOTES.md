@@ -531,6 +531,26 @@ Consequences:
     * So Thm 3.1.1's constants change slightly, and the minor-arc numerics must be regenerated.
       Run the Python model first.
   * Result: 4 hypotheses (RH, Platt's GRH, binary Goldbach, Ramaré's Möbius bound).
+  * **Model check** (2026-11-05, `scripts/route_d_model.py`, on top of `prelim_sensitivity.py`).
+    `a14 = 1 + c(V)/√V` and `a17 = 1 + (10/3) c(V)/√V` at `V = ⌊9x^{1/3}/2⌋`. These are worst at
+    `V = 2.7·10⁷` (`1.00224`, `1.00747`) and below Büthe's constants from about `x = 10²⁷`.
+    | variant | model C | Lean C | worst Z (needs ≤ 1.037) |
+    |---|---|---|---|
+    | Büthe (baseline) | 0.5664 | 0.8764 | 0.9696 |
+    | route D, `V`-dependent | 0.5659 | 0.8764 | 0.9696 |
+    | route D, uniform `1.0023` / `1.0075` | 0.5692 | 0.8791 | 0.9698 |
+    | uniform, Mertens `2.50637 → 3.5` | 0.5692 | 0.8791 | 0.9948 |
+    | `V`-dependent, Mertens `→ 5` | 0.5659 | 0.8764 | 1.0308 |
+    | (earlier run) `a14 = a17 = 1.04` | | 0.9692 | 0.9768 |
+    * (2.19) keeps `½`: it is used only for `W ≥ V ≥ 2.7·10⁷`, where `1.71 c(W) √W log W ≤ 0.1534 W`.
+      Its Lean statement must then start at about `2·10⁶` instead of `117`.
+    * (5.5) at `2` changes nothing.
+    * Caveats:
+      * the second case of Thm 3.1.1 (`h2`) is scaled heuristically;
+      * the major arcs' use of the Mertens product (`F_all` in `Singular.lean`) is not modelled.
+    * The analytic side has little room at `V = 2.7·10⁷` (`scripts/rs_ideal_model.py` gives
+      `1.9·10⁻³` there, against `2.24·10⁻³`). So the Lean target should be rounder constants with
+      slack, e.g. `ψ(y) ≤ 1.003y` and `1.01 y²/2` for `y ≥ 2.7·10⁷`. The model allows up to `1.04`.
 
 ## How small can the small-case computation be? (2026-11-02)
 
