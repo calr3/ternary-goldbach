@@ -559,6 +559,15 @@ Consequences:
       * P7 weighted zero sums from windows, replacing `line_sum_leH`;
       * P8 `|ψ(x) − x| ≤ ε(x) x` with `δ` chosen per `x` on `[2.7·10⁷, 10¹⁷]`;
       * P9 rework `Prelim` and drop `ButhePsi`.
+    * **Done 2026-11-05: P1–P4.** `weil_formula` (`Explicit/WeilFormula.lean`) uses only `propext`,
+      `Classical.choice` and `Quot.sound`. Along good heights `T_k`:
+      `2π Σ_{ρ ∈ [−½,3/2]×[−T_k,T_k]} m_ρ H_{T₀}(ρ) → 2π H̃(1) + ∫ A(½ + iy) H̃(½ + iy) dy`, where
+      `H̃ = H + H(1 − ·)` and `A(s) = −½ log π + ½ψ(s/2)`. It assumes `0 < ℓ ≤ 1`, `m ≥ 2` and
+      `e^{2mℓ} < 2`.
+      * Files: `WeilTest` (P1), `WeilPrime` (P2 and line shifts), `WeilRect` (rectangle identity),
+        `WeilSplit` (`ζ'/ζ` part `= 0`, `lor²` decay, `rectInt_limit`), `WeilLines` (`J₁ = 2πH̃(1)`,
+        `J₂` moved to `ℜs = ½`), `WeilFormula` (limit).
+      * Next: P5 (`Re ψ(¼ + iy/2)` upper bound), P6, P7.
   * **Model check** (2026-11-05, `scripts/route_d_model.py`, on top of `prelim_sensitivity.py`).
     `a14 = 1 + c(V)/√V` and `a17 = 1 + (10/3) c(V)/√V` at `V = ⌊9x^{1/3}/2⌋`. These are worst at
     `V = 2.7·10⁷` (`1.00224`, `1.00747`) and below Büthe's constants from about `x = 10²⁷`.

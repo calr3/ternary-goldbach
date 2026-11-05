@@ -340,4 +340,53 @@ theorem J1_eq (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) (hm : 2 ≤ m) (T₀ : ℝ) 
   · exact absurd h1 hI
   · exact sub_eq_zero.1 h1
 
+/-! ### Integrability on the lines (for the limit) -/
+
+theorem integrable_archF_WHt (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) (hm : 2 ≤ m) (T₀ : ℝ) {c : ℝ}
+    (hc : c ∈ Icc (1 / 2 : ℝ) (3 / 2)) :
+    Integrable fun y : ℝ => archF ((c : ℂ) + y * I) * WHt ℓ m T₀ ((c : ℂ) + y * I) := by
+  set K := 4 ^ m * Real.exp (2 * m * ℓ) * (37 + 4) * (3 + 2 * |T₀|) with hK
+  have hbd : ∀ y : ℝ, ‖archF ((c : ℂ) + y * I) * WHt ℓ m T₀ ((c : ℂ) + y * I)‖ ≤ LMaj T₀ K y := by
+    intro y
+    have hσ' : |c - 1 / 2| ≤ 1 := by rw [abs_le]; constructor <;> linarith [hc.1, hc.2]
+    have hre : ((c : ℂ) + y * I).re = c := by simp
+    have ha := norm_archF_le (s := (c : ℂ) + y * I) (by rw [hre]; exact hc.1) (by rw [hre]; exact hc.2)
+    have hn := norm_line_le c y
+    rw [abs_of_nonneg (by linarith [hc.1] : (0 : ℝ) ≤ c)] at hn
+    have ha' : ‖archF ((c : ℂ) + y * I)‖ ≤ 37 + 4 * |y| := by linarith [hc.2]
+    rw [norm_mul]
+    exact (mul_le_mul_of_nonneg_right ha' (norm_nonneg _)).trans
+      (mul_norm_WHt_le hℓ0 hℓ1 hm T₀ (by norm_num) (by norm_num) hσ' y)
+  have hcont : Continuous fun y : ℝ => archF ((c : ℂ) + y * I) * WHt ℓ m T₀ ((c : ℂ) + y * I) := by
+    refine continuous_iff_continuousAt.2 fun y => ?_
+    have h1 : DifferentiableAt ℂ (fun s => archF s * WHt ℓ m T₀ s) ((c : ℂ) + y * I) :=
+      (differentiableAt_archF (by simp; linarith [hc.1])).mul (differentiable_WHt ℓ m T₀ _)
+    exact h1.continuousAt.comp (f := fun y : ℝ => (c : ℂ) + y * I) (by fun_prop)
+  exact (integrable_LMaj T₀ K).mono' hcont.aestronglyMeasurable (ae_of_all _ hbd)
+
+theorem integrable_WP_three_halves (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) (hm : 2 ≤ m) (T₀ : ℝ) :
+    Integrable fun y : ℝ => WP ℓ m T₀ (((3 / 2 : ℝ) : ℂ) + y * I) := by
+  have hne0 : ∀ y : ℝ, ((3 / 2 : ℝ) : ℂ) + y * I ≠ 0 := by
+    intro y h; have := congrArg Complex.re h; simp at this
+  have hne1 : ∀ y : ℝ, ((3 / 2 : ℝ) : ℂ) + y * I ≠ 1 := by
+    intro y h; have := congrArg Complex.re h; simp at this; norm_num at this
+  have hbd : ∀ y : ℝ, ‖WP ℓ m T₀ (((3 / 2 : ℝ) : ℂ) + y * I)‖ ≤
+      LMaj T₀ (4 ^ m * Real.exp (2 * m * ℓ) * 4 * (3 + 2 * |T₀|)) y := by
+    intro y
+    rw [WP_eq (hne0 y) (hne1 y), norm_mul]
+    have h0 : 1 / 2 ≤ ‖((3 / 2 : ℝ) : ℂ) + y * I‖ :=
+      le_trans (by simp; norm_num) (Complex.abs_re_le_norm _)
+    have h1 : 1 / 2 ≤ ‖((3 / 2 : ℝ) : ℂ) + y * I - 1‖ :=
+      le_trans (by simp; norm_num) (Complex.abs_re_le_norm _)
+    have := mul_norm_WHt_le hℓ0 hℓ1 hm T₀ (A := 4) (B := 0) (by norm_num) le_rfl
+      (σ := 3 / 2) (by norm_num) y
+    simp only [zero_mul, add_zero] at this
+    exact (mul_le_mul_of_nonneg_right (norm_one_div_add_le h0 h1) (norm_nonneg _)).trans this
+  have hcont : Continuous fun y : ℝ => WP ℓ m T₀ (((3 / 2 : ℝ) : ℂ) + y * I) := by
+    unfold WP WG
+    refine Continuous.mul (Continuous.div ?_ (by fun_prop) hne0)
+      (Continuous.inv₀ (by fun_prop) fun y => sub_ne_zero.2 (hne1 y))
+    exact ((differentiable_WHt ℓ m T₀).continuous.comp (by fun_prop)).mul (by fun_prop)
+  exact (integrable_LMaj T₀ _).mono' hcont.aestronglyMeasurable (ae_of_all _ hbd)
+
 end TernaryGoldbach.Explicit

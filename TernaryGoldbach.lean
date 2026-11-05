@@ -218,3 +218,4 @@ import TernaryGoldbach.Explicit.WeilPrime
 import TernaryGoldbach.Explicit.WeilRect
 import TernaryGoldbach.Explicit.WeilSplit
 import TernaryGoldbach.Explicit.WeilLines
+import TernaryGoldbach.Explicit.WeilFormula
