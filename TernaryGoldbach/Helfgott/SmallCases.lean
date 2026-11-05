@@ -2,17 +2,17 @@ import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Prelim.ThetaExplicit
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput]
-  [Fact TernaryGoldbach.ButhePsi]
 
 /-!
 # The small cases `5 < n ≤ 10²⁷` from binary Goldbach and bounds for `θ`
 
 For odd `n ≤ 4·10¹⁸ + 3`, `n = 3 + (n − 3)` and binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`,
 [OeSHP14]) applies. For odd `4·10¹⁸ + 3 < n ≤ 10²⁷` there is a
-prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, since `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for
-`1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_psi`, with `ψ − θ ≤ 2.001 log m √m`) up to `10¹⁷`, and the explicit formula
-(`psi_plateau`, from `rh_upto`) with `ψ − θ ≤ 2.001 log m √m` above. Then `n − p` is even and at most
-`4·10¹⁸`.
+prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`: `b = n − 4 ≥ 4·10¹⁸` has `θ(b) ≥ b − 1.861·10¹⁸`, and
+`a = n − 4·10¹⁸` has `θ(a) ≤ a + 1.857·10¹⁸` if `a ≥ 10¹⁷` and `θ(a) ≤ 10¹⁷ log 4` otherwise. The bounds
+`−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `10¹⁷ ≤ m ≤ 10²⁷` (`theta_bound`) come from the explicit formula
+(`psi_plateau`, from `rh_upto`) and `ψ − θ ≤ 2.001 log m √m`; `θ(m) ≤ m log 4` is elementary
+(`theta_le`). Then `n − p` is even and at most `4·10¹⁸`. Büthe's bound is not used here.
 
 This replaces the Helfgott–Platt prime ladder [HP13], whose gaps are `≤ 4·10¹⁸`. It is the route of
 [H, App. D] (RH to a height and binary Goldbach), with these bounds for `θ` in place of the
@@ -23,8 +23,7 @@ open Finset Real
 
 namespace TernaryGoldbach.Helfgott
 
-open TernaryGoldbach.Prelim (buthe_psi psi_eq_Icc theta_eq psi_sub_theta_le' theta_le_psi' psiR_nat
-  log_1e19_le)
+open TernaryGoldbach.Prelim (psi_eq_Icc theta_eq psi_sub_theta_le' theta_le_psi' psiR_nat)
 open TernaryGoldbach.Explicit (psi_plateau)
 
 /-- `θ(n) = ∑_{p ≤ n} log p`. -/
@@ -60,45 +59,26 @@ theorem log_1e27_le : Real.log (10 ^ 27 : ℝ) ≤ 63 := by
   calc (10 ^ 27 : ℝ) ≤ (2.7182818283 : ℝ) ^ 63 := by norm_num
     _ ≤ Real.exp 1 ^ 63 := pow_le_pow_left₀ (by norm_num) h1.le 63
 
-/-- **`−1.861·10¹⁸ ≤ θ(n) − n ≤ 1.857·10¹⁸` for `1423 ≤ n ≤ 10²⁷`**. -/
-theorem theta_bound {n : ℕ} (h1 : 1423 ≤ n) (h2 : n ≤ 10 ^ 27) :
+/-- **`−1.861·10¹⁸ ≤ θ(n) − n ≤ 1.857·10¹⁸` for `10¹⁷ ≤ n ≤ 10²⁷`** (`psi_plateau`). -/
+theorem theta_bound {n : ℕ} (h1 : 10 ^ 17 ≤ n) (h2 : n ≤ 10 ^ 27) :
     -1.861e18 ≤ th n - n ∧ th n - n ≤ 1.857e18 := by
-  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  rcases le_or_gt n (10 ^ 17) with h | h
-  · -- Büthe's bound for `ψ`, and `ψ − θ ≤ 2.001 log n √n`
-    have hB := abs_le.1 (buthe_psi n (by omega) h)
-    rw [← psi_eq_Icc] at hB
-    have hT : th n = theta n := by rw [theta_eq]; rfl
-    have hle := theta_le_psi' n
-    have hge := psi_sub_theta_le' (N := n) (by omega)
-    have hs : √(n : ℝ) ≤ 4e9 :=
-      sqrt_le_of_sq (by norm_num) ((Nat.cast_le.2 (h.trans (by norm_num : 10 ^ 17 ≤ 10 ^ 19))).trans_eq' (by norm_num) |>.trans (by norm_num))
-    have hl : Real.log n ≤ 43.75 :=
-      (Real.log_le_log (by exact_mod_cast (by omega : 0 < n)) (by
-        have : (n : ℝ) ≤ 10 ^ 19 := by exact_mod_cast h.trans (by norm_num)
-        norm_num at this ⊢; linarith)).trans log_1e19_le
-    have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
-    have hl0 : 0 ≤ Real.log n := Real.log_natCast_nonneg n
-    have hls : Real.log n * √(n : ℝ) ≤ 43.75 * 4e9 := mul_le_mul hl hs hs0 (by norm_num)
-    rw [hT]
-    constructor <;> nlinarith
-  · have hn19 : (1e17 : ℝ) ≤ n := by
-      have : (10 ^ 17 : ℝ) ≤ n := by exact_mod_cast h.le
-      norm_num at this ⊢; exact this
-    have hn27 : (n : ℝ) ≤ 10 ^ 27 := by exact_mod_cast h2
-    have hP := abs_le.1 (psi_plateau hn19)
-    rw [psiR_nat] at hP
-    have hT : th n = theta n := by rw [theta_eq]; rfl
-    have hle := theta_le_psi' n
-    have hge := psi_sub_theta_le' (N := n) (by omega)
-    have hs : √(n : ℝ) ≤ 3.1623e13 := sqrt_le_of_sq (by norm_num) (hn27.trans (by norm_num))
-    have hl : Real.log n ≤ 63 :=
-      (Real.log_le_log (by linarith) hn27).trans log_1e27_le
-    have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
-    have hl0 : 0 ≤ Real.log n := Real.log_natCast_nonneg n
-    have hls : Real.log n * √(n : ℝ) ≤ 63 * 3.1623e13 := mul_le_mul hl hs hs0 (by norm_num)
-    rw [hT]
-    constructor <;> nlinarith
+  have hn19 : (1e17 : ℝ) ≤ n := by
+    have : (10 ^ 17 : ℝ) ≤ n := by exact_mod_cast h1
+    norm_num at this ⊢; exact this
+  have hn27 : (n : ℝ) ≤ 10 ^ 27 := by exact_mod_cast h2
+  have hP := abs_le.1 (psi_plateau hn19)
+  rw [psiR_nat] at hP
+  have hT : th n = theta n := by rw [theta_eq]; rfl
+  have hle := theta_le_psi' n
+  have hge := psi_sub_theta_le' (N := n) (by omega)
+  have hs : √(n : ℝ) ≤ 3.1623e13 := sqrt_le_of_sq (by norm_num) (hn27.trans (by norm_num))
+  have hl : Real.log n ≤ 63 :=
+    (Real.log_le_log (by linarith) hn27).trans log_1e27_le
+  have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
+  have hl0 : 0 ≤ Real.log n := Real.log_natCast_nonneg n
+  have hls : Real.log n * √(n : ℝ) ≤ 63 * 3.1623e13 := mul_le_mul hl hs hs0 (by norm_num)
+  rw [hT]
+  constructor <;> nlinarith
 
 /-- **Ternary Goldbach for odd `5 < n ≤ 10²⁷`**. -/
 theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
@@ -115,24 +95,30 @@ theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
     set b := n - 4 with hb
     have hab : (b : ℝ) - a = 4 * 10 ^ 18 - 4 := by
       rw [ha, hb, Nat.cast_sub (by omega), Nat.cast_sub (by omega)]; push_cast; ring
-    have hb1 : 1423 ≤ b := by omega
+    have hb1 : 10 ^ 17 ≤ b := by omega
     have hb2 : b ≤ 10 ^ 27 := by omega
     have hbb := (theta_bound hb1 hb2).1
+    have hbR : (4 * 10 ^ 18 : ℝ) ≤ b := by exact_mod_cast (show 4 * 10 ^ 18 ≤ b by omega)
     have hlt : th a < th b := by
-      rcases le_or_gt 1423 a with h | h
+      rcases le_or_gt (10 ^ 17) a with h | h
       · have haa := (theta_bound h (by omega)).2
         linarith
-      · have h1 : th a ≤ th 1423 := th_mono h.le
-        have h2 := (abs_le.1 (buthe_psi 1423 (by norm_num) (by norm_num))).2
-        rw [← psi_eq_Icc] at h2
-        have hs : √((1423 : ℕ) : ℝ) ≤ 38 := sqrt_le_of_sq (by norm_num) (by norm_num)
-        have h3 : th 1423 ≤ 1500 := by
-          have hT : th 1423 = theta 1423 := by rw [theta_eq]; rfl
-          have hle := theta_le_psi' 1423
-          have e : ((1423 : ℕ) : ℝ) = 1423 := by norm_num
-          rw [e] at h2 hs
-          rw [hT]; linarith
-        have hbR : (4 * 10 ^ 18 : ℝ) ≤ b := by exact_mod_cast (show 4 * 10 ^ 18 ≤ b by omega)
+      · -- `θ(a) ≤ θ(10¹⁷) ≤ 10¹⁷ log 4`
+        have h1 : th a ≤ th (10 ^ 17) := th_mono h.le
+        have hT : th (10 ^ 17) = theta (10 ^ 17) := by rw [theta_eq]; rfl
+        have h2 := theta_le (10 ^ 17)
+        have hl4 : Real.log 4 < 1.3863 := by
+          rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
+          have := Real.log_two_lt_d9; push_cast; linarith
+        have h3 : th (10 ^ 17) ≤ 1.3863e17 := by
+          rw [hT]
+          refine h2.trans ?_
+          have e : ((10 ^ 17 : ℕ) : ℝ) = 1e17 := by norm_num
+          rw [e]
+          have := mul_le_mul_of_nonneg_left hl4.le (by norm_num : (0 : ℝ) ≤ 1e17)
+          linarith
+        have h4 : (2e18 : ℝ) ≤ th b := by linarith
+        have h5 : th a ≤ 1.3863e17 := h1.trans h3
         linarith
     obtain ⟨p, hp, hap, hpb⟩ := exists_prime_of_th_lt hlt
     have hp2 : p ≠ 2 := by omega

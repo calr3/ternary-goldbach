@@ -40,6 +40,7 @@ theorem epl_nonneg (x : ℝ) : 0 ≤ epl x := by unfold epl; split_ifs <;> norm_
 
 theorem epl_le (x : ℝ) : epl x ≤ 1.83e-9 := by unfold epl; split_ifs <;> norm_num
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi] in
 theorem theta_eq (n : ℕ) : theta n = ∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p := by
   rw [theta, sum_filter, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (by omega)]
   simp only [Nat.not_prime_zero, if_false, zero_add]
@@ -49,8 +50,10 @@ theorem theta_eq (n : ℕ) : theta n = ∑ p ∈ (Icc 1 n).filter Nat.Prime, Rea
   · exact ArithmeticFunction.vonMangoldt_apply_prime hp
   · rfl
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi] in
 theorem psiR_nat (n : ℕ) : psiR n = psi n := by unfold psiR; rw [Nat.floor_natCast]
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi] in
 /-- `ψ(N) − θ(N) ≤ 2.001 log N · √N`. -/
 theorem psi_sub_theta_le' {N : ℕ} (hN : 2 ≤ N) : psi N - theta N ≤ 2.001 * Real.log N * √(N : ℝ) := by
   classical
@@ -128,11 +131,13 @@ theorem pow_exp_anti {k : ℕ} {c L0 L : ℝ} (hc : 0 < c) (h0 : (k : ℝ) / c �
 theorem sqrt_eq_exp_half {x : ℝ} (hx : 0 < x) : √x = Real.exp (Real.log x / 2) := by
   rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos hx]; congr 1; ring
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi] in
 theorem theta_le_psi' (N : ℕ) : theta N ≤ psi N := by
   rw [theta, psi]
   refine sum_le_sum fun n _ => ?_
   split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi] in
 theorem psi_eq_Icc (n : ℕ) : psi n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
   rw [psi, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n)]
   simp [Finset.Ico_add_one_right_eq_Icc]

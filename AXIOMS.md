@@ -25,10 +25,11 @@ Acta Arith. 157 paper, for which the later papers and the float check below stan
 
 The hypotheses are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
-`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_psi` and `rh_upto` (through
-`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
+`∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `rh_upto` (through `Explicit/PsiPlateau.lean`) and
+the elementary `θ(m) ≤ m log 4` also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
 `4·10¹⁸ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), in place of the Helfgott–Platt prime ladder
-(arXiv:1305.3062).
+(arXiv:1305.3062). `buthe_psi` is used only in `Prelim/` (`LambdaMu`, `MertensProduct`,
+`ThetaExplicit`), to prove bounds that [H] quotes from [RS62], [RS75] and [RR96].
 
 ## Errors found in the sources
 
@@ -136,13 +137,12 @@ What could replace the remaining hypotheses:
   * `nonprime_mid`, `logsq_mid`, `thetaN_ge` and `thetaN_close_small` go up to `10¹²`.
 
   Since 2026-11-04, `buthe_psi` is used only up to `10¹⁷` (it was `10¹⁹`): `psi_plateau` holds from
-  `10¹⁷`, and every switch from Büthe to the explicit formula is at `10¹⁷`. On `[10¹², 10¹⁷]`, four
-  uses remain, and none needs `√x` quality:
+  `10¹⁷`, and every switch from Büthe to the explicit formula is at `10¹⁷`. On `[10¹², 10¹⁷]`, three
+  uses remain (`SmallCases` no longer uses Büthe, since 2026-11-05), and none needs `√x` quality:
   * `theta_explicit` needs `|θ(n) − n| < n/log³n`, that is
     `|ψ(n) − n| ≤ c √n` with `c` allowed up to `45` at `10¹²`, `296` at `10¹⁴` and `2000` at `10¹⁶`
     (after `ψ − θ ≤ √n (1.0054 + 0.048 log n)`);
   * `psi_bounds` needs only `ψ ≤ 1.0004 n`;
-  * `SmallCases` needs only `|θ(m) − m| ≤ 7·10¹⁶`;
   * `E1_var` (the variation of `∑ Λ(n)/n − log x`, for Mertens' product) needs `4c/√M` small; the
     budget allows a switch to the explicit formula anywhere above `10⁹`.
 
@@ -161,6 +161,18 @@ What could replace the remaining hypotheses:
 
   The hypothesis count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
   Büthe's analytic theorem up to `10¹⁷`.
+
+  **Sources available by 2014** (NOTES, "Büthe and sources available by 2014").
+  * Büthe (2015) is the only hypothesis from after 2014.
+  * The two-sided `√x` computations then available reach `10⁸` ([RS62, Thm 19], as cited by Dusart);
+    [RR96] probably reaches `10¹⁰` (not checked). [Sch76] and Platt–Trudgian (arXiv:1407.1914) give
+    only `θ(x) < x`, to `10¹¹` and `1.39·10¹⁷`.
+  * An explicit formula from RH to `3.061·10¹⁰` gives `θ(x) > x − x/log³x` only from about
+    `1.8·10¹¹` (`scripts/rs_ideal_model.py`).
+
+  So a pre-2014 replacement needs either [H]'s quoted bounds ([RS62], [RS75], [RR96]) as hypotheses,
+  or a weaker `theta_explicit` on `[X₀, 2·10¹¹]` with retuned consumers. Faber–Kadiri
+  (arXiv:1310.6374) has a 2018 corrigendum, and its small-`b` values look about twice too strong.
 * **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
   be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
   arithmetic functions"). Proving it in Lean is still not realistic: every known proof rests on large

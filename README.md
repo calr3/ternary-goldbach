@@ -104,9 +104,10 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 * **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
   * binary Goldbach up to `4·10¹⁸` ([OeSHP14]; they double-checked `3·10¹⁷`);
   * for `n > 4·10¹⁸ + 3`, a prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, from
-    `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁷`, and above
-    it `|ψ(x) − x| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
-    `3·10¹⁰`). Then `n − p` is even and at most `4·10¹⁸`.
+    `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `10¹⁷ ≤ m ≤ 10²⁷`. This comes from
+    `|ψ(x) − x| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
+    `3·10¹⁰`). Below `10¹⁷` the elementary `θ(m) ≤ m log 4` is enough. Then `n − p` is even and at
+    most `4·10¹⁸`. Büthe's bound is not used here.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [H, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:

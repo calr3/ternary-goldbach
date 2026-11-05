@@ -421,6 +421,117 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
 
+## Büthe and sources available by 2014 (2026-11-05)
+
+Question: [H] does not use Büthe (arXiv:1511.02032, 2015). Can `ButhePsi` be replaced by sources
+available by 2014, plus more formalization? It is the only hypothesis from after 2014. The others are
+[Pla12] (arXiv:1203.5712), Platt's GRH paper (arXiv:1305.3087), [OeSHP14] (online Nov. 2013) and
+Ramaré, Acta Arith. 157 (2013).
+
+**Where Büthe enters.** Only the explicit-PNT layer: `Prelim/LambdaMu`, `MertensProduct`,
+`ThetaExplicit`. It is used there to *prove* bounds that [H] *quotes*:
+* (2.12)–(2.19) and (5.5), which [H] takes from [RS62], [RS75] and [RR96];
+* (C.19), [RS62, Thm 15];
+* the PNT inputs of our own proofs of things [H] cites, e.g. (2.13) and (2.22).
+
+`Helfgott/SmallCases.lean` no longer uses it (2026-11-05). `b = n − 4 ≥ 4·10¹⁸` is in the
+`psi_plateau` range, and for `a = n − 4·10¹⁸ < 10¹⁷` the elementary `θ(a) ≤ 10¹⁷ log 4` (`theta_le`)
+is enough.
+
+**What [H] uses** (book text, §2.5):
+* (2.12), (2.13): [RS62, (3.23), (3.21)];
+* (2.14) `ψ(y) ≤ 1.0004y` for `y ≥ 2·10⁶`: the second table of [RR96, p. 423], plus a computation;
+* (2.15) [RS62, Thm 12];
+* (2.17) from [RR96] and computations below `10⁷`;
+* (2.19): [RS75, Cor. 2] plus a computation;
+* (5.5) [RS62, Thm 13]; (C.19) [RS62, Thm 15].
+
+App. D (small cases via RH) uses [RS03] and Ramaré's tables [Ramd]. App. C bounds zero sums with
+[Ros41, Lemma 17] and [RS03, Lemma 2]. [H] declines Gourdon's `10¹³` zeros as not rigorous.
+
+**Candidates available by 2014.** Statements marked "cited" were seen only as quoted in a later
+paper; AMS and Project Euclid are behind bot checks.
+* [RS62] (cited, [Dus10, p. 3]): Thm 19 gives `θ(x) > x − 2√x` for `1423 ≤ x ≤ 10⁸`. With
+  `θ(x) < x` (Thm 18) this is the only two-sided `√x` bound to `10⁸` from a source available to me.
+  Also Thm 13 (`ψ − θ < 1.42620√x`) and Thm 24 (`ψ − θ > 0.9999√x`, `121 ≤ x ≤ 10¹⁶`).
+* [Sch76, p. 360] (cited, [PT14]): `θ(x) < x` for `0 < x ≤ 10¹¹`. Whether it also gives a lower bound
+  to `10¹¹` is not confirmed.
+* [RR96]: computations of `θ(x; q, a)` to `10¹⁰`, and the table behind (2.14). Not seen.
+* [FK13] Faber–Kadiri, arXiv:1310.6374 (Oct. 2013). Table 3 uses Platt's `H = 3.061·10¹⁰`.
+  * Values for `x ≥ e^b`: `ε(20) = 5.37·10⁻⁴`, `ε(25) = 4.82·10⁻⁵`, `ε(30) = 5.67·10⁻⁶`,
+    `ε(35) = 7.45·10⁻⁷`, `ε(40) = 8.63·10⁻⁸`.
+  * There is a corrigendum, Math. Comp. 87 (2018) 1451–1455, not seen.
+  * These values are about half of the model below. Dusart's Rosser–Schoenfeld-method value at `e²⁵`,
+    `7.79·10⁻⁵`, agrees with the model. Treat FK13's small-`b` values as suspect until the
+    corrigendum is checked.
+* [Dus10] arXiv:1002.0442 (2010), Thm 5.2: `|θ(x) − x| < x/log³x` for `x ≥ 89 967 803`.
+  * It rests on Gourdon's `10¹³` zeros, and on θ computations up to `8·10¹¹` (Table 6.4).
+  * BKLNW (arXiv:2002.11068, footnote 3) says the published version [Dus18] is likely affected by an
+    error in Ramaré's zero-density theorem.
+* [PT14] arXiv:1407.1914 (July 2014): `θ(x) < x` for `2 < x < 1.39·10¹⁷`. Upper side only.
+* [Ros41] explicit `N(T)` (also quoted in [FK13, Thm 1.5]). It would let our explicit formula count
+  zeros sharply instead of by Jensen windows.
+
+**The analytic limit** (`scripts/rs_ideal_model.py`, a model, not a proof). Suppose the zero data is
+RH to `3.061·10¹⁰` and the exact zero density, and every zero term is bounded in absolute value. Then
+the best relative error for `ψ` is about:
+
+| `x` | `10⁸` | `10⁹` | `10¹⁰` | `10¹¹` | `10¹²` | `10¹³` |
+|---|---|---|---|---|---|---|
+| relative error | `1.1·10⁻³` | `4.5·10⁻⁴` | `1.8·10⁻⁴` | `6.8·10⁻⁵` | `2.5·10⁻⁵` | `9.5·10⁻⁶` |
+
+Consequences:
+* The lower half of `theta_explicit` (`θ(n) > n − n/log³n`) needs relative error below
+  `1/log³x − 1.4262/√x`. No explicit formula of this kind gives that below about `1.8·10¹¹`. Neither
+  does any pre-2014 table (FK13 aside).
+* (2.14) `ψ ≤ 1.0004y` cannot be had analytically below about `10⁹`–`10¹⁰`. [H] gets it from [RR96]'s
+  computation, and we use it from `y = 2.7·10⁷` (Type I `V ≥ 2.7·10⁷`).
+* `psi_lower_all`'s `1/12000` needs `≲ 8·10⁻⁵`, which is analytic only from about `10¹¹`.
+* Our `psi_plateau` (`1145√x + 1.82·10⁻⁹x + 4.2·10¹⁰`, fixed smoothing `δ = 7/H`, Jensen-window counts)
+  is far from this model below `10¹⁶`. Reaching the model needs three things: a smoothing width chosen
+  per `x`, a smaller `y₀`, and an explicit `N(T)`.
+
+**Routes.**
+* **(A) [H]'s route.** Replace `ButhePsi` by the bounds [H] quotes, as hypotheses:
+  * [RS62] Thms 12, 13, 15, (3.21), (3.23);
+  * [RS75] Cor. 2;
+  * the [RR96] table.
+
+  All are pre-1997. This needs the PDFs and costs about 5 more hypotheses. Every downstream use must
+  then be re-proved from these weaker forms. Our proof of (2.22), which [H] quotes from [Ramb], uses
+  `E₁` bounds from `MertensProduct`; those may need more than these forms give. `theta_explicit` would
+  remain only above `10¹⁷`, where `psi_plateau` gives it.
+* **(B) Same hypothesis count.** Replace `ButhePsi` by one computational statement: two-sided `√x`
+  up to `X₀`, from [RS62] (`X₀ = 10⁸`), [RR96] (`10¹⁰`) or [Sch76] (`10¹¹`, if it has the lower side).
+  Then:
+  * prove `[X₀, 10¹⁷]` in Lean with an explicit formula near the model;
+  * relax `theta_explicit` on `[X₀, 2·10¹¹]` and re-check its consumers (`psi_bounds`, `psi_lower_all`,
+    `psi_upper_all`, `MertensProduct`, `logsq_*`);
+  * if `X₀ < 10¹⁰`, also weaken (2.14)/(2.17), which changes Thm 3.1.1's constants and means
+    regenerating the minor-arc numerics.
+* **(C) Cite FK13** for the analytic range. Not recommended until the corrigendum is checked.
+* **(D) Formalize a later analytic paper, with no new computational hypothesis.** Büthe,
+  *Estimating π(x) and related functions under partial RH assumptions* (arXiv:1410.7015, Oct. 2014;
+  Math. Comp. 85 (2016)).
+  * Thm 2: if RH holds up to `T`, then `|ψ(x) − x| ≤ √x log²x/(8π)` for `59 < x` with
+    `4.92√(x/log x) ≤ T`. That is `x ≤ 1.89·10²¹` for Platt's `T`.
+  * For `x ≥ e¹⁸` the proof is analytic: Thm 1 (Logan-kernel explicit formula), with zero sums by
+    Lemma 7 from Rosser's `|R(t)| ≤ log t`. It needs RH only to about `2√x`.
+  * Only `[5000, e¹⁸]` (ψ at all prime powers) and a θ bound to `10¹¹` are computational, and we do
+    not need them.
+  * Lean needs:
+    * an explicit `N(T)`: Trudgian, arXiv:1208.5846 (2012), `|S(T)| ≤ 0.111 log T + 0.275 log log T + 2.450`
+      for `T ≥ e`, by Backlund's trick and Jensen's formula;
+    * a smoothing width chosen per `x` (Logan kernel, or our Gaussian);
+    * kernel checks below about `10⁶`.
+  * Downstream, `c = log²x/(8π)` is 13.5 at `10⁸`, 21 at `10¹⁰`, 30 at `10¹²` and 61 at `10¹⁷`,
+    against Büthe's 0.94.
+    * `theta_explicit` follows from about `4·10¹¹`.
+    * (2.14) gives about `1.002` at `V = ⌊9x^{1/3}/2⌋ ≥ 2.7·10⁷`, and (2.17) about `1.003`.
+    * So Thm 3.1.1's constants change slightly, and the minor-arc numerics must be regenerated.
+      Run the Python model first.
+  * Result: 4 hypotheses (RH, Platt's GRH, binary Goldbach, Ramaré's Möbius bound).
+
 ## How small can the small-case computation be? (2026-11-02)
 
 Binary Goldbach up to `B` covers odd `n ≤ C` (the start of the circle method) iff every `x ≤ C` has a
