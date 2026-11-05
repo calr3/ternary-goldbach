@@ -531,6 +531,34 @@ Consequences:
     * So Thm 3.1.1's constants change slightly, and the minor-arc numerics must be regenerated.
       Run the Python model first.
   * Result: 4 hypotheses (RH, Platt's GRH, binary Goldbach, Ramaré's Möbius bound).
+  * **Zero counting: use the Weil explicit formula, not `N(T)`** (decided 2026-11-05).
+    * Why not `N(T)`: with Jensen-only bounds `|S(T)| ≤ A log T + B`, the bound at `T = 14` allows
+      about 25 "phantom" zeros below height 14. Each carries weight up to 4 in the ψ zero sums, which
+      swamps the ideal `Z ≈ 10`. Trudgian-quality constants still leave about 3 phantoms. So `N(T)`
+      would also need a computed zero-free region `|γ| ≤ 14`.
+    * The identity: `Σ_γ h(γ) = h(i/2) + h(−i/2) − g(0) log π + (1/2π) ∫ h(r) Re ψ(1/4 + ir/2) dr`,
+      where `ĝ = h` and `g` is supported in `(−log 2, log 2)`, so the prime sum vanishes.
+      `scripts/weil_check.py` checked it numerically: it matches the first 149 zeros to 8 digits
+      for `T = 0, 5, 14, 30, 60`.
+    * Test function: `B(z) = (2 sin(ℓz)/z)^m` with `2mℓ < log 2` (e.g. `m = 4`, `ℓ = 0.0865`), and
+      `H(s) = B(−i(s − ½) − T)²`. Then `H(½ + ir) = B(r − T)² ≥ 0` and `|H(σ + it)| ≤ (2e^{ℓ|σ−½|}/|t − T|)^{2m}`.
+    * Prime side: `∫_{(3/2)} H(s) n^{−s} ds = 0` for `n ≥ 2`, by moving the line to `Re s → ∞`
+      (`|H n^{−s}| ≲ e^{c(2mℓ − log n)}`). No Fourier inversion needed.
+    * Since `B²` has Fourier support in `[−2mℓ, 2mℓ]`, windows spaced `Δ < π/(2mℓ) ≈ 4.5` give an exact
+      partition of unity: `Σ_j Δ B(γ − jΔ)² = ∫ B²`. So weighted zero sums cost only the variation of
+      the weight across a window, plus tails bounded by the crude Jensen counts.
+    * Near `T = 0` the identity is exact (`Σ_γ B(γ)² = 0.029`), so phantom zeros never arise.
+    * Lean plan, files `Explicit/Weil*.lean`:
+      * P1 test function `B`, `H` and their bounds;
+      * P2 prime side `= 0`;
+      * P3 line shifts and the residue at `s = 1`;
+      * P4 the identity on `[−½, 3/2] × [−T_k, T_k]` at good heights, using `xiF`, `logDeriv_xiF_one_sub`,
+        `logDeriv_xiF`, and `MX` on the horizontal sides;
+      * P5 bound the archimedean term (upper bound for `Re ψ(¼ + ir/2)`);
+      * P6 bridge from `xiF` multiplicities to `zetaF`'s `multRectD`;
+      * P7 weighted zero sums from windows, replacing `line_sum_leH`;
+      * P8 `|ψ(x) − x| ≤ ε(x) x` with `δ` chosen per `x` on `[2.7·10⁷, 10¹⁷]`;
+      * P9 rework `Prelim` and drop `ButhePsi`.
   * **Model check** (2026-11-05, `scripts/route_d_model.py`, on top of `prelim_sensitivity.py`).
     `a14 = 1 + c(V)/√V` and `a17 = 1 + (10/3) c(V)/√V` at `V = ⌊9x^{1/3}/2⌋`. These are worst at
     `V = 2.7·10⁷` (`1.00224`, `1.00747`) and below Büthe's constants from about `x = 10²⁷`.
