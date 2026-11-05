@@ -222,3 +222,5 @@ import TernaryGoldbach.Explicit.WeilFormula
 import TernaryGoldbach.Explicit.WeilBridge
 import TernaryGoldbach.Explicit.WeilWindow
 import TernaryGoldbach.Explicit.WeilWeights
+import TernaryGoldbach.Explicit.WeilArch
+import TernaryGoldbach.Explicit.WeilPhiBound

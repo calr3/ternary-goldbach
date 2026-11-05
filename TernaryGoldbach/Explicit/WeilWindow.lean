@@ -21,6 +21,7 @@ namespace TernaryGoldbach.Explicit
 
 /-! ### Zeros of `ξ` in the rectangle are zeros of `zetaF` -/
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem xiF_eq_zero_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : xiF u = 0 := by
   rw [rectZerosXi, Finset.mem_filter] at hu
   have hd := (mem_zerosIn hu.1).2
@@ -33,18 +34,21 @@ theorem xiF_eq_zero_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZeros
     simp
   · exact Function.locallyFinsuppWithin.apply_eq_zero_of_notMem _ hb
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem strip_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : 0 < u.re ∧ u.re < 1 := by
   have h := xiF_eq_zero_of_mem_rectZerosXi hu
   constructor
   · by_contra h0; exact xiF_ne_zero_of_re_nonpos (not_lt.1 h0) h
   · by_contra h1; exact xiF_ne_zero_of_one_le_re (not_lt.1 h1) h
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem im_lt_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : |u.im| < T := by
   rw [rectZerosXi, Finset.mem_filter] at hu
   obtain ⟨-, -, -, h3, h4⟩ := hu
   rw [zT_im] at h3; rw [wT_im] at h4
   exact abs_lt.2 ⟨h3, h4⟩
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 /-- **The reverse bridge**: a zero of `ξ` in `R_T` is a zero of `zetaF` in `R_T`, with the same
 multiplicity. -/
 theorem mem_zerosRectD_of_mem_rectZerosXi {T : ℝ} (hT : 1 ≤ T) {u : ℂ} (hu : u ∈ rectZerosXi T) :
@@ -64,6 +68,7 @@ theorem mem_zerosRectD_of_mem_rectZerosXi {T : ℝ} (hT : 1 ≤ T) {u : ℂ} (hu
 
 /-! ### Zeros above `3·10¹⁰` -/
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 /-- `Σ_{k<K} 1/(H + 4.4k)² ≤ 1/H² + 1/(4.4H)`. -/
 theorem sum_inv_sq_lin_le {H : ℝ} (hH : 0 < H) (K : ℕ) :
     ∑ k ∈ range K, 1 / (H + 4.4 * k) ^ 2 ≤ 1 / H ^ 2 + 1 / (4.4 * H) := by
@@ -96,6 +101,7 @@ theorem sum_inv_sq_lin_le {H : ℝ} (hH : 0 < H) (K : ℕ) :
 /-- The off-line constant. -/
 noncomputable def OffC (ℓ : ℝ) (m : ℕ) : ℝ := 4 ^ m * Real.exp (m * ℓ) * 1e-15
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem OffC_nonneg (ℓ : ℝ) (m : ℕ) : 0 ≤ OffC ℓ m := by unfold OffC; positivity
 
 /-- **The zeros above `3·10¹⁰`** contribute at most `OffC` to the Weil sum. -/
@@ -231,6 +237,7 @@ theorem re_eq_half_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosX
   have hz : riemannZeta u = 0 := (xiF_eq_zero_iff h0 h1).1 (xiF_eq_zero_of_mem_rectZerosXi hu)
   exact rh_upto u hz h0 h1 him
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem WH_re_nonneg_of_line (ℓ : ℝ) (m : ℕ) (T₀ : ℝ) {u : ℂ} (hu : u.re = 1 / 2) :
     0 ≤ (WH ℓ m T₀ u).re := by
   have e : u = 1 / 2 + (u.im : ℂ) * I := by

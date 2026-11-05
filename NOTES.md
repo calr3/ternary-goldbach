@@ -570,7 +570,15 @@ Consequences:
       * P6 done (`WeilBridge`): `multRectD zetaF T u = mult T' u` in the strip, and zetaF-zeros
         are ξ-zeros. Next: P7, P5, P8.
     * **Status 2026-11-05 (late).** Done: P1–P4 (`weil_formula`), P6 (`WeilBridge`), P7a
-      (`weil_window`, including the zeros above `3·10¹⁰`) and P7b (`weil_weighted`). No sorry.
+      (`weil_window`, including the zeros above `3·10¹⁰`), P7b (`weil_weighted`) and P5
+      (`WeilArch`, `WeilPhiBound`: `Re ψ(¼+iy) ≤ ψ_N(y)` and
+      `Φ(t) + Off ≤ Φ⁺(t) = P(t) + (1/π)[A_N(|t|+R) B_R + (c_N + ½ log(1+|t|)) I₀ + I₁] + Off`).
+      No sorry; standard axioms only.
+      * Next: the zero-free region `|γ| < 2.39` (`Izeta` by parts once); then P8. P8 needs:
+        `‖Mg(½+iγ)‖ ≤ C e^{−δ²γ²/2}/max(½,|γ|)`; a lower bound `B_R ≥ c (2ℓ)^{2m}` from
+        `sin x ≥ x − x³/6`, polynomial in `u`; closed forms for `I₀`, `I₁` (rays and rpow); and
+        closed-form bounds for `∫ G(t) A_N(|t|+R) dt` (`log`² antiderivatives, a Gaussian tail) and
+        `∫ G P`.
     * **Low-lying zeros decide the sharpness.** Each window spreads its weight over `±R`, with
       `R ≳ 1/ℓ ≈ 12`. Near `γ = 0` there are no zeros, but a crude `Φ⁺` puts phantom mass there,
       about 0.35 per unit height. Model `scripts/weil_window_model.py`, ratio bound/ideal for

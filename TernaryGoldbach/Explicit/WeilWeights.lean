@@ -20,8 +20,10 @@ namespace TernaryGoldbach.Explicit
 /-- `B(y)²` on the real line. -/
 noncomputable def Bsq (ℓ : ℝ) (m : ℕ) (y : ℝ) : ℝ := (WB ℓ m (y : ℂ)).re ^ 2
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem Bsq_nonneg (ℓ : ℝ) (m : ℕ) (y : ℝ) : 0 ≤ Bsq ℓ m y := sq_nonneg _
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem continuous_Bsq (ℓ : ℝ) (m : ℕ) : Continuous (Bsq ℓ m) := by
   unfold Bsq
   exact (Complex.continuous_re.comp ((differentiable_WB ℓ m).continuous.comp
