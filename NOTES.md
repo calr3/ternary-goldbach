@@ -569,6 +569,29 @@ Consequences:
         `J₂` moved to `ℜs = ½`), `WeilFormula` (limit).
       * P6 done (`WeilBridge`): `multRectD zetaF T u = mult T' u` in the strip, and zetaF-zeros
         are ξ-zeros. Next: P7, P5, P8.
+    * **Status 2026-11-05 (late).** Done: P1–P4 (`weil_formula`), P6 (`WeilBridge`), P7a
+      (`weil_window`, including the zeros above `3·10¹⁰`) and P7b (`weil_weighted`). No sorry.
+    * **Low-lying zeros decide the sharpness.** Each window spreads its weight over `±R`, with
+      `R ≳ 1/ℓ ≈ 12`. Near `γ = 0` there are no zeros, but a crude `Φ⁺` puts phantom mass there,
+      about 0.35 per unit height. Model `scripts/weil_window_model.py`, ratio bound/ideal for
+      `g = e^{−δ²γ²/2}/max(½,|γ|)`, with `R = 12`:
+      | zero-free below | `δ = 10⁻³` | `δ = 10⁻⁵` |
+      |---|---|---|
+      | nothing | 6.0× | 2.4× |
+      | 3 | 2.25× | 1.41× |
+      | 14 | 1.49× | 1.21× |
+
+      Requirements (`scripts/route_d_model.py`, `rs_ideal_model.py`): (2.14) tolerates up to about
+      `1.04`, so 6× is fine at `V = 2.7·10⁷`. But `theta_explicit` near `10¹²` needs at most about
+      1.8×, so it needs a low zero-free region.
+      * Cheap and analytic: `ζ(s) = s/(s−1) − ½ − s(s+1) J(s)`, with
+        `J = ∫₁^∞ ({t}² − {t})/2 · t^{−s−2}` and `|J| ≤ 1/(8(σ+1))`. Integrate `Izeta` (`ZetaGrowth`)
+        by parts once. Then `ζ(½ + it) ≠ 0` for `|t| < 2.39`, and with `rh_upto` there are no zeros
+        with `|γ| < 2.39`. One more term gives about 4. Beyond that needs `Σ_{n<N} n^{−s}`, i.e.
+        kernel trigonometric numerics.
+      * Then replace `g` by `ĝ = g(max(·, t₀))`, which is the same on the actual zeros.
+      * Use `ψ_N` (`re_digamma_le` plus `N`-fold recurrence), not `re_digamma_le'`, in `Φ⁺`.
+        Choose `R ≈ 16`, so that the crude tail `(2/u)^{2m}` costs about 2%.
     * **P7 design** (window sums, without Poisson summation). Let `S` be the on-line zeros
       `|γ| ≤ 3·10¹⁰` of `zerosRectD zetaF T`, which is what `SsumG_gsm_err` sums over.
       1. Per window: `Σ_S m B(γ − T₀)² ≤ Φ(T₀) + Off` for `|T₀| ≤ 1.5·10¹⁰`, where
