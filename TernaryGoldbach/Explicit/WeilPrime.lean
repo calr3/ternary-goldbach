@@ -22,9 +22,10 @@ namespace TernaryGoldbach.Explicit
 
 /-! ### Moving a vertical line -/
 
-/-- **Vertical line integrals are independent of the line** for an entire `F` with
-`‖F(σ + iY)‖ ≤ M(Y)` on `σ ∈ [a, b]`, `M → 0` at `±∞`. -/
-theorem integral_vertical_eq {F : ℂ → ℂ} (hF : Differentiable ℂ F) {a b : ℝ} (hab : a ≤ b)
+/-- **Vertical line integrals are independent of the line** for `F` holomorphic on the closed strip
+`a ≤ ℜs ≤ b` with `‖F(σ + iY)‖ ≤ M(Y)` there, `M → 0` at `±∞`. -/
+theorem integral_vertical_eq_strip {F : ℂ → ℂ} {a b : ℝ} (hab : a ≤ b)
+    (hF : ∀ s : ℂ, s.re ∈ Icc a b → DifferentiableAt ℂ F s)
     (hia : Integrable fun t : ℝ => F (a + t * I)) (hib : Integrable fun t : ℝ => F (b + t * I))
     {M : ℝ → ℝ} (hMt : Tendsto M atTop (𝓝 0)) (hMb : Tendsto M atBot (𝓝 0))
     (hM : ∀ σ ∈ Icc a b, ∀ Y : ℝ, ‖F (σ + Y * I)‖ ≤ M Y) :
@@ -33,7 +34,12 @@ theorem integral_vertical_eq {F : ℂ → ℂ} (hF : Differentiable ℂ F) {a b 
       I * (∫ y : ℝ in (-Y)..Y, F (b + y * I)) - I * (∫ y : ℝ in (-Y)..Y, F (a + y * I)) = 0 := by
     intro Y
     have h := Complex.integral_boundary_rect_eq_zero_of_differentiableOn F
-      ((a : ℂ) + ((-Y : ℝ) : ℂ) * I) ((b : ℂ) + (Y : ℂ) * I) hF.differentiableOn
+      ((a : ℂ) + ((-Y : ℝ) : ℂ) * I) ((b : ℂ) + (Y : ℂ) * I) (fun u hu => by
+        refine (hF u ?_).differentiableWithinAt
+        have := (Complex.mem_reProdIm.1 hu).1
+        simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
+          Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero] at this
+        rwa [Set.uIcc_of_le hab] at this)
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.add_im, Complex.mul_im,
       zero_add, smul_eq_mul] at h
@@ -64,6 +70,14 @@ theorem integral_vertical_eq {F : ℂ → ℂ} (hF : Differentiable ℂ F) {a b 
   rcases mul_eq_zero.1 this with h | h
   · exact absurd h Complex.I_ne_zero
   · exact (sub_eq_zero.1 h).symm
+
+/-- `integral_vertical_eq_strip` for an entire `F`. -/
+theorem integral_vertical_eq {F : ℂ → ℂ} (hF : Differentiable ℂ F) {a b : ℝ} (hab : a ≤ b)
+    (hia : Integrable fun t : ℝ => F (a + t * I)) (hib : Integrable fun t : ℝ => F (b + t * I))
+    {M : ℝ → ℝ} (hMt : Tendsto M atTop (𝓝 0)) (hMb : Tendsto M atBot (𝓝 0))
+    (hM : ∀ σ ∈ Icc a b, ∀ Y : ℝ, ‖F (σ + Y * I)‖ ≤ M Y) :
+    ∫ t : ℝ, F (a + t * I) = ∫ t : ℝ, F (b + t * I) :=
+  integral_vertical_eq_strip hab (fun s _ => hF s) hia hib hMt hMb hM
 
 /-! ### A Lorentzian majorant for `H_T` -/
 
@@ -132,7 +146,7 @@ theorem norm_WH_le_lorentz {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m 
 
 /-! ### The prime side -/
 
-theorem norm_cpow_neg {n : ℝ} (hn : 0 < n) (s : ℂ) : ‖(n : ℂ) ^ (-s)‖ = n ^ (-s.re) := by
+theorem norm_ofReal_cpow_neg {n : ℝ} (hn : 0 < n) (s : ℂ) : ‖(n : ℂ) ^ (-s)‖ = n ^ (-s.re) := by
   rw [Complex.norm_cpow_eq_rpow_re_of_pos hn]; simp
 
 /-- **Prime side**: if `|G(s)| ≤ A e^{κ|σ − ½|} · L(t − τ)` with `G` entire and `n > e^κ`, then
@@ -151,7 +165,7 @@ theorem integral_cpow_eq_zero_of_bound {G : ℂ → ℂ} (hG : Differentiable �
   have hpt : ∀ σ t : ℝ, ‖F (σ + t * I)‖ ≤ A * Real.exp (κ * |σ - 1 / 2|) * n ^ (-σ) * lor (t - τ) := by
     intro σ t
     have h1 := hbd (σ + t * I)
-    have h2 := norm_cpow_neg hn0 (σ + t * I)
+    have h2 := norm_ofReal_cpow_neg hn0 (σ + t * I)
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero, Complex.add_im, Complex.mul_im,
       zero_add] at h1 h2
