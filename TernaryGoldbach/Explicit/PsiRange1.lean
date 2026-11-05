@@ -50,9 +50,77 @@ theorem Z3g_Gam1_le : Z3g BPz2 6.43e15 ≤ 313 := by
   have := log_Gam1_le; have := log_Gam1b_le; have := log_10_3_ge
   nlinarith
 
+/-! ## Constants at `3·10¹²` (the upper mid range of `MidB`) -/
+
+theorem log_3e12_hi : Real.log (3e12 + 22) ≤ 28.7298 := by
+  refine log_le_of_le_exp'' (by norm_num) ?_
+  have h := exp_split_ge' 28 (u := 0.7298) (by norm_num) 10
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_375e12_hi : Real.log (1.25 * (3e12 + 11)) ≤ 28.9529 := by
+  refine log_le_of_le_exp'' (by norm_num) ?_
+  have h := exp_split_ge' 28 (u := 0.9529) (by norm_num) 12
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem Z3g_3e12_le : Z3g BPz2 3e12 ≤ 248.9 := by
+  unfold Z3g
+  rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) log_10_3_ge)]
+  have h := log_BPz2_le' 3e12
+  rw [abs_of_pos (by norm_num)] at h
+  have := log_3e12_hi; have := log_375e12_hi; have := log_10_3_ge
+  nlinarith
+
+theorem Z3g_3e12_nonneg : 0 ≤ Z3g BPz2 3e12 := by
+  unfold Z3g
+  exact div_nonneg (polyDatum_zeta2.log_pos _).le (lt_of_lt_of_le (by norm_num) log_10_3_ge).le
+
+theorem c3g_3e12_le : c3g 10 3e12 ≤ 1.22e-11 := by
+  unfold c3g
+  rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) log_10_3_ge)]
+  have := log_10_3_ge
+  nlinarith
+
+theorem c3g_3e12_nonneg : 0 ≤ c3g 10 3e12 := by
+  unfold c3g; exact div_nonneg (by norm_num) (lt_of_lt_of_le (by norm_num) log_10_3_ge).le
+
+theorem exp_neg_63_le : Real.exp (-63) ≤ 4.4e-28 := by
+  rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by norm_num)]
+  have := exp_nat_ge' 63
+  norm_num at this ⊢; linarith
+
+/-- The lower mid range `(3·10¹⁰, 3·10¹²]` for `log x ≥ 20000`. -/
+theorem MidB0_lo_le {a δ x : ℝ} (hδa : δ ^ 2 / 2 + |a| ≤ 1e-10) (hx : 20000 ≤ Real.log x) :
+    MidB0 a δ 3e10 3e12 x ≤ 1e-22 := by
+  unfold MidB0
+  have he : Real.exp (δ ^ 2 / 2 + |a|) ≤ 1.000001 := by
+    have h := exp_small_le (t := δ ^ 2 / 2 + |a|) (by positivity) (by linarith)
+    linarith
+  have hlg := log_3e12_hi
+  have hlg' : Real.log 3e12 ≤ 28.7298 := (Real.log_le_log (by norm_num) (by norm_num)).trans hlg
+  have hlg0 : 0 < Real.log 3e12 := Real.log_pos (by norm_num)
+  have hzf : Real.exp (-(Real.log x / (11 * Real.log 3e12))) ≤ 4.4e-28 := by
+    refine le_trans (Real.exp_le_exp.2 ?_) exp_neg_63_le
+    rw [neg_le_neg_iff, le_div_iff₀ (by positivity)]
+    nlinarith
+  have hK : ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.76e11 := by
+    have := Nat.floor_le (show (0:ℝ) ≤ ((3e12 : ℝ) - 3e10) / 4.4 by norm_num)
+    norm_num at this ⊢; try linarith
+  have hZ := Z3g_H_le; have hZ0 := Z3g_H_nonneg
+  have hc := c3g_H_le; have hc0 := c3g_H_nonneg
+  have hK0 : (0:ℝ) ≤ ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
+  calc 2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e10 * Real.exp (-(Real.log x / (11 * Real.log 3e12))) *
+        ((((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 3e10 + 2 * c3g 10 3e10 *
+          (((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1)))
+      ≤ 2 * 1.000001 / 3e10 * 4.4e-28 * (6.76e11 * (2 * 210.6 + 2 * 1.22e-9 * 6.76e11)) := by
+        gcongr
+    _ ≤ 1e-22 := by norm_num
+
 theorem MidB_r1_le {a x : ℝ} (ha : |a| ≤ 1.3e-14) (hx : 20000 ≤ Real.log x) :
     MidB a 1.4e-15 6.43e15 x ≤ 7.6e-15 := by
   unfold MidB
+  have hlo := MidB0_lo_le (a := a) (δ := 1.4e-15) (by norm_num at ha ⊢; linarith) hx
+  suffices h : MidB0 a 1.4e-15 3e12 6.43e15 x ≤ 7.55e-15 by linarith
+  unfold MidB0
   have he : Real.exp ((1.4e-15 : ℝ) ^ 2 / 2 + |a|) ≤ 1.000001 := by
     have h := exp_small_le (t := (1.4e-15 : ℝ) ^ 2 / 2 + |a|) (by positivity) (by norm_num at ha ⊢; linarith)
     norm_num at ha h ⊢; linarith
@@ -65,15 +133,15 @@ theorem MidB_r1_le {a x : ℝ} (ha : |a| ≤ 1.3e-14) (hx : 20000 ≤ Real.log x
   have hK : ((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 1.4614e15 := by
     have := Nat.floor_le (show (0:ℝ) ≤ ((6.43e15 : ℝ) - 3e12) / 4.4 by norm_num)
     norm_num at this ⊢; try linarith
-  have hZ := Z3g_H_le; have hZ0 := Z3g_H_nonneg
-  have hc := c3g_H_le; have hc0 := c3g_H_nonneg
+  have hZ := Z3g_3e12_le; have hZ0 := Z3g_3e12_nonneg
+  have hc := c3g_3e12_le; have hc0 := c3g_3e12_nonneg
   have hK0 : (0:ℝ) ≤ ((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
   calc 2 * Real.exp ((1.4e-15 : ℝ) ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log 6.43e15))) *
         ((((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 3e12 + 2 * c3g 10 3e12 *
           (((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1)))
       ≤ 2 * 1.000001 / 3e12 * 2.14e-22 * (1.4614e15 * (2 * 248.9 + 2 * 1.22e-11 * 1.4614e15)) := by
         gcongr
-    _ ≤ 7.6e-15 := by norm_num
+    _ ≤ 7.55e-15 := by norm_num
 
 theorem TailBG_r1_le {a : ℝ} (ha : |a| ≤ 1.3e-14) : TailBG a 1.4e-15 6.43e15 ≤ 1e-17 := by
   unfold TailBG EBg rhoG
@@ -125,11 +193,11 @@ theorem LineB_le_gen {a δ : ℝ} (h : δ ^ 2 / 2 + |a| ≤ 3e-11) : LineB a δ 
     linarith
   have h1 := ZLg_H_le
   have h2 := log_Jl_H_le
-  have hZ0 : 0 ≤ ZLg BPz2 3e12 :=
+  have hZ0 : 0 ≤ ZLg BPz2 3e10 :=
     div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le
-  have hJ0 : 0 ≤ Real.log (Jl 3e12) := Real.log_nonneg (by unfold Jl; norm_num)
-  calc ZLg BPz2 3e12 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48))
-      ≤ 203.9 * (2 * 1.000001) * (4 * (1 + (1 + 27.49) / 3.48)) := by gcongr
+  have hJ0 : 0 ≤ Real.log (Jl 3e10) := Real.log_nonneg (by unfold Jl; norm_num)
+  calc ZLg BPz2 3e10 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e10)) / 3.48))
+      ≤ 172.6 * (2 * 1.000001) * (4 * (1 + (1 + 22.88) / 3.48)) := by gcongr
     _ ≤ 14990 := by norm_num
 
 theorem Vg_le_gen {a δ x : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1e-11) (ha : |a| ≤ 1e-10) (hx : 1e19 ≤ x) :

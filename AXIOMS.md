@@ -17,17 +17,17 @@ Acta Arith. 157 paper, for which the later papers and the float check below stan
 
 | Theorem (hypothesis) | Statement | Source | Check |
 |---|---|---|---|
-| `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹²` have `ℜρ = 1/2` | Platt–Trudgian, arXiv:2004.09765 | abstract: "all zeroes `β + iγ` … with `0 < γ ≤ 3·10¹²` have `β = 1/2`". The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
+| `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹⁰` have `ℜρ = 1/2` | Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), arXiv:1203.5712 | RH verified rigorously (interval arithmetic) up to height `3.0610046·10¹⁰`, as cited in [H] (to be re-checked against the paper). The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
-| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 1.45·10¹⁷` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` needs only `1.45·10¹⁷`, inside the double-checked range |
-| `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁹` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
+| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range (with RH only to `3·10¹⁰`, the `θ` bounds near `10²⁷` are `±1.86·10¹⁸`) |
+| `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁷` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The hypotheses are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
 behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for the tail of
 `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `buthe_psi` and `rh_upto` (through
-`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 1.45·10¹⁷, n − 4]` for
-`1.45·10¹⁷ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), in place of the Helfgott–Platt prime ladder
+`Explicit/PsiPlateau.lean`) also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
+`4·10¹⁸ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), in place of the Helfgott–Platt prime ladder
 (arXiv:1305.3062).
 
 ## Errors found in the sources
@@ -96,7 +96,7 @@ These inputs are theorems:
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
 | [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: `theta_explicit` above `10⁹`, Büthe's `ψ` bound, `|θ(x) − x| ≤ 2.37 √x` and a sharper prime-power tail on `[10⁵, 10⁹]`, kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi` up to `10¹⁹` (with `ψ − θ` bounded from it for `θ`), our explicit prime number theorem beyond; kernel for small `n` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi` up to `10¹⁷` (with `ψ − θ` bounded from it for `θ`), our explicit prime number theorem beyond; kernel for small `n` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
@@ -132,16 +132,19 @@ What could replace the remaining hypotheses:
 * **`buthe_psi` is stronger than needed above `10¹²`.** Its `√x`-quality is used only for
   `n ≤ 10¹²`:
   * `psi_lower2`, `psi_lower_all` and `psi_upper_all` switch to `theta_explicit` at `10¹⁰`;
-  * `MertensProduct` uses it on `[10⁵, 10⁹]`, `psi_mul_buthe` up to `10⁸`, and
-    `psi_sub_theta_le_buthe` at `√N ≤ 3.2·10⁹`;
+  * `psi_mul_buthe` uses it up to `10⁸`, and `psi_sub_theta_le_buthe` at `√N ≤ 3.2·10⁹`;
   * `nonprime_mid`, `logsq_mid`, `thetaN_ge` and `thetaN_close_small` go up to `10¹²`.
 
-  On `[10¹², 10¹⁹]`, three uses remain, and none needs `√x` quality:
+  Since 2026-11-04, `buthe_psi` is used only up to `10¹⁷` (it was `10¹⁹`): `psi_plateau` holds from
+  `10¹⁷`, and every switch from Büthe to the explicit formula is at `10¹⁷`. On `[10¹², 10¹⁷]`, four
+  uses remain, and none needs `√x` quality:
   * `theta_explicit` needs `|θ(n) − n| < n/log³n`, that is
     `|ψ(n) − n| ≤ c √n` with `c` allowed up to `45` at `10¹²`, `296` at `10¹⁴` and `2000` at `10¹⁶`
     (after `ψ − θ ≤ √n (1.0054 + 0.048 log n)`);
   * `psi_bounds` needs only `ψ ≤ 1.0004 n`;
-  * `SmallCases` needs only `|θ(m) − m| ≤ 7·10¹⁶`.
+  * `SmallCases` needs only `|θ(m) − m| ≤ 7·10¹⁶`;
+  * `E1_var` (the variation of `∑ Λ(n)/n − log x`, for Mertens' product) needs `4c/√M` small; the
+    budget allows a switch to the explicit formula anywhere above `10⁹`.
 
   So Büthe can be replaced by:
   1. a direct computation, `|ψ(x) − x| ≤ c√x` for `x ≤ X₀`, with `c ≤ 0.94` (or the downstream
@@ -150,14 +153,14 @@ What could replace the remaining hypotheses:
      `−√2 < (ψ(x) − x)/√x ≤ 0.7906` for `1 ≤ x ≤ 10¹³` (and `≥ −0.7510` on `[10⁴, 10¹³]`). Their
      Cor. 1.3 gives `|ψ(x) − x| ≤ πx/(3·10¹²) + 113.67√x` for all `x ≥ 1`, from RH up to
      `3·10¹² + 1 + π/3` alone;
-  2. our explicit formula from `rh_upto` on `[X₀, 10¹⁹]`, proved in Lean. As it stands, `psi_plateau`
-     gives `1533 √x + 2.15·10⁻¹¹ x + 4 y₀` (`y₀ = 10¹⁰`). With `y₀` lowered, that covers `x ≳ 10¹⁶`.
-     Reaching `X₀ = 10¹⁴` needs `c ≲ 296`. The zeros up to `3·10¹²` allow about
+  2. our explicit formula from `rh_upto` on `[X₀, 10¹⁷]`, proved in Lean. As it stands, `psi_plateau`
+     gave `1533 √x + 2.15·10⁻¹¹ x + 4 y₀` (`y₀ = 10¹⁰`) with RH to `3·10¹²`, which covers `x ≳ 10¹⁶` at
+     best (`10¹⁷` as proved). With RH only to `3·10¹⁰` it is `1145 √x + 1.82·10⁻⁹ x + 4 y₀`. Reaching `X₀ = 10¹³` needs `c ≲ 115` and `4 y₀ ≲ 4·10⁶`; `X₀ = 10¹⁴` needs `c ≲ 296`. The zeros up to `3·10¹²` allow about
      `(log(T/2π))²/(2π) ≈ 115`, so the loss is in our zero counting (Jensen windows). A sharp explicit
      `N(T)` would remove it.
 
   The hypothesis count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
-  Büthe's analytic theorem up to `10¹⁹`.
+  Büthe's analytic theorem up to `10¹⁷`.
 * **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
   be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
   arithmetic functions"). Proving it in Lean is still not realistic: every known proof rests on large

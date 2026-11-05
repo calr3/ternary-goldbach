@@ -12,7 +12,7 @@ leanprover/comparator against `Challenge.lean` (`comparator/config.json`).
 namespace TernaryGoldbach
 
 /-- **Helfgott's theorem for large `n`**: every odd `n ≥ 10²⁷` is a sum of three primes, given RH
-up to `3·10¹²`, Platt's GRH verification, Büthe's bound for `ψ` and Ramaré's bound for
+up to `3·10¹⁰`, Platt's GRH verification, Büthe's bound for `ψ` and Ramaré's bound for
 `∑ μ(n)/n`. -/
 theorem ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH) (hψ : ButhePsi)
     (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27) :=

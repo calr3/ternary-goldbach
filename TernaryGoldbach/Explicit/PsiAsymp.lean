@@ -129,14 +129,45 @@ theorem MidB_asymp_le {a δ x : ℝ} (hx : Real.exp 35000 ≤ x) (hδa : δ ^ 2 
     have : (L ^ 4 / 5 - 3e12) / 4.4 + 1 ≤ L ^ 4 / 22 := by
       rw [div_add_one (by norm_num), div_le_div_iff₀ (by norm_num) (by norm_num)]; linarith
     linarith
-  have hZ := Z3g_H_le; have hZ0 := Z3g_H_nonneg
-  have hc := c3g_H_le; have hc0 := c3g_H_nonneg
+  have hZ := Z3g_3e12_le; have hZ0 := Z3g_3e12_nonneg
+  have hc := c3g_3e12_le; have hc0 := c3g_3e12_nonneg
   have hK0 : (0:ℝ) ≤ ((⌊(L ^ 4 / 5 - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
   have hin : 2 * Z3g BPz2 3e12 + 2 * c3g 10 3e12 * (((⌊(L ^ 4 / 5 - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1) ≤ 1.2e-12 * L ^ 4 := by
     have : 2 * c3g 10 3e12 * (((⌊(L ^ 4 / 5 - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1) ≤ 2 * 1.22e-11 * (L ^ 4 / 22) := by
       gcongr
     nlinarith
   have hzf0 : 0 ≤ Real.exp (-(L / (11 * Real.log (L ^ 4 / 5)))) := (Real.exp_pos _).le
+  -- the lower range `(3·10¹⁰, 3·10¹²]`: its zero-free factor is at most that of the upper range
+  have hlo : MidB0 a δ 3e10 3e12 x ≤ 0.001 / L ^ 3 := by
+    unfold MidB0
+    rw [← hLdef]
+    have hΓ12 : (3e12 : ℝ) ≤ L ^ 4 / 5 := by linarith
+    have hz2 : Real.exp (-(L / (11 * Real.log 3e12))) ≤ Real.exp (-(L / (11 * Real.log (L ^ 4 / 5)))) := by
+      refine Real.exp_le_exp.2 (neg_le_neg (div_le_div_of_nonneg_left hL0.le (by
+        have := Real.log_pos (by norm_num : (1:ℝ) < 3e12); positivity) ?_))
+      have := Real.log_le_log (by norm_num) hΓ12; linarith
+    have hK1 : ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.76e11 := by
+      have := Nat.floor_le (show (0:ℝ) ≤ ((3e12 : ℝ) - 3e10) / 4.4 by norm_num)
+      norm_num at this ⊢; try linarith
+    have hK10 : (0:ℝ) ≤ ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
+    have hZl := Z3g_H_le; have hZl0 := Z3g_H_nonneg
+    have hcl := c3g_H_le; have hcl0 := c3g_H_nonneg
+    have hL8 : (2e36 : ℝ) ≤ L ^ 8 := by nlinarith
+    calc 2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e10 * Real.exp (-(L / (11 * Real.log 3e12))) *
+          ((((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 3e10 + 2 * c3g 10 3e10 *
+            (((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1)))
+        ≤ 2 * 1.00001 / 3e10 * (1.05e23 / L ^ 11) * (6.76e11 * (2 * 210.6 + 2 * 1.22e-9 * 6.76e11)) := by
+          gcongr
+          exact hz2.trans hzf
+      _ = (2 * 1.00001 / 3e10 * 1.05e23 * (6.76e11 * (2 * 210.6 + 2 * 1.22e-9 * 6.76e11)) / L ^ 8) /
+            L ^ 3 := by field_simp
+      _ ≤ 0.001 / L ^ 3 := by
+          apply div_le_div_of_nonneg_right _ (by positivity)
+          rw [div_le_iff₀ (by positivity)]; nlinarith
+  suffices hup : MidB0 a δ 3e12 (L ^ 4 / 5) x ≤ 0.009 / L ^ 3 by
+    have e : (0.01 : ℝ) / L ^ 3 = 0.001 / L ^ 3 + 0.009 / L ^ 3 := by ring
+    rw [e]; linarith
+  unfold MidB0
   calc 2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(L / (11 * Real.log (L ^ 4 / 5)))) *
         ((((⌊(L ^ 4 / 5 - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 3e12 + 2 * c3g 10 3e12 *
           (((⌊(L ^ 4 / 5 - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1)))
@@ -144,7 +175,7 @@ theorem MidB_asymp_le {a δ x : ℝ} (hx : Real.exp 35000 ≤ x) (hδa : δ ^ 2 
         gcongr
     _ = (2 * 1.00001 / 3e12 * 1.05e23 / 22 * 1.2e-12) / L ^ 3 := by
         field_simp
-    _ ≤ 0.01 / L ^ 3 := by
+    _ ≤ 0.009 / L ^ 3 := by
         apply div_le_div_of_nonneg_right (by norm_num) (by positivity)
 
 theorem log_log_ge {x : ℝ} (hx : Real.exp 35000 ≤ x) : 10.46 ≤ Real.log (Real.log x) := by

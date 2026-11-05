@@ -47,3 +47,12 @@ That container had no user systemd session, so the run skipped the `systemd-run`
 kernel supports Landlock ABI v7 only, so `landrun` ran with `--best-effort`, which is a weaker
 sandbox. `Solution.lean` is our own code, so a weaker sandbox mattered less than it would for
 untrusted input. The kernel check is unaffected.
+
+On 2026-11-05, on branch `platt-grh-rh` at commit `4c2186d` (RH to 3·10¹⁰, binary Goldbach to
+4·10¹⁸, `ButhePsi` up to 10¹⁷), the same setup took 97 minutes and ended with:
+
+```
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+```

@@ -8,7 +8,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 # The explicit-formula bound for the Gaussian-smoothed prime sum
 
 `|Σ Λ(n) φ(n/x) − M(1) x| ≤ √x·LineB2 + x·TailB + x^{−1/2} V/(2π)` for `φ = gsm a b δ`, unconditionally
-(RH to `3·10¹²` is the numerical axiom `rh_upto`).
+(RH to `3·10¹⁰` is the numerical axiom `rh_upto`).
 -/
 
 open Complex Set Filter MeasureTheory Finset
@@ -105,18 +105,18 @@ theorem norm_integral_hZeta_gsm {a b δ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) {x
 
 /-- The line-zero constant. -/
 noncomputable def LineB (a δ : ℝ) : ℝ :=
-  ZLg BPz2 3e12 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e12)) / 3.48))
+  ZLg BPz2 3e10 * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl 3e10)) / 3.48))
 
 /-- The sharper line-zero constant (`line_sum_leH` with windows of height `6`, radius `3.36`, each
 counted by Jensen at its centre; `norm_Mg_line_le'`), used by `SsumG_gsm_err`. -/
 noncomputable def LineB2 (a b δ : ℝ) : ℝ :=
   (Real.exp (δ ^ 2 / 2) * (Real.exp (a / 2) + Real.exp (b / 2))) *
-    (2 * ∑ m ∈ Finset.range (JlH 6 3e12), Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
+    (2 * ∑ m ∈ Finset.range (JlH 6 3e10), Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
       Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))))
 
-/-- The tail constant (zeros above `3·10¹²`). -/
+/-- The tail constant (zeros above `3·10¹⁰`). -/
 noncomputable def TailB (a δ : ℝ) : ℝ :=
-  EBg a δ 3e12 * (2 * Z3g BPz2 3e12 / (1 - rhoG δ 3e12) + 2 * c3g 10 3e12 / (1 - rhoG δ 3e12) ^ 2)
+  EBg a δ 3e10 * (2 * Z3g BPz2 3e10 / (1 - rhoG δ 3e10) + 2 * c3g 10 3e10 / (1 - rhoG δ 3e10) ^ 2)
 
 /-- **The explicit-formula bound for the smoothed sum.** -/
 theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 ≤ x) :
@@ -138,17 +138,17 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun u _ => ?_)
       rw [norm_mul, norm_mul, Complex.norm_natCast, norm_cpow_x hx0, hM]
     refine h1.trans ?_
-    rw [← Finset.sum_filter_add_sum_filter_not Z (fun u => |u.im| ≤ 3e12)]
+    rw [← Finset.sum_filter_add_sum_filter_not Z (fun u => |u.im| ≤ 3e10)]
     refine add_le_add ?_ ?_
     · -- the line zeros
-      set S := Z.filter (fun u => |u.im| ≤ 3e12) with hS
+      set S := Z.filter (fun u => |u.im| ≤ 3e10) with hS
       have hSZ : S ⊆ Z := Finset.filter_subset _ _
       have hre : ∀ u ∈ S, u.re = 1 / 2 := by
         intro u hu
         obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
         obtain ⟨hz, hr1, hr2, -⟩ := zerosRectD_zetaF_strip hu1
         exact rh_upto u hz hr1 hr2 hu2
-      have him : ∀ u ∈ S, |u.im| ≤ 3e12 := fun u hu => (Finset.mem_filter.1 hu).2
+      have him : ∀ u ∈ S, |u.im| ≤ 3e10 := fun u hu => (Finset.mem_filter.1 hu).2
       have heq : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) = √x * (m u * ‖Mg a b δ u‖) := by
         intro u hu
         rw [hre u hu, ← Real.sqrt_eq_rpow]; ring
@@ -161,10 +161,10 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
       rw [hu']
       have := norm_Mg_line_le' a b δ u.im
       simpa using this
-    · -- zeros above `3·10¹²`
-      set S := Z.filter (fun u => ¬ |u.im| ≤ 3e12) with hS
+    · -- zeros above `3·10¹⁰`
+      set S := Z.filter (fun u => ¬ |u.im| ≤ 3e10) with hS
       have hSZ : S ⊆ Z := Finset.filter_subset _ _
-      have him : ∀ u ∈ S, 3e12 < |u.im| := fun u hu => not_le.1 (Finset.mem_filter.1 hu).2
+      have him : ∀ u ∈ S, 3e10 < |u.im| := fun u hu => not_le.1 (Finset.mem_filter.1 hu).2
       exact tail_sum_gauss (by norm_num) hδ hb hx S hSZ him
   have h1 : ‖mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x - (1 / (2 * π) : ℂ) * I0‖ ≤
       √x * LineB2 a b δ + x * TailB a δ :=

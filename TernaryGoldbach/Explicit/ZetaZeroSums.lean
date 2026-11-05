@@ -6,7 +6,7 @@ import TernaryGoldbach.Explicit.XiPartial
 /-!
 # Sums over the zeros of `ζ` for the Gaussian smoothing
 
-* zeros with `|γ| ≤ H = 3·10¹²` lie on the critical line ([Platt–Trudgian 2021], numerical axiom);
+* zeros with `|γ| ≤ H = 3·10¹⁰` lie on the critical line ([Platt 2015], numerical hypothesis);
   they are counted in windows of width `3.48` (`count_line_windowG`) and weighted by `1/max(1, |γ|)`;
 * zeros with `|γ| > H` are weighted by the Gaussian factor `e^{−δ²γ²/2}` (geometric windows,
   `count_tail_windowG`, `sum_geom_windows`).
@@ -17,13 +17,13 @@ open scoped Real Interval Topology
 
 namespace TernaryGoldbach.Explicit
 
-/-- **Numerical hypothesis** ([Platt–Trudgian 2021], *The Riemann hypothesis is true up to 3·10¹²*,
-Bull. LMS 53 (2021), arXiv:2004.09765): every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹²`
-lies on the critical line. [PT21] state it for `0 < ℑρ ≤ 3·10¹²`. Zeros with `ℑρ < 0` are the
+/-- **Numerical hypothesis** ([Platt 2015], *Computing π(x) analytically*, Math. Comp. 84 (2015),
+arXiv:1203.5712): every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹⁰` lies on the critical
+line. [Pla15] verifies `0 < ℑρ ≤ 3.0610046·10¹⁰`. Zeros with `ℑρ < 0` are the
 conjugates of those (`ζ(s̄) = conj ζ(s)`), and there are none with `ℑρ = 0`, since `ζ(σ) < 0` for
 `0 < σ < 1` (classical). -/
 theorem rh_upto [h : Fact RHUpTo] :
-    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e12 → ρ.re = 1 / 2 :=
+    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2 :=
   h.out
 
 variable [Fact TernaryGoldbach.RHUpTo]

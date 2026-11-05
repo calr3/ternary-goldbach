@@ -18,7 +18,7 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
   the explicit prime number theorem `theta_explicit` (`Prelim/ThetaExplicit.lean`:
   `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 2·10⁸`, with a plateau `ε_pl = 2.2·10⁻¹¹` for
   `3400 < log n < 20000`; it replaces Dusart's bound [Dus18, Thm. 4.2]), Büthe's
-  `|ψ(n) − n| ≤ 0.94 √n` for `12 ≤ n ≤ 10¹⁹` (`buthe_psi`), a kernel-checked computation for
+  `|ψ(n) − n| ≤ 0.94 √n` for `12 ≤ n ≤ 10¹⁷` (`buthe_psi`), a kernel-checked computation for
   `n ≤ 586` (`Prelim/SmallPsi.lean`), and finite computer checks stated as numerical axioms
   (`scripts/psi_checks.py`).
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
@@ -238,9 +238,9 @@ theorem psi_upper_of {N : ℕ} (hN : 1000000000 ≤ N)
   have h5 := Real.sqrt_nonneg (N : ℝ)
   linarith
 
-/-- `ψ(n) < 1.03883 n` for `1 ≤ n ≤ 10¹⁹`: a kernel-checked computation for `n ≤ 586`
+/-- `ψ(n) < 1.03883 n` for `1 ≤ n ≤ 10¹⁷`: a kernel-checked computation for `n ≤ 586`
 (`Small.psi_lt_small`) and Büthe's `ψ(n) ≤ n + 0.94 √n` above. -/
-theorem psi_lt_small' {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10 ^ 19) : psiN n < 1.03883 * n := by
+theorem psi_lt_small' {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10 ^ 17) : psiN n < 1.03883 * n := by
   rcases le_or_gt n 586 with h | h
   · exact Small.psi_lt_small h1 h
   · have hB := (abs_le.1 (buthe_psi n (by omega) h2)).2
@@ -253,14 +253,14 @@ theorem psi_lt_small' {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10 ^ 19) : psiN n < 1
     unfold psiN; nlinarith
 
 /-- `ψ(n) ≤ 1.03883 n` for all `n`, and `ψ(n) ≤ 1.0004 n` for `n ≥ 6·10⁶` (Büthe's bound up to
-`10¹⁹`; above, strong induction with `theta_explicit` and `ψ − θ ≤ ψ(√n) + n^{1/3} log n`). -/
+`10¹⁷`; above, strong induction with `theta_explicit` and `ψ − θ ≤ ψ(√n) + n^{1/3} log n`). -/
 theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (6000000 ≤ n → psiN n ≤ 1.0004 * n) := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
   rcases Nat.eq_zero_or_pos n with h0 | hpos
   · subst h0; simp [psiN]
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  rcases le_or_gt n (10 ^ 19) with h2 | h2
+  rcases le_or_gt n (10 ^ 17) with h2 | h2
   · refine ⟨(psi_lt_small' hpos h2).le, fun h6 => ?_⟩
     have hB := (abs_le.1 (buthe_psi n (by omega) h2)).2
     have hs : (2449 : ℝ) ≤ √(n : ℝ) :=
@@ -310,7 +310,7 @@ theorem sum_vonMangoldt_lt {y : ℝ} (hy : 0 < y) :
     · rw [h0]; simp; positivity
     · have hn2 : n < 6000000 :=
         Nat.floor_lt hy.le |>.2 (show y < ((6000000 : ℕ) : ℝ) by norm_num; linarith)
-      have h1 := psi_lt_small' hpos (by omega : n ≤ 10 ^ 19)
+      have h1 := psi_lt_small' hpos (by omega : n ≤ 10 ^ 17)
       unfold psiN at h1
       have h2 : (n : ℝ) ≤ y := Nat.floor_le hy.le
       linarith
@@ -932,8 +932,7 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
       ∑ n ∈ Ioo X N, psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) :=
     sum_le_sum fun n hn => abel_term_ge (by have := (mem_Ioo.1 hn).1; omega)
   rw [sum_sub_distrib, sum_sub_distrib, sum_sub_distrib, ← mul_sum] at hint
-  have hep : ∑ n ∈ Ioo X N, epl n / ((n : ℝ) + 1) ≤ 3.66e-7 :=
-    (sum_epl_div_le X N).trans (by split_ifs <;> norm_num)
+  have hep : ∑ n ∈ Ioo X N, epl n / ((n : ℝ) + 1) ≤ 3.52e-5 := sum_epl_div_le_const X N
   have h1 := sum_inv_succ_ge h6
   have h2 := sum_inv_sqrt_le h6
   have h3' := sum_inv_log_cube_le (a := X) (by norm_num) h6
@@ -951,7 +950,7 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
     div_le_div_of_nonneg_left (by norm_num) (by norm_num)
       (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 9) hlX 2])
   -- the boundary term at `N`
-  have hNb : 1 - 0.95 / 100 - 1 / 729 - 2.2e-11 ≤ psiN N * (1 / (N : ℝ)) := by
+  have hNb : 1 - 0.95 / 100 - 1 / 729 - 1.83e-9 ≤ psiN N * (1 / (N : ℝ)) := by
     have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
     have hl := psi_lower2 (n := N) (by omega)
     have hlN : (9 : ℝ) ≤ Real.log N :=
@@ -1018,7 +1017,7 @@ theorem psi_lower_all (m : ℕ) :
     have h2 := thetaN_le_psiN m
     have hx : (10 : ℝ) ^ 10 ≤ m := by exact_mod_cast h'.le
     have h3 := div_log_cube_le hm0 (by norm_num) (log_ge_23 hx)
-    have : (m : ℝ) / 23 ^ 3 + 2.2e-11 * m ≤ m / 12000 := by
+    have : (m : ℝ) / 23 ^ 3 + 1.83e-9 * m ≤ m / 12000 := by
       rw [div_add' _ _ _ (by norm_num), div_le_div_iff₀ (by norm_num) (by norm_num)]; nlinarith
     have he := mul_le_mul_of_nonneg_right (epl_le m) hm0
     linarith
@@ -1080,8 +1079,8 @@ theorem psi_mul_large {N : ℕ} (hN : 10 ^ 8 ≤ N) :
   rw [← hs2] at hup' hlow' ⊢
   nlinarith [mul_pos (by linarith : (0 : ℝ) < s) (by linarith : (0 : ℝ) < s)]
 
-/-- `ψ(m) ≥ m − 0.94 √m − 11` for `m ≤ 10¹⁹` (Büthe for `m ≥ 12`, trivially below). -/
-theorem psi_lower_buthe {m : ℕ} (hm : m ≤ 10 ^ 19) :
+/-- `ψ(m) ≥ m − 0.94 √m − 11` for `m ≤ 10¹⁷` (Büthe for `m ≥ 12`, trivially below). -/
+theorem psi_lower_buthe {m : ℕ} (hm : m ≤ 10 ^ 17) :
     (m : ℝ) - 0.94 * √(m : ℝ) - 11 ≤ psiN m := by
   have hs := Real.sqrt_nonneg (m : ℝ)
   rcases lt_or_ge m 12 with h | h
@@ -1091,8 +1090,8 @@ theorem psi_lower_buthe {m : ℕ} (hm : m ≤ 10 ^ 19) :
   · have := (abs_le.1 (buthe_psi m h hm)).1
     unfold psiN; linarith
 
-/-- **[H, (2.17)]** for `2.5·10⁷ ≤ N ≤ 10¹⁹`, from Büthe's bound by partial summation. -/
-theorem psi_mul_buthe {N : ℕ} (hN : 25000000 ≤ N) (hN19 : N ≤ 10 ^ 19) :
+/-- **[H, (2.17)]** for `2.5·10⁷ ≤ N ≤ 10¹⁷`, from Büthe's bound by partial summation. -/
+theorem psi_mul_buthe {N : ℕ} (hN : 25000000 ≤ N) (hN19 : N ≤ 10 ^ 17) :
     ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.0008 * (N : ℝ) ^ 2 / 2 := by
   have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
   have hpsi0 : psiN 0 = 0 := by simp [psiN]
@@ -1257,10 +1256,10 @@ theorem logsq_large {N : ℕ} (hN : 10 ^ 12 < N) :
     rw [hs6, div_le_div_iff₀ (by linarith) (by norm_num)] at hanti
     nlinarith
   -- θ bounds at `a`, `b`, `N`
-  set Pa : ℝ := if L < 20000 then 2.2e-11 * N else 0 with hPa
+  set Pa : ℝ := if L < 20000 then 1.83e-9 * N else 0 with hPa
   have hPa0 : 0 ≤ Pa := by rw [hPa]; split_ifs <;> positivity
-  have hPa1 : Pa ≤ 2.2e-11 * N := by rw [hPa]; split_ifs <;> [exact le_rfl; positivity]
-  have hPa2 : Real.log N * Pa ≤ 4.41e-7 * N := by
+  have hPa1 : Pa ≤ 1.83e-9 * N := by rw [hPa]; split_ifs <;> [exact le_rfl; positivity]
+  have hPa2 : Real.log N * Pa ≤ 3.67e-5 * N := by
     rw [hPa]; split_ifs with hL2
     · have : Real.log N ≤ 20001.1 := by linarith
       have hlN0' : 0 ≤ Real.log N := by linarith
@@ -1303,7 +1302,7 @@ theorem logsq_large {N : ℕ} (hN : 10 ^ 12 < N) :
   have ht30 : 0 ≤ t3 := by positivity
   have hlN0 : 0 ≤ Real.log N := by linarith
   have hsN' : √(N : ℝ) ≤ N / 1000 := sqrt_le_div (by norm_num) (by linarith)
-  have hE' : E ≤ 1.95 * (N / 1000) + N / 2197 + 2.2e-11 * N := by linarith
+  have hE' : E ≤ 1.95 * (N / 1000) + N / 2197 + 1.83e-9 * N := by linarith
   have hBr : 0 ≤ (N : ℝ) / 4 - 1 - 2 * E := by linarith
   have k1 : Real.log b * (thetaN b - thetaN a) + Real.log N * (thetaN N - thetaN b) =
       Real.log N * (thetaN N - thetaN a) - (Real.log N - Real.log b) * (thetaN b - thetaN a) := by
@@ -1313,7 +1312,7 @@ theorem logsq_large {N : ℕ} (hN : 10 ^ 12 < N) :
   have k3 : 0.2876 * ((N : ℝ) / 4 - 1 - 2 * E) ≤ (Real.log N - Real.log b) * (thetaN b - thetaN a) :=
     mul_le_mul hl43 hLo hBr (by linarith)
   -- `log N · E ≤ 1.95 · 0.014 N + t3 L + 1.1 t3`
-  have k4 : Real.log N * E ≤ 1.95 * (0.014 * N) + (N / 169 + 1.1 * t3) + 4.41e-7 * N := by
+  have k4 : Real.log N * E ≤ 1.95 * (0.014 * N) + (N / 169 + 1.1 * t3) + 3.67e-5 * N := by
     have ha : Real.log N * √(N : ℝ) ≤ 0.014 * N := by
       have := mul_le_mul_of_nonneg_right hlsq (Real.sqrt_nonneg (N : ℝ))
       rw [mul_assoc, hss] at this; exact this

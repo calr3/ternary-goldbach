@@ -11,10 +11,10 @@ The proof is complete: there is no `sorry`, and the main theorems use only Lean'
 axioms. They take 5 published numerical results as explicit hypotheses, stated in
 `TernaryGoldbach/Statement.lean`:
 
-* `RHUpTo`: RH up to `3·10¹²`;
+* `RHUpTo`: RH up to `3·10¹⁰` ([Pla15], rigorous, 2012);
 * `PlattGRH`: Platt's GRH verification;
-* `BinaryGoldbachInput`: binary Goldbach up to `1.45·10¹⁷`;
-* `ButhePsi`: Büthe's bound on `ψ` up to `10¹⁹`;
+* `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
+* `ButhePsi`: Büthe's bound on `ψ`, used up to `10¹⁷` (Büthe proves it up to `10¹⁹`);
 * `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
   is checked against a later published bound (see `AXIOMS.md`).
 
@@ -102,11 +102,11 @@ also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
 The top level is [H, §14.4] (`Helfgott/Main.lean`).
 
 * **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
-  * binary Goldbach up to `1.45·10¹⁷` ([OeSHP14] verify `4·10¹⁸` and double-checked `3·10¹⁷`);
-  * for `n > 1.45·10¹⁷ + 3`, a prime `p` with `n − 1.45·10¹⁷ < p ≤ n − 4`, from
-    `−7.401·10¹⁶ ≤ θ(m) − m ≤ 7.003·10¹⁶` for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁹`, and above
-    it `|ψ(x) − x| ≤ 2.15·10⁻¹¹x + 1533√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
-    `3·10¹²`). Then `n − p` is even and at most `1.45·10¹⁷`.
+  * binary Goldbach up to `4·10¹⁸` ([OeSHP14]; they double-checked `3·10¹⁷`);
+  * for `n > 4·10¹⁸ + 3`, a prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, from
+    `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `1423 ≤ m ≤ 10²⁷`: Büthe's bound below `10¹⁷`, and above
+    it `|ψ(x) − x| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
+    `3·10¹⁰`). Then `n − p` is even and at most `4·10¹⁸`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [H, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
@@ -132,12 +132,12 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
-  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. Here `ε_pl(n) = 2.2·10⁻¹¹` for
-  `3400 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [H] uses. It comes from:
-  * Büthe's bound for `ψ` up to `10¹⁹`, with `ψ − θ ≤ √n (1.0054 + 0.048 log n)` (from the same
+  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. Here `ε_pl(n) = 1.83·10⁻⁹` for
+  `780 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [H] uses. It comes from:
+  * Büthe's bound for `ψ` up to `10¹⁷`, with `ψ − θ ≤ √n (1.0054 + 0.048 log n)` (from the same
     bound at `⌊√n⌋` and `⌊√n⌋/31`); below `10¹²` we use `|θ(n) − n| ≤ 2.37 √n` (Büthe and
     `ψ − θ < 1.4262 √n`). Büthe's separate bounds for `θ` are not used;
-  * above `10¹⁹`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹²` and the
+  * above `10¹⁷`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹⁰` and the
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
@@ -205,7 +205,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 **Other differences:**
 * Dusart's bound is replaced by `theta_explicit`, above.
 * The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
-  which [H, §1.6] uses up to `8.875·10³⁰`, and need binary Goldbach only up to `1.45·10¹⁷`.
+  which [H, §1.6] uses up to `8.875·10³⁰`; they need binary Goldbach up to `4·10¹⁸`.
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout
@@ -232,8 +232,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [OeSHP14] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even Goldbach
   conjecture and computation of prime gaps up to 4·10¹⁸*, Math. Comp. 83 (2014).
 * [Pla] D. J. Platt, *Numerical computations concerning the GRH*, arXiv:1305.3087.
-* [PT21] D. Platt, T. Trudgian, *The Riemann hypothesis is true up to 3·10¹²*, Bull. LMS 53 (2021),
-  arXiv:2004.09765.
+* [Pla15] D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535,
+  arXiv:1203.5712 (RH up to `3.0610046·10¹⁰`).
 * [Bü18] J. Büthe, *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018), arXiv:1511.02032.
 * [Dus18] P. Dusart, *Explicit estimates of some functions over primes*, Ramanujan J. 45 (2018).
 * [RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,

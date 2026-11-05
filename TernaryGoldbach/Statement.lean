@@ -49,11 +49,11 @@ The proof rests on five published numerical results, stated here as `Prop`s and 
 theorems that need them as `Fact` instances (not as axioms). Each is a large computation, and none
 is formalized. -/
 
-/-- [Platt–Trudgian 2021], *The Riemann hypothesis is true up to 3·10¹²*, Bull. LMS 53 (2021),
-arXiv:2004.09765: every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹²` is on the critical
-line. -/
+/-- D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535, arXiv:1203.5712:
+every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹⁰` is on the critical line (Platt verifies
+RH up to height `3.0610046·10¹⁰`, rigorously, with interval arithmetic). -/
 def RHUpTo : Prop :=
-  ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e12 → ρ.re = 1 / 2
+  ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2
 
 /-- D. Platt [Plab, Thm 7.1], [H, §9.6]: for every primitive character `χ` of conductor `q`, GRH
 holds for `L(s, χ)` up to height `10⁸/q` if `q ≤ 3·10⁵` is odd, and up to height
@@ -66,13 +66,13 @@ def PlattGRH : Prop :=
       |ρ.im| ≤ max (1e8 / q : ℝ) (200 + 7.5e7 / q) → ρ.re = 1 / 2)
 
 /-- [OeSHP] Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014): every even `4 ≤ n ≤ 4·10¹⁸` is
-a sum of two primes. Only `n ≤ 1.45·10¹⁷` is used. -/
-def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (145 * 10 ^ 15)
+a sum of two primes. -/
+def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
 /-- [Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018), Thm 2, (1.5):
-`|ψ(x) − x| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`, used at integers `12 ≤ n ≤ 10¹⁹`. -/
+`|ψ(x) − x| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`, used at integers `12 ≤ n ≤ 10¹⁷`. -/
 def ButhePsi : Prop :=
-  ∀ n : ℕ, 12 ≤ n → n ≤ 10 ^ 19 →
+  ∀ n : ℕ, 12 ≤ n → n ≤ 10 ^ 17 →
     |∑ m ∈ Finset.Icc 1 n, (ArithmeticFunction.vonMangoldt m : ℝ) - n| ≤ 0.94 * √(n : ℝ)
 
 /-- O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4, as cited in [H, (2.21)]:

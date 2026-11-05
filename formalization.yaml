@@ -24,11 +24,11 @@ sources:
       The proof follows [H] closely. Some constants are re-derived or re-tuned. For example,
       Prop. 12.2.4 is proved with c₊ = 2. See BLUEPRINT.md and NOTES.md.
     author_endorsement: "participated"
-  - title: "The Riemann hypothesis is true up to 3·10¹²"
-    authors: ["D. J. Platt", "T. S. Trudgian"]
-    id: "arXiv:2004.09765"
+  - title: "Computing π(x) analytically"
+    authors: ["D. J. Platt"]
+    id: "arXiv:1203.5712"
     type: "article"
-    location: "Bull. LMS 53 (2021); main theorem"
+    location: "Math. Comp. 84 (2015); RH verified up to height 3.0610046·10¹⁰"
     relationship: "background"
     note: "Assumed as the hypothesis `TernaryGoldbach.RHUpTo`."
   - title: "Numerical computations concerning the GRH"
@@ -44,7 +44,7 @@ sources:
     type: "article"
     location: "Math. Comp. 83 (2014), Table 1 and §1.3"
     relationship: "background"
-    note: "Assumed (up to 1.45·10¹⁷) as the hypothesis `TernaryGoldbach.BinaryGoldbachInput`."
+    note: "Assumed (up to 4·10¹⁸) as the hypothesis `TernaryGoldbach.BinaryGoldbachInput`."
   - title: "An analytic method for bounding ψ(x)"
     authors: ["J. Büthe"]
     id: "arXiv:1511.02032"
@@ -78,8 +78,8 @@ status:
   scope: >-
     The complete proof of the ternary Goldbach conjecture following [H], relative to five
     published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), four
-    hypotheses are used: RH to 3·10¹², Platt's GRH verification, Büthe's ψ bound, and Ramaré's
-    Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 1.45·10¹⁷.
+    hypotheses are used: RH to 3·10¹⁰, Platt's GRH verification, Büthe's ψ bound, and Ramaré's
+    Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -93,13 +93,13 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/config.json"
       literature_dependencies:
-        - statement: "`RHUpTo`: every zero of ζ in the critical strip with |ℑρ| ≤ 3·10¹² has ℜρ = 1/2"
-          source: "Platt–Trudgian, arXiv:2004.09765"
+        - statement: "`RHUpTo`: every zero of ζ in the critical strip with |ℑρ| ≤ 3·10¹⁰ has ℜρ = 1/2"
+          source: "Platt, arXiv:1203.5712"
         - statement: "`PlattGRH`: GRH for primitive χ mod q to height 10⁸/q (odd q ≤ 3·10⁵) or max(10⁸/q, 200 + 7.5·10⁷/q) (even q ≤ 4·10⁵)"
           source: "Platt, arXiv:1305.3087, Thm 7.1"
-        - statement: "`BinaryGoldbachInput`: every even 4 ≤ n ≤ 1.45·10¹⁷ is a sum of two primes"
+        - statement: "`BinaryGoldbachInput`: every even 4 ≤ n ≤ 4·10¹⁸ is a sum of two primes"
           source: "Oliveira e Silva–Herzog–Pardi, Math. Comp. 83 (2014)"
-        - statement: "`ButhePsi`: |ψ(n) − n| ≤ 0.94 √n for 12 ≤ n ≤ 10¹⁹"
+        - statement: "`ButhePsi`: |ψ(n) − n| ≤ 0.94 √n for 12 ≤ n ≤ 10¹⁷ (Büthe proves it up to 10¹⁹)"
           source: "Büthe, arXiv:1511.02032, Thm 2"
         - statement: "`RamareMoebius`: |∑_{n≤x} μ(n)/n| ≤ 0.03/log x for x ≥ 11815"
           source: "Ramaré, Acta Arith. 157 (2013), Cor. 1.4"
@@ -110,7 +110,7 @@ status:
       comparator_config: "comparator/config.json"
       literature_dependencies:
         - statement: "`RHUpTo`"
-          source: "Platt–Trudgian, arXiv:2004.09765"
+          source: "Platt, arXiv:1203.5712"
         - statement: "`PlattGRH`"
           source: "Platt, arXiv:1305.3087, Thm 7.1"
         - statement: "`ButhePsi`"

@@ -5,7 +5,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 /-!
 # The explicit bound for large `x`: zeros above `H` via the zero-free region
 
-Zeros with `H < |γ| ≤ Γ` have `x^β ≤ x·e^{−log x/(11 log Γ)}` (`zero_free`); those above `Γ` are killed by the
+Zeros with `H < |γ| ≤ Γ` (`H = 3·10¹⁰`) have `x^β ≤ x·e^{−log x/(11 log Γ)}` (`zero_free`); those above `Γ` are killed by the
 Gaussian (`tail_sum_gauss` anchored at `Γ`).
 -/
 
@@ -62,10 +62,55 @@ theorem rpow_re_le_zf {x Γ : ℝ} (hx : 1 < x) {u : ℂ} (hu : xiF u = 0) (h1 :
 noncomputable def TailBG (a δ Γ : ℝ) : ℝ :=
   EBg a δ Γ * (2 * Z3g BPz2 Γ / (1 - rhoG δ Γ) + 2 * c3g 10 Γ / (1 - rhoG δ Γ) ^ 2)
 
-/-- The zeros in `(H, Γ]`, with the zero-free region. -/
-noncomputable def MidB (a δ Γ x : ℝ) : ℝ :=
-  2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log Γ))) *
-    ((⌊(Γ - 3e12) / 4.4⌋₊ + 1) * (2 * Z3g BPz2 3e12 + 2 * c3g 10 3e12 * (⌊(Γ - 3e12) / 4.4⌋₊ + 1)))
+/-- The zeros in `(H₁, Γ]`, with the zero-free region. -/
+noncomputable def MidB0 (a δ H₁ Γ x : ℝ) : ℝ :=
+  2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ * Real.exp (-(Real.log x / (11 * Real.log Γ))) *
+    ((⌊(Γ - H₁) / 4.4⌋₊ + 1) * (2 * Z3g BPz2 H₁ + 2 * c3g 10 H₁ * (⌊(Γ - H₁) / 4.4⌋₊ + 1)))
+
+/-- The zeros in `(H, Γ]` (`H = 3·10¹⁰`), in two ranges: `(H, 3·10¹²]` and `(3·10¹², Γ]`. (One range
+anchored at `H` would count the zeros near `Γ` with `log B(H) + 10 (Γ − H)/H`, far too crudely.) -/
+noncomputable def MidB (a δ Γ x : ℝ) : ℝ := MidB0 a δ 3e10 3e12 x + MidB0 a δ 3e12 Γ x
+
+/-- The zero-free-region estimate for the zeros with `H₁ < |γ| ≤ Γ`, `H₁ ≥ 10⁹`. -/
+theorem mid_sum_le {a b δ x H₁ Γ T : ℝ} (hb : b ≤ 0) (hx : 1 < x) (hH₁ : 1e9 ≤ H₁) (S : Finset ℂ)
+    (hS : S ⊆ zerosRectD zetaF T) (him : ∀ u ∈ S, H₁ < |u.im| ∧ |u.im| ≤ Γ) :
+    ∑ u ∈ S, (multRectD zetaF T u : ℝ) * (‖Mg a b δ u‖ * x ^ u.re) ≤ x * MidB0 a δ H₁ Γ x := by
+  have hH0 : 0 < H₁ := by linarith
+  set m : ℂ → ℝ := fun u => (multRectD zetaF T u : ℝ) with hm
+  have hcount := count_mid hH0 S hS him
+  have hpt : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+      m u * (2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x) := by
+    intro u hu
+    obtain ⟨hz, hr1, hr2, hxi⟩ := zerosRectD_zetaF_strip (hS hu)
+    obtain ⟨hH, hG⟩ := him u hu
+    have hγ0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hH; linarith
+    have hMs := norm_Mg_strip_le (a := a) (δ := δ) hb hr1 hr2 hγ0
+    have hγ : 0 < |u.im| := abs_pos.2 hγ0
+    have hMb : ‖Mg a b δ u‖ ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ := by
+      have hg1 : Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) ≤ 1 := Real.exp_le_one_iff.2 (by
+        have := sq_nonneg (δ * u.im); nlinarith)
+      have : ‖Mg a b δ u‖ * |u.im| ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) := by
+        have := mul_le_mul_of_nonneg_left hg1 (by positivity : (0:ℝ) ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|))
+        linarith
+      rw [le_div_iff₀ hH0]
+      calc ‖Mg a b δ u‖ * H₁ ≤ ‖Mg a b δ u‖ * |u.im| := mul_le_mul_of_nonneg_left hH.le (norm_nonneg _)
+        _ ≤ _ := this
+    have hxr := rpow_re_le_zf hx hxi (by linarith) hG
+    refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+    calc ‖Mg a b δ u‖ * x ^ u.re ≤ (2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁) *
+        (x * Real.exp (-(Real.log x / (11 * Real.log Γ)))) :=
+          mul_le_mul hMb hxr (by positivity) (by positivity)
+      _ = _ := by ring
+  refine (Finset.sum_le_sum hpt).trans ?_
+  rw [← Finset.sum_mul]
+  unfold MidB0
+  have hC0 : 0 ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x := by
+    positivity
+  calc (∑ u ∈ S, m u) * (2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x)
+      ≤ ((⌊(Γ - H₁) / 4.4⌋₊ + 1) * (2 * Z3g BPz2 H₁ + 2 * c3g 10 H₁ * (⌊(Γ - H₁) / 4.4⌋₊ + 1))) *
+        (2 * Real.exp (δ ^ 2 / 2 + |a|) / H₁ * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x) :=
+        mul_le_mul_of_nonneg_right hcount hC0
+    _ = _ := by ring
 
 /-- **The explicit-formula bound with the zero-free region.** -/
 theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x)
@@ -88,19 +133,23 @@ theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb 
       refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun u _ => ?_)
       rw [norm_mul, norm_mul, Complex.norm_natCast, norm_cpow_x hx0, hM]
     refine h1.trans ?_
-    rw [← Finset.sum_filter_add_sum_filter_not Z (fun u => |u.im| ≤ 3e12),
-      ← Finset.sum_filter_add_sum_filter_not (Z.filter fun u => ¬ |u.im| ≤ 3e12) (fun u => |u.im| ≤ Γ)]
-    rw [add_assoc]
-    refine add_le_add ?_ (add_le_add ?_ ?_)
-    · -- the line zeros (as in `SsumG_gsm_err`)
-      set S := Z.filter (fun u => |u.im| ≤ 3e12) with hS
+    set Z1 := Z.filter fun u => ¬ |u.im| ≤ 3e10 with hZ1
+    set Z2 := Z1.filter fun u => ¬ |u.im| ≤ 3e12 with hZ2
+    rw [← Finset.sum_filter_add_sum_filter_not Z (fun u => |u.im| ≤ 3e10),
+      ← Finset.sum_filter_add_sum_filter_not Z1 (fun u => |u.im| ≤ 3e12),
+      ← Finset.sum_filter_add_sum_filter_not Z2 (fun u => |u.im| ≤ Γ)]
+    have hZ1Z : Z1 ⊆ Z := Finset.filter_subset _ _
+    have hZ2Z : Z2 ⊆ Z := (Finset.filter_subset _ _).trans hZ1Z
+    have hA : ∑ u ∈ Z.filter (fun u => |u.im| ≤ 3e10), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤ √x * LineB a δ := by
+      -- the line zeros (as in `SsumG_gsm_err`)
+      set S := Z.filter (fun u => |u.im| ≤ 3e10) with hS
       have hSZ : S ⊆ Z := Finset.filter_subset _ _
       have hre : ∀ u ∈ S, u.re = 1 / 2 := by
         intro u hu
         obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
         obtain ⟨hz, hr1, hr2, -⟩ := zerosRectD_zetaF_strip hu1
         exact rh_upto u hz hr1 hr2 hu2
-      have him : ∀ u ∈ S, |u.im| ≤ 3e12 := fun u hu => (Finset.mem_filter.1 hu).2
+      have him : ∀ u ∈ S, |u.im| ≤ 3e10 := fun u hu => (Finset.mem_filter.1 hu).2
       have heq : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) = √x * (m u * ‖Mg a b δ u‖) := by
         intro u hu
         rw [hre u hu, ← Real.sqrt_eq_rpow]; ring
@@ -113,50 +162,22 @@ theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb 
       rw [hu']
       have := norm_Mg_line_le (δ := δ) hab hb u.im
       simpa using this
-    · -- zeros in `(H, Γ]`
-      set S := (Z.filter fun u => ¬ |u.im| ≤ 3e12).filter (fun u => |u.im| ≤ Γ) with hS
-      have hSZ : S ⊆ Z := (Finset.filter_subset _ _).trans (Finset.filter_subset _ _)
-      have him : ∀ u ∈ S, 3e12 < |u.im| ∧ |u.im| ≤ Γ := fun u hu =>
-        ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
-      have hcount := count_mid (by norm_num) S hSZ him
-      have hpt : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
-          m u * (2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x) := by
-        intro u hu
-        obtain ⟨hz, hr1, hr2, hxi⟩ := zerosRectD_zetaF_strip (hSZ hu)
-        obtain ⟨hH, hG⟩ := him u hu
-        have hγ0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hH; linarith
-        have hMs := norm_Mg_strip_le (a := a) (δ := δ) hb hr1 hr2 hγ0
-        have hγ : 0 < |u.im| := abs_pos.2 hγ0
-        have hMb : ‖Mg a b δ u‖ ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 := by
-          have hg1 : Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) ≤ 1 := Real.exp_le_one_iff.2 (by
-            have := sq_nonneg (δ * u.im); nlinarith)
-          have : ‖Mg a b δ u‖ * |u.im| ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) := by
-            have := mul_le_mul_of_nonneg_left hg1 (by positivity : (0:ℝ) ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|))
-            linarith
-          rw [le_div_iff₀ (by norm_num)]
-          calc ‖Mg a b δ u‖ * 3e12 ≤ ‖Mg a b δ u‖ * |u.im| := mul_le_mul_of_nonneg_left hH.le (norm_nonneg _)
-            _ ≤ _ := this
-        have hxr := rpow_re_le_zf hx hxi (by linarith) hG
-        refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
-        calc ‖Mg a b δ u‖ * x ^ u.re ≤ (2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12) *
-            (x * Real.exp (-(Real.log x / (11 * Real.log Γ)))) :=
-              mul_le_mul hMb hxr (by positivity) (by positivity)
-          _ = _ := by ring
-      refine (Finset.sum_le_sum hpt).trans ?_
-      rw [← Finset.sum_mul]
-      unfold MidB
-      have hC0 : 0 ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x := by
-        positivity
-      calc (∑ u ∈ S, m u) * (2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x)
-          ≤ ((⌊(Γ - 3e12) / 4.4⌋₊ + 1) * (2 * Z3g BPz2 3e12 + 2 * c3g 10 3e12 * (⌊(Γ - 3e12) / 4.4⌋₊ + 1))) *
-            (2 * Real.exp (δ ^ 2 / 2 + |a|) / 3e12 * Real.exp (-(Real.log x / (11 * Real.log Γ))) * x) :=
-            mul_le_mul_of_nonneg_right hcount hC0
-        _ = _ := by ring
-    · -- zeros above `Γ`
-      set S := (Z.filter fun u => ¬ |u.im| ≤ 3e12).filter (fun u => ¬ |u.im| ≤ Γ) with hS
-      have hSZ : S ⊆ Z := (Finset.filter_subset _ _).trans (Finset.filter_subset _ _)
-      have him : ∀ u ∈ S, Γ < |u.im| := fun u hu => not_le.1 (Finset.mem_filter.1 hu).2
-      exact tail_sum_gauss (by linarith) hδ hb hx.le S hSZ him
+    have hB : ∑ u ∈ Z1.filter (fun u => |u.im| ≤ 3e12), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * MidB0 a δ 3e10 3e12 x := by
+      refine mid_sum_le hb hx (by norm_num) _ ((Finset.filter_subset _ _).trans hZ1Z) fun u hu => ?_
+      exact ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
+    have hC : ∑ u ∈ Z2.filter (fun u => |u.im| ≤ Γ), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * MidB0 a δ 3e12 Γ x := by
+      refine mid_sum_le hb hx (by norm_num) _ ((Finset.filter_subset _ _).trans hZ2Z) fun u hu => ?_
+      exact ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
+    have hD : ∑ u ∈ Z2.filter (fun u => ¬ |u.im| ≤ Γ), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * TailBG a δ Γ := by
+      have hSZ := (Finset.filter_subset (fun u => ¬ |u.im| ≤ Γ) Z2).trans hZ2Z
+      have him : ∀ u ∈ Z2.filter (fun u => ¬ |u.im| ≤ Γ), Γ < |u.im| := fun u hu =>
+        not_le.1 (Finset.mem_filter.1 hu).2
+      exact tail_sum_gauss (by linarith) hδ hb hx.le _ hSZ him
+    rw [MidB, mul_add]
+    linarith
   have h1 : ‖mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x - (1 / (2 * π) : ℂ) * I0‖ ≤
       √x * LineB a δ + x * MidB a δ Γ x + x * TailBG a δ Γ :=
     le_of_tendsto' ((continuous_norm.tendsto _).comp hlim) fun k => hbound (Tk k)
