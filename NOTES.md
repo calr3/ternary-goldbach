@@ -567,7 +567,28 @@ Consequences:
       * Files: `WeilTest` (P1), `WeilPrime` (P2 and line shifts), `WeilRect` (rectangle identity),
         `WeilSplit` (`ζ'/ζ` part `= 0`, `lor²` decay, `rectInt_limit`), `WeilLines` (`J₁ = 2πH̃(1)`,
         `J₂` moved to `ℜs = ½`), `WeilFormula` (limit).
-      * Next: P5 (`Re ψ(¼ + iy/2)` upper bound), P6, P7.
+      * P6 done (`WeilBridge`): `multRectD zetaF T u = mult T' u` in the strip, and zetaF-zeros
+        are ξ-zeros. Next: P7, P5, P8.
+    * **P7 design** (window sums, without Poisson summation). Let `S` be the on-line zeros
+      `|γ| ≤ 3·10¹⁰` of `zerosRectD zetaF T`, which is what `SsumG_gsm_err` sums over.
+      1. Per window: `Σ_S m B(γ − T₀)² ≤ Φ(T₀) + Off` for `|T₀| ≤ 1.5·10¹⁰`, where
+         `Φ(T₀) = Re[H̃_{T₀}(1) + (1/2π) ∫ A(½+iy) H̃_{T₀}(½+iy) dy]`. Take `k → ∞` in `weil_formula`:
+         * the on-line zeros of `rectZerosXi (goodT k)` have `Re H = B² ≥ 0`;
+         * the off-line zeros have `|γ| > 3·10¹⁰`, `|H| ≤ 4^m e^{mℓ} L(γ − T₀)² ≤ 4^m e^{mℓ} 64/γ⁴`, and are
+           counted by `count_tail_windowG` with `Z3g ≤ 210.6`. That needs the reverse bridge
+           (ξ-zeros to zetaF-zeros) and a telescoping bound `Σ_k (k+1)/(H + 4.4k)⁴ ≲ 1/(19H²)`.
+      2. Weights: for `w ≥ 0` and `w̄(T) = sup_{|γ−T| ≤ R} w(γ)`,
+         `w(γ) ≤ (K − tail_R)⁻¹ ∫ w̄(T) B(γ − T)² dT`, with `K = ∫ B²` and `tail_R = ∫_{|u|>R} B²`.
+         Swap the finite sum and the integral:
+         `Σ_S m w ≤ (K − tail_R)⁻¹ ∫ w̄(T) (Φ(T) + Off) dT`, restricted to `|T| ≤ 3·10¹⁰ + R`.
+      3. `∫ w̄ Φ`: the polar part `H̃_T(1)` is tiny unless `|T| ≲ 10`. The archimedean part is
+         `(1/π) ∫ Re A(½+iy) (w̄ ⋆ B²)(y) dy` (`w̄` even). Bound `Re A` above by P5. The crude
+         `re_digamma_le'` costs about `log 5/(2π)` in density, +17–35%. A sharper bound,
+         `Re ψ(¼ + it) ≤ log|¼ + it| + 1/(N − ¾) + O(1/|t|)`, follows from `re_digamma_le` and the
+         recurrence `N` times. Numerically `Re ψ(¼+it) < log|¼+it|` for all `t`.
+      4. P8: the weight is `w(γ) = C e^{−δ²γ²/2}/max(½, |γ|) ≥ ‖Mg(½+iγ)‖`, which needs a version of
+         `norm_Mg_line_le'` that keeps the Gaussian factor. Then `LineB2` is replaced by
+         `≈ (1/π)(½ log²(K₁/(2πδ)) + …)`, choosing `δ` for each `x`; compare `scripts/rs_ideal_model.py`.
   * **Model check** (2026-11-05, `scripts/route_d_model.py`, on top of `prelim_sensitivity.py`).
     `a14 = 1 + c(V)/√V` and `a17 = 1 + (10/3) c(V)/√V` at `V = ⌊9x^{1/3}/2⌋`. These are worst at
     `V = 2.7·10⁷` (`1.00224`, `1.00747`) and below Büthe's constants from about `x = 10²⁷`.
