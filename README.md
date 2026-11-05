@@ -133,7 +133,11 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
   `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. Here `ε_pl(n) = 1.83·10⁻⁹` for
-  `780 < log n < 20000` and `0` otherwise. It replaces Dusart's bound, which [H] uses. It comes from:
+  `780 < log n < 20000` and `0` otherwise. It plays the role of Dusart's `|θ(x) − x| < x/log³x`
+  (`x ≥ 89 967 803`), which earlier versions of this project assumed. [H] itself does not use
+  Dusart: it quotes its bounds for `ψ` and `θ` ([H, §2.5]) from [RS62], [RS75] and [RR96]. We prove
+  those bounds instead, which is why we need a `√x`-quality bound for `ψ` (Büthe's) for moderate
+  `x`. It comes from:
   * Büthe's bound for `ψ` up to `10¹⁷`, with `ψ − θ ≤ √n (1.0054 + 0.048 log n)` (from the same
     bound at `⌊√n⌋` and `⌊√n⌋/31`); below `10¹²` we use `|θ(n) − n| ≤ 2.37 √n` (Büthe and
     `ψ − θ < 1.4262 √n`). Büthe's separate bounds for `θ` are not used;
@@ -203,9 +207,13 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   Finding 5).
 
 **Other differences:**
-* Dusart's bound is replaced by `theta_explicit`, above.
+* [H, §2.5] quotes its bounds for `ψ`, `θ` and `Λ` from [RS62], [RS75] and [RR96]; we prove them
+  (`Prelim/LambdaMu.lean`, `ThetaExplicit.lean`) from Büthe's bound and `theta_explicit`, above.
 * The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
-  which [H, §1.6] uses up to `8.875·10³⁰`; they need binary Goldbach up to `4·10¹⁸`.
+  which [H, §1.6] uses up to `8.875·10³⁰`; they need binary Goldbach up to `4·10¹⁸`. This is the
+  route of [H, App. D], which reaches `1.23·10²⁷` from RH to `3.061·10¹⁰` [Pla15] (Prop. D.0.3).
+  There the prime below `n − 4` comes from short-interval results ([RS03] and Ramaré's tables);
+  here it comes from our bounds for `θ`.
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout
@@ -238,6 +246,11 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [Dus18] P. Dusart, *Explicit estimates of some functions over primes*, Ramanujan J. 45 (2018).
 * [RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,
   Illinois J. Math. 6 (1962).
+* [RS75] J. B. Rosser, L. Schoenfeld, *Sharper bounds for the Chebyshev functions θ(x) and ψ(x)*,
+  Math. Comp. 29 (1975), 243–269.
+* [RR96] O. Ramaré, R. Rumely, *Primes in arithmetic progressions*, Math. Comp. 65 (1996), 397–425.
+* [RS03] O. Ramaré, Y. Saouter, *Short effective intervals containing primes*, J. Number Theory 98
+  (2003), 10–33.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.

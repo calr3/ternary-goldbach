@@ -10,11 +10,13 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput
 For odd `n ≤ 4·10¹⁸ + 3`, `n = 3 + (n − 3)` and binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`,
 [OeSHP14]) applies. For odd `4·10¹⁸ + 3 < n ≤ 10²⁷` there is a
 prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, since `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for
-`1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_psi`, with `ψ − θ ≤ 2.001 log m √m`) below `10¹⁹`, and the explicit formula
+`1423 ≤ m ≤ 10²⁷` (`theta_bound`): [Büthe 2018] (`buthe_psi`, with `ψ − θ ≤ 2.001 log m √m`) up to `10¹⁷`, and the explicit formula
 (`psi_plateau`, from `rh_upto`) with `ψ − θ ≤ 2.001 log m √m` above. Then `n − p` is even and at most
 `4·10¹⁸`.
 
-This replaces the Helfgott–Platt prime ladder [HP13], whose gaps are `≤ 4·10¹⁸`.
+This replaces the Helfgott–Platt prime ladder [HP13], whose gaps are `≤ 4·10¹⁸`. It is the route of
+[H, App. D] (RH to a height and binary Goldbach), with these bounds for `θ` in place of the
+short-interval results of Ramaré–Saouter [RS03] and Ramaré's tables.
 -/
 
 open Finset Real

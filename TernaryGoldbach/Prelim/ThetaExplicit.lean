@@ -3,14 +3,14 @@ import TernaryGoldbach.Explicit.PsiAsymp
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# An explicit prime number theorem for `θ` (replacing Dusart's bound)
+# An explicit prime number theorem for `θ` (in place of Dusart's bound)
 
 `|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 10⁹`, where `ε_pl(n) = 1.83·10⁻⁹` if
 `780 < log n < 20000` and `0` otherwise.
 
-Inputs: for `n ≤ 10¹⁹`, Büthe's `|ψ(n) − n| ≤ 0.94 √n` (numerical axiom `buthe_psi`) and
+Inputs: for `n ≤ 10¹⁷`, Büthe's `|ψ(n) − n| ≤ 0.94 √n` (hypothesis `ButhePsi`, via `buthe_psi`) and
 `ψ(n) − θ(n) ≤ √n (1.0054 + 0.048 log n)` (`psi_sub_theta_le_buthe`: Büthe at `⌊√n⌋` and `⌊√n⌋/31`), whose
-sum is `< n/log³n` for `n ≥ 10⁹`; above `10¹⁹`, the explicit formula with the zero-free region
+sum is `< n/log³n` for `n ≥ 10⁹`; above `10¹⁷`, the explicit formula with the zero-free region
 (`Explicit/Psi*`).
 -/
 
@@ -25,7 +25,7 @@ open TernaryGoldbach.Helfgott (psi theta psi_sub_theta_le_sum sum_pow_le_theta)
 omit [Fact TernaryGoldbach.RHUpTo] in
 /-- **Numerical hypothesis** ([Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018),
 1991–2009, arXiv:1511.02032, Thm 2, (1.5)): `|x − ψ(x)| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`; we use it at
-integers `12 ≤ n ≤ 10¹⁹`. (Büthe's bounds (1.6)–(1.7) for `θ` are not used: the `θ` bounds here are
+integers `12 ≤ n ≤ 10¹⁷`. (Büthe's bounds (1.6)–(1.7) for `θ` are not used: the `θ` bounds here are
 derived from this one.) -/
 theorem buthe_psi [h : Fact ButhePsi] (n : ℕ) (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
     |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ 0.94 * √(n : ℝ) :=
