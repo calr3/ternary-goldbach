@@ -1,4 +1,4 @@
-# P8d: the constants of WeilNumC.lean (ℓ = 0.173, N = 20, R = 13, r = 5/4, n_A = 8, n_B = 20).
+# The constants of WeilNumC.lean (ℓ = 0.173, N = 20, R = 13, r = 5/4, n_A = 8, n_B = 20).
 from fractions import Fraction as Q
 from mpmath import mp, mpf, log, exp, pi, sqrt
 mp.dps = 40

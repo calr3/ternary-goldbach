@@ -1,20 +1,20 @@
-"""Finite checks behind former hypotheses of Prelim/LambdaMu.lean (small ranges).
+"""Float checks of small-range bounds for psi and theta ([H, §2.5]; Prelim/LambdaMu.lean proves them from the
+kernel tables and the explicit formula).
 
-* psi_small:      psi(n) < 1.03883 n            for 1 <= n < 2*10^6
-* nonprime_small: psi(n) - theta(n) < 1.4262 sqrt(n)   for 1 <= n <= 10^12
+* psi_small:      psi(n) < 1.03883 n            for 1 <= n < 2*10^6   ((2.15))
+* nonprime_small: psi(n) - theta(n) < 1.4262 sqrt(n)   for 1 <= n <= 10^12   ((5.5))
                   (psi - theta only jumps at prime powers p^k, k >= 2, p <= 10^6; we check the value
                   at every jump, where it is largest relative to sqrt(n))
-* mertens_small:  sum_{m <= n} Lambda(m)/m <= log n   for 1 <= n <= 100
-* mertens_lower_small: sum_{m <= n} Lambda(m)/m >= log(n+1) - log(3/sqrt 2)  for 3 <= n <= 10^6
+* mertens_small:  sum_{m <= n} Lambda(m)/m <= log n   for 1 <= n <= 100   ((2.12))
+* mertens_lower_small: sum_{m <= n} Lambda(m)/m >= log(n+1) - log(3/sqrt 2)  for 3 <= n <= 10^6   ((2.13))
   (equality at n = 2, which is proved by hand)
 * mertens_point:  sum_{m <= X} Lambda(m)/m - psi(X)/(X+1) - log(X+2) >= -1.5776, X = 10^6
-* logsq_small:    sum_{n/2 < p <= n} (log p)^2 <= (1/2) n log n   for 117 <= n <= 10^6
+* logsq_small:    sum_{n/2 < p <= n} (log p)^2 <= (1/2) n log n   for 117 <= n <= 10^6   ((2.19))
 
 Usage: python3 scripts/psi_checks.py   (needs numpy, mpmath; a few seconds, < 200 MB)
 
-NOTE (2026-11-01): psi_small is no longer a hypothesis (kernel-checked for n <= 586 in
-Prelim/SmallPsi.lean, Büthe's bound above); the other checks here backed hypotheses that were removed later.
-mertens_small is no longer a hypothesis either (Prelim/SmallMertens.lean).
+The Lean proof uses some of these ranges directly (kernel checks: Prelim/SmallPsi.lean, SmallMertens.lean,
+SmallNonprime.lean, SmallMertensLower.lean) and the others only through the tables and the explicit formula.
 """
 import math
 import numpy as np

@@ -1286,7 +1286,7 @@ theorem norm_restPart_le_caseA {α x δ Q₀ D ε : ℝ} {a k : ℤ} {q : ℕ} (
   linarith
 
 /-- **[H, Lemma 4.2.2], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.30) + (4.31),
-with `M = Mof x δ q D`.  Proved; it depends only on the trusted bound `eta2_fourier_bound'`. -/
+with `M = Mof x δ q D`. Uses (B.6) in the form `eta2_fourier_bound'`. -/
 theorem lemma_4_2_2_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hD : 1 ≤ D) (hDx : D ≤ x) (hcase : |δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) :
     ‖typeI α x D‖ ≤ bound_4_30 x δ q D + bound_4_31 x q D := by
@@ -1342,7 +1342,7 @@ theorem lemma_4_2_2_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   · exact norm_restPart_le_caseB hx hq hcop h2α hqQ hδ hD hD'Q hMD'
 
 /-- **[H, Lemma 4.2.2], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.30) + (4.32), with
-`M = Mof x δ q D`.  Proved; it depends only on the trusted bound `eta2_fourier_bound'`. -/
+`M = Mof x δ q D`. Uses (B.6) in the form `eta2_fourier_bound'`. -/
 theorem lemma_4_2_2_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hD : 1 ≤ D) (hDx : D ≤ x) (hδ : 1 / (2 * c₂) ≤ |δ|) {ε : ℝ} (hε : 0 < ε) :
     ‖typeI α x D‖ ≤ bound_4_30 x δ q D + bound_4_32 x δ q D Q₀ ε := by

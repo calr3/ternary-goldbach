@@ -5,7 +5,7 @@ import TernaryGoldbach.Prelim.SmallPsi
 # `G(r) ≥ log r + 1.07` for `6 ≤ r < 21400`, checked by the kernel
 
 `G(a) = ∑_{s ≤ a} μ²(s)/φ(s) ≥ ∑_{T ⊆ P, ∏T ≤ a} ∏_{p ∈ T} 1/(p−1)` for any set `P` of primes
-(`sum_powerset_le_GS`). `dfs` computes a lower bound for `10¹⁵` times the right side (depth-first
+(`Phi_le_GS`). `dfs` computes a lower bound for `10¹⁵` times the right side (depth-first
 over the list `PL` of primes `≤ 21400`, rounding down; `dfs_le`). For 32 blocks `[a, b)` the kernel
 checks `dfs a ≥ 10¹⁵ (U_b + 1.07)` and `log b < U_b` (`chkStep`), so `G(r) ≥ G(a) > log b + 1.07` on
 the block. Only the primality of the entries of `PL` is used (trial division).

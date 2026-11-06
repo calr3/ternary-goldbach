@@ -20,8 +20,6 @@ Theorem 3.1.1 at scale `wy` is in terms of `r_w = max(1, w|δ|/8) q`, **not** [H
   `g_{wy}(min(1, w) r)` (to be supplied by numerics).
 
 [H]'s `K` is our `1/w₀`; the condition at `w₁` is Thm 3.1.1's `|δ/y| ≤ 1/(q Q_{w₁y})`.
-
-Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
 
 open Real Set MeasureTheory

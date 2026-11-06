@@ -10,7 +10,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 `|H_T(σ + it)| ≤ ((2ℓ)^m e^{mℓ|σ − ½|})²`, `≤ (2e^{ℓ|σ − ½|}/|t − T|)^{2m}`.
 
 The Fourier transform of `B²` is supported in `[−2mℓ, 2mℓ]`; with `2mℓ < log 2` the prime side of
-the explicit formula vanishes (`Explicit/WeilPrime.lean`). See NOTES, route D.
+the explicit formula vanishes (`Explicit/WeilPrime.lean`).
 -/
 
 open Complex

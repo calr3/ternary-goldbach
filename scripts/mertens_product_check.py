@@ -1,4 +1,5 @@
-"""Finite check behind the former hypothesis `mertens_product_small` (Prelim/MertensProduct.lean):
+"""Float check of [RS62, Thm 15] on a finite range (Lean: Prelim/SmallMertensProd.lean, kernel, for x <= 10^5,
+and `F_mid`, Prelim/MertensProduct.lean, above):
 
   for every prime 5 <= x <= 2*10^8,
       prod_{p <= x} p/(p-1) < e^gamma log theta(x) + 2.50637 / log theta(x),

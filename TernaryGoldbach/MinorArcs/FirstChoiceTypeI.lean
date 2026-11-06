@@ -8,7 +8,8 @@ variable [Fact TernaryGoldbach.RHUpTo]
 /-!
 # [H, §6.3.1]: the Type I terms at the first choice of parameters
 
-`S_{I,1}` ((6.56)): `|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 1.617) · 2x/t + 0.015 x^{5/6}`.
+Auxiliary bounds. The bound on `S_{I,1}` ((6.56)) is `typeI1_first` (`FirstChoiceTypeI1.lean`):
+`|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`.
 -/
 
 open Real

@@ -12,9 +12,9 @@ prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`: `b = n − 4 ≥ 4·10¹⁸` 
 `a = n − 4·10¹⁸` has `θ(a) ≤ a + 1.857·10¹⁸` if `a ≥ 10¹⁷` and `θ(a) ≤ 10¹⁷ log 4` otherwise. The bounds
 `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `10¹⁷ ≤ m ≤ 10²⁷` (`theta_bound`) come from the explicit formula
 (`psi_plateau`, from `rh_upto`) and `ψ − θ ≤ 2.001 log m √m`; `θ(m) ≤ m log 4` is elementary
-(`theta_le`). Then `n − p` is even and at most `4·10¹⁸`. Büthe's bound is not used here.
+(`theta_le`). Then `n − p` is even and at most `4·10¹⁸`.
 
-This replaces the Helfgott–Platt prime ladder [HP13], whose gaps are `≤ 4·10¹⁸`. It is the route of
+[H] covers the small cases with the Helfgott–Platt prime ladder [HP13]. This file follows the route of
 [H, App. D] (RH to a height and binary Goldbach), with these bounds for `θ` in place of the
 short-interval results of Ramaré–Saouter [RS03] and Ramaré's tables.
 -/

@@ -86,7 +86,7 @@ theorem prop_9_3_2_one {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] 
   rw [Schar_eq_Ssum, Explicit.Ssum_eq_SsumG, ← hm]
   exact Explicit.norm_SsumG_zeta_le δ hx hT0 hRH
 
-/-- The error term of `prop_9_3_2`: `errZ` for `q = 1`, `err_new` for `q ≥ 2`. -/
+/-- The error term of `prop_9_3_2`: `errZ` for `q = 1`, `errNew` for `q ≥ 2`. -/
 noncomputable def err932N (q : ℕ) (T0 δ x : ℝ) : ℝ :=
   if q = 1 then errZ T0 δ x else errNew q T0 δ x
 

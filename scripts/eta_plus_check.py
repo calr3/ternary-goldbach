@@ -1,4 +1,4 @@
-"""Float64 check of the former hypothesis `integral_etaPlus_sq_log` ([H, (9.94)], MajorArcs/Prop715.lean):
+"""Float64 check of `integral_etaPlus_sq_log` ([H, (9.94)], proved in MajorArcs/EtaPlusSqLog.lean):
 
     int_0^inf eta_+(t)^2 log(xt) dt = (0.640206 + O*(1.95e-6)) log x - 0.021095 + O*(5.3e-7),
 

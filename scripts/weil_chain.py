@@ -1,4 +1,4 @@
-# P8c/d: the Lean chain for (∫ G Φ⁺)/K_R, exactly as formalized in Explicit/WeilNumerics*.lean.
+# The Lean chain for (∫ G Φ⁺)/K_R, exactly as formalized in Explicit/WeilNumA.lean, WeilNumB.lean, WeilNumC.lean.
 # Parameters m=2, ℓ=0.173, N=20, R=13, t0=2.39; grids: region A n_A equal steps on [0, R+t0],
 # region B geometric u_k = t0 r^k (k ≤ n_B), region C closed form on [U1, 1/δ], region D Gaussian pieces.
 import math
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     print(f"beta={beta:.5f} kap1={kap1:.6f} kap0={kap0:.5f} kap0'={kap0p:.5f} c0={c0:.5f} c2={c2:.4f} U1={U1:.3f}")
     print(f"E+={Ep:.5f} F+={Fp:.5f}; A={2*regionA():.4f} B={2*regionB():.4f}")
     import sys; sys.path.insert(0, 'scripts')
-    from p8_model import J
+    from weil_model import J
     for d in [3e-4, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 3e-9]:
         jm = float(J(d, m=m, l=l, N=N, R=R))
         print(f"d={d:g}: chain={Jchain(d):.4f} model={jm:.4f} loss={Jchain(d)/jm-1:.2%}")

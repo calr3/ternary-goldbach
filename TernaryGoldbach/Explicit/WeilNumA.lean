@@ -1,7 +1,7 @@
 import TernaryGoldbach.Explicit.WeilPhiBound
 
 /-!
-# Closed-form pieces for the Weil-window bound (route D, step P8c)
+# Closed-form pieces for the Weil-window bound
 
 * `aN_le_aC`: `A_N(y) ≤ ½ log(y/2π) + ½ log((N+¼)/(N−¾)) + 1/(2y) + 1/(16y²)` for `y ≥ ½`. The sum in
   `ψ_N` is compared with `∫ x/(x²+z²) dx`, a unimodal integrand (peak `1/(2z)` at `x = z`).

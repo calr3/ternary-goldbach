@@ -1,4 +1,5 @@
-/* The finite check behind [H, Prop 12.2.4] (former hypothesis `prop1224_check`, TernaryGoldbach/MinorArcs/LSQuot2.lean).
+/* The finite check behind [H, Prop 12.2.4] with [H]'s constant c+ = 1.36, in long double (the Lean proof,
+   MinorArcs/LSQuot*.lean, has c+ = 2 and needs no such check).
 
    For every 1 <= q < Q1 = 2.2e10 and every integer n >= 1 with n < lam(q), at least one of
      (S)  8.53 <= log q  and  log q + 1.039 (n + 1) <= 0.826 (q n)^(2/9);

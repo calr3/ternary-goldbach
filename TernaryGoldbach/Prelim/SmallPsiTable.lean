@@ -2,7 +2,7 @@ import Mathlib
 import TernaryGoldbach.Prelim.SmallMertens
 
 /-!
-# A kernel-checked table of `θ` and `ψ` on `[12, 10⁶]` (route D, step P9a)
+# A kernel-checked table of `θ` and `ψ` on `[12, 10⁶]`
 
 Trial division by the primes `≤ 1000` (`spf`), prime powers by dividing out the smallest factor
 (`isPowOf`). Bounds are scaled by `S = 10⁹`. Checkpoints `N_j`; on `(N_j, N_{j+1}]` every prime

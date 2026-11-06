@@ -10,7 +10,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 # Type II sums [H, Ch. 5]: the sum `S₂` via the large sieve [H, §5.2]
 
 `S(β) = ∑_{W' < p ≤ W} (log p) e(βp)` (`primeExpSum`), `∑_{W' < p ≤ W} (log p)²` (`logSqSum`).
-The large sieve inequalities used are the trusted sharp forms in `Prelim/LargeSieveMV.lean`.
+The large sieve inequalities used are the sharp forms in `Prelim/LargeSieveMV.lean`.
 -/
 
 open Real Finset

@@ -10,7 +10,7 @@ import TernaryGoldbach.Explicit.Landau
 (Mathlib's convention in `Complex.integral_boundary_rect_eq_zero_of_differentiableOn`).
 * `rectInt_inv_sub`: `∮ ds/(s − ρ) = 2πi` for `ρ` strictly inside (antiderivatives `log(s − ρ)` on
   three sides and `log(ρ − s)` on the left side, and `arg p − arg(−p) = ±π`);
-* `rectInt_div_sub`: Cauchy's formula `∮ g(s)/(s − ρ) ds = 2πi g(ρ)`.
+* `rectInt_mul_inv_sub`: Cauchy's formula `∮ g(s)/(s − ρ) ds = 2πi g(ρ)`.
 -/
 
 open Complex Set MeasureTheory intervalIntegral Metric

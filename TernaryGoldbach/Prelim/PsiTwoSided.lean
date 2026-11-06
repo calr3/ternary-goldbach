@@ -4,7 +4,7 @@ import TernaryGoldbach.Explicit.PsiRanges
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# `|ψ(n) − n| ≤ c(n) √n` on `[12, 10¹⁷]` without Büthe (route D, step P9c)
+# `|ψ(n) − n| ≤ c(n) √n` on `[12, 10¹⁷]`
 
 `c(n) = 1` for `n < 10⁶` (`SmallTab.small_table`, kernel-checked) and `c(n) = cW(n)` on
 `[10⁶, 10¹⁷]` (`Explicit.psi_mid`, the Weil-window explicit formula; `cW ≤ 33` up to `10⁸`,

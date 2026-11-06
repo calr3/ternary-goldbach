@@ -2,13 +2,13 @@ import TernaryGoldbach.Explicit.ZetaGrowth
 import TernaryGoldbach.Explicit.ZetaZeroSums
 
 /-!
-# No zeros of `ζ` with `|γ| ≤ 2.39` (route D)
+# No zeros of `ζ` with `|γ| < 2.39`
 
 One more integration by parts in `Izeta` (`ZetaGrowth`): with `P₂(t) = ({t}² − {t})/2 ∈ [−1/8, 0]`,
 `Izeta(s) = −1/(2s) − (s + 1) J(s)`, `J(s) = ∫₁^∞ P₂(t) t^{−s−2} dt` (`Izeta_eq`), so
 `zetaF(s) = (s + 1)/2 − s(s² − 1) J(s)` and `|J(½ + it)| ≤ 1/12`. Since `|s| = |s − 1|` on the critical
 line, `zetaF(½ + it) = 0` needs `|s|² ≥ 6`, i.e. `|t| ≥ 2.39…` (`zetaF_half_ne_zero`). With RH up to
-`3·10¹⁰`, every nontrivial zero has `|γ| > 2.39` (`abs_im_gt_of_zero`).
+`3·10¹⁰`, every nontrivial zero has `|γ| ≥ 2.39` (`abs_im_ge_of_zero`).
 -/
 
 open Complex MeasureTheory Set Filter

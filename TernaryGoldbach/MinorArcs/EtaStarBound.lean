@@ -12,8 +12,6 @@ In `S_{η_*}(α, x) = ∫ S_{η₂}(α, w y) φ(w) dw/w` (`S_etaStar_eq`, `y = x
 [H]'s proof of Prop. 11.2.3 overlooks (see `NOTES.md`).  For `w ≤ 1` the hypotheses of
 Theorem 3.1.1 at scale `wy` follow from those at scale `y` (`Q_{wy} ≤ Q_y`); for `w > 1` they
 need `|δ/y| ≤ 1/(q Q_{wy})` separately.
-
-Proved, modulo the trusted inputs of `theorem_3_1_1`.
 -/
 
 open Real

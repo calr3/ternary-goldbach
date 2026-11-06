@@ -26,10 +26,8 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGR
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, declared as section variables
-(`variable [Fact RHUpTo] …`). The declarations that used to state them without proof keep their names
-(`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input`,
-`Prelim.ramare_moebius`) and are now proved from the instances. Büthe's bound for `ψ` [Bü18] was a
-fifth hypothesis until 2026-11-06; it is no longer used (below).
+(`variable [Fact RHUpTo] …`), and restated as the theorems `Explicit.rh_upto`,
+`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.ramare_moebius`.
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -59,43 +57,49 @@ against `Challenge.lean`, which states them with Mathlib-only definitions (see
 [`comparator/README.md`](comparator/README.md)).
 
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
-`native_decide`. The kernel itself evaluates the computations that replace former hypotheses:
-* the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
-  `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean`,
-  `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean` and
-  `SmallMertensProd.lean`;
+`native_decide`. The kernel itself evaluates the finite computations of the proof:
+* the tables `|ψ(t) − t| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)` (trial division,
+  `Prelim/SmallPsiTable*.lean`) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)` (a bit sieve,
+  `Prelim/PsiSieve*.lean`);
+* the small-range checks in `Prelim/SmallPsi.lean`, `SmallPsi700.lean`, `SmallMertens.lean`,
+  `SmallProdAp.lean`, `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLiouville.lean`,
+  `SmallW.lean`, `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean`
+  and `SmallMertensProd.lean`;
 * the products and sums behind Ramaré's (12.12) and `c_E` in `Prelim/RamareBound.lean` and
   `RamareWalk.lean`;
 * the piecewise form of `T₂` and the bounds on `H₂` in `MinorArcs/H2Bound.lean`;
 * `g₂(n)` for `n ≤ 10⁴` and `T₂ ≤ 0.37273` on `[16, 10⁴)` in `MinorArcs/SmallG2.lean`, and the sums
   behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`;
-* the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`.
+* the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`;
+* the Riemann sums of the Weil-window bound (`Explicit/WeilNumC.lean`) and the constants of the
+  `ψ` ranges (`Explicit/PsiRanges.lean`);
+* the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`).
 
 [H, Prop 12.2.4] is proved with `c₊ = 2` in place of [H]'s `1.36`. [H]'s argument covers
-`q ≥ 2.2·10¹⁰`; for smaller `q`, [H] (and our former hypothesis `prop1224_check`) needed a computation
-over all `q < 2.2·10¹⁰`. With `c₊ = 2` there is room for a structural argument instead: removing a
-prime `p ≥ 17` from `q` never makes the required inequality fail (`MinorArcs/LSQuotRed.lean`), so
-everything reduces to the 64 divisors of `30030`, checked by the kernel for `4 ≤ n < 2600`
-(`LSQuot8g.lean`, about 90 s), plus a short exchange argument for `n ≤ 3` (`LSQuot9.lean`). The
-cost downstream is small: the worst cell of the final minor-arc inequality goes from `0.96534` to
-`1.00666` (against `1.037`).
+`q ≥ 2.2·10¹⁰`; for smaller `q`, [H] needs a computation over all `q < 2.2·10¹⁰`. With `c₊ = 2` there
+is room for a structural argument instead: removing a prime `p ≥ 17` from `q` never makes the
+required inequality fail (`MinorArcs/LSQuotRed.lean`), so everything reduces to the 64 divisors of
+`30030`, checked by the kernel for `4 ≤ n < 2600` (`LSQuot8g.lean`, about 90 s), plus a short
+exchange argument for `n ≤ 3` (`LSQuot9.lean`).
 
 (B.6) is proved with the constant `c₀ = 32` in place of [H]'s `31.521` (the true maximum is
 `31.52065`, at `t ≈ 17.4`), as Helfgott suggested; (B.11) follows. For `t ≥ 2`, three integrations
 by parts give `(2πt)² η̂₂(t) = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)` with `F` a polynomial, and the
 kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/25`. For `t ≤ 2`, it checks
 Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
-`Eta2DDBound.lean`; about 4 minutes in all). The cost of `32` downstream is small: Theorem 3.1.1's
-`2.5 x/√t` becomes `2.511 x/√t` (`2.526 x/√t` with the route-D (2.14), (2.17)), a few Type I constants move in the third or fourth digit, and the
-final minor-arc inequality's worst cell goes from `0.96499` to `0.96534` (against `1.037`; `1.00717` with the route-D constants). (9.94) is
-proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
-exact polynomial integration, `MajorArcs/EtaONum.lean`);
-[H]'s own derivation of it drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
+`Eta2DDBound.lean`; about 4 minutes in all).
+
+With `c₀ = 32`, `c₊ = 2` and our (2.14), (2.17), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
+`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00717` (against `1.037`).
+
+(9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
+integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
+drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
 `g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
 above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
 `m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
-also proved (`MinorArcs/G2Bound.lean`), but no longer needed.
+also proved (`MinorArcs/G2Bound.lean`), but the main theorems do not use it.
 
 ## How the proof is organized
 
@@ -134,10 +138,9 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
   `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 1.83·10⁻⁹` for
-  `780 < log n < 20000` and `0` otherwise. It plays the role of Dusart's `|θ(x) − x| < x/log³x`
-  (`x ≥ 89 967 803`), which earlier versions of this project assumed. [H] itself does not use
-  Dusart: it quotes its bounds for `ψ` and `θ` ([H, §2.5]) from [RS62], [RS75] and [RR96]. We prove
-  those bounds instead, from bounds `|ψ(x) − x| ≤ c√x` for moderate `x`:
+  `780 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
+  [RS62], [RS75] and [RR96]. We prove them instead, from this and from bounds `|ψ(x) − x| ≤ c√x` for
+  moderate `x`:
   * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on
     `[10⁶, 5·10⁷)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
   * `c = 31`–`72` on `[10⁶, 10¹⁷]` (`Prelim/PsiTwoSided.lean`), from the Weil explicit formula with RH
@@ -147,8 +150,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
-  With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`,
-  and (2.19) for `y ≥ 2·10⁶`; the first-case constant of Thm 3.1.1 becomes `2.526` (was `2.511`).
+  With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`
+  (for `y ≥ 2.5·10⁷`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
 
 [`BLUEPRINT.md`](BLUEPRINT.md) maps [H] chapter by chapter to the Lean files.
 
@@ -161,6 +164,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
+| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | `1.0064`, `1.022` (`y ≥ 2.5·10⁷`) |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -182,7 +186,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   * Repaired as follows: the scale-`x/κ` arcs are used above the base level, the Dirichlet
     approximation is redone at each scale, the levels are extended to `≈ x^{0.3}`, and the base gap
     is bounded with Cor 7.1.3.
-  * Numerically this gives `≤ 0.965 x²/κ` (with `0.8764`); we state `1.0376`.
+  * Numerically the repaired bound is at most `1.00717 · x²/κ` before the split `S_{η₊} = S₁ + S₂`
+    (worst generated cell, against `1.037`); we state (14.49) with `1.0376`.
 * The proof of Prop 11.2.3 does not rescale `δ` to `wδ`. This erratum is Helfgott's own: he found
   it around 2016 and reported it to the publisher. A float check suggests the statement still holds,
   with about 11% to spare (`scripts/prop_11_2_3_check.py`), but we do not use it. We use a variant,
@@ -202,7 +207,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
     (`MinorArcs/H2Bound.lean`).
   * This adds `0.0924` to the Type II factor and raises the first-case constant of Thm 3.1.1 to
     `0.8764`.
-  * (14.49) stays `1.0376`, because repair 3 below has room.
+  * (14.49) holds with `1.0376` all the same, because repair 3 (above) has room.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
   (`HYPOTHESES.md`, Finding 4).
@@ -232,7 +237,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
 | `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
-| `scripts/` | checks of the hypotheses and of former hypotheses; generators of numeric Lean files; exploratory checks |
+| `scripts/` | generators of the numeric Lean files (`gen_*.py`); independent float and interval-arithmetic checks of numerical claims of [H] and of quantities in the proof (`scripts/rigorous/`); models behind the errata |
 | `HYPOTHESES.md` | the hypotheses, checked against their sources; errors found in the sources |
 | `BLUEPRINT.md`, `NOTES.md` | map from [H] to Lean; working notes |
 
@@ -247,8 +252,6 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [Pla] D. J. Platt, *Numerical computations concerning the GRH*, arXiv:1305.3087.
 * [Pla15] D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535,
   arXiv:1203.5712 (RH up to `3.0610046·10¹⁰`).
-* [Bü18] J. Büthe, *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018), arXiv:1511.02032.
-* [Dus18] P. Dusart, *Explicit estimates of some functions over primes*, Ramanujan J. 45 (2018).
 * [RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,
   Illinois J. Math. 6 (1962).
 * [RS75] J. B. Rosser, L. Schoenfeld, *Sharper bounds for the Chebyshev functions θ(x) and ψ(x)*,

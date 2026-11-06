@@ -7,7 +7,7 @@ import TernaryGoldbach.MajorArcs.EtaONum
 With `A = ∫₀^∞ η₊²` and `B = ∫₀^∞ η₊² log t`, `∫ η₊² log(xt) = A log x + B`. Write
 `η₊² = η◦² + 2(η₊ − η◦)η◦ + (η₊ − η◦)²`.
 * The `η◦` integrals are elementary (`η◦ = (t(2 − t))³ e^{−(t−1)²/2}` on `[0, 2]`); they are a
-  computation (`etaO_integrals`).
+  computation (`integral_P0_sq`, `integral_P0_sq_log` in `EtaONum.lean`).
 * `(η₊ − η◦)²`: `‖η₊ − η◦‖₂² ≤ 368/(2·200⁴)` (`HHFourier2.lean`), and with the weight `|log t|` the
   same bound times `0.37`.
 * The cross terms: in `u = log t`, `(η₊ − η◦)η◦ dt = (g_H − g)(u) W(u) du` with

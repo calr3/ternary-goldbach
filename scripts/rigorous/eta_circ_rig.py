@@ -1,5 +1,5 @@
-"""Rigorous check of the former hypothesis `etaO_numerics` (MajorArcs/EtaPlusSqLog.lean), the numerical input
-of [H, (9.94)]:
+"""Rigorous check of the numerical input of [H, (9.94)] (`etaO_numerics`, MajorArcs/EtaPlusSqLog.lean; proved in
+Lean by exact polynomial integration, MajorArcs/EtaONum.lean):
 
     0.640205997 <= int_0^2 P0(t)^2 dt <= 0.640205998,
     -0.0210947787 <= int_0^2 P0(t)^2 log t dt <= -0.0210947786,

@@ -1,4 +1,4 @@
-/* Rigorous re-checks of the finite computations that were once hypotheses (our own).
+/* Rigorous checks of finite computations behind [H, §2] and our Prelim/ bounds (see README.md here).
 
    Every real quantity is enclosed in an interval [lo, hi] of MPFR numbers; each operation rounds
    lo down and hi up (MPFR is correctly rounded, so the enclosures are rigorous, including log, exp,

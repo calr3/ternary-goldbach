@@ -4,7 +4,7 @@ import TernaryGoldbach.Explicit.ZetaLowZeroFree
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# The line zeros of the explicit formula for `ψ`, by the Weil formula (route D, step P8a/b)
+# The line zeros of the explicit formula for `ψ`, by the Weil formula
 
 On the critical line `‖Mg(½ + iγ)‖ ≤ C e^{−δ²γ²/2}/|γ|` with `C = e^{δ²/8}(e^{a/2} + e^{b/2})`
 (`norm_Mg_line_gauss`). Every zero has `|γ| ≥ t₀ = 2.39` (`abs_im_ge_of_zero`), so with the

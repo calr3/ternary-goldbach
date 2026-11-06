@@ -1,7 +1,7 @@
 import TernaryGoldbach.Explicit.WeilArch
 
 /-!
-# An explicit majorant `Φ⁺ ≥ Φ + Off` (route D, step P5b)
+# An explicit majorant `Φ⁺ ≥ Φ + Off`
 
 `Φ(t) = Re H̃_t(1) + (1/2π) ∫ Re A(½ + iy) (B(y − t)² + B(y + t)²) dy` (`WPhi_eq`), and with
 `A_N ≥ Re A` (`archF_line_re_le`), evenness, and a split at `|y − t| = R`:

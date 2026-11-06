@@ -93,8 +93,8 @@ noncomputable def typeI2 (α x U V : ℝ) : ℂ :=
 /-- `|η₂|₁ = 1` [H, (6.1)]. -/
 theorem eta2_L1 : ∫ t, |eta2 t| = 1 := Helfgott.integral_abs_eta2
 
-/-- `|η̂₂''|_∞ ≤ 31.521` [H, (B.6), Lemma B.2.3], written via `η̂''(t) = (2πit)² η̂(t)`.
-Follows from the trusted fact `eta2_fourier_bound'` (in [H] a rigorous numerical computation). -/
+/-- `|η̂₂''|_∞ ≤ c₀` [H, (B.6), Lemma B.2.3] (`c₀ = 32`; [H]: `31.521`), written via
+`η̂''(t) = (2πit)² η̂(t)`. From `eta2_fourier_bound'`. -/
 theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ ≤ c₀ := by
   have h : fourier eta2 t = FourierTransform.fourier (fun u => (eta2 u : ℂ)) t :=
     (fourier_eq_integral_e _ _).symm

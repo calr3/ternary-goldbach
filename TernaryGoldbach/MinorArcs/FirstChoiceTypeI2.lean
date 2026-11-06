@@ -6,7 +6,8 @@ variable [Fact TernaryGoldbach.RHUpTo]
 /-!
 # [H, §6.3.1, (6.57)–(6.59)]: `S_{I,2}` at the first choice of parameters
 
-`|S_{I,2}| ≤ 2.4916 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.17 log t + 21.3) · 2x/t + 0.56 x^{5/6}`.
+Part 1 of the bound `typeI2_first` (`FirstChoiceTypeI2c.lean`):
+`|S_{I,2}| ≤ 2.5257 x/√t + 2.8 · 2x/(δ₀φ(q)) + (15.267 log t + 21.46) · 2x/t + 0.556 x^{5/6}`.
 -/
 
 open Real

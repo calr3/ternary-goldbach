@@ -8,7 +8,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 # [H, §6.3.1]: the Type II terms at the first choice of parameters
 
 The lower-order terms of (6.37)/(6.40) at `U = ⌊T²/(9√t)⌋`, `V = ⌊9T/2⌋` are at most
-`3.2 x^{5/6}` (`typeII_rest_le`), using Lemma C.2.2 (`q/φ(q) < Ϝ(T)`, trusted).
+`3.2 x^{5/6}` (`typeII_rest_le`), using Lemma C.2.2 (`q/φ(q) < Ϝ(T)`).
 -/
 
 open Real

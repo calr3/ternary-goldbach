@@ -1,4 +1,4 @@
-"""Rigorous check of the former hypothesis `sum_odd_mu_sq_div_totient` ([H, §14.1]):
+"""Rigorous check of `sum_odd_mu_sq_div_totient` ([H, §14.1]; kernel-checked in Prelim/SmallMuPhi.lean):
 
     6.798779 <= sum_{q <= 150000, q odd} mu(q)^2 / phi(q) <= 6.79878.
 

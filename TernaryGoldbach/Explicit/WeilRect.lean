@@ -3,7 +3,7 @@ import TernaryGoldbach.Explicit.XiPartial
 import TernaryGoldbach.Explicit.ExplicitFormula
 
 /-!
-# The Weil identity on a rectangle (route D, step P4a)
+# The Weil identity on a rectangle
 
 On `[−1/2, 3/2] × [−T, T]` at a good height `T ∈ [k, k+1]` (`k ≥ 8`), for `h` entire:
 `∮ (ξ'/ξ) h = 2πi Σ_{ρ inside} m_ρ h(ρ)` (`rectInt_xi_eq`). The left side folds onto the right side by

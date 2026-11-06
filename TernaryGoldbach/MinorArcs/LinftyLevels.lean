@@ -15,8 +15,6 @@ For `α ∉ 𝔐_{8,n}(y)`, `y = x/κ`, `670 ≤ n ≤ y^{1/3}/6`:
 * `g_{wy}(wn) ≤ g_y(n)/w` for `w ≤ 1` and `g_{wy}(n) ≤ g_y(n)` for `w ≥ 1` (`gx_scale_le`);
 * `h(wy) ≤ h(y) max(1, 1/w)` (`hfun_scale_le`);
 * `∫_{w₀}^∞ max(1, 1/w) φ ≤ 1.398`, `∫_0^{w₀} φ ≤ w₀³/3`.
-
-Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
 
 open Real Set MeasureTheory

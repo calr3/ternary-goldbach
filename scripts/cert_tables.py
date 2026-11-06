@@ -1,4 +1,5 @@
-# P8d: certified tables for WeilNumC.lean. Mirrors ELpow/T12 (Prelim/SmallPsi.lean) exactly.
+# Certified exp/log tables for the generated Lean files (WeilNumC.lean, PsiRanges.lean, SmallPsiTable,
+# PsiSieve). Mirrors ELpow/T12 (Prelim/SmallPsi.lean) exactly.
 from fractions import Fraction as Q
 from math import factorial, log, ceil, floor
 def ELpow(a): return Q(27182818283**a, 10**(10*a))

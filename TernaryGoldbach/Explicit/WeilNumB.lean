@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.WeilNumA
 import TernaryGoldbach.Explicit.WeilLineSum
 
 /-!
-# The Weil-window integral in closed form (route D, step P8c)
+# The Weil-window integral in closed form
 
 With `m = 2` and `B_R ≥ K0 ℓ R = (2ℓ)⁴ k₀` (`KRB_ge`), `Φ⁺(t)/B_R ≤ Ψ(|t|)` (`PhiUp_div_le`), where
 `Ψ(s) = p₀/max(1, ℓs)⁴ + κ₁ log(s + R) + κ₀ + (1/π)(1/(2(s+R)) + 1/(16(s+R)²))`.

@@ -2,7 +2,7 @@ import TernaryGoldbach.Prelim.PsiSieveData13
 import TernaryGoldbach.Prelim.SmallPsiTableMain
 
 /-!
-# `θ` on `[10⁶, 5·10⁷)` from the sieve chain (route D, P9c)
+# `θ` on `[10⁶, 5·10⁷)` from the sieve chain
 
 `sieve_table`: `θ(t) ≤ t + 3√t` and `t − θ(t) ≤ 5√t` for `10⁶ ≤ t < 5·10⁷`. The chain starts from the
 state of the trial-division table at `10⁶` (`SmallTab.stage117`); each stage is one kernel-checked

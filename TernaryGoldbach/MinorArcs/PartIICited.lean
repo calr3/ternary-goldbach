@@ -11,24 +11,24 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 
 These are major-arc results of [H]: explicit formulas plus the GRH verification for conductors
 `≤ 300000` [Plab]. Their proofs do not involve the minor-arc scale question (NOTES, "Ch. 13: scale
-erratum"). We state them as [H] does.
+erratum"). All three are proved; the statements are [H]'s, with our constants where they differ.
 
 * **`cor_7_1_3`** — [H, Cor 7.1.3]: twisted sums for `η = φ *_M η₂` (our `etaU`). **Proved**
-  (`MajorArcs/Cor713.lean`) from [H, Prop 9.3.2] (`MajorArcs.prop_9_3_2`: proved for `q ≥ 2` with our
-  constants, cited for `q = 1`; conditional on GRH up to height `T₀`) and Platt's verification
+  (`MajorArcs/Cor713.lean`) from [H, Prop 9.3.2] (`MajorArcs.prop_9_3_2`, proved with our constants,
+  for characters satisfying GRH up to height `T₀`) and Platt's verification
   (the hypothesis `PlattGRH`, through `platt_verification`, `platt_odd`, `platt_even`), via [H, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
 * **`prop_7_1_5`** — [H, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)` (for `x ≥ 4.9·10²⁶`). **Proved**
   (`MajorArcs/Prop715.lean`) from [H, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, proved: `ζ` explicit formulas for
   `η₊²` and `η₊² log`, RH up to `500`), Platt's verification at `q = 1` and
   `integral_etaPlus_sq_log` ([H, (9.94)], proved in `MajorArcs/EtaPlusSqLog.lean`).
-* **`l2_major_14_7`** — [H, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` in [H];
-  we state `(8.7098 + O*(0.0802)) x` (same lower end `8.6296 x`; our Thm 7.1.4 constants are weaker)
-  for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.675 x … 8.786 x`)
-  from [H, Thm 7.1.4] (Prop 9.4.2, proved, + Platt), Plancherel, the bound on `‖η₊ − η◦‖₂` and the numerical
-  results `integral_etaPlus_sq_log` ((9.94)) and `sum_odd_mu_sq_div_totient` (`Σ μ²/φ = 6.798779…`).
-  [H] writes `0.0754`, but its term `5.19 δ₀ r ET (|η₊|₁ + ET/2)` evaluates to `0.075456` with (14.1),
-  (14.3) ([H] prints `0.075272`); our proof splits the cross term differently and has a much smaller
-  error, so the statement holds as given.
+* **`l2_major_14_7`** — [H, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0754)) x` in [H]
+  (with [H]'s (14.1) and (14.3) the error term is `0.075456`, so `0.0756`; see NOTES). We state
+  `(8.7098 + O*(0.0802)) x` for `x ≥ 4.9·10²⁶`, i.e. `8.6296 x ≤ ∫ ≤ 8.79 x` (the lower end is [H]'s
+  corrected one; our Thm 7.1.4 constants are weaker, so the upper end is larger). **Proved**
+  (`MajorArcs/L2Major.lean`, `l2_major_bounds`) from [H, Thm 7.1.4] (Prop 9.4.2, proved, + Platt),
+  Plancherel, the bound on `‖η₊ − η◦‖₂` and the numerical results `integral_etaPlus_sq_log` ((9.94))
+  and `sum_odd_mu_sq_div_totient` (`Σ μ²/φ = 6.798779…`). Our proof splits the cross term
+  differently from [H] and does not use its `5.19 δ₀ r ET (|η₊|₁ + ET/2)` term.
 -/
 
 open Real Set MeasureTheory FourierTransform
@@ -61,7 +61,7 @@ theorem prop_7_1_5 {x : ℝ} (hx : 4.9e26 ≤ x) :
 
 /-- **[H, (14.7)]** — proved (`MajorArcs.l2_major_bounds`). For `x ≥ 4.9·10²⁶`,
 `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7098 + O*(0.0802)) x` (`𝔐` read in `ℝ/ℤ`, i.e. over
-`(0, 1]`; [H]: `8.7052 + O*(0.0756)`). -/
+`(0, 1]`; [H]: `8.7052 + O*(0.0754)`). -/
 theorem l2_major_14_7 {x : ℝ} (hx : 4.9e26 ≤ x) :
     |(∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖S etaPlus x α‖ ^ 2) - 8.7098 * x| ≤ 0.0802 * x := by
   obtain ⟨h1, h2⟩ := MajorArcs.l2_major_bounds hx

@@ -4,10 +4,10 @@ import TernaryGoldbach.Explicit.PsiPlateau
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# `|ψ(x) − x| ≤ c √x` on a range `[X, X']` (route D, step P9b)
+# `|ψ(x) − x| ≤ c √x` on a range `[X, X']`
 
 One smoothing `δ`, cutoff `K` and `y₀` for the whole range; each error term of `psi_upper_W` /
-`psi_lower_W` is maximised separately over the range (`scripts/p8_psi_model.py`, `sep_c`), so the
+`psi_lower_W` is maximised separately over the range (`scripts/weil_psi_model.py`, `sep_c`), so the
 conditions are a few rational inequalities about the atoms `log(1/δ)`, `e^{δ²/2+Kδ}`, `e^{Kδ/2}`,
 `e^{δ²/8}`, `2e^{−K²/2}` and square roots.
 -/

@@ -20,9 +20,8 @@ with an **ℓ∞ hypothesis** `hv`: `|S_{η_*}(α, x)| ≤ g(n)` for `α ∉ �
 
 What [H]'s proof actually supplies for `hv` is the bound off the arcs at scale `y = x/κ`
 (`le_rAlpha_of_not_mem` at scale `y` + Prop 11.2.3).  The difference, `𝔐_{8,n}(y) \ 𝔐_{8,n}(x)`,
-is the open gap described in NOTES "Ch. 13: scale erratum".  This file proves everything else.
-
-Proved, modulo the trusted computation Prop 12.2.4 (through Cor 12.2.5).
+is the gap described in NOTES "Ch. 13: scale erratum"; `MinorTotal.lean` closes it (repair 3, with
+the base gap from `BaseGap2.lean`). Prop 12.2.4 enters through Cor 12.2.5.
 -/
 
 open MeasureTheory Set

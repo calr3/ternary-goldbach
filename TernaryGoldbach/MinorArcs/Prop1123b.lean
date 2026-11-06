@@ -22,8 +22,6 @@ Unlike `prop_11_2_3`, there is no condition linking `w₁` to an approximation.
 * `norm_S_etaStar_le_of_pointwise`: the integration step, for any pointwise majorant on `[w₀, w₁]`
   and the trivial bound `17z` elsewhere;
 * **`prop_11_2_3'`**.
-
-Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
 
 open Real Set MeasureTheory

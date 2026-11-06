@@ -3,7 +3,7 @@ import Mathlib.NumberTheory.LSeries.Dirichlet
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
-# The Weil identity: the three parts of `ξ'/ξ` on `ℜs = 3/2` (route D, step P4b)
+# The Weil identity: the three parts of `ξ'/ξ` on `ℜs = 3/2`
 
 `H̃(s) = H_T(s) + H_T(1 − s)` (`WHt`). On `ℜs = 3/2`,
 `ξ'/ξ(s) = (1/s + 1/(s − 1)) + (−½ log π + ½ψ(s/2)) + ζ'/ζ(s)`, and

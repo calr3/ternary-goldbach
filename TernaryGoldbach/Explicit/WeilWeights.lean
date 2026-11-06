@@ -3,7 +3,7 @@ import TernaryGoldbach.Explicit.WeilWindow
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# Weighted zero sums from the windows (route D, step P7b)
+# Weighted zero sums from the windows
 
 For a weight `g ≥ 0`, nonincreasing on `[0, ∞)`, and `R > 0`, with `B_R = ∫_{−R}^{R} B(u)² du`:
 `g(|γ|) B_R ≤ ∫_{γ−R}^{γ+R} g(max(0, |t| − R)) B(γ − t)² dt`. Summing over the on-line zeros

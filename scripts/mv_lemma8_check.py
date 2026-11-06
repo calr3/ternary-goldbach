@@ -1,12 +1,13 @@
-"""Finite checks behind the former hypotheses of Prelim/MVLemma7.lean and Prelim/MVLemma8.lean.
+"""Float checks of the finite ranges of [MV73, Lemmas 7, 8] (Prelim/MVLemma7.lean, Prelim/MVLemma8.lean; Lean
+checks smaller ranges with the kernel: Prelim/SmallG.lean, SmallW.lean, SmallProdAp.lean).
 
 g(r) = mu(r)^2/phi(r), G(r) = sum_{s<=r} g(s).
 
-* lemma8_numeric: for 2 <= n <= 10^4,
+* Lemma 8: for 2 <= n <= 10^4,
     sum_{r<=n} g(r)(n+1)/(n+1+r) > log(n+1) + 0.25068          (min margin 1.1e-6, at n = 4)
     sum_{r<=n} g(r) r(n+1)/((n+1+r)(n+r)) <= 1                  (max 0.6384)
-* lemma7_numeric: log(r+1) + 1.07 <= G(r) for 6 <= r <= 29999999   (min margin 0.0441, at r = 9)
-* GS_N0: G(3*10^7) >= log(3*10^7) + 1.3325                          (value 1.33258)
+* Lemma 7: log(r+1) + 1.07 <= G(r) for 6 <= r <= 29999999   (min margin 0.0441, at r = 9)
+* G(3*10^7) >= log(3*10^7) + 1.3325                                 (value 1.33258)
 * prod_ap_le: prod_{p < 10^4} (1 + (p^{-2/3} + p^{-1/3})/(p-1)) <= 7.99  (value 7.98552)
 
 Floating point (double) is used for the sums; margins are far above rounding error except for the

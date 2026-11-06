@@ -18,16 +18,17 @@ variable [Fact TernaryGoldbach.RHUpTo]
 
 * The bounds on `ψ` and `θ` used here — (2.12)–(2.15), (2.17), (2.19), (5.5) — are **proved** from
   * the explicit prime number theorem `theta_explicit` (`Prelim/ThetaExplicit.lean`:
-    `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 10¹²`; it replaces Dusart's bound [Dus18, Thm. 4.2]),
+    `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 10¹²`),
   * `psi_two_sided` (`Prelim/PsiTwoSided.lean`: `|ψ(n) − n| ≤ c(n)√n` for `12 ≤ n ≤ 10¹⁷`, from the
     Weil explicit formula with RH to `3·10¹⁰` and a kernel-checked table below `10⁶`),
   * the kernel sieve table `thetaN_sieve` (`Prelim/PsiSieveMain.lean`: `n − 5√n ≤ θ(n) ≤ n + 3√n` on
     `[10⁶, 5·10⁷)`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
-  Route D (no Büthe): (2.14) and (2.17) hold with the weaker constants `1.0064` and `1.022`, (2.19) for
-  `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
+  (2.14) and (2.17) are proved with the constants `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`; [H] has
+  `1.0004` and `1.0008`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
-  each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are not formalized (unused).  Lemma C.2.2 (`div_totient_lt`) is
-  proved in `Prelim/MertensProduct.lean`.
+  each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.
+  (2.16) and (2.18) are not formalized (unused). Lemma C.2.2 (`div_totient_lt`) is proved in
+  `Prelim/MertensProduct.lean`.
 
 Two remarks.
 * (2.16) is only claimed for `y > 663` (it fails, e.g., at `y = 3`), so results that use it need
@@ -47,11 +48,6 @@ namespace TernaryGoldbach.Prelim
 theorem mertens_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 100) :
     ∑ m ∈ Icc 1 n, (Λ m : ℝ) / m ≤ Real.log n :=
   Small.mertens_small' h1 h
-
-/-! ### The explicit prime number theorem
-
-Dusart's `|θ(x) − x| < x/log³ x` ([Dus18, Thm. 4.2]) is replaced by `theta_explicit`
-(`Prelim/ThetaExplicit.lean`), which has an extra plateau term `ε_pl(n) n`. -/
 
 /-! ### `ψ` and `θ` -/
 
@@ -1246,7 +1242,7 @@ theorem psi_lower_big (n : ℕ) : (1 - 1 / 12000) * (n : ℝ) - 72 * √(n : ℝ
     have he := mul_le_mul_of_nonneg_right (epl_le n) hn0
     linarith
 
-/-- **[H, (2.17)], route D form**, for integers `N ≥ 2.5·10⁷`: `∑_{n ≤ N} Λ(n) n < 1.022 N²/2`.
+/-- **[H, (2.17)]**, for integers `N ≥ 2.5·10⁷`: `∑_{n ≤ N} Λ(n) n < 1.022 N²/2`.
 By partial summation (`psi_mul_of`) from `psi_two_sided` (`c ≤ 31.5, 33` to `10⁸`, `≤ 35.5` to
 `3.2·10¹⁰`, `≤ 72` to `10¹⁷`) and, above, `psi_bounds` and `psi_lower_big`. -/
 theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
@@ -1305,8 +1301,8 @@ theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
     have key := fin 48 0.004 (by nlinarith)
     nlinarith
 
-/-- **[H, (2.17)], route D form**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷` ([H]: `1.0008`,
-from [RS62]/Büthe; the minor arcs use it at `y ≥ 2.7·10⁷`). -/
+/-- **[H, (2.17)]**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷` ([H]: `1.0008`; the minor
+arcs use it at `y ≥ 2.7·10⁷`). -/
 theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
   set N := ⌊y⌋₊
@@ -1317,7 +1313,7 @@ theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
     linarith
   exact (psi_mul_a17 hN).trans_le hmono
 
-/-- **[H, (2.14)], route D form**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` ([H]: `1.0004`; the minor arcs
+/-- **[H, (2.14)]**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` ([H]: `1.0004`; the minor arcs
 use it at `V ≥ 2.7·10⁷`). From `psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). -/
 theorem sum_vonMangoldt_le_a14 {y : ℝ} (hy : 2.5e7 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0064 * y := by
@@ -1872,7 +1868,7 @@ theorem logsq_real {y c : ℝ} (hy : 1 ≤ y) (hc : 0 ≤ c)
     nlinarith
   linarith
 
-/-- **[H, (2.19)], route D form**: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 2·10⁶`
+/-- **[H, (2.19)]**: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 2·10⁶`
 ([H]: `y ≥ 117`, from [RS75, Cor. 2] and a computation; the minor arcs use it for `y ≥ V ≥ 2·10⁶`).
 By Abel summation from the sieve table (`logsq_sieve`, `y < 5·10⁷`), `psi_two_sided`
 (`logsq_r1`–`logsq_r3`) and `theta_explicit` (`logsq_large`). -/
@@ -1885,7 +1881,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 2e6 ≤ y) :
   · exact logsq_sieve hN h
   · exact logsq_ge (by omega)
 
-/-! ### Sums of `μ` (trusted) -/
+/-! ### Sums of `μ` -/
 
 /- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
 result `ramare_moebius` (a hypothesis, `Prelim/RamareMoebius.lean`), stated for the same range. -/
@@ -1894,7 +1890,8 @@ result `ramare_moebius` (a hypothesis, `Prelim/RamareMoebius.lean`), stated for 
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
 (Acta Arith. 165 (2014)) from the `q = 1` bound of `Prelim/MoebiusBound.lean`. -/
 
-/- [H, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 10¹⁰` in
-`Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`) from our own sieve. -/
+/- [H, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 11815` in
+`Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`, kernel-checked in
+`Prelim/SmallMoebius.lean`). -/
 
 end TernaryGoldbach.Prelim

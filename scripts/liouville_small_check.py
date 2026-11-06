@@ -1,4 +1,4 @@
-"""Finite check behind the former hypothesis `liouville_small` (Prelim/LiouvilleBound.lean):
+"""Float check of `liouville_small` (Prelim/LiouvilleBound.lean; kernel-checked in Prelim/SmallLiouville.lean):
 
     |l(k)| log(k+1) <= 0.99   for 1 <= k <= 10^5,   l(k) = sum_{n <= k} lambda(n)/n,
 

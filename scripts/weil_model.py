@@ -1,4 +1,4 @@
-# P8 model: the Lean chain line_sum_weil -> J(delta), and the resulting psi error eps(x).
+# Model (floats) of the Lean chain line_sum_weil -> J(delta), and the resulting psi error eps(x).
 import math
 from mpmath import mp, quad, sin, exp, log, pi, inf, mpf
 mp.dps = 30

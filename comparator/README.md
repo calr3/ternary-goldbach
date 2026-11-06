@@ -33,29 +33,23 @@ systemd-run --property=RestrictAddressFamilies=~AF_UNIX --user --pty -E PATH="$P
 
 (The `systemd-run` wrapper guards against a known landrun weakness. See Comparator's README.)
 
-## Last run
+Lake `v4.35.0` also has the check built in:
 
-On 2026-11-04, at commit `3efc51f`, the run took 69 minutes on 4 cores and ended with:
-
-```
-Running Lean default kernel on solution.
-Lean default kernel accepts the solution
-Your solution is okay!
+```sh
+lake comparator --config comparator/config.json
 ```
 
-That container had no user systemd session, so the run skipped the `systemd-run` wrapper. Its
-kernel supports Landlock ABI v7 only, so `landrun` ran with `--best-effort`, which is a weaker
-sandbox. `Solution.lean` is our own code, so a weaker sandbox mattered less than it would for
-untrusted input. The kernel check is unaffected.
+It builds and exports the project inside a `bwrap` sandbox, so it needs `bubblewrap`, with either
+unprivileged user namespaces or a setuid-root `bwrap`.
 
-On 2026-11-05, on branch `platt-grh-rh` at commit `4c2186d` (RH to 3·10¹⁰, binary Goldbach to
-4·10¹⁸, `ButhePsi` up to 10¹⁷; `ButhePsi` has since been removed), the same setup took 97 minutes
-and ended with:
+## Status
 
-```
-Running Lean default kernel on solution.
-Lean default kernel accepts the solution
-Your solution is okay!
-```
+Comparator has not yet been run on the current statements (the four hypotheses above).
 
-Comparator has not yet been run on the four-hypothesis statements (branch `buthe-free`).
+Notes for running it in a container:
+* Without a user systemd session, the `systemd-run` wrapper is not available. Run the inner
+  `lake env /path/to/comparator comparator/config.json` directly.
+* On a kernel that supports only an older Landlock ABI, `landrun` needs `--best-effort`, which is a
+  weaker sandbox. `Solution.lean` is the project's own code, so this matters less than it would for
+  untrusted input; the kernel check is unaffected.
+* Expect the replay of `Solution` to take well over an hour on 4 cores.

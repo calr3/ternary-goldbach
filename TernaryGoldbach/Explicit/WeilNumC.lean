@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.WeilNumB
 import TernaryGoldbach.Prelim.SmallMertens
 
 /-!
-# The Weil-window bound in numbers (route D, step P8d)
+# The Weil-window bound in numbers
 
 Parameters `ℓ = 0.173`, `m = 2`, `N = 20`, `R = 13`, grids `n_A = 8`, `r = 5/4`, `n_B = 20`
 (`U = 2.39 · 1.25²⁰ ≈ 207.3`). Constants: `p0 ≤ 0.24567`, `kap1 ≤ 0.16385`, `kap0 ≤ −0.23516`.
@@ -10,8 +10,8 @@ The Riemann sums of regions A and B are rational computations with certified log
 (`x ≤ e_lo^a T₁₂(f)` gives `log x ≤ a + f`), checked by the kernel (`decide +kernel`, no
 `native_decide`). Result (`line_sum_num`): for `3·10⁻¹⁰ ≤ δ ≤ 1/208`, with `L = log(1/δ)`,
 `Σ_{|γ| ≤ 3·10¹⁰} m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²10²⁰/2} LW)`,
-`JW(δ) = 0.16385 L² − 0.4271 L + 7.2032 + 57.73 δ`. (`scripts/p8_chain.py`, `p8_numbers.py`,
-`p8_tables.py`.)
+`JW(δ) = 0.16385 L² − 0.4271 L + 7.2032 + 57.73 δ`. (`scripts/weil_chain.py`, `weil_numbers.py`,
+`cert_tables.py`.)
 -/
 
 open Complex MeasureTheory Set Filter Finset
@@ -533,7 +533,7 @@ theorem Jtot_le {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) :
   rw [hC1]
   linarith [hA, hB, hC2, hD, hF, p1, p2, p3, p4, p5, p6, hc0a, hc0b]
 
-/-- **The line zeros `|γ| ≤ 3·10¹⁰` in numbers** (route D, P8): for `3·10⁻¹⁰ ≤ δ ≤ 1/208`,
+/-- **The line zeros `|γ| ≤ 3·10¹⁰` in numbers**: for `3·10⁻¹⁰ ≤ δ ≤ 1/208`,
 `Σ m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²10²⁰/2} LW)`. -/
 theorem line_sum_num [Fact TernaryGoldbach.RHUpTo] {δ : ℝ} (hδ0 : 3e-10 ≤ δ) (hδ1 : δ ≤ 1 / 208) (a b T : ℝ) :
     ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤

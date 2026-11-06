@@ -4,7 +4,7 @@ import TernaryGoldbach.Helfgott.Decay
 # Crude sup-norm bounds for `η₊` and `η_*`
 
 Helfgott proves `|η₊|_∞ ≤ 1.079955` and `|η_*|_∞ ≤ 1.414` [H13, (7.3), (7.19)].  The final
-inequality of [H13, §7.4] has so much room that much cruder bounds suffice, and these are easy:
+inequality of [H, §14.4] has so much room that much cruder bounds suffice, and these are easy:
 
 * `|η₊(t)| ≤ 400`, from `|h₂₀₀| ≤ 2000/π` and `t e^{-t²/2} ≤ e^{-1/2}`;
 * `|η_*(t)| ≤ 6.2`, from `η₂ ≤ 4 log 2`, `φ ≤ 2/e` and `supp η₂ ⊆ [1/4, 1]`.

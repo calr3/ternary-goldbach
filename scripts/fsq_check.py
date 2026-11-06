@@ -1,4 +1,4 @@
-"""Rigorous check of the former hypothesis `fsq_le` (Prelim/SqfreeCount.lean, [H, p. 83]):
+"""Rigorous check of `fsq_le` (Prelim/SqfreeCount.lean, [H, p. 83]; proved with the kernel check Prelim/SmallFsq.lean):
 
     f(X) <= 1.27 X  for all X >= 0,   f(X) = #{m <= X sq-free} + (X^2/2) sum_{m > X sq-free} 1/m^2.
 

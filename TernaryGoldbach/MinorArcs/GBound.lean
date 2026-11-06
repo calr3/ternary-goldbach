@@ -8,14 +8,12 @@ variable [Fact TernaryGoldbach.RHUpTo]
 # Theorem 3.1.1 as a function of `r = max(1, |δ|/8) q` [H, (11.11)–(11.13)]
 
 [H, §11.2] restates the first case of Theorem 3.1.1 as `|S_{η₂}(α, x)| ≤ g_x(r) x` with
-`r = max(1, |δ|/8) q` (so `δ₀q = 2r`), bounding `q/φ(q)` by `Ϝ(r)` (Lemma C.2.2, trusted):
+`r = max(1, |δ|/8) q` (so `δ₀q = 2r`), bounding `q/φ(q)` by `Ϝ(r)` (Lemma C.2.2):
 
 `g_x(r) = ((R_{x,2r} log 2r + 0.8764) √Ϝ(r) + 2.526)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
 `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55`.
 
 The constants `0.8764`, `3.8` are those of our corrected Theorem 3.1.1 ([H]: `0.5`, `3.36`).
-
-Proved, modulo the trusted inputs of `theorem_3_1_1` and Lemma C.2.2.
 -/
 
 open Real

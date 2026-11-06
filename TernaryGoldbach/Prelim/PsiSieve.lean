@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.SmallPsiTable
 
 /-!
-# A bit sieve in the kernel: `θ` on `[10⁶, 5·10⁷)` (route D, P9c)
+# A bit sieve in the kernel: `θ` on `[10⁶, 5·10⁷)`
 
 The trial-division table (`SmallPsiTable`) costs about `3·10⁻³ s` per integer near `10⁶`. Here a window
 `(n, n + W]` (`W ≤ 2¹⁵`) is sieved with one bit mask per prime `p ≤ 7100`, built by doubling

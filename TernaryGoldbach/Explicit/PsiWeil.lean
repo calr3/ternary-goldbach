@@ -4,12 +4,13 @@ import TernaryGoldbach.Explicit.WeilNumC
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# `ψ(x)` from the explicit formula with the Weil-window line bound (route D, step P8e)
+# `ψ(x)` from the explicit formula with the Weil-window line bound
 
 As `SsumG_gsm_err`, but the line zeros `|γ| ≤ 3·10¹⁰` are bounded by `line_sum_num`:
 `|Σ Λ(n) φ(n/x) − M(1) x| ≤ ErrW = √x·LineW + x·TailB + x^{−1/2} V/(2π)` for `φ = gsm a b δ` and
 `3·10⁻¹⁰ ≤ δ ≤ 1/208`, where `LineW = e^{δ²/8}(e^{a/2} + e^{b/2})(JW(δ) + e^{−δ²10²⁰/2} LW)`.
-The two sandwiches (`psi_upper_of_err`, `psi_lower_of_errW`) take any such error bound.
+The sandwiches `psi_upper_of_err`, `psi_lower_of_err` (`PsiLarge.lean`) take any such error bound;
+`psi_upper_W`, `psi_lower_W` apply them.
 -/
 
 open Complex Set Filter MeasureTheory Finset

@@ -1,5 +1,5 @@
-"""Rigorous check of the former hypothesis `eta2DD_small` (MinorArcs/InnerSums.lean), i.e. [H, (B.6)] on
-0 <= t <= 655 in explicit form:
+"""Rigorous check of [H, (B.6)] with [H]'s constant 31.521 on 0 <= t <= 655, in explicit form (Lean proves
+(B.6) with the constant 32 by kernel bisection, MinorArcs/Eta2DDBound.lean):
 
     |DD(t)| <= 31.521  for 0 <= t <= 655,
     DD(t) = 16 e(-t/2) - 16 e(-t/4) - 4 e(-t) + 4 J(1/4, 1/2) - 4 J(1/2, 1),

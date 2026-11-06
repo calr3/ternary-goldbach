@@ -1182,8 +1182,8 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
     nlinarith
 
 /-- **[H, Lemma 4.2.3], case (b)** (`|δ| ≤ 1/2c₂` or `D ≤ Q₀/2`), for `η = η₂`: (4.40) + (4.41)
-in the forms `bound_4_40` (corrected) and `bound_4_41` (slightly weakened). Proved; it depends
-only on the trusted bounds `eta2_fourier_bound'` and `eta2log_fourier_bound`. -/
+in the forms `bound_4_40` (corrected) and `bound_4_41` (slightly weakened). Uses (B.6) and its
+`log` analogue (`eta2_fourier_bound'`, `eta2log_fourier_bound`). -/
 theorem lemma_4_2_3_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hD : √3 ≤ D) (hDx : D ≤ min (x / 4) (x / rexp 1))
     (hcase : |δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) :

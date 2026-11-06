@@ -6,7 +6,7 @@ import TernaryGoldbach.Prelim.SmallPsiData5
 import TernaryGoldbach.Prelim.SmallPsiData6
 
 /-!
-# `θ` and `ψ` on `[12, 10⁶]`, kernel-checked (route D, step P9a)
+# `θ` and `ψ` on `[12, 10⁶]`, kernel-checked
 
 `|ψ(t) − t| ≤ √t` and `t − 2.3662 √t ≤ θ(t) ≤ t` for real `12 ≤ t < 10⁶` (`small_table`), chaining
 `outer_spec` through the chunks `chunk0`, …, `chunk117` (stage lemmas `stage_k`).

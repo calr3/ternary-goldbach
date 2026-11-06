@@ -14,8 +14,8 @@ For `r ≥ 21400` this follows from Ramaré's estimate `G(r) = log r + c_E + O*(
 (`SmallG.lemma7_small`).
 
 The file also proves the asymptotic `|G(N) − log N − κ| ≤ (2 + 3/e + γ) P N^{−1/3}` from the
-Euler product of `h = F ∗ μ`, `F(n) = n μ(n)²/φ(n)` (Rankin's trick, `P = ∑ |h(d)| d^{−2/3} ≤ 9.32`);
-it is no longer needed for Lemma 7.
+Euler product of `h = F ∗ μ`, `F(n) = n μ(n)²/φ(n)` (Rankin's trick, `P = ∑ |h(d)| d^{−2/3} ≤ 9.32`;
+`GS_asymp`). The main theorems do not use it.
 -/
 
 open Finset Real ArithmeticFunction

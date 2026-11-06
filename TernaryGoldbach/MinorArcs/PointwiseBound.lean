@@ -11,11 +11,10 @@ The main result of Part I of [H]: for `η = η₂` and `2α = a/q + δ/x`, an ex
 `|S_η(α, x)|` that is essentially `x (log q)/√φ(q)`.  Part I (Chs. 3–6) is its proof; it is
 used in [H, Chs. 11, 13] to bound the minor-arc integral (14.49).
 
-**Blueprint node.** Proved, modulo the trusted literature bounds and computations listed by
-`#sorry_deps`: the case `q ≤ x^{1/3}/6` is `theorem_3_1_1_first`, the case `q > x^{1/3}/6`
+**Blueprint node.** The case `q ≤ x^{1/3}/6` is `theorem_3_1_1_first`, the case `q > x^{1/3}/6`
 ([H, §6.3.2], with [H]'s constants `0.276`, `1234`) is `theorem_3_1_1_second` (with two
-corrections to [H]'s argument, see `SecondChoice.lean` and `NOTES.md`). Not yet used by
-`ternary_goldbach`.
+corrections to [H]'s argument, see `SecondChoice.lean` and `NOTES.md`). The minor arcs use it
+through `EtaStarBound.lean` and `Prop1123b.lean`.
 -/
 
 open Real

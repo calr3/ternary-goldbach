@@ -1,8 +1,9 @@
-"""Finite check behind the former hypothesis `C_grid` (Prelim/LiouvilleBound.lean).
+"""Float check of the grid inequality behind (2.22) with constant 2.8 (Prelim/LiouvilleBound.lean; the kernel
+checks a coarser form on 17 intervals, Prelim/SmallCGrid.lean).
 
 With beta(a, u) = min(5/3, 0.99/(a - 2 log u)) if 2 log u < a, else 5/3, and
     G(a) = sum_{u=1}^{3000} |mu(u)|/u^2 * beta(a, u) + (5/3)/(3000 + 1/2),
-the former hypothesis stated  (2.8 + (i+1)/100) * G(2.8 + i/100) <= 2.8  for 0 <= i < 7720  (grid on [2.8, 80]).
+the check is  (2.8 + (i+1)/100) * G(2.8 + i/100) <= 2.8  for 0 <= i < 7720  (grid on [2.8, 80]).
 This is the optimisation in Ramare, Acta Arith. 165 (2014), proof of Thm 1.1 (rho(U, y)), with our constants
 0.99 (|l(z)| log z) and 5/3 (|l_q| <= sum 1/u^2), restricted to squarefree u.
 Float64; the margin is about 0.06.   Usage: python3 scripts/moebius_C_grid.py   (seconds)

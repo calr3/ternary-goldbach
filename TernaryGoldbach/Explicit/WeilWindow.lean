@@ -4,7 +4,7 @@ import TernaryGoldbach.Explicit.PsiPlateau
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# One window of the Weil formula (route D, step P7a)
+# One window of the Weil formula
 
 For the on-line zeros `S` of `zerosRectD zetaF T` with `|γ| ≤ 3·10¹⁰` (all of them are on the line by
 `rh_upto`) and a window centre `|T₀| ≤ 1.5·10¹⁰`:

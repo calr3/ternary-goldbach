@@ -11,7 +11,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 * `eta2_eq_integral`: `η₂(mn/x) = 4 ∫ 1[x/2W < m ≤ x/W, W/2 < n ≤ W] dW/W` [H, (5.2)];
 * `typeII_eq_integral`: `S_{II} = 4 ∫_V^{x/U} IIsum(W) dW/W` [H, (5.3)];
 * `norm_IIsum_le`: Cauchy–Schwarz, `|IIsum(W)| ≤ √S₁ (√S₂ + √S₃)` [H, (5.4)–(5.5)], with
-  the trusted [RS62, Thm. 13] `ψ(y) - θ(y) < 1.4262 √y` for `S₃`;
+  [H, (5.5)] (`ψ(y) - θ(y) < 1.4262 √y`, [RS62, Thm. 13]) for `S₃`;
 * `norm_typeII_le`: `|S_{II}| ≤ 4 ∫_V^{x/U} g(W) dW/W` for any integrable majorant `g`.
 -/
 

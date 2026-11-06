@@ -1159,8 +1159,7 @@ theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Appr
 added) and the error terms `bound_4_51`, `bound_4_52` (corrected `c₁`, cruder lower-order terms;
 see their docstrings). Hypotheses: [H]'s `x ≥ e²c₂/2` is replaced by `x ≥ 10`; we need `UV ≥ 2`;
 [H]'s `UV + (19/18)Q₀ ≤ x/5.6` and `Q₀ ≥ 2√x` are not needed (the latter only to turn `x/Q₀`
-into `√x/2`). Depends only on the trusted `eta2_fourier_bound'` and the literature bounds
-(2.12), (2.15), (2.20). -/
+into `√x/2`). Uses `eta2_fourier_bound'` ((B.6)) and the bounds (2.12), (2.15), (2.20). -/
 theorem lemma_4_2_4 {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
     (hQ₀ : 2 * rexp 1 ≤ Q₀) (hx : 10 ≤ x) (hU : 1 ≤ U) (hV : 1 ≤ V) (hD2 : 2 ≤ U * V) :
     ((|δ| ≤ 1 / (2 * c₂) ∨ U * V ≤ Q₀ / 2) →

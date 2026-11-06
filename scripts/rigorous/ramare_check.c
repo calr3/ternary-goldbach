@@ -1,4 +1,4 @@
-/* Independent checks of the former published hypothesis `ramare_Gq` ([Ram95, Lemma 3.4] = [H, (12.12)]):
+/* Independent checks of [Ram95, Lemma 3.4] = [H, (12.12)] (proved in Lean, Prelim/Ramare.lean):
 
    (a) c_E = gamma + sum_p log p/(p(p-1)) lies in [1.3325822, 1.3325823] ([Ram95, (3.6)] gives
        1.332582275332...).  Rigorous: MPFR sums over the primes p <= P = 1e9 (rounded down / up),

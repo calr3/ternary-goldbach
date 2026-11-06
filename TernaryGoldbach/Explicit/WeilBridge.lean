@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.WeilFormula
 import TernaryGoldbach.Explicit.ZetaPoly
 
 /-!
-# From zeros of `ξ` to zeros of `zetaF` (route D, step P6)
+# From zeros of `ξ` to zeros of `zetaF`
 
 The Weil formula (`weil_formula`) counts the zeros of `ξ` in `R_T = [−1/2, 3/2] × [−T, T]` with
 `mult T`; the explicit formula for `ψ` sums over the zeros of `zetaF = (s − 1)ζ(s)` with

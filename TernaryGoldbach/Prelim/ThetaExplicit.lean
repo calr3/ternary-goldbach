@@ -4,7 +4,7 @@ import TernaryGoldbach.Prelim.PsiTwoSided
 variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
-# An explicit prime number theorem for `θ` (in place of Dusart's bound)
+# An explicit prime number theorem for `θ`
 
 `|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 10¹²`, where `ε_pl(n) = 1.83·10⁻⁹` if
 `780 < log n < 20000` and `0` otherwise.
@@ -475,7 +475,7 @@ theorem theta_mid {n : ℕ} (hn : 10 ^ 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
   · have := (abs_le.1 hB).2; linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **Explicit PNT for `θ`** (replaces Dusart): `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. -/
+/-- **Explicit PNT for `θ`**: `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. -/
 theorem theta_explicit {n : ℕ} (hn : 1000000000000 ≤ n) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3 + epl n * n := by
   obtain ⟨x, hxdef⟩ : ∃ x : ℝ, x = n := ⟨_, rfl⟩

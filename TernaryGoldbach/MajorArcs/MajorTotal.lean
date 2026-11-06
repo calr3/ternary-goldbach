@@ -9,7 +9,7 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 /-!
 # [H, (14.27)]: the integral over the major arcs
 
-`Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(−Nα) dα ≥ 1.045 x²/κ` for odd `N ≥ 10²⁷`.
+`Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(−Nα) dα ≥ 1.049 x²/κ` for odd `N ≥ 10²⁷`.
 
 This file, part 1: the major arcs as a disjoint union of arcs for a signed integrand, and
 `Σ_b |S(b/q + β) − μ(q)/φ(q) S(β)|² = Σ_b |S(b/q + β)|² − μ²(q)/φ(q) |S(β)|²`.

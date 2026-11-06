@@ -12,10 +12,8 @@ variable [Fact TernaryGoldbach.RHUpTo]
 `η(u) = (η₂ *_M φ)(u) = ∫_0^∞ η₂(u/w) φ(w) dw/w` (`etaU`; `0` for `u ≤ 0`). Then
 `η_*(t) = η(κt)` (`etaStar_eq_etaU`). This is the `η` of [H, Cor 7.1.3].
 
-`η̂(t) = ∫_0^∞ φ(w) η̂₂(wt) dw` (Fubini). The trusted (B.6), `(2πs)² |η̂₂(s)| ≤ c₀`, then gives
-`|η̂(t)| ≤ c₀ √(π/2) / (2πt)²` (**`norm_fourier_etaU_le`**).
-
-Proved, modulo the trusted (B.6) (`eta2_fourier_bound'`).
+`η̂(t) = ∫_0^∞ φ(w) η̂₂(wt) dw` (Fubini). (B.6) in the form `(2πs)² |η̂₂(s)| ≤ c₀`
+(`eta2_fourier_bound'`) then gives `|η̂(t)| ≤ c₀ √(π/2) / (2πt)²` (**`norm_fourier_etaU_le`**).
 -/
 
 open Real Set MeasureTheory FourierTransform Filter

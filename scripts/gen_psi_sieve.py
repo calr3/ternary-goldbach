@@ -1,4 +1,4 @@
-# P9c: data for Prelim/PsiSieve*.lean: the sieve window chain `outerT` on [10^6, 5·10^7),
+# Data for Prelim/PsiSieve*.lean: the sieve window chain `outerT` on [10^6, 5·10^7),
 # simulated exactly. Targets: theta(t) <= t + 3 sqrt t, t - theta(t) <= 5 sqrt t.
 import math, sys, time
 sys.path.insert(0, 'scripts')
@@ -6,7 +6,7 @@ import numpy as np
 from fractions import Fraction as Q
 import io, contextlib
 with contextlib.redirect_stdout(io.StringIO()):
-    from p8_tables import ELpow, T12, EHpow, T12up
+    from cert_tables import ELpow, T12, EHpow, T12up
 S = 10**9
 AN, AD, BN, BD = 5, 1, 3, 1
 N0, END = 10**6, 50_000_000
@@ -113,7 +113,7 @@ theorem chunk{k} : resEqT (outerT {AN} {AD} {BN} {BD} {' '.join(map(str, st))} g
 import TernaryGoldbach.Prelim.SmallPsiTableMain
 
 /-!
-# `θ` on `[10⁶, 5·10⁷)` from the sieve chain (route D, P9c)
+# `θ` on `[10⁶, 5·10⁷)` from the sieve chain
 
 `sieve_table`: `θ(t) ≤ t + 3√t` and `t − θ(t) ≤ 5√t` for `10⁶ ≤ t < 5·10⁷`. The chain starts from the
 state of the trial-division table at `10⁶` (`SmallTab.stage117`); each stage is one kernel-checked

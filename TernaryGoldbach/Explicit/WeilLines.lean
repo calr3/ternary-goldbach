@@ -1,7 +1,7 @@
 import TernaryGoldbach.Explicit.WeilSplit
 
 /-!
-# The Weil identity: the archimedean and polar parts (route D, step P4b)
+# The Weil identity: the archimedean and polar parts
 
 With `H̃ = H_T + H_T(1 − ·)` (`WHt`), on the lines `ℜs = 1/2` and `3/2`:
 * `J₂`: `∫ A(3/2 + iy) H̃(3/2 + iy) dy = ∫ A(1/2 + iy) H̃(1/2 + iy) dy` for the archimedean factor

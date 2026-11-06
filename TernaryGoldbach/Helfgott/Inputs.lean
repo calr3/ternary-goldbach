@@ -39,7 +39,7 @@ namespace TernaryGoldbach.Helfgott
 absolutely because `η₊` and `η_*` decay rapidly (`TernaryGoldbach.Helfgott.Decay`), and the
 integral over `[0, 1]` picks out the representations of `N` (`circle_identity_tsum`).
 
-*Proved* — this input no longer depends on `sorry`. -/
+*Proved.* -/
 theorem circle_identity_input (N : ℕ) (hN : 0 < N) :
     IntegrableOn (integrand N) (Set.Ioc 0 1) ∧
       ∫ α in Set.Ioc (0:ℝ) 1, integrand N α = (repSum (fun _ => True) N : ℂ) := by
@@ -101,9 +101,9 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
 scale erratum"): [H]'s proof derives its ℓ∞ input only off the arcs at scale `x/κ`; we run
 Prop 13.1.2 with the arcs at scale `x/κ` above the base level, take a fresh Dirichlet
 approximation at each scale in (11.9), extend the levels to `≈ x^{0.3}`, and bound the base gap
-with [H, Cor 7.1.3]. It depends on the trusted inputs of Theorem 3.1.1, the trusted computation
-Prop 12.2.4, the cited Part II results `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`
-(`MinorArcs/PartIICited.lean`). The numerics (`numerics_M`) are proved: generated cells for
+with [H, Cor 7.1.3]. It uses Theorem 3.1.1, Prop 12.2.4 (with `c₊ = 2`), the Part II results
+`cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7` (`MinorArcs/PartIICited.lean`) and `E_le_14_28`
+(`MinorArcs/EBound.lean`), all proved. The numerics (`numerics_M`) are proved: generated cells for
 `x ≤ 4.9·10¹⁰¹` (`scripts/gen_cells.py`) and an analytic argument beyond.
 
 (Our constant `1.0376` is weaker than [H]'s `1.00948`. [H]'s Theorem 3.1.1 has `0.5` where its

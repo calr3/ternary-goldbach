@@ -8,7 +8,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
-# `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.00449`
+# `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`
 
 For `y ≥ 1`, `N = ⌊y⌋`: `|g₂(y)| ≤ ∑_d f(d)² S_d(N/d)²` (`abs_g2_le_sum`) and
 `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` (`Sd_eq`), `m(K) = ∑_{n ≤ K} μ(n)/n`. By Cauchy–Schwarz with

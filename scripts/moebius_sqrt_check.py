@@ -1,4 +1,5 @@
-"""Finite check behind the former hypothesis `moebius_sqrt_small` (Prelim/LiouvilleBound.lean):
+"""Float check of the Moebius bound behind [H, (2.24)] on a long range (Lean uses k < 11815, kernel-checked in
+Prelim/SmallMoebius.lean):
 
     |m(k)| <= sqrt(2/(k+1))   for 1 <= k < 10^10,   m(k) = sum_{n <= k} mu(n)/n,
 

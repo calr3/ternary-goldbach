@@ -13,7 +13,7 @@ This file derives the ternary Goldbach conjecture from the inputs in
 lists only Lean's three standard axioms. The hypotheses (`Fact` instances) are checked against their
 sources in `HYPOTHESES.md`.
 
-The argument follows [H13, §7.4]:
+The argument follows [H, §14.4] ([H13, §7.4]):
 
 1. the weighted count equals `∫ = ∫_𝔐 + ∫_𝔪`;
 2. `Re ∫_𝔐 ≥ 1.049 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`;

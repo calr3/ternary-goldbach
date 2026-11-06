@@ -1,11 +1,11 @@
-# P9a: data for Prelim/SmallPsiTable*.lean. Simulates `outer` exactly.
+# Data for Prelim/SmallPsiTable*.lean. Simulates `outer` exactly.
 import math, sys
 sys.path.insert(0, 'scripts')
 from fractions import Fraction as Q
 from sympy import primerange, isprime
 import io, contextlib
 with contextlib.redirect_stdout(io.StringIO()):
-    from p8_tables import ELpow, T12, EHpow, T12up
+    from cert_tables import ELpow, T12, EHpow, T12up
 S = 10**9
 P1000 = list(primerange(2, 1001))
 LQ = {}
@@ -145,7 +145,7 @@ namespace TernaryGoldbach.Prelim.SmallTab
     out = [f"""{imports}
 
 /-!
-# `θ` and `ψ` on `[12, 10⁶]`, kernel-checked (route D, step P9a)
+# `θ` and `ψ` on `[12, 10⁶]`, kernel-checked
 
 `|ψ(t) − t| ≤ √t` and `t − 2.3662 √t ≤ θ(t) ≤ t` for real `12 ≤ t < 10⁶` (`small_table`), chaining
 `outer_spec` through the chunks `chunk0`, …, `chunk{len(names)-1}` (stage lemmas `stage_k`).

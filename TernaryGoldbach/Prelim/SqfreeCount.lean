@@ -5,8 +5,8 @@ import TernaryGoldbach.Prelim.SmallFsq
 # Squarefree integers coprime to `P` in an interval [H, proof of Lemma 5.1.1]
 
 * `sum_moebius_sq_dvd`: `∑_{m² | l} μ(m) = [l squarefree]`;
-* `sum_Ioc_dvd`: the number of multiples of `D` in `(a, b]` is `(b - a)/D + O*(1)`, and `0` when
-  `D > b`;
+* `sum_Ioc_dvd_sub`, `sum_Ioc_dvd_eq_zero`: the number of multiples of `D` in `(a, b]` is
+  `(b - a)/D + O*(1)`, and `0` when `D > b`;
 -/
 
 open Finset

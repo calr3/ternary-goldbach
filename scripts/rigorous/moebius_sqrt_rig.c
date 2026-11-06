@@ -1,4 +1,4 @@
-/* Rigorous check of `moebius_sqrt_small` (Prelim/LiouvilleBound.lean):
+/* Rigorous check of the Moebius bound behind [H, (2.24)] (Lean uses it for k < 11815, Prelim/SmallMoebius.lean):
 
        |m(k)| <= sqrt(2/(k+1))  for 1 <= k < 10^10,   m(k) = sum_{n <= k} mu(n)/n,
 

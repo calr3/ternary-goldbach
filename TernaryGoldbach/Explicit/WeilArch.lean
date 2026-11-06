@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.WeilWeights
 import TernaryGoldbach.Explicit.Digamma
 
 /-!
-# The archimedean term of the Weil formula (route D, step P5)
+# The archimedean term of the Weil formula
 
 `Re ψ(¼ + iy) ≤ ψ_N(y) = log(N + ¼) + ½ log(1 + y²/(N − ¾)²) − Σ_{k<N} (k + ¼)/((k + ¼)² + y²)`
 (`re_digamma_quarter_le`; `re_digamma_le` at `¼ + N` and the recurrence `N` times). `ψ_N` is even

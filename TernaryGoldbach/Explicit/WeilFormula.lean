@@ -1,7 +1,7 @@
 import TernaryGoldbach.Explicit.WeilLines
 
 /-!
-# The Weil explicit formula (route D, step P4c)
+# The Weil explicit formula
 
 For `0 < ℓ ≤ 1`, `m ≥ 2`, `e^{2mℓ} < 2` and any `T₀`, along good heights `T_k ∈ [k, k+1]`
 (`goodT`):

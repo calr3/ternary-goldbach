@@ -629,12 +629,12 @@ theorem D19_le {M : ℝ} (hM : 10 ^ 17 ≤ M) :
       3.52e-5 ≤ 0.0014 := by norm_num
   linarith
 
-/-! ### `10⁵ ≤ x < 10¹²`: the variation of `∑ Λ(n)/(n log n) − log log n` (route D)
+/-! ### `10⁵ ≤ x < 10¹²`: the variation of `∑ Λ(n)/(n log n) − log log n`
 
 `E₂Λ(M) − E₂Λ(N) = −(∑_{M<n≤N} Λ(n) w(n) − (log log N − log log M))`, `w(n) = 1/(n log n)`; by
 summation by parts against `ψ(n) − n` (`E2_var`) the `ψ`-errors at `n` enter with weight
 `w(n) − w(n+1) ≈ 1/(n² log n)`. With `|ψ(n) − n| ≤ c(n)√n` (`c = 1` below `10⁶`, `5` up to `5·10⁷`
-(`thetaN_sieve`), `cB` up to `10¹⁷`) this gives `|E₂Λ(M)| ≲ 0.0026` already at `M = 10⁵`
+(`thetaN_sieve`), `cB` up to `10¹⁷`) this gives `|E₂Λ(M)| ≤ 0.0027` already at `M = 10⁵`
 (`E2_le_bin`). -/
 
 /-- `w(n) = 1/(n log n)`. -/
