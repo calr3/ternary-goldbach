@@ -4,8 +4,6 @@ import TernaryGoldbach.MinorArcs.LargeSieveProof
 import TernaryGoldbach.MinorArcs.Prop1312
 import TernaryGoldbach.Helfgott.Decay
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Thm 13.2.1], conditional on an ℓ∞ bound at scale `x`
 
@@ -37,6 +35,7 @@ noncomputable def Hl2 (x T : ℝ) (r₁ n : ℕ) : ℝ :=
   if n < r₁ then (Real.log (2 * ((n : ℝ) + 1)) + 2) / (Real.log (2 * √(x / 16)) + cE) * T
   else T
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Thm 13.2.1], conditional on the ℓ∞ bound at scale `x`** (discrete (13.6)).  For
 `aₙ` supported on primes `> √x`, `S₁ = Σ aₙ e(nα)`, `T = Σ|aₙ|²`, and levels
 `10⁵ ≤ r₀ ≤ r₁` with `(20000 r₁)² ≤ x/16`, `2r₁ ≤ (2√(x/16))^{0.6}`: if `g` is non-increasing,
@@ -144,6 +143,7 @@ theorem Mmix_mono {x : ℝ} (hx : 0 < x) (r₀ : ℕ) : Monotone (Mmix x r₀) :
   · rw [majorArcs_div, majorArcs_div]
     exact majorArcs_subset (by rw [hκ]; norm_num) le_rfl (by positivity) hmn' hx
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Thm 13.2.1], repaired** (discrete (13.6), mixed family). For `aₙ` supported on
 primes `> √x`, `T = Σ|aₙ|²`, levels `10⁵ ≤ r₀ ≤ r₁` with `(20000 r₁)² ≤ x/784` and
 `2r₁ ≤ (2√(x/784))^{0.6}`, `g` non-increasing with `g(r₁) ≥ 0`: if `|S_{η_*}(α, x)| ≤ g(r₀)` off

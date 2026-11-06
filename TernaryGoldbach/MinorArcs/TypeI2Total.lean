@@ -1,9 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeIProof
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # Type I totals [H, §6.2.2]: `S_{I,2}` for `q ≤ Q/V`
 -/
@@ -105,7 +102,6 @@ theorem approx2_mul {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a
     calc |δ| * (q' * (Q / v)) ≤ |δ| * (q * Q) / v := this
       _ ≤ x / v := div_le_div_of_nonneg_right hδQ hv0.le
   · rw [le_div_iff₀ hv0]; nlinarith
-
 
 open Classical in
 /-- [H, (6.6)–(6.8)]: for `qV ≤ Q`, applying Lemma 4.2.2 to each `S_I(vα, x/v)`:

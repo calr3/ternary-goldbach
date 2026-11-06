@@ -85,6 +85,7 @@ theorem norm_cpow_neg {t : ℝ} (ht : 0 < t) (s : ℂ) :
     ‖(t : ℂ) ^ (-(s + 1))‖ = t ^ (-(s.re + 1)) := by
   rw [Complex.norm_cpow_eq_rpow_re_of_pos ht]; simp
 
+omit [NeZero q] in
 theorem aesm_integrand (χ : DirichletCharacter ℂ q) (s : ℂ) :
     AEStronglyMeasurable (fun t : ℝ => psum χ ⌊t⌋₊ * (t : ℂ) ^ (-(s + 1)))
       (volume.restrict (Ioi 1)) := by

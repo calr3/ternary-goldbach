@@ -22,6 +22,7 @@ noncomputable def eta2log (ρ t : ℝ) : ℝ := Real.log (ρ * t) * eta2 t
 variable {ρ : ℝ} (hρ : 4 ≤ ρ)
 include hρ
 
+omit hρ in
 theorem eta2log_eq_clamp (t : ℝ) : eta2log ρ t = Real.log (ρ * max t (1 / 8)) * eta2 t := by
   unfold eta2log
   rcases le_or_gt t (1 / 8) with h | h
@@ -29,7 +30,7 @@ theorem eta2log_eq_clamp (t : ℝ) : eta2log ρ t = Real.log (ρ * max t (1 / 8)
   · rw [max_eq_left h.le]
 
 theorem continuous_eta2log : Continuous (eta2log ρ) := by
-  have : eta2log ρ = fun t => Real.log (ρ * max t (1 / 8)) * eta2 t := funext (eta2log_eq_clamp hρ)
+  have : eta2log ρ = fun t => Real.log (ρ * max t (1 / 8)) * eta2 t := funext eta2log_eq_clamp
   rw [this]
   refine Continuous.mul ?_ Helfgott.continuous_eta2
   exact (continuous_const.mul (continuous_id.max continuous_const)).log fun t =>

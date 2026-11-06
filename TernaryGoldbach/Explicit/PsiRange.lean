@@ -1,8 +1,6 @@
 import TernaryGoldbach.Explicit.PsiWeil
 import TernaryGoldbach.Explicit.PsiPlateau
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `|ψ(x) − x| ≤ c √x` on a range `[X, X']`
 
@@ -25,7 +23,6 @@ theorem LW_nonneg : 0 ≤ LW := by
     (div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le)
     (one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _))))
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- `e^{−x} ≤ (1 + x/10)^{−10}` for `x ≥ 0`. -/
 theorem exp_neg_big_le {x : ℝ} (hx : 0 ≤ x) : Real.exp (-x) ≤ 1 / (1 + x / 10) ^ 10 := by
   have h1 : (1 + x / 10) ^ 10 ≤ Real.exp x := by
@@ -91,7 +88,6 @@ theorem TailB_tiny {a δ : ℝ} (ha : |a| ≤ 1) (hδ0 : 3e-9 ≤ δ) (hδ1 : δ
         mul_le_mul hE (add_le_add hA hB) hS0 (by norm_num)
     _ ≤ 1e-11 := by norm_num
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem JW_le {δ LU : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) (hLU : Real.log (1 / δ) ≤ LU) :
     JW δ ≤ 0.16385 * LU ^ 2 - 0.4271 * LU + 7.2032 + 57.73 * δ := by
   unfold JW
@@ -104,11 +100,9 @@ theorem JW_le {δ LU : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) (hLU : Real.
     rw [Real.le_log_iff_exp_le (by positivity)]; linarith
   nlinarith
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem JW_pos {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) : 0 < JW δ := by
   unfold JW; nlinarith [sq_nonneg (Real.log (1 / δ) - 1.3)]
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- The Vg constant: `(2/log 2 + 4.8)·82.6·√(2π)/(2π) ≤ 253.3`. -/
 theorem Vc_le : (2 / Real.log 2 + 4.8) * 82.6 * √(2 * π) / (2 * π) ≤ 253.3 := by
   have hl := Real.log_two_gt_d9
@@ -125,7 +119,6 @@ theorem Vc_le : (2 / Real.log 2 + 4.8) * 82.6 * √(2 * π) / (2 * π) ≤ 253.3
         gcongr
     _ ≤ 253.3 := by norm_num
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem exp_half_log {z : ℝ} (hz : 0 < z) : Real.exp (Real.log z / 2) = √z := by
   rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos hz]; ring_nf
 
@@ -204,6 +197,7 @@ theorem Vg_range_le {δ a y0 X x E8 E sYX : ℝ} (hδ : 0 < δ) (hy0 : 0 < y0) (
     _ = √x * (253.3 * E8 / δ * (E / X + sYX)) := by ring
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`ψ(x) ≤ x + c√x` on `[X, X']`.** -/
 theorem psi_range_up {δ K y0 X X' c LU E1 E8 Eh q sY sYX rX rX' : ℝ} (hδ0 : 3e-9 ≤ δ) (hδ1 : δ ≤ 1 / 208)
     (hK : 0 ≤ K) (hKδ : K * δ ≤ 1) (hy0 : 0 < y0) (hX1 : 1 ≤ X) (hYX : y0 * Real.exp (K * δ) ≤ X)
@@ -291,6 +285,7 @@ theorem psi_range_up {δ K y0 X X' c LU E1 E8 Eh q sY sYX rX rX' : ℝ} (hδ0 : 
   rw [e] at hU2
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`x − c√x ≤ ψ(x)` on `[X, X']`.** -/
 theorem psi_range_lo {δ K y0 X X' c LU E8 Eh q sY sYX rX rX' : ℝ} (hδ0 : 3e-9 ≤ δ) (hδ1 : δ ≤ 1 / 208)
     (hKδ0 : δ ≤ K) (hKδ : K * δ ≤ 1) (hy0 : 0 < y0) (hX1 : 1 ≤ X) (hYX : y0 * Real.exp (K * δ) ≤ X)

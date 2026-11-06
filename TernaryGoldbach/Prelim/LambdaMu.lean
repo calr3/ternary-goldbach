@@ -9,8 +9,6 @@ import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
 import TernaryGoldbach.Prelim.PsiSieveMain
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [H, §2.5]
 
@@ -80,6 +78,7 @@ theorem thetaN_le_psiN (n : ℕ) : thetaN n ≤ psiN n := by
     sum_nonneg fun m _ => by split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem thetaN_large {n : ℕ} (hn : 1000000000000 ≤ n) :
     |thetaN n - n| < n / Real.log n ^ 3 + epl n * n := by
   unfold thetaN; exact theta_explicit hn
@@ -226,6 +225,7 @@ theorem log_ge_23 {x : ℝ} (hx : 10 ^ 10 ≤ x) : 23 ≤ Real.log x := by
   have := nat_le_log (N := x) (k := 23) (by norm_num; linarith)
   exact_mod_cast this
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(N) ≤ N + N/log³N + 7.04 √N` for `N ≥ 10¹²`, given `ψ(√N) ≤ 1.03883 √N`. -/
 theorem psi_upper_of {N : ℕ} (hN : 1000000000000 ≤ N)
     (h : psiN (Nat.sqrt N) ≤ 1.03883 * (Nat.sqrt N : ℝ)) :
@@ -238,6 +238,7 @@ theorem psi_upper_of {N : ℕ} (hN : 1000000000000 ≤ N)
   have h5 := Real.sqrt_nonneg (N : ℝ)
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) < 1.03883 n` for `1 ≤ n ≤ 10¹⁷`: a kernel-checked computation for `n ≤ 700`
 (`Small.psi_lt_small_700`) and `|ψ(n) − n| ≤ c(n)√n` above (`psi_two_sided`: `c = 1` below `10⁶`,
 `c ≤ 33` up to `10⁸`, `c ≤ 72`). -/
@@ -269,6 +270,7 @@ theorem psi_lt_small' {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10 ^ 17) : psiN n < 1
       have := mul_le_mul_of_nonneg_right hc hs0
       nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≤ 1.0064 n` for `2.5·10⁷ ≤ n ≤ 10¹⁷` (`psi_two_sided`: `c ≤ 31.5` on `(10⁷, 10⁸]`,
 `c ≤ 35.5` up to `3.2·10¹⁰`, `c ≤ 72`). -/
 theorem psi_le_a14_mid {n : ℕ} (h1 : 25000000 ≤ n) (h2 : n ≤ 10 ^ 17) : psiN n ≤ 1.0064 * n := by
@@ -298,6 +300,7 @@ theorem psi_le_a14_mid {n : ℕ} (h1 : 25000000 ≤ n) (h2 : n ≤ 10 ^ 17) : ps
     have := mul_le_mul_of_nonneg_right hc hs0
     nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≤ 1.03883 n` for all `n`, and `ψ(n) ≤ 1.0064 n` for `n ≥ 2.5·10⁷` (`psi_two_sided` up to
 `10¹⁷`; above, strong induction with `theta_explicit` and `ψ − θ ≤ ψ(√n) + n^{1/3} log n`). -/
 theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (25000000 ≤ n → psiN n ≤ 1.0064 * n) := by
@@ -328,6 +331,7 @@ theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (25000000 ≤ n → ps
 
 /-! ### (2.14), (2.15) -/
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.15)]** ([RS62, Thm. 12]): `ψ(y) = ∑_{n ≤ y} Λ(n) < 1.03883 y` for `y > 0`.
 Proved from `psi_bounds` (`psi_two_sided` up to `10¹⁷`, `theta_explicit` beyond). -/
 theorem sum_vonMangoldt_lt {y : ℝ} (hy : 0 < y) :
@@ -345,6 +349,7 @@ theorem sum_vonMangoldt_lt {y : ℝ} (hy : 0 < y) :
     have : (0 : ℝ) < n := by exact_mod_cast hpos
     linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem psiN_le (n : ℕ) : psiN n ≤ 1.03883 * n := by
   rcases Nat.eq_zero_or_pos n with h | h
   · subst h; simp [psiN]
@@ -413,6 +418,7 @@ theorem sum_inv_le_log {a b : ℕ} (ha : 1 ≤ a) (hab : a ≤ b) :
     · have : a = b + 1 := by omega
       subst this; simp
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.12)]** for integer `N ≥ 30`. -/
 theorem sum_vonMangoldt_div_le_log_large {N : ℕ} (hN : 30 ≤ N) :
     ∑ n ∈ Icc 1 N, (Λ n : ℝ) / n ≤ Real.log N := by
@@ -522,6 +528,7 @@ theorem sum_vonMangoldt_div_le_log_large {N : ℕ} (hN : 30 ≤ N) :
   rw [← hmain] at hfin
   exact le_of_mul_le_mul_left (by linarith) hN0
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.12)]** ([RS62, (3.23)]): `∑_{n ≤ x} Λ(n)/n ≤ log x` for `x ≥ 1`.
 Proved from (2.15) (Chebyshev's identity `∑ Λ(n)⌊N/n⌋ = log N!` and summation by parts) and the
 finite check `mertens_small`. -/
@@ -666,6 +673,7 @@ theorem log_le_div_e {x : ℝ} (hx : 0 < x) : Real.log x ≤ x / Real.exp 1 := b
   rw [Real.log_div hx.ne' (Real.exp_pos 1).ne', Real.log_exp] at h
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`ψ(N) − θ(N) < 1.4262 √N` for `10⁶ ≤ N ≤ 10¹²`.** -/
 theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N < 10 ^ 12) :
     ∑ m ∈ Icc 1 N, (if m.Prime then 0 else (Λ m : ℝ)) < 1.4262 * √(N : ℝ) := by
@@ -737,6 +745,7 @@ theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N < 10 ^ 12) :
       _ = 0.4262 * v ^ 6 := by ring
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`ψ(n) − θ(n) < 1.4262 √n` for `1 ≤ n < 10¹²`** ([RS62, Thm 13] in this range): kernel-checked
 for `n ≤ 10⁶` (`SmallNP.nonprime_small_kernel`), analytic above (`small_table` at `√n`). -/
 theorem nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n < 10 ^ 12) :
@@ -745,6 +754,7 @@ theorem nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n < 10 ^ 12) :
   · exact TernaryGoldbach.Prelim.SmallNP.nonprime_small_kernel n h1 h6
   · exact nonprime_mid h6.le h
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (5.5)]** ([RS62, Thm. 13]): `ψ(y) − θ(y) = ∑_{n ≤ y, n not prime} Λ(n) < 1.4262 √y`
 for `y > 0`. Proved from (2.15) (`ψ − θ ≤ ψ(√y) + y^{1/3} log y`) for `y ≥ 10¹²` and
 `nonprime_small` below. -/
@@ -894,6 +904,7 @@ theorem cPsi_le (n : ℕ) :
     cPsi n ≤ 1 + 32 * (if 999999 < n then 1 else 0) + 39 * (if 10 ^ 8 < n then 1 else 0) := by
   unfold cPsi; split_ifs <;> first | (exfalso; omega) | norm_num
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≥ n − cPsi(n) √n − [n > 10¹⁷] (n/log³ n + ε_pl n)` for `n ≥ 12`. -/
 theorem psi_lower3 {n : ℕ} (hn : 12 ≤ n) :
     (n : ℝ) - cPsi n * √(n : ℝ) -
@@ -914,6 +925,7 @@ theorem psi_lower3 {n : ℕ} (hn : 12 ≤ n) :
     have : cPsi n = 0 := by unfold cPsi; rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
     rw [this, zero_mul]; linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- The Abel summation term: `ψ(n)(1/n − 1/(n+1)) ≥ 1/(n+1) − cPsi(n)/(√n (n+1)) − [n > 10¹⁷](…)`. -/
 theorem abel_term_ge3 {n : ℕ} (hn : 12 ≤ n) :
     1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) -
@@ -1053,6 +1065,7 @@ theorem cPsi_sqrt_le {N : ℕ} (h : 10 ^ 4 < N) : cPsi N * √(N : ℝ) ≤ 0.03
     nlinarith
   · rw [zero_mul]; positivity
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.13)]** for integers: `∑_{n ≤ N} Λ(n)/n ≥ log(N+1) − log(3/√2)`, `N ≥ 1`. -/
 theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
     Real.log (N + 1) - Real.log (3 / √2) ≤ ∑ n ∈ Icc 1 N, (Λ n : ℝ) / n := by
@@ -1136,6 +1149,7 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
   have hcast : ((N : ℕ) : ℝ) + 1 = (N : ℝ) + 1 := rfl
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.13)]**: `∑_{n ≤ x} Λ(n)/n ≥ log x − log(3/√2)` for `x ≥ 1`. -/
 theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
     Real.log x - Real.log (3 / √2) ≤ ∑ n ∈ Icc 1 ⌊x⌋₊, (Λ n : ℝ) / n := by
@@ -1208,6 +1222,7 @@ theorem psi_mul_of {N : ℕ} (hN : 1 ≤ N) {δ ε A B : ℝ} (hA : 0 ≤ A)
     mul_le_mul_of_nonneg_right hup (Nat.cast_nonneg N)
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≥ n − A √n − 11` for `n ≤ 10¹⁷`, if `cB ≤ A` (`psi_two_sided`; trivially for `n < 12`). -/
 theorem psi_lower_of_cB {A : ℝ} (hA : 0 ≤ A) {n : ℕ} (hn : n ≤ 10 ^ 17)
     (hc : 12 ≤ n → cB n ≤ A) : (n : ℝ) - A * √(n : ℝ) - 11 ≤ psiN n := by
@@ -1220,6 +1235,7 @@ theorem psi_lower_of_cB {A : ℝ} (hA : 0 ≤ A) {n : ℕ} (hn : n ≤ 10 ^ 17)
     have := mul_le_mul_of_nonneg_right (hc h) hs
     unfold psiN; linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≤ n + B √n` for `12 ≤ n ≤ 10¹⁷`, if `cB(n) ≤ B`. -/
 theorem psi_upper_of_cB {B : ℝ} {n : ℕ} (h12 : 12 ≤ n) (hn : n ≤ 10 ^ 17) (hc : cB n ≤ B) :
     psiN n ≤ n + B * √(n : ℝ) := by
@@ -1227,6 +1243,7 @@ theorem psi_upper_of_cB {B : ℝ} {n : ℕ} (h12 : 12 ≤ n) (hn : n ≤ 10 ^ 17
   have := mul_le_mul_of_nonneg_right hc (Real.sqrt_nonneg (n : ℝ))
   unfold psiN; linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(n) ≥ (1 − 1/12000) n − 72 √n − 11` for all `n`. -/
 theorem psi_lower_big (n : ℕ) : (1 - 1 / 12000) * (n : ℝ) - 72 * √(n : ℝ) - 11 ≤ psiN n := by
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
@@ -1242,6 +1259,7 @@ theorem psi_lower_big (n : ℕ) : (1 - 1 / 12000) * (n : ℝ) - 72 * √(n : ℝ
     have he := mul_le_mul_of_nonneg_right (epl_le n) hn0
     linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.17)]**, for integers `N ≥ 2.5·10⁷`: `∑_{n ≤ N} Λ(n) n < 1.022 N²/2`.
 By partial summation (`psi_mul_of`) from `psi_two_sided` (`c ≤ 31.5, 33` to `10⁸`, `≤ 35.5` to
 `3.2·10¹⁰`, `≤ 72` to `10¹⁷`) and, above, `psi_bounds` and `psi_lower_big`. -/
@@ -1301,6 +1319,7 @@ theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
     have key := fin 48 0.004 (by nlinarith)
     nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.17)]**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷` ([H]: `1.0008`; the minor
 arcs use it at `y ≥ 2.7·10⁷`). -/
 theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
@@ -1313,6 +1332,7 @@ theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
     linarith
   exact (psi_mul_a17 hN).trans_le hmono
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.14)]**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` ([H]: `1.0004`; the minor arcs
 use it at `V ≥ 2.7·10⁷`). From `psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). -/
 theorem sum_vonMangoldt_le_a14 {y : ℝ} (hy : 2.5e7 ≤ y) :
@@ -1327,6 +1347,7 @@ theorems do not need it. (It follows from (2.14) by summation by parts and finit
 
 /-! ### (2.19) -/
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `|θ(n) − n| ≤ 1.95 √n + n/log³ n + ε_pl(n) n` for `n ≥ 10¹²` (from `thetaN_large`; the `√n` term is
 slack). -/
 theorem thetaN_close {n : ℕ} (hn : 10 ^ 12 ≤ n) :
@@ -1348,6 +1369,7 @@ theorem sum_logsq_le_mul (a b : ℕ) :
   nlinarith
 
 set_option maxHeartbeats 800000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.19)]** for integers `N > 2·10¹²`. -/
 theorem logsq_large {N : ℕ} (hN : 2 * 10 ^ 12 < N) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
@@ -1528,6 +1550,7 @@ theorem abel_theta (w : ℕ → ℝ) (M N : ℕ) (hMN : M < N) :
         sum_singleton, sum_empty, thetaN_succ']
       ring
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `θ(n) ≥ n − (cB(n) + 1.4262) √n` for `12 ≤ n < 10¹²` (`psi_two_sided`, `nonprime_small`). -/
 theorem thetaN_ge_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
     (n : ℝ) - (cB n + 1.4262) * √(n : ℝ) ≤ thetaN n := by
@@ -1537,6 +1560,7 @@ theorem thetaN_ge_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
   unfold psiN at he
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|θ(n) − n| ≤ (cB(n) + 1.4262) √n` for `12 ≤ n < 10¹²`**: `θ ≤ ψ` and `thetaN_ge_cB`. -/
 theorem thetaN_close_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
     |thetaN n - n| ≤ (cB n + 1.4262) * √(n : ℝ) := by
@@ -1547,6 +1571,7 @@ theorem thetaN_close_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
   have hs := Real.sqrt_nonneg (n : ℝ)
   rw [abs_le]; constructor <;> linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `θ(n) ≥ n − (cB(n) + 2.45) √n` for `10⁹ ≤ n ≤ 3.2·10¹²` (`psi_sub_theta_le_cB`). -/
 theorem thetaN_ge_cB' {n : ℕ} (h1 : 10 ^ 9 ≤ n) (h2 : n ≤ 3200000000000) :
     (n : ℝ) - (cB n + 2.45) * √(n : ℝ) ≤ thetaN n := by
@@ -1753,6 +1778,7 @@ theorem logsq_abel {N : ℕ} (h1 : 2000000 ≤ N) {A B m lam nu r0 l0 : ℝ}
     exact mul_le_mul_of_nonneg_left hl0 (by linarith)
   linarith [F1, F2, F3, F3', F4B, F6', F7, hsum, hsN2, har1, hma, hnumN, hNl]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **(2.19) for `4.6·10⁷ ≤ N ≤ 10⁸`** (`c ≤ 31.5`). -/
 theorem logsq_r1 {N : ℕ} (h1 : 46000000 ≤ N) (h2 : N ≤ 10 ^ 8) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
@@ -1772,6 +1798,7 @@ theorem logsq_r1 {N : ℕ} (h1 : 46000000 ≤ N) (h2 : N ≤ 10 ^ 8) :
       linarith))
     (Real.log_nonneg (by linarith)) (by norm_num)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **(2.19) for `10⁸ < N ≤ 3.2·10¹⁰`** (`c ≤ 35.5`). -/
 theorem logsq_r2 {N : ℕ} (h1 : 10 ^ 8 < N) (h2 : N ≤ 32000000000) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
@@ -1791,6 +1818,7 @@ theorem logsq_r2 {N : ℕ} (h1 : 10 ^ 8 < N) (h2 : N ≤ 32000000000) :
       linarith))
     (Real.log_nonneg (by linarith)) (by norm_num)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **(2.19) for `3.2·10¹⁰ < N ≤ 2·10¹²`** (`c ≤ 72`; `ψ − θ ≤ 2.45 √n`). -/
 theorem logsq_r3 {N : ℕ} (h1 : 32000000000 < N) (h2 : N ≤ 2 * 10 ^ 12) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
@@ -1835,6 +1863,7 @@ theorem logsq_sieve {N : ℕ} (h1 : 2000000 ≤ N) (h2 : N < 50000000) :
       linarith))
     (Real.log_nonneg (by linarith)) (by norm_num)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- The integer form of (2.19) on `[N/2, N]` for `N ≥ 4.6·10⁷`. -/
 theorem logsq_ge {N : ℕ} (h : 46000000 ≤ N) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
@@ -1868,6 +1897,7 @@ theorem logsq_real {y c : ℝ} (hy : 1 ≤ y) (hc : 0 ≤ c)
     nlinarith
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (2.19)]**: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 2·10⁶`
 ([H]: `y ≥ 117`, from [RS75, Cor. 2] and a computation; the minor arcs use it for `y ≥ V ≥ 2·10⁶`).
 By Abel summation from the sieve table (`logsq_sieve`, `y < 5·10⁷`), `psi_two_sided`

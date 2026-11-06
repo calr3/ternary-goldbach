@@ -14,6 +14,9 @@ At every prime `x ≥ 5` it bounds `log θ = log m + log(1 + (θ − m)/m)`, whe
 from 12 terms of the artanh series (`q_bounds`). It uses `e^γ ≥ G/D` (Taylor, with `γ` from
 `RamareWalk`) and checks `D F(x) < G log θ + 2.50637 D/log θ` in fixed point.
 The tightest case is `x = 23`, with margin `2.4·10⁻⁷`.
+
+The final state also gives `∏_{p ≤ 10⁵} p/(p−1) ≤ 20.5116` (`prod_le_1e5`), which bounds the
+singular series (`MajorArcs.prod_p_div_le`).
 -/
 
 open Finset Real
@@ -710,5 +713,13 @@ theorem mertens_product_kernel (x : ℕ) (hx : x.Prime) (h5 : 5 ≤ x) (h : x �
           Real.log (∑ p ∈ (Icc 1 x).filter Nat.Prime, Real.log p) +
         2.50637 / Real.log (∑ p ∈ (Icc 1 x).filter Nat.Prime, Real.log p) :=
   inv_100000.2.2.2.2.2.2.2.2 x h5 (by omega) hx
+
+/-- **`∏_{p ≤ 10⁵} p/(p−1) ≤ 20.5116`**, from the state of the walk at `10⁵`. -/
+theorem prod_le_1e5 : ∏ p ∈ (Icc 1 100000).filter Nat.Prime, ((p : ℝ) / (p - 1)) ≤ 20.5116 := by
+  have h := inv_100000.2.2.2.2.1
+  change (10 : ℝ) ^ 30 * Fp 100000 ≤ ((20511592825190780161845326219264 : ℕ) : ℝ) at h
+  unfold Fp at h
+  push_cast at h
+  linarith
 
 end TernaryGoldbach.Prelim.MertProd

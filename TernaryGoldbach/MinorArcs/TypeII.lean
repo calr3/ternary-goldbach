@@ -4,8 +4,6 @@ import TernaryGoldbach.Prelim.SumMuSqPhi
 import TernaryGoldbach.MinorArcs.Montgomery
 import TernaryGoldbach.MinorArcs.TypeIINumerics
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # Type II sums [H, Ch. 5]: the sum `S₂` via the large sieve [H, §5.2]
 

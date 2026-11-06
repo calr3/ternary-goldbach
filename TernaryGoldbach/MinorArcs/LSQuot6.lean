@@ -1,7 +1,5 @@
 import TernaryGoldbach.MinorArcs.LSQuot9
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Prop 12.2.4]
 
@@ -66,6 +64,7 @@ theorem weaken_136 {G G' l L : ℝ} (hG' : 0 ≤ G') (hL : 0 < L + cE)
   refine h.trans (mul_le_mul_of_nonneg_right ?_ hG')
   exact div_le_div_of_nonneg_right (by linarith) hL.le
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Prop 12.2.4] with `c₊ = 2`** (for [H]'s `1.36`). -/
 theorem prop_12_2_4 {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
     (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) (_hqQ : (q : ℝ) ≤ Q₀) {s : ℝ}

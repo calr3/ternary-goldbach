@@ -25,9 +25,22 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGR
 ```
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
-Inside the development, the hypotheses are `Fact` instances, declared as section variables
-(`variable [Fact RHUpTo] …`), and restated as the theorems `Explicit.rh_upto`,
-`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.ramare_moebius`.
+Inside the development, the hypotheses are `Fact` instances, restated as the theorems
+`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and
+`Prelim.ramare_moebius`. Each theorem takes only the instances its proof uses (the
+`unusedSectionVars` linter checks this), so its statement shows what it depends on:
+
+| Stage of [H, §14.4] | Lean | Hypotheses |
+|---|---|---|
+| major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `RHUpTo`, `PlattGRH`, `RamareMoebius` |
+| non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
+| circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
+| odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `RHUpTo`, `BinaryGoldbachInput` |
+
+`RHUpTo` reaches the minor arcs only through `Prelim.theta_explicit` and `Prelim.psi_two_sided`,
+that is, through the bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s
+citations of [RS62], [RS75] and [RR96].
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -224,6 +237,9 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   route of [H, App. D], which reaches `1.23·10²⁷` from RH to `3.061·10¹⁰` [Pla15] (Prop. D.0.3).
   There the prime below `n − 4` comes from short-interval results ([RS03] and Ramaré's tables);
   here it comes from our bounds for `θ`.
+* Platt's verification reaches the minor-arc total through (14.7) and Prop 7.1.5, as in [H], and also
+  through Cor 7.1.3, which bounds the base gap in the repaired Thm 13.2.1
+  (`MinorArcs.norm_S_etaStar_le_gap`).
 * Helfgott works on `ℝ/ℤ`; here it is `(0, 1]`, with the major arcs lifted periodically to `ℝ`.
 
 ## Layout

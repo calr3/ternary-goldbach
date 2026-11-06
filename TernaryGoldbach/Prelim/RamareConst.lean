@@ -1,7 +1,5 @@
 import TernaryGoldbach.Prelim.RamareLog
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The constant `c_E = γ + ∑_p log p/(p(p−1))`: identities
 

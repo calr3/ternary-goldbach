@@ -1,8 +1,5 @@
 import TernaryGoldbach.MinorArcs.NumericsCells
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The numerics for `y = x/κ ≥ 10¹⁰⁰`
 

@@ -1,7 +1,5 @@
 import TernaryGoldbach.Prelim.RamareBound
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The main term of `G_d(R)`
 

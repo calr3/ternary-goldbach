@@ -1,8 +1,6 @@
 import TernaryGoldbach.Explicit.PsiExplicit
 import TernaryGoldbach.Explicit.LogNumerics
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `|ψ(x) − x| ≤ 1.82·10⁻⁹ x + 1145 √x + 4.2·10¹⁰` for `x ≥ 10¹⁷`
 
@@ -396,6 +394,7 @@ theorem ErrG_plateau_le {a x : ℝ} (ha : |a| ≤ 49 / 3e10) (hx : 1e17 ≤ x) :
   have := mul_le_mul_of_nonneg_left h2 hx0
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|ψ(x) − x| ≤ 1.82·10⁻⁹ x + 1145 √x + 4.2·10¹⁰`** for `x ≥ 10¹⁷`. -/
 theorem psi_plateau {x : ℝ} (hx : 1e17 ≤ x) : |psiR x - x| ≤ 1.82e-9 * x + 1145 * √x + 4.2e10 := by
   have hx0 : 0 < x := by linarith

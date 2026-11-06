@@ -2,9 +2,6 @@ import TernaryGoldbach.MajorArcs.Prop942
 import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Explicit.EtaPlusCg
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, Thm 7.1.4] from [H, Prop 9.4.2] (proved) and Platt's verification
 
@@ -568,6 +565,7 @@ theorem hT0_of {q δ D T0 : ℝ} (hq : 0 < q) (hδ : |δ| ≤ D / q) (h1 : 10 * 
   have := max_le (show 10 * π * |δ| ≤ T0 - 200 by linarith) (show (50:ℝ) ≤ T0 - 200 by linarith)
   linarith
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Thm 7.1.4], `q = 1`** (our constants), from `prop_9_4_2` at `T₀ = 10⁸` and Platt's
 verification: for `x ≥ 4.9·10²⁶`, `|δ| ≤ 6·10⁵`, `S_{η₊}(δ/x, x) = η̂₊(-δ) x + E x`,
 `|E| ≤ 10⁻¹⁸ + 6.24·10⁶/√x`. -/
@@ -589,6 +587,7 @@ theorem thm_7_1_4_one {x : ℝ} (hx : 4.9e26 ≤ x) (χ : DirichletCharacter ℂ
   simp only [ite_true]
   exact errPZ_le hx (by linarith)
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Thm 7.1.4], odd `q ≤ 150000`** (Platt's verification at `10⁸/q`), our constants:
 `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q` for `x ≥ 4.9·10²⁶`, `|δ| ≤ 6·10⁵/q`. -/
 theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd : Odd q) (hq : q ≤ 150000)
@@ -626,6 +625,7 @@ theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd :
   rw [show (1e8 : ℝ) / q + 3.48 = (1e8 + 3.48 * q) / q by field_simp]
   exact div_le_div_of_nonneg_right (by nlinarith) hq0.le
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Thm 7.1.4], even `q ≤ 300000`** (Platt's verification at `max(10⁸/q, 200 + 7.5·10⁷/q)`), our
 constants: `|E| ≤ (7.5·10⁻⁸ + 7.7·10⁶/√x)/√q` for `x ≥ 4.9·10²⁶`, `|δ| ≤ 1.2·10⁶/q`. -/
 theorem thm_7_1_4_even {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (heven : Even q) (hq : q ≤ 300000)

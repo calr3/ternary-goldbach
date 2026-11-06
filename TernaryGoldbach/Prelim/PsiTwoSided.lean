@@ -1,8 +1,6 @@
 import TernaryGoldbach.Prelim.SmallPsiTableMain
 import TernaryGoldbach.Explicit.PsiRanges
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `|ψ(n) − n| ≤ c(n) √n` on `[12, 10¹⁷]`
 
@@ -55,10 +53,8 @@ theorem cB_le_4508 {n : ℕ} (h1 : 320000000000 < n) (h : n ≤ 10000000000000) 
   exact Explicit.cW_le_4508 (by have : (320000000000 : ℝ) < n := by exact_mod_cast h1
                                 linarith) (cast_le_of h (by norm_num))
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cB_small {n : ℕ} (h : n < 1000000) : cB n = 1 := by unfold cB; rw [if_pos h]
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem thS_add_ppS (n : ℕ) : SmallTab.thS n + SmallTab.ppS n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
   unfold SmallTab.thS SmallTab.ppS
   rw [Finset.sum_filter, ← Finset.sum_add_distrib]
@@ -67,11 +63,11 @@ theorem thS_add_ppS (n : ℕ) : SmallTab.thS n + SmallTab.ppS n = ∑ m ∈ Icc 
   · rw [ArithmeticFunction.vonMangoldt_apply_prime h]; ring
   · ring
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem psi_Icc_eq (n : ℕ) : Helfgott.psi n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
   rw [Helfgott.psi, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n)]
   simp [Finset.Ico_add_one_right_eq_Icc]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|ψ(n) − n| ≤ c(n) √n` for `12 ≤ n ≤ 10¹⁷`.** -/
 theorem psi_two_sided {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
     |∑ m ∈ Icc 1 n, (Λ m : ℝ) - n| ≤ cB n * √(n : ℝ) := by
@@ -88,7 +84,6 @@ theorem psi_two_sided {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
     rw [Explicit.psiR, Nat.floor_natCast, psi_Icc_eq] at hm
     exact hm
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- `n − 2.3662 √n ≤ θ(n) ≤ n` for `12 ≤ n < 10⁶`. -/
 theorem theta_small_two_sided {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 1000000) :
     (n : ℝ) - 2.3662 * √(n : ℝ) ≤ ∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p ∧

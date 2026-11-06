@@ -1,7 +1,5 @@
 import TernaryGoldbach.MinorArcs.LSQuot3
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Prop 12.2.4], part 4: large `q`
 
@@ -179,7 +177,6 @@ theorem ghat_anti {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : b ≤ a) : gH
       linarith
     · unfold gHatQ
       split_ifs <;> first | omega | norm_num
-
 
 /-! ### `ŝ` -/
 

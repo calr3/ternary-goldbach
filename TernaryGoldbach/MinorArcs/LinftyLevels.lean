@@ -1,9 +1,6 @@
 import TernaryGoldbach.MinorArcs.Prop1123b
 import TernaryGoldbach.MinorArcs.PhiIntegrals
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The ℓ∞ input of the repaired Thm 13.2.1, level by level
 
@@ -355,6 +352,7 @@ noncomputable def ghatY (y n : ℝ) : ℝ := 1.398 * max (gx y n) (hfun y) + 17 
 
 theorem exp_nine_le_y {y : ℝ} (hy : 1e25 ≤ y) : rexp 9 ≤ y := exp_nine_le.trans (by linarith)
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **The ℓ∞ input at level `n`**: for `y = x/κ ≥ 10²⁵`, `670 ≤ n ≤ y^{1/3}/6` and
 `α ∉ 𝔐_{8,n}(y)`: `|S_{η_*}(α, x)| ≤ y ĝ(y, n)`. -/
 theorem norm_S_etaStar_le_ghat {x n α : ℝ} (hx : 0 < x) (hy : 1e25 ≤ x / κ)

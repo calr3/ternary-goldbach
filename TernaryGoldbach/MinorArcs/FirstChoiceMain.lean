@@ -1,8 +1,5 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, §6.4, (6.76)–(6.77)]: the main term
 

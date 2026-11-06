@@ -6,9 +6,6 @@ import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The top-level inputs
 
@@ -66,13 +63,16 @@ theorem xOf_ge (N : ℕ) (hN27 : 10 ^ 27 ≤ N) : (4.9e26 : ℝ) ≤ xOf N := by
   rw [le_div_iff₀ h0]
   nlinarith
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **Major arcs** [H, (14.27)], with `1.049` in place of [H]'s `1.058259`:
 `Re ∫_{𝔐_{8,r₀}} S_{η₊}(α,x)² S_{η_*}(α,x) e(-Nα) dα ≥ 1.049 x²/κ` with `r₀ = 150000`.
 
 *Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [H, §§14.1–14.2]. On the
 arcs of modulus `q` the sums are compared with `μ(q)/φ(q) η̂(−βx)x` by Cor 7.1.3 and Prop 7.1.5
 (the Part II results collected in `MinorArcs/PartIICited.lean`); the singular series is bounded below
-with the Mertens product bound ([RS62, Thm 15], `Prelim.F_all`, proved); and `C_{η◦,η_*}(N/x)` is computed. -/
+with `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5` (`MajorArcs.prod_p_div_le`, from the kernel computation of
+`SmallMertensProd.lean`); and `C_{η◦,η_*}(N/x)` is computed. This uses `PlattGRH` and no other
+hypothesis. -/
 theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     1.049 * xOf N ^ 2 / κ ≤
       (∫ α in Set.Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ (xOf N), integrand N α).re := by
@@ -90,6 +90,8 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     ring
   exact MajorArcs.major_total hN hx hNx
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Minor arcs** [H, (14.49)]:
 `∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
 (true for `x = xOf N` when `N ≥ 10²⁷`, [H, (14.15)]).
@@ -148,8 +150,6 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Numerical hypothesis: binary Goldbach up to `4 · 10¹⁸`** [OeSHP]. An exhaustive computer
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)) shows that every even
 `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes; the range up to `3·10¹⁷` was double-checked

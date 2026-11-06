@@ -26,6 +26,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
 /-- `√T ≥ (log T)²/16` (from `T = e^L`, `e^{L/4} ≥ 1 + L/4`). -/
 theorem sqrt_ge_log_sq {T : ℝ} (hT : 1 ≤ T) : Real.log T ^ 2 / 16 ≤ √T := by
   have hT0 : 0 < T := by linarith

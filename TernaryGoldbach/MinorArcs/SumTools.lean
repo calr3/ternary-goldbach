@@ -157,6 +157,7 @@ section
 variable {x : ℝ} (hx : 0 < x)
 include hx
 
+omit hx in
 /-- `F₁(t) = t log(ex/t)` is increasing on `(0, x]`. -/
 theorem F₁_mono {s t : ℝ} (hs : 0 < s) (hst : s ≤ t) (htx : t ≤ x) :
     s * (1 + Real.log x - Real.log s) ≤ t * (1 + Real.log x - Real.log t) := by
@@ -169,6 +170,7 @@ theorem F₁_mono {s t : ℝ} (hs : 0 < s) (hst : s ≤ t) (htx : t ≤ x) :
       linarith [Real.log_le_log hu.1 hu.2.le])
   exact this ⟨hs, hst.trans htx⟩ ⟨hs.trans_le hst, htx⟩ hst
 
+omit hx in
 /-- `F₂(t) = (t²/2) log(√e x/t)` is increasing on `(0, x]`. -/
 theorem F₂_mono {s t : ℝ} (hs : 0 < s) (hst : s ≤ t) (htx : t ≤ x) :
     s ^ 2 / 2 * (1 / 2 + Real.log x - Real.log s) ≤ t ^ 2 / 2 * (1 / 2 + Real.log x - Real.log t) := by
@@ -217,7 +219,7 @@ theorem S2_le {q D' : ℝ} (hq : 0 < q) {J : ℕ} (hJ : 1 ≤ J) (hJD : (J - 1 /
       ((antitoneOn_f₁ x).mono fun t ht => lt_of_lt_of_le hq2 ht.1)
     have e : ∀ i : ℕ, q / 2 + ((i : ℝ) + 1) * q = u (i + 1) := fun i => by rw [hu]; push_cast; ring
     simp_rw [e] at hA
-    have hF := F₁_mono hx (s := q / 2 + K * q) (t := D') (by positivity) (by rw [← hu]; exact huK)
+    have hF := F₁_mono (s := q / 2 + K * q) (t := D') (by positivity) (by rw [← hu]; exact huK)
       (hD'x.trans he)
     have hF0 : 0 ≤ q / 2 * (1 + Real.log x - Real.log (q / 2)) := by
       apply mul_nonneg hq2.le
@@ -244,7 +246,7 @@ theorem S2_le {q D' : ℝ} (hq : 0 < q) {J : ℕ} (hJ : 1 ≤ J) (hJD : (J - 1 /
       (fun t ht => hasDerivAt_F₂ x (lt_of_lt_of_le hq2 ht.1)) ((monotoneOn_f₂ x hx).mono hsub)
     have key : ∀ i : ℕ, q / 2 + (i : ℝ) * q = u i := fun i => (hu i).symm
     simp only [key] at hM
-    have hF := F₂_mono hx (s := u K) (t := D') (by simp only [u]; positivity) huK (hD'x.trans he)
+    have hF := F₂_mono (s := u K) (t := D') (by simp only [u]; positivity) huK (hD'x.trans he)
     have hF0 : 0 ≤ (q / 2) ^ 2 / 2 * (1 / 2 + Real.log x - Real.log (q / 2)) := by
       apply mul_nonneg (by positivity)
       have : q / 2 ≤ x := by
@@ -319,7 +321,7 @@ theorem sum_odd_mul_log_le {x : ℝ} (hx : 0 < x) {q : ℕ} (hq : 1 ≤ q) {N : 
     (fun s hs => hasDerivAt_F₂ x (lt_of_lt_of_le hq0 hs.1)) ((monotoneOn_f₂ x hx).mono hsub)
   have key : ∀ i : ℕ, (q : ℝ) + i * (2 * q) = t i := fun i => (ht i).symm
   simp only [key] at hMono
-  have hF := F₂_mono hx (s := t K) (t := M) (by simp only [t]; positivity) htK (hMx.trans he)
+  have hF := F₂_mono (s := t K) (t := M) (by simp only [t]; positivity) htK (hMx.trans he)
   have hF0 : 0 ≤ (q : ℝ) ^ 2 / 2 * (1 / 2 + Real.log x - Real.log q) := by
     apply mul_nonneg (by positivity)
     have : (q : ℝ) ≤ x := by

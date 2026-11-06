@@ -900,7 +900,7 @@ theorem psi_mid {x : ℝ} (h1 : 1e6 ≤ x) (h2 : x ≤ 1e17) : |psiR x - x| ≤ 
   push Not at h20
   exact psi_range_21 h20.le (by norm_num at h2 ⊢; linarith)
 
-
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_4282 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW x ≤ 42.82 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)
@@ -944,6 +944,7 @@ theorem cW_le_4282 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW x ≤ 
   rw [if_neg h12]
   exfalso; push Not at h12; norm_num at hx2; linarith
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_4508 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW x ≤ 45.08 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)
@@ -990,6 +991,7 @@ theorem cW_le_4508 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW x ≤ 45
   rw [if_neg h13]
   exfalso; push Not at h13; norm_num at hx2; linarith
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_315 {x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)
@@ -1006,6 +1008,7 @@ theorem cW_le_315 {x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5 :=
   rw [if_neg h3]
   exfalso; push Not at h3; norm_num at hx2; linarith
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_355 {x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)
@@ -1037,6 +1040,7 @@ theorem cW_le_355 {x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5 :
   rw [if_neg h8]
   exfalso; push Not at h8; norm_num at hx2; linarith
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_72 (x : ℝ) : cW x ≤ 72 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)
@@ -1104,6 +1108,7 @@ theorem cW_le_72 (x : ℝ) : cW x ≤ 72 := by
   rw [if_neg h20]
   norm_num
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cW_le_33 {x : ℝ} (hx : x ≤ 1e8) : cW x ≤ 33 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)

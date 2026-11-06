@@ -352,7 +352,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
       rw [Real.log_div hM.ne' hx.ne'] at this; linarith
     have h2 : M ^ 2 / (4 * q) * (1 / 2 + Real.log x - Real.log M) ≤
         D ^ 2 / (4 * q) * (1 / 2 + Real.log x - Real.log D) := by
-      have := F₂_mono hx hM hMD hDx
+      have := F₂_mono hM hMD hDx
       have e : ∀ t : ℝ, t ^ 2 / (4 * q) * (1 / 2 + Real.log x - Real.log t) =
           (t ^ 2 / 2 * (1 / 2 + Real.log x - Real.log t)) / (2 * q) := fun t => by field_simp; ring
       rw [e, e]; gcongr
@@ -577,7 +577,7 @@ theorem sum_R2L {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤
   have hsΛ : s * (1 / 2 + Real.log x - Real.log D') ≤ c₂ * (1 + Real.log q - Real.log c₂) := by
     have e1 : Real.log x - Real.log D' = Real.log q - Real.log s := by
       simp only [s]; rw [Real.log_div (by positivity) hx0.ne', Real.log_mul hq0.ne' hD'0.ne']; ring
-    have hmono := F₁_mono hq0 hs0 hsc (c₂_lt_one.le.trans hq1)
+    have hmono := F₁_mono hs0 hsc (c₂_lt_one.le.trans hq1)
     have : s * (1 / 2 + Real.log x - Real.log D') ≤ s * (1 + Real.log q - Real.log s) := by
       rw [show 1 / 2 + Real.log x - Real.log D' = 1 / 2 + (Real.log q - Real.log s) by linarith]
       exact mul_le_mul_of_nonneg_left (by linarith) hs0.le
@@ -792,7 +792,7 @@ theorem sum_R3L {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤
     (f := fun t => lx - Real.log t) (a := R) hq0 K
     (fun t ht => hasDerivAt_F₁ x (lt_of_lt_of_le hR0 ht.1))
     ((antitoneOn_f₁ x).mono fun t ht => lt_of_lt_of_le hR0 ht.1)
-  have hF1mono := F₁_mono hx0 hyK0 hyKD hDx
+  have hF1mono := F₁_mono hyK0 hyKD hDx
   have hii : ∑ j ∈ range (K + 1), √(1 + q / (R + j * q)) * (lx - Real.log (R + j * q)) ≤
       √(1 + q / R) * (lx - Real.log R) +
         (D * (1 + lx - Real.log D) - R * (1 + lx - Real.log R)) / q +
@@ -1127,7 +1127,7 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
     rcases eq_or_lt_of_le hD'0 with h | h
     · rw [← h]; simp
       exact mul_nonneg (by linarith) (by linarith [Real.log_le_log (by linarith) hDx])
-    · exact F₁_mono hx0 h hD'D hDx
+    · exact F₁_mono h hD'D hDx
   have hpos5 : 0 ≤ 3 * c₁ / 2 * (x / q) * logPlus (D / (c₂ * x / q)) * Real.log (q / c₂) := by
     positivity
   have hpos6 : 0 ≤ 2 * √(c₀ * c₁) / π * (√3 + 1 / 2 * logPlus (D / (q / 2))) * Real.log (q / c₂) * q := by
@@ -1149,7 +1149,7 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
         rcases eq_or_lt_of_le hD'0 with h | h
         · rw [← h]; simp
           exact mul_nonneg hR0.le (by linarith [Real.log_le_log hR0 (hRD.le.trans hDx)])
-        · exact F₁_mono hx0 h hD'R (hRD.le.trans hDx)
+        · exact F₁_mono h hD'R (hRD.le.trans hDx)
       have h2 : 0 ≤ R * (1 + Real.log x - Real.log R) :=
         mul_nonneg hR0.le (by linarith [Real.log_le_log hR0 (hRD.le.trans hDx)])
       have := Real.pi_pos

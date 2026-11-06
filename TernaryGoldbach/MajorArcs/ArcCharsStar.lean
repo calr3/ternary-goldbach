@@ -1,9 +1,6 @@
 import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MinorArcs.BaseGap2
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # `S_{η_*}` on the arcs of modulus `q`, via characters ([H, Cor 7.1.3])
 
@@ -137,6 +134,7 @@ theorem err_scaled_le_star {y c : ℝ} (hy : 1e25 ≤ y) (hc1 : 1 ≤ c) (hc3 : 
   nlinarith [sq_nonneg r]
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, §10.4] for `η_*` and one modulus `q`**: Bombieri's identity and [H, Cor 7.1.3]. -/
 theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt : (qt q : ℝ) ≤ 300000)
     {β : ℝ} (hβ : |β * x| ≤ 1200000 / qt q) :

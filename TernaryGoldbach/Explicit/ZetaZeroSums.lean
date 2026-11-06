@@ -26,8 +26,6 @@ theorem rh_upto [h : Fact RHUpTo] :
     ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2 :=
   h.out
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 theorem zetaF_zero_ne_zero : zetaF 0 ≠ 0 := by
   rw [zetaF_of_ne (by norm_num), riemannZeta_zero]; norm_num
 

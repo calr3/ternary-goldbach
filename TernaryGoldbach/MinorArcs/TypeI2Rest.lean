@@ -1,7 +1,5 @@
 import TernaryGoldbach.MinorArcs.TypeI2Proof
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Lemma 4.2.4]: the terms other than the main term (weights `log m`)
 
@@ -779,6 +777,7 @@ theorem three_fifths_le_c₂ : 3 / 5 ≤ c₂ := by
   rw [le_div_iff₀ (by positivity)]
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Lemma 4.2.4], case (b)** (`|δ| ≤ 1/2c₂` or `UV ≤ Q₀/2`), for `η = η₂`: (4.50) + (4.51),
 in our corrected form (`bound_4_50`, `bound_4_51`), with `M = Mof x δ q (UV)`. Hypotheses: [H]'s
 `x ≥ e²c₂/2` is replaced by `x ≥ 10`, and we need `UV ≥ 2`. -/
@@ -1126,6 +1125,7 @@ theorem norm_restPartI2_le_caseA {α x δ Q₀ U V ε : ℝ} {a k : ℤ} {q : �
     linarith
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Lemma 4.2.4], case (a)** (`|δ| ≥ 1/2c₂`), for `η = η₂`: (4.50) + (4.52), in our form
 (`bound_4_50`, `bound_4_52`), with `M = Mof x δ q (UV)`. -/
 theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
@@ -1155,6 +1155,7 @@ theorem lemma_4_2_4_caseA {α x δ Q₀ U V : ℝ} {a : ℤ} {q : ℕ} (h : Appr
   · exact norm_restPartI2_le_caseA hx hq hcop h2α hδQ₀ hqQ₀ hQ₀2 hδ (by linarith) (by linarith)
       hD1 hε hε1
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Lemma 4.2.4]** for `η = η₂`, in our form: the main term `bound_4_50` (factor `3/2`
 added) and the error terms `bound_4_51`, `bound_4_52` (corrected `c₁`, cruder lower-order terms;
 see their docstrings). Hypotheses: [H]'s `x ≥ e²c₂/2` is replaced by `x ≥ 10`; we need `UV ≥ 2`;

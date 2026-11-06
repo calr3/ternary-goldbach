@@ -1,8 +1,6 @@
 import TernaryGoldbach.Prelim.RamareConv
 import TernaryGoldbach.Prelim.RamareHarm
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The odd harmonic sum: `V(x) = ½ log x + ½(γ + log 2) + O*(0.64 x^{−1/3})` for all `x > 0`
 

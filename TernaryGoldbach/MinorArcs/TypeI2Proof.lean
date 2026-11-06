@@ -1,8 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.Prelim.LambdaMu
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # Proof of [H, Lemma 4.2.4] (the Type I sum with `Λ(v) μ(u)`; `η = η₂`)
 -/
@@ -241,6 +239,7 @@ theorem injOn_div_gcd (q : ℕ) (hq : q ≠ 0) (S : Finset ℕ) :
     Nat.pow_right_injective hp.two_le heq
   congr 1; omega
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- [H, p. 72]: `∑_{v ≤ V} Λ(v) gcd(q,v)/v ≤ log q + log V` (with (2.12)). -/
 theorem sum_vonMangoldt_gcd_le {q : ℕ} (hq : 1 ≤ q) {V : ℝ} (hV : 1 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (Λ v : ℝ) * Nat.gcd q v / v ≤ Real.log q + Real.log V := by
@@ -374,6 +373,7 @@ theorem dvd_mul_iff_div_gcd {q v u : ℕ} (hq : 0 < q) :
   · intro h
     exact Nat.mul_dvd_mul_left _ (Dvd.dvd.mul_left h _)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, p. 72]**: `|∑_{a ≤ M, a odd, q | a} c(a)/a| ≤ (log q + log V)/q` for `q` odd. -/
 theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 0 ≤ M) {q : ℕ}
     (hq : Odd q) :
@@ -585,6 +585,7 @@ theorem sum_odd_dvd_le {q : ℕ} (hq : Odd q) (K : ℕ) :
     _ = (K : ℝ) ^ 2 / (4 * q) + K / 2 + q / 4 := by field_simp; ring
     _ ≤ _ := by linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (4.54)–(4.55)]** (with `3/2` in the last term, see `sum_vonMangoldt_mul_not_coprime_le`):
 `∑_{a ≤ M, a odd, q | a} |c(a)| a ≤ M² log V/4q + (3c₄/4) MV + (3/2)(U+1)² V log q/4`. -/
 theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 0 ≤ M) {q : ℕ}
@@ -780,6 +781,7 @@ noncomputable def mainPartI2 (α x M U V : ℝ) (q : ℕ) : ℂ :=
   ∑ a ∈ Icc 1 ⌊M⌋₊, if Odd a ∧ q ∣ a then (coefI2 U V a : ℂ) * Todd α x a else 0
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (4.50)]** (with the factor `3/2`, see `bound_4_50`): the terms with `q | a ≤ M`. -/
 theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 ≤ q)
     (h2α : 2 * α = a₀ / q + δ / x + k) (hU : 1 ≤ U) (hV : 1 ≤ V) (hM0 : 0 ≤ M)

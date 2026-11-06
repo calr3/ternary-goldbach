@@ -1,9 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITotalGen
 import TernaryGoldbach.MinorArcs.S1Lemma
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, §6.3.1]: the first choice of parameters — tools
 

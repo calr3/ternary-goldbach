@@ -49,6 +49,7 @@ theorem norm_ghat_le_l1 (t : ℝ) : ‖ghat g t‖ ≤ N := by
   refine (norm_integral_le_integral_norm _).trans (le_of_eq ?_ |>.trans hg.l1)
   simp_rw [norm_mul, norm_e, one_mul, Complex.norm_real, Real.norm_eq_abs]
 
+omit hg in
 theorem ToddG_eq (α x : ℝ) (m : ℕ) :
     ToddG g α x m = e (α * m) * ∑' r : ℤ, foddG g x m r * e (2 * α * m * r) := by
   rw [ToddG, ← tsum_mul_left]
@@ -61,6 +62,7 @@ theorem ToddG_eq (α x : ℝ) (m : ℕ) :
 variable {x : ℝ} (hx : 0 < x) {m : ℕ} (hm : 1 ≤ m)
 include hx hm
 
+omit hx hm in
 theorem continuous_foddG : Continuous (foddG g x m) :=
   continuous_ofReal.comp (hg.cont.comp (by fun_prop))
 
@@ -110,9 +112,9 @@ theorem norm_ToddG_le (α : ℝ) :
       ‖ToddG g α x m‖ ≤ V / 2 / |Real.sin (2 * π * m * α)| ∧
       ‖ToddG g α x m‖ ≤ m / x * (K / 2) / Real.sin (2 * π * m * α) ^ 2) := by
   have hsin : π * (2 * α * m) = 2 * π * m * α := by ring
-  rw [hg.ToddG_eq, norm_mul, norm_e, one_mul]
+  rw [ToddG_eq, norm_mul, norm_e, one_mul]
   refine ⟨?_, fun hs => ⟨?_, ?_⟩⟩
-  · obtain ⟨hsumm, hle⟩ := tsum_norm_le_variation (hg.continuous_foddG hx hm)
+  · obtain ⟨hsumm, hle⟩ := tsum_norm_le_variation hg.continuous_foddG
       (hg.hasCompactSupport_foddG hx hm) hg.V0 (hg.variation_foddG hx hm)
     have h2 := hg.integral_norm_foddG hx hm
     refine le_trans ?_ (hle.trans (by linarith))
@@ -123,7 +125,7 @@ theorem norm_ToddG_le (α : ℝ) :
       (hg.variation_foddG hx hm) (α := 2 * α * m) (by rwa [hsin])
     rw [hsin] at this
     refine this.trans (le_of_eq ?_); ring
-  · have := norm_tsum_le_of_fourier_bound (hg.continuous_foddG hx hm)
+  · have := norm_tsum_le_of_fourier_bound hg.continuous_foddG
       (hg.hasCompactSupport_foddG hx hm) (hg.fourier_bound_foddG hx hm) (α := 2 * α * m)
       (by rwa [hsin])
     rw [hsin] at this

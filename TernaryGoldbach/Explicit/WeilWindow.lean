@@ -104,6 +104,7 @@ noncomputable def OffC (ℓ : ℝ) (m : ℕ) : ℝ := 4 ^ m * Real.exp (m * ℓ)
 omit [Fact TernaryGoldbach.RHUpTo] in
 theorem OffC_nonneg (ℓ : ℝ) (m : ℕ) : 0 ≤ OffC ℓ m := by unfold OffC; positivity
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 /-- **The zeros above `3·10¹⁰`** contribute at most `OffC` to the Weil sum. -/
 theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m) {T₀ : ℝ}
     (hT₀ : |T₀| ≤ 1.5e10) {T : ℝ} (hT : 1 ≤ T) :

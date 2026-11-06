@@ -1,8 +1,6 @@
 import TernaryGoldbach.Explicit.PsiAsymp
 import TernaryGoldbach.Prelim.PsiTwoSided
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # An explicit prime number theorem for `θ`
 
@@ -30,7 +28,6 @@ theorem epl_nonneg (x : ℝ) : 0 ≤ epl x := by unfold epl; split_ifs <;> norm_
 
 theorem epl_le (x : ℝ) : epl x ≤ 1.83e-9 := by unfold epl; split_ifs <;> norm_num
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem theta_eq (n : ℕ) : theta n = ∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p := by
   rw [theta, sum_filter, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (by omega)]
   simp only [Nat.not_prime_zero, if_false, zero_add]
@@ -40,10 +37,8 @@ theorem theta_eq (n : ℕ) : theta n = ∑ p ∈ (Icc 1 n).filter Nat.Prime, Rea
   · exact ArithmeticFunction.vonMangoldt_apply_prime hp
   · rfl
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem psiR_nat (n : ℕ) : psiR n = psi n := by unfold psiR; rw [Nat.floor_natCast]
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- `ψ(N) − θ(N) ≤ 2.001 log N · √N`. -/
 theorem psi_sub_theta_le' {N : ℕ} (hN : 2 ≤ N) : psi N - theta N ≤ 2.001 * Real.log N * √(N : ℝ) := by
   classical
@@ -121,13 +116,11 @@ theorem pow_exp_anti {k : ℕ} {c L0 L : ℝ} (hc : 0 < c) (h0 : (k : ℝ) / c �
 theorem sqrt_eq_exp_half {x : ℝ} (hx : 0 < x) : √x = Real.exp (Real.log x / 2) := by
   rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos hx]; congr 1; ring
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem theta_le_psi' (N : ℕ) : theta N ≤ psi N := by
   rw [theta, psi]
   refine sum_le_sum fun n _ => ?_
   split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem psi_eq_Icc (n : ℕ) : psi n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
   rw [psi, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (Nat.succ_pos n)]
   simp [Finset.Ico_add_one_right_eq_Icc]
@@ -149,6 +142,7 @@ theorem sum_pow_le_theta' {N k M : ℕ} (hMN : M ≤ N) (hM : ∀ m, m.Prime →
         Real.log_nonneg, hp.one_lt.le]
   · simp [hp]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `θ(M) ≤ M + c(M) √M` for `12 ≤ M ≤ 10¹⁷` (`psi_two_sided`). -/
 theorem theta_le_cB {M : ℕ} (h1 : 12 ≤ M) (h2 : M ≤ 10 ^ 17) :
     theta M ≤ M + cB M * √(M : ℝ) := by
@@ -175,6 +169,7 @@ theorem cB_sqrt_le {m : ℕ} (h1 : 1020 ≤ m) (h2 : m ≤ 32000000000) : cB m *
     nlinarith
 
 open Classical in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`ψ(N) − θ(N) ≤ √N (1.036 + 0.049 log N)` for `10⁹ ≤ N ≤ 10¹⁹`**: the squares contribute
 `θ(⌊√N⌋)`, and every prime `m` with `m³ ≤ N` has `961 m² ≤ N`, so `m ≤ ⌊√N⌋/31`; both `θ`s are bounded
 by `psi_two_sided` (`θ(m) ≤ 1.0355 m`, `cB_sqrt_le`). -/
@@ -378,6 +373,7 @@ theorem sqrt_mul_lt_div_cube {x x0 c A B : ℝ} (hx0 : 0 < x0) (h8 : 8 ≤ Real.
   rw [e1] at h1; rw [e2] at h2
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|θ(n) − n| < n/log³n` on `[10¹², 10¹⁷]`**, from `psi_two_sided` and `psi_sub_theta_le_cB`. -/
 theorem theta_mid {n : ℕ} (hn : 10 ^ 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3 := by
@@ -475,6 +471,7 @@ theorem theta_mid {n : ℕ} (hn : 10 ^ 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
   · have := (abs_le.1 hB).2; linarith
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **Explicit PNT for `θ`**: `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. -/
 theorem theta_explicit {n : ℕ} (hn : 1000000000000 ≤ n) :
     |∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p - n| < n / Real.log n ^ 3 + epl n * n := by

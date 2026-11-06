@@ -2,9 +2,6 @@ import TernaryGoldbach.MinorArcs.BaseGap2
 import TernaryGoldbach.MinorArcs.EBound
 import TernaryGoldbach.MinorArcs.Thm1321
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The minor-arc total (14.49), via repair 3
 
@@ -137,6 +134,7 @@ theorem norm_add_sq_le (u v : ℂ) {t : ℝ} (ht : 0 < t) :
     rw [e]; positivity
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem norm_sq_sum_a₂_le {x : ℝ} (hx : 4.9e26 ≤ x) :
     ∑' n, ‖a₂ x n‖ ^ 2 ≤ 8e-11 * x := by
   refine le_trans (le_of_eq ?_) (E_le_14_28 hx)
@@ -214,6 +212,7 @@ theorem ghatY_r0_ge {y : ℝ} (hy : 1e25 ≤ y) : 0.0121 ≤ ghatY y 150000 := b
 
 /-! ## `T = Σ|a₁|²` and `I₀` -/
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem T_le {x : ℝ} (hx : 4.9e26 ≤ x) : ∑' n, ‖a₁ x n‖ ^ 2 ≤ sig x * x := by
   have hx0 : 0 < x := by linarith
   obtain ⟨E₂, hE₂, heq⟩ := prop_7_1_5 (x := x) (by linarith)
@@ -273,6 +272,7 @@ theorem integrableOn_Ioc_of_continuous {f : ℝ → ℝ} (hf : Continuous f) (A 
     (hA : A ⊆ Ioc 0 1) : IntegrableOn f A :=
   (hf.integrableOn_Icc (a := 0) (b := 1)).mono_set (hA.trans Ioc_subset_Icc_self)
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH] in
 /-- `I₀ = ∫_{(0,1] ∩ 𝔐_{8,r₀}(x)} |S₁|² ≥ 8.6294 x`. -/
 theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
     8.6294 * x ≤ ∫ α in Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ x, ‖expTsum (a₁ x) α‖ ^ 2 := by
@@ -317,6 +317,8 @@ theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
   exact le_of_mul_le_mul_right this (by norm_num)
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- **(14.49), repaired**: for `x ≥ 4.9·10²⁶`,
 `∫_{(0,1] \ 𝔐_{8,r₀}} |S_{η_*}(α, x)| |S_{η₊}(α, x)|² dα ≤ 1.0376 x²/κ`. -/
 theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :

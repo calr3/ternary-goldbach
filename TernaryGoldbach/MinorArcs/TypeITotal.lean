@@ -4,8 +4,7 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.MoebiusLog
 import TernaryGoldbach.Prelim.LiouvilleBound
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
+variable [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # Type I totals [H, §6.2.1]: `S_{I,1}`
@@ -79,6 +78,7 @@ theorem abs_muSum_log_le {x U : ℝ} {q : ℕ} (hq : 1 ≤ q) (hU : 0 < U) (hUx 
   rw [abs_mul, abs_of_nonneg hl]
   exact mul_le_mul_of_nonneg_left h2 hl
 
+omit [Fact TernaryGoldbach.RamareMoebius] in
 theorem norm_fourier_logeta2_half_le (δ : ℝ) :
     ‖fourier (fun t => Real.log t * eta2 t) (-(δ / 2))‖ ≤ logFourierBound δ := by
   unfold logFourierBound

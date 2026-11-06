@@ -1,9 +1,6 @@
 import TernaryGoldbach.MinorArcs.SecondTypeI1
 import TernaryGoldbach.MinorArcs.TypeI2Rest
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # Type I at the second parameters: (4.51), (4.52) and the totals
 
@@ -488,6 +485,7 @@ theorem b452_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
           nlinarith [sq_nonneg T, mul_nonneg hL0 (sq_nonneg T)]
   linarith [mul_nonneg hL0 (sq_nonneg T), sq_nonneg T]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`S_{I,2}` at the second parameters**: `≤ (0.031 L² + 3185.8 L + 8455.3) T²`. -/
 theorem typeI2_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :
@@ -518,6 +516,7 @@ theorem typeI2_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     refine (key.2 hδ.le 0.01 (by norm_num) (by norm_num)).trans ?_
     nlinarith [mul_nonneg (sq_nonneg (Real.log T)) (sq_nonneg T), mul_nonneg hL0 (sq_nonneg T)]
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Type I at the second parameters**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0717 L² + 3199.9 L + 8471.0) T²`. -/
 theorem typeI_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :

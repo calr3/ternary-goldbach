@@ -1,7 +1,5 @@
 import TernaryGoldbach.Prelim.MoebiusLog
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # Liouville identities (Ramaré, Acta Arith. 165 (2014), Lemmas 2.3, 2.5, 3.2)
 

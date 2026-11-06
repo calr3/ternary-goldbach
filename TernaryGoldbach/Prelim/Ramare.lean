@@ -1,7 +1,5 @@
 import TernaryGoldbach.Prelim.RamareNum
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # Ramaré's estimate for `G_d(R)` ([Ram95, Lemma 3.4] = [H, (12.12)])
 

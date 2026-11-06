@@ -1,8 +1,5 @@
 import TernaryGoldbach.MinorArcs.Prop1123
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # Integrals of `φ(w) = w² e^{-w²/2}` needed in Prop 11.2.3′
 

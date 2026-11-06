@@ -1,8 +1,5 @@
 import TernaryGoldbach.MinorArcs.NumericsAsymp
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # `numerics_M`: the numerical inequality of the repaired minor-arc bound, for all `x ≥ 4.9·10²⁶`
 

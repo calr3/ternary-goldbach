@@ -1,8 +1,6 @@
 import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Prelim.ThetaExplicit
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput]
-
 /-!
 # The small cases `5 < n ≤ 10²⁷` from binary Goldbach and bounds for `θ`
 
@@ -59,6 +57,7 @@ theorem log_1e27_le : Real.log (10 ^ 27 : ℝ) ≤ 63 := by
   calc (10 ^ 27 : ℝ) ≤ (2.7182818283 : ℝ) ^ 63 := by norm_num
     _ ≤ Real.exp 1 ^ 63 := pow_le_pow_left₀ (by norm_num) h1.le 63
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`−1.861·10¹⁸ ≤ θ(n) − n ≤ 1.857·10¹⁸` for `10¹⁷ ≤ n ≤ 10²⁷`** (`psi_plateau`). -/
 theorem theta_bound {n : ℕ} (h1 : 10 ^ 17 ≤ n) (h2 : n ≤ 10 ^ 27) :
     -1.861e18 ≤ th n - n ∧ th n - n ≤ 1.857e18 := by
@@ -80,6 +79,7 @@ theorem theta_bound {n : ℕ} (h1 : 10 ^ 17 ≤ n) (h2 : n ≤ 10 ^ 27) :
   rw [hT]
   constructor <;> nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput] in
 /-- **Ternary Goldbach for odd `5 < n ≤ 10²⁷`**. -/
 theorem ternaryGoldbachUpTo_1e27 : TernaryGoldbachUpTo (10 ^ 27) := by
   intro n hn h5 hle

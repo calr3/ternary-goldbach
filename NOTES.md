@@ -14,7 +14,10 @@ the hypotheses and checks them against their sources.
   the non-prime terms: `6.7·10⁶` instead of `7.3306`). Each change is recorded in the docstrings and
   in the README.
 * Published results enter only as the four hypotheses of `Statement.lean`, as `Fact` instances.
-  Everything else is proved. Finite computations are evaluated by the kernel (`decide +kernel`);
+  Everything else is proved. Each theorem takes only the instances its proof uses, so its statement
+  shows what it depends on; the `unusedSectionVars` linter reports any other. A file's
+  `variable [Fact …]` line lists an instance only if most of its theorems use it; otherwise theorems add
+  it with `variable [Fact …] in` (or drop it with `omit [Fact …] in`). Finite computations are evaluated by the kernel (`decide +kernel`);
   there is no `native_decide`.
 * Blueprint statements use the book's exact constants and are transcribed from the typeset PDF.
   Watch division by zero: write `min(1, c/δ²)` with an explicit `δ = 0` case (`minInv`).
@@ -655,6 +658,9 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 * Opening `Set` and `Finset` together makes `mem_Icc` etc. ambiguous. Opening `ArithmeticFunction`
   makes `μ` mean Möbius; use `open scoped ArithmeticFunction.vonMangoldt` (and
   `ArithmeticFunction.Moebius`, `ArithmeticFunction.zeta`) instead.
+* An instance-implicit section variable with no dependencies (`variable [Fact …]`) is included in
+  every theorem of the section, used or not; the `unusedSectionVars` linter reports the unused ones.
+  `omit h in` on an `include`d explicit hypothesis removes an explicit argument, so callers change.
 * In a `variable [Fact …]` section, a bare identifier in a statement can be auto-bound as a new
   variable; qualify names from other namespaces (e.g. `(SmallTab.S : ℝ)`).
 * Big `nlinarith`/`linarith` calls time out (or exhaust memory) in large contexts. Use

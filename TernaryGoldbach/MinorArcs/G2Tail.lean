@@ -4,9 +4,6 @@ import TernaryGoldbach.MinorArcs.G2Euler
 import TernaryGoldbach.Prelim.RamareMoebius
 import Mathlib.NumberTheory.ZetaValues
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`
 
@@ -399,6 +396,7 @@ theorem log_11815_ge9' : 9 ≤ Real.log 11815 := by
   calc Real.exp 1 ^ 9 ≤ (2.7182818286 : ℝ) ^ 9 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 9
     _ ≤ 11815 := by norm_num
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- `log(j+1)/log j ≤ 1.00001` for `j ≥ 11815`. -/
 theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
     mm j ^ 2 * Real.log (1 + 1 / j) ≤ 0.0009 * 1.00001 * (1 / Real.log j - 1 / Real.log (j + 1)) := by
@@ -440,6 +438,7 @@ theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
         nlinarith
     _ = 0.0009 * 1.00001 * (Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1))) := by ring
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 theorem sum_tail_le (M : ℕ) :
     ∑ j ∈ Icc KK M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (tailV : ℝ) / 10 ^ 24 := by
   have hK : KK = 11815 := rfl
@@ -498,6 +497,7 @@ theorem sum_tU : ∑ j ∈ Icc 1 (KK - 1), tU j = cP := by
   have h2 : sV.Phi = cP := (Prod.mk.inj tail_ok).1
   rw [← h2, h]
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∑_{j=k}^M m(j)² log(1 + 1/j) ≤ V(k)/10²⁴`** for `1 ≤ k ≤ 10⁴`. -/
 theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
     ∑ j ∈ Icc k M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (Vt k : ℝ) / 10 ^ 24 := by
@@ -541,6 +541,7 @@ theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
   rw [add_sub_right_comm, add_div]
   linarith
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∫_X^S m(⌊y/u⌋)²/y dy ≤ V(⌊X/u⌋)/10²⁴`** (`⌊X/u⌋` replaced by `1` when it is `0`). -/
 theorem integral_mm_le {u : ℕ} (hu : 1 ≤ u) {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, mm ⌊y / u⌋₊ ^ 2 / y ≤
@@ -697,6 +698,7 @@ theorem intervalIntegrable_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b)
 noncomputable def Lam (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * lamR (d * a)
 noncomputable def Xi (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * wR (d * a)
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∫_X^S |g₂|/y ≤ ∑_d f(d)² Λ_d Ξ_d`**. -/
 theorem tail_le_sum {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ ∑ d ∈ Icc 1 ⌊S⌋₊, fo d ^ 2 * Lam ⌊S⌋₊ d * Xi ⌊S⌋₊ d := by
@@ -1078,6 +1080,7 @@ theorem tv_one : sV.tv.get (1, 0) 1 = (549755813888, 1482550931899) := by
   rw [hV]
   decide +kernel
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`** for `S ≥ 10⁴`. -/
 theorem tail_integral_le {S : ℝ} (hS : 10000 ≤ S) : ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ 0.0045 := by
   refine (tail_le_sum hS).trans ((sum_terms_le hS).trans ?_)

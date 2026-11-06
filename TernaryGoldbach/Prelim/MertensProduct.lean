@@ -2,8 +2,6 @@ import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.SmallMertensProd
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Lemma C.2.2]: `q/φ(q) < e^γ log log r + 2.50637/log log r`
 
@@ -62,6 +60,7 @@ theorem E2_le_of {x c D : ℝ} (hx : 2 ≤ x) (h : ∀ t, x < t → |E₁Λ t - 
   have e1 : (c + D) / Real.log x - (c - D) / Real.log x = 2 * D / Real.log x := by ring
   rw [abs_le]; constructor <;> linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 10¹²`. -/
 theorem psi_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     |psiN n - n| ≤ n / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ) := by
@@ -92,6 +91,7 @@ theorem sum_inv_succ_le {a b : ℕ} (hab : a < b) :
       rw [Ioo_self_succ]
       push_cast; simp
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- The Abel summation term, centred: `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ …`. -/
 theorem abel_term_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     |psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1)| ≤
@@ -113,6 +113,7 @@ theorem abel_term_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     rw [add_mul, add_mul, mul_assoc (7.04 : ℝ), this, e3]; field_simp; ring
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)`, `M ≥ 10¹²`. -/
 theorem E1_diff {M : ℕ} (hM : 1000000000000 ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
@@ -440,6 +441,7 @@ theorem log_sq_le_sqrt {x : ℝ} (hx : 10 ^ 8 ≤ x) : Real.log x ^ 2 ≤ 0.0361
   calc Real.log x ^ 2 ≤ (0.19 * x ^ (1 / 4 : ℝ)) ^ 2 := pow_le_pow_left₀ hL0 hL 2
     _ = 0.0361 * √x := by rw [mul_pow, hq2]; norm_num
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Lemma C.2.2]** for `x ≥ 10¹²`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
 theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
@@ -811,6 +813,7 @@ theorem E2_var {M N : ℕ} (hM : 3 ≤ M) (hMN : M < N) :
   rw [key, abs_le]
   constructor <;> linarith [hX.1, hX.2, hY.1, hY.2, hZ.1, hZ.2]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- `D(10¹⁸) ≤ 0.0014`, so `|E₂Λ(10¹⁸)| ≤ 2·0.0014/41`. -/
 theorem E2_1e18 : |E₂Λ ((10 ^ 18 : ℕ) : ℝ)| ≤ 0.0000683 := by
   have hN : (2 : ℝ) ≤ ((10 ^ 18 : ℕ) : ℝ) := by norm_num
@@ -828,6 +831,7 @@ theorem E2_1e18 : |E₂Λ ((10 ^ 18 : ℕ) : ℝ)| ≤ 0.0000683 := by
   generalize Real.log ((10 ^ 18 : ℕ) : ℝ) = L at hL ⊢
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- The tail `n > 10¹⁷` of the error sum (`psi_err`, `big_sum_le`). -/
 theorem tail_sum_le (M N : ℕ) :
     ∑ n ∈ Ioo M N, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤ 0.0000358 := by
@@ -880,6 +884,7 @@ theorem tail_sum_le (M N : ℕ) :
     · exact le_rfl
   nlinarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|E₂Λ(M)|` for `10⁵ ≤ M < 10¹⁷`**, given `|ψ(n) − n| ≤ c(n)√n` on `[M, 10¹⁷]` with
 `c(n) = c₀ + d₁[n ≥ 10⁶] + d₂[n ≥ 5·10⁷] + d₃[n > 10⁸] + d₄[n > 3.2·10¹⁰]`, `L₀ ≤ log M`, `s₀ ≤ √M`. -/
 theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ d₂ d₃ d₄ L₀ s₀ : ℝ}
@@ -1392,6 +1397,7 @@ noncomputable def cE (n : ℕ) : ℝ :=
   1 + 4 * (if 999999 < n then 1 else 0) + 26.5 * (if 49999999 < n then 1 else 0) +
     4 * (if 10 ^ 8 < n then 1 else 0) + 36.5 * (if 32000000000 < n then 1 else 0)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 17) : |psiN n - n| ≤ cE n * √(n : ℝ) := by
   have hs := Real.sqrt_nonneg (n : ℝ)
   rcases lt_or_ge n 1000000 with h6 | h6
@@ -1441,6 +1447,7 @@ theorem cE_eq {n : ℕ} {c₀ d₁ d₂ d₃ d₄ : ℝ}
 theorem lnat (N : ℝ) (k : ℕ) (h : (2.7182818286 : ℝ) ^ k ≤ N) : (k : ℝ) ≤ Real.log N := nat_le_log h
 
 set_option maxHeartbeats 4000000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[RS62, Thm 15] for `10⁵ ≤ x < 10¹²`**: seven bins, each with `E2_le_bin` and `F_mid_gen`. -/
 theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
@@ -1664,6 +1671,7 @@ theorem image_nth (k : ℕ) (hk : 1 ≤ k) :
       rw [Nat.count_succ]; simp [hpp]
     omega
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem F_all {x : ℕ} (hx : x.Prime) (h5 : 5 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) +
@@ -1699,6 +1707,7 @@ theorem bigF_gt {r : ℝ} (hr : 3 ≤ r) :
     nlinarith [sq_nonneg (t - 1.15385)]
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, Lemma C.2.2]** ([RS62, Thm. 15]): `q/φ(q) < e^γ log log r + 2.50637/log log r` for `q ≥ 1`,
 `r ≥ max(3, q)`. -/
 theorem div_totient_lt {q : ℕ} (hq : 1 ≤ q) {r : ℝ} (hr : 3 ≤ r) (hqr : (q : ℝ) ≤ r) :

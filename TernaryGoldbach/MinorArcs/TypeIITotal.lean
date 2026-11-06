@@ -1,7 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITools
 
 variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # Type II total [H, §6.2.3]
@@ -43,16 +42,19 @@ theorem logSqSum_le_half {W' W : ℝ} (hW : 2e6 ≤ W) (hW' : W / 2 ≤ W') :
 /-- `κ₀ζ(3/2)³ = 1.27 ζ(3/2)³` [H, (6.16)]. -/
 noncomputable def zeta3 : ℝ := 1.27 * (riemannZeta (3 / 2)).re ^ 3
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem zeta3_nonneg : 0 ≤ zeta3 := by
   unfold zeta3; have := zeta_three_halves_nonneg; positivity
 
 /-- `κ₁ = 2/π² + κ₀ζ(3/2)³ √(x/V)/U` [H, (6.18)] (we keep it as an expression). -/
 noncomputable def kap1 (x U V : ℝ) : ℝ := 2 / π ^ 2 + zeta3 * √(x / V) / U
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem sqrt_le_amgm {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) : √(u * v) ≤ (u + v) / 2 := by
   rw [Real.sqrt_le_left (by positivity)]
   nlinarith [sq_nonneg (u - v)]
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem sqrt_one_add_le {t : ℝ} (ht : 0 ≤ t) : √(1 + t) ≤ 1 + √t := by
   rw [Real.sqrt_le_left (by positivity)]
   nlinarith [Real.sq_sqrt ht, Real.sqrt_nonneg t]
@@ -70,6 +72,7 @@ noncomputable def G637 (x U V : ℝ) (q : ℕ) (β W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
@@ -206,6 +209,7 @@ theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
 
 
 set_option maxHeartbeats 2000000 in
+omit [Fact TernaryGoldbach.RHUpTo] in
 /-- Integrating `G637` over `[V, x/U]`. -/
 theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
     (hV : 0 < (V : ℝ)) (hVU : (V : ℝ) ≤ x / U) (hqV : 2 * rexp 1 * q ≤ V) {β : ℝ} (hβ : 0 < β) :
@@ -317,6 +321,7 @@ theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   nlinarith [K3, K4, K5, K6, K7]
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Type II total, our version of [H, (6.37)]** (`q ≤ V/2e`, any `δ`): with `φ = φ(q)`,
 `Λ₀ = log(x/UV)`, `Φ = log 2q · (log log(x/2Uq) - log log(V/2q))`, `κ₁ = 2/π² + 1.27ζ(3/2)³√(x/V)/U`,
 `|S_{II}| ≤ x/√(2φ) · √((Λ₀ + Φ)(0.60428 Λ₀ + 8 · 1.27ζ(3/2)³ √(x/V)/U))`

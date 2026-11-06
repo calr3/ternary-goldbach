@@ -1,7 +1,5 @@
 import TernaryGoldbach.Explicit.PsiPlateau
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The explicit bound for large `x`: zeros above `H` via the zero-free region
 
@@ -112,6 +110,7 @@ theorem mid_sum_le {a b δ x H₁ Γ T : ℝ} (hb : b ≤ 0) (hx : 1 < x) (hH₁
         mul_le_mul_of_nonneg_right hcount hC0
     _ = _ := by ring
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **The explicit-formula bound with the zero-free region.** -/
 theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x)
     (hΓ : 3e12 ≤ Γ) :
@@ -259,6 +258,7 @@ theorem psi_lower_of_err {δ K y0 x E : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1) (h
   have := (abs_le.1 hE).1
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- The tsum version of `SsumG_gsm_err_zf`. -/
 theorem tsum_gsm_le_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
     |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤

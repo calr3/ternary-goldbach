@@ -1,8 +1,5 @@
 import TernaryGoldbach.MinorArcs.SecondTypeIIb
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # Case (b): the numerical inequality `√(12 F₀X₀ᵇB₀ᵇ) + SECᵇ(L) ≤ 1.413 L^{3/2}` for `L ≥ 15.6`
 

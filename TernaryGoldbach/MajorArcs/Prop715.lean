@@ -3,9 +3,6 @@ import TernaryGoldbach.Explicit.EtaPlusSqBound
 import TernaryGoldbach.Explicit.EtaPlusCg
 import TernaryGoldbach.MajorArcs.EtaPlusSqLog
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, Prop 9.5.1] (proved, our constants) and [H, Prop 7.1.5]
 
@@ -353,6 +350,7 @@ theorem prop_9_5_1 {x : ℝ} (hx : 4.9e26 ≤ x) (hG : GRHUpTo (1 : DirichletCha
   have := mul_le_mul_of_nonneg_left h1 hlx0.le
   nlinarith
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Prop 7.1.5]** (for `x ≥ 4.9·10²⁶`), from [H, Prop 9.5.1] (`prop_9_5_1`), Platt's verification at
 `q = 1` and the numerical value (9.94). -/
 theorem prop_7_1_5' {x : ℝ} (hx : 4.9e26 ≤ x) :

@@ -3,9 +3,6 @@ import TernaryGoldbach.MajorArcs.Thm714
 import TernaryGoldbach.MajorArcs.ArcsEq
 import TernaryGoldbach.MinorArcs.BaseGap
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # `S_{η₊}` on the arcs of modulus `q`, via characters
 
@@ -342,6 +339,7 @@ theorem err_scaled_le {x c : ℝ} (hx : 4.9e26 ≤ x) (hc2 : 2 ≤ c) (hc3 : c �
 /-! ## The arcs of modulus `q` -/
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, §10.3] for one modulus `q`** (`q̃ ≤ 3·10⁵`, `|βx| ≤ 1.2·10⁶/q̃`, `x ≥ 4.9·10²⁶`), with
 `S'_q = Σ_{(n,q)=1} Λ(n) η₊(n/x) e(nα)`:
 `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (4.25·10⁻⁷ x)²` and

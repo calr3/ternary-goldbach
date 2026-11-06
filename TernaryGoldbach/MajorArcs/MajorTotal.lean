@@ -3,9 +3,6 @@ import TernaryGoldbach.MajorArcs.ArcCharsStar
 import TernaryGoldbach.MajorArcs.Singular
 import TernaryGoldbach.MajorArcs.FourierMain
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, (14.27)]: the integral over the major arcs
 
@@ -231,6 +228,7 @@ theorem totient_mul_norm_sq_le {q : ℕ} (hq1 : 1 ≤ q) :
   · rw [mul_one_div, div_le_one (by positivity)]; nlinarith
   · simp
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`η₊`**: `Σ_b |S_{η₊}(b/q + β) − μ(q)/φ(q) η̂₊(−βx) x|² ≤ 7.83·10⁻¹³ x²`. -/
 theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
     (hβ : |β * x| ≤ 1200000 / qt q) :
@@ -261,6 +259,7 @@ theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     linarith
   nlinarith
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`η_*`**: `|S_{η_*}(b/q + β) − μ(q)/φ(q) η̂(−βy) y|² ≤ 1.34·10⁻¹¹ y²` (`y = x/κ`) for each `b`. -/
 theorem resid_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
     (hβ : |β * x| ≤ 1200000 / qt q) {b : ℕ} (hb : b ∈ Bset q) :
@@ -756,6 +755,7 @@ theorem continuous_fI (N : ℕ) {x : ℝ} (hx : 0 < x) : Continuous (fI N x) :=
   (((continuous_S_etaPlus hx).pow 2).mul (continuous_S_etaStar hx)).mul
     (TernaryGoldbach.continuous_e.comp (by fun_prop))
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **The pointwise estimate** at `α = b/q + β`, summed over `b`. -/
 theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) {β : ℝ}
     (hβ : |β * x| ≤ 1200000 / qt q) :
@@ -803,6 +803,7 @@ theorem pointwise_bound (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : 
   ring
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **One modulus**: `Σ_b ∫_{J_{q,b}} S₊²S_* e(−N·)` is `c_q x² C_{η◦,η_*}(N/x)` up to a small error. -/
 theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
     ‖(∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y) -
@@ -967,6 +968,7 @@ theorem Cmain_ge_num {x : ℝ} (N : ℝ) (hNx : N / x = 2 + 9 / (8 * √(π / 2)
   linarith
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (14.27)]** (with `1.049` in place of [H]'s `1.058259`):
 `Re ∫_{(0,1] ∩ 𝔐_{8,r₀}} S_{η₊}(α)² S_{η_*}(α) e(−Nα) dα ≥ 1.049 x²/κ`. -/
 theorem major_total {N : ℕ} (hN : Odd N) {x : ℝ} (hx : 4.9e26 ≤ x)

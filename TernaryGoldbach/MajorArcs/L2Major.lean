@@ -1,9 +1,6 @@
 import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MajorArcs.SumMuPhi
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, (14.7)]: `8.6296 x ≤ ∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα ≤ 8.79 x` for `x ≥ 4.9·10²⁶`
 
@@ -97,6 +94,7 @@ theorem continuous_norm_sq_S {x : ℝ} (hx : 0 < x) : Continuous fun y => ‖S e
   (TernaryGoldbach.continuous_expTsum (summable_cP hx)).norm.pow 2
 
 set_option maxHeartbeats 4000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **The arcs of modulus `q`** (`q ∈ Qset r₀`, `x ≥ 4.9·10²⁶`):
 `Σ_b ∫_{J_{q,b}} |S_{η₊}|² = μ²(q)/φ(q) · (0.6392…0.64034) x + O(9.62·10⁻⁴ μ²(q)/φ(q) x + 2.17·10⁻⁷ x)`. -/
 theorem Jq_bounds {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀) :
@@ -305,6 +303,7 @@ theorem card_Qset_le : ((Qset r₀).card : ℝ) ≤ 300000 := by
   rw [Nat.card_Icc] at h2
   exact_mod_cast (by omega : (Qset r₀).card ≤ 300000)
 
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (14.7)], proved**: for `x ≥ 4.9·10²⁶`,
 `8.6296 x ≤ ∫_{(0,1] ∩ 𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα ≤ 8.79 x`. -/
 theorem l2_major_bounds {x : ℝ} (hx : 4.9e26 ≤ x) :

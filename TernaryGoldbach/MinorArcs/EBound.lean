@@ -1,8 +1,6 @@
 import TernaryGoldbach.Helfgott.HHBound
 import TernaryGoldbach.Prelim.LambdaMu
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, (14.28)] with our sup norms: `E ≤ 8·10⁻¹¹ x`
 
@@ -170,6 +168,7 @@ theorem sqrt_two_pow_mul (j : ℕ) {y : ℝ} (hy : 0 ≤ y) :
     rw [← pow_mul, mul_comm, pow_mul, Real.sq_sqrt (by norm_num)]]
   exact Real.sqrt_sq (by positivity)
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- Partial sums of `E`. -/
 theorem E_partial {x : ℝ} (hx : 1 ≤ x) (M : ℕ) :
     ∑ n ∈ range M, eTerm x n ≤
@@ -274,6 +273,7 @@ theorem E_partial {x : ℝ} (hx : 1 ≤ x) (M : ℕ) :
   rw [hsplit] at hstep1
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **[H, (14.28)], our constant**: `E ≤ 8·10⁻¹¹ x` for `x ≥ 4.9·10²⁶`. -/
 theorem E_le_14_28 {x : ℝ} (hx : 4.9e26 ≤ x) :
     ∑' n : ℕ, (if n.Prime ∧ √x < n then 0 else (Λ n * etaPlus (n / x)) ^ 2) ≤ 8e-11 * x := by

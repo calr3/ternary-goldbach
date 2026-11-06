@@ -2,8 +2,6 @@ import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LargeSieveMVProof
 import TernaryGoldbach.Prelim.MVLemma7
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The sharp large sieve inequalities
 

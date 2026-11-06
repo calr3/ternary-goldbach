@@ -2,9 +2,6 @@ import TernaryGoldbach.MinorArcs.FirstChoiceMain
 import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeI2Large
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, §6.3.1]: the Type I terms at the first choice of parameters
 

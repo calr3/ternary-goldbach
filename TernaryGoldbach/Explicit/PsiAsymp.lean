@@ -1,7 +1,5 @@
 import TernaryGoldbach.Explicit.PsiRange1
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `|ψ(x) − x| ≤ 0.2 x/log³x` for `x ≥ e^{35000}`
 
@@ -332,6 +330,7 @@ theorem sqrt_big {x : ℝ} (hx : Real.exp 35000 ≤ x) : 1e20 * Real.log x ^ 7 �
   linarith
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|ψ(x) − x| ≤ 0.2 x/log³x`** for `x ≥ e^{35000}`. -/
 theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 * x / Real.log x ^ 3 := by
   have hx0 : 0 < x := lt_of_lt_of_le (Real.exp_pos _) hx

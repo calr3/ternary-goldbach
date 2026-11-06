@@ -1,8 +1,6 @@
 import TernaryGoldbach.Prelim.Liouville
 import TernaryGoldbach.Prelim.RamareGq
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # The convolution behind Ramaré's (12.12)
 

@@ -1,9 +1,6 @@
 import TernaryGoldbach.MinorArcs.SecondTypeIIb
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2b
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # Type I at the second parameters [H, §6.3.2]: `S_{I,1}` and (4.50)
 
@@ -41,6 +38,7 @@ theorem xq_delta0_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     rw [e, div_le_iff₀ (by positivity)]
     nlinarith [pow_pos hT0 2]
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 theorem q_totient_le_F2 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :
     (q : ℝ) / Nat.totient q ≤ 1.7882 * Real.log (2 * Real.log T) + 0.9549 := by
@@ -311,6 +309,7 @@ theorem logFB_nonneg (δ : ℝ) : 0 ≤ logFourierBound δ := by
   · exact le_min hl4 (by positivity)
 
 set_option maxHeartbeats 4000000 in
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`S_{I,1}` at the second parameters**: `≤ (0.0407 L² + 14.1 L + 15.7) T²`. -/
 theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :

@@ -3,9 +3,6 @@ import TernaryGoldbach.MajorArcs.SumMuPhi
 import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Prelim.MertensProduct
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The singular series of [H, §10.2] for `r = 150000`
 
@@ -478,90 +475,91 @@ theorem one_le_prod_of_one_le {s : Finset ℕ} {f : ℕ → ℝ} (h : ∀ i ∈ 
   calc (1 : ℝ) = ∏ i ∈ s, (1 : ℝ) := by simp
     _ ≤ ∏ i ∈ s, f i := Finset.prod_le_prod₀ (fun _ _ => by norm_num) h
 
-/-- `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5` (from [RS62, Thm 15], `Prelim.F_all`, at `150001`). -/
+/-- `∏_{3 ≤ p ≤ r₀} p/(p − 1) ≤ 15.5`. The primes `p ≤ 10⁵` give at most `20.5116/2`
+(`Prelim.MertProd.prod_le_1e5`, a kernel computation); the at most `25000` odd `p` in
+`(10⁵, 150000]` give at most `(1 + 10⁻⁵)^{25000} ≤ e^{1/4} ≤ 1.29`. -/
 theorem prod_p_div_le : ∏ p ∈ oddPrimes 150000, ((p : ℝ) / (p - 1)) ≤ 15.5 := by
-  have hpr : Nat.Prime 150001 := by norm_num
-  have hM : ∏ p ∈ (Icc 1 150001).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
-      Real.exp Real.eulerMascheroniConstant *
-          Real.log (∑ p ∈ (Icc 1 150001).filter Nat.Prime, Real.log p) +
-        2.50637 / Real.log (∑ p ∈ (Icc 1 150001).filter Nat.Prime, Real.log p) :=
-    TernaryGoldbach.Prelim.F_all hpr (by norm_num)
-  set A := (Icc 1 150001).filter Nat.Prime with hA
-  set θ := ∑ p ∈ A, Real.log p with hθ
-  have hsub : insert 2 (oddPrimes 150000) ⊆ A := by
+  have hsub : oddPrimes 100000 ⊆ oddPrimes 150000 := fun p hp => by
+    rw [mem_oddPrimes] at hp ⊢; exact ⟨⟨hp.1.1, by omega⟩, hp.2⟩
+  rw [← prod_sdiff hsub]
+  have hnn : ∀ s : Finset ℕ, s ⊆ oddPrimes 150000 → 0 ≤ ∏ p ∈ s, ((p : ℝ) / (p - 1)) :=
+    fun s hs => prod_nonneg fun p hp => by
+      have := two_le_sub_one (three_le_of_mem (hs hp)); positivity
+  -- the primes `≤ 10⁵`
+  have h1 : ∏ p ∈ oddPrimes 100000, ((p : ℝ) / (p - 1)) ≤ 10.2558 := by
+    have hA := TernaryGoldbach.Prelim.MertProd.prod_le_1e5
+    have heq : (Icc 1 100000).filter Nat.Prime = insert 2 (oddPrimes 100000) := by
+      ext p
+      rw [mem_filter, mem_Icc, mem_insert, mem_oddPrimes]
+      constructor
+      · rintro ⟨⟨h1, h2⟩, hp⟩
+        rcases hp.eq_two_or_odd' with rfl | ho
+        · exact Or.inl rfl
+        · refine Or.inr ⟨⟨?_, h2⟩, hp⟩
+          have := hp.two_le
+          rcases ho with ⟨k, rfl⟩; omega
+      · rintro (rfl | ⟨⟨h1, h2⟩, hp⟩)
+        · exact ⟨⟨by norm_num, by norm_num⟩, Nat.prime_two⟩
+        · exact ⟨⟨by omega, h2⟩, hp⟩
+    have h2 : 2 ∉ oddPrimes 100000 := fun h => by have := three_le_of_mem h; omega
+    rw [heq, prod_insert h2] at hA
+    have e2 : ((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) = 2 := by norm_num
+    rw [e2] at hA
+    linarith
+  -- the odd primes in `(10⁵, 150000]`
+  set S := oddPrimes 150000 \ oddPrimes 100000 with hS
+  have hmemS : ∀ p ∈ S, 100000 < p ∧ p ≤ 150000 ∧ p % 2 = 1 := by
     intro p hp
-    rw [mem_insert] at hp
-    rw [hA, mem_filter, mem_Icc]
-    rcases hp with rfl | hp
-    · exact ⟨⟨by norm_num, by norm_num⟩, Nat.prime_two⟩
-    · rw [mem_oddPrimes] at hp; exact ⟨⟨by omega, by omega⟩, hp.2⟩
-  have h2 : 2 ∉ oddPrimes 150000 := fun h => by have := three_le_of_mem h; omega
-  have hone : ∀ p ∈ A, (1 : ℝ) ≤ (p : ℝ) / (p - 1) := by
+    rw [hS, mem_sdiff, mem_oddPrimes, mem_oddPrimes] at hp
+    obtain ⟨⟨⟨h3, h150⟩, hpr⟩, hn⟩ := hp
+    have hlt : 100000 < p := by
+      by_contra hle; exact hn ⟨⟨h3, by omega⟩, hpr⟩
+    refine ⟨hlt, h150, ?_⟩
+    rcases hpr.eq_two_or_odd with h | h
+    · omega
+    · exact h
+  have hcard : S.card ≤ 25000 := by
+    have hmaps : ∀ p ∈ S, p / 2 ∈ Ico 50000 75000 := by
+      intro p hp
+      obtain ⟨h1, h2, h3⟩ := hmemS p hp
+      rw [mem_Ico]; omega
+    have hinj : Set.InjOn (fun p => p / 2) S := by
+      intro p hp q hq hpq
+      obtain ⟨-, -, hp2⟩ := hmemS p hp
+      obtain ⟨-, -, hq2⟩ := hmemS q hq
+      simp only at hpq
+      omega
+    calc S.card ≤ (Ico 50000 75000).card := card_le_card_of_injOn _ hmaps hinj
+      _ = 25000 := by simp
+  have hfac : ∀ p ∈ S, (p : ℝ) / (p - 1) ≤ 1 + 1 / 100000 := by
     intro p hp
-    rw [hA, mem_filter] at hp
-    have : (2 : ℝ) ≤ p := by exact_mod_cast hp.2.two_le
-    rw [le_div_iff₀ (by linarith)]; linarith
-  have hsplit := Finset.prod_sdiff (f := fun p : ℕ => (p : ℝ) / (p - 1)) hsub
-  have hrest : 1 ≤ ∏ p ∈ A \ insert 2 (oddPrimes 150000), (p : ℝ) / (p - 1) :=
-    one_le_prod_of_one_le fun p hp => hone p (mem_sdiff.1 hp).1
-  rw [prod_insert h2] at hsplit
-  have hodd0 : 0 ≤ ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1) :=
-    prod_nonneg fun p hp => by
-      have := two_le_sub_one (three_le_of_mem hp); positivity
-  have he2 : ((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) = 2 := by norm_num
-  have hle : 2 * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1) ≤ ∏ p ∈ A, (p : ℝ) / (p - 1) := by
-    calc 2 * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)
-        = 1 * (((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)) := by
-          rw [he2]; ring
-      _ ≤ (∏ p ∈ A \ insert 2 (oddPrimes 150000), (p : ℝ) / (p - 1)) *
-            (((2 : ℕ) : ℝ) / (((2 : ℕ) : ℝ) - 1) * ∏ p ∈ oddPrimes 150000, (p : ℝ) / (p - 1)) :=
-          mul_le_mul_of_nonneg_right hrest (by rw [he2]; positivity)
-      _ = ∏ p ∈ A, (p : ℝ) / (p - 1) := hsplit
-  -- bounds on `log θ`
-  have hlog : Real.log 150001 ≤ 12.62 :=
-    (Real.log_le_log (by norm_num) (by norm_num)).trans TernaryGoldbach.MajorArcs.log_3e5_le
-  have hlog8 : 8 ≤ Real.log 150001 := by
-    rw [Real.le_log_iff_exp_le (by norm_num)]
+    have hp0 : 100001 ≤ p := (hmemS p hp).1
+    have hp1 : (100001 : ℝ) ≤ p := by exact_mod_cast hp0
+    rw [div_le_iff₀ (by linarith)]
+    linarith
+  have hexp : Real.exp (1 / 4) ≤ 1.29 := by
+    by_contra hc
+    rw [not_le] at hc
+    have h4 : Real.exp (1 / 4) ^ 4 = Real.exp 1 := by rw [← Real.exp_nat_mul]; norm_num
     have := Real.exp_one_lt_d9
-    calc Real.exp 8 = Real.exp 1 ^ 8 := by rw [← Real.exp_nat_mul]; norm_num
-      _ ≤ 2.7182818286 ^ 8 := by gcongr
-      _ ≤ 150001 := by norm_num
-  have hθlo : 8 ≤ θ := by
-    have h150 : (150001 : ℕ) ∈ A := by rw [hA, mem_filter, mem_Icc]; exact ⟨⟨by norm_num, le_rfl⟩, hpr⟩
-    have := single_le_sum (f := fun p : ℕ => Real.log p) (fun p hp => Real.log_natCast_nonneg p) h150
-    push_cast at this; linarith
-  have hθhi : θ ≤ 150001 * 12.62 := by
-    calc θ ≤ ∑ p ∈ A, (12.62 : ℝ) := by
-          refine sum_le_sum fun p hp => ?_
-          rw [hA, mem_filter, mem_Icc] at hp
-          have : (p : ℝ) ≤ 150001 := by exact_mod_cast hp.1.2
-          exact (Real.log_le_log (by exact_mod_cast hp.2.pos) this).trans hlog
-      _ = A.card * 12.62 := by rw [sum_const, nsmul_eq_mul]
-      _ ≤ 150001 * 12.62 := by
+    have h129 : (1.29 : ℝ) ^ 4 < Real.exp (1 / 4) ^ 4 := pow_lt_pow_left₀ hc (by norm_num) (by norm_num)
+    rw [h4] at h129
+    norm_num at h129
+    linarith
+  have h2 : ∏ p ∈ S, ((p : ℝ) / (p - 1)) ≤ 1.29 := by
+    calc ∏ p ∈ S, ((p : ℝ) / (p - 1)) ≤ ∏ _p ∈ S, (1 + 1 / 100000 : ℝ) :=
+          prod_le_prod₀ (fun p hp => by
+            have := two_le_sub_one (three_le_of_mem (mem_sdiff.1 hp).1); positivity) hfac
+      _ = (1 + 1 / 100000 : ℝ) ^ S.card := prod_const _
+      _ ≤ (1 + 1 / 100000 : ℝ) ^ 25000 := pow_le_pow_right₀ (by norm_num) hcard
+      _ ≤ Real.exp (1 / 100000) ^ 25000 := by
           gcongr
-          have : A.card ≤ 150001 := (card_filter_le _ _).trans (by simp)
-          exact_mod_cast this
-  have hθpos : 0 < θ := by linarith
-  have ht_lo : 2 ≤ Real.log θ := by
-    rw [Real.le_log_iff_exp_le hθpos]
-    have := Real.exp_one_lt_d9
-    calc Real.exp 2 = Real.exp 1 ^ 2 := by rw [← Real.exp_nat_mul]; norm_num
-      _ ≤ 2.7182818286 ^ 2 := by gcongr
-      _ ≤ 8 := by norm_num
-      _ ≤ θ := hθlo
-  have ht_hi : Real.log θ ≤ 15.22 := by
-    rw [Real.log_le_iff_le_exp hθpos]
-    have h := TernaryGoldbach.MajorArcs.exp_split_ge 15 (u := 0.22) (by norm_num) 4
-    norm_num [Finset.sum_range_succ, Nat.factorial] at h
-    linarith
-  have hG := TernaryGoldbach.Prelim.exp_gamma_lt
-  have hf : Real.exp Real.eulerMascheroniConstant * Real.log θ + 2.50637 / Real.log θ ≤ 30.94 := by
-    have h1 : Real.exp Real.eulerMascheroniConstant * Real.log θ ≤ 1.95 * 15.22 :=
-      mul_le_mul hG.le ht_hi (by linarith) (by norm_num)
-    have h2 : 2.50637 / Real.log θ ≤ 2.50637 / 2 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) ht_lo
-    linarith
-  have hM' : ∏ p ∈ A, (p : ℝ) / (p - 1) < 30.94 := lt_of_lt_of_le hM hf
-  linarith
+          have := Real.add_one_le_exp (1 / 100000 : ℝ); linarith
+      _ = Real.exp (1 / 4) := by rw [← Real.exp_nat_mul]; norm_num
+      _ ≤ 1.29 := hexp
+  calc (∏ p ∈ S, ((p : ℝ) / (p - 1))) * ∏ p ∈ oddPrimes 100000, ((p : ℝ) / (p - 1))
+      ≤ 1.29 * 10.2558 := mul_le_mul h2 h1 (hnn _ hsub) (by norm_num)
+    _ ≤ 15.5 := by norm_num
 
 theorem exp_inv199_le : Real.exp (1 / 199) ≤ 1.006 := by
   have h := Real.add_one_le_exp (-(1 / 199))

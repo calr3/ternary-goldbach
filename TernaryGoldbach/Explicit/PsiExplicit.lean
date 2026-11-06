@@ -16,6 +16,7 @@ open scoped Real Interval Topology ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.Explicit
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem norm_logDeriv_zeta_left (y : ℝ) :
     ‖logDeriv riemannZeta (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ (2 / Real.log 2 + 4.8) * (3 + 37 + 2.6 * |y|) := by
   set c₁ := 2 / Real.log 2 + 4.8 with hc₁
@@ -50,6 +51,7 @@ noncomputable def Vg (a b δ : ℝ) : ℝ :=
   (2 / Real.log 2 + 4.8) * 82.6 * Real.exp (δ ^ 2 / 8) * (Real.exp (-(a / 2)) + Real.exp (-(b / 2))) *
     (√(2 * π) / δ)
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem norm_integral_hZeta_gsm {a b δ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) {x : ℝ} (hx : 0 < x) :
     ‖∫ y : ℝ, hZeta (fun u => (gsm a b δ u : ℂ)) x (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤
       x ^ (-(1 / 2) : ℝ) * Vg a b δ := by
@@ -188,6 +190,7 @@ theorem SsumG_gsm_err {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b �
 noncomputable def ErrG (a b δ x : ℝ) : ℝ :=
   √x * LineB2 a b δ + x * TailB a δ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)
 
+omit [Fact TernaryGoldbach.RHUpTo] in
 theorem summable_gsm {a b δ x : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hx : 0 < x) :
     Summable fun n : ℕ => Λ n * gsm a b δ (n / x) := by
   have h := summable_SsumG (1 : DirichletCharacter ℂ 1) (goodSmoothing_gsm hδ hab) hx

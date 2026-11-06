@@ -1,7 +1,5 @@
 import TernaryGoldbach.MinorArcs.LSQuot8
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # [H, Prop 12.2.4] with `c₊ = 2`, part 4: the kernel checks for the divisors of `30030`
 

@@ -1,7 +1,5 @@
 import TernaryGoldbach.Explicit.PsiLarge
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x` for `x ≥ e^{20000}`
 
@@ -275,6 +273,7 @@ theorem abs_terms_le {x : ℝ} (hx : 1e40 ≤ x) : 15000 * √x + 1e13 ≤ 1.6e-
   have h2 : (1e13 : ℝ) ≤ 1e-17 * x := by nlinarith
   linarith
 
+variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **`|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x`** for `x ≥ e^{20000}`. -/
 theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e-14 * x := by
   have hx40 : 1e40 ≤ x := exp_20000_ge.trans hx

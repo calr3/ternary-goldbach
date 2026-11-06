@@ -52,6 +52,8 @@ theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
   linarith
 
 open Classical in
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- Step 4: a nonzero count over a set of primes gives a representation. -/
 theorem isSumOfThreePrimes_of_repSum_ne_zero {P : ℕ → Prop} (hP : ∀ n, P n → n.Prime)
     (N : ℕ) (h : repSum P N ≠ 0) : IsSumOfThreePrimes N := by

@@ -3,9 +3,6 @@ import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.PhiIntegrals
 import TernaryGoldbach.Helfgott.Eta2
 
-variable [Fact TernaryGoldbach.RHUpTo]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # The unscaled `η_*` and its Fourier transform
 

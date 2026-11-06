@@ -1,8 +1,6 @@
 import TernaryGoldbach.MinorArcs.T2Basic
 import TernaryGoldbach.MinorArcs.SmallG2
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # `T₂(S) ≤ 0.37273` for `16 ≤ S < 10⁴`, and `∫₁^{10⁴} g₂/y`, `∫₁^{10⁴} |g₂|`
 

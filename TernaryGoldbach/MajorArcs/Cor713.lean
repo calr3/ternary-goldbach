@@ -1,8 +1,5 @@
 import TernaryGoldbach.MajorArcs.Cor933
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
-
 /-!
 # [H, Cor 7.1.3] from [H, Cor 9.3.3] and Platt's verification
 
@@ -802,6 +799,7 @@ theorem err933Z_le {y : ℝ} (hy : 1e25 ≤ y) {δ : ℝ} (hδ : |δ| ≤ 1.2e6)
   linarith
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Cor 7.1.3]** (with our constants): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
 `|δ| ≤ 4·3·10⁵/q`, `Σ Λ(n) χ(n) e(δn/y) η_*(n/y) = [q = 1] η̂_*(-δ) y + E y` with
 `|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [H, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (the
