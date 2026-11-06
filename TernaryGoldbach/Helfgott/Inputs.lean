@@ -71,7 +71,7 @@ theorem xOf_ge (N : ℕ) (hN27 : 10 ^ 27 ≤ N) : (4.9e26 : ℝ) ≤ xOf N := by
 
 *Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [H, §§14.1–14.2]. On the
 arcs of modulus `q` the sums are compared with `μ(q)/φ(q) η̂(−βx)x` by Cor 7.1.3 and Prop 7.1.5
-(the cited Part II inputs in `MinorArcs/PartIICited.lean`); the singular series is bounded below
+(the Part II results collected in `MinorArcs/PartIICited.lean`); the singular series is bounded below
 with the Mertens product bound ([RS62, Thm 15], `Prelim.F_all`, proved); and `C_{η◦,η_*}(N/x)` is computed. -/
 theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     1.049 * xOf N ^ 2 / κ ≤

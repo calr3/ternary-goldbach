@@ -13,8 +13,9 @@ For `q` and `β` on the arc `|β| < w_q`, with `S'_q` the part of `S_{η₊}` ov
 * `|S − S'_q| ≤ D` everywhere, `D = 1.94 K log q + 1` (`x² ≤ 2^K`): only prime powers `p^k`, `p ∣ q`;
 * (Bombieri's identity, `|τ(ψ)|² ≤ cond ψ`) `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|²
   ≤ μ²(q)/φ(q) |S'_q(β)|² + E²`, with `E = max_{ψ ≠ 1} |τ(ψ)| |S'_{q,ψ⁻¹}(β)|`;
-* [H, Thm 7.1.4] for the primitive characters inducing `ψ⁻¹`: `E ≤ 2.41·10⁻⁸ x` and
-  `|S'_q(β) − η̂₊(−βx) x| ≤ 1.141·10⁻⁸ x` for `x ≥ 4.9·10²⁶`.
+* [H, Thm 7.1.4] for the primitive characters inducing `ψ⁻¹`: `E ≤ 4.25·10⁻⁷ x` and
+  `|S'_q(β) − η̂₊(−βx) x| ≤ 2.83·10⁻⁷ x` for `x ≥ 4.9·10²⁶` (`arc_chars`; [H, (14.2), (14.1)]:
+  `2.3992·10⁻⁸`, `1.1405·10⁻⁸`).
 -/
 
 open Real MeasureTheory FourierTransform Set Finset

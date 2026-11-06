@@ -9,8 +9,8 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 
 The analogue of `ArcChars.lean` for `η_*(t) = η(κt)` (`η = η₂ *_M φ`, our `etaU`), at scale `y = x/κ`:
 for `q ∈ Qset r₀` and `|βx| ≤ 1.2·10⁶/q̃`, with `S'_q` the part over `(n, q) = 1`,
-* `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (1.35·10⁻⁷ y)²`;
-* `|S'_q(β) − η̂(−βy) y| ≤ 1.21·10⁻⁷ y`;
+* `μ²(q)/φ(q) |S'_q(β)|² ≤ Σ_b |S'_q(b/q + β)|² ≤ μ²(q)/φ(q) |S'_q(β)|² + (1.49·10⁻⁶ y)²`;
+* `|S'_q(β) − η̂(−βy) y| ≤ 1.49·10⁻⁶ y` (`arc_chars_star`);
 * `|S_{η_*}(α, x) − S'_q(α)| ≤ 10⁻¹² y`.
 -/
 

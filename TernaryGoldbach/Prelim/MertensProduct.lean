@@ -12,7 +12,7 @@ Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
   `E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log² t) dt` (ported from PNT+, `Prelim/PNTMertens.lean`);
 * `|E₂Λ(x)| ≤ 2D/log x` when `E₁Λ` stays within `D` of `E₁Λ(x)` on `[x, ∞)`, and `D = O(1/log² x)`
   by summation by parts from `theta_explicit` (`|θ(n) − n| < n/log³ n + ε_pl(n) n`, `Prelim/ThetaExplicit.lean`;
-  the plateau adds `P(M) = 3.7·10⁻⁷` to `D` while `log M < 20000`);
+  the plateau adds `Pth M ≤ 3.52·10⁻⁵` to `D` while `log M < 20000`);
 * `log ∏_{p ≤ x} p/(p−1) ≤ ∑_{d ≤ x} Λ(d)/(d log d) + 3/⌊√x⌋` (the log series);
 * hence `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)` for `x ≥ 10¹²` (`F_large`);
 * for `10⁵ ≤ x < 10¹²` the same argument, with `E₂Λ` bounded by the variation of

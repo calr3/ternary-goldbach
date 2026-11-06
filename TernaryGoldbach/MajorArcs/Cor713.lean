@@ -6,9 +6,11 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 /-!
 # [H, Cor 7.1.3] from [H, Cor 9.3.3] and Platt's verification
 
-With `T₀ = 10⁸/q` (Platt, `platt_grh`) and `y ≥ 10⁸`, `q ≤ 3·10⁵`, `|δ| ≤ 4·3·10⁵/q`, the error term of
-`cor_9_3_3` is at most `10⁻¹⁷ + 4.7·10⁶/(√q √y)` for `y ≥ 10²⁵` (for `q = 1`, [H]'s
-`2.485·10⁻¹⁹ + (381500 + 76)/√y` ([H, §9.6]); for `q ≥ 2`, our constants).
+With `T₀ = 10⁸/q` (Platt, `platt_grh`), `q ≤ 3·10⁵`, `|δ| ≤ 4·3·10⁵/q` and `y ≥ 10²⁵`, the error term
+of `cor_9_3_3` is at most `10⁻¹⁷ + 4.7·10⁶/(√q √y)` for every `q`, including `q = 1` (`err933Z_le`
+for `ζ`, `err933New_le` for `q ≥ 2`); this is `cor_7_1_3'`. [H] has
+`2.485·10⁻¹⁹ + (381500/√q + 76)/√y`; `err933_le_book` checks [H, §9.6]'s arithmetic for [H]'s form
+`err933` of the error term.
 -/
 
 open Real MeasureTheory FourierTransform
@@ -800,10 +802,10 @@ theorem err933Z_le {y : ℝ} (hy : 1e25 ≤ y) {δ : ℝ} (hδ : |δ| ≤ 1.2e6)
   linarith
 
 set_option maxHeartbeats 1000000 in
-/-- **[H, Cor 7.1.3]** (with our constants for `q ≥ 2`): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
+/-- **[H, Cor 7.1.3]** (with our constants): for `y ≥ 10²⁵`, `χ` primitive mod `q ≤ 3·10⁵`,
 `|δ| ≤ 4·3·10⁵/q`, `Σ Λ(n) χ(n) e(δn/y) η_*(n/y) = [q = 1] η̂_*(-δ) y + E y` with
-`|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [H, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (numerical
-hypothesis), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
+`|E| ≤ 10⁻¹⁷ + 4.7·10⁶/(√q √y)`. From [H, Cor 9.3.3] (`cor_9_3_3`) and Platt's verification (the
+hypothesis `PlattGRH`), at `T₀ = 10⁸/q` (for `q = 1`, `ζ`: `err933Z_le`). -/
 theorem cor_7_1_3' {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} [NeZero q] (hq : q ≤ 300000)
     (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) {δ : ℝ} (hδ : |δ| ≤ 4 * 300000 / q) :
     ‖Schar χ (fun n => ((Λ n * etaU (n / y) : ℝ) : ℂ)) (δ / y) -
