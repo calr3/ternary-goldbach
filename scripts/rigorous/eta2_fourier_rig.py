@@ -1,4 +1,4 @@
-"""Rigorous check of the axiom `eta2DD_small` (MinorArcs/InnerSums.lean), i.e. [H, (B.6)] on
+"""Rigorous check of the former hypothesis `eta2DD_small` (MinorArcs/InnerSums.lean), i.e. [H, (B.6)] on
 0 <= t <= 655 in explicit form:
 
     |DD(t)| <= 31.521  for 0 <= t <= 655,

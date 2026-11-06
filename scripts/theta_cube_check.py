@@ -1,4 +1,4 @@
-"""Finite check behind the numerical axiom `theta_cube_small` (Prelim/LambdaMu.lean):
+"""Finite check behind the former hypothesis `theta_cube_small` (Prelim/LambdaMu.lean):
 
   |theta(n) - n| < n / log^3 n      for 89 967 803 <= n <= 10^10
 
@@ -10,8 +10,8 @@ against the margin.
 
 Usage: python3 scripts/theta_cube_check.py   (a few minutes)
 
-NOTE (2026-11-01): the corresponding axioms are no longer used; they are proved from Büthe's
-bounds (`buthe_theta`, `buthe_psi`) and kernel-checked computations (see AXIOMS.md, "Removed axioms").
+NOTE (2026-11-01): the corresponding hypotheses are no longer used. They were proved from Büthe's
+bounds and kernel-checked computations; Büthe's bounds were removed in turn (see HYPOTHESES.md).
 This script is kept for reference.
 """
 import math

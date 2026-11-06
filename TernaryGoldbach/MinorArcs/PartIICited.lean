@@ -16,11 +16,11 @@ erratum"). We state them as [H] does.
 * **`cor_7_1_3`** — [H, Cor 7.1.3]: twisted sums for `η = φ *_M η₂` (our `etaU`). **Proved**
   (`MajorArcs/Cor713.lean`) from [H, Prop 9.3.2] (`MajorArcs.prop_9_3_2`: proved for `q ≥ 2` with our
   constants, cited for `q = 1`; conditional on GRH up to height `T₀`) and Platt's verification
-  (numerical axiom `platt_verification`, via `platt_odd`, `platt_even`), via [H, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
+  (the hypothesis `PlattGRH`, through `platt_verification`, `platt_odd`, `platt_even`), via [H, Cor 9.3.3] (`MajorArcs/Cor933.lean`).
 * **`prop_7_1_5`** — [H, Prop 7.1.5]: `Σ Λ(n) log n η₊²(n/x)` (for `x ≥ 4.9·10²⁶`). **Proved**
   (`MajorArcs/Prop715.lean`) from [H, Prop 9.5.1] (`MajorArcs.prop_9_5_1`, proved: `ζ` explicit formulas for
-  `η₊²` and `η₊² log`, RH up to `500`), Platt's verification at `q = 1` and the numerical axiom
-  `integral_etaPlus_sq_log` ([H, (9.94)]).
+  `η₊²` and `η₊² log`, RH up to `500`), Platt's verification at `q = 1` and
+  `integral_etaPlus_sq_log` ([H, (9.94)], proved in `MajorArcs/EtaPlusSqLog.lean`).
 * **`l2_major_14_7`** — [H, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` in [H];
   we state `(8.7098 + O*(0.0802)) x` (same lower end `8.6296 x`; our Thm 7.1.4 constants are weaker)
   for `x ≥ 4.9·10²⁶`. **Proved** (`MajorArcs/L2Major.lean`, `l2_major_bounds`: in fact `8.675 x … 8.786 x`)

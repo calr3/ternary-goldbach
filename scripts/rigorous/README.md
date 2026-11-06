@@ -1,6 +1,7 @@
-# Rigorous re-checks of the computation axioms
+# Rigorous re-checks of former computational hypotheses
 
-These programs re-check the finite numerical axioms that rest on our own computations. They are
+These programs re-check the finite computations that were once stated as hypotheses (our own
+computations; all have since been proved in Lean or replaced). They are
 independent of the float scripts in `scripts/`: different code, sieves and summation order.
 
 * `rig_checks.c` encloses every real quantity in an interval `[lo, hi]` of MPFR numbers (64-bit
@@ -9,7 +10,7 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
   `λ` are exact integer computations. A check passes only if it holds for the whole interval.
 * `eta2_fourier_rig.py` (python-flint/Arb ball arithmetic) checks `eta2DD_small` with the
   closed form in Si/Ci and a rigorous Lipschitz bound (see its docstring).
-* `moebius_sqrt_rig.c` (former axiom `moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
+* `moebius_sqrt_rig.c` (former hypothesis `moebius_sqrt_small`, `10¹⁰` terms) uses IEEE double arithmetic with the
   rounding mode set to round-down; upper bounds are computed as `−((−a) ∘ b)`. Each operation is a
   correctly rounded IEEE operation (compiled with `-frounding-math`, no contraction to FMA).
 * `p1224_rig.c` (`prop1224_check`, `2.2·10¹⁰` values of `q`) is interval arithmetic. The arithmetic
@@ -22,26 +23,26 @@ independent of the float scripts in `scripts/`: different code, sieves and summa
   with the same counts and margins.
 * `ramare_check.c` checks Ramaré's (12.12) numerically: `c_E` in MPFR from the primes `≤ 10⁹` plus a
   tail bound, and (12.12) in interval arithmetic for `d ≤ 2000`, three primorials, and `X ≤ 2·10⁶`.
-  It was written when (12.12) was the published axiom `ramare_Gq`, which is now proved in Lean
+  It was written when (12.12) was the published hypothesis `ramare_Gq`, which is now proved in Lean
   (`Prelim/Ramare.lean`).
 
-| Check | Axiom | Range | Time |
+| Check | Former hypothesis | Range | Time |
 |---|---|---|---|
-| `nonprime` | (former axiom `nonprime_small`; now proved) | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
-| `mertens_lower` | (former axioms `mertens_lower_small`, `mertens_point`; now proved, kernel to `10⁴`) | `n ≤ 10⁶` | 1 s |
-| `logsq` | (former axiom `logsq_small`; now proved) | `n ≤ 10⁶` | 2 s |
-| `mertens_product` | (former axiom `mertens_product_small`; now proved, kernel to `10⁵`) | primes `≤ 2·10⁸` | 70 s |
-| `K` | (former axioms `K_blocks`, `K_pieces`; replaced by `ramare_moebius`) | prime powers `≤ 10⁹` | 2 min |
-| `liouville` | (former axiom `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
-| `C_grid` | (former axiom `C_grid`; now kernel-checked on 17 intervals) | 7720 grid points × 3000 terms | 25 s |
-| `lemma7` | (former axioms `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
-| `lemma8` | (former axiom `lemma8_numeric`; now proved) | `n ≤ 10⁴` | 10 s |
-| `moebius_sqrt_rig` | (former axiom `moebius_sqrt_small`; now proved for `k < 11815`) | `k < 10¹⁰` | 6 min |
+| `nonprime` | (former hypothesis `nonprime_small`; now proved) | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
+| `mertens_lower` | (former hypotheses `mertens_lower_small`, `mertens_point`; now proved, kernel to `10⁴`) | `n ≤ 10⁶` | 1 s |
+| `logsq` | (former hypothesis `logsq_small`; now proved) | `n ≤ 10⁶` | 2 s |
+| `mertens_product` | (former hypothesis `mertens_product_small`; now proved, kernel to `10⁵`) | primes `≤ 2·10⁸` | 70 s |
+| `K` | (former hypotheses `K_blocks`, `K_pieces`; replaced by `ramare_moebius`) | prime powers `≤ 10⁹` | 2 min |
+| `liouville` | (former hypothesis `liouville_small`; now proved) | `k ≤ 10⁵` | < 1 s |
+| `C_grid` | (former hypothesis `C_grid`; now kernel-checked on 17 intervals) | 7720 grid points × 3000 terms | 25 s |
+| `lemma7` | (former hypotheses `lemma7_numeric`, `GS_N0`; now proved) | `r ≤ 3·10⁷` | 20 s |
+| `lemma8` | (former hypothesis `lemma8_numeric`; now proved) | `n ≤ 10⁴` | 10 s |
+| `moebius_sqrt_rig` | (former hypothesis `moebius_sqrt_small`; now proved for `k < 11815`) | `k < 10¹⁰` | 6 min |
 | `eta2_fourier_rig.py` | `eta2DD_small` ([H, (B.6)] on `0 ≤ t ≤ 655`) | Lipschitz stepping, 137334 points | 3 s |
-| `eta_circ_rig.py` | former axiom `etaO_numerics` (input of [H, (9.94)]; now proved) | four integrals over `[0, 2]` | < 1 s |
-| `t2_rig.c` | (former axioms `T2_small`, `T2_mid`; (5.31) is now proved, kernel to `10⁴`) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
+| `eta_circ_rig.py` | former hypothesis `etaO_numerics` (input of [H, (9.94)]; now proved) | four integrals over `[0, 2]` | < 1 s |
+| `t2_rig.c` | (former hypotheses `T2_small`, `T2_mid`; (5.31) is now proved, kernel to `10⁴`) | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
 | `p1224_rig.c` | `prop1224_check` (the finite part of [H, Prop 12.2.4]) | every `q < 2.2·10¹⁰`, every `n < λ(q)`: 87 972 745 explicit checks for 2 102 258 values of `q` | about 40 min on 22 threads |
-| `ramare_check.c` | (former published axiom `ramare_Gq`; now proved) | `c_E`; `d ≤ 2000` and three primorials, `X ≤ 2·10⁶` | 2 min |
+| `ramare_check.c` | (former published hypothesis `ramare_Gq`; now proved) | `c_E`; `d ≤ 2000` and three primorials, `X ≤ 2·10⁶` | 2 min |
 | `g2_rig.c` | (exploration: `g₂` and `max \|g₂(n)\| n`) | `n ≤ N` | seconds |
 
 The reference output is `output.txt`.

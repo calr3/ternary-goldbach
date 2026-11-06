@@ -1,4 +1,4 @@
-"""Finite checks behind the numerical axioms of Prelim/MVLemma7.lean and Prelim/MVLemma8.lean.
+"""Finite checks behind the former hypotheses of Prelim/MVLemma7.lean and Prelim/MVLemma8.lean.
 
 g(r) = mu(r)^2/phi(r), G(r) = sum_{s<=r} g(s).
 

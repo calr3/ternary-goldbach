@@ -8,7 +8,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 # The explicit-formula bound for the Gaussian-smoothed prime sum
 
 `|Σ Λ(n) φ(n/x) − M(1) x| ≤ √x·LineB2 + x·TailB + x^{−1/2} V/(2π)` for `φ = gsm a b δ`, unconditionally
-(RH to `3·10¹⁰` is the numerical axiom `rh_upto`).
+(RH to `3·10¹⁰` is the hypothesis `RHUpTo`, through `rh_upto`).
 -/
 
 open Complex Set Filter MeasureTheory Finset

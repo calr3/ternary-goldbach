@@ -15,7 +15,7 @@ axioms. They take 4 published numerical results as explicit hypotheses, stated i
 * `PlattGRH`: Platt's GRH verification;
 * `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
 * `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
-  is checked against a later published bound (see `AXIOMS.md`).
+  is checked against a later published bound (see `HYPOTHESES.md`).
 
 ```lean
 theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
@@ -26,19 +26,19 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGR
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, declared as section variables
-(`variable [Fact RHUpTo] …`). The theorems they used to be axioms for keep their names
+(`variable [Fact RHUpTo] …`). The declarations that used to state them without proof keep their names
 (`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input`,
 `Prelim.ramare_moebius`) and are now proved from the instances. Büthe's bound for `ψ` [Bü18] was a
 fifth hypothesis until 2026-11-06; it is no longer used (below).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
-our proof avoids it (`AXIOMS.md`, Finding 5).
+our proof avoids it (`HYPOTHESES.md`, Finding 5).
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
-Every hypothesis has been checked against its source ([`AXIOMS.md`](AXIOMS.md)). The project's
+Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
 
 ## Checking it
@@ -59,7 +59,7 @@ against `Challenge.lean`, which states them with Mathlib-only definitions (see
 [`comparator/README.md`](comparator/README.md)).
 
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
-`native_decide`. The kernel itself evaluates the computations that replace former axioms:
+`native_decide`. The kernel itself evaluates the computations that replace former hypotheses:
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallMertens.lean`, `SmallProdAp.lean`,
   `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLogSq.lean`, `SmallLiouville.lean`, `SmallW.lean`,
   `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean` and
@@ -72,7 +72,7 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
 * the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`.
 
 [H, Prop 12.2.4] is proved with `c₊ = 2` in place of [H]'s `1.36`. [H]'s argument covers
-`q ≥ 2.2·10¹⁰`; for smaller `q`, [H] (and our former axiom `prop1224_check`) needed a computation
+`q ≥ 2.2·10¹⁰`; for smaller `q`, [H] (and our former hypothesis `prop1224_check`) needed a computation
 over all `q < 2.2·10¹⁰`. With `c₊ = 2` there is room for a structural argument instead: removing a
 prime `p ≥ 17` from `q` never makes the required inequality fail (`MinorArcs/LSQuotRed.lean`), so
 everything reduces to the 64 divisors of `30030`, checked by the kernel for `4 ≤ n < 2600`
@@ -90,7 +90,7 @@ Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `E
 final minor-arc inequality's worst cell goes from `0.96499` to `0.96534` (against `1.037`; `1.00717` with the route-D constants). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
-[H]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
+[H]'s own derivation of it drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
 `g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
 above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
@@ -159,7 +159,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | [H] | Statement | [H]'s constant | ours |
 |---|---|---|---|
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
-| Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computation axiom) |
+| Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
@@ -197,7 +197,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * In Lemma 9.1.3, `N⁺ = N/2` holds only for real `χ`. The proof sums over `χ` and `χ̄`.
 * (14.7) has an arithmetic slip (`0.0754`); our error analysis avoids it.
 * (5.32) is false for `v = 2`, and so is (5.36), which depends on it: `∫₁⁴ T₂(S)/S dS = 0.53344 >
-  0.37273 log 4` (`AXIOMS.md`, Finding 1).
+  0.37273 log 4` (`HYPOTHESES.md`, Finding 1).
   * We use (5.36) with `+0.0231`. This form, and (5.37), are proved in Lean
     (`MinorArcs/H2Bound.lean`).
   * This adds `0.0924` to the Type II factor and raises the first-case constant of Thm 3.1.1 to
@@ -205,10 +205,10 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   * (14.49) stays `1.0376`, because repair 3 below has room.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
-  (`AXIOMS.md`, Finding 4).
+  (`HYPOTHESES.md`, Finding 4).
 * [H, (12.12)] is [Ram95, Lemma 3.4]. Its proof there uses (3.9),
   `∏_p (1 + (p^{1/3} + p^{2/3})/(p(p−1))) ≤ 8`, but the product is about `8.0845`. We prove (12.12)
-  as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`AXIOMS.md`,
+  as stated by a different decomposition, which gives the constant `7.04 ≤ 7.284` (`HYPOTHESES.md`,
   Finding 5).
 
 **Other differences:**
@@ -232,8 +232,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
 | `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
-| `scripts/` | the computations behind the numerical axioms; generators of numeric Lean files; exploratory checks |
-| `AXIOMS.md` | the axiom audit |
+| `scripts/` | checks of the hypotheses and of former hypotheses; generators of numeric Lean files; exploratory checks |
+| `HYPOTHESES.md` | the hypotheses, checked against their sources; errors found in the sources |
 | `BLUEPRINT.md`, `NOTES.md` | map from [H] to Lean; working notes |
 
 ## References

@@ -4,7 +4,8 @@ Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015
 This is the book version, and it supersedes the three papers. References `[H, …]` are to it.
 
 This is a chapter-level map from [H] to the Lean files. There is no `sorry`. `ternary_goldbach`
-depends on 28 axioms, which are listed and audited in `AXIOMS.md`. [H, (5.36)] is used in corrected
+uses only Lean's three standard axioms and takes four published results as hypotheses (`Fact`
+instances), listed and checked against their sources in `HYPOTHESES.md`. [H, (5.36)] is used in corrected
 form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status is in the README.
 
 ## Top level ([H, §14.4]) — done
@@ -14,11 +15,11 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
 | [H] | Lean | Status |
 |---|---|---|
 | (14.50) circle identity | `circle_identity_input` | ✅ proved |
-| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses numerical axioms) |
+| (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input`, stated with `1.049` (`MajorArcs/MajorTotal.lean`) | ✅ proved (uses hypotheses) |
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input`, stated with `1.0376` (re-run with the corrected Thm 3.1.1, `scripts/minor_arc_total_numerics.py`) | ✅ proved (repair 3; uses cited/trusted inputs) |
 | (14.51) non-prime terms | `nonprime_input` (constant `6.7·10⁶` instead of `7.3306`) | ✅ proved |
 | final inequality | `final_inequality_crude` | ✅ proved |
-| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`) and a prime in `(n − 4·10¹⁸, n − 4]` from the bounds for `θ` (`psi_plateau`, and `θ(m) ≤ m log 4` below `10¹⁷`) instead of the ladder | ✅ proved (uses published axioms) |
+| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`): binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`) and a prime in `(n − 4·10¹⁸, n − 4]` from the bounds for `θ` (`psi_plateau`, and `θ(m) ≤ m log 4` below `10¹⁷`) instead of the ladder | ✅ proved (uses published hypotheses) |
 
 ## Minor arcs: (14.49) ⟸ Thm 13.2.1
 
@@ -88,7 +89,7 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
      ├─ Thm 7.1.1, Thm 7.1.2, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5   ← Part II
      │   [Cor 7.1.3 ✅ MajorArcs/Cor713.lean ⇐ Cor 9.3.3 ✅ (Cor933.lean) ⇐ Prop 9.3.2 ✅
      │    (MajorArcs/Prop932.lean: q ≥ 2 from Explicit/ExplicitBound, q = 1 from Explicit/ZetaBound;
-     │    weaker constants) + Platt (numerical axiom platt_verification, MajorArcs/GRH.lean);
+     │    weaker constants) + Platt (the hypothesis `PlattGRH`, through platt_verification, MajorArcs/GRH.lean);
      │    Prop 7.1.5 ✅ MajorArcs/Prop715.lean ⇐ Prop 9.5.1 ✅ (same file, from Explicit/EtaPlusSqBound) + Platt (q = 1, T₀ = 500)
      │    + (9.94) (proved: EtaPlusSqLog + EtaONum); Thm 7.1.4 ✅ MajorArcs/Thm714.lean ⇐ Prop 9.4.2 ✅
      │    (MajorArcs/Prop942.lean from Explicit/EtaPlusBound; weaker constants) + Platt]
@@ -97,14 +98,14 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
      │   ├─ Ch 8  Mellin transform of the twisted Gaussian: Thm 8.0.1, Cor 8.0.2 (saddle point)
      │   └─ Ch 9  explicit formulas: §9.1 general explicit formula; Props 9.2.2, 9.3.2,
      │            Cor 9.3.3, Props 9.4.2, 9.5.1
-     │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← numerical axioms ✅
+     │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← hypotheses ✅
      ├─ Ch 11  the smoothing functions η◦, η_* (§11.1 η◦(t)η◦(ρ−t))  ✅ (CMain: polarization bound
      │         for η◦∗η◦ and the moments of η_*; constant 8.82)
      └─ Appendix A  norms of η₊ (A.3–A.5: |η₊|_∞ ≤ 1.079955, …)
          (✅ crude bounds in Helfgott/Decay.lean, Helfgott/SupNorms.lean)
 ```
 
-## Trusted computations (planned `axiom`s)
+## Trusted computations (planned hypotheses)
 
 1. [OeSHP14] binary Goldbach up to `4·10¹⁸` (we use the whole range).
 2. ~~[HP13] the prime ladder up to `8.875694·10³⁰`~~: replaced by the bounds for `θ` (`Helfgott/SmallCases.lean`).
@@ -117,4 +118,4 @@ form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The current status i
 
 1. Part I bottom-up: §2.5 (sums of μ, Λ), Ch 4 (Type I; mostly elementary), Ch 5, Ch 6 → Thm 3.1.1.
 2. Ch 12 (large sieve for primes) and Ch 13 → Thm 13.2.1 → (14.49).
-3. Part II: Ch 8 and Ch 9 (the heavy analysis), with §9.6 as an axiom → Ch 10 → (14.27).
+3. Part II: Ch 8 and Ch 9 (the heavy analysis), with §9.6 as a hypothesis → Ch 10 → (14.27).

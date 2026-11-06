@@ -369,7 +369,7 @@ open H2B in
 /-- **[H, (5.36)], corrected**: `∫₁ᵀ H₂(S)/S dS ≤ 0.15107 log T + 0.0231` for `T ≥ 1`.
 
 [H, (5.36)] states this without the `+ 0.0231`. That is false: it inherits an error in [H, (5.32)]
-for `v = 2`, where `∫₁⁴ T₂(S)/S dS = 0.53344 > 0.37273 log 4` (see `AXIOMS.md`). The supremum of
+for `v = 2`, where `∫₁⁴ T₂(S)/S dS = 0.53344 > 0.37273 log 4` (see `HYPOTHESES.md`). The supremum of
 `∫₁ᵀ H₂/S − 0.15107 log T` is `0.023059…`, at `T ≈ 15.58`. -/
 theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
     ∫ S in (1 : ℝ)..T, H2 S / S ≤ 0.15107 * Real.log T + 0.0231 := by

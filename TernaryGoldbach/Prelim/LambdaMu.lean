@@ -41,7 +41,7 @@ open scoped ArithmeticFunction.vonMangoldt ArithmeticFunction.Moebius
 
 namespace TernaryGoldbach.Prelim
 
-/-! ### Numerical axioms (finite computer checks) -/
+/-! ### Finite computer checks (kernel) -/
 
 /-- `∑_{m ≤ n} Λ(m)/m ≤ log n` for `1 ≤ n ≤ 100` (kernel-checked, `Prelim/SmallMertens.lean`). -/
 theorem mertens_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 100) :

@@ -1,4 +1,4 @@
-"""Finite checks behind the numerical axioms `psi_mid`, `psi_sqrt`, `theta_sqrt`, `psi_mul_mid`
+"""Finite checks behind the former hypotheses `psi_mid`, `psi_sqrt`, `theta_sqrt`, `psi_mul_mid`
 (Prelim/LambdaMu.lean).  Segmented sieve up to 10^10 (segments of 5*10^6, < 1 GB RAM).
 
   psi_mid      psi(n) <= 1.0004 n                       for 2*10^6 <= n <= 10^9
@@ -13,8 +13,8 @@ margins exceed these errors by orders of magnitude.
 
 Usage: python3 scripts/psi_mid_check.py   (a few minutes)
 
-NOTE (2026-11-01): the corresponding axioms are no longer used; they are proved from Büthe's
-bounds (`buthe_theta`, `buthe_psi`) and kernel-checked computations (see AXIOMS.md, "Removed axioms").
+NOTE (2026-11-01): the corresponding hypotheses are no longer used. They were proved from Büthe's
+bounds and kernel-checked computations; Büthe's bounds were removed in turn (see HYPOTHESES.md).
 This script is kept for reference.
 """
 import bisect

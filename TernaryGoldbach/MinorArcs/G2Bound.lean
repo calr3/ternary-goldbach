@@ -13,7 +13,7 @@ Proof (a version of [H]'s, with cruder constants):
 * `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` ([H, (5.20)], `g2_eq_sum_moebius`);
 * `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` with `H_d ≥ 0` multiplicative (`Sd_eq`);
 * `|m(x/u)| ≤ 0.03 u^{1/9}/log x + √(2u/x)` (`abs_m_le`): Ramaré's `|m(y)| ≤ 0.03/log y`
-  ([H, (2.21)], axiom `ramare_moebius`, `Prelim/RamareMoebius.lean`) with Rankin's
+  ([H, (2.21)], the hypothesis `RamareMoebius` through `ramare_moebius`, `Prelim/RamareMoebius.lean`) with Rankin's
   `log x/log(x/u) ≤ u^{1/9}` for `x/u ≥ 11815`, and the kernel-checked `|m(y)| ≤ √(2/y)`
   (`Prelim/SmallMoebius.lean`) for `y < 11815`;
 * the Euler products of `G2Euler.lean`, evaluated in `G2Numerics.lean`.

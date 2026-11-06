@@ -10,7 +10,7 @@ variable [Fact TernaryGoldbach.RHUpTo]
 [H, §5.2] uses two sharp forms of the large sieve. Both are **proved** in
 `Prelim/LargeSieveMVProof.lean`, from the Montgomery–Vaughan Hilbert inequalities
 (`Prelim/HilbertReal.lean`, `Prelim/HilbertCsc.lean`). [MV73, Lemma 8] below is proved in
-`Prelim/MVLemma7.lean`, `Prelim/MVLemma8.lean` (modulo finite numerical checks stated as axioms).
+`Prelim/MVLemma7.lean`, `Prelim/MVLemma8.lean` (with kernel-checked finite ranges, `Prelim/SmallG.lean`, `Prelim/SmallW.lean`).
 
 Notation: `S(α) = ∑_{M < n ≤ M+N} a(n) e(αn)`; `‖t‖ = |t - round t|` is the distance from `t`
 to the nearest integer.

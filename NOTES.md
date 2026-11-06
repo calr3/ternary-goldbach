@@ -22,7 +22,7 @@ Also done (sorry-free): `Explicit/LGrowthLeft` (`|L(z,χ)| ≤ 512 q⁹(q+1)(|�
 `|L'/L(z) − Σ_{|ρ−c|<5} m/(z−ρ)| ≤ 4.8 log(B_T/0.355)` on `|z−c| ≤ 5/2`; `≤ log(B_T/0.355)/log 2` zeros in
 `|ρ−c| ≤ 5`), `Explicit/RectResidue` (`rectInt`; `∮ ds/(s−ρ) = 2πi`; Cauchy's formula; residue theorem
 `∮ (f'/f) h = 2πi Σ_{ρ inside} m_ρ h(ρ)` for entire `f`, rectangle in `ball c (R/2)`, no zeros on sides).
-**Explicit formula DONE (2026-11-01)**: `Explicit/ExplicitFormula.explicit_formula` (no sorry; axioms only
+**Explicit formula DONE (2026-11-01)**: `Explicit/ExplicitFormula.explicit_formula` (no sorry; only the standard axioms
 propext/choice/Quot.sound): for `χ` primitive `≠ 1`, `η = t²e^{−t²/2}`, along `T_k ∈ [k+1, k+2]`,
 `Σ_{ρ ∈ (−1/2,3/2)×(−T_k,T_k)} m_ρ G_δ(ρ)x^ρ → −S − (1/2π)∫ (L'/L)(−1/2+iy)G_δ(−1/2+iy)x^{−1/2+iy}dy`.
 Also `Explicit/GMellin` (`G_δ` holomorphic on `ℜs > −2`, `|G_δ| ≤ K_δ e^{−0.28|t|}` on `−1/2 ≤ σ ≤ 3/2`).
@@ -121,13 +121,13 @@ chosen `≥ 1/(2N+2)` from all ordinates, by a measure argument) and the line `�
    constants in Props 9.x / Cor 9.3.3 / Cor 7.1.3 / Thm 7.1.4 must then be restated and re-verified.
    (Sharp alternative: Weil's explicit formula with a test function supported in `|log n| < log 2`.)
 7. *Dusart*: explicit formula for `ζ` + zero-free region (3-4-1 with step 4) + RH verification (numerical
-   axiom) + numerics; or weaken `dusart_theta` to what the uses need.
+   hypothesis) + numerics; or weaken `dusart_theta` to what the uses need.
 
 ## Plan: replacing `dusart_theta` (2026-11-01)
 
 Dusart's `|θ(x) − x| < x/log³x` for all `x ≥ 89 967 803` needs zero-density estimates (Faber–Kadiri /
 Ramaré) beyond `x ≈ e^{4000}`; we do not formalize those. Instead:
-1. **Numerical axioms** (computer-verified, finite range): [Büthe 2018, Thm 2] (arXiv:1511.02032, zeros to
+1. **Hypotheses** (computer-verified, finite range): [Büthe 2018, Thm 2] (arXiv:1511.02032, zeros to
    `10¹¹`): `0.05√x < x − θ(x) ≤ 1.95√x` for `1423 ≤ x ≤ 10¹⁹`; [Platt–Trudgian 2021] (arXiv:2004.09765):
    RH up to `3·10¹²`.
 2. **Digamma**: `ψ(s) = ∫₀^∞ (e^{−u} − (1+u)^{−s}) du/u` (Fubini + Frullani), so
@@ -168,7 +168,7 @@ Ramaré) beyond `x ≈ e^{4000}`; we do not formalize those. Instead:
 
 Model `zf/eps2.py` (session scratchpad): smoothing `φ(u) = Φ((a − log u)/δ) − Φ((b − log u)/δ)` (`Φ` normal cdf,
 `e^b = 10¹⁰/x`, `a = ±K₀δ`), `M(s) = e^{δ²s²/2}(e^{as} − e^{bs})/s` (entire), zeros: Jensen windows
-(`count_tail_windowG` at `T₀ = H = 3·10¹²`, `count_line_windowG` below), RH to `H` (Platt–Trudgian axiom),
+(`count_tail_windowG` at `T₀ = H = 3·10¹²`, `count_line_windowG` below), RH to `H` (Platt–Trudgian hypothesis),
 `zero_free` above `H`. Sandwich: `ψ(x) ≤ S(K₀δ)/Φ(K₀)`, `ψ(x) ≥ S(−K₀δ) − tail`. Achievable relative error:
 `6·10⁻⁷` at `x = 10¹⁹`, `≈ 2·10⁻¹¹` for `100 ≤ log x ≤ 7000` (`δH ≈ 7.5`, `K₀ = 7`), `< 1/log³x` again from
 `log x ≈ 12000` (needs the zero-free region; crude window bounds need `≈ 15000`). Interface plan:
@@ -178,7 +178,7 @@ relax `K ≤ 0.54` to `0.55` — `abs_ls_big` still gives `≤ 0.99` if `Σ 1/u�
 (`0.55·(1.034·π²/6 + 0.09·1.0117) + 0.0042 = 0.990`, check exactly) or a tighter partial sum.
 Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` — absolute size `≈ 10¹⁰`, negligible.
 
-## Fewer axioms (2026-11-01, after the audit)
+## Fewer hypotheses (2026-11-01, after the audit)
 
 * Step 1: `theta_sqrt` removed; it is a special case of `buthe_theta`.
 * Step 2: `psi_sqrt`, `psi_small`, `psi_mid`, `psi_mul_mid`, `theta_cube_small` removed, and
@@ -191,7 +191,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     * `theta_explicit` from `2·10⁸`, using `1.95√n < n/log³n` there;
     * the Type I hypotheses `V ≥ 2.5·10⁷` (the actual `V ≥ 2.7·10⁷`);
     * `F_large` from `2·10⁸`, with `mertens_product_small` re-run to `2·10⁸`.
-  * The unused `LambdaMuExtra` axioms were re-checked on their extended ranges (that file has
+  * The unused `LambdaMuExtra` hypotheses were re-checked on their extended ranges (that file has
     since been deleted).
 * Step 3: `mertens_small`, `prod_ap_le` and `fsq_le` proved, with the kernel doing the numerics:
   * `SmallMertens`: per-prime upper bounds on log p, per-`n` lower bounds on log n, and a rational
@@ -200,22 +200,22 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     split into ten ranges of 1000.
   * `SmallFsq`: endpoint checks in blocks of 4 values of `n`; for `n = 2` the 3000-term tail is checked
     in 12 blocks.
-  ternary_goldbach now depends on 28 axioms (14 our own, 7 published, 7 from [H]).
+  ternary_goldbach now depends on 28 hypotheses (14 our own, 7 published, 7 from [H]).
 * `H2_le` ((5.37)) and the corrected (5.36) `integral_H2_le` proved (`MinorArcs/H2Bound.lean`):
   * `T₂ = α_n + β_n/S` on `[n, n+1)` from `integral_g2`; the case split is `2 s max(r₁, r₂) ≤ n`;
   * kernel tables of `μ`, `σ` (`r ≤ 15`), `α_n`, `β_n` (`n ≤ 15`) and `log j` (`j ≤ 16`, `10⁻⁹`);
   * the integral by FTC with antiderivative `k(α log S − β/S)`; the excess at integers from these
     tables; `[2, 15]` by monotonicity (`H₂ ≥ 0.15107`), `[1, 2]` and `[15, 16]` by hand;
   * `g2`, `T2`, `H2` moved to `MinorArcs/T2Defs.lean` so that `TypeIIS1` can import the proofs.
-  ternary_goldbach now depends on 26 axioms (14 our own, 7 published, 5 from [H]).
-* Rigorous re-checks of all our computation axioms (`scripts/rigorous/`):
+  ternary_goldbach now depends on 26 hypotheses (14 our own, 7 published, 5 from [H]).
+* Rigorous re-checks of all our computational hypotheses (`scripts/rigorous/`):
   * `rig_checks.c`: MPFR intervals with directed rounding;
   * `moebius_sqrt_rig.c`: IEEE round-down mode, `10¹⁰` terms in 6 min.
   All pass; the values agree with the float scripts. Published equivalents:
   * `mertens_product_small`: [RS62, Thm 15] at primorials;
   * `moebius_sqrt_small`: [H, (2.24)];
   Building needs only `gcc`, `gmpy2` (for the MPFR headers) and the system MPFR.
-* (B.6) and (B.11) proved (`MinorArcs/Eta2Fourier.lean`); new axiom `eta2DD_small` for
+* (B.6) and (B.11) proved (`MinorArcs/Eta2Fourier.lean`); new hypothesis `eta2DD_small` for
   `0 ≤ t ≤ 655`:
   * `ibp2`: two integrations by parts against `e(−ut)` for a `C²` piece;
   * `eta2DD_eq`: `(2πt)² η̂₂ = eta2DD`;
@@ -224,8 +224,8 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * `norm_Jq_le`: one more integration by parts;
   * `norm_eta2log4_le`: `48 log 2` with no numerics, from FTC for `∫|h''|` (constant sign).
   The finite range is checked by `scripts/rigorous/eta2_fourier_rig.py` (python-flint/Arb, 3 s).
-  Found: [H]'s derivation of (9.94) drops the factor 2 of the cross term (`AXIOMS.md`, Finding 3).
-  ternary_goldbach now depends on 25 axioms (15 our own, 7 published, 3 from [H]).
+  Found: [H]'s derivation of (9.94) drops the factor 2 of the cross term (`HYPOTHESES.md`, Finding 3).
+  ternary_goldbach now depends on 25 hypotheses (15 our own, 7 published, 3 from [H]).
 * (9.94) proved (`MajorArcs/EtaPlusSqLog.lean`), with [H]'s constants; inputs `etaO_numerics` (now proved):
   * expand `(g + D)²` in `u = log t`;
   * cross terms by Parseval (`integral_conj_mul_fourier` via `Lp.inner_fourier_eq`, and Fubini for
@@ -233,18 +233,18 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * weights in the form `W(u) = eᵘ 1_{[0,2]}(eᵘ) k(eᵘ)` (`IF`) for integrability, with `t log t`
     continuous for the `log` weight;
   * computation: `scripts/rigorous/eta_circ_rig.py` (Arb, under a second).
-  ternary_goldbach now depends on 25 axioms (16 our own, 7 published, 2 from [H]).
+  ternary_goldbach now depends on 25 hypotheses (16 our own, 7 published, 2 from [H]).
 * (5.31) `T2_le` proved (`MinorArcs/T2Bound.lean`):
   * `T₂(S) = S⁻¹ ∫₀^S g₂ N` with `N` the count of odd `s ∈ (S/2y, S/y]`; the counting lemma via
     `#{odd ≤ n} = (n+1)/2`;
   * notation pitfall: the body of `∫ y in a..b, …` absorbs a following `+ …`, so parenthesize;
   * computations: `scripts/rigorous/t2_rig.c` (MPFR, `g₂(n)` for all `n ≤ 10⁸` in 8 min), giving
     `T2_small`, `T2_mid`;
-  * [H, Lemma 5.1.2] is the remaining axiom, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
+  * [H, Lemma 5.1.2] is the remaining hypothesis, used only for `x ≥ 10⁸`. Removing it needs Ramaré's
     `|m(x)| ≤ 0.03/log x` ([H, (2.21)]): our Lean `0.55/(log x − 0.75)` is about 18 times too weak.
-  ternary_goldbach now depends on 27 axioms (18 our own, 7 published, 2 from [H]).
+  ternary_goldbach now depends on 27 hypotheses (18 our own, 7 published, 2 from [H]).
 * [H, Lemma 5.1.2] proved (`MinorArcs/G2Moebius.lean` → `G2Euler.lean` → `G2Numerics.lean` →
-  `G2Bound.lean`): `|g₂(x)| ≤ 0.0215/(log x)² + 528(1 + log x)²/x`, from the new published axiom
+  `G2Bound.lean`): `|g₂(x)| ≤ 0.0215/(log x)² + 528(1 + log x)²/x`, from the new published hypothesis
   `ramare_moebius` ([H, (2.21)], Ram13) and `moebius_sqrt_small`:
   * one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`, `H_d = f·1_{(·,d)=1} ∗ (1/id) ≥ 0`, via
     `ArithmeticFunction` ring identities and `sum_Ioc_mul_eq_sum_sum`;
@@ -256,9 +256,9 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * the `d`-sum at `s = 1/2` is compared with `τ(d)/d` (multiplicative comparison on prime powers,
     `(t−1)⁴ + 1 ≥ 0`);
   * the tail integral in `T2Bound` is now `≤ 0.0036`.
-  ternary_goldbach now depends on 27 axioms (18 our own, 8 published, 1 from [H]).
-* [H, Prop 12.2.4] proved (`MinorArcs/LSQuot1.lean` … `LSQuot6.lean`); no [H] axiom remains:
-  * inputs: Ramaré's (12.12) (published axiom `ramare_Gq`, stated with an existential
+  ternary_goldbach now depends on 27 hypotheses (18 our own, 8 published, 1 from [H]).
+* [H, Prop 12.2.4] proved (`MinorArcs/LSQuot1.lean` … `LSQuot6.lean`); no [H] hypothesis remains:
+  * inputs: Ramaré's (12.12) (published hypothesis `ramare_Gq`, stated with an existential
     `c ∈ [1.3325822, 1.3325823]` since `c_E` is not computed in Lean) and the computation
     `prop1224_check` (`scripts/rigorous/p1224_check.c`, 22 min on 22 threads for `q < 2.2·10¹⁰`;
     [H] needed two weeks single-core, mostly because it recomputed more);
@@ -268,11 +268,11 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `p ≥ 37`);
   * the computation's (S)-branch uses the monotone form `log q + 1.039(n+1) ≤ 0.826 (qn)^{2/9}`, so
     Lean needs no concavity; τ = 2/9 makes the large-`q` condition polynomial;
-  * [H] slips found (AXIOMS.md Finding 4): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
+  * [H] slips found (HYPOTHESES.md Finding 4): Lemma 12.2.3 has `log Q + 1.312`, not `+ c_E`; (12.15)'s
     analytic range starts at `4.42·10⁷`, not `4·10⁷`;
   * name clashes to watch: `kap`, `Gq_nonneg`, `ghat`, `sum_moebius_divisors` already exist in
     `MinorArcs`.
-  ternary_goldbach now depends on 28 axioms (19 our own, 9 published, 0 from [H]).
+  ternary_goldbach now depends on 28 hypotheses (19 our own, 9 published, 0 from [H]).
 * Independent checks of the inputs:
   * `prop1224_check` was re-run in interval arithmetic (`scripts/rigorous/p1224_rig.c`).
   * `ramare_Gq` was checked against Ramaré's 1995 paper (numdam, open access: Lemma 3.4 and (3.6)).
@@ -284,28 +284,28 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * Item 1: `lemma7_numeric` and `GS_N0` were removed. Ramaré's (12.12) covers `r ≥ 21400`, and the
     kernel covers smaller `r` (`Prelim/SmallG.lean`: a DFS over subsets of primes, lower bound only,
     23 s, 7.5 GB peak). `ramare_Gq` moved to `Prelim/RamareGq.lean`; `MinorArcs.ramare_Gq` is now a
-    theorem. 26 axioms (17 own, 9 published).
+    theorem. 26 hypotheses (17 own, 9 published).
   * Item 2: `nonprime_small` was removed: analytic for `10⁶ ≤ n ≤ 10¹²` from `buthe_psi` and
     `ψ − θ ≤ θ(√n) + θ(n^{1/3}) + θ(n^{1/4}) + n^{1/5} log n` (`nonprime_sum_le4`), kernel below
-    (`Prelim/SmallNonprime.lean`, 31 blocks, 9 s). 25 axioms (16 own, 9 published).
+    (`Prelim/SmallNonprime.lean`, 31 blocks, 9 s). 25 hypotheses (16 own, 9 published).
   * Item 3: `logsq_small` was removed: Abel summation against `θ` for `40000 ≤ n ≤ 10⁶`
-    (`logsq_mid`), kernel below (`Prelim/SmallLogSq.lean`, 225 blocks, 78 s). 24 axioms (15 own).
+    (`logsq_mid`), kernel below (`Prelim/SmallLogSq.lean`, 225 blocks, 78 s). 24 hypotheses (15 own).
     Kernel lesson: a single `decide` over a 4203-element `IsChain` hits deep recursion, so the
     table is kept in chunks and only upper bounds are used (no sortedness needed).
   * Item 4: `liouville_small` was removed: `Ω(n)` by trial division (proved correct), a kernel walk
     over `n ≤ 10⁵` with fixed-point partial sums and the state certified at 105 chunk boundaries
-    (`Prelim/SmallLiouville.lean`, 4.7 min, 8.2 GB). 23 axioms (14 own).
+    (`Prelim/SmallLiouville.lean`, 4.7 min, 8.2 GB). 23 hypotheses (14 own).
   * Item 5: `lemma8_numeric` was removed: `lemma8_large` from `R ≥ 1000`, a weighted DFS lower bound
-    for `6 ≤ R < 1000` (`Prelim/SmallW.lean`, 18 blocks), exact rationals for `R < 6`. 22 axioms (13 own).
+    for `6 ≤ R < 1000` (`Prelim/SmallW.lean`, 18 blocks), exact rationals for `R < 6`. 22 hypotheses (13 own).
   * Item 6: `sum_odd_mu_sq_div_totient` was removed: trial division for `φ` and squarefreeness, a
     kernel walk with 150 certified chunk states (`Prelim/SmallMuPhi.lean`, about 10 min, the slowest
-    file). A DFS over the 13847 primes would recurse too deeply in the kernel. 21 axioms (12 own).
+    file). A DFS over the 13847 primes would recurse too deeply in the kernel. 21 hypotheses (12 own).
   * Item 7: `etaO_numerics` was removed: Taylor sandwich of `e^{−(t−1)²}` and exact polynomial and
     `tᵐ log t` integrals (`MajorArcs/EtaONum.lean`); crude polynomial bounds for `‖W₀''‖₂² ≤ 1000` and
-    `‖W₁''‖₂² ≤ 60`, which still fit (9.94) after re-choosing `λ`. 20 axioms (11 own, 9 published).
-* Published axiom `ramare_Gq` removed (goal 2026-11-02): Ramaré's (12.12) is proved
+    `‖W₁''‖₂² ≤ 60`, which still fit (9.94) after re-choosing `λ`. 20 hypotheses (11 own, 9 published).
+* Published hypothesis `ramare_Gq` removed (goal 2026-11-02): Ramaré's (12.12) is proved
   (`Prelim/Ramare.lean`, from `RamareConv` → `RamareFo` → `RamareLocal` → `RamareBound` →
-  `RamareMain` → `RamareLog`, plus `RamareConst`, `RamareWalk`, `RamareNum` for `c_E`). 19 axioms
+  `RamareMain` → `RamareLog`, plus `RamareConst`, `RamareWalk`, `RamareNum` for `c_E`). 19 hypotheses
   (11 own, 8 published). `RamareBound`, `RamareWalk` and `RamareNum` are generated by
   `scripts/ramare/gen_bound.py` and `gen_walk_num.py` (template `RamareNum.tmpl`).
   * `g_d = h_d ∗ v` with `v = [odd]/n`, `h_d = g_d ∗ (μ v)` (`wO_mul_vO : wO * vO = 1`), and
@@ -318,7 +318,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
   * Main terms via `EulerProduct.eulerProduct` (limit over `primesBelow`) and `tendsto_nhds_unique`;
     `∑' h_d log a` via `log a = ∑_q v_q(a) log q`, a fiberwise sum over `a = q^k b`, and `Bp` (the
     sum over `b` coprime to `q`).
-  * Found [Ram95, (3.9)] false: `∏_p (1 + (p^{1/3}+p^{2/3})/(p(p−1))) ≈ 8.0845 > 8` (AXIOMS.md
+  * Found [Ram95, (3.9)] false: `∏_p (1 + (p^{1/3}+p^{2/3})/(p(p−1))) ≈ 8.0845 > 8` (HYPOTHESES.md
     Finding 5). Ramaré's route would give about `7.36`.
   * `c_E ∈ [1.3325822734, 1.3325822894]` (`cR_bounds`; needed `[1.3325822, 1.3325823]`; the upper
     margin is `1.07·10⁻⁸`):
@@ -333,7 +333,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
       even `log k/k²` to 2000, `log p/(p³−p)` with trial-division primality `isPr_iff`), 24 chunks
       to `n = 20001`, 125 s total. Kernel pitfall: `congr 1` on `aL (2 (j + 1000) + 1) = aL (2j + 2001)`
       hits max recursion (unary unfolding); use `add_right_inj` + `tsum_congr` + `ring`.
-* `ramare_moebius` assessed (same goal) and left as an axiom.
+* `ramare_moebius` assessed (same goal) and left as a hypothesis.
   * arXiv:2408.05969 (Ramaré–Zuniga-Alterman, the sequel to Ram13) bootstraps from
     `μL² = μ⋆Λ⋆Λ − (μ⋆Λ)L`. Its inputs are `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El
     Marraki), `|M(x)| ≤ √x` for `x ≤ 10¹⁶` (Hurst), `ψ` bounds, and computed sums such as
@@ -362,7 +362,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
     `b G(a) ≤ 2.8` suffice. `Prelim/SmallCGrid.lean` (21 s) runs one walk over `u ≤ 3000`: an upper
     bound for `log u`, squarefreeness by trial division, and fixed-point upper bounds for every grid
     point. Generator: `scripts/gen_c_grid.py`.
-  * 14 axioms (6 own, 8 published).
+  * 14 hypotheses (6 own, 8 published).
 * Own computations 6 → 4 (2026-11-02, follow-up):
   * `moebius_sqrt_small` removed. `ramare_moebius` is now stated over its published range `x ≥ 11815`
     (Ram13 Cor. 1.4; float check `scripts/moebius_ramare_check.py`: max `0.029496` at `k = 11820`).
@@ -384,7 +384,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
       evaluates `adv` with symbolic arguments and runs out of memory, even after `generalize` (the
       beta-redex is reduced). Fix: state the step lemma for an arbitrary `r` (`Inv_stepR`) and
       instantiate it.
-  * 12 axioms (4 own, 8 published).
+  * 12 hypotheses (4 own, 8 published).
 * Own computations 4 → 2 (2026-11-02): `T2_small` and `T2_mid` removed; (5.31) `T2_le` is proved.
   * `MinorArcs/SmallG2.lean` (kernel, 54 s): walks `n ≤ 10⁴` with `F(r) = μ(r)⌊10³⁰/σ(r)⌋` for odd
     `r`, a binary trie (`T2Kernel.Tr`) of `Ã_d(n) = ∑_{r≤n, d∣r} F(r)` keyed by `d/2`, and
@@ -416,7 +416,7 @@ Vertical line `ℜs = −1/2`: `|M| ≲ √(x/10¹⁰)/|s| e^{−δ²y²/2}` —
       about `36/x`; the mean-square route gains `m(k)²` on average instead of its envelope.
   * `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0045 ≤ 0.3672` for `S ≥ 10⁴`.
   * [H, Lemma 5.1.2] (`G2Bound.lean`) stays proved but is no longer used.
-  * 10 axioms (2 own, 8 published).
+  * 10 hypotheses (2 own, 8 published).
 * Kernel limits measured (no `native_decide`):
   * about `10⁵` simple steps per declaration is fine and `10⁶` runs out of memory;
   * `Nat.primesBelow 10⁴` is too heavy; chunked checks and verified loops work.
@@ -850,12 +850,12 @@ Conclusion: `B` can come down to about `10¹⁶` (start the circle method at `10
 `10¹⁵` (with a short-window smoothing near the RH-to-`H` floor), each a large rework; `10¹⁰–10¹²` is
 out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc method.
 
-## One axiom per cited theorem; Büthe's θ bounds dropped (2026-11-02)
+## One hypothesis per cited theorem; Büthe's θ bounds dropped (2026-11-02)
 
-* `platt_odd`, `platt_even` → one axiom `platt_verification` (Platt's Thm 7.1, the two parities as a
-  conjunction); `platt_odd`, `platt_even` are now theorems with the same statements. 8 axioms.
-* `buthe_psi`, `buthe_theta` → one axiom `buthe_bounds` (Büthe's Thm 2: (1.5) and (1.6)–(1.7)). 7 axioms.
-* Then **Büthe's `θ` bounds (1.6)–(1.7) dropped**: the axiom is (1.5) alone (`buthe_psi`), and every `θ`
+* `platt_odd`, `platt_even` → one hypothesis `platt_verification` (Platt's Thm 7.1, the two parities as a
+  conjunction); `platt_odd`, `platt_even` are now theorems with the same statements. 8 hypotheses.
+* `buthe_psi`, `buthe_theta` → one hypothesis `buthe_bounds` (Büthe's Thm 2: (1.5) and (1.6)–(1.7)). 7 hypotheses.
+* Then **Büthe's `θ` bounds (1.6)–(1.7) dropped**: the hypothesis is (1.5) alone (`buthe_psi`), and every `θ`
   bound is derived from it via `|θ − n| ≤ 0.94√n + (ψ − θ)(n)`:
   * `ψ(N) − θ(N) ≤ √N (1.0054 + 0.048 log N)` on `[10⁹, 10¹⁹]` (`psi_sub_theta_le_buthe`: the squares
     give `θ(⌊√N⌋)`; a prime with `m³ ≤ N` has `961 m² ≤ N`, so `m ≤ ⌊√N⌋/31`; Büthe at both). With
@@ -890,7 +890,7 @@ out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc metho
 * `theta_bound`: `−7.401·10¹⁶ ≤ θ(n) − n ≤ 7.003·10¹⁶` on `[1423, 10²⁷]` (the lower side has
   `ψ − θ ≤ 2.001·63·√n`); sum `1.4404·10¹⁷`, so `binary_goldbach_input : BinaryGoldbachUpTo (145 * 10 ^ 15)`.
 * [OeSHP14] (PDF in hand): verification to `4·10¹⁸`, full double-check to `3·10¹⁷` (Table 1, §1.3;
-  AXIOMS.md had `4·10¹⁷` from the project page). `1.45·10¹⁷` is inside the double-checked range.
+  HYPOTHESES.md had `4·10¹⁷` from the project page). `1.45·10¹⁷` is inside the double-checked range.
 * What is left: `2·1533√x ≈ 9.7·10¹⁶` and `2·2.15·10⁻¹¹x ≈ 4.3·10¹⁶` at `10²⁷`.
   * The `x` term (`Kδ = 64/H`, the Gaussian smoothing width needed to kill zeros above `H`) alone
     forces `N ≳ 4.3·10¹⁶`.
@@ -903,9 +903,9 @@ out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc metho
   product over primes `< 10⁷` recomputed: `8.07754`). [HP13]'s introduction describes the
   Ramaré–Saouter route (RH to a height + binary Goldbach), which `SmallCases.lean` now follows.
 
-## Prime ladder replaced (2026-11-02): 9 axioms (2 own, 7 published)
+## Prime ladder replaced (2026-11-02): 9 hypotheses (2 own, 7 published)
 
-* Assessment of the published axioms (user asked which could be formalized or weakened):
+* Assessment of the published hypotheses (user asked which could be formalized or weakened):
   * `prime_ladder_input`: replaceable, done below.
   * `binary_goldbach_input`: stays (an exhaustive search). With `|θ − x| ≤ 6·10¹⁷` it could be
     weakened to about `1.1·10¹⁸`, but it is the same kind of computation.
@@ -916,7 +916,7 @@ out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc metho
     `[10⁵, 2·10⁸]` and the θ bounds of [H, §2] are tight.
   * `ramare_moebius`: stays. Its proof rests on computations of `M(x)`; our uses need a constant
     near `0.05/log x` (g₂ tail). `MoebiusBound.lean`'s `0.55/(log x − 0.7521)` is derived from it
-    (AXIOMS.md's Outlook called it elementary; fixed).
+    (HYPOTHESES.md's Outlook called it elementary; fixed).
 * `Helfgott/SmallCases.lean`: `theta_bound` (`|θ(n) − n| ≤ 6·10¹⁷` for `1423 ≤ n ≤ 10²⁷`):
   `buthe_theta` below `10¹⁹` (`1.95√n ≤ 7.8·10⁹`); above, `psi_plateau` (`2.15·10⁻¹¹ n + 15000√n +
   4.2·10¹⁰ ≤ 5·10¹⁷` at `10²⁷`, mostly `15000√n`) and `ψ − θ ≤ 2.001 log n √n ≤ 4.1·10¹⁵`. For odd `n > 4·10¹⁸ + 3`,
@@ -926,15 +926,15 @@ out of reach with RH to `3·10¹²`, Platt's GRH range and [H]'s minor-arc metho
   (ladder reduction, certificates for `4·10¹⁸ + 2`) deleted. Stale docstrings in `Main.lean`
   ("still `sorry`") and `LambdaMu.lean` (Ramaré "for `x ≥ 10¹⁰`") fixed.
 
-## Axiom audit (2026-11-01): `AXIOMS.md`
+## Hypothesis audit (2026-11-01): `HYPOTHESES.md`
 
-Every axiom has been checked against its source or script, and all scripts were re-run. Findings:
+Every hypothesis has been checked against its source or script, and all scripts were re-run. Findings:
 
 * **[H, (5.32)] is false for `v = 2`, so `integral_H2_le` ((5.36)) is false.**
   * Exactly, `∫₁⁴ T₂/S = 0.53344 > 0.37273 log 4`.
   * True version: `∫₁ᵀ H₂/S ≤ 0.15107 log T + 0.0231` (`scripts/h2_integral_check.py`; the supremum
     of the excess is `0.023059`, constant from `T = 16` on).
-  * **Done.** The axiom is replaced by the corrected bound. `integral_H2_comp` gives
+  * **Done.** The hypothesis is replaced by the corrected bound. `integral_H2_comp` gives
     `0.15107 log(x/UV) + 0.0231`, and the Type II totals have `0.60428 Λ₀ + 0.0924 + 8ζ³…`.
   * First case: our `ζ³` bound (`≤ 0.2355`) had room, so `B ≤ 0.30214 log t + 0.7468` (was
     `0.67506`). By AM–GM with the same `√ρ = 1.84332`, Thm 3.1.1's constant becomes `0.8764` (was
@@ -958,10 +958,10 @@ Every axiom has been checked against its source or script, and all scripts were 
 `dusart_theta` is gone. `Prelim/ThetaExplicit.lean` `theta_explicit`:
 `|θ(n) − n| < n/log³n + ε_pl(n)·n` for `n ≥ 89 967 803`, `ε_pl = 2.2·10⁻¹¹` for `3400 < log n < 20000`
 (`epl`), else `0`. Ranges:
-* `n ≤ 10¹⁰`: `theta_cube_small` (numerical axiom, `scripts/theta_cube_check.py`, max ratio `0.99934`).
-* `10¹⁰ < n ≤ 10¹⁹`: `buthe_theta` ([Büthe 2018, Thm 2], `|θ − n| ≤ 1.95√n`, numerical axiom).
+* `n ≤ 10¹⁰`: `theta_cube_small` (hypothesis, `scripts/theta_cube_check.py`, max ratio `0.99934`).
+* `10¹⁰ < n ≤ 10¹⁹`: `buthe_theta` ([Büthe 2018, Thm 2], `|θ − n| ≤ 1.95√n`, hypothesis).
 * `10¹⁹ ≤ x < e²⁰⁰⁰⁰`: `Explicit/PsiPlateau.lean` `psi_plateau` (`|ψ − x| ≤ 2.15·10⁻¹¹x + 15000√x + 4.2·10¹⁰`;
-  `δ = 8/H`, `K = 8`, `H = 3·10¹²`, RH to `H` = `rh_upto` [Platt–Trudgian 2021], numerical axiom).
+  `δ = 8/H`, `K = 8`, `H = 3·10¹²`, RH to `H` = `rh_upto` [Platt–Trudgian 2021], hypothesis).
 * `e²⁰⁰⁰⁰ ≤ x < e³⁵⁰⁰⁰`: `Explicit/PsiRange1.lean` `psi_range1` (`2.1·10⁻¹⁴x`; `δ = 1.4·10⁻¹⁵`, `K = 9`,
   zero-free region up to `Γ = 6.43·10¹⁵`).
 * `x ≥ e³⁵⁰⁰⁰`: `Explicit/PsiAsymp.lean` `psi_asymp` (`0.2x/log³x`; `K = ℓ+4`, `Γ = L⁴/5`, `δ = 5(ℓ+5)/L⁴`).
@@ -984,20 +984,20 @@ Consumers absorb `ε_pl`:
 
 ## Status (2026-11-01, final)
 
-* `ternary_goldbach` depends on **no `sorry`** and 36 axioms (`#print axioms`: the 33 before plus
+* `ternary_goldbach` depends on **no `sorry`** and 36 hypotheses (the 33 before plus
   `rh_upto`, `buthe_theta`, `theta_cube_small`). The audit later found `integral_H2_le` to be false
-  (see "Axiom audit" above).
+  (see "Hypothesis audit" above).
 
 ## Status (2026-11-01, latest)
 
-* `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 numerical axioms. Props 9.3.2, 9.4.2,
+* `ternary_goldbach` depends on 1 `sorry` — `dusart_theta` — and 33 hypotheses. Props 9.3.2, 9.4.2,
   9.5.1 are proved (`Explicit/`, `MajorArcs/Prop932.lean`, `Prop942.lean`, `Prop715.lean`) with weaker
   constants; Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7) restated; (14.27) still `1.049`.
 
 ## Status (2026-11-01, later)
 
 * `ternary_goldbach` depends on 4 `sorry`s — `dusart_theta` and the three cited explicit formulas
-  [H, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical axioms.
+  [H, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 hypotheses.
   **(14.27) is proved** (`MajorArcs/MajorTotal.lean`, constant `1.049` for [H]'s `1.058259`), so all of
   `Helfgott/Inputs.lean` is proved; the final margin is `1.049 − 1.0376 = 0.0114 x²/κ`.
 
@@ -1005,9 +1005,9 @@ Consumers absorb `ε_pl`:
 
 * `ternary_goldbach` depends on 5 `sorry`s — `major_arcs_input` ((14.27)), `dusart_theta`, and the three
   cited explicit formulas [H, Props 9.3.2, 9.4.2, 9.5.1] (conditional on GRH up to `T₀`) — and 33 numerical
-  axioms. (14.7) is proved (`MajorArcs/L2Major.lean`), with a Cauchy–Schwarz-free error analysis that
+  hypotheses. (14.7) is proved (`MajorArcs/L2Major.lean`), with a Cauchy–Schwarz-free error analysis that
   gives `8.688x … 8.709x` (so [H]'s `0.0754` slip is moot); it brought Prop 9.4.2 onto the main path and
-  added the numerical axiom `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`.
+  added the hypothesis `Σ_{q≤150000 odd} μ²(q)/φ(q) = 6.798779…`.
 
 ## Status (2026-10-31)
 
@@ -1053,8 +1053,8 @@ Consumers absorb `ε_pl`:
   28 explicitly labelled items (`scripts/sorry_deps.lean`): the 3 remaining `Helfgott/Inputs`
   items (major arcs (14.27), binary Goldbach ≤ 4·10¹⁸, prime ladder), the cited Part II results
   `cor_7_1_3`, `prop_7_1_5`, `l2_major_14_7`, `E_le_14_28`, and the literature bounds in
-  `Prelim/` ([RS62] etc., Lemma C.2.2): 16 `sorry`s now (large sieves proved) ((2.20) proved 2026-10-31, `Prelim/MoebiusCoprime.lean`). Plus 7 **numerical axioms** (Lean `axiom`s,
-  2026-10-31, at the user's request; listed in README "Numerical axioms"): `prop_12_2_4`, the
+  `Prelim/` ([RS62] etc., Lemma C.2.2): 16 `sorry`s now (large sieves proved) ((2.20) proved 2026-10-31, `Prelim/MoebiusCoprime.lean`). Plus 7 **hypotheses** (unproved
+  declarations, 2026-10-31, at the user's request; listed in the README): `prop_12_2_4`, the
   (B.6)/(B.2.3) Fourier bounds, `integral_H2_le`/`H2_le`/`T2_le`, `fsq_le`.
 * ✅ **`minor_arcs_input` is now a theorem** (`Helfgott/Inputs.lean` → `MinorArcs/MinorTotal.lean:
   minor_total`). Its dependency closure: the trusted inputs of Thm 3.1.1, Prop 12.2.4 (trusted
@@ -1089,8 +1089,8 @@ Consumers absorb `ε_pl`:
   * [H, §4.2]: **Lemma 4.2.2** (`TypeIProof.lean: lemma_4_2_2`) and **Lemma 4.2.3**
     (`TypeILogProof.lean: lemma_4_2_3`, the case §6.2.1 uses) are proved. Their only non-standard
     dependencies are the trusted `eta2_fourier_bound'` ([H, (B.6)]) and `eta2log_fourier_bound`
-    ([H, Lemma B.2.3]); checked by temporarily turning them into `axiom`s and running
-    `#print axioms`.
+    ([H, Lemma B.2.3]); checked by temporarily removing their proofs and listing
+    the declarations that depend on them.
   * **Lemma 4.2.4** (`TypeI2Rest.lean: lemma_4_2_4`) is proved, both cases. Its non-standard
     dependencies are `eta2_fourier_bound'`, (2.12), (2.15), (2.20) (checked with a script that
     walks the dependency closure for `sorryAx`; (2.16) turned out not to be needed).
@@ -1133,7 +1133,7 @@ Consumers absorb `ε_pl`:
   * Proved: the reduction (5.7)–(5.8) (`S1_eq`, bijection `(m,d₁,d₂) ↔ (s,r₁,r₂,l)`); Lemma 5.1.1
     for `v = 2` (`lemma_5_1_1`; main-term constant `(6/π²)P/σ(P)` from Mathlib's
     `L(χ₀μ, 2) = 1/L(χ₀, 2)`); (5.19) (`integral_g2`); **(5.34) `S1_bound`**.
-  * Numerical axioms: `fsq_le` (`f(X) ≤ 1.27X`, [H p. 83]; provable: reduce to integers `n ≤ 37` using
+  * Hypotheses: `fsq_le` (`f(X) ≤ 1.27X`, [H p. 83]; provable: reduce to integers `n ≤ 37` using
     `∑ μ²(m)/m² = 15/π²` — the extremal case `n = 2` needs `15/π² ≤ 1.52`, i.e. `π² ≥ 9.8684`);
     `T2_le` (`T₂(S) ≤ 0.37273` for `S ≥ 16`: Lemma 5.1.2 + the computations of [H pp. 90–92]);
     (5.36) `integral_H2_le`, (5.37) `H2_le`.
@@ -1225,12 +1225,12 @@ Consumers absorb `ε_pl`:
 
 ## Removing the remaining `sorry`s (goal set 2026-10-31)
 
-Policy (user): prove everything; finite computer checks may be stated as **numerical axioms**.
-Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are numerical axioms. Status 2026-10-31:
+Policy (user): prove everything; finite computer checks may be stated as **hypotheses**.
+Done: (2.20) proved; `binary_goldbach_input`, `prime_ladder_input` are hypotheses. Status 2026-10-31:
 `ternary_goldbach` depends on 5 `sorry`s (`dusart_theta`, `major_arcs_input`, `l2_major_14_7`,
-`MajorArcs.prop_9_3_2`, `MajorArcs.prop_9_5_1`) and 32 numerical axioms.
+`MajorArcs.prop_9_3_2`, `MajorArcs.prop_9_5_1`) and 32 hypotheses.
 *Part II split (2026-11-01, user's choice "work on Part II"):* Platt's verification is now the numerical
-axiom pair `platt_odd`/`platt_even` on Mathlib's `DirichletCharacter.LFunction` (`GRHUpTo χ T`); the analytic
+hypothesis pair `platt_odd`/`platt_even` on Mathlib's `DirichletCharacter.LFunction` (`GRHUpTo χ T`); the analytic
 explicit-formula results are cited *conditionally* on GRH up to `T₀` ([H, Prop 9.3.2], [H, Prop 9.5.1]);
 Cor 9.3.3 → Cor 7.1.3 and Prop 7.1.5 are proved (`MajorArcs/`). [H]'s numerics check out:
 `(1000/3)·log(10⁸/2π)·6.11·e^{−0.1598·1000/3} = 2.48404·10⁻¹⁹ ≤ 2.485·10⁻¹⁹`; for Prop 7.1.5 we use `T₀ = 440`
@@ -1248,7 +1248,7 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
 3. *`η₊ − η◦`* — **DONE** (`HHFourier.lean`, `integral_sq_etaPlus_sub_etaO_le`: `≤ 19.5/(2·200²)`): with `g(u) = h(eᵘ)`, `h_H(eᵘ) = (g * sin(Hv)/(πv))(u) = ∫_{|ξ|≤H/2π} ĝ(ξ)e(ξu)dξ`
    (Fubini, `sin(Hv)/(πv) = ∫_{|ξ|≤H/2π} e(ξv)dξ`); L² Fourier (`fourierL2_ae_eq`) gives `|g − g_H|₂² = ∫_{|ξ|>H/2π}|ĝ|²
    ≤ |g'|₂²/H²`; then `|η₊ − η◦|₂ ≤ sup(s^{3/2}e^{−s²/2}) |g'|₂/H` (`|g'|₂² = ∫₀² t h'(t)² dt ≈ 6.92`).
-4. *Main term* — **DONE** (`EtaPlusL2.lean`, `integral_fourier_etaPlus_Ioo_bounds`: `[0.6392, 0.640208]` for `T ≥ 4`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the axiom `integral_etaPlus_sq_log` (`x → ∞`);
+4. *Main term* — **DONE** (`EtaPlusL2.lean`, `integral_fourier_etaPlus_Ioo_bounds`: `[0.6392, 0.640208]` for `T ≥ 4`): `|η₊|₂² = 0.640206 ± 1.95·10⁻⁶` from the hypothesis `integral_etaPlus_sq_log` (`x → ∞`);
    for `T ≥ 4`, `|η₊|₂² − tail ≤ ∫_{|δ|<T}|η̂₊|² ≤ |η₊|₂²`, `tail ≤ 2·98/(8π)⁴ + 2|η₊−η◦|₂²` (Plancherel, done).
 5. *Coprime split* — **DONE** (`ArcChars.lean`, per modulus: `norm_S_sub_coprime_le`, `≤ 10⁻¹⁵x`): `|S − S'_q| ≤ B ≪ log x` (prime powers of `p ≤ 2r`), `S'_q` over `(n, q) = 1`;
    `|S|² ≤ (1+t)|S'|² + (1+1/t)B²` both ways.
@@ -1256,7 +1256,7 @@ constants suffice everywhere and `|η₊|₁` is not needed. Steps (files under 
    `S'_ψ = S'_{ψ*}` and `|S'_{ψ*} − S_{ψ*}| ≤ B`; Thm 7.1.4 (`thm_7_1_4_one/odd/even`) on `ψ*`: principal part
    `μ²(q)/φ(q) |S'(β)|²`, non-principal `≤ (E x + √(2r) B)²`, `E ≤ 2.3992·10⁻⁸`.
 7. *Assembly* — **DONE** (`L2Major.lean`, `l2_major_bounds`: `8.688x ≤ ∫ ≤ 8.709x`; `l2_major_14_7` is a theorem): translate arcs, `β = δ/x`, `T_q = δ₀r/q̃ ≥ 4`; parity pairing `Σ_{q∈Qset} μ²/φ =
-   2 Σ_{q odd ≤ r} μ²/φ`; **numerical axiom** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
+   2 Σ_{q odd ≤ r} μ²/φ`; **hypothesis** `Σ_{q≤150000 odd} μ²(q)/φ(q) ∈ [6.798779, 6.79878]` (finite sum).
 Then (14.27) via Prop 10.4.1 + §14.2 (main term (10.23), Euler product `C₀`, `η◦`-triple integral (10.22)).
 **(14.27): DONE** (`MajorArcs/MajorTotal.lean`, `major_total`; `major_arcs_input` is a theorem with `1.049`).
 Final numbers (units `x²/κ`): main `1.314 · 0.800689 = 1.05211`; `η₊ → η◦` + `β`-tail `2.85 · 2.03·10⁻⁵ · 49 = 0.00283`;
@@ -1316,17 +1316,17 @@ parts on `[ε, 2]` against `−G_H(log(t/u))`: `|h_H| ≤ (3/π)·TV(h) + O(Hε�
 `LiouvilleBound.lean`). Ramaré's Liouville route (Ram14 = hal-02572851) with our own `q = 1` input:
 1. `MoebiusBound`: `m(x)(log x + E(x)) = −∑_{n≤x} μ(n)/n (E(x/n) − E(x))` and
    `K = ∑_{n≤x}|E(x/n) − E(x)|/n ≤ 0.4259 + 0.0755 + 0.0378 ≤ 0.54` for `x ≥ 10¹⁰` (fine pieces below `1000`,
-   dyadic blocks to `10⁹`: numerical axioms `K_pieces`, `K_blocks`; Dusart beyond), so
+   dyadic blocks to `10⁹`: hypotheses `K_pieces`, `K_blocks`; Dusart beyond), so
    `|m(x)| ≤ 0.54/(log x − 0.7521)` ((2.13) for `E(x) ≥ −log(3/√2)`).
 2. `Liouville`: `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ` (multiplicativity, prime powers), `(Fχ_q) ∗ (Gχ_q) =
    (F ∗ G)χ_q`, and the `1/n`-weighted partial sums: Lemmas 2.3, 3.2, 2.5 of Ram14 for every `q`.
 3. `LiouvilleBound`: `|ℓ(z)| log z ≤ 0.99` for all `z > 1` — `z ≤ 10⁵` by the kernel check `liouville_small` (`Prelim/SmallLiouville.lean`)
-   (max `0.7831` at `z → 11⁻`); `10⁵ ≤ z < 10¹⁰` from `|m(y)| ≤ √(2/y)` (numerical axiom `moebius_sqrt_small`,
+   (max `0.7831` at `z → 11⁻`); `10⁵ ≤ z < 10¹⁰` from `|m(y)| ≤ √(2/y)` (hypothesis `moebius_sqrt_small`,
    a Möbius sieve to `10¹⁰`; max of `|m(k)|√((k+1)/2)` over `2 ≤ k < 10¹⁰` is `0.612` at `k = 2`, equality at
    `k = 1`); `z ≥ 10¹⁰` from step 1 for `z/u² ≥ 10¹⁰` (`∑ 1/u² ≤ 5/3`, `∑ log u/u² ≤ 1.0117`, total `0.984`).
    Then `|ℓ_q(x)| log(x/q) ≤ 0.99 q/φ(q)` (`∑_{d∣q} μ²(d)/d ≤ q/φ(q)` via `sum_factored_le`), `|ℓ_q| ≤ 5/3`.
 4. `|m_q(x)| ≤ (q/φ(q)) ∑_{u² ≤ x} |μ(u)|/u² β(log(x/q), u)`, `β(y, u) = min(5/3, 0.99/(y − 2 log u))` (or `5/3`);
-   `y·∑ ≤ 2.8` on `[2.8, 80)` by the grid axiom `C_grid` (step `0.01`, `u ≤ 3000`, max `2.7422`), for `y ≥ 80`
+   `y·∑ ≤ 2.8` on `[2.8, 80)` by the grid hypothesis `C_grid` (step `0.01`, `u ≤ 3000`, max `2.7422`), for `y ≥ 80`
    analytically (split at `u ≤ e^{y/8}`: `≤ 2.2 + 0.007`), and `|m_q| ≤ 1` for `y ≤ 2.8`.
 Downstream: `muBound` uses `2.8`; `typeI1_first` `1.80303 → 3.8`, `typeI2_first` `0.8 → 2.8`, and the
 first-case spill `5.21697 → 1.22` (`3.8 + 2.8 + 1.22 = 7.82`), so Theorem 3.1.1's statement is unchanged.
@@ -1402,12 +1402,12 @@ Büthe/Dusart/Kadiri inputs; importing it would also mean building a very large 
 **[MV73, Lemmas 7, 8]: DONE** (`Prelim/MVLemma7.lean`, `MVLemma8.lean`). Lemma 8 for `R > 10⁴` by Abel
 summation against Lemma 7 (`G(r) ≥ log r + 1.07`, `r ≥ 6`), comparing `∑ f(r) log(r/(r−1))` with
 `Φ(t) = log(t/(R+t))` via the monotonicity of `t log(1+1/t)` (margin 0.04); for `2 ≤ R ≤ 10⁴` from the book's
-finite endpoint check plus a finite monotonicity condition (numerical axiom). Lemma 7: `h = (nμ²/φ) ∗ μ`
+finite endpoint check plus a finite monotonicity condition (hypothesis). Lemma 7: `h = (nμ²/φ) ∗ μ`
 (`h(p) = 1/(p−1)`, `h(p²) = −p/(p−1)`), `G(N) = ∑_{d≤N} (h(d)/d) H(N/d)`, `∑ h(d)/d = 1` by Mathlib's
 `EulerProduct`, Rankin with `σ = 2/3`: `P = ∑|h(d)|d^{−2/3} ≤ 7.99·exp(0.1426) ≤ 9.32` (the finite product over
-`p < 10⁴` is a numerical axiom; the tail is bounded by an integral). Then
+`p < 10⁴` is a hypothesis; the tail is bounded by an integral). Then
 `|G(N) − log N − κ| ≤ (2 + 3/e + γ)P N^{−1/3}`; comparing with `N₀ = 3·10⁷` (numerical value of `G(N₀)`)
-eliminates `κ`. Finite range `6 ≤ r < 3·10⁷` is a numerical axiom. Checks: `scripts/mv_lemma8_check.py`.
+eliminates `κ`. Finite range `6 ≤ r < 3·10⁷` is a hypothesis. Checks: `scripts/mv_lemma8_check.py`.
 **Resource note:** the first `GS_asymp` proof (one big `nlinarith` over a large context) exhausted memory and
 crashed WSL; keep proofs split, use `linarith only`/`nlinarith only`, compile with `lake env lean -M 10000`, and
 rebuild many modules sequentially (`lake build M` one module at a time in topological order).
@@ -1569,7 +1569,7 @@ That is not `g_{wy}(r₁)`, so the `g(r₁)` of (13.13)/(14.43) must be read the
 ## Prop 12.2.4 with `c₊ = 2` (removes `prop1224_check`)
 
 [H]'s Prop 12.2.4 with `c₊ = 1.36` needed, for `q < 2.2·10¹⁰`, a computation over 88 million
-`(q, n)`: our axiom `prop1224_check`. Weakening the constant alone does not shrink it enough (at
+`(q, n)`: our hypothesis `prop1224_check`. Weakening the constant alone does not shrink it enough (at
 `c₊ = 2`, about 24 million checks remain, for smooth `q` up to `10⁹`). What works is a structural
 reduction, which `c₊ = 2` makes possible:
 * `Φ(q, n, L) = (q/φ) G_q(n) − log n − c − S_q + 0.1768 (q/φ) f₁ n^{−1/3} − (0.3414 (L − S_q) + 0.6674177)`;

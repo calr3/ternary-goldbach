@@ -1,4 +1,4 @@
-/* Rigorous re-checks of the finite numerical axioms (our own computations).
+/* Rigorous re-checks of the finite computations that were once hypotheses (our own).
 
    Every real quantity is enclosed in an interval [lo, hi] of MPFR numbers; each operation rounds
    lo down and hi up (MPFR is correctly rounded, so the enclosures are rigorous, including log, exp,

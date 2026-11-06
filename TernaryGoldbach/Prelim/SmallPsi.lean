@@ -7,8 +7,8 @@ import Mathlib
 `lcm(1, …, n) < e^{cn}`. We check `lcm(1, …, n) < e_lo^a · T(f)` with `cn = a + f`, `0 ≤ f < 1`,
 `e_lo = 2.7182818283 < e` and `T(f) = ∑_{i<12} f^i/i! ≤ e^f`. The check is a rational inequality
 evaluated by the kernel (`decide +kernel`, GMP arithmetic). The lcm is carried along a structurally
-recursive loop with `lcm(1, …, n+1) = lcm(lcm(1, …, n), n+1)`. No `native_decide`, so no axioms
-beyond the standard ones.
+recursive loop with `lcm(1, …, n+1) = lcm(lcm(1, …, n), n+1)`. No `native_decide`, so only the three
+standard axioms.
 
 The same check with `L = p`, `n = 1` gives upper bounds `log p < c` for single integers.
 -/

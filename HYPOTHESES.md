@@ -1,10 +1,11 @@
-# Axiom audit
+# Hypotheses and literature dependencies
 
 `ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
 `Classical.choice`, `Quot.sound`) and takes 4 hypotheses, all published results. They are defined in
-`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`). Inside the development they are `Fact` instances, and the theorems below (formerly
-axioms) are proved from them. None is a computation of our own. Each has been checked against its
-source.
+`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
+Inside the development they are `Fact` instances, and the theorems below (formerly unproved
+declarations) are proved from them. None is a computation of our own. Each has been checked against
+its source.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.

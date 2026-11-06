@@ -1,4 +1,4 @@
-"""Finite checks behind the numerical axioms `K_pieces` and `K_blocks` (Prelim/MoebiusBound.lean).
+"""Finite checks behind the former hypotheses `K_pieces` and `K_blocks` (Prelim/MoebiusBound.lean).
 
 Psi(k) = sum_{n<=k} Lambda(n)/n,  E(y) = Psi(floor y) - log y,  EZ = E(10^9).
 * K_pieces: sum_{k=1}^{999} sum_{i < m_k} g_{k,i} log(b/a) <= 0.4035, where m_k = ceil(400/k),

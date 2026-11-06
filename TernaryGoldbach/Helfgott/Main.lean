@@ -9,8 +9,9 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 # Assembling Helfgott's proof
 
 This file derives the ternary Goldbach conjecture from the inputs in
-`TernaryGoldbach.Helfgott.Inputs` and `SmallCases.lean`. There is no `sorry`; the axioms it depends
-on are listed by `#print axioms ternary_goldbach` and audited in `AXIOMS.md`.
+`TernaryGoldbach.Helfgott.Inputs` and `SmallCases.lean`. There is no `sorry`; `#print axioms ternary_goldbach`
+lists only Lean's three standard axioms. The hypotheses (`Fact` instances) are checked against their
+sources in `HYPOTHESES.md`.
 
 The argument follows [H13, §7.4]:
 
@@ -87,7 +88,7 @@ variable [Fact BinaryGoldbachInput]
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5`
 is a sum of three primes.
 
-It depends on the five hypotheses of `Statement.lean`, passed as `Fact` instances (see
+It depends on the four hypotheses of `Statement.lean`, passed as `Fact` instances (see
 `MainTheorems.lean` for the version with explicit hypotheses). -/
 theorem ternary_goldbach : Statement :=
   statement_of_upTo_of_from Helfgott.ternaryGoldbachUpTo Helfgott.ternaryGoldbachFrom

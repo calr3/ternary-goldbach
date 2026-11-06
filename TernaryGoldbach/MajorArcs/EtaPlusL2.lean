@@ -7,7 +7,7 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 /-!
 # `‖η₊‖₂²` and `∫_{|ξ|<T} |η̂₊(ξ)|² dξ`
 
-* `‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`: from the numerical axiom `integral_etaPlus_sq_log` ([H, (9.94)]),
+* `‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`: from `integral_etaPlus_sq_log` ([H, (9.94)], proved in `MajorArcs/EtaPlusSqLog.lean`),
   letting `x → ∞` (`∫ η₊² log(xt) = (log x) ‖η₊‖₂² + ∫ η₊² log t`).
 * For `T ≥ 4`: `‖η₊‖₂² − 0.001 ≤ ∫_{|ξ|<T} |η̂₊|² ≤ ‖η₊‖₂²` (Plancherel; the tail is at most
   `2·98/(2πT)⁴ + 2‖η₊ − η◦‖₂²`, `EtaCirc.lean`, `HHFourier.lean`).
@@ -83,7 +83,7 @@ theorem integral_sq_etaPlus_eq_Ioi : ∫ t, etaPlus t ^ 2 = ∫ t in Ioi 0, etaP
   refine (setIntegral_eq_integral_of_forall_compl_eq_zero fun t ht => ?_).symm
   rw [etaPlus_of_nonpos (not_lt.1 ht)]; ring
 
-/-- **`‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`** (from the numerical axiom `integral_etaPlus_sq_log`). -/
+/-- **`‖η₊‖₂² = 0.640206 + O*(1.951·10⁻⁶)`** (from `integral_etaPlus_sq_log`, `MajorArcs/EtaPlusSqLog.lean`). -/
 theorem abs_integral_sq_etaPlus_sub_le :
     |(∫ t, etaPlus t ^ 2) - 0.640206| ≤ 1.951e-6 := by
   rw [integral_sq_etaPlus_eq_Ioi]

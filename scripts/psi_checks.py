@@ -1,4 +1,4 @@
-"""Finite checks behind numerical axioms of Prelim/LambdaMu.lean (small ranges).
+"""Finite checks behind former hypotheses of Prelim/LambdaMu.lean (small ranges).
 
 * psi_small:      psi(n) < 1.03883 n            for 1 <= n < 2*10^6
 * nonprime_small: psi(n) - theta(n) < 1.4262 sqrt(n)   for 1 <= n <= 10^12
@@ -12,9 +12,9 @@
 
 Usage: python3 scripts/psi_checks.py   (needs numpy, mpmath; a few seconds, < 200 MB)
 
-NOTE (2026-11-01): psi_small is no longer an axiom (kernel-checked for n <= 586 in
-Prelim/SmallPsi.lean, Büthe's bound above); the other checks here still back axioms.
-mertens_small is no longer an axiom either (Prelim/SmallMertens.lean).
+NOTE (2026-11-01): psi_small is no longer a hypothesis (kernel-checked for n <= 586 in
+Prelim/SmallPsi.lean, Büthe's bound above); the other checks here backed hypotheses that were removed later.
+mertens_small is no longer a hypothesis either (Prelim/SmallMertens.lean).
 """
 import math
 import numpy as np

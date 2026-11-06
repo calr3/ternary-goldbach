@@ -14,7 +14,7 @@ height `T_q` for all primitive characters of conductor `q ≤ 4·10⁵` [H, §9.
 
 * `GRHUpTo χ T`: every zero `ρ` of `L(s, χ)` with `0 < ℜρ < 1`, `|ℑρ| ≤ T`, has `ℜρ = 1/2`
   (Mathlib's `DirichletCharacter.LFunction`; for `q = 1` this is `ζ`).
-* **`platt_verification`** (numerical axiom, Platt's Theorem 7.1): [H, §9.6] — `T_q = 10⁸/q` for odd
+* **`platt_verification`** (the hypothesis `PlattGRH`, Platt's Theorem 7.1): [H, §9.6] — `T_q = 10⁸/q` for odd
   `q ≤ 3·10⁵`, `T_q = max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵`; `platt_odd` and `platt_even`
   are its two halves.
 * [H, Prop 9.3.2] (the explicit-formula bound for `Σ Λ(n) χ(n) e(δn/x) η(n/x)`, `η(t) = t² e^{-t²/2}`,

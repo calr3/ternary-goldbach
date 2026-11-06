@@ -14,8 +14,8 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
 
 The four analytic inputs of [H, §14.4] (circle identity, major arcs (14.27), minor arcs (14.49),
 non-prime terms (14.51)) are proved here from the rest of the development.  The computational
-input for the small cases, `binary_goldbach_input` [OeSHP14], is a numerical axiom; the small
-cases themselves are in `SmallCases.lean`.  All numerical axioms are listed and audited in `AXIOMS.md`.
+input for the small cases, `binary_goldbach_input` [OeSHP14], is the hypothesis `BinaryGoldbachInput`; the small
+cases themselves are in `SmallCases.lean`.  All hypotheses are listed and checked against their sources in `HYPOTHESES.md`.
 
 [H]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
        version, which supersedes [H13], [Hela], [Helb].  **This is the reference the blueprint
@@ -75,7 +75,7 @@ theorem xOf_ge (N : ℕ) (hN27 : 10 ^ 27 ≤ N) : (4.9e26 : ℝ) ≤ xOf N := by
 *Proof:* `MajorArcs.major_total` (`MajorArcs/MajorTotal.lean`), following [H, §§14.1–14.2]. On the
 arcs of modulus `q` the sums are compared with `μ(q)/φ(q) η̂(−βx)x` by Cor 7.1.3 and Prop 7.1.5
 (the cited Part II inputs in `MinorArcs/PartIICited.lean`); the singular series is bounded below
-with the Mertens axiom; and `C_{η◦,η_*}(N/x)` is computed. -/
+with the Mertens product bound ([RS62, Thm 15], `Prelim.F_all`, proved); and `C_{η◦,η_*}(N/x)` is computed. -/
 theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     1.049 * xOf N ^ 2 / κ ≤
       (∫ α in Set.Ioc (0:ℝ) 1 ∩ majorArcs 8 r₀ (xOf N), integrand N α).re := by

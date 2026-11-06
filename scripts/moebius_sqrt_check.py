@@ -1,4 +1,4 @@
-"""Finite check behind the numerical axiom `moebius_sqrt_small` (Prelim/LiouvilleBound.lean):
+"""Finite check behind the former hypothesis `moebius_sqrt_small` (Prelim/LiouvilleBound.lean):
 
     |m(k)| <= sqrt(2/(k+1))   for 1 <= k < 10^10,   m(k) = sum_{n <= k} mu(n)/n,
 

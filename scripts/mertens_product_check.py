@@ -1,4 +1,4 @@
-"""Finite check behind the numerical axiom `mertens_product_small` (Prelim/MertensProduct.lean):
+"""Finite check behind the former hypothesis `mertens_product_small` (Prelim/MertensProduct.lean):
 
   for every prime 5 <= x <= 2*10^8,
       prod_{p <= x} p/(p-1) < e^gamma log theta(x) + 2.50637 / log theta(x),

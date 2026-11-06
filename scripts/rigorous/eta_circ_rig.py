@@ -1,4 +1,4 @@
-"""Rigorous check of the axiom `etaO_numerics` (MajorArcs/EtaPlusSqLog.lean), the numerical input
+"""Rigorous check of the former hypothesis `etaO_numerics` (MajorArcs/EtaPlusSqLog.lean), the numerical input
 of [H, (9.94)]:
 
     0.640205997 <= int_0^2 P0(t)^2 dt <= 0.640205998,

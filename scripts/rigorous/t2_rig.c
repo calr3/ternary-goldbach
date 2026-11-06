@@ -5,7 +5,7 @@
    f(r) = mu(r)/sigma(r) (r odd): when f(n) != 0, for each d | n: g2 += mu(d)(2 S_d f(n) + f(n)^2),
    S_d += f(n).
 
-   Checks (the axioms `T2_small`, `T2_mid` in T2Bound.lean):
+   Checks (the former hypotheses `T2_small`, `T2_mid` in T2Bound.lean):
    (1) T2(S) <= 0.37273 for 16 <= S < 10^5.  On [n, n+1), T2(S) = alpha_n + beta_n/S with
          alpha_n = sum_{s odd <= n} (g2(n div s)/s - g2(n div 2s)/(2s)),
          beta_n  = sum_{s odd <= n} (Cg(n div s) - Cg(n div 2s)),  Cg(k) = sum_{j<k} g2(j) - k g2(k)

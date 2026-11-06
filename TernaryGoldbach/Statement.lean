@@ -46,7 +46,7 @@ theorem statement_of_upTo_of_from {C : ℕ} (h₁ : TernaryGoldbachUpTo C)
 /-! ## Hypotheses
 
 The proof rests on four published numerical results, stated here as `Prop`s and passed to the
-theorems that need them as `Fact` instances (not as axioms). Each is a large computation, and none
+theorems that need them as `Fact` instances. Each is a large computation, and none
 is formalized. -/
 
 /-- D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535, arXiv:1203.5712:
