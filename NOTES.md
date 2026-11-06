@@ -593,6 +593,50 @@ Consequences:
         `sin x ≥ x − x³/6`, polynomial in `u`; closed forms for `I₀`, `I₁` (rays and rpow); and
         closed-form bounds for `∫ G(t) A_N(|t|+R) dt` (`log`² antiderivatives, a Gaussian tail) and
         `∫ G P`.
+    * **Done 2026-11-06: P8 (a)–(e).** No sorry; standard axioms only.
+      * `WeilLineSum`: `‖Mg(½+iγ)‖ ≤ C e^{−δ²γ²/2}/|γ|`; line zeros `|γ| ≤ 10¹⁰` by `weil_weighted`, and
+        `10¹⁰ < |γ| ≤ 3·10¹⁰` by Jensen windows times `e^{−δ²10²⁰/2}` (`line_sum_weil_all`).
+      * `WeilNumA`: `ψ_N(y) ≤ log((N+¼)/(N−¾)) + log y + 1/(2y) + 1/(32y²)` (unimodal sum against
+        `∫ x/(x²+z²)`); `B_R ≥ (2ℓ)⁴k₀` from `sin x ≥ x − x³/6`; `I₀`, `I₁` in closed form (`m = 2`).
+      * `WeilNumB`: `Φ⁺/B_R ≤ Ψ` with constants `p₀, κ₁, κ₀` (any upper bounds), evenness, and four
+        regions: Riemann sums on `[0, R+t₀]` and `[R+t₀, R+t₀r^n]`, a closed form with
+        `e^{−x} ≤ 1 − x + x²/2` up to `1/δ`, and Gaussian pieces beyond (`line_sum_closed`).
+      * `WeilNumC`: parameters `ℓ = 0.173`, `m = 2`, `N = 20`, `R = 13`, `n_A = 8`, `r = 5/4`,
+        `n_B = 20`. The Riemann sums are kernel-checked rational computations with certified logs
+        (`decide +kernel`; `scripts/p8_tables.py`). Result `line_sum_num`: for `3·10⁻¹⁰ ≤ δ ≤ 1/208`,
+        `Σ_{|γ|≤3·10¹⁰} m_ρ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2}+e^{b/2})(JW(δ) + e^{−δ²10²⁰/2}·LW)`, with
+        `JW(δ) = 0.16385 L² − 0.4271 L + 7.2032 + 57.73δ` and `L = log(1/δ)`.
+        This is 2–8% above the exact window bound (`scripts/p8_chain.py`).
+      * `PsiWeil`: `psi_upper_W`, `psi_lower_W` (the sandwiches with `ErrW`).
+      * The exact Lean bound, with `δ`, `K`, `y₀` optimized per `x` (`scripts/p8_psi_model.py`):
+        | `x` | `10⁶` | `10⁷` | `2.7·10⁷` | `10⁸` | `10⁹` | `10¹⁰` | `10¹²` | `10¹⁴` | `10¹⁷` |
+        |---|---|---|---|---|---|---|---|---|---|
+        | `ε(x)` | `2.8·10⁻²` | `8.6·10⁻³` | `5.3·10⁻³` | `2.8·10⁻³` | `9.3·10⁻⁴` | `3.2·10⁻⁴` | `4.0·10⁻⁵` | `5.0·10⁻⁶` | `2.2·10⁻⁷` |
+        | `ε√x` | 27.7 | 27.1 | 27.3 | 27.8 | 29.5 | 32.1 | 39.7 | 49.7 | 68.7 |
+        So `|θ(x) − x| < x/log³x` from about `10¹²` (`ε log³x = 0.84` there), `ψ ≤ 1.0054x` at
+        `2.7·10⁷`, and `ψ < 1.03883x` from about `6·10⁵`.
+    * **P9 plan** (2026-11-06). The Büthe frontier (a metaprogram over the dependency graph of
+      `ternary_goldbach_of_hypotheses`) is 10 Prelim theorems used outside Prelim:
+      (2.12) `sum_vonMangoldt_div_le_log`, (2.13) `log_sub_le_sum_vonMangoldt_div`, (2.14)
+      `sum_vonMangoldt_le_10004`, (2.15) `sum_vonMangoldt_lt`, `psiN_le`, (2.17) `sum_vonMangoldt_mul_lt'`,
+      (2.19) `sum_log_sq_primes_le`, (5.5) `sum_vonMangoldt_nonprime_lt`, `F_all` (Mertens product) and
+      `div_totient_lt` (C.2.2). Direct users of `buthe_psi`: `psi_lt_small'`, `psi_bounds`, `theta_explicit`,
+      `theta_le_buthe`, `psi_lower2`, `psi_upper_all`, `psi_lower_all`, `psi_mul_buthe`, `psi_lower_buthe`,
+      `logsq_mid`, `thetaN_ge`, `nonprime_mid`, `E1_diff_B`, `abel_term_err_B`, `thetaN_close_small`.
+      * (a) Small range by kernel: `[587, X₁]` with `X₁ ≈ 10⁶`. Trial division runs at about 500
+        numbers/s in the kernel, and long accumulator loops exhaust kernel memory. Plan: a block sieve on
+        big-`Nat` bitmasks (`Nat.lor`, shifts and division are GMP-accelerated; the mask of multiples of
+        `d` in a block is one division `2^r (2^{dc} − 1)/(2^d − 1)`). Then bound
+        `ψ(N_{j+1}) − ψ(N_j)` by `π_block · log N_{j+1}` (upper) or `π_block · log N_j` (lower), plus the
+        prime powers. Checkpoints about 0.1–1% apart suffice: `max ψ(y)/y` on `[587, 6·10⁵]` is well
+        below `1.03883`, and `psi_lower_all`'s `0.95√m` allows about `10⁻³` relative.
+      * (b) Analytic range: instantiate `psi_upper_W`/`psi_lower_W` on `[X₁, 10¹⁷]`, one `δ` per range.
+      * (c) Rework the frontier:
+        * (2.15), and with it (2.12) and `psiN_le`, need `ψ < 1.03883y` everywhere: (a) plus (b).
+        * (2.14) `1.0004` is not reachable below about `5·10⁹`. Replace it by `a₁₄(y) = 1 + 28/√y`
+          (`1.0054` at `2.7·10⁷`) and regenerate the Type I numerics. The model allows a uniform `1.04`.
+        * (2.17), (2.19), (5.5), `F_all`, `div_totient_lt`, `theta_explicit` (from about `10¹²`):
+          re-derive from (a), (b) and `psi_plateau`.
     * **Low-lying zeros decide the sharpness.** Each window spreads its weight over `±R`, with
       `R ≳ 1/ℓ ≈ 12`. Near `γ = 0` there are no zeros, but a crude `Φ⁺` puts phantom mass there,
       about 0.35 per unit height. Model `scripts/weil_window_model.py`, ratio bound/ideal for
