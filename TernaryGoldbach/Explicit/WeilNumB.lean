@@ -22,8 +22,10 @@ noncomputable def kap0 (ℓ : ℝ) (N : ℕ) (R : ℝ) : ℝ :=
     (cN N * I0 2 R + I1 2 R) / K0 ℓ R) + OffC ℓ 2 / K0 ℓ R
 noncomputable def p0 (ℓ R : ℝ) : ℝ := 2 * Real.exp (2 * ℓ) / kB ℓ R
 noncomputable def smallT (y : ℝ) : ℝ := 1 / π * (1 / (2 * y) + 1 / (16 * y ^ 2))
-noncomputable def PsiB (ℓ : ℝ) (N : ℕ) (R s : ℝ) : ℝ :=
-  p0 ℓ R / max 1 (ℓ * s) ^ 4 + kap1 ℓ R * Real.log (s + R) + kap0 ℓ N R + smallT (s + R)
+/-- `Ψ` with constants `p₀, κ₁, κ₀` (upper bounds for `p0`, `kap1`, `kap0`). -/
+noncomputable def PsiG (ℓ p₀ κ₁ κ₀ R s : ℝ) : ℝ :=
+  p₀ / max 1 (ℓ * s) ^ 4 + κ₁ * Real.log (s + R) + κ₀ + smallT (s + R)
+noncomputable def PsiB (ℓ : ℝ) (N : ℕ) (R s : ℝ) : ℝ := PsiG ℓ (p0 ℓ R) (kap1 ℓ R) (kap0 ℓ N R) R s
 
 theorem I0_two_nonneg {R : ℝ} (hR : 0 < R) : 0 ≤ I0 2 R := by rw [I0_two hR]; positivity
 theorem I1_two_nonneg {R : ℝ} (hR : 0 < R) : 0 ≤ I1 2 R := by rw [I1_two hR]; positivity
@@ -90,7 +92,7 @@ theorem PhiUp_div_le {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : 
   rw [e]
   have e2 : PsiB ℓ N R |t| = p0 ℓ R / max 1 (ℓ * |t|) ^ 4 + 1 / π * aC N (|t| + R) +
       1 / π * (((cN N + 1 / 2 * Real.log (|t| + R)) * I0 2 R + I1 2 R) / K0 ℓ R) + OffC ℓ 2 / K0 ℓ R := by
-    unfold PsiB kap1 kap0 smallT aC
+    unfold PsiB PsiG kap1 kap0 smallT aC
     field_simp
     ring
   rw [e2]
@@ -99,6 +101,16 @@ theorem PhiUp_div_le {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : 
   have h2 : 1 / π * (((cN N + 1 / 2 * Real.log (1 + |t|)) * I0 2 R + I1 2 R) / KRB ℓ 2 R) ≤
       1 / π * (((cN N + 1 / 2 * Real.log (|t| + R)) * I0 2 R + I1 2 R) / K0 ℓ R) :=
     mul_le_mul_of_nonneg_left htail (by positivity)
+  linarith
+
+theorem PsiB_le_PsiG {ℓ : ℝ} {N : ℕ} {R : ℝ} (hR : 1 ≤ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀)
+    (hk : kap1 ℓ R ≤ κ₁) (hk0 : kap0 ℓ N R ≤ κ₀) {s : ℝ} (hs : 0 ≤ s) :
+    PsiB ℓ N R s ≤ PsiG ℓ p₀ κ₁ κ₀ R s := by
+  unfold PsiB PsiG
+  have h0 : 0 < max 1 (ℓ * s) := lt_of_lt_of_le one_pos (le_max_left _ _)
+  have h1 : p0 ℓ R / max 1 (ℓ * s) ^ 4 ≤ p₀ / max 1 (ℓ * s) ^ 4 := by gcongr
+  have hl : 0 ≤ Real.log (s + R) := Real.log_nonneg (by linarith)
+  have h2 : kap1 ℓ R * Real.log (s + R) ≤ κ₁ * Real.log (s + R) := mul_le_mul_of_nonneg_right hk hl
   linarith
 
 /-! ### Evenness and Riemann sums -/
@@ -128,8 +140,8 @@ theorem integral_le_riemann {f w : ℝ → ℝ} {p c : ℕ → ℝ} {n : ℕ} (h
 
 /-! ### From `[−Y, Y]` to `[0, Y]` -/
 
-theorem continuous_PsiB_abs {ℓ : ℝ} (N : ℕ) {R : ℝ} (hR : 0 < R) : Continuous fun t : ℝ => PsiB ℓ N R |t| := by
-  unfold PsiB smallT
+theorem continuous_PsiG_abs (ℓ p₀ κ₁ κ₀ : ℝ) {R : ℝ} (hR : 0 < R) : Continuous fun t : ℝ => PsiG ℓ p₀ κ₁ κ₀ R |t| := by
+  unfold PsiG smallT
   have hpos : ∀ t : ℝ, 0 < |t| + R := fun t => by positivity
   refine (((continuous_const.div ((continuous_const.max (continuous_const.mul continuous_abs)).pow 4)
     fun t => ?_).add (continuous_const.mul ((continuous_abs.add continuous_const).log fun t => (hpos t).ne'))).add
@@ -148,32 +160,34 @@ theorem continuous_GW (δ R : ℝ) : Continuous (GW δ R) :=
   (continuous_gW δ (by norm_num)).comp (continuous_const.max (continuous_id.sub continuous_const))
 
 /-- The integrand on `[0, Y]`: `G(s) Ψ(|s|)`. -/
-noncomputable def WI (δ ℓ : ℝ) (N : ℕ) (R s : ℝ) : ℝ := GW δ R s * PsiB ℓ N R |s|
+noncomputable def WI (δ ℓ p₀ κ₁ κ₀ R s : ℝ) : ℝ := GW δ R s * PsiG ℓ p₀ κ₁ κ₀ R |s|
 
-theorem continuous_WI (δ ℓ : ℝ) (N : ℕ) {R : ℝ} (hR : 0 < R) : Continuous (WI δ ℓ N R) :=
-  (continuous_GW δ R).mul (continuous_PsiB_abs N hR)
+theorem continuous_WI (δ ℓ p₀ κ₁ κ₀ : ℝ) {R : ℝ} (hR : 0 < R) : Continuous (WI δ ℓ p₀ κ₁ κ₀ R) :=
+  (continuous_GW δ R).mul (continuous_PsiG_abs ℓ p₀ κ₁ κ₀ hR)
 
 /-- **Reduction to `[0, Y]`.** -/
 theorem window_int_le {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R)
-    (hkB : 0 < kB ℓ R) (hKK : K0 ℓ R ≤ KRB ℓ 2 R) (δ Y : ℝ) (hY : 0 ≤ Y) :
+    (hkB : 0 < kB ℓ R) (hKK : K0 ℓ R ≤ KRB ℓ 2 R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
+    (hk0 : kap0 ℓ N R ≤ κ₀) (δ Y : ℝ) (hY : 0 ≤ Y) :
     (∫ t in (-Y)..Y, gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t) / KRB ℓ 2 R ≤
-      2 * ∫ s in (0 : ℝ)..Y, WI δ ℓ N R s := by
+      2 * ∫ s in (0 : ℝ)..Y, WI δ ℓ p₀ κ₁ κ₀ R s := by
   have hR0 : 0 < R := by linarith
   have hK : 0 < KRB ℓ 2 R := lt_of_lt_of_le (by unfold K0; positivity) hKK
   rw [← intervalIntegral.integral_div]
   have hc1 : Continuous fun t : ℝ => gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t / KRB ℓ 2 R :=
     (((continuous_gW δ (by norm_num)).comp (continuous_const.max (continuous_abs.sub continuous_const))).mul
       (continuous_PhiUp ℓ 2 N R)).div_const _
-  have hc2 : Continuous fun t : ℝ => GW δ R |t| * PsiB ℓ N R |t| :=
-    ((continuous_GW δ R).comp continuous_abs).mul (continuous_PsiB_abs N hR0)
+  have hc2 : Continuous fun t : ℝ => GW δ R |t| * PsiG ℓ p₀ κ₁ κ₀ R |t| :=
+    ((continuous_GW δ R).comp continuous_abs).mul (continuous_PsiG_abs ℓ p₀ κ₁ κ₀ hR0)
   calc ∫ t in (-Y)..Y, gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t / KRB ℓ 2 R ≤
-      ∫ t in (-Y)..Y, GW δ R |t| * PsiB ℓ N R |t| := by
+      ∫ t in (-Y)..Y, GW δ R |t| * PsiG ℓ p₀ κ₁ κ₀ R |t| := by
         refine intervalIntegral.integral_mono_on (by linarith) (hc1.intervalIntegrable _ _)
           (hc2.intervalIntegrable _ _) fun t _ => ?_
         rw [mul_div_assoc]
-        exact mul_le_mul_of_nonneg_left (PhiUp_div_le hℓ hN hR hkB hKK t) (GW_nonneg δ R |t|)
-    _ = 2 * ∫ s in (0 : ℝ)..Y, WI δ ℓ N R s := by
-        have := integral_symm_abs (h := fun s => GW δ R s * PsiB ℓ N R s) hc2 Y
+        exact mul_le_mul_of_nonneg_left ((PhiUp_div_le hℓ hN hR hkB hKK t).trans
+          (PsiB_le_PsiG hR hp hk hk0 (abs_nonneg t))) (GW_nonneg δ R |t|)
+    _ = 2 * ∫ s in (0 : ℝ)..Y, WI δ ℓ p₀ κ₁ κ₀ R s := by
+        have := integral_symm_abs (h := fun s => GW δ R s * PsiG ℓ p₀ κ₁ κ₀ R s) hc2 Y
         rw [this]
         congr 1
         refine intervalIntegral.integral_congr fun t ht => ?_
@@ -183,32 +197,32 @@ theorem window_int_le {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R :
 /-! ### Regions A and B: Riemann sums -/
 
 /-- The value of `Ψ` on `[a, b]`, bounded by its monotone parts at the ends. -/
-noncomputable def PsiBar (ℓ : ℝ) (N : ℕ) (R a b : ℝ) : ℝ :=
-  p0 ℓ R / max 1 (ℓ * a) ^ 4 + kap1 ℓ R * Real.log (b + R) + kap0 ℓ N R + smallT (a + R)
+noncomputable def PsiBarG (ℓ p₀ κ₁ κ₀ R a b : ℝ) : ℝ :=
+  p₀ / max 1 (ℓ * a) ^ 4 + κ₁ * Real.log (b + R) + κ₀ + smallT (a + R)
 
-theorem PsiB_le_PsiBar {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hK0 : 0 < K0 ℓ R)
-    (hkB : 0 < kB ℓ R) {a b s : ℝ} (ha : 0 ≤ a) (hs : s ∈ Icc a b) :
-    PsiB ℓ N R s ≤ PsiBar ℓ N R a b := by
-  unfold PsiB PsiBar
-  have h1 : p0 ℓ R / max 1 (ℓ * s) ^ 4 ≤ p0 ℓ R / max 1 (ℓ * a) ^ 4 := by
-    have hp : 0 ≤ p0 ℓ R := by unfold p0; positivity
+theorem PsiG_le_PsiBarG {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀)
+    (hk₁ : 0 ≤ κ₁) {a b s : ℝ} (ha : 0 ≤ a) (hs : s ∈ Icc a b) :
+    PsiG ℓ p₀ κ₁ κ₀ R s ≤ PsiBarG ℓ p₀ κ₁ κ₀ R a b := by
+  unfold PsiG PsiBarG
+  have h1 : p₀ / max 1 (ℓ * s) ^ 4 ≤ p₀ / max 1 (ℓ * a) ^ 4 := by
+    have hp : 0 ≤ p₀ := hp₀
     have h0 : 0 < max 1 (ℓ * a) := lt_of_lt_of_le one_pos (le_max_left _ _)
     exact div_le_div_of_nonneg_left hp (by positivity)
       (pow_le_pow_left₀ h0.le (max_le_max le_rfl (by nlinarith [hs.1])) 4)
-  have h2 : kap1 ℓ R * Real.log (s + R) ≤ kap1 ℓ R * Real.log (b + R) :=
-    mul_le_mul_of_nonneg_left (Real.log_le_log (by linarith [hs.1]) (by linarith [hs.2])) (kap1_nonneg hR hK0)
+  have h2 : κ₁ * Real.log (s + R) ≤ κ₁ * Real.log (b + R) :=
+    mul_le_mul_of_nonneg_left (Real.log_le_log (by linarith [hs.1]) (by linarith [hs.2])) hk₁
   have h3 : smallT (s + R) ≤ smallT (a + R) := smallT_anti (by linarith) (by linarith [hs.1])
   linarith
 
-theorem PsiBar_nonneg {ℓ : ℝ} (N : ℕ) {R : ℝ} (hR : 0 < R) (hK0 : 0 < K0 ℓ R) (hkB : 0 < kB ℓ R)
-    (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
-    0 ≤ PsiBar ℓ N R a b := by
-  unfold PsiBar
-  have h1 : 0 ≤ p0 ℓ R / max 1 (ℓ * a) ^ 4 := by
+theorem PsiBarG_nonneg {ℓ : ℝ} {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀) (hk₁ : 0 ≤ κ₁)
+    (hκ : 0 ≤ κ₀ + κ₁ * Real.log R) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
+    0 ≤ PsiBarG ℓ p₀ κ₁ κ₀ R a b := by
+  unfold PsiBarG
+  have h1 : 0 ≤ p₀ / max 1 (ℓ * a) ^ 4 := by
     have h0 : 0 < max 1 (ℓ * a) := lt_of_lt_of_le one_pos (le_max_left _ _)
-    unfold p0; positivity
-  have h2 : kap1 ℓ R * Real.log R ≤ kap1 ℓ R * Real.log (b + R) :=
-    mul_le_mul_of_nonneg_left (Real.log_le_log hR (by linarith)) (kap1_nonneg hR hK0)
+    exact div_nonneg hp₀ (by positivity)
+  have h2 : κ₁ * Real.log R ≤ κ₁ * Real.log (b + R) :=
+    mul_le_mul_of_nonneg_left (Real.log_le_log hR (by linarith)) hk₁
   have h3 := smallT_nonneg (y := a + R) (by linarith)
   linarith
 
@@ -219,27 +233,26 @@ theorem gW_le_inv (δ : ℝ) {t₀ : ℝ} (ht₀ : 0 < t₀) (u : ℝ) : gW δ t
     have := sq_nonneg δ; have := sq_nonneg (max u t₀); nlinarith)
   exact div_le_div_of_nonneg_right this h0.le
 
-theorem WI_eq {δ ℓ : ℝ} {N : ℕ} {R s : ℝ} (hs : 0 ≤ s) : WI δ ℓ N R s = GW δ R s * PsiB ℓ N R s := by
+theorem WI_eq {δ ℓ p₀ κ₁ κ₀ : ℝ} {R s : ℝ} (hs : 0 ≤ s) : WI δ ℓ p₀ κ₁ κ₀ R s = GW δ R s * PsiG ℓ p₀ κ₁ κ₀ R s := by
   unfold WI; rw [abs_of_nonneg hs]
 
 /-- **Region A** (`0 ≤ s ≤ R + t₀`, where `G = e^{−δ²t₀²/2}/t₀ ≤ 1/t₀`): `n` equal steps. -/
-theorem regionA_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hkB : 0 < kB ℓ R)
-    (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R) (δ : ℝ) (n : ℕ) (hn : 0 < n) :
-    ∫ s in (0 : ℝ)..(R + 2.39), WI δ ℓ N R s ≤
-      ∑ k ∈ range n, PsiBar ℓ N R (k * ((R + 2.39) / n)) ((k + 1) * ((R + 2.39) / n)) / 2.39 *
+theorem regionA_le {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀) (hk₁ : 0 ≤ κ₁)
+    (hκ : 0 ≤ κ₀ + κ₁ * Real.log R) (δ : ℝ) (n : ℕ) (hn : 0 < n) :
+    ∫ s in (0 : ℝ)..(R + 2.39), WI δ ℓ p₀ κ₁ κ₀ R s ≤
+      ∑ k ∈ range n, PsiBarG ℓ p₀ κ₁ κ₀ R (k * ((R + 2.39) / n)) ((k + 1) * ((R + 2.39) / n)) / 2.39 *
         ((R + 2.39) / n) := by
-  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   set h := (R + 2.39) / n with hh
   have hh0 : 0 < h := div_pos (by linarith) hn'
   set p : ℕ → ℝ := fun k => k * h with hp
   have hpn : p n = R + 2.39 := by simp only [hp, hh]; field_simp
   have hpk : ∀ k, p (k + 1) = (k + 1) * h := fun k => by simp only [hp]; push_cast; ring
-  have hc := continuous_WI δ ℓ N hR
+  have hc := continuous_WI δ ℓ p₀ κ₁ κ₀ hR
   have e0 : (0 : ℝ) = p 0 := by simp [hp]
   rw [e0, ← hpn]
-  have hR' := integral_le_riemann (f := WI δ ℓ N R) (w := fun _ => (1 : ℝ)) (p := p)
-    (c := fun k => PsiBar ℓ N R (p k) (p (k + 1)) / 2.39) (n := n)
+  have hR' := integral_le_riemann (f := WI δ ℓ p₀ κ₁ κ₀ R) (w := fun _ => (1 : ℝ)) (p := p)
+    (c := fun k => PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) / 2.39) (n := n)
     (fun k _ => by simp only [hp]; push_cast; nlinarith) (fun k _ => hc.intervalIntegrable _ _)
     (fun k _ => intervalIntegrable_const) (fun k hk s hs => ?_)
   · refine hR'.trans (le_of_eq (Finset.sum_congr rfl fun k _ => ?_))
@@ -257,23 +270,22 @@ theorem regionA_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
       have := gW_le_inv δ (by norm_num : (0 : ℝ) < 2.39) (max 0 (s - R))
       unfold GW
       rwa [max_eq_right (max_le (by norm_num) (by linarith))] at this
-    have hPs := PsiB_le_PsiBar hℓ N hR hK0 hkB (by simp only [hp]; positivity) hs
-    have hPb := PsiBar_nonneg N hR hK0 hkB hκ (a := p k) (b := p (k + 1)) (by simp only [hp]; positivity)
+    have hPs := PsiG_le_PsiBarG (κ₀ := κ₀) hℓ hR hp₀ hk₁ (by simp only [hp]; positivity) hs
+    have hPb := PsiBarG_nonneg (ℓ := ℓ) hR hp₀ hk₁ hκ (a := p k) (b := p (k + 1)) (by simp only [hp]; positivity)
       (by simp only [hp]; positivity)
-    calc GW δ R s * PsiB ℓ N R s ≤ GW δ R s * PsiBar ℓ N R (p k) (p (k + 1)) :=
+    calc GW δ R s * PsiG ℓ p₀ κ₁ κ₀ R s ≤ GW δ R s * PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) :=
           mul_le_mul_of_nonneg_left hPs (GW_nonneg δ R s)
-      _ ≤ 1 / 2.39 * PsiBar ℓ N R (p k) (p (k + 1)) := mul_le_mul_of_nonneg_right hG hPb
-      _ = PsiBar ℓ N R (p k) (p (k + 1)) / 2.39 := by ring
+      _ ≤ 1 / 2.39 * PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) := mul_le_mul_of_nonneg_right hG hPb
+      _ = PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) / 2.39 := by ring
 
 /-- **Region B** (`R + t₀ ≤ s ≤ R + t₀ r^n`, where `G ≤ 1/(s − R)`): geometric steps. -/
-theorem regionB_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hkB : 0 < kB ℓ R)
-    (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R) (δ : ℝ) {r : ℝ} (hr : 1 ≤ r) (n : ℕ) :
-    ∫ s in (R + 2.39)..(R + 2.39 * r ^ n), WI δ ℓ N R s ≤
-      ∑ k ∈ range n, PsiBar ℓ N R (R + 2.39 * r ^ k) (R + 2.39 * r ^ (k + 1)) * Real.log r := by
-  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
+theorem regionB_le {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀) (hk₁ : 0 ≤ κ₁)
+    (hκ : 0 ≤ κ₀ + κ₁ * Real.log R) (δ : ℝ) {r : ℝ} (hr : 1 ≤ r) (n : ℕ) :
+    ∫ s in (R + 2.39)..(R + 2.39 * r ^ n), WI δ ℓ p₀ κ₁ κ₀ R s ≤
+      ∑ k ∈ range n, PsiBarG ℓ p₀ κ₁ κ₀ R (R + 2.39 * r ^ k) (R + 2.39 * r ^ (k + 1)) * Real.log r := by
   have hr0 : 0 < r := by linarith
   set p : ℕ → ℝ := fun k => R + 2.39 * r ^ k with hp
-  have hc := continuous_WI δ ℓ N hR
+  have hc := continuous_WI δ ℓ p₀ κ₁ κ₀ hR
   have hpk : ∀ k, 2.39 ≤ 2.39 * r ^ k := fun k => le_mul_of_one_le_right (by norm_num) (one_le_pow₀ hr)
   have hmono : ∀ k, p k ≤ p (k + 1) := fun k => by
     simp only [hp, pow_succ]; nlinarith [pow_pos hr0 k]
@@ -285,8 +297,8 @@ theorem regionB_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
     rw [Set.uIcc_of_le (hmono k)] at hs
     have : 0 < s - R := by have := hs.1; simp only [hp] at this; linarith [hpk k]
     exact (continuousAt_const.div (continuousAt_id.sub continuousAt_const) this.ne').continuousWithinAt
-  have hR' := integral_le_riemann (f := WI δ ℓ N R) (w := fun s => 1 / (s - R)) (p := p)
-    (c := fun k => PsiBar ℓ N R (p k) (p (k + 1))) (n := n)
+  have hR' := integral_le_riemann (f := WI δ ℓ p₀ κ₁ κ₀ R) (w := fun s => 1 / (s - R)) (p := p)
+    (c := fun k => PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1))) (n := n)
     (fun k _ => hmono k) (fun k _ => hc.intervalIntegrable _ _) (fun k _ => hw k) (fun k hk s hs => ?_)
   · refine hR'.trans (le_of_eq (Finset.sum_congr rfl fun k _ => ?_))
     congr 1
@@ -305,12 +317,12 @@ theorem regionB_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
       rw [hm] at this
       exact this
     have hpk0 : 0 ≤ p k := by simp only [hp]; positivity
-    have hPs := PsiB_le_PsiBar hℓ N hR hK0 hkB hpk0 hs
-    have hPb := PsiBar_nonneg N hR hK0 hkB hκ (a := p k) (b := p (k + 1)) hpk0 (hpk0.trans (hmono k))
-    calc GW δ R s * PsiB ℓ N R s ≤ GW δ R s * PsiBar ℓ N R (p k) (p (k + 1)) :=
+    have hPs := PsiG_le_PsiBarG (κ₀ := κ₀) hℓ hR hp₀ hk₁ hpk0 hs
+    have hPb := PsiBarG_nonneg (ℓ := ℓ) hR hp₀ hk₁ hκ (a := p k) (b := p (k + 1)) hpk0 (hpk0.trans (hmono k))
+    calc GW δ R s * PsiG ℓ p₀ κ₁ κ₀ R s ≤ GW δ R s * PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) :=
           mul_le_mul_of_nonneg_left hPs (GW_nonneg δ R s)
-      _ ≤ 1 / (s - R) * PsiBar ℓ N R (p k) (p (k + 1)) := mul_le_mul_of_nonneg_right hG hPb
-      _ = PsiBar ℓ N R (p k) (p (k + 1)) * (1 / (s - R)) := by ring
+      _ ≤ 1 / (s - R) * PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) := mul_le_mul_of_nonneg_right hG hPb
+      _ = PsiBarG ℓ p₀ κ₁ κ₀ R (p k) (p (k + 1)) * (1 / (s - R)) := by ring
 
 /-! ### Region C: `[R + U, R + 1/δ]` in closed form -/
 
@@ -380,19 +392,19 @@ theorem continuousOn_QC (δ c₀ κ₁ c₂ : ℝ) {a b : ℝ} (ha : 0 < a) (hab
     (continuousAt_const.mul ((hinv2.sub continuousAt_const).add (by fun_prop)))).continuousWithinAt
 
 /-- The constants of region C. -/
-noncomputable def c0C (ℓ : ℝ) (N : ℕ) (R U : ℝ) : ℝ := kap0 ℓ N R + p0 ℓ R / max 1 (ℓ * (U + R)) ^ 4
-noncomputable def c2C (ℓ R U : ℝ) : ℝ := 2 * R * kap1 ℓ R + 1 / (2 * π) + 1 / (16 * π * U)
+noncomputable def c0C (ℓ p₀ κ₀ R U : ℝ) : ℝ := κ₀ + p₀ / max 1 (ℓ * (U + R)) ^ 4
+noncomputable def c2C (κ₁ R U : ℝ) : ℝ := 2 * R * κ₁ + 1 / (2 * π) + 1 / (16 * π * U)
 
 /-- For `u ≥ U ≥ R`: `Ψ(u + R) ≤ c₀ + κ₁ log u + c₂/u`. -/
-theorem PsiB_shift_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hK0 : 0 < K0 ℓ R)
-    (hkB : 0 < kB ℓ R) {U u : ℝ} (hU : 0 < U) (hu : U ≤ u) :
-    PsiB ℓ N R (u + R) ≤ c0C ℓ N R U + kap1 ℓ R * Real.log u + c2C ℓ R U / u := by
+theorem PsiG_shift_le {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀)
+    (hk₁ : 0 ≤ κ₁) {U u : ℝ} (hU : 0 < U) (hu : U ≤ u) :
+    PsiG ℓ p₀ κ₁ κ₀ R (u + R) ≤ c0C ℓ p₀ κ₀ R U + κ₁ * Real.log u + c2C κ₁ R U / u := by
   have hu0 : 0 < u := by linarith
-  have hk1 := kap1_nonneg hR hK0
+  have hk1 := hk₁
   have hpi := Real.pi_pos
-  unfold PsiB c0C c2C
-  have h1 : p0 ℓ R / max 1 (ℓ * (u + R)) ^ 4 ≤ p0 ℓ R / max 1 (ℓ * (U + R)) ^ 4 := by
-    have hp : 0 ≤ p0 ℓ R := by unfold p0; positivity
+  unfold PsiG c0C c2C
+  have h1 : p₀ / max 1 (ℓ * (u + R)) ^ 4 ≤ p₀ / max 1 (ℓ * (U + R)) ^ 4 := by
+    have hp : 0 ≤ p₀ := hp₀
     have h0 : 0 < max 1 (ℓ * (U + R)) := lt_of_lt_of_le one_pos (le_max_left _ _)
     exact div_le_div_of_nonneg_left hp (by positivity)
       (pow_le_pow_left₀ h0.le (max_le_max le_rfl (by nlinarith)) 4)
@@ -406,36 +418,34 @@ theorem PsiB_shift_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 <
       rw [div_le_div_iff₀ (by positivity) (by positivity)]; nlinarith
     calc 1 / π * (1 / (2 * u) + 1 / (16 * u ^ 2)) ≤ 1 / π * (1 / (2 * u) + 1 / (16 * U * u)) := by gcongr
       _ = _ := by field_simp
-  have e : (2 * R * kap1 ℓ R + 1 / (2 * π) + 1 / (16 * π * U)) / u =
-      kap1 ℓ R * (2 * R / u) + (1 / (2 * π) + 1 / (16 * π * U)) / u := by field_simp; ring
+  have e : (2 * R * κ₁ + 1 / (2 * π) + 1 / (16 * π * U)) / u =
+      κ₁ * (2 * R / u) + (1 / (2 * π) + 1 / (16 * π * U)) / u := by field_simp; ring
   rw [e]
   nlinarith [mul_le_mul_of_nonneg_left h2 hk1]
 
 /-- **Region C.** -/
-theorem regionC_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hkB : 0 < kB ℓ R)
-    (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R) {δ U : ℝ} (hδ : 0 < δ) (hRU : R ≤ U) (hU0 : 2.39 ≤ U)
+theorem regionC_le {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀) (hk₁ : 0 ≤ κ₁)
+    (hκ : 0 ≤ κ₀ + κ₁ * Real.log R) {δ U : ℝ} (hδ : 0 < δ) (hRU : R ≤ U) (hU0 : 2.39 ≤ U)
     (hUδ : U ≤ 1 / δ) :
-    ∫ s in (R + U)..(R + 1 / δ), WI δ ℓ N R s ≤
-      PhiC δ (c0C ℓ N R U) (kap1 ℓ R) (c2C ℓ R U) (1 / δ) - PhiC δ (c0C ℓ N R U) (kap1 ℓ R) (c2C ℓ R U) U := by
-  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
+    ∫ s in (R + U)..(R + 1 / δ), WI δ ℓ p₀ κ₁ κ₀ R s ≤
+      PhiC δ (c0C ℓ p₀ κ₀ R U) (κ₁) (c2C κ₁ R U) (1 / δ) - PhiC δ (c0C ℓ p₀ κ₀ R U) (κ₁) (c2C κ₁ R U) U := by
   have hU : 0 < U := by linarith
-  set c₀ := c0C ℓ N R U
-  set κ₁ := kap1 ℓ R
-  set c₂ := c2C ℓ R U
-  have hk1 : 0 ≤ κ₁ := kap1_nonneg hR hK0
+  set c₀ := c0C ℓ p₀ κ₀ R U
+  set c₂ := c2C κ₁ R U
+  have hk1 : 0 ≤ κ₁ := hk₁
   have hc2 : 0 ≤ c₂ := by simp only [c₂, c2C]; have := Real.pi_pos; positivity
-  have hc0 : kap0 ℓ N R ≤ c₀ := by
+  have hc0 : κ₀ ≤ c₀ := by
     simp only [c₀, c0C]
     have h0 : 0 < max 1 (ℓ * (U + R)) := lt_of_lt_of_le one_pos (le_max_left _ _)
-    have : 0 ≤ p0 ℓ R / max 1 (ℓ * (U + R)) ^ 4 := by unfold p0; positivity
+    have : 0 ≤ p₀ / max 1 (ℓ * (U + R)) ^ 4 := div_nonneg hp₀ (by positivity)
     linarith
-  have e : ∫ s in (R + U)..(R + 1 / δ), WI δ ℓ N R s = ∫ u in U..(1 / δ), WI δ ℓ N R (u + R) := by
+  have e : ∫ s in (R + U)..(R + 1 / δ), WI δ ℓ p₀ κ₁ κ₀ R s = ∫ u in U..(1 / δ), WI δ ℓ p₀ κ₁ κ₀ R (u + R) := by
     rw [intervalIntegral.integral_comp_add_right]; congr 1 <;> ring
   rw [e, ← intervalIntegral.integral_eq_sub_of_hasDerivAt
     (fun u hu => hasDerivAt_PhiC δ c₀ κ₁ c₂ (lt_of_lt_of_le hU (by rw [Set.uIcc_of_le hUδ] at hu; exact hu.1)))
     ((continuousOn_QC δ c₀ κ₁ c₂ hU hUδ).intervalIntegrable)]
   refine intervalIntegral.integral_mono_on hUδ
-    ((continuous_WI δ ℓ N hR).comp (continuous_id.add continuous_const) |>.intervalIntegrable _ _)
+    ((continuous_WI δ ℓ p₀ κ₁ κ₀ hR).comp (continuous_id.add continuous_const) |>.intervalIntegrable _ _)
     ((continuousOn_QC δ c₀ κ₁ c₂ hU hUδ).intervalIntegrable) fun u hu => ?_
   have hu0 : 0 < u := lt_of_lt_of_le hU hu.1
   have huR : 0 ≤ u + R := by linarith
@@ -443,7 +453,7 @@ theorem regionC_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
   have hG : GW δ R (u + R) = Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u := by
     unfold GW gW
     rw [show u + R - R = u by ring, max_eq_right hu0.le, max_eq_left (by linarith [hu.1])]
-  have hP := PsiB_shift_le hℓ N hR hK0 hkB hU hu.1
+  have hP := PsiG_shift_le (κ₀ := κ₀) hℓ hR hp₀ hk₁ hU hu.1
   have hpos : 0 ≤ c₀ + κ₁ * Real.log u + c₂ / u := by
     have : κ₁ * Real.log R ≤ κ₁ * Real.log u := mul_le_mul_of_nonneg_left
       (Real.log_le_log hR (by linarith [hu.1])) hk1
@@ -452,7 +462,7 @@ theorem regionC_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
   have hx : 0 ≤ δ ^ 2 * u ^ 2 / 2 := by positivity
   have hE := exp_neg_le_quad hx
   rw [hG]
-  calc Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u * PsiB ℓ N R (u + R) ≤
+  calc Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u * PsiG ℓ p₀ κ₁ κ₀ R (u + R) ≤
       Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u * (c₀ + κ₁ * Real.log u + c₂ / u) :=
         mul_le_mul_of_nonneg_left hP (by positivity)
     _ ≤ (1 - δ ^ 2 * u ^ 2 / 2 + (δ ^ 2 * u ^ 2 / 2) ^ 2 / 2) / u * (c₀ + κ₁ * Real.log u + c₂ / u) :=
@@ -560,36 +570,34 @@ noncomputable def FpD : ℝ :=
   Real.log 3 * ((Real.exp (-(2 ^ 2 / 2)) - Real.exp (-(3 ^ 2 / 2))) / 2 ^ 2) + Real.exp (-(9 / 2)) / 3
 
 /-- **Region D.** -/
-theorem regionD_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R) (hkB : 0 < kB ℓ R)
-    (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R) {δ U W : ℝ} (hδ : 0 < δ) (hRU : R ≤ U) (hU0 : 2.39 ≤ U)
+theorem regionD_le {ℓ : ℝ} (hℓ : 0 < ℓ) {R : ℝ} (hR : 0 < R) {p₀ κ₁ κ₀ : ℝ} (hp₀ : 0 ≤ p₀) (hk₁ : 0 ≤ κ₁)
+    (hκ : 0 ≤ κ₀ + κ₁ * Real.log R) {δ U W : ℝ} (hδ : 0 < δ) (hRU : R ≤ U) (hU0 : 2.39 ≤ U)
     (hUδ : U ≤ 1 / δ) (hW : 3 / δ ≤ W) :
-    ∫ s in (R + 1 / δ)..(R + W), WI δ ℓ N R s ≤
-      (c0C ℓ N R U + kap1 ℓ R * Real.log (1 / δ) + c2C ℓ R U * δ) * EpD + kap1 ℓ R * FpD := by
-  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
+    ∫ s in (R + 1 / δ)..(R + W), WI δ ℓ p₀ κ₁ κ₀ R s ≤
+      (c0C ℓ p₀ κ₀ R U + κ₁ * Real.log (1 / δ) + c2C κ₁ R U * δ) * EpD + κ₁ * FpD := by
   have hU : 0 < U := by linarith
-  set c₀ := c0C ℓ N R U
-  set κ₁ := kap1 ℓ R
-  set c₂ := c2C ℓ R U
+  set c₀ := c0C ℓ p₀ κ₀ R U
+  set c₂ := c2C κ₁ R U
   set C₁ := c₀ + κ₁ * Real.log (1 / δ) + c₂ * δ with hC₁
-  have hk1 : 0 ≤ κ₁ := kap1_nonneg hR hK0
+  have hk1 : 0 ≤ κ₁ := hk₁
   have hc2 : 0 ≤ c₂ := by simp only [c₂, c2C]; have := Real.pi_pos; positivity
-  have hc0 : kap0 ℓ N R ≤ c₀ := by
+  have hc0 : κ₀ ≤ c₀ := by
     simp only [c₀, c0C]
     have h0 : 0 < max 1 (ℓ * (U + R)) := lt_of_lt_of_le one_pos (le_max_left _ _)
-    have : 0 ≤ p0 ℓ R / max 1 (ℓ * (U + R)) ^ 4 := by unfold p0; positivity
+    have : 0 ≤ p₀ / max 1 (ℓ * (U + R)) ^ 4 := div_nonneg hp₀ (by positivity)
     linarith
   have hC0 : 0 ≤ C₁ := by
     have : κ₁ * Real.log R ≤ κ₁ * Real.log (1 / δ) :=
       mul_le_mul_of_nonneg_left (Real.log_le_log hR (by linarith)) hk1
     have : 0 ≤ c₂ * δ := by positivity
     linarith
-  have e : ∫ s in (R + 1 / δ)..(R + W), WI δ ℓ N R s = ∫ u in (1 / δ)..W, WI δ ℓ N R (u + R) := by
+  have e : ∫ s in (R + 1 / δ)..(R + W), WI δ ℓ p₀ κ₁ κ₀ R s = ∫ u in (1 / δ)..W, WI δ ℓ p₀ κ₁ κ₀ R (u + R) := by
     rw [intervalIntegral.integral_comp_add_right]; congr 1 <;> ring
   rw [e]
-  have hf : Continuous fun u => WI δ ℓ N R (u + R) :=
-    (continuous_WI δ ℓ N hR).comp (continuous_id.add continuous_const)
+  have hf : Continuous fun u => WI δ ℓ p₀ κ₁ κ₀ R (u + R) :=
+    (continuous_WI δ ℓ p₀ κ₁ κ₀ hR).comp (continuous_id.add continuous_const)
   have hle : ∀ u, 1 / δ ≤ u →
-      WI δ ℓ N R (u + R) ≤ Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u * (C₁ + κ₁ * Real.log (δ * u)) := by
+      WI δ ℓ p₀ κ₁ κ₀ R (u + R) ≤ Real.exp (-(δ ^ 2 * u ^ 2 / 2)) / u * (C₁ + κ₁ * Real.log (δ * u)) := by
     intro u hu
     have hu0 : 0 < u := lt_of_lt_of_le (by positivity) hu
     have huU : U ≤ u := hUδ.trans hu
@@ -598,7 +606,7 @@ theorem regionD_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
       unfold GW gW
       rw [show u + R - R = u by ring, max_eq_right hu0.le, max_eq_left (by linarith)]
     rw [hG]
-    have hP := PsiB_shift_le hℓ N hR hK0 hkB hU huU
+    have hP := PsiG_shift_le (κ₀ := κ₀) hℓ hR hp₀ hk₁ hU huU
     have hlog : Real.log u = Real.log (1 / δ) + Real.log (δ * u) := by
       rw [← Real.log_mul (by positivity) (by positivity)]; congr 1; field_simp
     have hc2u : c₂ / u ≤ c₂ * δ := by
@@ -617,7 +625,7 @@ theorem regionD_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
     (fun u hu => hle u ((div_le_div_of_nonneg_right (by norm_num) hδ.le).trans hu))
   have p5 := gauss_tail hδ hW hC0 hk1 hf
     (fun u hu => hle u ((div_le_div_of_nonneg_right (by norm_num) hδ.le).trans hu))
-  have hi : ∀ a b : ℝ, IntervalIntegrable (fun u => WI δ ℓ N R (u + R)) volume a b :=
+  have hi : ∀ a b : ℝ, IntervalIntegrable (fun u => WI δ ℓ p₀ κ₁ κ₀ R (u + R)) volume a b :=
     fun a b => hf.intervalIntegrable a b
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi _ (5 / 4 / δ)) (hi _ W),
     ← intervalIntegral.integral_add_adjacent_intervals (hi _ (3 / 2 / δ)) (hi _ W),
@@ -633,38 +641,42 @@ theorem regionD_le {ℓ : ℝ} (hℓ : 0 < ℓ) (N : ℕ) {R : ℝ} (hR : 0 < R)
 /-! ### Assembly -/
 
 /-- The four regions, `Ψ`-integrated. -/
-noncomputable def RegA (ℓ : ℝ) (N : ℕ) (R : ℝ) (n : ℕ) : ℝ :=
-  ∑ k ∈ range n, PsiBar ℓ N R (k * ((R + 2.39) / n)) ((k + 1) * ((R + 2.39) / n)) / 2.39 * ((R + 2.39) / n)
-noncomputable def RegB (ℓ : ℝ) (N : ℕ) (R r : ℝ) (n : ℕ) : ℝ :=
-  ∑ k ∈ range n, PsiBar ℓ N R (R + 2.39 * r ^ k) (R + 2.39 * r ^ (k + 1)) * Real.log r
-noncomputable def RegC (ℓ : ℝ) (N : ℕ) (R U δ : ℝ) : ℝ :=
-  PhiC δ (c0C ℓ N R U) (kap1 ℓ R) (c2C ℓ R U) (1 / δ) - PhiC δ (c0C ℓ N R U) (kap1 ℓ R) (c2C ℓ R U) U
-noncomputable def RegD (ℓ : ℝ) (N : ℕ) (R U δ : ℝ) : ℝ :=
-  (c0C ℓ N R U + kap1 ℓ R * Real.log (1 / δ) + c2C ℓ R U * δ) * EpD + kap1 ℓ R * FpD
+noncomputable def RegA (ℓ p₀ κ₁ κ₀ R : ℝ) (n : ℕ) : ℝ :=
+  ∑ k ∈ range n, PsiBarG ℓ p₀ κ₁ κ₀ R (k * ((R + 2.39) / n)) ((k + 1) * ((R + 2.39) / n)) / 2.39 * ((R + 2.39) / n)
+noncomputable def RegB (ℓ p₀ κ₁ κ₀ R r : ℝ) (n : ℕ) : ℝ :=
+  ∑ k ∈ range n, PsiBarG ℓ p₀ κ₁ κ₀ R (R + 2.39 * r ^ k) (R + 2.39 * r ^ (k + 1)) * Real.log r
+noncomputable def RegC (ℓ p₀ κ₁ κ₀ R U δ : ℝ) : ℝ :=
+  PhiC δ (c0C ℓ p₀ κ₀ R U) (κ₁) (c2C κ₁ R U) (1 / δ) - PhiC δ (c0C ℓ p₀ κ₀ R U) (κ₁) (c2C κ₁ R U) U
+noncomputable def RegD (ℓ p₀ κ₁ κ₀ R U δ : ℝ) : ℝ :=
+  (c0C ℓ p₀ κ₀ R U + κ₁ * Real.log (1 / δ) + c2C κ₁ R U * δ) * EpD + κ₁ * FpD
 
 /-- **The window integral**, `(∫ G Φ⁺)/B_R ≤ 2(A + B + C + D)`. -/
 theorem window_int_regions {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R)
-    (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R)
+    (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
+    (hk0 : kap0 ℓ N R ≤ κ₀) (hκ : 0 ≤ κ₀ + κ₁ * Real.log R)
     {r : ℝ} (hr : 1 ≤ r) {nA nB : ℕ} (hnA : 0 < nA) (hRU : R ≤ 2.39 * r ^ nB) {δ : ℝ} (hδ : 0 < δ)
     (hUδ : 2.39 * r ^ nB ≤ 1 / δ) (hW : 3 / δ ≤ 1e10) :
     (∫ t in (-(1e10 + R))..(1e10 + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t) / KRB ℓ 2 R ≤
-      2 * (RegA ℓ N R nA + RegB ℓ N R r nB + RegC ℓ N R (2.39 * r ^ nB) δ + RegD ℓ N R (2.39 * r ^ nB) δ) := by
+      2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) := by
   have hR0 : 0 < R := by linarith
   have hKK := KRB_ge hℓ hR0.le hlR
   have hU0 : 2.39 ≤ 2.39 * r ^ nB := le_mul_of_one_le_right (by norm_num) (one_le_pow₀ hr)
   have hδW : 1 / δ ≤ 1e10 := by
     have : 1 / δ ≤ 3 / δ := div_le_div_of_nonneg_right (by norm_num) hδ.le
     linarith
-  refine (window_int_le hℓ hN hR hkB hKK δ (1e10 + R) (by linarith)).trans ?_
-  have hi : ∀ a b : ℝ, IntervalIntegrable (WI δ ℓ N R) volume a b :=
-    fun a b => (continuous_WI δ ℓ N hR0).intervalIntegrable a b
+  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
+  have hp₀ : 0 ≤ p₀ := le_trans (by unfold p0; positivity) hp
+  have hk₁ : 0 ≤ κ₁ := le_trans (kap1_nonneg hR0 hK0) hk
+  refine (window_int_le hℓ hN hR hkB hKK hp hk hk0 δ (1e10 + R) (by linarith)).trans ?_
+  have hi : ∀ a b : ℝ, IntervalIntegrable (WI δ ℓ p₀ κ₁ κ₀ R) volume a b :=
+    fun a b => (continuous_WI δ ℓ p₀ κ₁ κ₀ hR0).intervalIntegrable a b
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi 0 (R + 2.39)) (hi _ (1e10 + R)),
     ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 2.39 * r ^ nB)) (hi _ (1e10 + R)),
     ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 1 / δ)) (hi _ (1e10 + R))]
-  have hA := regionA_le hℓ N hR0 hkB hκ δ nA hnA
-  have hB := regionB_le hℓ N hR0 hkB hκ δ hr nB
-  have hC := regionC_le hℓ N hR0 hkB hκ hδ hRU hU0 hUδ
-  have hD := regionD_le hℓ N hR0 hkB hκ hδ hRU hU0 hUδ hW
+  have hA := regionA_le hℓ hR0 hp₀ hk₁ hκ δ nA hnA
+  have hB := regionB_le hℓ hR0 hp₀ hk₁ hκ δ hr nB
+  have hC := regionC_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ
+  have hD := regionD_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ hW
   rw [show (1e10 : ℝ) + R = R + 1e10 by ring]
   unfold RegA RegB RegC RegD
   linarith
@@ -672,17 +684,18 @@ theorem window_int_regions {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N)
 /-- **The line zeros `|γ| ≤ 3·10¹⁰`, in closed form.** -/
 theorem line_sum_closed [Fact TernaryGoldbach.RHUpTo] {ℓ : ℝ} (hℓ : 0 < ℓ) (hℓ1 : ℓ ≤ 1)
     (h2 : Real.exp (2 * (2 : ℕ) * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R) (hR1 : R ≤ 1e9)
-    (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) (hκ : 0 ≤ kap0 ℓ N R + kap1 ℓ R * Real.log R)
+    (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
+    (hk0 : kap0 ℓ N R ≤ κ₀) (hκ : 0 ≤ κ₀ + κ₁ * Real.log R)
     {r : ℝ} (hr : 1 ≤ r) {nA nB : ℕ} (hnA : 0 < nA) (hRU : R ≤ 2.39 * r ^ nB) {δ : ℝ} (hδ : 0 < δ)
     (hUδ : 2.39 * r ^ nB ≤ 1 / δ) (hW : 3 / δ ≤ 1e10) (a b T : ℝ) :
     ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
-        (2 * (RegA ℓ N R nA + RegB ℓ N R r nB + RegC ℓ N R (2.39 * r ^ nB) δ + RegD ℓ N R (2.39 * r ^ nB) δ) +
+        (2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) +
           Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW) := by
   have hR0 : 0 < R := by linarith
   have hK : 0 < KRB ℓ 2 R := lt_of_lt_of_le (by positivity) (KRB_ge hℓ hR0.le hlR)
   refine (line_sum_weil_all hℓ hℓ1 (le_refl 2) h2 hN hR hR1 hK a b δ T).trans ?_
-  have hreg := window_int_regions hℓ hN hR hlR hkB hκ hr hnA hRU hδ hUδ hW
+  have hreg := window_int_regions hℓ hN hR hlR hkB hp hk hk0 hκ hr hnA hRU hδ hUδ hW
   gcongr
 
 end TernaryGoldbach.Explicit
