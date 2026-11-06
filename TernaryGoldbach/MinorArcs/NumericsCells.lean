@@ -10,7 +10,7 @@ open TernaryGoldbach.Helfgott (κ)
 
 namespace TernaryGoldbach.MinorArcs
 
-theorem c0_g0 : ghatY (1e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0602338 := by
+theorem c0_g0 : ghatY (1e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.060272 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 8.078748)
     (ρ := 0.623985) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -32,7 +32,7 @@ theorem c0_g0 : ghatY (1e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0602338 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p0 : ghatY (1e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0602336 := by
+theorem c0_p0 : ghatY (1e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0602719 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 8.078741)
     (ρ := 0.623986) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -54,7 +54,7 @@ theorem c0_p0 : ghatY (1e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0602336 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p1 : ghatY (1e25 : ℝ) ((210002 : ℕ) : ℝ) ≤ 0.0521591 := by
+theorem c0_p1 : ghatY (1e25 : ℝ) ((210002 : ℕ) : ℝ) ≤ 0.0521914 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 12.94808) (b₁ := 14.334315) (b₂ := 7.742266)
     (ρ := 0.655305) (c₁ := 2.505925) (c₂ := 2.505922) (s₁ := 2.341215) (s₂ := 648.0765)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -76,7 +76,7 @@ theorem c0_p1 : ghatY (1e25 : ℝ) ((210002 : ℕ) : ℝ) ≤ 0.0521591 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p2 : ghatY (1e25 : ℝ) ((294003 : ℕ) : ℝ) ≤ 0.0452616 := by
+theorem c0_p2 : ghatY (1e25 : ℝ) ((294003 : ℕ) : ℝ) ≤ 0.0452889 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 13.284494) (b₁ := 14.670794) (b₂ := 7.405793)
     (ρ := 0.688392) (c₁ := 2.533012) (c₂ := 2.533008) (s₁ := 2.349261) (s₂ := 766.8147)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -98,7 +98,7 @@ theorem c0_p2 : ghatY (1e25 : ℝ) ((294003 : ℕ) : ℝ) ≤ 0.0452616 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p3 : ghatY (1e25 : ℝ) ((411605 : ℕ) : ℝ) ≤ 0.0393517 := by
+theorem c0_p3 : ghatY (1e25 : ℝ) ((411605 : ℕ) : ℝ) ≤ 0.0393748 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 13.620971) (b₁ := 15.007262) (b₂ := 7.069319)
     (ρ := 0.723414) (c₁ := 2.559388) (c₂ := 2.55938) (s₁ := 2.357117) (s₂ := 907.3083)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -120,7 +120,7 @@ theorem c0_p3 : ghatY (1e25 : ℝ) ((411605 : ℕ) : ℝ) ≤ 0.0393517 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p4 : ghatY (1e25 : ℝ) ((576248 : ℕ) : ℝ) ≤ 0.0342744 := by
+theorem c0_p4 : ghatY (1e25 : ℝ) ((576248 : ℕ) : ℝ) ≤ 0.0342939 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 13.957505) (b₁ := 15.343736) (b₂ := 6.732845)
     (ρ := 0.760573) (c₁ := 2.585079) (c₂ := 2.585074) (s₁ := 2.364785) (s₂ := 1073.542)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -142,7 +142,7 @@ theorem c0_p4 : ghatY (1e25 : ℝ) ((576248 : ℕ) : ℝ) ≤ 0.0342744 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p5 : ghatY (1e25 : ℝ) ((806748 : ℕ) : ℝ) ≤ 0.0299019 := by
+theorem c0_p5 : ghatY (1e25 : ℝ) ((806748 : ℕ) : ℝ) ≤ 0.0299184 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 14.293915) (b₁ := 15.680216) (b₂ := 6.396372)
     (ρ := 0.800098) (c₁ := 2.610131) (c₂ := 2.610125) (s₁ := 2.372277) (s₂ := 1270.233)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -164,7 +164,7 @@ theorem c0_p5 : ghatY (1e25 : ℝ) ((806748 : ℕ) : ℝ) ≤ 0.0299019 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p6 : ghatY (1e25 : ℝ) ((1129448 : ℕ) : ℝ) ≤ 0.0261292 := by
+theorem c0_p6 : ghatY (1e25 : ℝ) ((1129448 : ℕ) : ℝ) ≤ 0.0261432 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 14.630392) (b₁ := 16.016683) (b₂ := 6.059899)
     (ρ := 0.842256) (c₁ := 2.634574) (c₂ := 2.634563) (s₁ := 2.379601) (s₂ := 1502.96)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -186,7 +186,7 @@ theorem c0_p6 : ghatY (1e25 : ℝ) ((1129448 : ℕ) : ℝ) ≤ 0.0261292 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p7 : ghatY (1e25 : ℝ) ((1581228 : ℕ) : ℝ) ≤ 0.0228685 := by
+theorem c0_p7 : ghatY (1e25 : ℝ) ((1581228 : ℕ) : ℝ) ≤ 0.0228803 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 14.966928) (b₁ := 16.353155) (b₂ := 5.723426)
     (ρ := 0.887362) (c₁ := 2.658426) (c₂ := 2.658418) (s₁ := 2.386759) (s₂ := 1778.327)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -208,7 +208,7 @@ theorem c0_p7 : ghatY (1e25 : ℝ) ((1581228 : ℕ) : ℝ) ≤ 0.0228685 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p8 : ghatY (1e25 : ℝ) ((2213720 : ℕ) : ℝ) ≤ 0.020046 := by
+theorem c0_p8 : ghatY (1e25 : ℝ) ((2213720 : ℕ) : ℝ) ≤ 0.020056 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 15.303334) (b₁ := 16.689635) (b₂ := 5.386954)
     (ρ := 0.935788) (c₁ := 2.681727) (c₂ := 2.681717) (s₁ := 2.393761) (s₂ := 2104.146)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -230,7 +230,7 @@ theorem c0_p8 : ghatY (1e25 : ℝ) ((2213720 : ℕ) : ℝ) ≤ 0.020046 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p9 : ghatY (1e25 : ℝ) ((3099209 : ℕ) : ℝ) ≤ 0.0176003 := by
+theorem c0_p9 : ghatY (1e25 : ℝ) ((3099209 : ℕ) : ℝ) ≤ 0.0176087 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 15.63981) (b₁ := 17.026101) (b₂ := 5.050481)
     (ρ := 0.987979) (c₁ := 2.704501) (c₂ := 2.704486) (s₁ := 2.400614) (s₂ := 2489.659)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -252,7 +252,7 @@ theorem c0_p9 : ghatY (1e25 : ℝ) ((3099209 : ℕ) : ℝ) ≤ 0.0176003 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p10 : ghatY (1e25 : ℝ) ((4338893 : ℕ) : ℝ) ≤ 0.0154785 := by
+theorem c0_p10 : ghatY (1e25 : ℝ) ((4338893 : ℕ) : ℝ) ≤ 0.0154857 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 15.976349) (b₁ := 17.362573) (b₂ := 4.714009)
     (ρ := 1.044366) (c₁ := 2.726761) (c₂ := 2.726748) (s₁ := 2.40732) (s₂ := 2945.805)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -274,7 +274,7 @@ theorem c0_p10 : ghatY (1e25 : ℝ) ((4338893 : ℕ) : ℝ) ≤ 0.0154785 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p11 : ghatY (1e25 : ℝ) ((6074451 : ℕ) : ℝ) ≤ 0.0136373 := by
+theorem c0_p11 : ghatY (1e25 : ℝ) ((6074451 : ℕ) : ℝ) ≤ 0.0136433 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 16.312751) (b₁ := 17.699053) (b₂ := 4.377536)
     (ρ := 1.10578) (c₁ := 2.748541) (c₂ := 2.748525) (s₁ := 2.413887) (s₂ := 3485.524)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -296,7 +296,7 @@ theorem c0_p11 : ghatY (1e25 : ℝ) ((6074451 : ℕ) : ℝ) ≤ 0.0136373 := by
       (by norm_num : ((57 : ℕ) : ℝ) + 0.56463 ≤ 57.56463)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00006812928) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c0_p12 : ghatY (1e25 : ℝ) ((8504232 : ℕ) : ℝ) ≤ 0.0120386 := by
+theorem c0_p12 : ghatY (1e25 : ℝ) ((8504232 : ℕ) : ℝ) ≤ 0.0120437 := by
   refine ghatY_le_num (u := 215443200) (a₁ := 16.649228) (b₁ := 18.035518) (b₂ := 4.041064)
     (ρ := 1.172957) (c₁ := 2.76986) (c₂ := 2.769838) (s₁ := 2.420322) (s₂ := 4124.127)
     (t₁ := 0.00006812928) (h₁ := 0.008542245) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -354,8 +354,8 @@ theorem cell0 {x : ℝ} (hx1 : (490000000000000000000000000 : ℝ) ≤ x) (hx2 :
     ((log_le_num (z := 2 * ((10431623 : ℕ) : ℝ)) 16 0.853531 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨10431623, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e25) (L₀ := 61.456446) (L₁ := 62.555062) (cl0 := 14.611549) (clt := 18.853498)
-    (G0 := 0.0602338) (Gt := 0.0119421) (sD' := 1.336562) (τ' := 14.84787) (k := 13)
-    (fun i => [150001, 210002, 294003, 411605, 576248, 806748, 1129448, 1581228, 2213720, 3099209, 4338893, 6074451, 8504232, 10431623].getD i 0) (fun i => ([0.0602336, 0.0521591, 0.0452616, 0.0393517, 0.0342744, 0.0299019, 0.0261292, 0.0228685, 0.020046, 0.0176003, 0.0154785, 0.0136373, 0.0120386] : List ℝ).getD i 0)
+    (G0 := 0.060272) (Gt := 0.0119421) (sD' := 1.336562) (τ' := 14.84787) (k := 13)
+    (fun i => [150001, 210002, 294003, 411605, 576248, 806748, 1129448, 1581228, 2213720, 3099209, 4338893, 6074451, 8504232, 10431623].getD i 0) (fun i => ([0.0602719, 0.0521914, 0.0452889, 0.0393748, 0.0342939, 0.0299184, 0.0261432, 0.0228803, 0.020056, 0.0176087, 0.0154857, 0.0136433, 0.0120437] : List ℝ).getD i 0)
     (fun i => ([0.336477, 0.336474, 0.336476, 0.336475, 0.336475, 0.336474, 0.336474, 0.336474, 0.336474, 0.336474, 0.336474, 0.336474, 0.204279] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -411,7 +411,7 @@ theorem cell0 {x : ℝ} (hx1 : (490000000000000000000000000 : ℝ) ≤ x) (hx2 :
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c1_g0 : ghatY (3e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.059759 := by
+theorem c1_g0 : ghatY (3e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0597973 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 8.444952)
     (ρ := 0.60365) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -433,7 +433,7 @@ theorem c1_g0 : ghatY (3e25 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.059759 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p0 : ghatY (3e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0597588 := by
+theorem c1_p0 : ghatY (3e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0597971 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 8.444946)
     (ρ := 0.60365) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -455,7 +455,7 @@ theorem c1_p0 : ghatY (3e25 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0597588 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p1 : ghatY (3e25 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.0488517 := by
+theorem c1_p1 : ghatY (3e25 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.048882 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 13.081551) (b₁ := 14.467846) (b₂ := 7.97494)
     (ρ := 0.64558) (c₁ := 2.516763) (c₂ := 2.516759) (s₁ := 2.344432) (s₂ := 692.8225)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -477,7 +477,7 @@ theorem c1_p1 : ghatY (3e25 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.0488517 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p2 : ghatY (3e25 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0400885 := by
+theorem c1_p2 : ghatY (3e25 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0401124 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 13.551558) (b₁ := 14.937906) (b₂ := 7.504935)
     (ρ := 0.690756) (c₁ := 2.554003) (c₂ := 2.553996) (s₁ := 2.355511) (s₂ := 876.3597)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -499,7 +499,7 @@ theorem c1_p2 : ghatY (3e25 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0400885 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p3 : ghatY (3e25 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0330084 := by
+theorem c1_p3 : ghatY (3e25 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0330273 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 14.021562) (b₁ := 15.407856) (b₂ := 7.03493)
     (ρ := 0.739613) (c₁ := 2.589902) (c₂ := 2.589896) (s₁ := 2.366226) (s₂ := 1108.517)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -521,7 +521,7 @@ theorem c1_p3 : ghatY (3e25 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0330084 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p4 : ghatY (3e25 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.0272621 := by
+theorem c1_p4 : ghatY (3e25 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.027277 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 14.491566) (b₁ := 15.877897) (b₂ := 6.564925)
     (ρ := 0.792695) (c₁ := 2.62456) (c₂ := 2.624552) (s₁ := 2.376599) (s₂ := 1402.176)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -543,7 +543,7 @@ theorem c1_p4 : ghatY (3e25 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.0272621 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p5 : ghatY (3e25 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.022581 := by
+theorem c1_p5 : ghatY (3e25 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.0225928 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 14.961635) (b₁ := 16.347864) (b₂ := 6.094921)
     (ρ := 0.850654) (c₁ := 2.658055) (c₂ := 2.658047) (s₁ := 2.386647) (s₂ := 1773.629)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -565,7 +565,7 @@ theorem c1_p5 : ghatY (3e25 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.022581 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p6 : ghatY (3e25 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0187563 := by
+theorem c1_p6 : ghatY (3e25 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0187656 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 15.431574) (b₁ := 16.817891) (b₂ := 5.624917)
     (ρ := 0.914315) (c₁ := 2.690468) (c₂ := 2.690456) (s₁ := 2.39639) (s₂ := 2243.483)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -587,7 +587,7 @@ theorem c1_p6 : ghatY (3e25 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0187563 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p7 : ghatY (3e25 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0156245 := by
+theorem c1_p7 : ghatY (3e25 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0156318 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 15.901621) (b₁ := 17.287872) (b₂ := 5.154914)
     (ρ := 0.984711) (c₁ := 2.721861) (c₂ := 2.721848) (s₁ := 2.405843) (s₂ := 2837.807)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -609,7 +609,7 @@ theorem c1_p7 : ghatY (3e25 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0156245 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p8 : ghatY (3e25 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0130551 := by
+theorem c1_p8 : ghatY (3e25 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0130609 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 16.371582) (b₁ := 17.75789) (b₂ := 4.68491)
     (ρ := 1.063063) (c₁ := 2.752301) (c₂ := 2.752284) (s₁ := 2.415022) (s₂ := 3589.574)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -631,7 +631,7 @@ theorem c1_p8 : ghatY (3e25 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0130551 := by
       (by norm_num : ((58 : ℕ) : ℝ) + 0.663246 ≤ 58.663246)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00005673011) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c1_p9 : ghatY (3e25 : ℝ) ((10308060 : ℕ) : ℝ) ≤ 0.0109456 := by
+theorem c1_p9 : ghatY (3e25 : ℝ) ((10308060 : ℕ) : ℝ) ≤ 0.0109502 := by
   refine ghatY_le_num (u := 310722900) (a₁ := 16.841613) (b₁ := 18.22788) (b₂ := 4.214906)
     (ρ := 1.151305) (c₁ := 2.781842) (c₂ := 2.781822) (s₁ := 2.42394) (s₂ := 4540.493)
     (t₁ := 0.00005673011) (h₁ := 0.007268108) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -689,8 +689,8 @@ theorem cell1 {x : ℝ} (hx1 : (1470000000000000000000000000 : ℝ) ≤ x) (hx2 
     ((log_le_num (z := 2 * ((14504017 : ℕ) : ℝ)) 17 0.183085 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨14504017, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 3e25) (L₀ := 62.555058) (L₁ := 63.759048) (cl0 := 14.611549) (clt := 19.183082)
-    (G0 := 0.059759) (Gt := 0.0101609) (sD' := 1.335533) (τ' := 15.19932) (k := 10)
-    (fun i => [150001, 240002, 384004, 614407, 983052, 1572884, 2516615, 4026585, 6442537, 10308060, 14504017].getD i 0) (fun i => ([0.0597588, 0.0488517, 0.0400885, 0.0330084, 0.0272621, 0.022581, 0.0187563, 0.0156245, 0.0130551, 0.0109456] : List ℝ).getD i 0)
+    (G0 := 0.0597973) (Gt := 0.0101609) (sD' := 1.335533) (τ' := 15.19932) (k := 10)
+    (fun i => [150001, 240002, 384004, 614407, 983052, 1572884, 2516615, 4026585, 6442537, 10308060, 14504017].getD i 0) (fun i => ([0.0597971, 0.048882, 0.0401124, 0.0330273, 0.027277, 0.0225928, 0.0187656, 0.0156318, 0.0130609, 0.0109502] : List ℝ).getD i 0)
     (fun i => ([0.470007, 0.470007, 0.470006, 0.470006, 0.470006, 0.470005, 0.470005, 0.470005, 0.470005, 0.341501] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -737,7 +737,7 @@ theorem cell1 {x : ℝ} (hx1 : (1470000000000000000000000000 : ℝ) ≤ x) (hx2 
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c2_g0 : ghatY (1e26 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.059281 := by
+theorem c2_g0 : ghatY (1e26 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0593193 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 8.846277)
     (ρ := 0.582875) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -759,7 +759,7 @@ theorem c2_g0 : ghatY (1e26 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.059281 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p0 : ghatY (1e26 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0592809 := by
+theorem c2_p0 : ghatY (1e26 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0593191 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 8.84627)
     (ρ := 0.582876) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -781,7 +781,7 @@ theorem c2_p0 : ghatY (1e26 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0592809 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p1 : ghatY (1e26 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.0484099 := by
+theorem c2_p1 : ghatY (1e26 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.0484402 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 13.081551) (b₁ := 14.467846) (b₂ := 8.376265)
     (ρ := 0.622526) (c₁ := 2.516763) (c₂ := 2.516759) (s₁ := 2.344432) (s₂ := 692.8225)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -803,7 +803,7 @@ theorem c2_p1 : ghatY (1e26 : ℝ) ((240002 : ℕ) : ℝ) ≤ 0.0484099 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p2 : ghatY (1e26 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0396795 := by
+theorem c2_p2 : ghatY (1e26 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0397034 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 13.551558) (b₁ := 14.937906) (b₂ := 7.906259)
     (ρ := 0.665109) (c₁ := 2.554003) (c₂ := 2.553996) (s₁ := 2.355511) (s₂ := 876.3597)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -825,7 +825,7 @@ theorem c2_p2 : ghatY (1e26 : ℝ) ((384004 : ℕ) : ℝ) ≤ 0.0396795 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p3 : ghatY (1e26 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0326288 := by
+theorem c2_p3 : ghatY (1e26 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0326477 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 14.021562) (b₁ := 15.407856) (b₂ := 7.436254)
     (ρ := 0.710995) (c₁ := 2.589902) (c₂ := 2.589896) (s₁ := 2.366226) (s₂ := 1108.517)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -847,7 +847,7 @@ theorem c2_p3 : ghatY (1e26 : ℝ) ((614407 : ℕ) : ℝ) ≤ 0.0326288 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p4 : ghatY (1e26 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.0269088 := by
+theorem c2_p4 : ghatY (1e26 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.0269237 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 14.491566) (b₁ := 15.877897) (b₂ := 6.96625)
     (ρ := 0.760649) (c₁ := 2.62456) (c₂ := 2.624552) (s₁ := 2.376599) (s₂ := 1402.176)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -869,7 +869,7 @@ theorem c2_p4 : ghatY (1e26 : ℝ) ((983052 : ℕ) : ℝ) ≤ 0.0269088 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p5 : ghatY (1e26 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.022251 := by
+theorem c2_p5 : ghatY (1e26 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.0222629 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 14.961635) (b₁ := 16.347864) (b₂ := 6.496246)
     (ρ := 0.814616) (c₁ := 2.658055) (c₂ := 2.658047) (s₁ := 2.386647) (s₂ := 1773.629)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -891,7 +891,7 @@ theorem c2_p5 : ghatY (1e26 : ℝ) ((1572884 : ℕ) : ℝ) ≤ 0.022251 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p6 : ghatY (1e26 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0184469 := by
+theorem c2_p6 : ghatY (1e26 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0184562 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 15.431574) (b₁ := 16.817891) (b₂ := 6.026242)
     (ρ := 0.873582) (c₁ := 2.690468) (c₂ := 2.690456) (s₁ := 2.39639) (s₂ := 2243.483)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -913,7 +913,7 @@ theorem c2_p6 : ghatY (1e26 : ℝ) ((2516615 : ℕ) : ℝ) ≤ 0.0184469 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p7 : ghatY (1e26 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0153329 := by
+theorem c2_p7 : ghatY (1e26 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0153403 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 15.901621) (b₁ := 17.287872) (b₂ := 5.556238)
     (ρ := 0.93839) (c₁ := 2.721861) (c₂ := 2.721848) (s₁ := 2.405843) (s₂ := 2837.807)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -935,7 +935,7 @@ theorem c2_p7 : ghatY (1e26 : ℝ) ((4026585 : ℕ) : ℝ) ≤ 0.0153329 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p8 : ghatY (1e26 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0127788 := by
+theorem c2_p8 : ghatY (1e26 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0127846 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 16.371582) (b₁ := 17.75789) (b₂ := 5.086234)
     (ρ := 1.010031) (c₁ := 2.752301) (c₂ := 2.752284) (s₁ := 2.415022) (s₂ := 3589.574)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -957,7 +957,7 @@ theorem c2_p8 : ghatY (1e26 : ℝ) ((6442537 : ℕ) : ℝ) ≤ 0.0127788 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p9 : ghatY (1e26 : ℝ) ((10308060 : ℕ) : ℝ) ≤ 0.0106819 := by
+theorem c2_p9 : ghatY (1e26 : ℝ) ((10308060 : ℕ) : ℝ) ≤ 0.0106865 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 16.841613) (b₁ := 18.22788) (b₂ := 4.61623)
     (ρ := 1.090019) (c₁ := 2.781842) (c₂ := 2.781822) (s₁ := 2.42394) (s₂ := 4540.493)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -979,7 +979,7 @@ theorem c2_p9 : ghatY (1e26 : ℝ) ((10308060 : ℕ) : ℝ) ≤ 0.0106819 := by
       (by norm_num : ((59 : ℕ) : ℝ) + 0.867247 ≤ 59.867247)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00004641594) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c2_p10 : ghatY (1e26 : ℝ) ((16492897 : ℕ) : ℝ) ≤ 0.00895881 := by
+theorem c2_p10 : ghatY (1e26 : ℝ) ((16492897 : ℕ) : ℝ) ≤ 0.00896246 := by
   refine ghatY_le_num (u := 464158400) (a₁ := 17.311589) (b₁ := 18.697891) (b₂ := 4.146227)
     (ρ := 1.180135) (c₁ := 2.810536) (c₂ := 2.810511) (s₁ := 2.432612) (s₂ := 5743.32)
     (t₁ := 0.00004641594) (h₁ := 0.006093341) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1037,8 +1037,8 @@ theorem cell2 {x : ℝ} (hx1 : (4900000000000000000000000000 : ℝ) ≤ x) (hx2 
     ((log_le_num (z := 2 * ((20813828 : ℕ) : ℝ)) 17 0.544278 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨20813828, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e26) (L₀ := 63.759031) (L₁ := 66.061619) (cl0 := 14.611549) (clt := 19.544274)
-    (G0 := 0.059281) (Gt := 0.0085185) (sD' := 1.334448) (τ' := 16.22977) (k := 11)
-    (fun i => [150001, 240002, 384004, 614407, 983052, 1572884, 2516615, 4026585, 6442537, 10308060, 16492897, 20813828].getD i 0) (fun i => ([0.0592809, 0.0484099, 0.0396795, 0.0326288, 0.0269088, 0.022251, 0.0184469, 0.0153329, 0.0127788, 0.0106819, 0.00895881] : List ℝ).getD i 0)
+    (G0 := 0.0593193) (Gt := 0.0085185) (sD' := 1.334448) (τ' := 16.22977) (k := 11)
+    (fun i => [150001, 240002, 384004, 614407, 983052, 1572884, 2516615, 4026585, 6442537, 10308060, 16492897, 20813828].getD i 0) (fun i => ([0.0593191, 0.0484402, 0.0397034, 0.0326477, 0.0269237, 0.0222629, 0.0184562, 0.0153403, 0.0127846, 0.0106865, 0.00896246] : List ℝ).getD i 0)
     (fun i => ([0.470007, 0.470007, 0.470006, 0.470006, 0.470006, 0.470005, 0.470005, 0.470005, 0.470005, 0.470005, 0.232689] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -1088,7 +1088,7 @@ theorem cell2 {x : ℝ} (hx1 : (4900000000000000000000000000 : ℝ) ≤ x) (hx2 
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c3_g0 : ghatY (1e27 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0584711 := by
+theorem c3_g0 : ghatY (1e27 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0585094 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 9.613805)
     (ρ := 0.546973) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1110,7 +1110,7 @@ theorem c3_g0 : ghatY (1e27 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0584711 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p0 : ghatY (1e27 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0584709 := by
+theorem c3_p0 : ghatY (1e27 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0585092 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 9.613798)
     (ρ := 0.546974) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1132,7 +1132,7 @@ theorem c3_p0 : ghatY (1e27 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0584709 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p1 : ghatY (1e27 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0433135 := by
+theorem c3_p1 : ghatY (1e27 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0433406 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 13.304696) (b₁ := 14.690998) (b₂ := 8.920648)
     (ρ := 0.600721) (c₁ := 2.534615) (c₂ := 2.534611) (s₁ := 2.349738) (s₂ := 774.5997)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1154,7 +1154,7 @@ theorem c3_p1 : ghatY (1e27 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0433135 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p2 : ghatY (1e27 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0323155 := by
+theorem c3_p2 : ghatY (1e27 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0323347 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 13.997926) (b₁ := 15.38414) (b₂ := 8.227499)
     (ρ := 0.660074) (c₁ := 2.588121) (c₂ := 2.588115) (s₁ := 2.365694) (s₂ := 1095.45)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1176,7 +1176,7 @@ theorem c3_p2 : ghatY (1e27 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0323155 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p3 : ghatY (1e27 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0242502 := by
+theorem c3_p3 : ghatY (1e27 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0242637 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 14.691) (b₁ := 16.077288) (b₂ := 7.534351)
     (ρ := 0.726077) (c₁ := 2.638915) (c₂ := 2.638902) (s₁ := 2.380903) (s₂ := 1549.201)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1198,7 +1198,7 @@ theorem c3_p3 : ghatY (1e27 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0242502 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p4 : ghatY (1e27 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0182893 := by
+theorem c3_p4 : ghatY (1e27 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0182988 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 15.384141) (b₁ := 16.770451) (b₂ := 6.841203)
     (ρ := 0.80009) (c₁ := 2.687244) (c₂ := 2.687233) (s₁ := 2.39542) (s₂ := 2190.902)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1220,7 +1220,7 @@ theorem c3_p4 : ghatY (1e27 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0182893 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p5 : ghatY (1e27 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0138588 := by
+theorem c3_p5 : ghatY (1e27 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0138655 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 16.077288) (b₁ := 17.463583) (b₂ := 6.148056)
     (ρ := 0.883911) (c₁ := 2.73335) (c₂ := 2.733335) (s₁ := 2.409306) (s₂ := 3098.403)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1242,7 +1242,7 @@ theorem c3_p5 : ghatY (1e27 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0138588 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p6 : ghatY (1e27 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0105527 := by
+theorem c3_p6 : ghatY (1e27 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0105575 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 16.770451) (b₁ := 18.15673) (b₂ := 5.454909)
     (ρ := 0.979999) (c₁ := 2.777425) (c₂ := 2.777406) (s₁ := 2.422606) (s₂ := 4381.805)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1264,7 +1264,7 @@ theorem c3_p6 : ghatY (1e27 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0105527 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p7 : ghatY (1e27 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.0080789 := by
+theorem c3_p7 : ghatY (1e27 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.00808228 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 17.463583) (b₁ := 18.849907) (b₂ := 4.761761)
     (ρ := 1.09169) (c₁ := 2.819643) (c₂ := 2.819616) (s₁ := 2.435365) (s₂ := 6196.808)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1286,7 +1286,7 @@ theorem c3_p7 : ghatY (1e27 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.0080789 := by
       (by norm_num : ((62 : ℕ) : ℝ) + 0.169799 ≤ 62.169799)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00003162281) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c3_p8 : ghatY (1e27 : ℝ) ((38400511 : ℕ) : ℝ) ≤ 0.00622603 := by
+theorem c3_p8 : ghatY (1e27 : ℝ) ((38400511 : ℕ) : ℝ) ≤ 0.00622843 := by
   refine ghatY_le_num (u := 999998900) (a₁ := 18.15673) (b₁ := 19.543025) (b₂ := 4.068614)
     (ρ := 1.224271) (c₁ := 2.860151) (c₂ := 2.860116) (s₁ := 2.447622) (s₂ := 8763.61)
     (t₁ := 0.00003162281) (h₁ := 0.004355097) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1344,8 +1344,8 @@ theorem cell3 {x : ℝ} (hx1 : (49000000000000000000000000000 : ℝ) ≤ x) (hx2
     ((log_le_num (z := 2 * ((41529048 : ℕ) : ℝ)) 18 0.235052 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨41529048, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e27) (L₀ := 66.061616) (L₁ := 68.364204) (cl0 := 14.611549) (clt := 20.235049)
-    (G0 := 0.0584711) (Gt := 0.00608843) (sD' := 1.332487) (τ' := 16.82035) (k := 9)
-    (fun i => [150001, 300003, 600007, 1200015, 2400031, 4800063, 9600127, 19200255, 38400511, 41529048].getD i 0) (fun i => ([0.0584709, 0.0433135, 0.0323155, 0.0242502, 0.0182893, 0.0138588, 0.0105527, 0.0080789, 0.00622603] : List ℝ).getD i 0)
+    (G0 := 0.0585094) (Gt := 0.00608843) (sD' := 1.332487) (τ' := 16.82035) (k := 9)
+    (fun i => [150001, 300003, 600007, 1200015, 2400031, 4800063, 9600127, 19200255, 38400511, 41529048].getD i 0) (fun i => ([0.0585092, 0.0433406, 0.0323347, 0.0242637, 0.0182988, 0.0138655, 0.0105575, 0.00808228, 0.00622843] : List ℝ).getD i 0)
     (fun i => ([0.693159, 0.693158, 0.693157, 0.693156, 0.693156, 0.693156, 0.693156, 0.693156, 0.078324] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -1389,7 +1389,7 @@ theorem cell3 {x : ℝ} (hx1 : (49000000000000000000000000000 : ℝ) ≤ x) (hx2
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c4_g0 : ghatY (1e28 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0577729 := by
+theorem c4_g0 : ghatY (1e28 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0578112 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 10.381333)
     (ρ := 0.515329) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1411,7 +1411,7 @@ theorem c4_g0 : ghatY (1e28 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0577729 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p0 : ghatY (1e28 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0577728 := by
+theorem c4_p0 : ghatY (1e28 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0578111 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 10.381326)
     (ρ := 0.51533) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1433,7 +1433,7 @@ theorem c4_p0 : ghatY (1e28 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0577728 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p1 : ghatY (1e28 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0427024 := by
+theorem c4_p1 : ghatY (1e28 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0427295 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 13.304696) (b₁ := 14.690998) (b₂ := 9.688176)
     (ρ := 0.564289) (c₁ := 2.534615) (c₂ := 2.534611) (s₁ := 2.349738) (s₂ := 774.5997)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1455,7 +1455,7 @@ theorem c4_p1 : ghatY (1e28 : ℝ) ((300003 : ℕ) : ℝ) ≤ 0.0427024 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p2 : ghatY (1e28 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0317793 := by
+theorem c4_p2 : ghatY (1e28 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0317984 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 13.997926) (b₁ := 15.38414) (b₂ := 8.995027)
     (ρ := 0.617968) (c₁ := 2.588121) (c₂ := 2.588115) (s₁ := 2.365694) (s₂ := 1095.45)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1477,7 +1477,7 @@ theorem c4_p2 : ghatY (1e28 : ℝ) ((600007 : ℕ) : ℝ) ≤ 0.0317793 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p3 : ghatY (1e28 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0237779 := by
+theorem c4_p3 : ghatY (1e28 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0237915 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 14.691) (b₁ := 16.077288) (b₂ := 8.301879)
     (ρ := 0.677174) (c₁ := 2.638915) (c₂ := 2.638902) (s₁ := 2.380903) (s₂ := 1549.201)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1499,7 +1499,7 @@ theorem c4_p3 : ghatY (1e28 : ℝ) ((1200015 : ℕ) : ℝ) ≤ 0.0237779 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p4 : ghatY (1e28 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0178711 := by
+theorem c4_p4 : ghatY (1e28 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0178807 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 15.384141) (b₁ := 16.770451) (b₂ := 7.608731)
     (ρ := 0.742928) (c₁ := 2.687244) (c₂ := 2.687233) (s₁ := 2.39542) (s₂ := 2190.902)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1521,7 +1521,7 @@ theorem c4_p4 : ghatY (1e28 : ℝ) ((2400031 : ℕ) : ℝ) ≤ 0.0178711 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p5 : ghatY (1e28 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0134859 := by
+theorem c4_p5 : ghatY (1e28 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0134927 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 16.077288) (b₁ := 17.463583) (b₂ := 6.915584)
     (ρ := 0.81655) (c₁ := 2.73335) (c₂ := 2.733335) (s₁ := 2.409306) (s₂ := 3098.403)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1543,7 +1543,7 @@ theorem c4_p5 : ghatY (1e28 : ℝ) ((4800063 : ℕ) : ℝ) ≤ 0.0134859 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p6 : ghatY (1e28 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0102171 := by
+theorem c4_p6 : ghatY (1e28 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0102219 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 16.770451) (b₁ := 18.15673) (b₂ := 6.222437)
     (ρ := 0.899787) (c₁ := 2.777425) (c₂ := 2.777406) (s₁ := 2.422606) (s₂ := 4381.805)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1565,7 +1565,7 @@ theorem c4_p6 : ghatY (1e28 : ℝ) ((9600127 : ℕ) : ℝ) ≤ 0.0102171 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p7 : ghatY (1e28 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.00777376 := by
+theorem c4_p7 : ghatY (1e28 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.00777714 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 17.463583) (b₁ := 18.849907) (b₂ := 5.52929)
     (ρ := 0.995017) (c₁ := 2.819643) (c₂ := 2.819616) (s₁ := 2.435365) (s₂ := 6196.808)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1587,7 +1587,7 @@ theorem c4_p7 : ghatY (1e28 : ℝ) ((19200255 : ℕ) : ℝ) ≤ 0.00777376 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p8 : ghatY (1e28 : ℝ) ((38400511 : ℕ) : ℝ) ≤ 0.00594396 := by
+theorem c4_p8 : ghatY (1e28 : ℝ) ((38400511 : ℕ) : ℝ) ≤ 0.00594636 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 18.15673) (b₁ := 19.543025) (b₂ := 4.836142)
     (ρ := 1.10543) (c₁ := 2.860151) (c₂ := 2.860116) (s₁ := 2.447622) (s₂ := 8763.61)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1609,7 +1609,7 @@ theorem c4_p8 : ghatY (1e28 : ℝ) ((38400511 : ℕ) : ℝ) ≤ 0.00594396 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_p9 : ghatY (1e28 : ℝ) ((76801023 : ℕ) : ℝ) ≤ 0.00457295 := by
+theorem c4_p9 : ghatY (1e28 : ℝ) ((76801023 : ℕ) : ℝ) ≤ 0.00457464 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 18.849907) (b₁ := 20.236172) (b₂ := 4.142995)
     (ρ := 1.236117) (c₁ := 2.899085) (c₂ := 2.89904) (s₁ := 2.459413) (s₂ := 12393.61)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1631,7 +1631,7 @@ theorem c4_p9 : ghatY (1e28 : ℝ) ((76801023 : ℕ) : ℝ) ≤ 0.00457295 := by
       (by norm_num : ((64 : ℕ) : ℝ) + 0.472384 ≤ 64.472384)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c4_gt : ghatY (1e28 : ℝ) ((82861348 : ℕ) : ℝ) ≤ 0.00444539 := by
+theorem c4_gt : ghatY (1e28 : ℝ) ((82861348 : ℕ) : ℝ) ≤ 0.00444702 := by
   refine ghatY_le_num (u := 2154432000) (a₁ := 18.925879) (b₁ := 20.312122) (b₂ := 4.067044)
     (ρ := 1.251953) (c₁ := 2.903261) (c₂ := 2.903214) (s₁ := 2.460678) (s₂ := 12873.31)
     (t₁ := 0.00002154437) (h₁ := 0.003115179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1667,8 +1667,8 @@ theorem cell4 {x : ℝ} (hx1 : (490000000000000000000000000000 : ℝ) ≤ x) (hx
     ((log_le_num (z := 2 * ((82861348 : ℕ) : ℝ)) 18 0.925879 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨82861348, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e28) (L₀ := 68.364201) (L₁ := 72.969442) (cl0 := 14.611549) (clt := 20.925825)
-    (G0 := 0.0577729) (Gt := 0.00444539) (sD' := 1.330664) (τ' := 18.91829) (k := 10)
-    (fun i => [150001, 300003, 600007, 1200015, 2400031, 4800063, 9600127, 19200255, 38400511, 76801023, 82861348].getD i 0) (fun i => ([0.0577728, 0.0427024, 0.0317793, 0.0237779, 0.0178711, 0.0134859, 0.0102171, 0.00777376, 0.00594396, 0.00457295] : List ℝ).getD i 0)
+    (G0 := 0.0578112) (Gt := 0.00444702) (sD' := 1.330664) (τ' := 18.91829) (k := 10)
+    (fun i => [150001, 300003, 600007, 1200015, 2400031, 4800063, 9600127, 19200255, 38400511, 76801023, 82861348].getD i 0) (fun i => ([0.0578111, 0.0427295, 0.0317984, 0.0237915, 0.0178807, 0.0134927, 0.0102219, 0.00777714, 0.00594636, 0.00457464] : List ℝ).getD i 0)
     (fun i => ([0.693159, 0.693158, 0.693157, 0.693156, 0.693156, 0.693156, 0.693156, 0.693156, 0.693156, 0.075952] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -1715,7 +1715,7 @@ theorem cell4 {x : ℝ} (hx1 : (490000000000000000000000000000 : ℝ) ≤ x) (hx
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c5_g0 : ghatY (1e30 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0566265 := by
+theorem c5_g0 : ghatY (1e30 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0566648 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 11.91639)
     (ρ := 0.46206) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1737,7 +1737,7 @@ theorem c5_g0 : ghatY (1e30 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0566265 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p0 : ghatY (1e30 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0566264 := by
+theorem c5_p0 : ghatY (1e30 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0566647 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 11.916383)
     (ρ := 0.462061) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1759,7 +1759,7 @@ theorem c5_p0 : ghatY (1e30 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0566264 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p1 : ghatY (1e30 : ℝ) ((375003 : ℕ) : ℝ) ≤ 0.0378557 := by
+theorem c5_p1 : ghatY (1e30 : ℝ) ((375003 : ℕ) : ℝ) ≤ 0.0378799 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 13.527838) (b₁ := 14.914179) (b₂ := 11.000091)
     (ρ := 0.517552) (c₁ := 2.552156) (c₂ := 2.55215) (s₁ := 2.354961) (s₂ := 866.028)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1781,7 +1781,7 @@ theorem c5_p1 : ghatY (1e30 : ℝ) ((375003 : ℕ) : ℝ) ≤ 0.0378557 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p2 : ghatY (1e30 : ℝ) ((937508 : ℕ) : ℝ) ≤ 0.0255675 := by
+theorem c5_p2 : ghatY (1e30 : ℝ) ((937508 : ℕ) : ℝ) ≤ 0.0255828 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 14.444129) (b₁ := 15.830449) (b₂ := 10.0838)
     (ρ := 0.579391) (c₁ := 2.621116) (c₂ := 2.621109) (s₁ := 2.375567) (s₂ := 1369.31)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1803,7 +1803,7 @@ theorem c5_p2 : ghatY (1e30 : ℝ) ((937508 : ℕ) : ℝ) ≤ 0.0255675 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p3 : ghatY (1e30 : ℝ) ((2343771 : ℕ) : ℝ) ≤ 0.0173934 := by
+theorem c5_p3 : ghatY (1e30 : ℝ) ((2343771 : ℕ) : ℝ) ≤ 0.017403 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 15.36042) (b₁ := 16.746727) (b₂ := 9.167509)
     (ρ := 0.648874) (c₁ := 2.685627) (c₂ := 2.685617) (s₁ := 2.394934) (s₂ := 2165.071)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1825,7 +1825,7 @@ theorem c5_p3 : ghatY (1e30 : ℝ) ((2343771 : ℕ) : ℝ) ≤ 0.0173934 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p4 : ghatY (1e30 : ℝ) ((5859428 : ℕ) : ℝ) ≤ 0.0118983 := by
+theorem c5_p4 : ghatY (1e30 : ℝ) ((5859428 : ℕ) : ℝ) ≤ 0.0119044 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 16.276711) (b₁ := 17.663011) (b₂ := 8.251218)
     (ρ := 0.727719) (c₁ := 2.746231) (c₂ := 2.746215) (s₁ := 2.41319) (s₂ := 3423.278)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1847,7 +1847,7 @@ theorem c5_p4 : ghatY (1e30 : ℝ) ((5859428 : ℕ) : ℝ) ≤ 0.0118983 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p5 : ghatY (1e30 : ℝ) ((14648571 : ℕ) : ℝ) ≤ 0.00817904 := by
+theorem c5_p5 : ghatY (1e30 : ℝ) ((14648571 : ℕ) : ℝ) ≤ 0.00818292 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 17.193002) (b₁ := 18.579298) (b₂ := 7.334927)
     (ρ := 0.818259) (c₁ := 2.803373) (c₂ := 2.80335) (s₁ := 2.430446) (s₂ := 5412.678)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1869,7 +1869,7 @@ theorem c5_p5 : ghatY (1e30 : ℝ) ((14648571 : ℕ) : ℝ) ≤ 0.00817904 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p6 : ghatY (1e30 : ℝ) ((36621428 : ℕ) : ℝ) ≤ 0.00565106 := by
+theorem c5_p6 : ghatY (1e30 : ℝ) ((36621428 : ℕ) : ℝ) ≤ 0.00565351 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 18.109293) (b₁ := 19.495587) (b₂ := 6.418636)
     (ρ := 0.923783) (c₁ := 2.85743) (c₂ := 2.857396) (s₁ := 2.446798) (s₂ := 8558.195)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1891,7 +1891,7 @@ theorem c5_p6 : ghatY (1e30 : ℝ) ((36621428 : ℕ) : ℝ) ≤ 0.00565106 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p7 : ghatY (1e30 : ℝ) ((91553571 : ℕ) : ℝ) ≤ 0.00392813 := by
+theorem c5_p7 : ghatY (1e30 : ℝ) ((91553571 : ℕ) : ℝ) ≤ 0.00392968 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 19.025584) (b₁ := 20.411878) (b₂ := 5.502346)
     (ρ := 1.049015) (c₁ := 2.908719) (c₂ := 2.90867) (s₁ := 2.462331) (s₂ := 13531.69)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1913,7 +1913,7 @@ theorem c5_p7 : ghatY (1e30 : ℝ) ((91553571 : ℕ) : ℝ) ≤ 0.00392813 := by
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_p8 : ghatY (1e30 : ℝ) ((228883928 : ℕ) : ℝ) ≤ 0.00275244 := by
+theorem c5_p8 : ghatY (1e30 : ℝ) ((228883928 : ℕ) : ℝ) ≤ 0.00275342 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 19.941931) (b₁ := 21.328169) (b₂ := 4.586055)
     (ρ := 1.20157) (c₁ := 2.957509) (c₂ := 2.957443) (s₁ := 2.477117) (s₂ := 21395.48)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1935,7 +1935,7 @@ theorem c5_p8 : ghatY (1e30 : ℝ) ((228883928 : ℕ) : ℝ) ≤ 0.00275244 := b
       (by norm_num : ((69 : ℕ) : ℝ) + 0.077554 ≤ 69.077554)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.00001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c5_gt : ghatY (1e30 : ℝ) ((329876975 : ℕ) : ℝ) ≤ 0.00239526 := by
+theorem c5_gt : ghatY (1e30 : ℝ) ((329876975 : ℕ) : ℝ) ≤ 0.00239607 := by
   refine ghatY_le_num (u := 9999989000) (a₁ := 20.307379) (b₁ := 21.693681) (b₂ := 4.22055)
     (ρ := 1.272569) (c₁ := 2.976328) (c₂ := 2.976254) (s₁ := 2.482822) (s₂ := 25685.65)
     (t₁ := 0.00001000002) (h₁ := 0.001593111) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1971,8 +1971,8 @@ theorem cell5 {x : ℝ} (hx1 : (49000000000000000000000000000000 : ℝ) ≤ x) (
     ((log_le_num (z := 2 * ((329876975 : ℕ) : ℝ)) 20 0.307379 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨329876975, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e30) (L₀ := 72.969372) (L₁ := 82.179715) (cl0 := 14.611549) (clt := 22.307376)
-    (G0 := 0.0566265) (Gt := 0.00239526) (sD' := 1.327375) (τ' := 23.10219) (k := 9)
-    (fun i => [150001, 375003, 937508, 2343771, 5859428, 14648571, 36621428, 91553571, 228883928, 329876975].getD i 0) (fun i => ([0.0566264, 0.0378557, 0.0255675, 0.0173934, 0.0118983, 0.00817904, 0.00565106, 0.00392813, 0.00275244] : List ℝ).getD i 0)
+    (G0 := 0.0566648) (Gt := 0.00239607) (sD' := 1.327375) (τ' := 23.10219) (k := 9)
+    (fun i => [150001, 375003, 937508, 2343771, 5859428, 14648571, 36621428, 91553571, 228883928, 329876975].getD i 0) (fun i => ([0.0566647, 0.0378799, 0.0255828, 0.017403, 0.0119044, 0.00818292, 0.00565351, 0.00392968, 0.00275342] : List ℝ).getD i 0)
     (fun i => ([0.916341, 0.91634, 0.91634, 0.91634, 0.91634, 0.91634, 0.91634, 0.91634, 0.365506] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -2016,7 +2016,7 @@ theorem cell5 {x : ℝ} (hx1 : (49000000000000000000000000000000 : ℝ) ≤ x) (
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c6_g0 : ghatY (1e34 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0549791 := by
+theorem c6_g0 : ghatY (1e34 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0550174 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 14.986503)
     (ρ := 0.383233) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2038,7 +2038,7 @@ theorem c6_g0 : ghatY (1e34 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0549791 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p0 : ghatY (1e34 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.054979 := by
+theorem c6_p0 : ghatY (1e34 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0550173 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 14.986497)
     (ρ := 0.383233) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2060,7 +2060,7 @@ theorem c6_p0 : ghatY (1e34 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.054979 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p1 : ghatY (1e34 : ℝ) ((450004 : ℕ) : ℝ) ≤ 0.0337144 := by
+theorem c6_p1 : ghatY (1e34 : ℝ) ((450004 : ℕ) : ℝ) ≤ 0.0337365 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 13.710169) (b₁ := 15.096455) (b₂ := 13.887882)
     (ρ := 0.434062) (c₁ := 2.56626) (c₂ := 2.566255) (s₁ := 2.359166) (s₂ := 948.6865)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2082,7 +2082,7 @@ theorem c6_p1 : ghatY (1e34 : ℝ) ((450004 : ℕ) : ℝ) ≤ 0.0337144 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p2 : ghatY (1e34 : ℝ) ((1350013 : ℕ) : ℝ) ≤ 0.0209345 := by
+theorem c6_p2 : ghatY (1e34 : ℝ) ((1350013 : ℕ) : ℝ) ≤ 0.0209473 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 14.808795) (b₁ := 16.195068) (b₂ := 12.789269)
     (ρ := 0.490513) (c₁ := 2.647288) (c₂ := 2.647281) (s₁ := 2.383415) (s₂ := 1643.173)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2104,7 +2104,7 @@ theorem c6_p2 : ghatY (1e34 : ℝ) ((1350013 : ℕ) : ℝ) ≤ 0.0209345 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p3 : ghatY (1e34 : ℝ) ((4050040 : ℕ) : ℝ) ≤ 0.0130969 := by
+theorem c6_p3 : ghatY (1e34 : ℝ) ((4050040 : ℕ) : ℝ) ≤ 0.0131043 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 15.907431) (b₁ := 17.29368) (b₂ := 11.690657)
     (ρ := 0.553679) (c₁ := 2.722243) (c₂ := 2.72223) (s₁ := 2.405958) (s₂ := 2846.061)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2126,7 +2126,7 @@ theorem c6_p3 : ghatY (1e34 : ℝ) ((4050040 : ℕ) : ℝ) ≤ 0.0130969 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p4 : ghatY (1e34 : ℝ) ((12150121 : ℕ) : ℝ) ≤ 0.00823259 := by
+theorem c6_p4 : ghatY (1e34 : ℝ) ((12150121 : ℕ) : ℝ) ≤ 0.00823684 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 17.005998) (b₁ := 18.392293) (b₂ := 10.592044)
     (ρ := 0.624987) (c₁ := 2.791973) (c₂ := 2.791952) (s₁ := 2.427001) (s₂ := 4929.522)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2148,7 +2148,7 @@ theorem c6_p4 : ghatY (1e34 : ℝ) ((12150121 : ℕ) : ℝ) ≤ 0.00823259 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p5 : ghatY (1e34 : ℝ) ((36450364 : ℕ) : ℝ) ≤ 0.00519336 := by
+theorem c6_p5 : ghatY (1e34 : ℝ) ((36450364 : ℕ) : ℝ) ≤ 0.00519581 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 18.104611) (b₁ := 19.490905) (b₂ := 9.493432)
     (ρ := 0.706343) (c₁ := 2.857161) (c₂ := 2.857127) (s₁ := 2.446717) (s₂ := 8538.183)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2170,7 +2170,7 @@ theorem c6_p5 : ghatY (1e34 : ℝ) ((36450364 : ℕ) : ℝ) ≤ 0.00519336 := by
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p6 : ghatY (1e34 : ℝ) ((109351093 : ℕ) : ℝ) ≤ 0.00328736 := by
+theorem c6_p6 : ghatY (1e34 : ℝ) ((109351093 : ℕ) : ℝ) ≤ 0.00328878 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 19.203223) (b₁ := 20.589519) (b₂ := 8.39482)
     (ρ := 0.800373) (c₁ := 2.918365) (c₂ := 2.918314) (s₁ := 2.465254) (s₂ := 14788.56)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2192,7 +2192,7 @@ theorem c6_p6 : ghatY (1e34 : ℝ) ((109351093 : ℕ) : ℝ) ≤ 0.00328736 := b
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p7 : ghatY (1e34 : ℝ) ((328053280 : ℕ) : ℝ) ≤ 0.00208951 := by
+theorem c6_p7 : ghatY (1e34 : ℝ) ((328053280 : ℕ) : ℝ) ≤ 0.00209033 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 20.301835) (b₁ := 21.688137) (b₂ := 7.296207)
     (ρ := 0.910827) (c₁ := 2.976045) (c₂ := 2.975971) (s₁ := 2.482737) (s₂ := 25614.55)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2214,7 +2214,7 @@ theorem c6_p7 : ghatY (1e34 : ℝ) ((328053280 : ℕ) : ℝ) ≤ 0.00208951 := b
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p8 : ghatY (1e34 : ℝ) ((984159841 : ℕ) : ℝ) ≤ 0.00133565 := by
+theorem c6_p8 : ghatY (1e34 : ℝ) ((984159841 : ℕ) : ℝ) ≤ 0.00133612 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 21.400448) (b₁ := 22.78676) (b₂ := 6.197595)
     (ρ := 1.043226) (c₁ := 3.030488) (c₂ := 3.030485) (s₁ := 2.499237) (s₂ := 44365.7)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2236,7 +2236,7 @@ theorem c6_p8 : ghatY (1e34 : ℝ) ((984159841 : ℕ) : ℝ) ≤ 0.00133565 := b
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_p9 : ghatY (1e34 : ℝ) ((2952479524 : ℕ) : ℝ) ≤ 0.000860879 := by
+theorem c6_p9 : ghatY (1e34 : ℝ) ((2952479524 : ℕ) : ℝ) ≤ 0.000861152 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 22.49906) (b₁ := 23.885392) (b₂ := 5.098983)
     (ρ := 1.206622) (c₁ := 3.082184) (c₂ := 3.08218) (s₁ := 2.514907) (s₂ := 76843.65)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2258,7 +2258,7 @@ theorem c6_p9 : ghatY (1e34 : ℝ) ((2952479524 : ℕ) : ℝ) ≤ 0.000860879 :=
       (by norm_num : ((78 : ℕ) : ℝ) + 0.287895 ≤ 78.287895)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c6_gt : ghatY (1e34 : ℝ) ((5228197760 : ℕ) : ℝ) ≤ 0.000688206 := by
+theorem c6_gt : ghatY (1e34 : ℝ) ((5228197760 : ℕ) : ℝ) ≤ 0.000688411 := by
   refine ghatY_le_num (u := 215443200000) (a₁ := 23.070481) (b₁ := 24.456776) (b₂ := 4.527561)
     (ρ := 1.308571) (c₁ := 3.10805) (c₂ := 3.108047) (s₁ := 2.522745) (s₂ := 102256.4)
     (t₁ := 0.000002154437) (h₁ := 0.0004123423) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2294,8 +2294,8 @@ theorem cell6 {x : ℝ} (hx1 : (490000000000000000000000000000000000 : ℝ) ≤ 
     ((log_le_num (z := 2 * ((5228197760 : ℕ) : ℝ)) 23 0.070481 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨5228197760, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e34) (L₀ := 82.179712) (L₁ := 100.600398) (cl0 := 14.611549) (clt := 25.070478)
-    (G0 := 0.0549791) (Gt := 0.000688206) (sD' := 1.321939) (τ' := 31.43829) (k := 10)
-    (fun i => [150001, 450004, 1350013, 4050040, 12150121, 36450364, 109351093, 328053280, 984159841, 2952479524, 5228197760].getD i 0) (fun i => ([0.054979, 0.0337144, 0.0209345, 0.0130969, 0.00823259, 0.00519336, 0.00328736, 0.00208951, 0.00133565, 0.000860879] : List ℝ).getD i 0)
+    (G0 := 0.0550174) (Gt := 0.000688411) (sD' := 1.321939) (τ' := 31.43829) (k := 10)
+    (fun i => [150001, 450004, 1350013, 4050040, 12150121, 36450364, 109351093, 328053280, 984159841, 2952479524, 5228197760].getD i 0) (fun i => ([0.0550173, 0.0337365, 0.0209473, 0.0131043, 0.00823684, 0.00519581, 0.00328878, 0.00209033, 0.00133612, 0.000861152] : List ℝ).getD i 0)
     (fun i => ([1.098616, 1.098615, 1.098614, 1.098614, 1.098614, 1.098614, 1.098614, 1.098614, 1.098614, 0.571424] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -2342,7 +2342,7 @@ theorem cell6 {x : ℝ} (hx1 : (490000000000000000000000000000000000 : ℝ) ≤ 
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c7_g0 : ghatY (1e42 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0529905 := by
+theorem c7_g0 : ghatY (1e42 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0530288 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 21.12673)
     (ρ := 0.286146) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2364,7 +2364,7 @@ theorem c7_g0 : ghatY (1e42 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0529905 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p0 : ghatY (1e42 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0529904 := by
+theorem c7_p0 : ghatY (1e42 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0530287 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 21.126724)
     (ρ := 0.286146) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2386,7 +2386,7 @@ theorem c7_p0 : ghatY (1e42 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0529904 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p1 : ghatY (1e42 : ℝ) ((600005 : ℕ) : ℝ) ≤ 0.0283536 := by
+theorem c7_p1 : ghatY (1e42 : ℝ) ((600005 : ℕ) : ℝ) ≤ 0.0283728 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 13.997923) (b₁ := 15.384136) (b₂ := 19.740428)
     (ρ := 0.329061) (c₁ := 2.58812) (c₂ := 2.588115) (s₁ := 2.365693) (s₂ := 1095.448)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2408,7 +2408,7 @@ theorem c7_p1 : ghatY (1e42 : ℝ) ((600005 : ℕ) : ℝ) ≤ 0.0283536 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p2 : ghatY (1e42 : ℝ) ((2400021 : ℕ) : ℝ) ≤ 0.0154187 := by
+theorem c7_p2 : ghatY (1e42 : ℝ) ((2400021 : ℕ) : ℝ) ≤ 0.0154282 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 15.384137) (b₁ := 16.770446) (b₂ := 18.354133)
     (ρ := 0.376283) (c₁ := 2.687243) (c₂ := 2.687233) (s₁ := 2.39542) (s₂ := 2190.897)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2430,7 +2430,7 @@ theorem c7_p2 : ghatY (1e42 : ℝ) ((2400021 : ℕ) : ℝ) ≤ 0.0154187 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p3 : ghatY (1e42 : ℝ) ((9600085 : ℕ) : ℝ) ≤ 0.0084463 := by
+theorem c7_p3 : ghatY (1e42 : ℝ) ((9600085 : ℕ) : ℝ) ≤ 0.00845109 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 16.770447) (b₁ := 18.156726) (b₂ := 16.967838)
     (ρ := 0.428554) (c₁ := 2.777425) (c₂ := 2.777406) (s₁ := 2.422606) (s₂ := 4381.795)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2452,7 +2452,7 @@ theorem c7_p3 : ghatY (1e42 : ℝ) ((9600085 : ℕ) : ℝ) ≤ 0.0084463 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p4 : ghatY (1e42 : ℝ) ((38400341 : ℕ) : ℝ) ≤ 0.00464046 := by
+theorem c7_p4 : ghatY (1e42 : ℝ) ((38400341 : ℕ) : ℝ) ≤ 0.00464285 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 18.156726) (b₁ := 19.543021) (b₂ := 15.581544)
     (ρ := 0.486814) (c₁ := 2.860151) (c₂ := 2.860116) (s₁ := 2.447622) (s₂ := 8763.591)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2474,7 +2474,7 @@ theorem c7_p4 : ghatY (1e42 : ℝ) ((38400341 : ℕ) : ℝ) ≤ 0.00464046 := by
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p5 : ghatY (1e42 : ℝ) ((153601365 : ℕ) : ℝ) ≤ 0.00255228 := by
+theorem c7_p5 : ghatY (1e42 : ℝ) ((153601365 : ℕ) : ℝ) ≤ 0.00255348 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 19.543021) (b₁ := 20.929366) (b₂ := 14.19525)
     (ρ := 0.552275) (c₁ := 2.936564) (c₂ := 2.936505) (s₁ := 2.470769) (s₂ := 17527.18)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2496,7 +2496,7 @@ theorem c7_p5 : ghatY (1e42 : ℝ) ((153601365 : ℕ) : ℝ) ≤ 0.00255228 := b
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p6 : ghatY (1e42 : ℝ) ((614405461 : ℕ) : ℝ) ≤ 0.00140466 := by
+theorem c7_p6 : ghatY (1e42 : ℝ) ((614405461 : ℕ) : ℝ) ≤ 0.00140525 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 20.929366) (b₁ := 22.315609) (b₂ := 12.808955)
     (ρ := 0.626528) (c₁ := 3.007473) (c₂ := 3.00747) (s₁ := 2.49226) (s₂ := 35054.36)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2518,7 +2518,7 @@ theorem c7_p6 : ghatY (1e42 : ℝ) ((614405461 : ℕ) : ℝ) ≤ 0.00140466 := b
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p7 : ghatY (1e42 : ℝ) ((2457621845 : ℕ) : ℝ) ≤ 0.00077382 := by
+theorem c7_p7 : ghatY (1e42 : ℝ) ((2457621845 : ℕ) : ℝ) ≤ 0.000774119 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 22.315609) (b₁ := 23.701911) (b₂ := 11.422661)
     (ρ := 0.711732) (c₁ := 3.073734) (c₂ := 3.073731) (s₁ := 2.512346) (s₂ := 70108.72)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2540,7 +2540,7 @@ theorem c7_p7 : ghatY (1e42 : ℝ) ((2457621845 : ℕ) : ℝ) ≤ 0.00077382 := 
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p8 : ghatY (1e42 : ℝ) ((9830487381 : ℕ) : ℝ) ≤ 0.000427103 := by
+theorem c7_p8 : ghatY (1e42 : ℝ) ((9830487381 : ℕ) : ℝ) ≤ 0.000427253 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 23.701911) (b₁ := 25.088197) (b₂ := 10.036367)
     (ρ := 0.810893) (c₁ := 3.135876) (c₂ := 3.135873) (s₁ := 2.531175) (s₂ := 140217.4)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2562,7 +2562,7 @@ theorem c7_p8 : ghatY (1e42 : ℝ) ((9830487381 : ℕ) : ℝ) ≤ 0.000427103 :=
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p9 : ghatY (1e42 : ℝ) ((39321949525 : ℕ) : ℝ) ≤ 0.000236522 := by
+theorem c7_p9 : ghatY (1e42 : ℝ) ((39321949525 : ℕ) : ℝ) ≤ 0.000236596 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 25.088197) (b₁ := 26.474492) (b₂ := 8.650072)
     (ρ := 0.928393) (c₁ := 3.194382) (c₂ := 3.194379) (s₁ := 2.548888) (s₂ := 280434.9)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2584,7 +2584,7 @@ theorem c7_p9 : ghatY (1e42 : ℝ) ((39321949525 : ℕ) : ℝ) ≤ 0.000236522 :
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p10 : ghatY (1e42 : ℝ) ((157287798101 : ℕ) : ℝ) ≤ 0.000131696 := by
+theorem c7_p10 : ghatY (1e42 : ℝ) ((157287798101 : ℕ) : ℝ) ≤ 0.000131734 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 26.474492) (b₁ := 27.860818) (b₂ := 7.263778)
     (ρ := 1.070828) (c₁ := 3.249653) (c₂ := 3.24965) (s₁ := 2.565603) (s₂ := 560869.8)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2606,7 +2606,7 @@ theorem c7_p10 : ghatY (1e42 : ℝ) ((157287798101 : ℕ) : ℝ) ≤ 0.000131696
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_p11 : ghatY (1e42 : ℝ) ((629151192405 : ℕ) : ℝ) ≤ 0.0000739795 := by
+theorem c7_p11 : ghatY (1e42 : ℝ) ((629151192405 : ℕ) : ℝ) ≤ 0.0000739982 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 27.860818) (b₁ := 29.24708) (b₂ := 5.877483)
     (ρ := 1.249348) (c₁ := 3.302028) (c₂ := 3.302025) (s₁ := 2.581423) (s₂ := 1121739)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2628,7 +2628,7 @@ theorem c7_p11 : ghatY (1e42 : ℝ) ((629151192405 : ℕ) : ℝ) ≤ 0.000073979
       (by norm_num : ((96 : ℕ) : ℝ) + 0.708584 ≤ 96.708584)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000001000002) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c7_gt : ghatY (1e42 : ℝ) ((1313263902199 : ℕ) : ℝ) ≤ 0.000054762 := by
+theorem c7_gt : ghatY (1e42 : ℝ) ((1313263902199 : ℕ) : ℝ) ≤ 0.0000547749 := by
   refine ghatY_le_num (u := 99999890000000) (a₁ := 28.596688) (b₁ := 29.983054) (b₂ := 5.141584)
     (ρ := 1.365006) (c₁ := 3.328757) (c₂ := 3.328752) (s₁ := 2.589487) (s₂ := 1620654)
     (t₁ := 0.0000001000002) (h₁ := 0.00002624991) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2664,8 +2664,8 @@ theorem cell7 {x : ℝ} (hx1 : (49000000000000000000000000000000000000000000 : �
     ((log_le_num (z := 2 * ((1313263902199 : ℕ) : ℝ)) 28 0.596688 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨1313263902199, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e42) (L₀ := 100.600393) (L₁ := 137.441757) (cl0 := 14.611549) (clt := 30.596682)
-    (G0 := 0.0529905) (Gt := 0.000054762) (sD' := 1.314133) (τ' := 48.04413) (k := 12)
-    (fun i => [150001, 600005, 2400021, 9600085, 38400341, 153601365, 614405461, 2457621845, 9830487381, 39321949525, 157287798101, 629151192405, 1313263902199].getD i 0) (fun i => ([0.0529904, 0.0283536, 0.0154187, 0.0084463, 0.00464046, 0.00255228, 0.00140466, 0.00077382, 0.000427103, 0.000236522, 0.000131696, 0.0000739795] : List ℝ).getD i 0)
+    (G0 := 0.0530288) (Gt := 0.0000547749) (sD' := 1.314133) (τ' := 48.04413) (k := 12)
+    (fun i => [150001, 600005, 2400021, 9600085, 38400341, 153601365, 614405461, 2457621845, 9830487381, 39321949525, 157287798101, 629151192405, 1313263902199].getD i 0) (fun i => ([0.0530287, 0.0283728, 0.0154282, 0.00845109, 0.00464285, 0.00255348, 0.00140525, 0.000774119, 0.000427253, 0.000236596, 0.000131734, 0.0000739982] : List ℝ).getD i 0)
     (fun i => ([1.386298, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 1.386296, 0.735912] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -2718,7 +2718,7 @@ theorem cell7 {x : ℝ} (hx1 : (49000000000000000000000000000000000000000000 : �
     (by simp only [Finset.sum_range_succ, Finset.sum_range_zero, List.getD_cons_succ,
       List.getD_cons_zero]; norm_num)
 
-theorem c8_g0 : ghatY (1e58 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0510358 := by
+theorem c8_g0 : ghatY (1e58 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0510741 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 12.611542) (b₁ := 13.997915) (b₂ := 33.407184)
     (ρ := 0.190212) (c₁ := 2.478088) (c₂ := 2.478081) (s₁ := 2.332969) (s₂ := 547.722)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2740,7 +2740,7 @@ theorem c8_g0 : ghatY (1e58 : ℝ) ((150000 : ℕ) : ℝ) ≤ 0.0510358 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p0 : ghatY (1e58 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0510357 := by
+theorem c8_p0 : ghatY (1e58 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.051074 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 12.611549) (b₁ := 13.997921) (b₂ := 33.407177)
     (ρ := 0.190212) (c₁ := 2.478089) (c₂ := 2.478082) (s₁ := 2.33297) (s₂ := 547.7238)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2762,7 +2762,7 @@ theorem c8_p0 : ghatY (1e58 : ℝ) ((150001 : ℕ) : ℝ) ≤ 0.0510357 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p1 : ghatY (1e58 : ℝ) ((900007 : ℕ) : ℝ) ≤ 0.0225428 := by
+theorem c8_p1 : ghatY (1e58 : ℝ) ((900007 : ℕ) : ℝ) ≤ 0.0225585 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 14.403307) (b₁ := 15.789619) (b₂ := 31.615417)
     (ρ := 0.222916) (c₁ := 2.618142) (c₂ := 2.618135) (s₁ := 2.374676) (s₂ := 1341.644)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2784,7 +2784,7 @@ theorem c8_p1 : ghatY (1e58 : ℝ) ((900007 : ℕ) : ℝ) ≤ 0.0225428 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p2 : ghatY (1e58 : ℝ) ((5400043 : ℕ) : ℝ) ≤ 0.0101703 := by
+theorem c8_p2 : ghatY (1e58 : ℝ) ((5400043 : ℕ) : ℝ) ≤ 0.0101767 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 16.195066) (b₁ := 17.581362) (b₂ := 29.823657)
     (ρ := 0.258323) (c₁ := 2.740977) (c₂ := 2.740962) (s₁ := 2.411606) (s₂ := 3286.345)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2806,7 +2806,7 @@ theorem c8_p2 : ghatY (1e58 : ℝ) ((5400043 : ℕ) : ℝ) ≤ 0.0101703 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p3 : ghatY (1e58 : ℝ) ((32400259 : ℕ) : ℝ) ≤ 0.00461494 := by
+theorem c8_p3 : ghatY (1e58 : ℝ) ((32400259 : ℕ) : ℝ) ≤ 0.00461754 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 17.986901) (b₁ := 19.37312) (b₂ := 28.031898)
     (ρ := 0.296808) (c₁ := 2.850372) (c₂ := 2.850339) (s₁ := 2.444662) (s₂ := 8049.868)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2828,7 +2828,7 @@ theorem c8_p3 : ghatY (1e58 : ℝ) ((32400259 : ℕ) : ℝ) ≤ 0.00461494 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p4 : ghatY (1e58 : ℝ) ((194401555 : ℕ) : ℝ) ≤ 0.0020932 := by
+theorem c8_p4 : ghatY (1e58 : ℝ) ((194401555 : ℕ) : ℝ) ≤ 0.00209427 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 19.778602) (b₁ := 21.164879) (b₂ := 26.240138)
     (ρ := 0.338822) (c₁ := 2.948986) (c₂ := 2.948924) (s₁ := 2.474534) (s₂ := 19718.07)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2850,7 +2850,7 @@ theorem c8_p4 : ghatY (1e58 : ℝ) ((194401555 : ℕ) : ℝ) ≤ 0.0020932 := by
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p5 : ghatY (1e58 : ℝ) ((1166409331 : ℕ) : ℝ) ≤ 0.000947079 := by
+theorem c8_p5 : ghatY (1e58 : ℝ) ((1166409331 : ℕ) : ℝ) ≤ 0.000947514 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 21.570346) (b₁ := 22.956701) (b₂ := 24.448379)
     (ρ := 0.384919) (c₁ := 3.038661) (c₂ := 3.038656) (s₁ := 2.501715) (s₂ := 48299.21)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2872,7 +2872,7 @@ theorem c8_p5 : ghatY (1e58 : ℝ) ((1166409331 : ℕ) : ℝ) ≤ 0.000947079 :=
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p6 : ghatY (1e58 : ℝ) ((6998455987 : ℕ) : ℝ) ≤ 0.000427341 := by
+theorem c8_p6 : ghatY (1e58 : ℝ) ((6998455987 : ℕ) : ℝ) ≤ 0.000427519 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 23.362104) (b₁ := 24.748411) (b₂ := 22.656619)
     (ρ := 0.435778) (c₁ := 3.120998) (c₂ := 3.120995) (s₁ := 2.526668) (s₂ := 118308.4)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2894,7 +2894,7 @@ theorem c8_p6 : ghatY (1e58 : ℝ) ((6998455987 : ℕ) : ℝ) ≤ 0.000427341 :=
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p7 : ghatY (1e58 : ℝ) ((41990735923 : ℕ) : ℝ) ≤ 0.000192373 := by
+theorem c8_p7 : ghatY (1e58 : ℝ) ((41990735923 : ℕ) : ℝ) ≤ 0.000192446 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 25.153864) (b₁ := 26.540159) (b₂ := 20.86486)
     (ρ := 0.492257) (c₁ := 3.19707) (c₂ := 3.197067) (s₁ := 2.549701) (s₂ := 289795.2)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2916,7 +2916,7 @@ theorem c8_p7 : ghatY (1e58 : ℝ) ((41990735923 : ℕ) : ℝ) ≤ 0.000192373 :
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p8 : ghatY (1e58 : ℝ) ((251944415539 : ℕ) : ℝ) ≤ 0.0000864537 := by
+theorem c8_p8 : ghatY (1e58 : ℝ) ((251944415539 : ℕ) : ℝ) ≤ 0.0000864833 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 26.945681) (b₁ := 28.331917) (b₂ := 19.0731)
     (ρ := 0.555449) (c₁ := 3.267762) (c₂ := 3.267759) (s₁ := 2.571075) (s₂ := 709850.5)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2938,7 +2938,7 @@ theorem c8_p8 : ghatY (1e58 : ℝ) ((251944415539 : ℕ) : ℝ) ≤ 0.0000864537
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p9 : ghatY (1e58 : ℝ) ((1511666493235 : ℕ) : ℝ) ≤ 0.0000388184 := by
+theorem c8_p9 : ghatY (1e58 : ℝ) ((1511666493235 : ℕ) : ℝ) ≤ 0.0000388305 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 28.737394) (b₁ := 30.123677) (b₂ := 17.281341)
     (ρ := 0.626781) (c₁ := 3.333785) (c₂ := 3.333781) (s₁ := 2.591004) (s₂ := 1738771)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2960,7 +2960,7 @@ theorem c8_p9 : ghatY (1e58 : ℝ) ((1511666493235 : ℕ) : ℝ) ≤ 0.000038818
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p10 : ghatY (1e58 : ℝ) ((9069998959411 : ℕ) : ℝ) ≤ 0.00001743 := by
+theorem c8_p10 : ghatY (1e58 : ℝ) ((9069998959411 : ℕ) : ℝ) ≤ 0.0000174349 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 30.529142) (b₁ := 31.915484) (b₂ := 15.489581)
     (ρ := 0.708156) (c₁ := 3.395718) (c₂ := 3.395714) (s₁ := 2.609662) (s₂ := 4259103)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -2982,7 +2982,7 @@ theorem c8_p10 : ghatY (1e58 : ℝ) ((9069998959411 : ℕ) : ℝ) ≤ 0.00001743
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p11 : ghatY (1e58 : ℝ) ((54419993756467 : ℕ) : ℝ) ≤ 0.00000783459 := by
+theorem c8_p11 : ghatY (1e58 : ℝ) ((54419993756467 : ℕ) : ℝ) ≤ 0.0000078366 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 32.320901) (b₁ := 33.707204) (b₂ := 13.697822)
     (ρ := 0.802196) (c₁ := 3.454037) (c₂ := 3.454033) (s₁ := 2.627196) (s₂ := 10432630)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3004,7 +3004,7 @@ theorem c8_p11 : ghatY (1e58 : ℝ) ((54419993756467 : ℕ) : ℝ) ≤ 0.0000078
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p12 : ghatY (1e58 : ℝ) ((326519962538803 : ℕ) : ℝ) ≤ 0.00000352992 := by
+theorem c8_p12 : ghatY (1e58 : ℝ) ((326519962538803 : ℕ) : ℝ) ≤ 0.00000353074 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 34.112661) (b₁ := 35.498955) (b₂ := 11.906062)
     (ρ := 0.912649) (c₁ := 3.509142) (c₂ := 3.509138) (s₁ := 2.643729) (s₂ := 25554620)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3026,7 +3026,7 @@ theorem c8_p12 : ghatY (1e58 : ℝ) ((326519962538803 : ℕ) : ℝ) ≤ 0.000003
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p13 : ghatY (1e58 : ℝ) ((1959119775232819 : ℕ) : ℝ) ≤ 0.00000159694 := by
+theorem c8_p13 : ghatY (1e58 : ℝ) ((1959119775232819 : ℕ) : ℝ) ≤ 0.00000159728 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 35.904464) (b₁ := 37.290715) (b₂ := 10.114303)
     (ρ := 1.045025) (c₁ := 3.561369) (c₂ := 3.561365) (s₁ := 2.659365) (s₂ := 62595780)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3048,7 +3048,7 @@ theorem c8_p13 : ghatY (1e58 : ℝ) ((1959119775232819 : ℕ) : ℝ) ≤ 0.00000
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p14 : ghatY (1e58 : ℝ) ((11754718651396915 : ℕ) : ℝ) ≤ 0.000000727327 := by
+theorem c8_p14 : ghatY (1e58 : ℝ) ((11754718651396915 : ℕ) : ℝ) ≤ 0.000000727464 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 37.696187) (b₁ := 39.082474) (b₂ := 8.322543)
     (ρ := 1.208361) (c₁ := 3.611004) (c₂ := 3.610998) (s₁ := 2.674193) (s₂ := 153327700)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3070,7 +3070,7 @@ theorem c8_p14 : ghatY (1e58 : ℝ) ((11754718651396915 : ℕ) : ℝ) ≤ 0.0000
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_p15 : ghatY (1e58 : ℝ) ((70528311908381491 : ℕ) : ℝ) ≤ 0.000000334906 := by
+theorem c8_p15 : ghatY (1e58 : ℝ) ((70528311908381491 : ℕ) : ℝ) ≤ 0.000000334962 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 39.487939) (b₁ := 40.874269) (b₂ := 6.530784)
     (ρ := 1.418122) (c₁ := 3.658293) (c₂ := 3.658284) (s₁ := 2.688289) (s₂ := 375574600)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3092,7 +3092,7 @@ theorem c8_p15 : ghatY (1e58 : ℝ) ((70528311908381491 : ℕ) : ℝ) ≤ 0.0000
       (by norm_num : ((133 : ℕ) : ℝ) + 0.549938 ≤ 133.549938)) (by norm_num) (by norm_num)
       (rpow_neg_sixth_le (t := 0.0000000002154437) (by norm_num) (by norm_num))).trans (by norm_num)
 
-theorem c8_gt : ghatY (1e58 : ℝ) ((82861350433499550 : ℕ) : ℝ) ≤ 0.000000312578 := by
+theorem c8_gt : ghatY (1e58 : ℝ) ((82861350433499550 : ℕ) : ℝ) ≤ 0.00000031263 := by
   refine ghatY_le_num (u := 21544320000000000000) (a₁ := 39.649098) (b₁ := 41.035388) (b₂ := 6.369629)
     (ρ := 1.440115) (c₁ := 3.66244) (c₂ := 3.66243) (s₁ := 2.689524) (s₂ := 407090100)
     (t₁ := 0.0000000002154437) (h₁ := 0.00000009177179) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -3128,8 +3128,8 @@ theorem cell8 {x : ℝ} (hx1 : (490000000000000000000000000000000000000000000000
     ((log_le_num (z := 2 * ((82861350433499550 : ℕ) : ℝ)) 39 0.649098 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (by norm_num)) (by norm_num) hL₀x
   refine ⟨82861350433499550, by norm_num, c1, c2, c3, c4, c5, ?_⟩
   refine cell_bound (Y := 1e58) (L₀ := 137.441754) (L₁ := 234.150331) (cl0 := 14.611549) (clt := 41.649091)
-    (G0 := 0.0510358) (Gt := 0.000000312578) (sD' := 1.30492) (τ' := 95.96147) (k := 16)
-    (fun i => [150001, 900007, 5400043, 32400259, 194401555, 1166409331, 6998455987, 41990735923, 251944415539, 1511666493235, 9069998959411, 54419993756467, 326519962538803, 1959119775232819, 11754718651396915, 70528311908381491, 82861350433499550].getD i 0) (fun i => ([0.0510357, 0.0225428, 0.0101703, 0.00461494, 0.0020932, 0.000947079, 0.000427341, 0.000192373, 0.0000864537, 0.0000388184, 0.00001743, 0.00000783459, 0.00000352992, 0.00000159694, 0.000000727327, 0.000000334906] : List ℝ).getD i 0)
+    (G0 := 0.0510741) (Gt := 0.00000031263) (sD' := 1.30492) (τ' := 95.96147) (k := 16)
+    (fun i => [150001, 900007, 5400043, 32400259, 194401555, 1166409331, 6998455987, 41990735923, 251944415539, 1511666493235, 9069998959411, 54419993756467, 326519962538803, 1959119775232819, 11754718651396915, 70528311908381491, 82861350433499550].getD i 0) (fun i => ([0.051074, 0.0225585, 0.0101767, 0.00461754, 0.00209427, 0.000947514, 0.000427519, 0.000192446, 0.0000864833, 0.0000388305, 0.0000174349, 0.0000078366, 0.00000353074, 0.00000159728, 0.000000727464, 0.000000334962] : List ℝ).getD i 0)
     (fun i => ([1.791781, 1.79178, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 0.161156] : List ℝ).getD i 0) hx (by norm_num)
     (by rw [show (κ : ℝ) = 49 from rfl, le_div_iff₀ (by norm_num)]; linarith) (by norm_num) hL₀x hL₁x
     rfl rfl (by intro i hi; interval_cases i <;> decide)
@@ -3196,9 +3196,9 @@ theorem cell8 {x : ℝ} (hx1 : (490000000000000000000000000000000000000000000000
 
 /-- The block chain of cell 8, for every `y ≥ Y_8` (used for `y ≥ 10¹⁰⁰`). -/
 theorem chain8 {y : ℝ} (hy : (1e58 : ℝ) ≤ y) :
-    ∑ n ∈ Finset.Ico (150001 : ℕ) 82861350433499550, ghatY y n * Real.log (((n : ℝ) + 1) / n) ≤ 0.165166588766518519 := by
+    ∑ n ∈ Finset.Ico (150001 : ℕ) 82861350433499550, ghatY y n * Real.log (((n : ℝ) + 1) / n) ≤ 0.165282706731081808 := by
   have h := chain_le (Y := 1e58) (k := 16) (fun i => [150001, 900007, 5400043, 32400259, 194401555, 1166409331, 6998455987, 41990735923, 251944415539, 1511666493235, 9069998959411, 54419993756467, 326519962538803, 1959119775232819, 11754718651396915, 70528311908381491, 82861350433499550].getD i 0)
-    (fun i => ([0.0510357, 0.0225428, 0.0101703, 0.00461494, 0.0020932, 0.000947079, 0.000427341, 0.000192373, 0.0000864537, 0.0000388184, 0.00001743, 0.00000783459, 0.00000352992, 0.00000159694, 0.000000727327, 0.000000334906] : List ℝ).getD i 0) (fun i => ([1.791781, 1.79178, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 0.161156] : List ℝ).getD i 0)
+    (fun i => ([0.051074, 0.0225585, 0.0101767, 0.00461754, 0.00209427, 0.000947514, 0.000427519, 0.000192446, 0.0000864833, 0.0000388305, 0.0000174349, 0.0000078366, 0.00000353074, 0.00000159728, 0.000000727464, 0.000000334962] : List ℝ).getD i 0) (fun i => ([1.791781, 1.79178, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 1.791779, 0.161156] : List ℝ).getD i 0)
     (by norm_num) hy (by decide) (by intro i hi; interval_cases i <;> decide)
     ((by norm_num : ((82861350433499550 : ℕ) : ℝ) ≤ 21544320000000000000 / 6).trans (by
       have := le_rpow_third (Y := (1e58 : ℝ)) (u := 21544320000000000000) (by norm_num) (by norm_num); linarith))

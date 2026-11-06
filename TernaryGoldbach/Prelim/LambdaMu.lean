@@ -1147,6 +1147,19 @@ theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
   · exact (psi_mul_buthe hN (h.trans (by norm_num))).trans_le hmono
   · exact (psi_mul_large h.le).trans_le hmono
 
+/-- **[H, (2.14)], route D form**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` (the minor arcs use it at
+`V ≥ 2.7·10⁷`). Without Büthe, `|ψ(y) − y| ≤ 31.5 √y` there gives `1.0063`. -/
+theorem sum_vonMangoldt_le_a14 {y : ℝ} (hy : 2.5e7 ≤ y) :
+    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0064 * y := by
+  have := sum_vonMangoldt_le_10004 (y := y) (by linarith); linarith
+
+/-- **[H, (2.17)], route D form**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷`. -/
+theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
+    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
+  have := sum_vonMangoldt_mul_lt' hy
+  have : 0 ≤ y ^ 2 := sq_nonneg y
+  linarith
+
 /- [H, (2.18)] (`∑_{n≤y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`) is not formalized either: the main
 theorems do not need it. (It follows from (2.14) by summation by parts and finite checks.) -/
 

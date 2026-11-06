@@ -195,6 +195,21 @@ def chain(name, stmt, bound, upto):
             return "\n".join(lines)
     lines.append("  norm_num")
     return "\n".join(lines)
-env = "\n\n" + chain("cW_le_72", "(x : ℝ) : cW x ≤ 72", 72, n) + "\n\n" + chain("cW_le_33", "{x : ℝ} (hx : x ≤ 1e8) : cW x ≤ 33", 33, 4) + "\n"
+def chain_lo(name, stmt, start, upto):
+    """cW x ≤ bound for bounds[start] < x ≤ bounds[upto]."""
+    lines = [f"theorem {name} {stmt} := by", "  unfold cW"]
+    for i in range(n - 1):
+        lines.append(f"  by_cases h{i} : x ≤ {lq(bounds[i+1])}")
+        if i < start:
+            lines.append(f"  · exfalso; norm_num at hx1 h{i}; linarith")
+        else:
+            lines.append(f"  · rw [if_pos h{i}]; norm_num")
+        lines.append(f"  rw [if_neg h{i}]")
+        if i + 1 >= upto:
+            lines.append(f"  exfalso; push Not at h{i}; norm_num at hx2; linarith")
+            return "\n".join(lines)
+    lines.append("  norm_num")
+    return "\n".join(lines)
+env = "\n\n" + chain_lo("cW_le_315", "{x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5", 2, 4) + "\n\n" + chain_lo("cW_le_355", "{x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5", 0, 9) + "\n\n" + chain("cW_le_72", "(x : ℝ) : cW x ≤ 72", 72, n) + "\n\n" + chain("cW_le_33", "{x : ℝ} (hx : x ≤ 1e8) : cW x ≤ 33", 33, 4) + "\n"
 txt = txt.replace("\nend TernaryGoldbach.Explicit\n", "\n" + defn + "\n\n" + "\n".join(proof) + "\n" + env + "\nend TernaryGoldbach.Explicit\n")
 open('TernaryGoldbach/Explicit/PsiRanges.lean', 'w').write(txt)

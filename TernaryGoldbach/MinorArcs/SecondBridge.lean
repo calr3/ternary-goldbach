@@ -106,7 +106,7 @@ theorem Cxt_le_loglog {T t : ℝ} (hT : 6e6 ≤ T) (ht2 : 2 ≤ t) (htT : t ≤ 
 /-- The final numerical inequality of the bridge case (main part), in `L = log T ≥ 15.6`. -/
 theorem bridge_numeric_main {L : ℝ} (hL : 15.6 ≤ L) :
     ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) *
-        √(3.0001 * (1.948 * Real.log L + 1)) + (4.35 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := by
+        √(3.0001 * (1.948 * Real.log L + 1)) + (4.38 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := by
   have hsq := sqrt_ge_of_log hL
   have h39 := sqrt_fifteen_six_ge
   have hl15 := log_fifteen_six_le
@@ -143,7 +143,7 @@ theorem bridge_numeric_main {L : ℝ} (hL : 15.6 ≤ L) :
         ≤ ((0.27125 * (s - 1.06) + 0.41415) * L + 0.0562 * L) * √B := by gcongr
       _ = L * (A * √B) := by simp only [A]; ring
       _ ≤ _ := by gcongr
-  have hc : 4.35 + 2.5 + 3.8 ≤ L * 0.69 := by linarith
+  have hc : 4.38 + 2.5 + 3.8 ≤ L * 0.69 := by linarith
   -- Monotonicity in `s`, then a polynomial inequality in `d`.
   have hmon : A * (B * (100 / 874) + 2.185) ≤ (0.27125 * (2.75 + d - 1.06) + 0.41415 + 0.0562) *
       (3.0001 * (1.948 * (2.75 + d) + 1) * (100 / 874) + 2.185) := by
@@ -286,16 +286,16 @@ theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
     calc N * T ^ 3 = N * √(3.0001 * Fb) * (T ^ 2 * √T) * (√T / √(3.0001 * Fb)) := by
           rw [hT3]; field_simp
       _ ≤ _ := by gcongr
-  have t2 : 2.511 * T ^ 3 / √t ≤ 4.35 * (T ^ 2 * √T) := by
+  have t2 : 2.526 * T ^ 3 / √t ≤ 4.38 * (T ^ 2 * √T) := by
     have h1 : √(T / 3.0001) ≤ √t := Real.sqrt_le_sqrt htlow
     have h2 : √(T / 3.0001) = √T / √3.0001 := Real.sqrt_div' _ (by norm_num)
     have h3 : √3.0001 ≤ 1.73209 := by
       rw [Real.sqrt_le_left (by norm_num)]; norm_num
     rw [h2] at h1
     rw [div_le_iff₀ (lt_of_lt_of_le (by positivity) h1)]
-    calc 2.511 * T ^ 3 = 2.511 * √3.0001 * (T ^ 2 * √T) * (√T / √3.0001) := by
+    calc 2.526 * T ^ 3 = 2.526 * √3.0001 * (T ^ 2 * √T) * (√T / √3.0001) := by
           rw [hT3]; field_simp
-      _ ≤ 4.35 * (T ^ 2 * √T) * (√T / √3.0001) := by gcongr; nlinarith
+      _ ≤ 4.38 * (T ^ 2 * √T) * (√T / √3.0001) := by gcongr; nlinarith
       _ ≤ _ := by gcongr
   have t3 : 2 * T ^ 3 / t * ((q' : ℝ) / Nat.totient q' * (13 / 4 * Real.log t + 7.82) +
       13.66 * Real.log t + 37.55) ≤ 2.5 * (T ^ 2 * √T) := by
@@ -319,9 +319,9 @@ theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
       _ ≤ T ^ 2 * (2.5 * √T) := by gcongr
       _ = _ := by ring
   have hmain : ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) * √(3.0001 * Fb) +
-      (4.35 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := bridge_numeric_main hL
+      (4.38 + 2.5 + 3.8) ≤ 1.434 * (L * √L) := bridge_numeric_main hL
   have hP : 0 < T ^ 2 * √T := by positivity
-  have hfin : N * √(3.0001 * Fb) ≤ 1.434 * (L * √L) - (4.35 + 2.5 + 3.8) := by
+  have hfin : N * √(3.0001 * Fb) ≤ 1.434 * (L * √L) - (4.38 + 2.5 + 3.8) := by
     have : N * √(3.0001 * Fb) ≤ ((0.27125 * (Real.log L - 1.06) + 0.41415) * L + 0.8764) *
         √(3.0001 * Fb) := mul_le_mul_of_nonneg_right hN (Real.sqrt_nonneg _)
     linarith

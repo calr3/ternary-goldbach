@@ -10,7 +10,7 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
 [H, §11.2] restates the first case of Theorem 3.1.1 as `|S_{η₂}(α, x)| ≤ g_x(r) x` with
 `r = max(1, |δ|/8) q` (so `δ₀q = 2r`), bounding `q/φ(q)` by `Ϝ(r)` (Lemma C.2.2, trusted):
 
-`g_x(r) = ((R_{x,2r} log 2r + 0.8764) √Ϝ(r) + 2.511)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
+`g_x(r) = ((R_{x,2r} log 2r + 0.8764) √Ϝ(r) + 2.526)/√(2r) + L_{2r}/r + 3.8 x^{-1/6}`,
 `L_t = Ϝ(t/2)(13/4 log t + 7.82) + 13.66 log t + 37.55`.
 
 The constants `0.8764`, `3.8` are those of our corrected Theorem 3.1.1 ([H]: `0.5`, `3.36`).
@@ -34,7 +34,7 @@ noncomputable def Lg (t : ℝ) : ℝ :=
 
 /-- `g_x(r)` [H, (11.12)], with our constants `0.8764` and `3.8`. -/
 noncomputable def gx (x r : ℝ) : ℝ :=
-  ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √(Fr r) + 2.511) / √(2 * r) + Lg (2 * r) / r +
+  ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √(Fr r) + 2.526) / √(2 * r) + Lg (2 * r) / r +
     3.8 * x ^ (-1 / 6 : ℝ)
 
 /-- `R_{x,t} ≥ 0` for `1 ≤ t ≤ x^{1/3}/3` (both logarithms in (11.13) are positive). -/
@@ -122,10 +122,10 @@ theorem norm_S_eta2_le_gx {α x δ : ℝ} {a : ℤ} {q : ℕ} (hx : 2.16e20 ≤ 
   refine key.trans ?_
   unfold gx
   rw [t4, ← hFdef]
-  have e2 : 2.511 * x / √(2 * r) = 2.511 / √(2 * r) * x := by ring
+  have e2 : 2.526 * x / √(2 * r) = 2.526 / √(2 * r) * x := by ring
   rw [e2]
-  have : (R x (2 * r) * Real.log (2 * r) + 0.8764) * √F / √(2 * r) * x + 2.511 / √(2 * r) * x =
-      ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √F + 2.511) / √(2 * r) * x := by ring
+  have : (R x (2 * r) * Real.log (2 * r) + 0.8764) * √F / √(2 * r) * x + 2.526 / √(2 * r) * x =
+      ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √F + 2.526) / √(2 * r) * x := by ring
   nlinarith [t1, t3]
 
 end TernaryGoldbach.MinorArcs

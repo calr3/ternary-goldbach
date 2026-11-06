@@ -170,13 +170,13 @@ theorem typeI2_mu_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
         have : 4.696 + 3 * Real.log q ≤ 3 * Real.log t + 2.618 := by linarith
         gcongr
 
-/-- The `c₀(1/8 - 1/2π²)` term of `S_{I,2}` at the parameters: `≤ 0.1489 · 2x/t + 0.0005 x^{5/6}`. -/
+/-- The `c₀(1/8 - 1/2π²)` term of `S_{I,2}` at the parameters: `≤ 0.152 · 2x/t + 0.0005 x^{5/6}`. -/
 theorem typeI2_c0_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqT : (q : ℝ) ≤ T / 6)
     (ht2 : 2 ≤ t) (htT : t ≤ T / 3) :
     c₀ * (1 / 8 - 1 / (2 * π ^ 2)) / T ^ 3 *
-        ((U1 T t : ℝ) ^ 2 / q * (0.5004 * (V1 T : ℝ) ^ 2 + V1 T * q * Real.log q) +
-          (2 * U1 T t + q) * (0.5004 * (V1 T : ℝ) ^ 2)) ≤
-      0.1489 * (2 * T ^ 3 / t) + 0.0005 * (T ^ 2 * √T) := by
+        ((U1 T t : ℝ) ^ 2 / q * (0.511 * (V1 T : ℝ) ^ 2 + V1 T * q * Real.log q) +
+          (2 * U1 T t + q) * (0.511 * (V1 T : ℝ) ^ 2)) ≤
+      0.152 * (2 * T ^ 3 / t) + 0.0005 * (T ^ 2 * √T) := by
   have hT0 : 0 < T := by linarith
   have ht0 : 0 < t := by linarith
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
@@ -214,19 +214,19 @@ theorem typeI2_c0_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (h
     have : 0 ≤ T ^ 2 := by positivity
     nlinarith
   -- Part a.
-  have ha : K₀ / T ^ 3 * (U ^ 2 / q * (0.5004 * V ^ 2)) ≤ 0.1489 * (2 * T ^ 3 / t) := by
+  have ha : K₀ / T ^ 3 * (U ^ 2 / q * (0.511 * V ^ 2)) ≤ 0.152 * (2 * T ^ 3 / t) := by
     have h1 : (U * V) ^ 2 ≤ (T ^ 3 / (2 * √t)) ^ 2 := pow_le_pow_left₀ (by positivity) hUV 2
     have h2 : (T ^ 3 / (2 * √t)) ^ 2 = T ^ 6 / (4 * t) := by
       rw [div_pow, mul_pow, Real.sq_sqrt ht0.le]; ring
-    have e : K₀ / T ^ 3 * (U ^ 2 / q * (0.5004 * V ^ 2)) = K₀ * 0.5004 * (U * V) ^ 2 / (q * T ^ 3) := by
+    have e : K₀ / T ^ 3 * (U ^ 2 / q * (0.511 * V ^ 2)) = K₀ * 0.511 * (U * V) ^ 2 / (q * T ^ 3) := by
       field_simp
     rw [e, div_le_iff₀ (by positivity)]
-    calc K₀ * 0.5004 * (U * V) ^ 2 ≤ 2.379 * 0.5004 * (T ^ 6 / (4 * t)) := by
+    calc K₀ * 0.511 * (U * V) ^ 2 ≤ 2.379 * 0.511 * (T ^ 6 / (4 * t)) := by
           rw [← h2]; gcongr
-      _ ≤ 0.1489 * (2 * T ^ 3 / t) * (q * T ^ 3) := by
-          have e2 : 0.1489 * (2 * T ^ 3 / t) * (q * T ^ 3) = 0.2978 * q * (T ^ 6 / t) := by
+      _ ≤ 0.152 * (2 * T ^ 3 / t) * (q * T ^ 3) := by
+          have e2 : 0.152 * (2 * T ^ 3 / t) * (q * T ^ 3) = 0.304 * q * (T ^ 6 / t) := by
             field_simp; norm_num
-          have e3 : 2.379 * 0.5004 * (T ^ 6 / (4 * t)) = 0.2976129 * (T ^ 6 / t) := by
+          have e3 : 2.379 * 0.511 * (T ^ 6 / (4 * t)) = 0.30391725 * (T ^ 6 / t) := by
             field_simp; ring
           rw [e2, e3]
           have : 0 < T ^ 6 / t := by positivity
@@ -245,19 +245,19 @@ theorem typeI2_c0_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (h
       _ ≤ 0.00043 * (T ^ 2 * √T) * T ^ 3 := by
           have : 0 ≤ T ^ 5 * √T := by positivity
           nlinarith
-  have hc : K₀ / T ^ 3 * ((2 * U + q) * (0.5004 * V ^ 2)) ≤ 0.00001 * (T ^ 2 * √T) := by
+  have hc : K₀ / T ^ 3 * ((2 * U + q) * (0.511 * V ^ 2)) ≤ 0.00001 * (T ^ 2 * √T) := by
     rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
     have : V ^ 2 ≤ (9 * T / 2) ^ 2 := pow_le_pow_left₀ hV0 hV2 2
-    calc K₀ * ((2 * U + q) * (0.5004 * V ^ 2)) ≤ 2.379 * ((2 * (0.0786 * T ^ 2) + T) * (0.5004 * (9 * T / 2) ^ 2)) := by
+    calc K₀ * ((2 * U + q) * (0.511 * V ^ 2)) ≤ 2.379 * ((2 * (0.0786 * T ^ 2) + T) * (0.511 * (9 * T / 2) ^ 2)) := by
           gcongr; linarith
       _ ≤ 0.00001 * (T ^ 2 * √T) * T ^ 3 := by
           have h1 : (0 : ℝ) ≤ T ^ 4 := by positivity
           have h2 : 2449 * T ^ 4 ≤ T ^ 4 * √T := by nlinarith
           nlinarith [pow_pos hT0 3, pow_pos hT0 4, pow_pos hT0 5]
-  have e : K₀ / T ^ 3 * (U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) +
-      (2 * U + q) * (0.5004 * V ^ 2)) = K₀ / T ^ 3 * (U ^ 2 / q * (0.5004 * V ^ 2)) +
+  have e : K₀ / T ^ 3 * (U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) +
+      (2 * U + q) * (0.511 * V ^ 2)) = K₀ / T ^ 3 * (U ^ 2 / q * (0.511 * V ^ 2)) +
       K₀ / T ^ 3 * (U ^ 2 / q * (V * q * Real.log q)) +
-      K₀ / T ^ 3 * ((2 * U + q) * (0.5004 * V ^ 2)) := by ring
+      K₀ / T ^ 3 * ((2 * U + q) * (0.511 * V ^ 2)) := by ring
   have : 0 ≤ T ^ 2 * √T := by positivity
   rw [e]; linarith
 
@@ -277,12 +277,12 @@ theorem logPlus_le_log_of_le {y Y : ℝ} (hy : 0 < y) (hyY : y ≤ Y) (hY : 1 �
 
 set_option maxHeartbeats 1600000 in
 /-- The rest of `S_{I,2}` for `|δ| ≤ 1/2c₂` ([H, (6.13)]) at the parameters:
-`≤ 2.2157 x/√t + 1.8229 · 2x/t + 0.0426 x^{5/6}`. -/
+`≤ 2.229 x/√t + 1.8339 · 2x/t + 0.0429 x^{5/6}`. -/
 theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ t) (htT : t ≤ T / 3) :
-    1.0004 * coefUV (cPlus (T ^ 3) (U1 T t) (V1 T)) * ((U1 T t : ℝ) * V1 T) +
-        1.0004 * coefQ (T ^ 3) q (U1 T t) (V1 T) (cPlus (T ^ 3) (U1 T t) (V1 T)) * (3 / 4 * T ^ 2) ≤
-      2.2157 * (T ^ 3 / √t) + 1.8229 * (2 * T ^ 3 / t) + 0.0426 * (T ^ 2 * √T) := by
+    1.0064 * coefUV (cPlus (T ^ 3) (U1 T t) (V1 T)) * ((U1 T t : ℝ) * V1 T) +
+        1.0064 * coefQ (T ^ 3) q (U1 T t) (V1 T) (cPlus (T ^ 3) (U1 T t) (V1 T)) * (3 / 4 * T ^ 2) ≤
+      2.229 * (T ^ 3 / √t) + 1.8339 * (2 * T ^ 3 / t) + 0.0429 * (T ^ 2 * √T) := by
   have hT0 : 0 < T := by linarith
   have ht0 : 0 < t := by linarith
   have hst : 0 < √t := Real.sqrt_pos.2 ht0
@@ -326,14 +326,14 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
     have h5 : (3.6014 * 1.3863 + 0.82807 * 2.7726) / √t ≤ 7.2886 / √t :=
       div_le_div_of_nonneg_right h4 hst.le
     linarith
-  have hB3 : 1.0004 * coefUV c * ((U1 T t : ℝ) * V1 T) ≤ 2.2157 * (T ^ 3 / √t) + 1.8229 * (2 * T ^ 3 / t) := by
+  have hB3 : 1.0064 * coefUV c * ((U1 T t : ℝ) * V1 T) ≤ 2.229 * (T ^ 3 / √t) + 1.8339 * (2 * T ^ 3 / t) := by
     have hcu0 : 0 ≤ coefUV c := coefUV_nonneg (by linarith)
     have hss : √t * √t = t := Real.mul_self_sqrt ht0.le
-    calc 1.0004 * coefUV c * ((U1 T t : ℝ) * V1 T) ≤ 1.0004 * (4.4295 + 7.2886 / √t) * (T ^ 3 / (2 * √t)) := by
+    calc 1.0064 * coefUV c * ((U1 T t : ℝ) * V1 T) ≤ 1.0064 * (4.4295 + 7.2886 / √t) * (T ^ 3 / (2 * √t)) := by
           gcongr
-      _ = 1.0004 * 4.4295 / 2 * (T ^ 3 / √t) + 1.0004 * 7.2886 / 4 * (2 * T ^ 3 / (√t * √t)) := by
+      _ = 1.0064 * 4.4295 / 2 * (T ^ 3 / √t) + 1.0064 * 7.2886 / 4 * (2 * T ^ 3 / (√t * √t)) := by
           field_simp; ring
-      _ = 1.0004 * 4.4295 / 2 * (T ^ 3 / √t) + 1.0004 * 7.2886 / 4 * (2 * T ^ 3 / t) := by
+      _ = 1.0064 * 4.4295 / 2 * (T ^ 3 / √t) + 1.0064 * 7.2886 / 4 * (2 * T ^ 3 / t) := by
           rw [hss]
       _ ≤ _ := by
           have : 0 ≤ T ^ 3 / √t := by positivity
@@ -406,11 +406,11 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
       have : 0 ≤ logPlus (2 * U1 T t / q) := logPlus_nonneg _
       gcongr
     nlinarith
-  have hB4 : 1.0004 * coefQ (T ^ 3) q (U1 T t) (V1 T) c * (3 / 4 * T ^ 2) ≤ 0.0426 * (T ^ 2 * √T) := by
+  have hB4 : 1.0064 * coefQ (T ^ 3) q (U1 T t) (V1 T) c * (3 / 4 * T ^ 2) ≤ 0.0429 * (T ^ 2 * √T) := by
     have h0 : 0 ≤ coefQ (T ^ 3) q (U1 T t) (V1 T) c := coefQ_nonneg _ _ _ _ (by linarith)
-    calc 1.0004 * coefQ (T ^ 3) q (U1 T t) (V1 T) c * (3 / 4 * T ^ 2)
-        ≤ 1.0004 * (0.03967 * √T + 41.876) * (3 / 4 * T ^ 2) := by gcongr
-      _ ≤ 0.0426 * (T ^ 2 * √T) := by
+    calc 1.0064 * coefQ (T ^ 3) q (U1 T t) (V1 T) c * (3 / 4 * T ^ 2)
+        ≤ 1.0064 * (0.03967 * √T + 41.876) * (3 / 4 * T ^ 2) := by gcongr
+      _ ≤ 0.0429 * (T ^ 2 * √T) := by
           have : 2449 * T ^ 2 ≤ T ^ 2 * √T := by nlinarith [pow_pos hT0 2]
           nlinarith [pow_pos hT0 2]
   linarith
