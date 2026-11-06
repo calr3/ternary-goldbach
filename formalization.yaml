@@ -135,8 +135,8 @@ review:
   notes: >-
     The proof is kernel-checked. The hypothesis statements were checked against their sources
     (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
-    leanprover/comparator (comparator/README.md); Comparator has not yet been run on the current
-    statements.
+    leanprover/comparator. `lake comparator` accepted both theorems on 2026-11-06, at commit
+    83ac1e1 (comparator/README.md).
 
 alignment:
   namespace: "TernaryGoldbach"

@@ -683,7 +683,6 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 
 ## Open directions
 
-* Comparator has not yet been run on the current statements (`comparator/README.md`).
 * `ramare_moebius` is the only hypothesis that is a single analytic estimate; see `HYPOTHESES.md`,
   "Outlook", for why proving it is out of reach.
 * Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`

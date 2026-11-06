@@ -53,8 +53,8 @@ echo 'import TernaryGoldbach
 ```
 
 The theorems can also be checked with [Comparator](https://github.com/leanprover/comparator)
-against `Challenge.lean`, which states them with Mathlib-only definitions (see
-[`comparator/README.md`](comparator/README.md)).
+against `Challenge.lean`, which states them with Mathlib-only definitions. Comparator accepts both
+(see [`comparator/README.md`](comparator/README.md)).
 
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:

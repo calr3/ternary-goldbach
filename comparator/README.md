@@ -44,7 +44,18 @@ unprivileged user namespaces or a setuid-root `bwrap`.
 
 ## Status
 
-Comparator has not yet been run on the current statements (the four hypotheses above).
+On 2026-11-06, at commit `83ac1e1`, `lake comparator --config comparator/config.json` accepted both
+theorems:
+
+```
+Running Lean default kernel on solution
+Lean default kernel accepts the solution
+Your solution is okay!
+```
+
+The run took 112 minutes, about 90 of them in the kernel replay of `Solution` (single-threaded,
+up to about 5 GB). It used `bwrap` 0.9.0 with unprivileged user namespaces, under
+`systemd-run --user --scope -p MemoryMax=42G`.
 
 Notes for running it in a container:
 * Without a user systemd session, the `systemd-run` wrapper is not available. Run the inner
@@ -52,4 +63,4 @@ Notes for running it in a container:
 * On a kernel that supports only an older Landlock ABI, `landrun` needs `--best-effort`, which is a
   weaker sandbox. `Solution.lean` is the project's own code, so this matters less than it would for
   untrusted input; the kernel check is unaffected.
-* Expect the replay of `Solution` to take well over an hour on 4 cores.
+* Expect the kernel replay of `Solution` to take about an hour and a half.
