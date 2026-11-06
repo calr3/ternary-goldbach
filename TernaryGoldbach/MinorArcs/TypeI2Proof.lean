@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeILogProof
 import TernaryGoldbach.Prelim.LambdaMu
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # Proof of [H, Lemma 4.2.4] (the Type I sum with `Λ(v) μ(u)`; `η = η₂`)

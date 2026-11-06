@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.Prelim.Liouville
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # `g₂` via Möbius inversion of the coprimality condition ([H, (5.20)])

@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Decomposition
 import TernaryGoldbach.MinorArcs.TypeIIS1
 import TernaryGoldbach.Prelim.LambdaMu
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

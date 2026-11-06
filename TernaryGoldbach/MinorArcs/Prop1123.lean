@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.GMono
 import Mathlib.NumberTheory.Chebyshev
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

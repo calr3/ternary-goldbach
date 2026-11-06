@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.LSQuot5
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, Prop 12.2.4] with `c₊ = 2`, part 1: the reduction to `Φ(q, n) ≤ 0`

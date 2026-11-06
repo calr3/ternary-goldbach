@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.Bombieri
 import TernaryGoldbach.MinorArcs.LargeSieveProof
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # The base gap of repair 3: `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, via [H, Cor 7.1.3]

@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.RamareConst
 import TernaryGoldbach.Prelim.RamareWalk
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # `1.3325822 ≤ c_E ≤ 1.3325823`

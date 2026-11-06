@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuot1
 import TernaryGoldbach.MinorArcs.SecondNumerics
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, Prop 12.2.4], part 2: the reduction

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MajorArcs.Cor933
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, Cor 7.1.3] from [H, Cor 9.3.3] and Platt's verification

@@ -4,7 +4,7 @@ import TernaryGoldbach.MajorArcs.Singular
 import TernaryGoldbach.MajorArcs.FourierMain
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, (14.27)]: the integral over the major arcs

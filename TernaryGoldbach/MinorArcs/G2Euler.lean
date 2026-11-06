@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.G2Moebius
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # Euler-product bounds for the sums in [H, Lemma 5.1.2]

@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.Prop932
 import TernaryGoldbach.MajorArcs.Eta2Moments
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, Cor 9.3.3] from [H, Prop 9.3.2]

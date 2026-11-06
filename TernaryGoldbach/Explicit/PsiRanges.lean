@@ -901,6 +901,142 @@ theorem psi_mid {x : ℝ} (h1 : 1e6 ≤ x) (h2 : x ≤ 1e17) : |psiR x - x| ≤ 
   exact psi_range_21 h20.le (by norm_num at h2 ⊢; linarith)
 
 
+theorem cW_le_4282 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW x ≤ 42.82 := by
+  unfold cW
+  by_cases h0 : x ≤ (3200000 : ℝ)
+  · exfalso; norm_num at hx1 h0; linarith
+  rw [if_neg h0]
+  by_cases h1 : x ≤ (10000000 : ℝ)
+  · exfalso; norm_num at hx1 h1; linarith
+  rw [if_neg h1]
+  by_cases h2 : x ≤ (32000000 : ℝ)
+  · exfalso; norm_num at hx1 h2; linarith
+  rw [if_neg h2]
+  by_cases h3 : x ≤ (100000000 : ℝ)
+  · exfalso; norm_num at hx1 h3; linarith
+  rw [if_neg h3]
+  by_cases h4 : x ≤ (320000000 : ℝ)
+  · exfalso; norm_num at hx1 h4; linarith
+  rw [if_neg h4]
+  by_cases h5 : x ≤ (1000000000 : ℝ)
+  · exfalso; norm_num at hx1 h5; linarith
+  rw [if_neg h5]
+  by_cases h6 : x ≤ (3200000000 : ℝ)
+  · exfalso; norm_num at hx1 h6; linarith
+  rw [if_neg h6]
+  by_cases h7 : x ≤ (10000000000 : ℝ)
+  · exfalso; norm_num at hx1 h7; linarith
+  rw [if_neg h7]
+  by_cases h8 : x ≤ (32000000000 : ℝ)
+  · exfalso; norm_num at hx1 h8; linarith
+  rw [if_neg h8]
+  by_cases h9 : x ≤ (100000000000 : ℝ)
+  · exfalso; norm_num at hx1 h9; linarith
+  rw [if_neg h9]
+  by_cases h10 : x ≤ (320000000000 : ℝ)
+  · exfalso; norm_num at hx1 h10; linarith
+  rw [if_neg h10]
+  by_cases h11 : x ≤ (1000000000000 : ℝ)
+  · rw [if_pos h11]; norm_num
+  rw [if_neg h11]
+  by_cases h12 : x ≤ (3200000000000 : ℝ)
+  · rw [if_pos h12]; norm_num
+  rw [if_neg h12]
+  exfalso; push Not at h12; norm_num at hx2; linarith
+
+theorem cW_le_4508 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW x ≤ 45.08 := by
+  unfold cW
+  by_cases h0 : x ≤ (3200000 : ℝ)
+  · exfalso; norm_num at hx1 h0; linarith
+  rw [if_neg h0]
+  by_cases h1 : x ≤ (10000000 : ℝ)
+  · exfalso; norm_num at hx1 h1; linarith
+  rw [if_neg h1]
+  by_cases h2 : x ≤ (32000000 : ℝ)
+  · exfalso; norm_num at hx1 h2; linarith
+  rw [if_neg h2]
+  by_cases h3 : x ≤ (100000000 : ℝ)
+  · exfalso; norm_num at hx1 h3; linarith
+  rw [if_neg h3]
+  by_cases h4 : x ≤ (320000000 : ℝ)
+  · exfalso; norm_num at hx1 h4; linarith
+  rw [if_neg h4]
+  by_cases h5 : x ≤ (1000000000 : ℝ)
+  · exfalso; norm_num at hx1 h5; linarith
+  rw [if_neg h5]
+  by_cases h6 : x ≤ (3200000000 : ℝ)
+  · exfalso; norm_num at hx1 h6; linarith
+  rw [if_neg h6]
+  by_cases h7 : x ≤ (10000000000 : ℝ)
+  · exfalso; norm_num at hx1 h7; linarith
+  rw [if_neg h7]
+  by_cases h8 : x ≤ (32000000000 : ℝ)
+  · exfalso; norm_num at hx1 h8; linarith
+  rw [if_neg h8]
+  by_cases h9 : x ≤ (100000000000 : ℝ)
+  · exfalso; norm_num at hx1 h9; linarith
+  rw [if_neg h9]
+  by_cases h10 : x ≤ (320000000000 : ℝ)
+  · exfalso; norm_num at hx1 h10; linarith
+  rw [if_neg h10]
+  by_cases h11 : x ≤ (1000000000000 : ℝ)
+  · rw [if_pos h11]; norm_num
+  rw [if_neg h11]
+  by_cases h12 : x ≤ (3200000000000 : ℝ)
+  · rw [if_pos h12]; norm_num
+  rw [if_neg h12]
+  by_cases h13 : x ≤ (10000000000000 : ℝ)
+  · rw [if_pos h13]; norm_num
+  rw [if_neg h13]
+  exfalso; push Not at h13; norm_num at hx2; linarith
+
+theorem cW_le_315 {x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5 := by
+  unfold cW
+  by_cases h0 : x ≤ (3200000 : ℝ)
+  · exfalso; norm_num at hx1 h0; linarith
+  rw [if_neg h0]
+  by_cases h1 : x ≤ (10000000 : ℝ)
+  · exfalso; norm_num at hx1 h1; linarith
+  rw [if_neg h1]
+  by_cases h2 : x ≤ (32000000 : ℝ)
+  · rw [if_pos h2]; norm_num
+  rw [if_neg h2]
+  by_cases h3 : x ≤ (100000000 : ℝ)
+  · rw [if_pos h3]; norm_num
+  rw [if_neg h3]
+  exfalso; push Not at h3; norm_num at hx2; linarith
+
+theorem cW_le_355 {x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5 := by
+  unfold cW
+  by_cases h0 : x ≤ (3200000 : ℝ)
+  · rw [if_pos h0]; norm_num
+  rw [if_neg h0]
+  by_cases h1 : x ≤ (10000000 : ℝ)
+  · rw [if_pos h1]; norm_num
+  rw [if_neg h1]
+  by_cases h2 : x ≤ (32000000 : ℝ)
+  · rw [if_pos h2]; norm_num
+  rw [if_neg h2]
+  by_cases h3 : x ≤ (100000000 : ℝ)
+  · rw [if_pos h3]; norm_num
+  rw [if_neg h3]
+  by_cases h4 : x ≤ (320000000 : ℝ)
+  · rw [if_pos h4]; norm_num
+  rw [if_neg h4]
+  by_cases h5 : x ≤ (1000000000 : ℝ)
+  · rw [if_pos h5]; norm_num
+  rw [if_neg h5]
+  by_cases h6 : x ≤ (3200000000 : ℝ)
+  · rw [if_pos h6]; norm_num
+  rw [if_neg h6]
+  by_cases h7 : x ≤ (10000000000 : ℝ)
+  · rw [if_pos h7]; norm_num
+  rw [if_neg h7]
+  by_cases h8 : x ≤ (32000000000 : ℝ)
+  · rw [if_pos h8]; norm_num
+  rw [if_neg h8]
+  exfalso; push Not at h8; norm_num at hx2; linarith
+
 theorem cW_le_72 (x : ℝ) : cW x ≤ 72 := by
   unfold cW
   by_cases h0 : x ≤ (3200000 : ℝ)

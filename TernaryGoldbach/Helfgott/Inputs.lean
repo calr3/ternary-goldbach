@@ -7,7 +7,7 @@ import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # The top-level inputs
@@ -151,7 +151,7 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.ButhePsi]
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Numerical hypothesis: binary Goldbach up to `4 · 10¹⁸`** [OeSHP]. An exhaustive computer
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)) shows that every even

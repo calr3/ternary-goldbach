@@ -3,7 +3,7 @@ import TernaryGoldbach.MajorArcs.Cor933
 import TernaryGoldbach.MajorArcs.EtaPlusL2
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, Ch. 11, (11.6)]: the main-term constant `C_{η◦,η_*}`

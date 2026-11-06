@@ -4,7 +4,7 @@ import TernaryGoldbach.MinorArcs.SecondBridge
 import TernaryGoldbach.MinorArcs.SecondChoice
 import TernaryGoldbach.MinorArcs.Assembly
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

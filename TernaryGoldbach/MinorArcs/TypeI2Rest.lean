@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeI2Proof
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, Lemma 4.2.4]: the terms other than the main term (weights `log m`)

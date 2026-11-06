@@ -4,7 +4,7 @@ import TernaryGoldbach.MinorArcs.G2Euler
 import TernaryGoldbach.Prelim.RamareMoebius
 import Mathlib.NumberTheory.ZetaValues
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

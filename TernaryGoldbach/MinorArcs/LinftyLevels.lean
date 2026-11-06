@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.Prop1123b
 import TernaryGoldbach.MinorArcs.PhiIntegrals
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

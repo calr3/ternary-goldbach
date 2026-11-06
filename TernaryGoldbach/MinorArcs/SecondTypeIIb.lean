@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.SecondTypeIIaPieces
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -29,7 +29,7 @@ theorem typeII_a2 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have hq1 : 1 ≤ q := h.1
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq1
   have key := typeII_639 hq1 h.2.1 hα hqQ (by positivity) (one_le_U2 hT)
-    (by linarith [V2_ge_50000 hT]) (V2_le_xU hT)
+    (by linarith [V2_ge_2e6 hT]) (V2_le_xU hT)
   refine key.trans ?_
   set L := Real.log T with hLdef
   have hL := fifteen_six_le_log hT
@@ -754,7 +754,7 @@ theorem typeII_b {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have hqρ : (q : ℝ) ≤ T / 6 / Q2 T * Q2 T := by rw [div_mul_cancel₀ _ hQ0.ne']; exact hq
   have hδq0 : 0 < |δ| * q := by linarith
   have key := typeII_641 (θ := 8) (ρ := T / 6 / Q2 T) (U := U2 T) (V := V2 T) hq1 hcop h2α hδQ hδ8.le (by positivity)
-    (x_le_Q2_sq hT) hρ1 hqρ (one_le_U2 hT) (by linarith [V2_ge_50000 hT])
+    (x_le_Q2_sq hT) hρ1 hqρ (one_le_U2 hT) (by linarith [V2_ge_2e6 hT])
     (by have := V2_le hT0; nlinarith)
     (by
       have : 8 * |δ| * q ≤ 2792 * T := by nlinarith

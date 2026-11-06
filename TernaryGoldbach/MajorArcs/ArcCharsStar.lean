@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MinorArcs.BaseGap2
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # `S_{η_*}` on the arcs of modulus `q`, via characters ([H, Cor 7.1.3])

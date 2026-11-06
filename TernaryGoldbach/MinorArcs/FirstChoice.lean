@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeIITotalGen
 import TernaryGoldbach.MinorArcs.S1Lemma
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

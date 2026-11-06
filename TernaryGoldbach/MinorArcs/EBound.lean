@@ -1,7 +1,7 @@
 import TernaryGoldbach.Helfgott.HHBound
 import TernaryGoldbach.Prelim.LambdaMu
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, (14.28)] with our sup norms: `E ≤ 8·10⁻¹¹ x`

@@ -1,6 +1,6 @@
 import TernaryGoldbach.Prelim.MertensProduct
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # `∑_{n ≤ x} μ(n)/n` from the error term of `∑ Λ(n)/n`

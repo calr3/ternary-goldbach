@@ -31,6 +31,30 @@ theorem cB_le_33 {n : ℕ} (h : n ≤ 10 ^ 8) : cB n ≤ 33 := by
       have : ((n : ℕ) : ℝ) ≤ ((10 ^ 8 : ℕ) : ℝ) := by exact_mod_cast h
       norm_num at this ⊢; linarith)
 
+private theorem cast_le_of {n : ℕ} {a : ℝ} {b : ℕ} (h : n ≤ b) (hb : (b : ℝ) = a) : (n : ℝ) ≤ a := by
+  rw [← hb]; exact_mod_cast h
+
+theorem cB_le_355 {n : ℕ} (h : n ≤ 32000000000) : cB n ≤ 35.5 := by
+  unfold cB; split_ifs with h1
+  · norm_num
+  · exact Explicit.cW_le_355 (by push Not at h1; have : (1000000 : ℝ) ≤ n := by exact_mod_cast h1
+                                 linarith) (cast_le_of h (by norm_num))
+
+theorem cB_le_315 {n : ℕ} (h1 : 10000000 < n) (h : n ≤ 100000000) : cB n ≤ 31.5 := by
+  unfold cB; rw [if_neg (by omega)]
+  exact Explicit.cW_le_315 (by have : (10000000 : ℝ) < n := by exact_mod_cast h1
+                               linarith) (cast_le_of h (by norm_num))
+
+theorem cB_le_4282 {n : ℕ} (h1 : 320000000000 < n) (h : n ≤ 3200000000000) : cB n ≤ 42.82 := by
+  unfold cB; rw [if_neg (by omega)]
+  exact Explicit.cW_le_4282 (by have : (320000000000 : ℝ) < n := by exact_mod_cast h1
+                                linarith) (cast_le_of h (by norm_num))
+
+theorem cB_le_4508 {n : ℕ} (h1 : 320000000000 < n) (h : n ≤ 10000000000000) : cB n ≤ 45.08 := by
+  unfold cB; rw [if_neg (by omega)]
+  exact Explicit.cW_le_4508 (by have : (320000000000 : ℝ) < n := by exact_mod_cast h1
+                                linarith) (cast_le_of h (by norm_num))
+
 omit [Fact TernaryGoldbach.RHUpTo] in
 theorem cB_small {n : ℕ} (h : n < 1000000) : cB n = 1 := by unfold cB; rw [if_pos h]
 

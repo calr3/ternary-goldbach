@@ -2,12 +2,14 @@ import Mathlib
 import TernaryGoldbach.Prelim.MoebiusCoprime
 import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.SmallPsi
+import TernaryGoldbach.Prelim.SmallPsi700
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallNonprime
 import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
+import TernaryGoldbach.Prelim.PsiSieveMain
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # Explicit bounds on sums of `Λ` and `μ` [H, §2.5]
@@ -15,12 +17,14 @@ variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
 [H] quotes these from the literature (with some supplementary computations).
 
 * The bounds on `ψ` and `θ` used here — (2.12)–(2.15), (2.17), (2.19), (5.5) — are **proved** from
-  the explicit prime number theorem `theta_explicit` (`Prelim/ThetaExplicit.lean`:
-  `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 2·10⁸`, with a plateau `ε_pl = 2.2·10⁻¹¹` for
-  `3400 < log n < 20000`; it replaces Dusart's bound [Dus18, Thm. 4.2]), Büthe's
-  `|ψ(n) − n| ≤ 0.94 √n` for `12 ≤ n ≤ 10¹⁷` (`buthe_psi`), a kernel-checked computation for
-  `n ≤ 586` (`Prelim/SmallPsi.lean`), and finite computer checks stated as numerical axioms
-  (`scripts/psi_checks.py`).
+  * the explicit prime number theorem `theta_explicit` (`Prelim/ThetaExplicit.lean`:
+    `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 10¹²`; it replaces Dusart's bound [Dus18, Thm. 4.2]),
+  * `psi_two_sided` (`Prelim/PsiTwoSided.lean`: `|ψ(n) − n| ≤ c(n)√n` for `12 ≤ n ≤ 10¹⁷`, from the
+    Weil explicit formula with RH to `3·10¹⁰` and a kernel-checked table below `10⁶`),
+  * the kernel sieve table `thetaN_sieve` (`Prelim/PsiSieveMain.lean`: `n − 5√n ≤ θ(n) ≤ n + 3√n` on
+    `[10⁶, 5·10⁷)`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
+  Route D (no Büthe): (2.14) and (2.17) hold with the weaker constants `1.0064` and `1.022`, (2.19) for
+  `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
   each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.  (2.16) and (2.18) are not formalized (unused).  Lemma C.2.2 (`div_totient_lt`) is
   proved in `Prelim/MertensProduct.lean`.
@@ -80,7 +84,7 @@ theorem thetaN_le_psiN (n : ℕ) : thetaN n ≤ psiN n := by
     sum_nonneg fun m _ => by split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
   linarith
 
-theorem thetaN_large {n : ℕ} (hn : 1000000000 ≤ n) :
+theorem thetaN_large {n : ℕ} (hn : 1000000000000 ≤ n) :
     |thetaN n - n| < n / Real.log n ^ 3 + epl n * n := by
   unfold thetaN; exact theta_explicit hn
 
@@ -226,8 +230,8 @@ theorem log_ge_23 {x : ℝ} (hx : 10 ^ 10 ≤ x) : 23 ≤ Real.log x := by
   have := nat_le_log (N := x) (k := 23) (by norm_num; linarith)
   exact_mod_cast this
 
-/-- `ψ(N) ≤ N + N/log³N + 7.04 √N` for `N ≥ 10⁹`, given `ψ(√N) ≤ 1.03883 √N`. -/
-theorem psi_upper_of {N : ℕ} (hN : 1000000000 ≤ N)
+/-- `ψ(N) ≤ N + N/log³N + 7.04 √N` for `N ≥ 10¹²`, given `ψ(√N) ≤ 1.03883 √N`. -/
+theorem psi_upper_of {N : ℕ} (hN : 1000000000000 ≤ N)
     (h : psiN (Nat.sqrt N) ≤ 1.03883 * (Nat.sqrt N : ℝ)) :
     psiN N ≤ N + N / Real.log N ^ 3 + epl N * N + 7.04 * √(N : ℝ) := by
   rw [psiN_eq]
@@ -238,41 +242,80 @@ theorem psi_upper_of {N : ℕ} (hN : 1000000000 ≤ N)
   have h5 := Real.sqrt_nonneg (N : ℝ)
   linarith
 
-/-- `ψ(n) < 1.03883 n` for `1 ≤ n ≤ 10¹⁷`: a kernel-checked computation for `n ≤ 586`
-(`Small.psi_lt_small`) and Büthe's `ψ(n) ≤ n + 0.94 √n` above. -/
+/-- `ψ(n) < 1.03883 n` for `1 ≤ n ≤ 10¹⁷`: a kernel-checked computation for `n ≤ 700`
+(`Small.psi_lt_small_700`) and `|ψ(n) − n| ≤ c(n)√n` above (`psi_two_sided`: `c = 1` below `10⁶`,
+`c ≤ 33` up to `10⁸`, `c ≤ 72`). -/
 theorem psi_lt_small' {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10 ^ 17) : psiN n < 1.03883 * n := by
-  rcases le_or_gt n 586 with h | h
-  · exact Small.psi_lt_small h1 h
-  · have hB := (abs_le.1 (buthe_psi n (by omega) h2)).2
+  rcases le_or_gt n 700 with h | h
+  · exact Small.psi_lt_small_700 h1 h
+  · have hB := (abs_le.1 (psi_two_sided (n := n) (by omega) h2)).2
     have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-    have hs : (24.21 : ℝ) ≤ √(n : ℝ) :=
-      Real.le_sqrt_of_sq_le (by
-        have h587 : (587 : ℝ) ≤ n := by exact_mod_cast h
-        norm_num; linarith)
     have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0
-    unfold psiN; nlinarith
+    have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
+    unfold psiN
+    rcases lt_or_ge n 1000000 with h6 | h6
+    · rw [cB_small h6, one_mul] at hB
+      have hs : (26.47 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+        have : (701 : ℝ) ≤ n := by exact_mod_cast h
+        linarith)
+      nlinarith
+    rcases le_or_gt n (10 ^ 8) with h8 | h8
+    · have hc := cB_le_33 h8
+      have hs : (1000 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+        have : (1000000 : ℝ) ≤ n := by exact_mod_cast h6
+        linarith)
+      have := mul_le_mul_of_nonneg_right hc hs0
+      nlinarith
+    · have hc := cB_le_72 n
+      have hs : (10000 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+        have : (100000000 : ℝ) < n := by exact_mod_cast h8
+        linarith)
+      have := mul_le_mul_of_nonneg_right hc hs0
+      nlinarith
 
-/-- `ψ(n) ≤ 1.03883 n` for all `n`, and `ψ(n) ≤ 1.0004 n` for `n ≥ 6·10⁶` (Büthe's bound up to
+/-- `ψ(n) ≤ 1.0064 n` for `2.5·10⁷ ≤ n ≤ 10¹⁷` (`psi_two_sided`: `c ≤ 31.5` on `(10⁷, 10⁸]`,
+`c ≤ 35.5` up to `3.2·10¹⁰`, `c ≤ 72`). -/
+theorem psi_le_a14_mid {n : ℕ} (h1 : 25000000 ≤ n) (h2 : n ≤ 10 ^ 17) : psiN n ≤ 1.0064 * n := by
+  have hB := (abs_le.1 (psi_two_sided (n := n) (by omega) h2)).2
+  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+  have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0
+  have hs0 : 0 ≤ √(n : ℝ) := Real.sqrt_nonneg _
+  unfold psiN
+  rcases le_or_gt n (10 ^ 8) with h8 | h8
+  · have hc := cB_le_315 (by omega) h8
+    have hs : (5000 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (25000000 : ℝ) ≤ n := by exact_mod_cast h1
+      linarith)
+    have := mul_le_mul_of_nonneg_right hc hs0
+    nlinarith
+  rcases le_or_gt n 32000000000 with h10 | h10
+  · have hc := cB_le_355 h10
+    have hs : (10000 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (100000000 : ℝ) < n := by exact_mod_cast h8
+      linarith)
+    have := mul_le_mul_of_nonneg_right hc hs0
+    nlinarith
+  · have hc := cB_le_72 n
+    have hs : (178885 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (32000000000 : ℝ) < n := by exact_mod_cast h10
+      linarith)
+    have := mul_le_mul_of_nonneg_right hc hs0
+    nlinarith
+
+/-- `ψ(n) ≤ 1.03883 n` for all `n`, and `ψ(n) ≤ 1.0064 n` for `n ≥ 2.5·10⁷` (`psi_two_sided` up to
 `10¹⁷`; above, strong induction with `theta_explicit` and `ψ − θ ≤ ψ(√n) + n^{1/3} log n`). -/
-theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (6000000 ≤ n → psiN n ≤ 1.0004 * n) := by
+theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (25000000 ≤ n → psiN n ≤ 1.0064 * n) := by
   induction n using Nat.strong_induction_on with
   | _ n ih =>
   rcases Nat.eq_zero_or_pos n with h0 | hpos
   · subst h0; simp [psiN]
   have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   rcases le_or_gt n (10 ^ 17) with h2 | h2
-  · refine ⟨(psi_lt_small' hpos h2).le, fun h6 => ?_⟩
-    have hB := (abs_le.1 (buthe_psi n (by omega) h2)).2
-    have hs : (2449 : ℝ) ≤ √(n : ℝ) :=
-      Real.le_sqrt_of_sq_le (by
-        have h6' : (6000000 : ℝ) ≤ n := by exact_mod_cast h6
-        norm_num; linarith)
-    have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0
-    unfold psiN; nlinarith
+  · exact ⟨(psi_lt_small' hpos h2).le, fun h6 => psi_le_a14_mid h6 h2⟩
   · have hsq : Nat.sqrt n < n := Nat.sqrt_lt_self (by omega)
-    have h9 : 1000000000 ≤ n := le_trans (by norm_num) h2.le
+    have h9 : 1000000000000 ≤ n := le_trans (by norm_num) h2.le
     have hup := psi_upper_of (N := n) (by omega) (ih _ hsq).1
-    have hn9 : (1000000000 : ℝ) ≤ n := by exact_mod_cast h9
+    have hn9 : (1000000000000 : ℝ) ≤ n := by exact_mod_cast h9
     have hlog : (20 : ℝ) ≤ Real.log n := by
       have := nat_le_log (N := n) (k := 20) (by norm_num; linarith)
       exact_mod_cast this
@@ -289,31 +332,22 @@ theorem psi_bounds (n : ℕ) : psiN n ≤ 1.03883 * n ∧ (6000000 ≤ n → psi
 
 /-! ### (2.14), (2.15) -/
 
-/-- **[H, (2.14)]**, for `y ≥ 6·10⁶` ([H] states it for `y ≥ 2·10⁶`; we use it only for
-`y ≥ 2.7·10⁷`): `∑_{n ≤ y} Λ(n) ≤ 1.0004 y`.  Proved from Büthe's bound and `theta_explicit`
-(`psi_bounds`). -/
-theorem sum_vonMangoldt_le_10004 {y : ℝ} (hy : 6e6 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0004 * y := by
-  have hN : 6000000 ≤ ⌊y⌋₊ := Nat.le_floor (by norm_num; linarith)
-  have h := (psi_bounds ⌊y⌋₊).2 hN
-  have hy' : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le (by linarith)
-  unfold psiN at h; linarith
-
 /-- **[H, (2.15)]** ([RS62, Thm. 12]): `ψ(y) = ∑_{n ≤ y} Λ(n) < 1.03883 y` for `y > 0`.
-Proved from (2.14) and `psi_lt_small'`. -/
+Proved from `psi_bounds` (`psi_two_sided` up to `10¹⁷`, `theta_explicit` beyond). -/
 theorem sum_vonMangoldt_lt {y : ℝ} (hy : 0 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) < 1.03883 * y := by
-  rcases le_or_gt 6e6 y with h | h
-  · have := sum_vonMangoldt_le_10004 h; linarith
-  · set n := ⌊y⌋₊ with hn
-    rcases Nat.eq_zero_or_pos n with h0 | hpos
-    · rw [h0]; simp; positivity
-    · have hn2 : n < 6000000 :=
-        Nat.floor_lt hy.le |>.2 (show y < ((6000000 : ℕ) : ℝ) by norm_num; linarith)
-      have h1 := psi_lt_small' hpos (by omega : n ≤ 10 ^ 17)
-      unfold psiN at h1
-      have h2 : (n : ℝ) ≤ y := Nat.floor_le hy.le
-      linarith
+  set n := ⌊y⌋₊ with hn
+  rcases Nat.eq_zero_or_pos n with h0 | hpos
+  · rw [h0]; simp; positivity
+  have h2 : (n : ℝ) ≤ y := Nat.floor_le hy.le
+  rcases le_or_gt n (10 ^ 17) with h | h
+  · have h1 := psi_lt_small' hpos h
+    unfold psiN at h1
+    linarith
+  · have h1 := (psi_bounds n).2 (by omega)
+    unfold psiN at h1
+    have : (0 : ℝ) < n := by exact_mod_cast hpos
+    linarith
 
 theorem psiN_le (n : ℕ) : psiN n ≤ 1.03883 * n := by
   rcases Nat.eq_zero_or_pos n with h | h
@@ -637,7 +671,7 @@ theorem log_le_div_e {x : ℝ} (hx : 0 < x) : Real.log x ≤ x / Real.exp 1 := b
   linarith
 
 /-- **`ψ(N) − θ(N) < 1.4262 √N` for `10⁶ ≤ N ≤ 10¹²`.** -/
-theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N ≤ 10 ^ 12) :
+theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N < 10 ^ 12) :
     ∑ m ∈ Icc 1 N, (if m.Prime then 0 else (Λ m : ℝ)) < 1.4262 * √(N : ℝ) := by
   have hN1 : 1 ≤ N := by omega
   have hN0 : (0 : ℝ) < N := by exact_mod_cast hN1
@@ -657,20 +691,21 @@ theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N ≤ 10 ^ 12) :
     calc (3.162 : ℝ) = ((3.162 : ℝ) ^ (12 : ℕ)) ^ ((1 / 12) : ℝ) := by
           rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num
       _ ≤ v := Real.rpow_le_rpow (by positivity) this (by norm_num)
-  -- `θ(√N) ≤ ψ(√N) ≤ √N + 0.94 N^{1/4}`
+  -- `θ(√N) ≤ ψ(√N) ≤ √N + N^{1/4}` (`small_table`, `√N < 10⁶`)
   have hsN : (Nat.sqrt N : ℝ) ≤ √(N : ℝ) := Real.nat_sqrt_le_real_sqrt
   have hs12 : 12 ≤ Nat.sqrt N := by
     rw [Nat.le_sqrt]; omega
-  have hb := buthe_psi (Nat.sqrt N) hs12 (by
-    have : Nat.sqrt N ≤ N := Nat.sqrt_le_self N; omega)
-  have hpsi : psiN (Nat.sqrt N) ≤ Nat.sqrt N + 0.94 * √(Nat.sqrt N : ℝ) := by
+  have hs6 : Nat.sqrt N < 1000000 := Nat.sqrt_lt'.2 (by norm_num; omega)
+  have hb := psi_two_sided (n := Nat.sqrt N) hs12 (by omega)
+  rw [cB_small hs6, one_mul] at hb
+  have hpsi : psiN (Nat.sqrt N) ≤ Nat.sqrt N + 1 * √(Nat.sqrt N : ℝ) := by
     unfold psiN; linarith [(abs_le.1 hb).2]
   have hss : √(Nat.sqrt N : ℝ) ≤ v ^ 3 := by
     rw [← h14]
     calc √(Nat.sqrt N : ℝ) ≤ √(√(N : ℝ)) := Real.sqrt_le_sqrt hsN
       _ = (N : ℝ) ^ ((1 / 4) : ℝ) := by
           rw [Real.sqrt_eq_rpow, Real.sqrt_eq_rpow, ← Real.rpow_mul hN0.le]; norm_num
-  have t2 : thetaN (Nat.sqrt N) ≤ v ^ 6 + 0.94 * v ^ 3 := by
+  have t2 : thetaN (Nat.sqrt N) ≤ v ^ 6 + 1 * v ^ 3 := by
     have := thetaN_le_psiN (Nat.sqrt N); rw [← hsq]; nlinarith
   have t3 : thetaN ⌊(N : ℝ) ^ ((1 / 3) : ℝ)⌋₊ ≤ 1.03883 * v ^ 4 := by
     refine (thetaN_le_psiN _).trans ((psiN_le _).trans ?_)
@@ -697,25 +732,25 @@ theorem nonprime_mid {N : ℕ} (h1 : 10 ^ 6 ≤ N) (h2 : N ≤ 10 ^ 12) :
           rw [hm]; exact mul_le_mul_of_nonneg_right he (by positivity)
   rw [hsq]
   have hv3' : 0 < v ^ 3 := by positivity
-  have key : 9.33643 + 1.03883 * v < 0.4262 * v ^ 3 := by
+  have key : 9.39643 + 1.03883 * v < 0.4262 * v ^ 3 := by
     have hw : 0 ≤ v - 3.162 := by linarith
     nlinarith [mul_nonneg (mul_nonneg hw hw) hw, mul_nonneg hw hw]
-  have key2 : 9.33643 * v ^ 3 + 1.03883 * v ^ 4 < 0.4262 * v ^ 6 :=
-    calc 9.33643 * v ^ 3 + 1.03883 * v ^ 4 = v ^ 3 * (9.33643 + 1.03883 * v) := by ring
+  have key2 : 9.39643 * v ^ 3 + 1.03883 * v ^ 4 < 0.4262 * v ^ 6 :=
+    calc 9.39643 * v ^ 3 + 1.03883 * v ^ 4 = v ^ 3 * (9.39643 + 1.03883 * v) := by ring
       _ < v ^ 3 * (0.4262 * v ^ 3) := mul_lt_mul_of_pos_left key hv3'
       _ = 0.4262 * v ^ 6 := by ring
   linarith
 
-/-- **`ψ(n) − θ(n) < 1.4262 √n` for `1 ≤ n ≤ 10¹²`** ([RS62, Thm 13] in this range): kernel-checked
-for `n ≤ 10⁶` (`SmallNP.nonprime_small_kernel`), analytic from [Büthe] above. -/
-theorem nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n ≤ 10 ^ 12) :
+/-- **`ψ(n) − θ(n) < 1.4262 √n` for `1 ≤ n < 10¹²`** ([RS62, Thm 13] in this range): kernel-checked
+for `n ≤ 10⁶` (`SmallNP.nonprime_small_kernel`), analytic above (`small_table` at `√n`). -/
+theorem nonprime_small (n : ℕ) (h1 : 1 ≤ n) (h : n < 10 ^ 12) :
     ∑ m ∈ Icc 1 n, (if m.Prime then 0 else (Λ m : ℝ)) < 1.4262 * √n := by
   rcases le_or_gt n (10 ^ 6) with h6 | h6
   · exact TernaryGoldbach.Prelim.SmallNP.nonprime_small_kernel n h1 h6
   · exact nonprime_mid h6.le h
 
 /-- **[H, (5.5)]** ([RS62, Thm. 13]): `ψ(y) − θ(y) = ∑_{n ≤ y, n not prime} Λ(n) < 1.4262 √y`
-for `y > 0`. Proved from (2.15) (`ψ − θ ≤ ψ(√y) + y^{1/3} log y`) for `y > 10¹²` and
+for `y > 0`. Proved from (2.15) (`ψ − θ ≤ ψ(√y) + y^{1/3} log y`) for `y ≥ 10¹²` and
 `nonprime_small` below. -/
 theorem sum_vonMangoldt_nonprime_lt {y : ℝ} (hy : 0 < y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (if n.Prime then 0 else (Λ n : ℝ)) < 1.4262 * √y := by
@@ -724,15 +759,15 @@ theorem sum_vonMangoldt_nonprime_lt {y : ℝ} (hy : 0 < y) :
   have hsq : √(n : ℝ) ≤ √y := Real.sqrt_le_sqrt hny
   rcases Nat.eq_zero_or_pos n with h0 | hpos
   · rw [h0]; simp; positivity
-  rcases le_or_gt n (10 ^ 12) with h | h
+  rcases lt_or_ge n (10 ^ 12) with h | h
   · have := nonprime_small n hpos h; linarith
   · have hN := nonprime_sum_le n hpos
     have hpsi : psiN (Nat.sqrt n) ≤ 1.03883 * √(n : ℝ) := by
       refine (psiN_le _).trans ?_
       exact mul_le_mul_of_nonneg_left (Real.nat_sqrt_le_real_sqrt) (by norm_num)
     have hfin := nonprime_final (N := n) (by
-      have : ((10 ^ 12 : ℕ) : ℝ) ≤ n := by exact_mod_cast h.le
-      norm_num at this ⊢; linarith)
+      have : (1000000000000 : ℝ) ≤ n := by exact_mod_cast h
+      norm_num; linarith)
     linarith
 
 /-! ### (2.13) -/
@@ -854,25 +889,39 @@ theorem sum_inv_log_cube_le {a b : ℕ} (ha : 2 ≤ a) (hab : a < b) :
       rw [Ioo_self_succ]
       push_cast; simp
 
-/-- `ψ(n) ≥ n − 0.95 √n − n/log³ n` for `n ≥ 12`. -/
-theorem psi_lower2 {n : ℕ} (hn : 12 ≤ n) :
-    (n : ℝ) - 0.95 * √(n : ℝ) - n / Real.log n ^ 3 - epl n * n ≤ psiN n := by
-  have hepl := mul_nonneg (epl_nonneg n) (Nat.cast_nonneg n)
-  have hl : 0 ≤ (n : ℝ) / Real.log n ^ 3 := by
-    have : 0 ≤ Real.log n := Real.log_natCast_nonneg n
-    positivity
-  have hs := Real.sqrt_nonneg (n : ℝ)
-  rcases le_or_gt n (10 ^ 10) with h | h
-  · have := (abs_le.1 (buthe_psi n hn (h.trans (by norm_num)))).1
-    unfold psiN; linarith
-  · have h1 := (abs_lt.1 (thetaN_large (n := n) (by omega))).1
-    have h2 := thetaN_le_psiN n
-    linarith
+/-- The `√n` coefficient of `psi_lower3`: `1` below `10⁶` (`small_table`), `33` up to `10⁸` and
+`72` up to `10¹⁷` (`psi_two_sided`), `0` above (where `theta_explicit` takes over). -/
+noncomputable def cPsi (n : ℕ) : ℝ :=
+  if n < 1000000 then 1 else if n ≤ 10 ^ 8 then 33 else if n ≤ 10 ^ 17 then 72 else 0
 
-/-- The Abel summation term: `ψ(n)(1/n − 1/(n+1)) ≥ 1/(n+1) − 0.95/(√n (n+1)) − 1/((n+1) log³ n)`. -/
-theorem abel_term_ge {n : ℕ} (hn : 12 ≤ n) :
-    1 / ((n : ℝ) + 1) - 0.95 * (1 / (√(n : ℝ) * (n + 1))) - 1 / ((n + 1) * Real.log n ^ 3) -
-        epl n / ((n : ℝ) + 1) ≤
+theorem cPsi_le (n : ℕ) :
+    cPsi n ≤ 1 + 32 * (if 999999 < n then 1 else 0) + 39 * (if 10 ^ 8 < n then 1 else 0) := by
+  unfold cPsi; split_ifs <;> first | (exfalso; omega) | norm_num
+
+/-- `ψ(n) ≥ n − cPsi(n) √n − [n > 10¹⁷] (n/log³ n + ε_pl n)` for `n ≥ 12`. -/
+theorem psi_lower3 {n : ℕ} (hn : 12 ≤ n) :
+    (n : ℝ) - cPsi n * √(n : ℝ) -
+        (if 10 ^ 17 < n then n / Real.log n ^ 3 + epl n * n else 0) ≤ psiN n := by
+  rcases le_or_gt n (10 ^ 17) with h | h
+  · rw [if_neg (by omega)]
+    have hB := (abs_le.1 (psi_two_sided hn h)).1
+    have hc : cB n ≤ cPsi n := by
+      unfold cPsi; split_ifs with h1 h2 h3
+      · rw [cB_small h1]
+      · exact cB_le_33 h2
+      · exact cB_le_72 n
+    have := mul_le_mul_of_nonneg_right hc (Real.sqrt_nonneg (n : ℝ))
+    unfold psiN; linarith
+  · rw [if_pos h]
+    have h1 := (abs_lt.1 (thetaN_large (n := n) (by omega))).1
+    have h2 := thetaN_le_psiN n
+    have : cPsi n = 0 := by unfold cPsi; rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+    rw [this, zero_mul]; linarith
+
+/-- The Abel summation term: `ψ(n)(1/n − 1/(n+1)) ≥ 1/(n+1) − cPsi(n)/(√n (n+1)) − [n > 10¹⁷](…)`. -/
+theorem abel_term_ge3 {n : ℕ} (hn : 12 ≤ n) :
+    1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) -
+        (if 10 ^ 17 < n then 1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1) else 0) ≤
       psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) := by
   have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
   have hs0 : 0 < √(n : ℝ) := Real.sqrt_pos.2 hn0
@@ -882,18 +931,131 @@ theorem abel_term_ge {n : ℕ} (hn : 12 ≤ n) :
     push_cast; field_simp; ring
   rw [hk]
   have hk0 : (0 : ℝ) ≤ 1 / (n * (n + 1)) := by positivity
-  have h := mul_le_mul_of_nonneg_right (psi_lower2 hn) hk0
+  have h := mul_le_mul_of_nonneg_right (psi_lower3 hn) hk0
   have e1 : (n : ℝ) * (1 / (n * (n + 1))) = 1 / (n + 1) := by field_simp
-  have e2 : √(n : ℝ) * (1 / (n * (n + 1))) = 1 / (√(n : ℝ) * (n + 1)) := by
+  have e2 : cPsi n * √(n : ℝ) * (1 / (n * (n + 1))) = cPsi n * (1 / (√(n : ℝ) * (n + 1))) := by
+    rw [mul_assoc]; congr 1
     rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
-  have e3 : (n : ℝ) / Real.log n ^ 3 * (1 / (n * (n + 1))) = 1 / ((n + 1) * Real.log n ^ 3) := by
-    field_simp
-  have e4 : epl n * n * (1 / (n * (n + 1))) = epl n / ((n : ℝ) + 1) := by field_simp
-  have : ((n : ℝ) - 0.95 * √(n : ℝ) - n / Real.log n ^ 3 - epl n * n) * (1 / (n * (n + 1))) =
-      1 / ((n : ℝ) + 1) - 0.95 * (1 / (√(n : ℝ) * (n + 1))) - 1 / ((n + 1) * Real.log n ^ 3) -
-        epl n / ((n : ℝ) + 1) := by
-    rw [sub_mul, sub_mul, sub_mul, mul_assoc, e1, e2, e3, e4]
+  by_cases hbig : 10 ^ 17 < n
+  · rw [if_pos hbig] at h ⊢
+    have e3 : (n : ℝ) / Real.log n ^ 3 * (1 / (n * (n + 1))) = 1 / ((n + 1) * Real.log n ^ 3) := by
+      field_simp
+    have e4 : epl n * n * (1 / (n * (n + 1))) = epl n / ((n : ℝ) + 1) := by field_simp
+    have : ((n : ℝ) - cPsi n * √(n : ℝ) - (n / Real.log n ^ 3 + epl n * n)) * (1 / (n * (n + 1))) =
+        1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) -
+          (1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1)) := by
+      rw [sub_mul, sub_mul, add_mul, e1, e2, e3, e4]
+    linarith
+  · rw [if_neg hbig] at h ⊢
+    have : ((n : ℝ) - cPsi n * √(n : ℝ) - 0) * (1 / (n * (n + 1))) =
+        1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) - 0 := by
+      rw [sub_zero, sub_zero, sub_mul, e1, e2]
+    linarith
+
+/-- `∑_{a < n < N} 1/(√n (n+1)) ≤ 2/√(a+1)`. -/
+theorem sum_Ioo_inv_sqrt_le (a N : ℕ) :
+    ∑ n ∈ Ioo a N, (1 : ℝ) / (√(n : ℝ) * (n + 1)) ≤ 2 / √((a : ℝ) + 1) := by
+  refine le_trans (sum_le_sum_of_subset_of_nonneg (Ioo_subset_Ioo_right
+    (show N ≤ N + a + 1 by omega)) fun n _ _ => by positivity) ?_
+  have := sum_inv_sqrt_le (a := a) (b := N + a + 1) (by omega)
+  have : 0 ≤ 2 / √(((N + a + 1 : ℕ)) : ℝ) := by positivity
   linarith
+
+/-- Restricting a nonnegative sum over `(X, N)` to `n > a`. -/
+theorem sum_Ioo_ite_le (g : ℕ → ℝ) (hg : ∀ n, 0 ≤ g n) (a X N : ℕ) :
+    ∑ n ∈ Ioo X N, (if a < n then g n else 0) ≤ ∑ n ∈ Ioo a N, g n := by
+  rw [← sum_filter]
+  refine sum_le_sum_of_subset_of_nonneg ?_ fun n _ _ => hg n
+  intro n hn
+  simp only [mem_filter, mem_Ioo] at hn ⊢
+  omega
+
+/-- The `√n`-errors of (2.13): `∑_{10⁴ < n < N} cPsi(n)/(√n (n+1)) ≤ 0.0918`. -/
+theorem cPsi_sum_le (N : ℕ) :
+    ∑ n ∈ Ioo (10 ^ 4) N, cPsi n * (1 / (√(n : ℝ) * (n + 1))) ≤ 0.0918 := by
+  set f : ℕ → ℝ := fun n => 1 / (√(n : ℝ) * (n + 1)) with hf
+  have hf0 : ∀ n, 0 ≤ f n := fun n => by simp only [hf]; positivity
+  have h1 : ∑ n ∈ Ioo (10 ^ 4) N, cPsi n * f n ≤
+      ∑ n ∈ Ioo (10 ^ 4) N, f n + 32 * ∑ n ∈ Ioo (10 ^ 4) N, (if 999999 < n then f n else 0) +
+        39 * ∑ n ∈ Ioo (10 ^ 4) N, (if 10 ^ 8 < n then f n else 0) := by
+    rw [mul_sum, mul_sum, ← sum_add_distrib, ← sum_add_distrib]
+    refine sum_le_sum fun n _ => ?_
+    have hc := mul_le_mul_of_nonneg_right (cPsi_le n) (hf0 n)
+    have h0 := hf0 n
+    split_ifs at hc ⊢ <;> linarith
+  have hA := sum_Ioo_inv_sqrt_le (10 ^ 4) N
+  have hB := (sum_Ioo_ite_le f hf0 999999 (10 ^ 4) N).trans (sum_Ioo_inv_sqrt_le 999999 N)
+  have hC := (sum_Ioo_ite_le f hf0 (10 ^ 8) (10 ^ 4) N).trans (sum_Ioo_inv_sqrt_le (10 ^ 8) N)
+  have hA' : 2 / √(((10 ^ 4 : ℕ) : ℝ) + 1) ≤ 0.02 := by
+    have : (100 : ℝ) ≤ √(((10 ^ 4 : ℕ) : ℝ) + 1) := Real.le_sqrt_of_sq_le (by norm_num)
+    calc 2 / √(((10 ^ 4 : ℕ) : ℝ) + 1) ≤ 2 / 100 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) this
+      _ = 0.02 := by norm_num
+  have hB' : 2 / √(((999999 : ℕ) : ℝ) + 1) ≤ 0.002 := by
+    have : (1000 : ℝ) ≤ √(((999999 : ℕ) : ℝ) + 1) := Real.le_sqrt_of_sq_le (by norm_num)
+    calc 2 / √(((999999 : ℕ) : ℝ) + 1) ≤ 2 / 1000 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) this
+      _ = 0.002 := by norm_num
+  have hC' : 2 / √(((10 ^ 8 : ℕ) : ℝ) + 1) ≤ 0.0002 := by
+    have : (10000 : ℝ) ≤ √(((10 ^ 8 : ℕ) : ℝ) + 1) := Real.le_sqrt_of_sq_le (by norm_num)
+    calc 2 / √(((10 ^ 8 : ℕ) : ℝ) + 1) ≤ 2 / 10000 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) this
+      _ = 0.0002 := by norm_num
+  calc ∑ n ∈ Ioo (10 ^ 4) N, cPsi n * (1 / (√(n : ℝ) * (n + 1)))
+      ≤ ∑ n ∈ Ioo (10 ^ 4) N, f n + 32 * ∑ n ∈ Ioo (10 ^ 4) N, (if 999999 < n then f n else 0) +
+        39 * ∑ n ∈ Ioo (10 ^ 4) N, (if 10 ^ 8 < n then f n else 0) := h1
+    _ ≤ 0.02 + 32 * 0.002 + 39 * 0.0002 :=
+        add_le_add (add_le_add (hA.trans hA') (mul_le_mul_of_nonneg_left (hB.trans hB') (by norm_num)))
+          (mul_le_mul_of_nonneg_left (hC.trans hC') (by norm_num))
+    _ = 0.0918 := by norm_num
+
+/-- The `n > 10¹⁷` errors of (2.13): `≤ 2/39² + 3.52·10⁻⁵ ≤ 0.00136`. -/
+theorem big_sum_le (X N : ℕ) :
+    ∑ n ∈ Ioo X N, (if 10 ^ 17 < n then 1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1)
+      else 0) ≤ 0.00136 := by
+  set g : ℕ → ℝ := fun n => 1 / ((n + 1) * Real.log n ^ 3) with hg
+  have hg0 : ∀ n, 0 ≤ g n := fun n => by
+    simp only [hg]; have := Real.log_natCast_nonneg n; positivity
+  have h1 : ∑ n ∈ Ioo X N, (if 10 ^ 17 < n then 1 / ((n + 1) * Real.log n ^ 3) +
+      epl n / ((n : ℝ) + 1) else 0) ≤
+      ∑ n ∈ Ioo X N, (if 10 ^ 17 < n then g n else 0) + ∑ n ∈ Ioo X N, epl n / ((n : ℝ) + 1) := by
+    rw [← sum_add_distrib]
+    refine sum_le_sum fun n _ => ?_
+    have : 0 ≤ epl n / ((n : ℝ) + 1) := by have := epl_nonneg n; positivity
+    split_ifs <;> (try simp only [hg]) <;> linarith
+  have h2 := sum_Ioo_ite_le g hg0 (10 ^ 17) X N
+  have h3 : ∑ n ∈ Ioo (10 ^ 17) N, g n ≤ 2 / Real.log (((10 ^ 17 : ℕ) : ℝ) + 1) ^ 2 := by
+    refine le_trans (sum_le_sum_of_subset_of_nonneg (Ioo_subset_Ioo_right
+      (show N ≤ N + 10 ^ 17 + 1 by omega)) fun n _ _ => hg0 n) ?_
+    have := sum_inv_log_cube_le (a := 10 ^ 17) (b := N + 10 ^ 17 + 1) (by norm_num) (by omega)
+    have : 0 ≤ 2 / Real.log (((N + 10 ^ 17 + 1 : ℕ)) : ℝ) ^ 2 := by positivity
+    simp only [hg]; linarith
+  have hl : (39 : ℝ) ≤ Real.log (((10 ^ 17 : ℕ) : ℝ) + 1) := by
+    exact_mod_cast nat_le_log (N := ((10 ^ 17 : ℕ) : ℝ) + 1) (k := 39) (by norm_num)
+  have h4 : 2 / Real.log (((10 ^ 17 : ℕ) : ℝ) + 1) ^ 2 ≤ 2 / 39 ^ 2 :=
+    div_le_div_of_nonneg_left (by norm_num) (by norm_num) (pow_le_pow_left₀ (by norm_num) hl 2)
+  have h5 := sum_epl_div_le_const X N
+  calc _ ≤ _ := h1
+    _ ≤ 2 / 39 ^ 2 + 3.52e-5 := add_le_add (h2.trans (h3.trans h4)) h5
+    _ ≤ 0.00136 := by norm_num
+
+/-- `cPsi(N)/√N ≤ 0.033` for `N > 10⁴`. -/
+theorem cPsi_sqrt_le {N : ℕ} (h : 10 ^ 4 < N) : cPsi N * √(N : ℝ) ≤ 0.033 * N := by
+  have hN0 : (0 : ℝ) ≤ N := Nat.cast_nonneg N
+  have hss : √(N : ℝ) * √(N : ℝ) = N := Real.mul_self_sqrt hN0
+  have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
+  unfold cPsi
+  split_ifs with h1 h2 h3
+  · have : (100 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (10000 : ℝ) < N := by exact_mod_cast h
+      linarith)
+    nlinarith
+  · have : (1000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (1000000 : ℝ) ≤ N := by exact_mod_cast (show 1000000 ≤ N by omega)
+      linarith)
+    nlinarith
+  · have : (10000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (100000000 : ℝ) < N := by exact_mod_cast (show 100000000 < N by omega)
+      linarith)
+    nlinarith
+  · rw [zero_mul]; positivity
 
 /-- **[H, (2.13)]** for integers: `∑_{n ≤ N} Λ(n)/n ≥ log(N+1) − log(3/√2)`, `N ≥ 1`. -/
 theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
@@ -927,62 +1089,53 @@ theorem mertens_lower_nat {N : ℕ} (hN : 1 ≤ N) :
       sum_Ioc_consecutive _ (Nat.zero_le X) h6.le]
   rw [hsplit, abel_Ioc _ X N h6]
   -- the interior terms
-  have hint : ∑ n ∈ Ioo X N, (1 / ((n : ℝ) + 1) - 0.95 * (1 / (√(n : ℝ) * (n + 1))) -
-      1 / ((n + 1) * Real.log n ^ 3) - epl n / ((n : ℝ) + 1)) ≤
+  have hint : ∑ n ∈ Ioo X N, (1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) -
+      (if 10 ^ 17 < n then 1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1) else 0)) ≤
       ∑ n ∈ Ioo X N, psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) :=
-    sum_le_sum fun n hn => abel_term_ge (by have := (mem_Ioo.1 hn).1; omega)
-  rw [sum_sub_distrib, sum_sub_distrib, sum_sub_distrib, ← mul_sum] at hint
-  have hep : ∑ n ∈ Ioo X N, epl n / ((n : ℝ) + 1) ≤ 3.52e-5 := sum_epl_div_le_const X N
+    sum_le_sum fun n hn => abel_term_ge3 (by have := (mem_Ioo.1 hn).1; omega)
+  rw [sum_sub_distrib, sum_sub_distrib] at hint
+  have hc := cPsi_sum_le N
+  have hbig := big_sum_le X N
   have h1 := sum_inv_succ_ge h6
-  have h2 := sum_inv_sqrt_le h6
-  have h3' := sum_inv_log_cube_le (a := X) (by norm_num) h6
-  have hb2 : 0 ≤ 2 / √(N : ℝ) := by positivity
-  have hb3 : 0 ≤ 2 / Real.log (N : ℝ) ^ 2 := by positivity
-  -- numerical bounds at `X + 1 = 10⁴ + 1`
-  have hX1 : ((X : ℕ) : ℝ) + 1 = 10001 := by norm_num [hX]
-  have hsX : 2 / √(((X : ℕ) : ℝ) + 1) ≤ 0.02 := by
-    rw [hX1, div_le_iff₀ (by positivity)]
-    have : (100 : ℝ) ≤ √10001 := Real.le_sqrt_of_sq_le (by norm_num)
-    linarith
-  have hlX : (9 : ℝ) ≤ Real.log (((X : ℕ) : ℝ) + 1) := by
-    rw [hX1]; exact_mod_cast nat_le_log (N := 10001) (k := 9) (by norm_num)
-  have hlX2 : 2 / Real.log (((X : ℕ) : ℝ) + 1) ^ 2 ≤ 2 / 81 :=
-    div_le_div_of_nonneg_left (by norm_num) (by norm_num)
-      (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 9) hlX 2])
   -- the boundary term at `N`
-  have hNb : 1 - 0.95 / 100 - 1 / 729 - 1.83e-9 ≤ psiN N * (1 / (N : ℝ)) := by
+  have hNb : 1 - 0.033 - 1 / 729 - 1.83e-9 ≤ psiN N * (1 / (N : ℝ)) := by
     have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
-    have hl := psi_lower2 (n := N) (by omega)
-    have hlN : (9 : ℝ) ≤ Real.log N :=
-      le_trans hlX (Real.log_le_log (by positivity) (by rw [hX1]; exact_mod_cast h6))
-    have hsN : (100 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by exact_mod_cast (by omega : 10 ^ 4 ≤ N))
-    have hss : √(N : ℝ) * √(N : ℝ) = N := Real.mul_self_sqrt hN0.le
-    have e : ((N : ℝ) - 0.95 * √(N : ℝ) - N / Real.log N ^ 3 - epl N * N) * (1 / (N : ℝ)) =
-        1 - 0.95 / √(N : ℝ) - 1 / Real.log N ^ 3 - epl N := by
-      have hs0 : 0 < √(N : ℝ) := by linarith
-      have e1 : (N : ℝ) * (1 / N) = 1 := by field_simp
-      have e2 : 0.95 * √(N : ℝ) * (1 / N) = 0.95 / √(N : ℝ) := by
-        rw [mul_one_div, div_eq_div_iff hN0.ne' hs0.ne', mul_assoc, hss]
-      have e3 : (N : ℝ) / Real.log N ^ 3 * (1 / N) = 1 / Real.log N ^ 3 := by field_simp
-      have e4 : epl N * N * (1 / (N : ℝ)) = epl N := by field_simp
-      rw [sub_mul, sub_mul, sub_mul, e1, e2, e3, e4]
-    have h1' : 0.95 / √(N : ℝ) ≤ 0.95 / 100 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsN
-    have h2' : 1 / Real.log N ^ 3 ≤ 1 / 729 :=
-      div_le_div_of_nonneg_left (by norm_num) (by norm_num)
-        (by nlinarith [pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 9) hlN 3])
-    have := mul_le_mul_of_nonneg_right hl (by positivity : (0 : ℝ) ≤ 1 / (N : ℝ))
-    have := epl_le (N : ℝ)
-    linarith
+    have hl := psi_lower3 (n := N) (by omega)
+    have hc' := cPsi_sqrt_le h6
+    have hI : (if 10 ^ 17 < N then (N : ℝ) / Real.log N ^ 3 + epl N * N else 0) ≤
+        N / 729 + 1.83e-9 * N := by
+      split_ifs with hb
+      · have hlN : (9 : ℝ) ≤ Real.log N := by
+          have := nat_le_log (N := (N : ℝ)) (k := 9) (by
+            have : (10000 : ℝ) < N := by exact_mod_cast h6
+            norm_num; linarith)
+          exact_mod_cast this
+        have h3 := div_log_cube_le hN0.le (by norm_num) hlN
+        have := mul_le_mul_of_nonneg_right (epl_le (N : ℝ)) hN0.le
+        norm_num at h3 ⊢; linarith
+      · positivity
+    have hlow : (1 - 0.033 - 1 / 729 - 1.83e-9) * (N : ℝ) ≤ psiN N := by linarith
+    have := mul_le_mul_of_nonneg_right hlow (by positivity : (0 : ℝ) ≤ 1 / (N : ℝ))
+    rw [mul_assoc, mul_one_div_cancel hN0.ne', mul_one] at this
+    exact this
   have hpt := MertWalk.mertens_point_le
   have hpX : psiN X * (1 / ((X + 1 : ℕ) : ℝ)) =
       (∑ m ∈ Icc 1 (10 ^ 4), (Λ m : ℝ)) / (10 ^ 4 + 1) := by
     rw [psiN, hX]; push_cast; ring
   have hlog2 : Real.log ((X : ℕ) + 2 : ℝ) = Real.log (10 ^ 4 + 2) := by rw [hX]; push_cast; ring_nf
-  have hl32 : Real.log 2 ≤ Real.log (3 / √2) := by
-    apply Real.log_le_log (by norm_num)
-    rw [le_div_iff₀ (by positivity)]
-    nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num), Real.sqrt_nonneg 2]
-  have hl2 := Real.log_two_gt_d9
+  -- `log(3/√2) ≥ log 2 + log 1.06 ≥ 0.74`
+  have hl32 : 0.74 ≤ Real.log (3 / √2) := by
+    have hs2 : √(2 : ℝ) * √2 = 2 := Real.mul_self_sqrt (by norm_num)
+    have hs0 : 0 ≤ √(2 : ℝ) := Real.sqrt_nonneg 2
+    have h212 : (2.12 : ℝ) ≤ 3 / √2 := by
+      rw [le_div_iff₀ (Real.sqrt_pos.2 (by norm_num))]; nlinarith
+    have hl : Real.log 2.12 = Real.log 2 + Real.log 1.06 := by
+      rw [← Real.log_mul (by norm_num) (by norm_num)]; norm_num
+    have h106 := Real.one_sub_inv_le_log_of_pos (x := (1.06 : ℝ)) (by norm_num)
+    have := Real.log_two_gt_d9
+    have := Real.log_le_log (by norm_num) h212
+    norm_num at h106
+    linarith
   rw [hpX]
   have hcast : ((N : ℕ) : ℝ) + 1 = (N : ℝ) + 1 := rfl
   linarith
@@ -1001,176 +1154,189 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 /- [H, (2.16)] (`∑_{n≤y} Λ(n) n < 1.03884 y²/2` for `y > 663`) is not formalized: the main theorems do
 not need it. (It follows from (2.17) and a finite check.) -/
 
-/-- `ψ(m) ≥ (1 − 1/12000) m − 0.95 √m − 11` for all `m`. -/
-theorem psi_lower_all (m : ℕ) :
-    (1 - 1 / 12000) * (m : ℝ) - 0.95 * √(m : ℝ) - 11 ≤ psiN m := by
-  have hs := Real.sqrt_nonneg (m : ℝ)
-  have hm0 : (0 : ℝ) ≤ m := Nat.cast_nonneg m
-  rcases lt_or_ge m 12 with h | h
-  · have : (m : ℝ) ≤ 11 := by exact_mod_cast (by omega : m ≤ 11)
-    have := psiN_nonneg m
-    nlinarith
-  rcases le_or_gt m (10 ^ 10) with h' | h'
-  · have := (abs_le.1 (buthe_psi m h (h'.trans (by norm_num)))).1
-    unfold psiN; nlinarith
-  · have h1 := (abs_lt.1 (thetaN_large (n := m) (by omega))).1
-    have h2 := thetaN_le_psiN m
-    have hx : (10 : ℝ) ^ 10 ≤ m := by exact_mod_cast h'.le
-    have h3 := div_log_cube_le hm0 (by norm_num) (log_ge_23 hx)
-    have : (m : ℝ) / 23 ^ 3 + 1.83e-9 * m ≤ m / 12000 := by
+/-- `∑_{0<n<N} √n ≤ (2/3) N √N`. -/
+theorem sum_sqrt_Ioo_le (N : ℕ) : ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ 2 / 3 * N * √(N : ℝ) := by
+  induction N with
+  | zero => simp
+  | succ N ih =>
+    rcases Nat.eq_zero_or_pos N with h | h
+    · subst h; rw [Ioo_self_succ]; norm_num
+    rw [Ioo_succ_insert h, sum_insert (by simp)]
+    have hN1 : (((N + 1 : ℕ)) : ℝ) = (N : ℝ) + 1 := by push_cast; ring
+    have ha0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
+    have ha2 : √(N : ℝ) ^ 2 = N := Real.sq_sqrt (Nat.cast_nonneg N)
+    have hb2 : √(((N + 1 : ℕ) : ℝ)) ^ 2 = (N : ℝ) + 1 := by
+      rw [Real.sq_sqrt (Nat.cast_nonneg _)]; push_cast; ring
+    have hab : √(N : ℝ) ≤ √(((N + 1 : ℕ) : ℝ)) := Real.sqrt_le_sqrt (by push_cast; linarith)
+    generalize √(N : ℝ) = a at *
+    generalize √(((N + 1 : ℕ) : ℝ)) = b at *
+    have hD : (a + b) * (2 * a ^ 2 * (b - a) + 2 * b - 3 * a) = (b - a) * (2 * b + a) := by
+      linear_combination (2 * a ^ 2) * hb2 - (2 * a ^ 2) * ha2
+    have hD0 : 0 ≤ 2 * a ^ 2 * (b - a) + 2 * b - 3 * a := by
+      have h1 : 0 ≤ (b - a) * (2 * b + a) := mul_nonneg (by linarith) (by linarith)
+      by_contra hneg
+      push Not at hneg
+      have hb0 : 0 < b := by
+        rcases lt_or_eq_of_le (ha0.trans hab) with hb | hb
+        · exact hb
+        · exfalso; rw [← hb] at hb2; norm_num at hb2; linarith [Nat.cast_nonneg (α := ℝ) N]
+      nlinarith
+    have e : 2 / 3 * (((N + 1 : ℕ) : ℝ)) * b - (a + 2 / 3 * (N : ℝ) * a) =
+        (2 * a ^ 2 * (b - a) + 2 * b - 3 * a) / 3 := by
+      rw [hN1, ← ha2]; ring
+    linarith
+
+/-- Partial summation for (2.17): `∑_{n ≤ N} Λ(n) n = N ψ(N) − ∑_{0<n<N} ψ(n)`, given an upper
+bound for `ψ(N)` and a lower bound for `ψ(n)`, `n < N`. -/
+theorem psi_mul_of {N : ℕ} (hN : 1 ≤ N) {δ ε A B : ℝ} (hA : 0 ≤ A)
+    (hup : psiN N ≤ (1 + δ) * N + B * √(N : ℝ))
+    (hlo : ∀ n, n < N → (1 - ε) * n - A * √(n : ℝ) - 11 ≤ psiN n) :
+    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n ≤
+      ((1 + δ) * N + B * √(N : ℝ)) * N -
+        ((1 - ε) * ((N : ℝ) * (N - 1) / 2) - A * (2 / 3 * N * √(N : ℝ)) - 11 * N) := by
+  have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
+  have hpsi0 : psiN 0 = 0 := by simp [psiN]
+  rw [show Icc 1 N = Ioc 0 N from rfl, hab, hpsi0]
+  simp only [zero_mul, sub_zero]
+  have e : ∑ n ∈ Ioo 0 N, psiN n * ((n : ℝ) - ((n + 1 : ℕ) : ℝ)) = -∑ n ∈ Ioo 0 N, psiN n := by
+    rw [← sum_neg_distrib]; refine sum_congr rfl fun n _ => ?_; push_cast; ring
+  rw [e]
+  have hlow : ∑ n ∈ Ioo 0 N, ((1 - ε) * (n : ℝ) - A * √(n : ℝ) - 11) ≤ ∑ n ∈ Ioo 0 N, psiN n :=
+    sum_le_sum fun n hn => hlo n (mem_Ioo.1 hn).2
+  rw [sum_sub_distrib, sum_sub_distrib, ← mul_sum, ← mul_sum, sum_Ioo_id, sum_const,
+    nsmul_eq_mul] at hlow
+  have hcard : ((Ioo 0 N).card : ℝ) ≤ N := by
+    rw [Nat.card_Ioo]; exact_mod_cast (by omega : N - 0 - 1 ≤ N)
+  have h1 := mul_le_mul_of_nonneg_left (sum_sqrt_Ioo_le N) hA
+  have hup' : psiN N * N ≤ ((1 + δ) * N + B * √(N : ℝ)) * N :=
+    mul_le_mul_of_nonneg_right hup (Nat.cast_nonneg N)
+  linarith
+
+/-- `ψ(n) ≥ n − A √n − 11` for `n ≤ 10¹⁷`, if `cB ≤ A` (`psi_two_sided`; trivially for `n < 12`). -/
+theorem psi_lower_of_cB {A : ℝ} (hA : 0 ≤ A) {n : ℕ} (hn : n ≤ 10 ^ 17)
+    (hc : 12 ≤ n → cB n ≤ A) : (n : ℝ) - A * √(n : ℝ) - 11 ≤ psiN n := by
+  have hs := Real.sqrt_nonneg (n : ℝ)
+  rcases lt_or_ge n 12 with h | h
+  · have : (n : ℝ) ≤ 11 := by exact_mod_cast (by omega : n ≤ 11)
+    have := psiN_nonneg n
+    nlinarith [mul_nonneg hA hs]
+  · have hB := (abs_le.1 (psi_two_sided h hn)).1
+    have := mul_le_mul_of_nonneg_right (hc h) hs
+    unfold psiN; linarith
+
+/-- `ψ(n) ≤ n + B √n` for `12 ≤ n ≤ 10¹⁷`, if `cB(n) ≤ B`. -/
+theorem psi_upper_of_cB {B : ℝ} {n : ℕ} (h12 : 12 ≤ n) (hn : n ≤ 10 ^ 17) (hc : cB n ≤ B) :
+    psiN n ≤ n + B * √(n : ℝ) := by
+  have hB := (abs_le.1 (psi_two_sided h12 hn)).2
+  have := mul_le_mul_of_nonneg_right hc (Real.sqrt_nonneg (n : ℝ))
+  unfold psiN; linarith
+
+/-- `ψ(n) ≥ (1 − 1/12000) n − 72 √n − 11` for all `n`. -/
+theorem psi_lower_big (n : ℕ) : (1 - 1 / 12000) * (n : ℝ) - 72 * √(n : ℝ) - 11 ≤ psiN n := by
+  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+  have hs := Real.sqrt_nonneg (n : ℝ)
+  rcases le_or_gt n (10 ^ 17) with h | h
+  · have := psi_lower_of_cB (A := 72) (by norm_num) h (fun _ => cB_le_72 n); linarith
+  · have h1 := (abs_lt.1 (thetaN_large (n := n) (by omega))).1
+    have h2 := thetaN_le_psiN n
+    have hx : (10 : ℝ) ^ 10 ≤ n := by exact_mod_cast (show 10 ^ 10 ≤ n by omega)
+    have h3 := div_log_cube_le hn0 (by norm_num) (log_ge_23 hx)
+    have : (n : ℝ) / 23 ^ 3 + 1.83e-9 * n ≤ n / 12000 := by
       rw [div_add' _ _ _ (by norm_num), div_le_div_iff₀ (by norm_num) (by norm_num)]; nlinarith
-    have he := mul_le_mul_of_nonneg_right (epl_le m) hm0
+    have he := mul_le_mul_of_nonneg_right (epl_le n) hn0
     linarith
 
-/-- `ψ(N) ≤ (1 + 1.6·10⁻⁴) N + 0.95 √N` for `N ≥ 11`. -/
-theorem psi_upper_all {N : ℕ} (hN : 11 ≤ N) :
-    psiN N ≤ (1 + 0.00016) * N + 0.95 * √(N : ℝ) := by
-  have hs := Real.sqrt_nonneg (N : ℝ)
-  have hN0 : (0 : ℝ) ≤ N := Nat.cast_nonneg N
-  rcases le_or_gt N (10 ^ 10) with h | h
-  · rcases (show N = 11 ∨ 12 ≤ N by omega) with h11 | h12
-    · subst h11
-      have := psiN_le 11
-      have h3 : (3 : ℝ) ≤ √((11 : ℕ) : ℝ) := Real.le_sqrt_of_sq_le (by norm_num)
-      push_cast at this h3 ⊢; nlinarith
-    have := (abs_le.1 (buthe_psi N h12 (h.trans (by norm_num)))).2
-    unfold psiN; nlinarith
-  · have hsq : Nat.sqrt N < N := Nat.sqrt_lt_self (by omega)
-    have hup := psi_upper_of (N := N) (by omega) (psi_bounds _).1
-    have hx : (10 : ℝ) ^ 10 ≤ N := by exact_mod_cast h.le
-    have h3 := div_log_cube_le hN0 (by norm_num) (log_ge_23 hx)
-    have h4 := sqrt_le_div (N := (N : ℝ)) (a := 100000) (by norm_num) (by norm_num; linarith)
-    have : (N : ℝ) / 23 ^ 3 + 7.04 * ((N : ℝ) / 100000) ≤ 0.000159 * N := by
-      rw [div_eq_mul_inv, div_eq_mul_inv]; nlinarith
-    have he := mul_le_mul_of_nonneg_right (epl_le N) hN0
+/-- **[H, (2.17)], route D form**, for integers `N ≥ 2.5·10⁷`: `∑_{n ≤ N} Λ(n) n < 1.022 N²/2`.
+By partial summation (`psi_mul_of`) from `psi_two_sided` (`c ≤ 31.5, 33` to `10⁸`, `≤ 35.5` to
+`3.2·10¹⁰`, `≤ 72` to `10¹⁷`) and, above, `psi_bounds` and `psi_lower_big`. -/
+theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
+    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.022 * (N : ℝ) ^ 2 / 2 := by
+  have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
+  have hs2 : √(N : ℝ) ^ 2 = N := Real.sq_sqrt hN0.le
+  have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
+  have hs5 : (5000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+    have : (25000000 : ℝ) ≤ N := by exact_mod_cast hN
+    linarith)
+  -- `c₁ s + 11.5 < c₂ s²` gives the bound
+  have fin : ∀ c₁ c₂ : ℝ, c₁ * √(N : ℝ) + 11.5 < c₂ * √(N : ℝ) ^ 2 →
+      c₁ * ((N : ℝ) * √(N : ℝ)) + 11.5 * N < c₂ * (N : ℝ) ^ 2 := by
+    intro c₁ c₂ h
+    have := mul_lt_mul_of_pos_right h hN0
+    rw [hs2] at this; nlinarith
+  rcases le_or_gt N (10 ^ 8) with h8 | h8
+  · have hup : psiN N ≤ (1 + 0) * N + 31.5 * √(N : ℝ) := by
+      have := psi_upper_of_cB (by omega) (by omega) (cB_le_315 (by omega) h8); linarith
+    have h := psi_mul_of (by omega) (ε := 0) (A := 33) (by norm_num) hup (fun n hn => by
+      have := psi_lower_of_cB (A := 33) (by norm_num) (n := n) (by omega)
+        (fun _ => cB_le_33 (by omega))
+      linarith)
+    have key := fin 53.5 0.011 (by nlinarith)
+    nlinarith
+  rcases le_or_gt N 32000000000 with h10 | h10
+  · have hs4 : (10000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (100000000 : ℝ) < N := by exact_mod_cast h8
+      linarith)
+    have hup : psiN N ≤ (1 + 0) * N + 35.5 * √(N : ℝ) := by
+      have := psi_upper_of_cB (by omega) (by omega) (cB_le_355 h10); linarith
+    have h := psi_mul_of (by omega) (ε := 0) (A := 35.5) (by norm_num) hup (fun n hn => by
+      have := psi_lower_of_cB (A := 35.5) (by norm_num) (n := n) (by omega)
+        (fun _ => cB_le_355 (by omega))
+      linarith)
+    have key := fin 59.17 0.011 (by nlinarith)
+    nlinarith
+  rcases le_or_gt N (10 ^ 17) with h17 | h17
+  · have hs4 : (178885 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (32000000000 : ℝ) < N := by exact_mod_cast h10
+      linarith)
+    have hup : psiN N ≤ (1 + 0) * N + 72 * √(N : ℝ) := by
+      have := psi_upper_of_cB (by omega) h17 (cB_le_72 N); linarith
+    have h := psi_mul_of (by omega) (ε := 0) (A := 72) (by norm_num) hup (fun n hn => by
+      have := psi_lower_of_cB (A := 72) (by norm_num) (n := n) (by omega) (fun _ => cB_le_72 n)
+      linarith)
+    have key := fin 120 0.011 (by nlinarith)
+    nlinarith
+  · have hs4 : (300000000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
+      have : (100000000000000000 : ℝ) < N := by exact_mod_cast h17
+      linarith)
+    have hup : psiN N ≤ (1 + 0.0064) * N + 0 * √(N : ℝ) := by
+      have := (psi_bounds N).2 (by omega); linarith
+    have h := psi_mul_of (by omega) (ε := 1 / 12000) (A := 72) (by norm_num) hup
+      (fun n _ => psi_lower_big n)
+    have key := fin 48 0.004 (by nlinarith)
     nlinarith
 
-/-- **[H, (2.17)]**, `N ≥ 10⁸`. -/
-theorem psi_mul_large {N : ℕ} (hN : 10 ^ 8 ≤ N) :
-    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.0008 * (N : ℝ) ^ 2 / 2 := by
-  have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
-  have hpsi0 : psiN 0 = 0 := by simp [psiN]
-  rw [show Icc 1 N = Ioc 0 N from rfl, hab, hpsi0]
-  simp only [zero_mul, sub_zero]
-  have e : ∑ n ∈ Ioo 0 N, psiN n * ((n : ℝ) - ((n + 1 : ℕ) : ℝ)) = -∑ n ∈ Ioo 0 N, psiN n := by
-    rw [← sum_neg_distrib]; refine sum_congr rfl fun n _ => ?_; push_cast; ring
-  rw [e]
-  have hlow : ∑ n ∈ Ioo 0 N, ((1 - 1 / 12000) * (n : ℝ) - 0.95 * √(n : ℝ) - 11) ≤
-      ∑ n ∈ Ioo 0 N, psiN n := sum_le_sum fun n _ => psi_lower_all n
-  have hcard : ((Ioo 0 N).card : ℝ) ≤ N := by
-    rw [Nat.card_Ioo]; exact_mod_cast (by omega : N - 0 - 1 ≤ N)
-  have hsq : ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ N * √(N : ℝ) := by
-    calc ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ ∑ _n ∈ Ioo 0 N, √(N : ℝ) :=
-          sum_le_sum fun n hn => Real.sqrt_le_sqrt (by exact_mod_cast (mem_Ioo.1 hn).2.le)
-      _ = (Ioo 0 N).card * √(N : ℝ) := by rw [sum_const, nsmul_eq_mul]
-      _ ≤ N * √(N : ℝ) := mul_le_mul_of_nonneg_right hcard (Real.sqrt_nonneg _)
-  have hlow' : (1 - 1 / 12000) * ((N : ℝ) * (N - 1) / 2) - 0.95 * (N * √(N : ℝ)) - 11 * N ≤
-      ∑ n ∈ Ioo 0 N, psiN n := by
-    refine le_trans ?_ hlow
-    rw [sum_sub_distrib, sum_sub_distrib, ← mul_sum, ← mul_sum, sum_Ioo_id, sum_const, nsmul_eq_mul]
-    nlinarith [Real.sqrt_nonneg (N : ℝ)]
-  have hup := psi_upper_all (N := N) (by omega)
-  set s := √(N : ℝ) with hs
-  have hs2 : s ^ 2 = N := Real.sq_sqrt (Nat.cast_nonneg N)
-  have hs4 : (10000 : ℝ) ≤ s := by
-    rw [hs, Real.le_sqrt (by norm_num) (Nat.cast_nonneg _)]; exact_mod_cast (by omega : 10 ^ 8 ≤ N)
-  have hN0 : (0 : ℝ) ≤ N := Nat.cast_nonneg N
-  have hup' : psiN N * N ≤ ((1 + 0.00016) * N + 0.95 * s) * N := mul_le_mul_of_nonneg_right hup hN0
-  rw [← hs2] at hup' hlow' ⊢
-  nlinarith [mul_pos (by linarith : (0 : ℝ) < s) (by linarith : (0 : ℝ) < s)]
-
-/-- `ψ(m) ≥ m − 0.94 √m − 11` for `m ≤ 10¹⁷` (Büthe for `m ≥ 12`, trivially below). -/
-theorem psi_lower_buthe {m : ℕ} (hm : m ≤ 10 ^ 17) :
-    (m : ℝ) - 0.94 * √(m : ℝ) - 11 ≤ psiN m := by
-  have hs := Real.sqrt_nonneg (m : ℝ)
-  rcases lt_or_ge m 12 with h | h
-  · have : (m : ℝ) ≤ 11 := by exact_mod_cast (by omega : m ≤ 11)
-    have := psiN_nonneg m
-    linarith
-  · have := (abs_le.1 (buthe_psi m h hm)).1
-    unfold psiN; linarith
-
-/-- **[H, (2.17)]** for `2.5·10⁷ ≤ N ≤ 10¹⁷`, from Büthe's bound by partial summation. -/
-theorem psi_mul_buthe {N : ℕ} (hN : 25000000 ≤ N) (hN19 : N ≤ 10 ^ 17) :
-    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.0008 * (N : ℝ) ^ 2 / 2 := by
-  have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
-  have hpsi0 : psiN 0 = 0 := by simp [psiN]
-  rw [show Icc 1 N = Ioc 0 N from rfl, hab, hpsi0]
-  simp only [zero_mul, sub_zero]
-  have e : ∑ n ∈ Ioo 0 N, psiN n * ((n : ℝ) - ((n + 1 : ℕ) : ℝ)) = -∑ n ∈ Ioo 0 N, psiN n := by
-    rw [← sum_neg_distrib]; refine sum_congr rfl fun n _ => ?_; push_cast; ring
-  rw [e]
-  have hlow : ∑ n ∈ Ioo 0 N, ((n : ℝ) - 0.94 * √(n : ℝ) - 11) ≤ ∑ n ∈ Ioo 0 N, psiN n :=
-    sum_le_sum fun n hn => psi_lower_buthe (le_trans (mem_Ioo.1 hn).2.le hN19)
-  have hcard : ((Ioo 0 N).card : ℝ) ≤ N := by
-    rw [Nat.card_Ioo]; exact_mod_cast (by omega : N - 0 - 1 ≤ N)
-  have hsq : ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ N * √(N : ℝ) := by
-    calc ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ ∑ _n ∈ Ioo 0 N, √(N : ℝ) :=
-          sum_le_sum fun n hn => Real.sqrt_le_sqrt (by exact_mod_cast (mem_Ioo.1 hn).2.le)
-      _ = (Ioo 0 N).card * √(N : ℝ) := by rw [sum_const, nsmul_eq_mul]
-      _ ≤ N * √(N : ℝ) := mul_le_mul_of_nonneg_right hcard (Real.sqrt_nonneg _)
-  have hlow' : (N : ℝ) * (N - 1) / 2 - 0.94 * (N * √(N : ℝ)) - 11 * N ≤
-      ∑ n ∈ Ioo 0 N, psiN n := by
-    refine le_trans ?_ hlow
-    rw [sum_sub_distrib, sum_sub_distrib, ← mul_sum, sum_Ioo_id, sum_const, nsmul_eq_mul]
-    nlinarith [Real.sqrt_nonneg (N : ℝ)]
-  have hup : psiN N ≤ N + 0.94 * √(N : ℝ) := by
-    have := (abs_le.1 (buthe_psi N (by omega) hN19)).2
-    unfold psiN; linarith
-  set s := √(N : ℝ) with hs
-  have hs2 : s ^ 2 = N := Real.sq_sqrt (Nat.cast_nonneg N)
-  have hs4 : (5000 : ℝ) ≤ s := by
-    rw [hs, Real.le_sqrt (by norm_num) (Nat.cast_nonneg _)]
-    exact_mod_cast (by omega : 25000000 ≤ N)
-  have hN0 : (0 : ℝ) ≤ N := Nat.cast_nonneg N
-  have hup' : psiN N * N ≤ (N + 0.94 * s) * N := mul_le_mul_of_nonneg_right hup hN0
-  rw [← hs2] at hup' hlow' ⊢
-  have hs0 : (0 : ℝ) < s := by linarith
-  have key : 1.88 * s ^ 3 + 11.5 * s ^ 2 < 0.0004 * s ^ 4 := by
-    have h1 : 1.88 * s + 11.5 < 0.0004 * s ^ 2 := by nlinarith
-    have h2 : 0 < s ^ 2 := by positivity
-    nlinarith
-  nlinarith
-
-/-- **[H, (2.17)]**, for `y ≥ 2.5·10⁷` ([H] states it for `y > 1.6·10⁶`; we use it only for
-`y ≥ 2.7·10⁷`): `∑_{n ≤ y} Λ(n) n < 1.0008 y²/2`. From Büthe's bound up to `10⁸` and
-`theta_explicit` above. -/
-theorem sum_vonMangoldt_mul_lt' {y : ℝ} (hy : 2.5e7 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.0008 * y ^ 2 / 2 := by
+/-- **[H, (2.17)], route D form**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷` ([H]: `1.0008`,
+from [RS62]/Büthe; the minor arcs use it at `y ≥ 2.7·10⁷`). -/
+theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
+    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
   set N := ⌊y⌋₊
   have hNy : (N : ℝ) ≤ y := Nat.floor_le (by linarith)
   have hN : 25000000 ≤ N := Nat.le_floor (by norm_num; linarith)
-  have hmono : 1.0008 * (N : ℝ) ^ 2 / 2 ≤ 1.0008 * y ^ 2 / 2 := by
+  have hmono : 1.022 * (N : ℝ) ^ 2 / 2 ≤ 1.022 * y ^ 2 / 2 := by
     have : (N : ℝ) ^ 2 ≤ y ^ 2 := pow_le_pow_left₀ (Nat.cast_nonneg _) hNy 2
     linarith
-  rcases le_or_gt N (10 ^ 8) with h | h
-  · exact (psi_mul_buthe hN (h.trans (by norm_num))).trans_le hmono
-  · exact (psi_mul_large h.le).trans_le hmono
+  exact (psi_mul_a17 hN).trans_le hmono
 
-/-- **[H, (2.14)], route D form**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` (the minor arcs use it at
-`V ≥ 2.7·10⁷`). Without Büthe, `|ψ(y) − y| ≤ 31.5 √y` there gives `1.0063`. -/
+/-- **[H, (2.14)], route D form**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` ([H]: `1.0004`; the minor arcs
+use it at `V ≥ 2.7·10⁷`). From `psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). -/
 theorem sum_vonMangoldt_le_a14 {y : ℝ} (hy : 2.5e7 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0064 * y := by
-  have := sum_vonMangoldt_le_10004 (y := y) (by linarith); linarith
-
-/-- **[H, (2.17)], route D form**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷`. -/
-theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
-  have := sum_vonMangoldt_mul_lt' hy
-  have : 0 ≤ y ^ 2 := sq_nonneg y
-  linarith
+  have hN : 25000000 ≤ ⌊y⌋₊ := Nat.le_floor (by norm_num; linarith)
+  have h := (psi_bounds ⌊y⌋₊).2 hN
+  have hy' : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le (by linarith)
+  unfold psiN at h; linarith
 
 /- [H, (2.18)] (`∑_{n≤y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`) is not formalized either: the main
 theorems do not need it. (It follows from (2.14) by summation by parts and finite checks.) -/
 
 /-! ### (2.19) -/
 
-/-- `|θ(n) − n| ≤ 1.95 √n + n/log³ n + ε_pl(n) n` for `n > 10¹⁰` (from `thetaN_large`; the `√n` term is
+/-- `|θ(n) − n| ≤ 1.95 √n + n/log³ n + ε_pl(n) n` for `n ≥ 10¹²` (from `thetaN_large`; the `√n` term is
 slack). -/
-theorem thetaN_close {n : ℕ} (hn : 10 ^ 10 < n) :
+theorem thetaN_close {n : ℕ} (hn : 10 ^ 12 ≤ n) :
     |thetaN n - n| ≤ 1.95 * √(n : ℝ) + n / Real.log n ^ 3 + epl n * n := by
   have hs := Real.sqrt_nonneg (n : ℝ)
-  have := thetaN_large (n := n) (by omega)
+  have := thetaN_large (n := n) hn
   linarith
 
 theorem sum_logsq_le_mul (a b : ℕ) :
@@ -1186,8 +1352,8 @@ theorem sum_logsq_le_mul (a b : ℕ) :
   nlinarith
 
 set_option maxHeartbeats 800000 in
-/-- **[H, (2.19)]** for integers `N > 10¹²`. -/
-theorem logsq_large {N : ℕ} (hN : 10 ^ 12 < N) :
+/-- **[H, (2.19)]** for integers `N > 2·10¹²`. -/
+theorem logsq_large {N : ℕ} (hN : 2 * 10 ^ 12 < N) :
     ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
   set a := N / 2 with ha
   set b := 3 * N / 4 with hb
@@ -1366,25 +1532,38 @@ theorem abel_theta (w : ℕ → ℝ) (M N : ℕ) (hMN : M < N) :
         sum_singleton, sum_empty, thetaN_succ']
       ring
 
-/-- `θ(n) ≥ n − 2.3662 √n` for `12 ≤ n ≤ 10¹²` ([Büthe] and `nonprime_small`). -/
-theorem thetaN_ge {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 12) :
-    (n : ℝ) - 2.3662 * √(n : ℝ) ≤ thetaN n := by
-  have hb := buthe_psi n h1 (by omega)
+/-- `θ(n) ≥ n − (cB(n) + 1.4262) √n` for `12 ≤ n < 10¹²` (`psi_two_sided`, `nonprime_small`). -/
+theorem thetaN_ge_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
+    (n : ℝ) - (cB n + 1.4262) * √(n : ℝ) ≤ thetaN n := by
+  have hb := (abs_le.1 (psi_two_sided h1 (by omega))).1
   have hnp := nonprime_small n (by omega) h2
   have he := psiN_eq n
   unfold psiN at he
-  have := (abs_le.1 hb).1
   linarith
 
-/-- **`|θ(n) − n| ≤ 2.37 √n` for `12 ≤ n ≤ 10¹²`**: `θ ≤ ψ ≤ n + 0.94 √n` (Büthe) and `thetaN_ge`. -/
-theorem thetaN_close_small {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 12) :
-    |thetaN n - n| ≤ 2.37 * √(n : ℝ) := by
-  have hlo := thetaN_ge h1 h2
-  have hb := (abs_le.1 (buthe_psi n h1 (by omega))).2
+/-- **`|θ(n) − n| ≤ (cB(n) + 1.4262) √n` for `12 ≤ n < 10¹²`**: `θ ≤ ψ` and `thetaN_ge_cB`. -/
+theorem thetaN_close_cB {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 10 ^ 12) :
+    |thetaN n - n| ≤ (cB n + 1.4262) * √(n : ℝ) := by
+  have hlo := thetaN_ge_cB h1 h2
+  have hb := (abs_le.1 (psi_two_sided h1 (by omega))).2
   have hθψ := thetaN_le_psiN n
   unfold psiN at hθψ
   have hs := Real.sqrt_nonneg (n : ℝ)
   rw [abs_le]; constructor <;> linarith
+
+/-- `θ(n) ≥ n − (cB(n) + 2.45) √n` for `10⁹ ≤ n ≤ 3.2·10¹²` (`psi_sub_theta_le_cB`). -/
+theorem thetaN_ge_cB' {n : ℕ} (h1 : 10 ^ 9 ≤ n) (h2 : n ≤ 3200000000000) :
+    (n : ℝ) - (cB n + 2.45) * √(n : ℝ) ≤ thetaN n := by
+  have hb := (abs_le.1 (psi_two_sided (n := n) (by omega) (by omega))).1
+  have h := psi_sub_theta_le_cB (N := n) h1 (by omega)
+  rw [psi_eq_Icc, theta_eq] at h
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+  have hl : Real.log n ≤ 28.795 := (Real.log_le_log hn0 (by
+    have : (n : ℝ) ≤ 3200000000000 := by exact_mod_cast h2
+    norm_num; linarith)).trans log_32e11_le
+  have hs := Real.sqrt_nonneg (n : ℝ)
+  have : √(n : ℝ) * (1.036 + 0.049 * Real.log n) ≤ 2.45 * √(n : ℝ) := by nlinarith
+  unfold thetaN; linarith
 
 /-- `log N ≤ 0.0535 √N` for `N ≥ 40000`. -/
 theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 * √N := by
@@ -1411,13 +1590,67 @@ theorem log_le_sqrt_40000 {N : ℝ} (hN : 40000 ≤ N) : Real.log N ≤ 0.0535 *
   rw [hs, div_le_div_iff₀ hsN (by norm_num)] at hanti
   nlinarith
 
-/-- **[H, (2.19)] for `40000 ≤ N ≤ 10¹²`**, by Abel summation from [Büthe] and `nonprime_small`. -/
-theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
-    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+/-- `log N ≤ λ √N` for `N ≥ N₀ ≥ 40000` if it holds at `N₀` (`log x/√x` decreases for `x ≥ e²`). -/
+theorem log_le_lam_sqrt {N₀ N lam : ℝ} (h0 : 40000 ≤ N₀) (h : N₀ ≤ N)
+    (hl : Real.log N₀ ≤ lam * √N₀) : Real.log N ≤ lam * √N := by
+  have he2 : Real.exp 2 ≤ N₀ := by
+    have := Real.exp_one_lt_d9
+    have h2 : Real.exp 2 = Real.exp 1 ^ 2 := by rw [← Real.exp_nat_mul]; norm_num
+    rw [h2]; nlinarith [Real.exp_pos 1]
+  have hanti := Real.log_div_sqrt_antitoneOn (Set.mem_Ici.2 he2) (Set.mem_Ici.2 (he2.trans h)) h
+  simp only at hanti
+  have hs0 : 0 < √N₀ := Real.sqrt_pos.2 (by linarith)
+  have hsN : 0 < √N := Real.sqrt_pos.2 (by linarith)
+  rw [div_le_div_iff₀ hsN hs0] at hanti
+  have : Real.log N₀ * √N ≤ lam * √N₀ * √N := mul_le_mul_of_nonneg_right hl hsN.le
+  nlinarith
+
+theorem log_46e6_le : Real.log 46000000 ≤ 17.645 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 17 (u := 0.645) (by norm_num) 8
+  have e : ((17 : ℕ) : ℝ) + 0.645 = 17.645 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
+theorem log_1e8_le : Real.log 100000000 ≤ 18.421 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 18 (u := 0.421) (by norm_num) 8
+  have e : ((18 : ℕ) : ℝ) + 0.421 = 18.421 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
+theorem log_32e9_le : Real.log 32000000000 ≤ 24.19 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 24 (u := 0.19) (by norm_num) 8
+  have e : ((24 : ℕ) : ℝ) + 0.19 = 24.19 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
+theorem log_2e6_le : Real.log 2000000 ≤ 14.51 := by
+  refine TernaryGoldbach.Explicit.log_le_of_le_exp'' (by norm_num) ?_
+  have h := TernaryGoldbach.Explicit.exp_split_ge' 14 (u := 0.51) (by norm_num) 8
+  have e : ((14 : ℕ) : ℝ) + 0.51 = 14.51 := by norm_num
+  rw [e] at h; refine le_trans ?_ h
+  norm_num [Finset.sum_range_succ, Nat.factorial]
+
+theorem sqrt_ge_of_sq {x a : ℝ} (ha : 0 ≤ a) (h : a ^ 2 ≤ x) : a ≤ √x := Real.le_sqrt_of_sq_le h
+
+set_option maxHeartbeats 1600000 in
+/-- **Abel summation for (2.19)** on `(N/2, N]`, `N ≥ 2·10⁶`. From `θ(N) ≤ N + A√N`,
+`θ(n) ≥ n − B√n` on `[N/2, N)`, `log N ≤ λ√N`, `ℓ₀ ≤ log N` and the numerical condition `hnum`
+(`m ≤ 1 − B/r₀ − 1/r₀²` with `r₀² ≤ N/2` bounds `(n − B√n)/(n+1)` below):
+`∑_{N/2 < p ≤ N} (log p)² ≤ (ν/2) N log N`. -/
+theorem logsq_abel {N : ℕ} (h1 : 2000000 ≤ N) {A B m lam nu r0 l0 : ℝ}
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hr0 : 0 < r0) (hr0N : r0 ^ 2 ≤ (N : ℝ) / 2) (hm0 : 0 ≤ m)
+    (hm : m ≤ 1 - B / r0 - 1 / r0 ^ 2) (hnu : 1 ≤ nu) (hl00 : 0 ≤ l0)
+    (hθN : thetaN N ≤ N + A * √(N : ℝ))
+    (hθ : ∀ n : ℕ, N / 2 ≤ n → n < N → (n : ℝ) - B * √(n : ℝ) ≤ thetaN n)
+    (hlam : Real.log N ≤ lam * √(N : ℝ)) (hl0 : l0 ≤ Real.log N)
+    (hnum : (A + 0.70711 * B) * lam + (0.6931471808 - m) / 2 + 2.5e-5 ≤ (nu - 1) / 2 * l0) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ nu / 2 * N * Real.log N := by
   set a := N / 2 with ha
-  have ha1 : 20000 ≤ a := by omega
   have haN : a < N := by omega
-  have hNr : (40000 : ℝ) ≤ N := by exact_mod_cast h1
+  have hNr : (2000000 : ℝ) ≤ N := by exact_mod_cast h1
   have hN0 : (0 : ℝ) < N := by linarith
   have har1 : (a : ℝ) ≤ N / 2 := by
     have : 2 * a ≤ N := by omega
@@ -1427,7 +1660,6 @@ theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
     have : N ≤ 2 * a + 1 := by omega
     have : (N : ℝ) ≤ 2 * a + 1 := by exact_mod_cast this
     linarith
-  have ha0 : (20000 : ℝ) ≤ a := by exact_mod_cast ha1
   have hS : ∑ p ∈ (Ioc a N).filter Nat.Prime, Real.log p ^ 2 =
       ∑ n ∈ Ioc a N, (if n.Prime then Real.log (n : ℝ) else 0) * Real.log n := by
     rw [sum_filter]; refine sum_congr rfl fun n _ => ?_; split_ifs <;> ring
@@ -1438,7 +1670,7 @@ theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
   have hL0 : 0 ≤ L := Real.log_nonneg (by linarith)
   have ha1r : ((a + 1 : ℕ) : ℝ) = a + 1 := by push_cast; ring
   have hLa1le : Real.log ((a + 1 : ℕ) : ℝ) ≤ L := by
-    rw [ha1r]; exact Real.log_le_log (by linarith) (by
+    rw [ha1r]; exact Real.log_le_log (by positivity) (by
       have : a + 1 ≤ N := by omega
       exact_mod_cast this)
   have hLa1ge : L - Real.log 2 ≤ Real.log ((a + 1 : ℕ) : ℝ) := by
@@ -1450,29 +1682,24 @@ theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
   set sN := √(N : ℝ) with hsN
   have hsN2 : sN * sN = N := Real.mul_self_sqrt hN0.le
   have hsN0 : 0 ≤ sN := Real.sqrt_nonneg _
-  have hsN200 : 200 ≤ sN := Real.le_sqrt_of_sq_le (by linarith)
-  have hlsq : L ≤ 0.0535 * sN := log_le_sqrt_40000 hNr
+  have hsN1414 : 1414 ≤ sN := Real.le_sqrt_of_sq_le (by linarith)
+  have hlsq : L ≤ 0.0535 * sN := log_le_sqrt_40000 (by linarith)
   have hsa : √(a : ℝ) ≤ 0.70711 * sN := by
     rw [show (0.70711 : ℝ) * sN = √(0.70711 ^ 2 * N) by
       rw [Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]]
     exact Real.sqrt_le_sqrt (by nlinarith)
-  -- (i) `θ(N) ≤ N + 0.94 √N`
-  have hθN : thetaN N ≤ N + 0.94 * sN := by
-    have hb := buthe_psi N (by omega) (by omega)
-    have := thetaN_le_psiN N
-    unfold psiN at this
-    linarith [(abs_le.1 hb).2]
-  -- (ii) `θ(a) ≥ a − 2.3662 √a`
-  have hθa := thetaN_ge (n := a) (by omega) (by omega)
-  -- (iii) the Abel sum
+  have hm1 : m ≤ 1 := by
+    have : 0 ≤ B / r0 := div_nonneg hB hr0.le
+    have : 0 ≤ 1 / r0 ^ 2 := by positivity
+    linarith
+  -- the Abel sum
   have hterm : ∀ n ∈ Ioo a N,
-      thetaN n * (Real.log (n : ℝ) - Real.log ((n + 1 : ℕ) : ℝ)) ≤ -0.9832 := by
+      thetaN n * (Real.log (n : ℝ) - Real.log ((n + 1 : ℕ) : ℝ)) ≤ -m := by
     intro n hn
     have hn1 : a < n := (mem_Ioo.1 hn).1
     have hn2 : n < N := (mem_Ioo.1 hn).2
-    have hnr : (20001 : ℝ) ≤ n := by exact_mod_cast (by omega : 20001 ≤ n)
-    have hn0 : (0 : ℝ) < n := by linarith
-    have hθ := thetaN_ge (n := n) (by omega) (by omega)
+    have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+    have hθn := hθ n hn1.le hn2
     have hd : 1 / ((n : ℝ) + 1) ≤ Real.log ((n + 1 : ℕ) : ℝ) - Real.log n := by
       have hl := Real.one_sub_inv_le_log_of_pos (x := ((n : ℝ) + 1) / n) (by positivity)
       rw [Real.log_div (by positivity) hn0.ne'] at hl
@@ -1480,48 +1707,155 @@ theorem logsq_mid {N : ℕ} (h1 : 40000 ≤ N) (h2 : N ≤ 10 ^ 12) :
       rw [e] at hl; push_cast; linarith
     set r := √(n : ℝ) with hr
     have hr2 : r * r = n := Real.mul_self_sqrt hn0.le
-    have hr0 : 141.42 ≤ r := Real.le_sqrt_of_sq_le (by nlinarith)
-    have hm : 0.9832 * ((n : ℝ) + 1) ≤ n - 2.3662 * r := by
-      nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ r - 141.42) (by linarith : (0 : ℝ) ≤ r)]
-    have hm0 : 0 ≤ (n : ℝ) - 2.3662 * r := by nlinarith
-    have hprod : ((n : ℝ) - 2.3662 * r) * (1 / ((n : ℝ) + 1)) ≤
+    have hrr : r0 ≤ r := by
+      rw [hr]; apply Real.le_sqrt_of_sq_le
+      have : N ≤ 2 * n := by omega
+      have : (N : ℝ) ≤ 2 * n := by exact_mod_cast this
+      linarith
+    have hr0' : 0 < r := lt_of_lt_of_le hr0 hrr
+    have hq1 : B * r ≤ B / r0 * (r * r) := by
+      rw [div_mul_eq_mul_div, le_div_iff₀ hr0]
+      nlinarith [mul_le_mul_of_nonneg_left hrr (mul_nonneg hB hr0'.le)]
+    have hq2 : 1 ≤ 1 / r0 ^ 2 * (r * r) := by
+      rw [div_mul_eq_mul_div, one_mul, le_div_iff₀ (by positivity)]
+      nlinarith [mul_le_mul hrr hrr hr0.le hr0'.le]
+    have hq3 : (B / r0 + 1 / r0 ^ 2) * (r * r) ≤ (1 - m) * (r * r) :=
+      mul_le_mul_of_nonneg_right (by linarith) (by positivity)
+    have hmn : m * (n : ℝ) = m * (r * r) := by rw [hr2]
+    have hm' : m * ((n : ℝ) + 1) ≤ n - B * r := by nlinarith
+    have hprod : ((n : ℝ) - B * r) * (1 / ((n : ℝ) + 1)) ≤
         thetaN n * (Real.log ((n + 1 : ℕ) : ℝ) - Real.log n) :=
-      mul_le_mul hθ hd (by positivity) (by linarith)
-    have hq : 0.9832 ≤ ((n : ℝ) - 2.3662 * r) * (1 / ((n : ℝ) + 1)) := by
-      rw [mul_one_div, le_div_iff₀ (by positivity)]; exact hm
+      mul_le_mul hθn hd (by positivity) (by nlinarith)
+    have hq : m ≤ ((n : ℝ) - B * r) * (1 / ((n : ℝ) + 1)) := by
+      rw [mul_one_div, le_div_iff₀ (by positivity)]; exact hm'
     nlinarith
   have hsum : ∑ n ∈ Ioo a N, thetaN n * (Real.log (n : ℝ) - Real.log ((n + 1 : ℕ) : ℝ)) ≤
-      -0.9832 * ((N : ℝ) - a - 1) := by
+      -m * ((N : ℝ) - a - 1) := by
     refine (sum_le_card_nsmul _ _ _ hterm).trans (le_of_eq ?_)
     rw [Nat.card_Ioo, nsmul_eq_mul, Nat.cast_sub (by omega), Nat.cast_sub (by omega)]
     push_cast; ring
   -- assemble
   have F1 := mul_le_mul_of_nonneg_right hθN hL0
+  have hθa := hθ a le_rfl haN
   have F2 := mul_le_mul_of_nonneg_right hθa hLa10
   have hLl2 : Real.log 2 ≤ L := Real.log_le_log (by norm_num) (by linarith)
   have F3 := mul_le_mul har2 hLa1ge (by linarith) (by linarith)
   have F3' := mul_le_mul_of_nonneg_left hlog2.le (by linarith : (0 : ℝ) ≤ ((N : ℝ) - 1) / 2)
   have F4 := mul_le_mul hsa hLa1le hLa10 (by positivity)
-  have F6 := mul_le_mul_of_nonneg_left hlsq hsN0
-  have F7 : L ≤ 0.0002675 * N := by
-    have := mul_le_mul_of_nonneg_right hsN200 hsN0
+  have F4B := mul_le_mul_of_nonneg_left F4 hB
+  have F6 : sN * L ≤ lam * N := by
+    have := mul_le_mul_of_nonneg_left hlam hsN0
+    nlinarith
+  have F6' := mul_le_mul_of_nonneg_left F6 (by positivity : (0 : ℝ) ≤ A + 0.70711 * B)
+  have F7 : L / 2 + 1 ≤ 2.5e-5 * N := by
+    have : sN ≤ N / 1414 := by rw [le_div_iff₀ (by norm_num)]; nlinarith
     linarith
-  linarith [F1, F2, F3, F3', F4, F6, F7, hsum, hsN2, har1]
+  have hma : m * a ≤ m * (N / 2) := mul_le_mul_of_nonneg_left har1 hm0
+  have hnumN := mul_le_mul_of_nonneg_left hnum hN0.le
+  have hNl : (nu - 1) / 2 * l0 * N ≤ (nu - 1) / 2 * L * N := by
+    apply mul_le_mul_of_nonneg_right _ hN0.le
+    exact mul_le_mul_of_nonneg_left hl0 (by linarith)
+  linarith [F1, F2, F3, F3', F4B, F6', F7, hsum, hsN2, har1, hma, hnumN, hNl]
 
-/-- **`∑_{n/2 < p ≤ n} (log p)² ≤ ½ n log n` for `117 ≤ n ≤ 10¹²`**: kernel-checked for `n < 40000`
-(`SmallLS.logsq_kernel`), by Abel summation above. -/
-theorem logsq_small (n : ℕ) (h1 : 117 ≤ n) (h2 : n ≤ 10 ^ 12) :
-    ∑ p ∈ (Ioc (n / 2) n).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * n * Real.log n := by
-  rcases lt_or_ge n 40000 with h | h
-  · exact TernaryGoldbach.Prelim.SmallLS.logsq_kernel n h1 h
-  · exact logsq_mid h h2
+/-- **(2.19) for `4.6·10⁷ ≤ N ≤ 10⁸`** (`c ≤ 31.5`). -/
+theorem logsq_r1 {N : ℕ} (h1 : 46000000 ≤ N) (h2 : N ≤ 10 ^ 8) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  have hNr : (46000000 : ℝ) ≤ N := by exact_mod_cast h1
+  refine logsq_abel (N := N) (by omega) (A := 31.5) (B := 32.9262) (m := 0.993133)
+    (lam := 0.0026018) (nu := 1) (r0 := 4795) (l0 := 0) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num; linarith) (by norm_num) (by norm_num) le_rfl le_rfl
+    ((thetaN_le_psiN N).trans (psi_upper_of_cB (by omega) (by omega) (cB_le_315 (by omega) h2)))
+    (fun n hn hn' => by
+      have := thetaN_ge_cB (n := n) (by omega) (by omega)
+      have hc := mul_le_mul_of_nonneg_right (cB_le_315 (n := n) (by omega) (by omega))
+        (Real.sqrt_nonneg (n : ℝ))
+      linarith)
+    (log_le_lam_sqrt (N₀ := 46000000) (by norm_num) hNr (by
+      have := sqrt_ge_of_sq (x := 46000000) (a := 6782) (by norm_num) (by norm_num)
+      have := log_46e6_le
+      linarith))
+    (Real.log_nonneg (by linarith)) (by norm_num)
 
-/-- **[H, (2.19)]** ([RS75, Cor. 2] for `y ≥ 2·758699`, a computation for `117 ≤ y < 2·758699`):
-`∑_{y/2 < p ≤ y} (log p)² ≤ (1/2) y log y` for `y ≥ 117`. -/
-theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
-    ∑ p ∈ (Ioc ⌊y / 2⌋₊ ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * y * Real.log y := by
+/-- **(2.19) for `10⁸ < N ≤ 3.2·10¹⁰`** (`c ≤ 35.5`). -/
+theorem logsq_r2 {N : ℕ} (h1 : 10 ^ 8 < N) (h2 : N ≤ 32000000000) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  have hNr : (100000000 : ℝ) ≤ N := by exact_mod_cast h1.le
+  refine logsq_abel (N := N) (by omega) (A := 35.5) (B := 36.9262) (m := 0.994777)
+    (lam := 0.0018421) (nu := 1) (r0 := 7071) (l0 := 0) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num; linarith) (by norm_num) (by norm_num) le_rfl le_rfl
+    ((thetaN_le_psiN N).trans (psi_upper_of_cB (by omega) (by omega) (cB_le_355 h2)))
+    (fun n hn hn' => by
+      have := thetaN_ge_cB (n := n) (by omega) (by omega)
+      have hc := mul_le_mul_of_nonneg_right (cB_le_355 (n := n) (by omega))
+        (Real.sqrt_nonneg (n : ℝ))
+      linarith)
+    (log_le_lam_sqrt (N₀ := 100000000) (by norm_num) hNr (by
+      have := sqrt_ge_of_sq (x := 100000000) (a := 10000) (by norm_num) (by norm_num)
+      have := log_1e8_le
+      linarith))
+    (Real.log_nonneg (by linarith)) (by norm_num)
+
+/-- **(2.19) for `3.2·10¹⁰ < N ≤ 2·10¹²`** (`c ≤ 72`; `ψ − θ ≤ 2.45 √n`). -/
+theorem logsq_r3 {N : ℕ} (h1 : 32000000000 < N) (h2 : N ≤ 2 * 10 ^ 12) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  have hNr : (32000000000 : ℝ) ≤ N := by exact_mod_cast h1.le
+  refine logsq_abel (N := N) (by omega) (A := 72) (B := 74.45) (m := 0.999411)
+    (lam := 0.0001353) (nu := 1) (r0 := 126491) (l0 := 0) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num; linarith) (by norm_num) (by norm_num) le_rfl le_rfl
+    ((thetaN_le_psiN N).trans (psi_upper_of_cB (by omega) (by omega) (cB_le_72 N)))
+    (fun n hn hn' => by
+      have := thetaN_ge_cB' (n := n) (by omega) (by omega)
+      have hc := mul_le_mul_of_nonneg_right (cB_le_72 n) (Real.sqrt_nonneg (n : ℝ))
+      linarith)
+    (log_le_lam_sqrt (N₀ := 32000000000) (by norm_num) hNr (by
+      have := sqrt_ge_of_sq (x := 32000000000) (a := 178885) (by norm_num) (by norm_num)
+      have := log_32e9_le
+      linarith))
+    (Real.log_nonneg (by linarith)) (by norm_num)
+
+/-- `θ(n) ≤ n + 3√n` and `n − 5√n ≤ θ(n)` for `10⁶ ≤ n < 5·10⁷` (the sieve table). -/
+theorem thetaN_sieve {n : ℕ} (h1 : 1000000 ≤ n) (h2 : n < 50000000) :
+    thetaN n ≤ n + 3 * √(n : ℝ) ∧ (n : ℝ) - 5 * √(n : ℝ) ≤ thetaN n := by
+  have h := SieveTab.sieve_table (t := (n : ℝ)) (by exact_mod_cast h1) (by exact_mod_cast h2)
+  unfold SieveTab.RtT at h
+  rw [Nat.floor_natCast] at h
+  have e : SmallTab.thS n = thetaN n := rfl
+  rw [e] at h
+  norm_num at h
+  constructor <;> linarith [h.1, h.2]
+
+/-- **(2.19) for `2·10⁶ ≤ N < 5·10⁷`** (`thetaN_sieve`). -/
+theorem logsq_sieve {N : ℕ} (h1 : 2000000 ≤ N) (h2 : N < 50000000) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  have hNr : (2000000 : ℝ) ≤ N := by exact_mod_cast h1
+  refine logsq_abel (N := N) h1 (A := 3) (B := 5) (m := 0.994999)
+    (lam := 0.01027) (nu := 1) (r0 := 1000) (l0 := 0) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num; linarith) (by norm_num) (by norm_num) le_rfl le_rfl
+    (thetaN_sieve (by omega) h2).1
+    (fun n hn hn' => (thetaN_sieve (n := n) (by omega) (by omega)).2)
+    (log_le_lam_sqrt (N₀ := 2000000) (by norm_num) hNr (by
+      have := sqrt_ge_of_sq (x := 2000000) (a := 1414) (by norm_num) (by norm_num)
+      have := log_2e6_le
+      linarith))
+    (Real.log_nonneg (by linarith)) (by norm_num)
+
+/-- The integer form of (2.19) on `[N/2, N]` for `N ≥ 4.6·10⁷`. -/
+theorem logsq_ge {N : ℕ} (h : 46000000 ≤ N) :
+    ∑ p ∈ (Ioc (N / 2) N).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * N * Real.log N := by
+  rcases le_or_gt N (10 ^ 8) with h8 | h8
+  · exact logsq_r1 h h8
+  rcases le_or_gt N 32000000000 with h10 | h10
+  · exact logsq_r2 h8 h10
+  rcases le_or_gt N (2 * 10 ^ 12) with h12 | h12
+  · exact logsq_r3 h10 h12
+  · exact logsq_large h12
+
+/-- From an integer bound on `(N/2, N]` to the real form on `(y/2, y]`. -/
+theorem logsq_real {y c : ℝ} (hy : 1 ≤ y) (hc : 0 ≤ c)
+    (h : ∑ p ∈ (Ioc (⌊y⌋₊ / 2) ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ c * ⌊y⌋₊ * Real.log ⌊y⌋₊) :
+    ∑ p ∈ (Ioc ⌊y / 2⌋₊ ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ c * y * Real.log y := by
   set N := ⌊y⌋₊
-  have hN : 117 ≤ N := Nat.le_floor (by norm_num; linarith)
+  have hN : 1 ≤ N := Nat.le_floor (by exact_mod_cast hy)
   have hNy : (N : ℝ) ≤ y := Nat.floor_le (by linarith)
   have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
   have hsub : (Ioc ⌊y / 2⌋₊ N).filter Nat.Prime ⊆ (Ioc (N / 2) N).filter Nat.Prime := by
@@ -1531,14 +1865,25 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 117 ≤ y) :
     have : ((N / 2 : ℕ) : ℝ) ≤ (N : ℝ) / 2 := Nat.cast_div_le
     linarith
   have hmono := sum_le_sum_of_subset_of_nonneg hsub (fun p _ _ => sq_nonneg (Real.log p))
-  have hrhs : 1 / 2 * (N : ℝ) * Real.log N ≤ 1 / 2 * y * Real.log y := by
+  have hrhs : c * (N : ℝ) * Real.log N ≤ c * y * Real.log y := by
     have h1 : Real.log N ≤ Real.log y := Real.log_le_log hN0 hNy
     have h2 : 0 ≤ Real.log N := Real.log_natCast_nonneg N
+    have := mul_le_mul hNy h1 h2 (by linarith)
     nlinarith
-  refine hmono.trans (le_trans ?_ hrhs)
-  rcases le_or_gt N (10 ^ 12) with h | h
-  · exact logsq_small N hN h
-  · exact logsq_large h
+  linarith
+
+/-- **[H, (2.19)], route D form**: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 2·10⁶`
+([H]: `y ≥ 117`, from [RS75, Cor. 2] and a computation; the minor arcs use it for `y ≥ V ≥ 2·10⁶`).
+By Abel summation from the sieve table (`logsq_sieve`, `y < 5·10⁷`), `psi_two_sided`
+(`logsq_r1`–`logsq_r3`) and `theta_explicit` (`logsq_large`). -/
+theorem sum_log_sq_primes_le {y : ℝ} (hy : 2e6 ≤ y) :
+    ∑ p ∈ (Ioc ⌊y / 2⌋₊ ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * y * Real.log y := by
+  refine logsq_real (by linarith) (by norm_num) ?_
+  set N := ⌊y⌋₊
+  have hN : 2000000 ≤ N := Nat.le_floor (by norm_num; linarith)
+  rcases lt_or_ge N 50000000 with h | h
+  · exact logsq_sieve hN h
+  · exact logsq_ge (by omega)
 
 /-! ### Sums of `μ` (trusted) -/
 

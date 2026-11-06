@@ -717,6 +717,35 @@ Consequences:
       * Consumer ranges (estimates): (2.15) analytic from `6·10⁵`; `F_all` from about `3·10⁵` given
         `c ≈ 33` from `10⁶`; (2.19) from about `9·10⁶`, and its consumer needs `y ≥ 2.7·10⁷` only;
         (2.13) with a kernel range to `10⁶` plus SmallMertensLower. So kernel `[12, 10⁶]` suffices.
+      * **Done 2026-11-06: P9c phase B, `ButhePsi` dropped.** The main theorems take four hypotheses.
+        * `Prelim/PsiSieve.lean`, `PsiSieveData1–13.lean`, `PsiSieveMain.lean`
+          (`scripts/gen_psi_sieve.py`): a kernel bit sieve. Each window `(n, n + W]`, `W ≤ 2¹⁵`, is
+          sieved by primes `≤ 7100`, with masks built by doubling, or-ed, and popcounted by halves; all
+          GMP operations on `W`-bit `Nat`s. `cnt_spec` is the proof that this is the prime count. The
+          window chain `outerT` (like `SmallTab.outer`, θ only) starts from `SmallTab.stage117` and
+          gives `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)` (`sieve_table`, `thetaN_sieve`): 3343
+          windows, 128 chunks. Costs: about 7·10⁻⁵ s per integer, 100× faster than trial division.
+          Memory: 3–8 GB per chunk above the 7 GB Mathlib baseline, so the data files import each
+          other in a chain (lake builds them one at a time).
+        * (2.14) `1.0064`, (2.15), (2.17) `1.022` (`psi_mul_of` partial summation, four ranges of
+          `c`), (2.13) (`cPsi`, `log(3/√2) ≥ 0.74`), (5.5): from `psi_two_sided`, the tables and
+          `theta_explicit` (now from `10¹²`).
+        * (2.19) for `y ≥ 2·10⁶` with constant `½`: one Abel-summation lemma `logsq_abel`, applied with
+          the sieve table below `5·10⁷`, `cB` on `[4.6·10⁷, 2·10¹²]` and `theta_explicit` above.
+          The minor arcs use it at `W ≥ V ≥ 2·10⁶` (`V₂ = ⌊T/3⌋`, second choice), so the Type II
+          theorems now assume `2·10⁶ ≤ V` (was `117`, `50000`). No minor-arc constant changed.
+        * Lemma C.2.2 with `2.50637` unchanged. `|E₂Λ(M)|` is bounded by the variation of
+          `∑ Λ(n)/(n log n) − log log n` up to `10¹⁸` (`E2_var`: summation by parts against
+          `ψ(n) − n` with weight `1/(n log n)`; `E2_le_bin`) plus `|E₂Λ(10¹⁸)|`. `F_mid` covers
+          `[10⁵, 10¹²)` in 7 bins (worst `2.388 < 2.5`); `F_large` starts at `10¹²`. The old route
+          (`E1_var`, sup of the variation of `E₁Λ`) would have needed `|ψ − x| ≤ 3√x` up to about `10⁸`.
+        * Not needed after all: the `ν = 1.07` weakening of (2.19) and the `0.276 → 0.283` change of the
+          second case of Thm 3.1.1. Both were planned before the sieve made `c ≤ 5` cheap up to `5·10⁷`.
+        * The consumer-range estimates above were too optimistic in two places. The second choice
+          has `V₂ = ⌊T/3⌋ ≥ 2·10⁶`, so (2.19) is needed from `2·10⁶`, not `2.7·10⁷`. And with `c ≈ 33`
+          from `10⁶`, `F_mid` fails on `[10⁶, 5·10⁶]`: the `log θ(x)` term alone uses most of the
+          `2.50637` budget. Hence the sieve.
+        * `Prelim/SmallLogSq.lean` (kernel, `n < 40000`) is now unused.
 
       * (c) Rework the frontier:
         * (2.15), and with it (2.12) and `psiN_le`, need `ψ < 1.03883y` everywhere: (a) plus (b).

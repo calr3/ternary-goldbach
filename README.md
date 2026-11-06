@@ -8,28 +8,28 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 ## Status
 
 The proof is complete: there is no `sorry`, and the main theorems use only Lean's standard three
-axioms. They take 5 published numerical results as explicit hypotheses, stated in
+axioms. They take 4 published numerical results as explicit hypotheses, stated in
 `TernaryGoldbach/Statement.lean`:
 
 * `RHUpTo`: RH up to `3·10¹⁰` ([Pla15], rigorous, 2012);
 * `PlattGRH`: Platt's GRH verification;
 * `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
-* `ButhePsi`: Büthe's bound on `ψ`, used up to `10¹⁷` (Büthe proves it up to `10¹⁹`);
 * `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
   is checked against a later published bound (see `AXIOMS.md`).
 
 ```lean
 theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
-    (hBG : BinaryGoldbachInput) (hψ : ButhePsi) (hμ : RamareMoebius) : Statement
+    (hBG : BinaryGoldbachInput) (hμ : RamareMoebius) : Statement
 theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
-    (hψ : ButhePsi) (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27)
+    (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27)
 ```
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, declared as section variables
 (`variable [Fact RHUpTo] …`). The theorems they used to be axioms for keep their names
 (`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input`,
-`Prelim.buthe_psi`, `Prelim.ramare_moebius`) and are now proved from the instances.
+`Prelim.ramare_moebius`) and are now proved from the instances. Büthe's bound for `ψ` [Bü18] was a
+fifth hypothesis until 2026-11-06; it is no longer used (below).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -86,8 +86,8 @@ by parts give `(2πt)² η̂₂(t) = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)` w
 kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/25`. For `t ≤ 2`, it checks
 Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
 `Eta2DDBound.lean`; about 4 minutes in all). The cost of `32` downstream is small: Theorem 3.1.1's
-`2.5 x/√t` becomes `2.511 x/√t`, a few Type I constants move in the third or fourth digit, and the
-final minor-arc inequality's worst cell goes from `0.96499` to `0.96534` (against `1.037`). (9.94) is
+`2.5 x/√t` becomes `2.511 x/√t` (`2.526 x/√t` with the route-D (2.14), (2.17)), a few Type I constants move in the third or fourth digit, and the
+final minor-arc inequality's worst cell goes from `0.96499` to `0.96534` (against `1.037`; `1.00717` with the route-D constants). (9.94) is
 proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the integrals by
 exact polynomial integration, `MajorArcs/EtaONum.lean`);
 [H]'s own derivation of it drops a factor 2 (`AXIOMS.md`, Finding 3). (5.31) `T2_le` is proved from
@@ -107,7 +107,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `10¹⁷ ≤ m ≤ 10²⁷`. This comes from
     `|ψ(x) − x| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
     `3·10¹⁰`). Below `10¹⁷` the elementary `θ(m) ≤ m log 4` is enough. Then `n − p` is even and at
-    most `4·10¹⁸`. Büthe's bound is not used here.
+    most `4·10¹⁸`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [H, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
@@ -133,18 +133,22 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
-  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10⁹`. Here `ε_pl(n) = 1.83·10⁻⁹` for
+  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 1.83·10⁻⁹` for
   `780 < log n < 20000` and `0` otherwise. It plays the role of Dusart's `|θ(x) − x| < x/log³x`
   (`x ≥ 89 967 803`), which earlier versions of this project assumed. [H] itself does not use
   Dusart: it quotes its bounds for `ψ` and `θ` ([H, §2.5]) from [RS62], [RS75] and [RR96]. We prove
-  those bounds instead, which is why we need a `√x`-quality bound for `ψ` (Büthe's) for moderate
-  `x`. It comes from:
-  * Büthe's bound for `ψ` up to `10¹⁷`, with `ψ − θ ≤ √n (1.0054 + 0.048 log n)` (from the same
-    bound at `⌊√n⌋` and `⌊√n⌋/31`); below `10¹²` we use `|θ(n) − n| ≤ 2.37 √n` (Büthe and
-    `ψ − θ < 1.4262 √n`). Büthe's separate bounds for `θ` are not used;
+  those bounds instead, from bounds `|ψ(x) − x| ≤ c√x` for moderate `x`:
+  * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on
+    `[10⁶, 5·10⁷)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
+  * `c = 31`–`72` on `[10⁶, 10¹⁷]` (`Prelim/PsiTwoSided.lean`), from the Weil explicit formula with RH
+    up to `3·10¹⁰` and a compactly supported test function, with a zero-free region `|γ| ≥ 2.39`
+    near the real axis;
   * above `10¹⁷`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹⁰` and the
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
+
+  With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`,
+  and (2.19) for `y ≥ 2·10⁶`; the first-case constant of Thm 3.1.1 becomes `2.526` (was `2.511`).
 
 [`BLUEPRINT.md`](BLUEPRINT.md) maps [H] chapter by chapter to the Lean files.
 
@@ -156,7 +160,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 |---|---|---|---|
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computation axiom) |
-| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
+| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -209,7 +213,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 
 **Other differences:**
 * [H, §2.5] quotes its bounds for `ψ`, `θ` and `Λ` from [RS62], [RS75] and [RR96]; we prove them
-  (`Prelim/LambdaMu.lean`, `ThetaExplicit.lean`) from Büthe's bound and `theta_explicit`, above.
+  (`Prelim/LambdaMu.lean`, `ThetaExplicit.lean`) from the `c√x` bounds and `theta_explicit`, above.
 * The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
   which [H, §1.6] uses up to `8.875·10³⁰`; they need binary Goldbach up to `4·10¹⁸`. This is the
   route of [H, App. D], which reaches `1.23·10²⁷` from RH to `3.061·10¹⁰` [Pla15] (Prop. D.0.3).

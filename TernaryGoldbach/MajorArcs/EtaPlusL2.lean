@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.HHFourier
 import TernaryGoldbach.MajorArcs.Prop715
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # `‖η₊‖₂²` and `∫_{|ξ|<T} |η̂₊(ξ)|² dξ`

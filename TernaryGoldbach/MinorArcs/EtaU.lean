@@ -3,7 +3,7 @@ import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.PhiIntegrals
 import TernaryGoldbach.Helfgott.Eta2
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

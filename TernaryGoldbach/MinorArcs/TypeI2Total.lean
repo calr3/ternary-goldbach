@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeITotal
 import TernaryGoldbach.MinorArcs.TypeIProof
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

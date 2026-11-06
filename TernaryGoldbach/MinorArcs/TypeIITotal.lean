@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITools
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -33,7 +33,7 @@ theorem norm_typeII_le' (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1 �
   rwa [intervalIntegral.integral_congr_ae (g := G) (Filter.Eventually.of_forall
     fun W hW => (heq hW).symm)] at h
 
-theorem logSqSum_le_half {W' W : ℝ} (hW : 117 ≤ W) (hW' : W / 2 ≤ W') :
+theorem logSqSum_le_half {W' W : ℝ} (hW : 2e6 ≤ W) (hW' : W / 2 ≤ W') :
     logSqSum W' W ≤ 1 / 2 * W * Real.log W := by
   refine le_trans ?_ (Prelim.sum_log_sq_primes_le hW)
   refine sum_le_sum_of_subset_of_nonneg ?_ fun p _ _ => sq_nonneg _
@@ -73,7 +73,7 @@ set_option maxHeartbeats 2000000 in
 /-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (50000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) (hqV : 2 * rexp 1 * q ≤ V) {β : ℝ} (hβ : 0 < β)
+    (hV : (2000000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) (hqV : 2 * rexp 1 * q ≤ V) {β : ℝ} (hβ : 0 < β)
     {W : ℝ} (hW : W ∈ Set.Icc (V : ℝ) (x / U)) :
     √(S1 x U W) * (√(S2 α x (max U (x / (2 * W))) (max V (W / 2)) W) +
       √((x / (2 * W) + 1) * (1.4262 ^ 2 * W))) ≤ W * G637 x U V q β W := by
@@ -327,7 +327,7 @@ The main term is [H]'s `x/√(2φ(q)) √((log x/UV + Φ)(κ₆ log x/UV + 2κ�
 `√2κ₂√(q/φ)(1 + 1.15√(log 2q/log(x/2Uq)))x/√U + κ₉ x/√V`. -/
 theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (50000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) (hQ : 3.5 * (x / U) ≤ Q)
+    (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) (hQ : 3.5 * (x / U) ≤ Q)
     (hqV : 2 * rexp 1 * q ≤ V) :
     ‖typeII α x U V‖ ≤
       x / √(2 * Nat.totient q) * √((Real.log (x / (U * V)) + Real.log (2 * q) *

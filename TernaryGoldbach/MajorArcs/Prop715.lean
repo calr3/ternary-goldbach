@@ -4,7 +4,7 @@ import TernaryGoldbach.Explicit.EtaPlusCg
 import TernaryGoldbach.MajorArcs.EtaPlusSqLog
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, Prop 9.5.1] (proved, our constants) and [H, Prop 7.1.5]

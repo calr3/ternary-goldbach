@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITotalGen
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -104,7 +104,7 @@ noncomputable def G53 (x U V : ℝ) (M r W : ℝ) : ℝ :=
 set_option maxHeartbeats 1000000 in
 /-- The pointwise bound behind [H, (6.20)]. -/
 theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r) {W : ℝ}
+    (hV : (2000000 : ℝ) ≤ V) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r) {W : ℝ}
     (hW : W ∈ Set.Icc (V : ℝ) (x / U))
     (hS2 : S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (2 * M / x + r * x / (2 * W) + W / 2) * logSqSum (max V (W / 2)) W) :
@@ -378,7 +378,7 @@ With `Λ_A = log(x/UA)`, `Φ_A = log c (log log(x/Uc) - log log(A/c))`, the main
 `4√κ₁ (√M (2/3)((log A)^{3/2} - (log V)^{3/2}) + √r x √log A/√V + √(xA) √log A)`
 (our version of [H, (6.20)]). -/
 theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) (hAU : A ≤ x / U) {M r : ℝ} (hM : 0 ≤ M)
+    (hV : (2000000 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) (hAU : A ≤ x / U) {M r : ℝ} (hM : 0 ≤ M)
     (hr : 0 ≤ r)
     (hS2a : ∀ W ∈ Set.Icc (V : ℝ) A, S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (2 * M / x + r * x / (2 * W) + W / 2) * logSqSum (max V (W / 2)) W)
@@ -481,7 +481,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
 
 /-- **Type II total, all of `[V, x/U]` in the (5.53)/(5.57) regime** (used for [H, (6.39)]). -/
 theorem typeII_top {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r)
+    (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r)
     (hS2a : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (2 * M / x + r * x / (2 * W) + W / 2) * logSqSum (max V (W / 2)) W) :
     ‖typeII α x U V‖ ≤
@@ -538,7 +538,7 @@ theorem S2_le_57 {α x δ Q ρ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop
 /-- (5.54) in the shape used by `Ggen` (`c = 2q`, `m = 1/4`), on `[A, x/U]` with `A ≥ 2eq`. -/
 theorem S2_le_54 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ}
-    (hV : (50000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) {A : ℝ} (hVA : (V : ℝ) ≤ A)
+    (hV : (2000000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) {A : ℝ} (hVA : (V : ℝ) ≤ A)
     (hqA : 2 * q * rexp 1 ≤ A) {W : ℝ} (hW : W ∈ Set.Icc A (x / U)) :
     S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (1 / 4 * x / (Nat.totient q * Real.log (W / (2 * q))) +
@@ -559,7 +559,7 @@ set_option maxHeartbeats 1000000 in
 on `[V, 2θq]`, (5.54) on `[2θq, x/U]`. -/
 theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (50000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) (hθ : rexp 1 ≤ θ)
+    (hV : (2000000 : ℝ) ≤ V) (hQ : 3.5 * (x / U) ≤ Q) (hθ : rexp 1 ≤ θ)
     (hVA : (V : ℝ) ≤ 2 * θ * q) (hAU : 2 * θ * q ≤ x / U) :
     ‖typeII α x U V‖ ≤
       4 * x * √(1 / 4 / (2 * Nat.totient q)) * √((Real.log (x / (U * (2 * θ * q))) +
@@ -591,7 +591,7 @@ theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
 /-- **Our version of [H, (6.39)]** (`q ≤ Q`, any `δ`): (5.53) with `ρ = 1` on all of `[V, x/U]`. -/
 theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q) (hx : 0 < x) {U V : ℕ}
-    (hU : 1 ≤ U) (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) :
+    (hU : 1 ≤ U) (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) :
     ‖typeII α x U V‖ ≤
       4 * (√(kap1 x U V) * (√(x ^ 2 / (8 * q) + q * x) * (2 / 3 *
         (Real.log (x / U) * √(Real.log (x / U)) - Real.log V * √(Real.log V))) +
@@ -614,7 +614,7 @@ set_option maxHeartbeats 1000000 in
 theorem typeII_641 {α x δ Q ρ θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)
     (hQx : x ≤ Q ^ 2) (hρ1 : ρ < 1) (hqρ : (q : ℝ) ≤ ρ * Q) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) (hVA : (V : ℝ) ≤ θ * |δ| * q) (hAU : θ * |δ| * q ≤ x / U)
+    (hV : (2000000 : ℝ) ≤ V) (hVA : (V : ℝ) ≤ θ * |δ| * q) (hAU : θ * |δ| * q ≤ x / U)
     (hθ : |δ| * q * (1 + x / (2 * U * Q)) / 4 * rexp 1 ≤ θ * |δ| * q) :
     let c := |δ| * q * (1 + x / (2 * U * Q)) / 4
     ‖typeII α x U V‖ ≤

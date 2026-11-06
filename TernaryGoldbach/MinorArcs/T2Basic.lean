@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.MinorArcs.G2Moebius
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # `T₂(S) ≈ ¼ ∫₁^S g₂(y) dy/y`

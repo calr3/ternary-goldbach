@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.Assembly
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

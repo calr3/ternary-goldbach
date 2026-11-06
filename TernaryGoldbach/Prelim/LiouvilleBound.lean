@@ -4,7 +4,7 @@ import TernaryGoldbach.Prelim.SmallLiouville
 import TernaryGoldbach.Prelim.SmallCGrid
 import TernaryGoldbach.Prelim.SmallMoebius
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

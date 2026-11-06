@@ -1,16 +1,15 @@
 # Axiom audit
 
 `ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
-`Classical.choice`, `Quot.sound`) and takes 5 hypotheses, all published results. They are defined in
-`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `ButhePsi`,
-`RamareMoebius`). Inside the development they are `Fact` instances, and the theorems below (formerly
+`Classical.choice`, `Quot.sound`) and takes 4 hypotheses, all published results. They are defined in
+`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`). Inside the development they are `Fact` instances, and the theorems below (formerly
 axioms) are proved from them. None is a computation of our own. Each has been checked against its
 source.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Published results (5 hypotheses)
+## Published results (4 hypotheses)
 
 Each row was re-checked against the paper on 2026-11-02 (PDFs of all the sources except Ramaré's
 Acta Arith. 157 paper, for which the later papers and the float check below stand in).
@@ -20,7 +19,6 @@ Acta Arith. 157 paper, for which the later papers and the float check below stan
 | `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹⁰` have `ℜρ = 1/2` | Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), arXiv:1203.5712 | RH verified rigorously (interval arithmetic) up to height `3.0610046·10¹⁰`, as cited in [H] (to be re-checked against the paper). The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range (with RH only to `3·10¹⁰`, the `θ` bounds near `10²⁷` are `±1.86·10¹⁸`) |
-| `Prelim.buthe_psi` | `\|ψ(n) − n\| ≤ 0.94 √n`, `12 ≤ n ≤ 10¹⁷` | Büthe, arXiv:1511.02032, Thm 2 | (1.5) `\|x − ψ(x)\| ≤ 0.94√x` for `11 < x ≤ 10¹⁹`. The `θ` bounds (1.6)–(1.7) of the same theorem are not used: our `θ` bounds are derived from (1.5) (`ThetaExplicit.psi_sub_theta_le_buthe`, `LambdaMu.thetaN_close_small`) |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The hypotheses are stated as in the papers or weaker. `ramare_moebius` is used for the Liouville bound
@@ -28,8 +26,12 @@ behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`, `MoebiusBound.lean`) and for t
 `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`). `rh_upto` (through `Explicit/PsiPlateau.lean`) and
 the elementary `θ(m) ≤ m log 4` also give the small cases: a prime in `(n − 4·10¹⁸, n − 4]` for
 `4·10¹⁸ + 3 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), in place of the Helfgott–Platt prime ladder
-(arXiv:1305.3062). `buthe_psi` is used only in `Prelim/` (`LambdaMu`, `MertensProduct`,
-`ThetaExplicit`), to prove bounds that [H] quotes from [RS62], [RS75] and [RR96].
+(arXiv:1305.3062).
+
+Büthe's bound `|ψ(x) − x| ≤ 0.94√x` (`ButhePsi`, arXiv:1511.02032) was a hypothesis until 2026-11-06.
+It is no longer used: the bounds [H] quotes from [RS62], [RS75] and [RR96] are proved from RH up to
+`3·10¹⁰` (through the Weil explicit formula) and kernel-checked tables (see "Proved in Lean" below and
+NOTES, "Büthe and sources available by 2014").
 
 ## Errors found in the sources
 
@@ -92,12 +94,12 @@ These inputs are theorems:
 | Prop 12.2.4 with `c₊ = 2` (for [H]'s `1.36`) | `MinorArcs/LSQuot1–9.lean`, `LSQuotRed.lean`, `LSQuot8g.lean` | `q ≥ 2.2·10¹⁰`: [H]'s argument, (12.12), `regionS` and `λ(q)⁷ ≤ (103/120)⁹ q²`. `q < 2.2·10¹⁰`: with `R ∈ [n, n+1)` it suffices that `Φ(q, n) ≤ 0`; removing a prime `p ≥ 17` from `q` keeps `Φ ≤ 0` (`G_{q'}(n) = G_{q'p}(n) + G_{q'p}(n/p)/(p−1)`, `(q/φ(q)) G_q(x) ≥ G(x) ≥ log x`), which reduces `n ≥ 4` to the 64 divisors of `30030` (kernel walks over `r < 2600`, Ramaré beyond); `n ≤ 3` by an exchange argument with `log sq ≥ log(10⁵/(n+1))` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
 | (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. |
-| [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `buthe_psi`; kernel for `N ≤ 10⁴` |
+| [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `\|ψ(n) − n\| ≤ c(n)√n` (`cPsi`: the tables below `5·10⁷`, `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴` |
 | [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
-| [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: `theta_explicit` above `10⁹`, Büthe's `ψ` bound, `|θ(x) − x| ≤ 2.37 √x` and a sharper prime-power tail on `[10⁵, 10⁹]`, kernel for primes `≤ 10⁵` |
+| [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: `theta_explicit` above `10¹²`; on `[10⁵, 10¹²)`, `\|E₂Λ(x)\|` from the variation of `∑ Λ(n)/(n log n) − log log n` (`E2_var`, `E2_le_bin`: summation by parts against `ψ(n) − n`), the θ tables, `psi_two_sided` and a sharper prime-power tail (`F_mid`, 7 bins); kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `buthe_psi` up to `10¹⁷` (with `ψ − θ` bounded from it for `θ`), our explicit prime number theorem beyond; kernel for small `n` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `3·10¹⁰` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
@@ -110,7 +112,9 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallNonprime.lean` | `ψ(n) − θ(n) < 1.4262 √n`, `n ≤ 10⁶` | 9 s |
 | `Prelim/SmallG.lean` | `G(r) ≥ log r + 1.07`, `6 ≤ r < 21400` | 23 s |
 | `Prelim/SmallW.lean` | [MV73, Lemma 8], `6 ≤ R < 1000` | seconds |
-| `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` | 78 s |
+| `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` (no longer used: (2.19) is needed only for `y ≥ 2·10⁶`) | 78 s |
+| `Prelim/SmallPsiData1–6.lean` | `\|ψ(t) − t\| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)`, by trial division (`SmallPsiTable`) | about 3 min per file |
+| `Prelim/PsiSieveData1–13.lean` | `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)`: 3343 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` (`PsiSieve.cnt_spec`) | 66 min, up to 15 GB resident |
 | `Prelim/SmallLiouville.lean` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `k ≤ 10⁵` | 4.7 min |
 | `Prelim/SmallMuPhi.lean` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | about 10 min |
 | `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |
@@ -130,49 +134,16 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 What could replace the remaining hypotheses:
 
-* **`buthe_psi` is stronger than needed above `10¹²`.** Its `√x`-quality is used only for
-  `n ≤ 10¹²`:
-  * `psi_lower2`, `psi_lower_all` and `psi_upper_all` switch to `theta_explicit` at `10¹⁰`;
-  * `psi_mul_buthe` uses it up to `10⁸`, and `psi_sub_theta_le_buthe` at `√N ≤ 3.2·10⁹`;
-  * `nonprime_mid`, `logsq_mid`, `thetaN_ge` and `thetaN_close_small` go up to `10¹²`.
+* **Büthe's bound is no longer used** (2026-11-06; NOTES, "P9c"). Its `√x`-quality was needed below
+  about `10¹²`. It is replaced by
+  * the trial-division table on `[12, 10⁶)` and the sieve table on `[10⁶, 5·10⁷)` (kernel);
+  * `psi_two_sided` on `[10⁶, 10¹⁷]`: `|ψ(x) − x| ≤ c√x`, `c = 31`–`72`, from the Weil explicit formula
+    with RH to `3·10¹⁰`;
+  * `theta_explicit` from `10¹²`.
 
-  Since 2026-11-04, `buthe_psi` is used only up to `10¹⁷` (it was `10¹⁹`): `psi_plateau` holds from
-  `10¹⁷`, and every switch from Büthe to the explicit formula is at `10¹⁷`. On `[10¹², 10¹⁷]`, three
-  uses remain (`SmallCases` no longer uses Büthe, since 2026-11-05), and none needs `√x` quality:
-  * `theta_explicit` needs `|θ(n) − n| < n/log³n`, that is
-    `|ψ(n) − n| ≤ c √n` with `c` allowed up to `45` at `10¹²`, `296` at `10¹⁴` and `2000` at `10¹⁶`
-    (after `ψ − θ ≤ √n (1.0054 + 0.048 log n)`);
-  * `psi_bounds` needs only `ψ ≤ 1.0004 n`;
-  * `E1_var` (the variation of `∑ Λ(n)/n − log x`, for Mertens' product) needs `4c/√M` small; the
-    budget allows a switch to the explicit formula anywhere above `10⁹`.
-
-  So Büthe can be replaced by:
-  1. a direct computation, `|ψ(x) − x| ≤ c√x` for `x ≤ X₀`, with `c ≤ 0.94` (or the downstream
-     constants retuned). Chirre–Helfgott, "Optimal bounds for sums of non-negative arithmetic
-     functions" (arXiv:2512.15709, Dec. 2025), Lemma 9.2, is this kind of input: by brute force,
-     `−√2 < (ψ(x) − x)/√x ≤ 0.7906` for `1 ≤ x ≤ 10¹³` (and `≥ −0.7510` on `[10⁴, 10¹³]`). Their
-     Cor. 1.3 gives `|ψ(x) − x| ≤ πx/(3·10¹²) + 113.67√x` for all `x ≥ 1`, from RH up to
-     `3·10¹² + 1 + π/3` alone;
-  2. our explicit formula from `rh_upto` on `[X₀, 10¹⁷]`, proved in Lean. As it stands, `psi_plateau`
-     gave `1533 √x + 2.15·10⁻¹¹ x + 4 y₀` (`y₀ = 10¹⁰`) with RH to `3·10¹²`, which covers `x ≳ 10¹⁶` at
-     best (`10¹⁷` as proved). With RH only to `3·10¹⁰` it is `1145 √x + 1.82·10⁻⁹ x + 4 y₀`. Reaching `X₀ = 10¹³` needs `c ≲ 115` and `4 y₀ ≲ 4·10⁶`; `X₀ = 10¹⁴` needs `c ≲ 296`. The zeros up to `3·10¹²` allow about
-     `(log(T/2π))²/(2π) ≈ 115`, so the loss is in our zero counting (Jensen windows). A sharp explicit
-     `N(T)` would remove it.
-
-  The hypothesis count stays the same. But the input becomes a sieve computation up to `10¹³` instead of
-  Büthe's analytic theorem up to `10¹⁷`.
-
-  **Sources available by 2014** (NOTES, "Büthe and sources available by 2014").
-  * Büthe (2015) is the only hypothesis from after 2014.
-  * The two-sided `√x` computations then available reach `10⁸` ([RS62, Thm 19], as cited by Dusart);
-    [RR96] probably reaches `10¹⁰` (not checked). [Sch76] and Platt–Trudgian (arXiv:1407.1914) give
-    only `θ(x) < x`, to `10¹¹` and `1.39·10¹⁷`.
-  * An explicit formula from RH to `3.061·10¹⁰` gives `θ(x) > x − x/log³x` only from about
-    `1.8·10¹¹` (`scripts/rs_ideal_model.py`).
-
-  So a pre-2014 replacement needs either [H]'s quoted bounds ([RS62], [RS75], [RR96]) as hypotheses,
-  or a weaker `theta_explicit` on `[X₀, 2·10¹¹]` with retuned consumers. Faber–Kadiri
-  (arXiv:1310.6374) has a 2018 corrigendum, and its small-`b` values look about twice too strong.
+  The cost is in [H, §2.5]: (2.14) and (2.17) hold with `1.0064` and `1.022` instead of `1.0004` and
+  `1.0008`, and (2.19) is proved for `y ≥ 2·10⁶` (the minor arcs use it at `y ≥ V ≥ 2·10⁶`). The
+  first-case constant of Thm 3.1.1 becomes `2.526` (was `2.511`); everything downstream still closes.
 * **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
   be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
   arithmetic functions"). Proving it in Lean is still not realistic: every known proof rests on large

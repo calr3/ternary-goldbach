@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.TypeII
 import TernaryGoldbach.MinorArcs.H2Bound
 import TernaryGoldbach.MinorArcs.T2Bound
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

@@ -1,6 +1,6 @@
 import TernaryGoldbach.Prelim.RamareMain
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # `∑_a h_d(a) log a = (2φ(d)/d)(log 2 − ∑_p log p/(p(p−1)) − ∑_{p∣d} log p/p)`

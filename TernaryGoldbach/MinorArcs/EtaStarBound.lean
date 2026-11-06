@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.PointwiseBound
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

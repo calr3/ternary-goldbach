@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.LSQuotRed
 import TernaryGoldbach.Prelim.SmallMuPhi
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, Prop 12.2.4] with `c₊ = 2`, part 3: the divisors of `30030`

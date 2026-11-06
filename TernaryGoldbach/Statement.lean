@@ -45,7 +45,7 @@ theorem statement_of_upTo_of_from {C : ℕ} (h₁ : TernaryGoldbachUpTo C)
 
 /-! ## Hypotheses
 
-The proof rests on five published numerical results, stated here as `Prop`s and passed to the
+The proof rests on four published numerical results, stated here as `Prop`s and passed to the
 theorems that need them as `Fact` instances (not as axioms). Each is a large computation, and none
 is formalized. -/
 
@@ -68,12 +68,6 @@ def PlattGRH : Prop :=
 /-- [OeSHP] Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014): every even `4 ≤ n ≤ 4·10¹⁸` is
 a sum of two primes. -/
 def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
-
-/-- [Büthe 2018], *An analytic method for bounding ψ(x)*, Math. Comp. 87 (2018), Thm 2, (1.5):
-`|ψ(x) − x| ≤ 0.94 √x` for `11 < x ≤ 10¹⁹`, used at integers `12 ≤ n ≤ 10¹⁷`. -/
-def ButhePsi : Prop :=
-  ∀ n : ℕ, 12 ≤ n → n ≤ 10 ^ 17 →
-    |∑ m ∈ Finset.Icc 1 n, (ArithmeticFunction.vonMangoldt m : ℝ) - n| ≤ 0.94 * √(n : ℝ)
 
 /-- O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4, as cited in [H, (2.21)]:
 `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. -/

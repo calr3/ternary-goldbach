@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.TypeI2Total
 import TernaryGoldbach.MinorArcs.GcdSums
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

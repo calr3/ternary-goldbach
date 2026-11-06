@@ -1,7 +1,7 @@
 import TernaryGoldbach.MajorArcs.CMain
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, (10.22)]: `∫ η̂◦(t)² η̂_*(t) e(tM) dt = C_{η◦,η_*}(M)`

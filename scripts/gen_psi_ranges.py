@@ -210,6 +210,6 @@ def chain_lo(name, stmt, start, upto):
             return "\n".join(lines)
     lines.append("  norm_num")
     return "\n".join(lines)
-env = "\n\n" + chain_lo("cW_le_315", "{x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5", 2, 4) + "\n\n" + chain_lo("cW_le_355", "{x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5", 0, 9) + "\n\n" + chain("cW_le_72", "(x : ℝ) : cW x ≤ 72", 72, n) + "\n\n" + chain("cW_le_33", "{x : ℝ} (hx : x ≤ 1e8) : cW x ≤ 33", 33, 4) + "\n"
+env = "\n\n" + chain_lo("cW_le_4282", "{x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW x ≤ 42.82", 11, 13) + "\n\n" + chain_lo("cW_le_4508", "{x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW x ≤ 45.08", 11, 14) + "\n\n" + chain_lo("cW_le_315", "{x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW x ≤ 31.5", 2, 4) + "\n\n" + chain_lo("cW_le_355", "{x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW x ≤ 35.5", 0, 9) + "\n\n" + chain("cW_le_72", "(x : ℝ) : cW x ≤ 72", 72, n) + "\n\n" + chain("cW_le_33", "{x : ℝ} (hx : x ≤ 1e8) : cW x ≤ 33", 33, 4) + "\n"
 txt = txt.replace("\nend TernaryGoldbach.Explicit\n", "\n" + defn + "\n\n" + "\n".join(proof) + "\n" + env + "\nend TernaryGoldbach.Explicit\n")
 open('TernaryGoldbach/Explicit/PsiRanges.lean', 'w').write(txt)

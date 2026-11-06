@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.RamareMoebius
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!

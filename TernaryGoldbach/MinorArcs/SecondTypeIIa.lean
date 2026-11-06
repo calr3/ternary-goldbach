@@ -3,7 +3,7 @@ import TernaryGoldbach.MinorArcs.TypeIILarge
 import TernaryGoldbach.MinorArcs.SecondParams
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeII
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -705,7 +705,7 @@ theorem typeII_a1 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   obtain ⟨k, hα⟩ := approx2_abs (by positivity) h
   have hV := V2_le hT0
   have he := Real.exp_one_lt_d9
-  have key := typeII_638 (θ := 8) h.1 h.2.1 hα (by positivity) (one_le_U2 hT) (V2_ge_50000 hT)
+  have key := typeII_638 (θ := 8) h.1 h.2.1 hα (by positivity) (one_le_U2 hT) (V2_ge_2e6 hT)
     (Q2_ge hT) (by linarith) (by linarith) (by linarith)
   have h1 := a1_M1_le hT hq hq16
   have h2 := a1_M2_le hT hq hq16

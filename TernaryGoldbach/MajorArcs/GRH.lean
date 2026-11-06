@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.EtaU
 import TernaryGoldbach.MinorArcs.Bombieri
 import Mathlib.NumberTheory.LSeries.DirichletContinuation
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -39,7 +39,7 @@ theorem GRHUpTo.mono {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {T T' 
     (hT : T' ≤ T) : GRHUpTo χ T' :=
   fun ρ h0 h1 h2 h3 => h ρ h0 h1 h2 (h3.trans hT)
 
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+omit [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Numerical hypothesis** (D. Platt [Plab, Thm 7.1], [H, §9.6]): for every primitive character `χ` of
 conductor `q`, GRH holds for `L(s, χ)` up to height `10⁸/q` if `q ≤ 3·10⁵` is odd, and up to height

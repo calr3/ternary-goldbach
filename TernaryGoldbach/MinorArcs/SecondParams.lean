@@ -48,6 +48,11 @@ theorem one_le_U2 (hT : 6e6 ≤ T) : 1 ≤ U2 T := by
 theorem V2_ge_50000 (hT : 6e6 ≤ T) : (50000 : ℝ) ≤ V2 T := by
   have := V2_ge' hT; linarith
 
+/-- `V₂ ≥ 2·10⁶` (the range of (2.19), `Prelim.sum_log_sq_primes_le`). -/
+theorem V2_ge_2e6 (hT : 6e6 ≤ T) : (2000000 : ℝ) ≤ V2 T := by
+  unfold V2
+  exact_mod_cast Nat.le_floor (show ((2000000 : ℕ) : ℝ) ≤ T / 3 by norm_num; linarith)
+
 theorem two_le_V2 (hT : 6e6 ≤ T) : 2 ≤ V2 T := by
   have := V2_ge_50000 hT
   exact_mod_cast (show (2 : ℝ) ≤ V2 T by linarith)

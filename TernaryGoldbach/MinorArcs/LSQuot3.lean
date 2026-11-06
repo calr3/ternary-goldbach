@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.LSQuot2
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
 
 /-!
 # [H, Prop 12.2.4], part 3: small `R` ([H, Lemmas 12.2.1–12.2.3])

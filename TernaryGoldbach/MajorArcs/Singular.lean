@@ -4,7 +4,7 @@ import TernaryGoldbach.MajorArcs.Cor713
 import TernaryGoldbach.Prelim.MertensProduct
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # The singular series of [H, §10.2] for `r = 150000`

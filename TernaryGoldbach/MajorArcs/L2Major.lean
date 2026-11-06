@@ -2,7 +2,7 @@ import TernaryGoldbach.MajorArcs.ArcChars
 import TernaryGoldbach.MajorArcs.SumMuPhi
 
 variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.ButhePsi] [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # [H, (14.7)]: `∫_{𝔐_{8,r₀}} |S_{η₊}(α, x)|² dα = (8.7052 + O*(0.0756)) x` for `x ≥ 4.9·10²⁶`

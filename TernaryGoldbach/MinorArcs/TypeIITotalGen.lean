@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITotal
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -31,7 +31,7 @@ noncomputable def Ggen (x U V : ℝ) (q : ℕ) (c m β W : ℝ) : ℝ :=
 set_option maxHeartbeats 2000000 in
 /-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
+    (hV : (2000000 : ℝ) ≤ V) {A : ℝ} (hVA : (V : ℝ) ≤ A) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
     (hcV : c * rexp 1 ≤ A)
     (hS2gen : ∀ W ∈ Set.Icc A (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (m * x / (Nat.totient q * Real.log (W / c)) + q / Nat.totient q * (W / Real.log (W / c))) *
@@ -298,7 +298,7 @@ theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
 
 /-- `pointwise_gen'` with `A = V`. -/
 theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m) (hcV : c * rexp 1 ≤ V)
+    (hV : (2000000 : ℝ) ≤ V) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m) (hcV : c * rexp 1 ≤ V)
     (hS2gen : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (m * x / (Nat.totient q * Real.log (W / c)) + q / Nat.totient q * (W / Real.log (W / c))) *
         logSqSum (max V (W / 2)) W)
@@ -310,7 +310,7 @@ theorem pointwise_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : 
 set_option maxHeartbeats 2000000 in
 /-- **Type II total, general form** (see the module docstring). -/
 theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
-    (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
+    (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
     (hcV : c * rexp 1 ≤ V)
     (hS2gen : ∀ W ∈ Set.Icc (V : ℝ) (x / U), S2 α x (max U (x / (2 * W))) (max V (W / 2)) W ≤
       (m * x / (Nat.totient q * Real.log (W / c)) + q / Nat.totient q * (W / Real.log (W / c))) *
@@ -500,7 +500,7 @@ Requires `c'e ≤ V` (i.e. `|δq| ≤ V/θ` with `θ = e(1+ε₁)/4`; [H] takes 
 `x ≤ Q²` ([H] assumes `Q ≥ 2√x`). The main term is [H]'s with `Φ` as in (6.34). -/
 theorem typeII_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)
-    (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U) (hV : (117 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U)
+    (hQx : x ≤ Q ^ 2) {U V : ℕ} (hU : 1 ≤ U) (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U)
     (hcV : |δ| * q * (1 + x / (2 * U * Q)) / 4 * rexp 1 ≤ V) :
     let c := |δ| * q * (1 + x / (2 * U * Q)) / 4
     ‖typeII α x U V‖ ≤

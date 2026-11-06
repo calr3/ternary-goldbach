@@ -2,7 +2,7 @@ import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.SmallCases
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.ButhePsi]
+variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
