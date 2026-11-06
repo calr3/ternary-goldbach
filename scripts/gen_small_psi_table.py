@@ -140,15 +140,15 @@ theorem sum{k} : {n} + (gs{k}.map (fun g => g.1)).sum ≤ 1000000 := by decide +
 namespace TernaryGoldbach.Prelim.SmallTab
 """
         open(f'TernaryGoldbach/Prelim/SmallPsiData{i+1}.lean', 'w').write(hdr + "".join(f) + "\nend TernaryGoldbach.Prelim.SmallTab\n")
-    # assembly
+    # assembly: a chain of small stage lemmas
     imports = "\n".join(f"import TernaryGoldbach.Prelim.SmallPsiData{i+1}" for i in range(len(files)))
-    lines = [f"""{imports}
+    out = [f"""{imports}
 
 /-!
 # `θ` and `ψ` on `[12, 10⁶]`, kernel-checked (route D, step P9a)
 
-`|ψ(t) − t| ≤ √t` and `t − 2.3662 √t ≤ θ(t) ≤ t` for real `12 ≤ t < 10⁶` (`small_table`), from the
-chunks `chunk0`, …, `chunk{len(ch)-1}` (`outer_spec`). Standard axioms only.
+`|ψ(t) − t| ≤ √t` and `t − 2.3662 √t ≤ θ(t) ≤ t` for real `12 ≤ t < 10⁶` (`small_table`), chaining
+`outer_spec` through the chunks `chunk0`, …, `chunk{len(names)-1}` (stage lemmas `stage_k`).
 -/
 
 open Finset
@@ -159,32 +159,46 @@ theorem Inv_one : Inv 1 0 0 0 0 := by
   have h1 : thS 1 = 0 := by unfold thS; simp [Finset.filter_singleton, Nat.not_prime_one]
   have h2 : ppS 1 = 0 := by unfold ppS; simp
   refine ⟨?_, ?_, ?_, ?_⟩ <;> simp [h1, h2]
-
-set_option maxHeartbeats 4000000 in
-theorem small_table {{t : ℝ}} (h1 : 12 ≤ t) (h2 : t < 1000000) : Rt 1 1 23662 10000 t := by
-  have hl0 : ((0 : ℕ) : ℝ) / S ≤ Real.log ((1 : ℕ) : ℝ) := by simp
-  have hh0 : Real.log ((1 : ℕ) : ℝ) ≤ ((0 : ℕ) : ℝ) / S := by simp"""]
-    prev = ("Inv_one", "hl0", "hh0")
+"""]
     for idx, (k, consts, st, st1) in enumerate(names):
         cN, cD, tN, tD = consts.split()
         n, tlo, thi, plo, phi, LL, LH = st
-        n1 = st1[0]
+        n1, a, b, c, d, e, f = st1
         res = " ".join(map(str, st1))
-        I, L, H = prev
-        lines.append(f"""  obtain ⟨R{k}, I{k}, L{k}, H{k}⟩ := outer_spec (cN := {cN}) (cD := {cD}) (tN := {tN}) (tD := {tD}) (by norm_num)
-    (by norm_num) gs{k} {n} {tlo} {thi} {plo} {phi} {LL} {LH} {res} (by norm_num) sum{k} {I} {L} {H}
-    (resEq_spec chunk{k})""")
-        prev = (f"I{k}", f"L{k}", f"H{k}")
-    # case analysis over chunk ranges (skip chunk 0 = init)
-    rng = [(k, st[0], st1[0]) for (k, consts, st, st1) in names if k > 0]
-    for (k, a, b) in rng[:-1]:
-        lines.append(f"  rcases lt_or_ge t {b} with h{k} | h{k}")
-        lo = "h1" if k == rng[0][0] else f"h{k-1}"
-        lines.append(f"  · exact R{k} t (by push_cast; linarith) (by push_cast; linarith)")
-    k, a, b = rng[-1]
-    lines.append(f"  exact R{k} t (by push_cast; linarith) (by push_cast; linarith)")
-    lines.append("\nend TernaryGoldbach.Prelim.SmallTab\n")
-    open('TernaryGoldbach/Prelim/SmallPsiTableMain.lean', 'w').write("\n".join(lines))
+        concl_state = f"Inv {n1} {a} {b} {c} {d} ∧ (({e} : ℕ) : ℝ) / S ≤ Real.log (({n1} : ℕ) : ℝ) ∧ Real.log (({n1} : ℕ) : ℝ) ≤ (({f} : ℕ) : ℝ) / S"
+        if k == 0:
+            out.append(f"""
+theorem stage{k} : {concl_state} := by
+  obtain ⟨-, I, L, H⟩ := outer_spec (cN := {cN}) (cD := {cD}) (tN := {tN}) (tD := {tD}) (by norm_num) (by norm_num)
+    gs{k} {n} {tlo} {thi} {plo} {phi} {LL} {LH} {res} (by norm_num) sum{k} Inv_one (by simp) (by simp)
+    (resEq_spec chunk{k})
+  exact ⟨I, L, H⟩
+""")
+        else:
+            prevR = "" if k == 1 else "Rp, "
+            out.append(f"""
+theorem stage{k} : (∀ t : ℝ, 12 ≤ t → t < {n1} → Rt 1 1 23662 10000 t) ∧ {concl_state} := by
+  obtain ⟨{prevR}I0, L0, H0⟩ := stage{k-1}
+  obtain ⟨R, I, L, H⟩ := outer_spec (cN := {cN}) (cD := {cD}) (tN := {tN}) (tD := {tD}) (by norm_num) (by norm_num)
+    gs{k} {n} {tlo} {thi} {plo} {phi} {LL} {LH} {res} (by norm_num) sum{k} I0 L0 H0 (resEq_spec chunk{k})
+  refine ⟨fun t h1 h2 => ?_, I, L, H⟩
+""")
+            if k == 1:
+                out.append(f"  exact R t (by exact_mod_cast h1) (by exact_mod_cast h2)\n")
+            else:
+                out.append(f"""  rcases lt_or_ge t {n} with h | h
+  · exact Rp t h1 h
+  · exact R t (by exact_mod_cast h) (by exact_mod_cast h2)
+""")
+    last = len(names) - 1
+    out.append(f"""
+/-- **`θ` and `ψ` on `[12, 10⁶)`**: `|ψ(t) − t| ≤ √t` and `t − 2.3662√t ≤ θ(t) ≤ t`. -/
+theorem small_table {{t : ℝ}} (h1 : 12 ≤ t) (h2 : t < 1000000) : Rt 1 1 23662 10000 t :=
+  stage{last}.1 t h1 h2
+
+end TernaryGoldbach.Prelim.SmallTab
+""")
+    open('TernaryGoldbach/Prelim/SmallPsiTableMain.lean', 'w').write("".join(out))
     return len(files)
 if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "emit":
     print(emit())

@@ -3,6 +3,9 @@ import TernaryGoldbach.CircleMethod
 import TernaryGoldbach.Prelim.LambdaMu
 import TernaryGoldbach.Prelim.ThetaExplicit
 import TernaryGoldbach.Prelim.SmallPsi
+import TernaryGoldbach.Prelim.SmallPsiTable
+import TernaryGoldbach.Prelim.SmallPsiTableMain
+import TernaryGoldbach.Prelim.SmallPsi700
 import TernaryGoldbach.Prelim.Ramare
 import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallNonprime
