@@ -550,4 +550,20 @@ theorem outer_spec {cN cD tN tD : ℕ} (hcD : 0 < cD) (htD : 0 < tD) :
     · push Not at htG
       exact ihR t htG ht2
 
+/-- Component-wise comparison of a result with a given state (avoids `DecidableEq` on 7-tuples). -/
+def resEq : Option (ℕ × ℕ × ℕ × ℕ × ℕ × ℕ × ℕ) → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → Bool
+  | some (a, b, c, d, e, f, g), a', b', c', d', e', f', g' =>
+    Nat.beq a a' && Nat.beq b b' && Nat.beq c c' && Nat.beq d d' && Nat.beq e e' && Nat.beq f f' && Nat.beq g g'
+  | none, _, _, _, _, _, _, _ => false
+
+theorem resEq_spec {r : Option (ℕ × ℕ × ℕ × ℕ × ℕ × ℕ × ℕ)} {a' b' c' d' e' f' g' : ℕ}
+    (h : resEq r a' b' c' d' e' f' g' = true) : r = some (a', b', c', d', e', f', g') := by
+  rcases r with _ | ⟨a, b, c, d, e, f, g⟩
+  · simp [resEq] at h
+  · simp only [resEq, Bool.and_eq_true] at h
+    obtain ⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩, h6⟩, h7⟩ := h
+    rw [Nat.beq_eq] at h1 h2 h3 h4 h5 h6 h7
+    subst h1 h2 h3 h4 h5 h6 h7
+    rfl
+
 end TernaryGoldbach.Prelim.SmallTab
