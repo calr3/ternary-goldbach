@@ -18,11 +18,8 @@ input for the small cases, `binary_goldbach_input` [OeSHP14], is the hypothesis 
 cases themselves are in `SmallCases.lean`.  All hypotheses are listed and checked against their sources in `HYPOTHESES.md`.
 
 [H]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
-       version, which supersedes [H13], [Hela], [Helb].  **This is the reference the blueprint
-       follows**; equation numbers below are the book's.
-[H13]  H. A. Helfgott, *The ternary Goldbach conjecture is true*, arXiv:1312.7748.
-[Hela] H. A. Helfgott, *Major arcs for Goldbach's problem*, arXiv:1305.2897.
-[Helb] H. A. Helfgott, *Minor arcs for Goldbach's problem*, arXiv:1205.5252.
+       version, which supersedes arXiv:1205.5252, 1305.2897 and 1312.7748.  **This is the
+       reference the blueprint follows**; equation numbers are the book's.
 [HP]   H. A. Helfgott, D. Platt, *Numerical verification of the ternary Goldbach conjecture
        up to 8.875 · 10³⁰*, Experiment. Math. 22 (2013).
 [OeSHP] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even

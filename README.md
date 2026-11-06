@@ -244,7 +244,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 ## References
 
 * [H] H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015). This is the book
-  version, superseding arXiv:1205.5252, 1305.2897 and 1312.7748 [H13].
+  version, superseding arXiv:1205.5252, 1305.2897 and 1312.7748.
 * [HP13] H. A. Helfgott, D. J. Platt, *Numerical verification of the ternary Goldbach conjecture up
   to 8.875·10³⁰*, arXiv:1305.3062.
 * [OeSHP14] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even Goldbach

@@ -10,7 +10,8 @@ For `U, V ≥ 0`, writing `f_{≤U}` for `f` truncated to `n ≤ U` and `f_{>U} 
 as Dirichlet convolutions.  In particular, for `n > V`,
 `Λ(n) = (μ_{≤U} * log)(n) - (μ_{≤U} * Λ_{≤V} * 1)(n) + (μ_{>U} * Λ_{>V} * 1)(n)`.
 
-This is the starting point of the minor-arc estimates in [Helb] and [H13, §5].
+This is [H, (3.6)], the starting point of the minor-arc estimates of [H, Part I].  [H, (3.6)]
+prints `+ μ_{≤U} * Λ_{≤V} * 1`; the derivation that follows it, and (3.8), have `-`.
 
 Proved, with no `sorry`.
 -/

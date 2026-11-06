@@ -35,8 +35,8 @@ the hypotheses and checks them against their sources.
 
 ### Part I (Chs. 2–6)
 
-* Small slips. (4.32) cites "(4.8)" where it means (4.29). (4.34) ends with a stray factor `x`.
-  The `η₁` of §7 disagrees with (4.10)/(11.10); we use `η₁ = 2·1_{[1/2,1]}`. In the proof of
+* Small slips. (3.6) prints `+ μ_{≤U} ∗ Λ_{≤V} ∗ 1`; the derivation after it and (3.8) have `−`.
+  (4.32) cites "(4.8)" where it means (4.29). (4.34) ends with a stray factor `x`. In the proof of
   4.2.1/4.2.2, `Q = ⌊x/|δq|⌋` is too small by rounding for `c₂x/q ≤ Q/2`; we use the unrounded `Q`
   (`Mof`). Lean's `C/0 = 0` makes `min(A, C/sin²)` vanish where `sin = 0`, so Lemma 4.1.1 is proved
   with the honest summand (`lemma_4_1_1'`, `minA`).
@@ -110,6 +110,8 @@ the hypotheses and checks them against their sources.
   [H]'s own (14.1) (`ET ≤ 1.1405·10⁻⁸`) and (14.3) (`|η₊|₁ ≤ 1.062319`) it is `0.075456`. So (14.7)
   holds with `O*(0.0756)`, not `O*(0.0754)`; the lower end is `8.7052 − 0.0756 = 8.6296`. Our proof of
   (14.7) has a different error analysis (see "Major arcs") and states `8.6296x ≤ ∫ ≤ 8.79x`.
+* The opening of Ch. 14 defines `η₁ = 2·1_{[−1/2,1/2]}`, which disagrees with (11.7)/(11.10); we
+  use `η₁ = 2·1_{[1/2,1]}`.
 * **(14.17)** prints `1.33805·10⁻⁸/κ`; the expression evaluates to `1.338·10⁻⁷/κ` (exponent slip;
   harmless).
 
