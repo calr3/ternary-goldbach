@@ -693,6 +693,27 @@ Consequences:
           * Plan: make them parameters `a₁₄`, `a₁₇` (or `V`-dependent, `a(V) = 1 + c(V)/√V`), then
             rerun the minor-arc numerics. The model allows a uniform `1.04` (worst `Z` 0.977 < 1.037), but
             the Lean numeric proofs downstream will need slack checks.
+      * **Done 2026-11-06: `Prelim/PsiTwoSided.psi_two_sided`.** `|ψ(n) − n| ≤ cB(n)√n` for
+        `12 ≤ n ≤ 10¹⁷` (`cB = 1` below `10⁶`, `cW` above; `cB_le_33` to `10⁸`, `cB_le_72`), and
+        `theta_small_two_sided` (`n − 2.3662√n ≤ θ(n) ≤ n`, `n < 10⁶`). Standard axioms only. This is the
+        Büthe-free replacement for `buthe_psi`.
+      * (2.19) `sum_log_sq_primes_le` (`≤ ½ y log y`, `y ≥ 117`) also breaks in the middle range.
+        * Abel summation leaves slack `0.153y`, against an error of about `c_θ√y(1.71 log y + 0.6)`,
+          with `c_θ ≈ c + 1 ≈ 32.5`. So it closes analytically only from about `4·10⁷`, while its
+          minor-arc consumer needs `y ≥ 2.7·10⁷`.
+        * Below `10⁶` the table (`θ ≤ n`, `θ ≥ n − 2.3662√n`) is at least as good as the Büthe route.
+        * So the minor arcs need a weaker (2.19) too, e.g. `½ y log y + c₁₉ y` for `y ≥ 2.7·10⁷`, or a
+          sharper `c` there.
+      * **Next steps (P9c).**
+        1. Re-prove the frontier theorems from `psi_two_sided`, the table, `psi_mid` and `psi_plateau`:
+           (2.15) `ψ < 1.03883y` (`psi_lt_small_700`, table, `psi_mid`, above `10¹⁷` as before), and with it
+           (2.12) and `psiN_le`; (5.5); (2.13); `F_all` / `div_totient_lt` (Mertens product: the table
+           below `10⁶`, `cW` above); and `theta_explicit` from `10¹²`.
+        2. Weaken (2.14) to `a₁₄ ≈ 1.0062`, (2.17) to `a₁₇ ≈ 1.021` and (2.19) as above, on `y ≥ 2.7·10⁷`.
+           Thread them through `MinorArcs` (TypeI2Large, TypeI2Sum, FirstChoiceTypeI2/b/c and
+           `logSqSum_le_half`'s users), and rerun the minor-arc numerics. Model first
+           (`scripts/route_d_model.py`, `prelim_sensitivity.py`).
+        3. Drop `ButhePsi` from `Statement`, `MainTheorems` and every `variable` line.
       * Consumer ranges (estimates): (2.15) analytic from `6·10⁵`; `F_all` from about `3·10⁵` given
         `c ≈ 33` from `10⁶`; (2.19) from about `9·10⁶`, and its consumer needs `y ≥ 2.7·10⁷` only;
         (2.13) with a kernel range to `10⁶` plus SmallMertensLower. So kernel `[12, 10⁶]` suffices.
