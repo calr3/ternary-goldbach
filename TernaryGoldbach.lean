@@ -229,3 +229,4 @@ import TernaryGoldbach.Explicit.WeilLineSum
 import TernaryGoldbach.Explicit.WeilNumA
 import TernaryGoldbach.Explicit.WeilNumB
 import TernaryGoldbach.Explicit.WeilNumC
+import TernaryGoldbach.Explicit.PsiWeil
