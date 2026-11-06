@@ -344,4 +344,210 @@ theorem inner_spec {LL LH : ℕ} : ∀ (k m tlo thi plo phi a b c d : ℕ), 1 �
         · rw [ppS_succ, if_neg hnp, hΛ]; linarith
         · rw [ppS_succ, if_neg hnp, hΛ]; linarith
 
+/-! ### Checkpoints -/
+
+/-- `(a − b)/S ≤ (cN/cD) √n`, decided in `ℕ`. -/
+def leSq (a b n cN cD : ℕ) : Bool := Nat.ble a b || Nat.ble ((a - b) ^ 2 * cD ^ 2) (S ^ 2 * cN ^ 2 * n)
+
+theorem leSq_spec {a b n cN cD : ℕ} (hcD : 0 < cD) (h : leSq a b n cN cD = true) :
+    (a : ℝ) / S - (b : ℝ) / S ≤ (cN : ℝ) / cD * √(n : ℝ) := by
+  have hS := S_pos
+  have hR : 0 ≤ (cN : ℝ) / cD * √(n : ℝ) := by positivity
+  unfold leSq at h
+  rcases Bool.or_eq_true_iff.1 h with h | h
+  · have : (a : ℝ) ≤ b := by exact_mod_cast Nat.le_of_ble_eq_true h
+    have : (a : ℝ) / S - (b : ℝ) / S ≤ 0 := by rw [← sub_div]; exact div_nonpos_of_nonpos_of_nonneg (by linarith) hS.le
+    linarith
+  · have h' := Nat.le_of_ble_eq_true h
+    by_cases hab : a ≤ b
+    · have : (a : ℝ) ≤ b := by exact_mod_cast hab
+      have : (a : ℝ) / S - (b : ℝ) / S ≤ 0 := by rw [← sub_div]; exact div_nonpos_of_nonpos_of_nonneg (by linarith) hS.le
+      linarith
+    · push Not at hab
+      have hcast : ((a - b : ℕ) : ℝ) = (a : ℝ) - b := by push_cast [hab.le]; ring
+      have h'' : (((a - b : ℕ) : ℝ)) ^ 2 * (cD : ℝ) ^ 2 ≤ (S : ℝ) ^ 2 * (cN : ℝ) ^ 2 * n := by exact_mod_cast h'
+      rw [hcast] at h''
+      rw [← sub_div]
+      have hcD' : (0 : ℝ) < cD := by exact_mod_cast hcD
+      have hlhs : 0 ≤ ((a : ℝ) - b) / S := div_nonneg (by have : (b : ℝ) < a := by exact_mod_cast hab
+                                                          linarith) hS.le
+      have hsq : (((a : ℝ) - b) / S) ^ 2 ≤ ((cN : ℝ) / cD * √(n : ℝ)) ^ 2 := by
+        rw [mul_pow, div_pow, div_pow, Real.sq_sqrt (Nat.cast_nonneg _), div_mul_eq_mul_div,
+          div_le_div_iff₀ (by positivity) (by positivity)]
+        nlinarith
+      exact (pow_le_pow_iff_left₀ hlhs hR two_ne_zero).1 hsq
+
+/-- The four checks on a window `(n, e]`, with start bounds `tlo, plo` and end bounds `thi', phi'`. -/
+def winOK (n e tlo plo thi' phi' cN cD tN tD : ℕ) : Bool :=
+  leSq (thi' + phi') (S * n) n cN cD && leSq (S * e) (tlo + plo) n cN cD && Nat.ble thi' (S * n) &&
+    leSq (S * e) tlo n tN tD
+
+/-- The bounds at real `t`. -/
+def Rt (cN cD tN tD : ℕ) (t : ℝ) : Prop :=
+  thS ⌊t⌋₊ + ppS ⌊t⌋₊ - t ≤ (cN : ℝ) / cD * √t ∧ t - (thS ⌊t⌋₊ + ppS ⌊t⌋₊) ≤ (cN : ℝ) / cD * √t ∧
+    thS ⌊t⌋₊ ≤ t ∧ t - thS ⌊t⌋₊ ≤ (tN : ℝ) / tD * √t
+
+theorem window_ok {n G tlo thi plo phi a b c d cN cD tN tD : ℕ} (hn : 1 ≤ n) (hcD : 0 < cD) (htD : 0 < tD)
+    (h0 : Inv n tlo thi plo phi) (h1 : Inv (n + G) a b c d) (hw : winOK n (n + G) tlo plo b d cN cD tN tD = true)
+    {t : ℝ} (ht1 : (n : ℝ) ≤ t) (ht2 : t < ((n + G : ℕ) : ℝ)) : Rt cN cD tN tD t := by
+  have hS := S_pos
+  unfold winOK at hw
+  simp only [Bool.and_eq_true] at hw
+  obtain ⟨⟨⟨w1, w2⟩, w3⟩, w4⟩ := hw
+  have l1 := leSq_spec hcD w1
+  have l2 := leSq_spec hcD w2
+  have l4 := leSq_spec htD w4
+  have w3' : (b : ℝ) ≤ S * n := by exact_mod_cast Nat.le_of_ble_eq_true w3
+  have ht0 : 0 ≤ t := le_trans (by positivity) ht1
+  have hfl1 : n ≤ ⌊t⌋₊ := Nat.le_floor ht1
+  have hfl2 : ⌊t⌋₊ ≤ n + G := by
+    have := Nat.floor_lt ht0 |>.2 ht2; omega
+  have hsq : √(n : ℝ) ≤ √t := Real.sqrt_le_sqrt ht1
+  have hcn : 0 ≤ (cN : ℝ) / cD := by positivity
+  have htn : 0 ≤ (tN : ℝ) / tD := by positivity
+  obtain ⟨a0, a1, a2, a3⟩ := h0
+  obtain ⟨b0, b1, b2, b3⟩ := h1
+  have m1 := thS_mono hfl1; have m2 := thS_mono hfl2; have m3 := ppS_mono hfl1; have m4 := ppS_mono hfl2
+  have eS : ∀ x : ℕ, ((S * x : ℕ) : ℝ) / S = x := fun x => by push_cast; field_simp
+  rw [eS] at l1 l2 l4
+  push_cast at l1 l2 l4 ht2
+  rw [add_div] at l1 l2
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · have := mul_le_mul_of_nonneg_left hsq hcn; linarith
+  · have := mul_le_mul_of_nonneg_left hsq hcn; linarith
+  · have : (b : ℝ) / S ≤ n := by rw [div_le_iff₀ hS]; linarith
+    linarith
+  · have := mul_le_mul_of_nonneg_left hsq htn; linarith
+
+/-- The checkpoint loop. Each window is `(G, L1, H1)`: `L1 = 0` means the log chain, otherwise
+`L1 ≤ S log e < H1` is certified. -/
+def outer (cN cD tN tD : ℕ) : ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ × ℕ) →
+    Option (ℕ × ℕ × ℕ × ℕ × ℕ × ℕ × ℕ)
+  | n, tlo, thi, plo, phi, LL, LH, [] => some (n, tlo, thi, plo, phi, LL, LH)
+  | n, tlo, thi, plo, phi, LL, LH, (G, L1, H1) :: gs =>
+    let LLe := if L1 = 0 then LL + S * G / (n + G) else L1
+    let LHe := if L1 = 0 then LH + (S * G + n - 1) / n else H1
+    if L1 = 0 ∨ (chkLow L1 S (n + G) = true ∧ chkStep H1 S 1 (n + G) = true) then
+      match inner (if G = 1 then LLe else LL) LHe n tlo thi plo phi G with
+      | none => none
+      | some (a, b, c, d) =>
+        if winOK n (n + G) tlo plo b d cN cD tN tD = true then outer cN cD tN tD (n + G) a b c d LLe LHe gs
+        else none
+    else none
+
+theorem log_chain_lo {n G LL : ℕ} (hn : 1 ≤ n) (h : (LL : ℝ) / S ≤ Real.log n) :
+    ((LL + S * G / (n + G) : ℕ) : ℝ) / S ≤ Real.log ((n + G : ℕ) : ℝ) := by
+  have hS := S_pos
+  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hnG : (0 : ℝ) < ((n + G : ℕ) : ℝ) := by push_cast; positivity
+  have h1 : ((S * G / (n + G) : ℕ) : ℝ) ≤ (S : ℝ) * G / ((n + G : ℕ) : ℝ) := by
+    rw [le_div_iff₀ hnG]; exact_mod_cast Nat.div_mul_le_self _ _
+  have h2 : (G : ℝ) / ((n + G : ℕ) : ℝ) ≤ Real.log ((n + G : ℕ) : ℝ) - Real.log n := by
+    rw [← Real.log_div hnG.ne' hn'.ne']
+    have := Real.one_sub_inv_le_log_of_pos (x := ((n + G : ℕ) : ℝ) / n) (by positivity)
+    rw [inv_div] at this
+    have e : 1 - (n : ℝ) / ((n + G : ℕ) : ℝ) = (G : ℝ) / ((n + G : ℕ) : ℝ) := by
+      field_simp; push_cast; ring
+    linarith
+  push_cast at h1 ⊢
+  rw [add_div]
+  have : ((S * G / (n + G) : ℕ) : ℝ) / S ≤ (G : ℝ) / ((n : ℝ) + G) := by
+    rw [div_le_iff₀ hS]; push_cast at h1 ⊢; field_simp at h1 ⊢; nlinarith
+  push_cast at this h2
+  linarith
+
+theorem log_chain_hi {n G LH : ℕ} (hn : 1 ≤ n) (h : Real.log n ≤ (LH : ℝ) / S) :
+    Real.log ((n + G : ℕ) : ℝ) ≤ ((LH + (S * G + n - 1) / n : ℕ) : ℝ) / S := by
+  have hS := S_pos
+  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have h1 : (S : ℝ) * G / n ≤ (((S * G + n - 1) / n : ℕ) : ℝ) := by
+    rw [div_le_iff₀ hn']
+    have : S * G ≤ (S * G + n - 1) / n * n := by
+      have := Nat.div_add_mod' (S * G + n - 1) n
+      have hm := Nat.mod_lt (S * G + n - 1) (by omega : 0 < n)
+      omega
+    exact_mod_cast this
+  have h2 : Real.log ((n + G : ℕ) : ℝ) - Real.log n ≤ (G : ℝ) / n := by
+    rw [← Real.log_div (by positivity) hn'.ne']
+    have := Real.log_le_sub_one_of_pos (x := ((n + G : ℕ) : ℝ) / n) (by positivity)
+    have e : ((n + G : ℕ) : ℝ) / n - 1 = (G : ℝ) / n := by field_simp; push_cast; ring
+    linarith
+  have : (G : ℝ) / n ≤ (((S * G + n - 1) / n : ℕ) : ℝ) / S := by
+    rw [le_div_iff₀ hS]
+    have e : (G : ℝ) / n * S = (S : ℝ) * G / n := by ring
+    rw [e]; exact h1
+  push_cast at h2 ⊢
+  rw [add_div]
+  linarith
+
+theorem outer_spec {cN cD tN tD : ℕ} (hcD : 0 < cD) (htD : 0 < tD) :
+    ∀ (gs : List (ℕ × ℕ × ℕ)) (n tlo thi plo phi LL LH n' tlo' thi' plo' phi' LL' LH' : ℕ),
+    1 ≤ n → n + (gs.map (fun g => g.1)).sum ≤ 1000000 → Inv n tlo thi plo phi →
+    (LL : ℝ) / S ≤ Real.log n → Real.log n ≤ (LH : ℝ) / S →
+    outer cN cD tN tD n tlo thi plo phi LL LH gs = some (n', tlo', thi', plo', phi', LL', LH') →
+    (∀ t : ℝ, (n : ℝ) ≤ t → t < n' → Rt cN cD tN tD t) ∧ Inv n' tlo' thi' plo' phi' ∧
+      (LL' : ℝ) / S ≤ Real.log n' ∧ Real.log n' ≤ (LH' : ℝ) / S := by
+  intro gs
+  induction gs with
+  | nil =>
+    intro n tlo thi plo phi LL LH n' tlo' thi' plo' phi' LL' LH' _ _ hI hL hH h
+    simp only [outer, Option.some.injEq, Prod.mk.injEq] at h
+    obtain ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩ := h
+    exact ⟨fun t h1 h2 => absurd (lt_of_le_of_lt h1 h2) (lt_irrefl _), hI, hL, hH⟩
+  | cons g gs ih =>
+    obtain ⟨G, L1, H1⟩ := g
+    intro n tlo thi plo phi LL LH n' tlo' thi' plo' phi' LL' LH' hn hsum hI hL hH h
+    simp only [List.map_cons, List.sum_cons] at hsum
+    have hS := S_pos
+    have hS0 : (0 : ℕ) < S := by unfold S; norm_num
+    unfold outer at h
+    simp only at h
+    by_cases hc : L1 = 0 ∨ (chkLow L1 S (n + G) = true ∧ chkStep H1 S 1 (n + G) = true)
+    swap
+    · rw [if_neg hc] at h; exact absurd h (by simp)
+    rw [if_pos hc] at h
+    -- the log bounds at `n + G`
+    have hlog : ((if L1 = 0 then LL + S * G / (n + G) else L1 : ℕ) : ℝ) / S ≤ Real.log ((n + G : ℕ) : ℝ) ∧
+        Real.log ((n + G : ℕ) : ℝ) ≤ ((if L1 = 0 then LH + (S * G + n - 1) / n else H1 : ℕ) : ℝ) / S := by
+      by_cases h0 : L1 = 0
+      · simp only [h0, if_true]
+        exact ⟨log_chain_lo hn hL, log_chain_hi hn hH⟩
+      · simp only [h0, if_false]
+        rcases hc with hc | ⟨hc1, hc2⟩
+        · exact absurd hc h0
+        · have hpos : 0 < n + G := by omega
+          exact ⟨le_log_of_chk hS0 hpos hc1, (log_lt_of_chk hS0 hpos hc2).le.trans (by simp)⟩
+    set LLe := (if L1 = 0 then LL + S * G / (n + G) else L1 : ℕ) with hLLe
+    set LHe := (if L1 = 0 then LH + (S * G + n - 1) / n else H1 : ℕ) with hLHe
+    rcases hin : inner (if G = 1 then LLe else LL) LHe n tlo thi plo phi G with _ | ⟨a, b, c, d⟩
+    · rw [hin] at h; simp at h
+    rw [hin] at h
+    simp only at h
+    by_cases hw : winOK n (n + G) tlo plo b d cN cD tN tD = true
+    swap
+    · rw [if_neg hw] at h; exact absurd h (by simp)
+    rw [if_pos hw] at h
+    -- primes in the window
+    have hp : ∀ p : ℕ, n < p → p ≤ n + G → p.Prime →
+        ((if G = 1 then LLe else LL : ℕ) : ℝ) / S ≤ Real.log p ∧ Real.log p ≤ (LHe : ℝ) / S := by
+      intro p hp1 hp2 _
+      have hp0 : (0 : ℝ) < p := by exact_mod_cast (show 0 < p by omega)
+      have hle : Real.log p ≤ Real.log ((n + G : ℕ) : ℝ) :=
+        Real.log_le_log hp0 (by exact_mod_cast hp2)
+      refine ⟨?_, hle.trans hlog.2⟩
+      by_cases hG : G = 1
+      · rw [if_pos hG]
+        have : p = n + G := by omega
+        rw [this]; exact hlog.1
+      · rw [if_neg hG]
+        exact hL.trans (Real.log_le_log (by exact_mod_cast hn) (by exact_mod_cast hp1.le))
+    have hI1 := inner_spec G n tlo thi plo phi a b c d hn (by omega) hp hI hin
+    obtain ⟨ihR, ihI, ihL, ihH⟩ := ih (n + G) a b c d LLe LHe n' tlo' thi' plo' phi' LL' LH' (by omega)
+      (by omega) hI1 hlog.1 hlog.2 h
+    refine ⟨fun t ht1 ht2 => ?_, ihI, ihL, ihH⟩
+    by_cases htG : t < ((n + G : ℕ) : ℝ)
+    · exact window_ok hn hcD htD hI hI1 hw ht1 htG
+    · push Not at htG
+      exact ihR t htG ht2
+
 end TernaryGoldbach.Prelim.SmallTab
