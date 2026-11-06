@@ -6,6 +6,7 @@ import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.SmallPsiTable
 import TernaryGoldbach.Prelim.SmallPsiTableMain
 import TernaryGoldbach.Prelim.SmallPsi700
+import TernaryGoldbach.Prelim.PsiTwoSided
 import TernaryGoldbach.Prelim.Ramare
 import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallNonprime
