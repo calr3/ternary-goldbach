@@ -36,7 +36,7 @@ Inside the development, the hypotheses are `Fact` instances, restated as the the
 | minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `RHUpTo`, `PlattGRH`, `RamareMoebius` |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
-| odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `RHUpTo`, `BinaryGoldbachInput` |
+| odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
 
 `RHUpTo` reaches the minor arcs only through `Prelim.theta_explicit` and `Prelim.psi_two_sided`,
 that is, through the bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s
@@ -86,7 +86,20 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
 * the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`;
 * the Riemann sums of the Weil-window bound (`Explicit/WeilNumC.lean`) and the constants of the
   `ψ` ranges (`Explicit/PsiRanges.lean`);
-* the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`).
+* the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`);
+* the prime ladder up to `10²⁷`: `2.5·10⁸` Proth primes (`Ladder/`, below).
+
+**The prime ladder.** Rung `i` (`1 ≤ i ≤ 254638308`) is `c = (111616 i − t)·2⁴⁵ + 1` with
+`0 ≤ t < 2048`, and its certificate is `3^((c−1)/2) ≡ −1 (mod c)`: every prime factor of `c` is then
+`≡ 1 (mod 2⁴⁵)` (Mathlib's `Nat.pow_pow_add_primeFactors_one_lt`), and `c < (2⁴⁵ + 1)²`
+(`Ladder/Spec.lean`). The offsets `t` are not in the repository. `ladder_hints%`
+(`LadderHints.lean`, compiled to native code with `precompileModules`) finds them during
+elaboration, about `1.5·10⁻⁵` s per rung, and packs each chunk of 4096 into one literal. The kernel
+then checks the chunk by evaluation (`decide +kernel`). It checks 32 rungs at a time modulo the
+product `M` of their candidates: one exponentiation `3^(2⁴⁴·111616·i₀) mod M` per block, then a few
+operations on 3000-bit numbers per rung (`Ladder/Check.lean`). This is about `5.5·10⁻⁵` s per rung.
+The 128 files `Ladder/Data/L*.lean` (`scripts/gen_ladder.py`) take about 5 hours of one core (about
+140 s per file of 486 chunks, 1.7 GB each), of which about 4 hours are kernel checking.
 
 [H, Prop 12.2.4] is proved with `c₊ = 2` in place of [H]'s `1.36`. [H]'s argument covers
 `q ≥ 2.2·10¹⁰`; for smaller `q`, [H] needs a computation over all `q < 2.2·10¹⁰`. With `c₊ = 2` there
@@ -120,11 +133,11 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 
 * **Small cases.** Odd `5 < n ≤ 10²⁷` (`Helfgott/SmallCases.lean`):
   * binary Goldbach up to `4·10¹⁸` ([OeSHP14]; they double-checked `3·10¹⁷`);
-  * for `n > 4·10¹⁸ + 3`, a prime `p` with `n − 4·10¹⁸ < p ≤ n − 4`, from
-    `−1.861·10¹⁸ ≤ θ(m) − m ≤ 1.857·10¹⁸` for `10¹⁷ ≤ m ≤ 10²⁷`. This comes from
-    `|ψ(x) − x| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` (`Explicit/PsiPlateau.lean`, from RH up to
-    `3·10¹⁰`). Below `10¹⁷` the elementary `θ(m) ≤ m log 4` is enough. Then `n − p` is even and at
-    most `4·10¹⁸`.
+  * for `n > 4·10¹⁸ + 3`, a prime `p` with `n − 4·10¹⁸ ≤ p ≤ n − 4` from a prime ladder
+    (`Ladder/`): for each `1 ≤ i ≤ 254638308`, a Proth prime `(111616 i − t)·2⁴⁵ + 1`, `0 ≤ t < 2048`,
+    certified by `3^((c−1)/2) ≡ −1 (mod c)`. Consecutive rungs are less than `4·10¹⁸ − 4` apart. The
+    Lean kernel checks all `2.5·10⁸` rungs (see "The prime ladder" below). Then `n − p` is even and
+    at most `4·10¹⁸`.
 * **Large cases.** Odd `n ≥ 10²⁷`, by the circle method with Helfgott's smoothings `η₊` and `η_*`
   (`CircleMethod.lean`, `Helfgott/`):
   * **major arcs**, [H, (14.27)] with constant `1.049` (`MajorArcs/MajorTotal.lean`). This needs:
@@ -232,11 +245,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 **Other differences:**
 * [H, §2.5] quotes its bounds for `ψ`, `θ` and `Λ` from [RS62], [RS75] and [RR96]; we prove them
   (`Prelim/LambdaMu.lean`, `ThetaExplicit.lean`) from the `c√x` bounds and `theta_explicit`, above.
-* The small cases use the bounds for `θ` (above) instead of the Helfgott–Platt prime ladder [HP13],
-  which [H, §1.6] uses up to `8.875·10³⁰`; they need binary Goldbach up to `4·10¹⁸`. This is the
-  route of [H, App. D], which reaches `1.23·10²⁷` from RH to `3.061·10¹⁰` [Pla15] (Prop. D.0.3).
-  There the prime below `n − 4` comes from short-interval results ([RS03] and Ramaré's tables);
-  here it comes from our bounds for `θ`.
+* The small cases follow [H, §1.6] with a ladder of our own up to `10²⁷`, checked in Lean, in place
+  of the Helfgott–Platt ladder [HP13] (up to `8.875·10³⁰`, a cited computation in [H]).
 * Platt's verification reaches the minor-arc total through (14.7) and Prop 7.1.5, as in [H], and also
   through Cor 7.1.3, which bounds the base gap in the repaired Thm 13.2.1
   (`MinorArcs.norm_S_etaStar_le_gap`).
@@ -249,6 +259,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `Statement.lean` | the statement |
 | `CircleMethod.lean` | the finite circle method and the circle identity for absolutely summable series |
 | `Helfgott/` | Helfgott's smoothings and major arcs (`Defs`), sup norms and decay, the non-prime terms, the top-level inputs (`Inputs`), the small cases (`SmallCases`) and the assembly (`Main`) |
+| `Ladder/` | the prime ladder up to `10²⁷`: the kernel check (`Check`), its correctness and Proth's criterion (`Spec`), the generated chunk files (`Data/`), `ladder_prime` (`Main`) |
+| `LadderHints.lean` | the search for the ladder hints, run during elaboration (compiled to native code) |
 | `MinorArcs/` | [H, Chs. 3–6, 11–13] and §14.3: Vaughan's identity, Type I and II sums, Thm 3.1.1, the large sieve for primes, the minor-arc total; generated numerics (`scripts/gen_*.py`) |
 | `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
@@ -273,8 +285,6 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [RS75] J. B. Rosser, L. Schoenfeld, *Sharper bounds for the Chebyshev functions θ(x) and ψ(x)*,
   Math. Comp. 29 (1975), 243–269.
 * [RR96] O. Ramaré, R. Rumely, *Primes in arithmetic progressions*, Math. Comp. 65 (1996), 397–425.
-* [RS03] O. Ramaré, Y. Saouter, *Short effective intervals containing primes*, J. Number Theory 98
-  (2003), 10–33.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.

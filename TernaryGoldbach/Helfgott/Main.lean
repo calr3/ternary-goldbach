@@ -19,7 +19,7 @@ The argument follows [H, §14.4]:
 2. `Re ∫_𝔐 ≥ 1.049 x²/κ` and `|∫_𝔪| ≤ ∫_𝔪 |S_{η_*}||S_{η₊}|² ≤ 1.0376 x²/κ`;
 3. so the count restricted to odd primes is `≥ 0.0114 x²/κ - 6.7·10⁶ N^{3/2} log N > 0`;
 4. a positive count over primes gives a representation;
-5. the cases `N < 10²⁷` follow from binary Goldbach up to `4·10¹⁸` and the bounds for `θ`
+5. the cases `N < 10²⁷` follow from binary Goldbach up to `4·10¹⁸` and a prime ladder
    (`ternaryGoldbachUpTo_1e27`, `SmallCases.lean`).
 -/
 
@@ -76,7 +76,8 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
   intro h0
   linarith
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- The small cases: ternary Goldbach for odd `5 < N ≤ 10²⁷` (`SmallCases.lean`). -/
 theorem ternaryGoldbachUpTo [Fact TernaryGoldbach.BinaryGoldbachInput] :
     TernaryGoldbachUpTo (10 ^ 27) := ternaryGoldbachUpTo_1e27

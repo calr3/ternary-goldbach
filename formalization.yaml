@@ -71,7 +71,8 @@ status:
     The complete proof of the ternary Goldbach conjecture following [H], relative to four
     published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), three
     hypotheses are used: RH to 3·10¹⁰, Platt's GRH verification, and Ramaré's Möbius bound. The
-    small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸.
+    small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸ and a prime ladder of 2.5·10⁸ Proth
+    primes up to 10²⁷, which the Lean kernel checks.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -124,7 +125,8 @@ fidelity:
     Some constants and intermediate statements differ from [H]. For example, Prop. 12.2.4 is
     proved with c₊ = 2 instead of a finite check, and the ψ and θ bounds that [H, §2.5] quotes
     from Rosser–Schoenfeld and Ramaré–Rumely are proved (from RH up to 3·10¹⁰ and kernel-checked
-    tables), with weaker constants in (2.14) and (2.17). Several errors in [H] are corrected (e.g. (5.32),
+    tables), with weaker constants in (2.14) and (2.17). The small cases use a kernel-checked prime
+    ladder up to 10²⁷ instead of the Helfgott–Platt ladder. Several errors in [H] are corrected (e.g. (5.32),
     (6.77), and the two scales of major arcs in the proof of Thm 13.2.1); one step of Ramaré's 1995
     proof ((3.9) of [Ram95]) is false, and the formal proof avoids it. README.md, NOTES.md and
     HYPOTHESES.md list these.
@@ -150,6 +152,13 @@ alignment:
       lean: "TernaryGoldbach.ternary_goldbach_large_of_hypotheses"
       module: "TernaryGoldbach.MainTheorems"
       status: "proved"
+    - source: "[H, §1.6] (5 < n < 10²⁷)"
+      lean: "TernaryGoldbach.Helfgott.ternaryGoldbachUpTo_1e27"
+      module: "TernaryGoldbach.Helfgott.SmallCases"
+      status: "proved"
+      note: >-
+        From `BinaryGoldbachInput` and a prime ladder of Proth primes up to 10²⁷ that the kernel
+        checks (`TernaryGoldbach.Ladder.ladder_prime`), in place of the Helfgott–Platt ladder.
     - source: "[H, Prop. 12.2.4]"
       lean: "TernaryGoldbach.MinorArcs.prop_12_2_4"
       module: "TernaryGoldbach.MinorArcs.LSQuot6"

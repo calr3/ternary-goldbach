@@ -18,19 +18,19 @@ later papers and the float check below stand in.
 |---|---|---|---|
 | `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹⁰` have `ℜρ = 1/2` | Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), arXiv:1203.5712 | §7, footnote 1: "We isolated all the zeros of ζ to a height of 30,610,046,000 (103,800,788,359 zeros)", computed in interval arithmetic (§2, §7); [H] cites this as RH up to `3.0610046·10¹⁰`. The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
-| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range (with RH only to `3·10¹⁰`, the `θ` bounds near `10²⁷` are `±1.86·10¹⁸`) |
+| `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range: the ladder rungs are up to `(111616 + 2047)·2⁴⁵ ≈ 3.9992·10¹⁸` apart |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The hypotheses are stated as in the papers or weaker. Where they are used:
 * `rh_upto`: the explicit formulas for `ψ` (`Explicit/`): the Weil-window formula on `[10⁶, 10¹⁷]` and
   the Gaussian-smoothed formula above `10¹⁷`. Through them it enters every bound of [H, §2] for `ψ` and
-  `θ`, and the small cases;
+  `θ`;
 * `platt_verification`: [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5] (including `q = 1`), hence (14.7),
   (14.27) and the base gap of the minor arcs;
 * `binary_goldbach_input`: the small cases `n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), together with a
-  prime in `(n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from `rh_upto` (through
-  `Explicit/PsiPlateau.lean`) and the elementary `θ(m) ≤ m log 4`. This replaces [H]'s use of the
-  Helfgott–Platt prime ladder (arXiv:1305.3062);
+  prime in `[n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from a prime ladder of Proth primes up
+  to `10²⁷` that the kernel checks (`Ladder/`). [H, §1.6] takes the ladder from Helfgott–Platt
+  (arXiv:1305.3062);
 * `ramare_moebius`: the Liouville bound behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`,
   `MoebiusBound.lean`) and the tail of `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
@@ -133,6 +133,7 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `MinorArcs/LSQuotRed.lean` | `H_n ≤ G(n)` for `n ≤ 199` (so `G(x) ≥ log x`) | seconds |
 | `MinorArcs/LSQuot8.lean`, `LSQuot8g.lean` | Prop 12.2.4: Ramaré's tail for the divisors of `30030`; for each divisor `A`, a walk over `r < 2600` (`φ` by trial division) with 82 block checks | about 90 s |
 | `MinorArcs/LSQuot9.lean` | Prop 12.2.4 for `n ≤ 3`: 72 rational checks | seconds |
+| `Ladder/Data/L000–L127.lean` | the prime ladder up to `10²⁷`: `254640128` Proth primes `(111616 i − t)·2⁴⁵ + 1` with `3^((c−1)/2) ≡ −1 (mod c)`, in 62168 chunks of 4096 (hints from `LadderHints.lean`, `Ladder.run_spec`, `Ladder.prime_of_cert`) | about 5 h of one core in all, 140 s per file |
 
 ## Outlook
 

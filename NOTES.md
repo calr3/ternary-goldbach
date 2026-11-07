@@ -612,14 +612,29 @@ transform supported on `|ξ| > H/2π`, so Parseval (`integral_conj_mul_fourier`)
 polynomial bounds for `‖W₀''‖₂² ≤ 1000`, `‖W₁''‖₂² ≤ 60`). Weights in the form
 `W(u) = eᵘ 1_{[0,2]}(eᵘ) k(eᵘ)` (`IF`) for integrability.
 
-## Small cases (`Helfgott/SmallCases.lean`)
+## Small cases (`Helfgott/SmallCases.lean`, `Ladder/`)
 
-For odd `n ≤ 4·10¹⁸ + 3`, `n = 3 + (n − 3)` and binary Goldbach. For `4·10¹⁸ + 3 < n ≤ 10²⁷`,
-`θ(n − 4) − θ(n − 4·10¹⁸) > 0` gives a prime `p ∈ (n − 4·10¹⁸, n − 4]`: `θ(b) ≥ b − 1.861·10¹⁸` for
-`b ≥ 4·10¹⁸`, and `θ(a) ≤ a + 1.857·10¹⁸` (`a ≥ 10¹⁷`) or `θ(a) ≤ 10¹⁷ log 4` (`a < 10¹⁷`). The bounds
-come from `psi_plateau` and `ψ − θ ≤ 2.001 log m √m`. At `10²⁷` the two terms of `psi_plateau` are
-about `1.82·10¹⁸` (`x`-term) and `3.6·10¹⁶` (`√x`-term), so binary Goldbach is needed to about
-`3.7·10¹⁸`; [OeSHP14] goes to `4·10¹⁸`.
+For odd `n ≤ 4·10¹⁸ + 3`, `n = 3 + (n − 3)` and binary Goldbach. For `4·10¹⁸ + 3 < n ≤ 10²⁷`, rung
+`i = ⌊(n − 5)/(S·2⁴⁵)⌋` of the ladder (`S = 111616`) gives a prime in
+`[(S·i − 2047)·2⁴⁵ + 1, S·i·2⁴⁵ + 1] ⊂ [n − 4·10¹⁸, n − 4]` (`Ladder.ladder_prime`).
+
+The ladder (`Ladder/`):
+* Rung `i`, `1 ≤ i ≤ 254638308 = ⌊(10²⁷ − 5)/(S·2⁴⁵)⌋`, is `c = (S·i − t)·2⁴⁵ + 1`, `0 ≤ t < 2048`, with
+  `c ≡ 2 (mod 3)` and `3^((c−1)/2) ≡ −1 (mod c)`. `S` is the largest grid step with
+  `(S + 2047)·2⁴⁵ + 4 ≤ 4·10¹⁸` (up to a few units), so the rungs are as sparse as binary Goldbach
+  allows. `S·i < 2⁴⁵` keeps `c < (2⁴⁵ + 1)²`, which Proth's criterion needs. The largest offset is
+  about `1100` (expected gap `62` between rungs that pass base `3`).
+* Proth's criterion is Mathlib's `Nat.pow_pow_add_primeFactors_one_lt` (prime factors `≠ 2` of
+  `a^(2ⁿ) + 1` are `≡ 1 (mod 2ⁿ⁺¹)`) plus `minFac² ≤ c` (`prime_of_dvd_pow_add_one`).
+* The check (`Check.lean`) works on blocks of 32 rungs, modulo the product `M ≈ 2²⁹⁰⁰` of their
+  candidates: `B = 3^(2⁴⁴)`, `A = B^S`, `U = A^{i₀}` mod `M` (about 90 squarings per block), then per
+  rung `U ← U·A mod M` and the test `c ∣ U + (B mod c)^t`. `3 ∤ M` replaces a test `3 ∤ c` per rung.
+  Blocks of 32 balance the kernel's overhead per operation (about `1 µs`) against GMP's cost on `M`.
+* Costs: hints `1.5·10⁻⁵` s per rung (native, `LadderHints.lean`); kernel `5.5·10⁻⁵` s per rung, of
+  which about `0.8·10⁻⁵` the products, `2.2·10⁻⁵` the block exponentiations and `2.5·10⁻⁵` the
+  tests.
+* The hints exist only during elaboration (in the `.olean`s, `11` bits per rung). A file of hints
+  would be about `350 MB`.
 
 Lower limits of the method: `r₀ = 150000` is fixed by Platt's GRH range (`q ≤ 3·10⁵`), and Thm 3.1.1
 as formalized needs scale `≥ 2.16·10²⁰` and `r ≤ y^{1/3}/6`, so `y ≥ (6r₀)³ ≈ 7·10¹⁷` at least. Moving
@@ -647,6 +662,22 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   a chain so that lake builds them one at a time.
 * Assembly over many data files: a chain of small lemmas (`stage_k`); one big theorem timed out
   because `linarith` scanned hundreds of large hypotheses.
+* `Nat.powMod` is not accelerated by the kernel (about 12 ms for a 90-bit modulus, by unfolding).
+  `Nat.pow` is, for exponents below `2²⁴`. Straight-line GMP operations cost about `1 µs` each in the
+  kernel; a `cond` costs about `9 µs` more than `Bool.rec`, and `match`-compiled loops cost about
+  `30 µs` per iteration: write kernel loops as `Nat.rec` with `Bool.rec` branches.
+* Kernel definitional checks unfold `Nat.add iS 111616` (raw) against `iS + 111616` (notation) by
+  structural recursion on the literal, which recurses `111616` levels deep. State loop equations in
+  the definitions' own raw syntax, or as equations of functions, and use them with `rw`, not `simp`.
+  Similarly a `Bool.rec` whose condition is a loop with literal fuel on symbolic data makes the kernel
+  unroll the loop during `whnf`: write such definitions for abstract loop functions (`blkWith`,
+  `runWith`) and prove the specification there.
+* With Mathlib, `x ^ n : ℕ` elaborates to `Monoid.npow`, not core's `Nat.pow`: a power written in a
+  core-only file and the same power written in a Mathlib file are different terms. Name such
+  constants (`mask352`). Keep `3 ^ 2 ^ 44` from being normalized: `ring` on it makes the kernel
+  evaluate it (state such identities for a variable exponent `D`).
+* Many theorems in one file elaborate in parallel (`Elab.async`), up to about 7 GB for a ladder
+  file; the generated files set `Elab.async false`, so lake's parallelism across files is the only one.
 
 ## Lean 4 / Mathlib pitfalls
 
@@ -698,10 +729,16 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 * Lean/Mathlib v4.35.0. Fetch the prebuilt Mathlib with `lake exe cache get`.
 * Compile single files with `timeout 1500 lake env lean -M 9000 File.lean` (`-M 20000` for the kernel
   data files). Build heavy modules sequentially; a full `lake build` takes well over an hour, most of
-  it in `Prelim/PsiSieveData*.lean` and `SmallPsiData*.lean`.
+  it in `Prelim/PsiSieveData*.lean` and `SmallPsiData*.lean`. The 128 ladder files take about 5 hours
+  of one core (1.7 GB each, about 40 minutes in waves of 16 on 24 threads).
 * Clone/push via SSH (`git@github.com:calr3/ternary-goldbach.git`).
 
 ## Open directions
+
+* `RHUpTo` is used only through the bounds for `ψ`, `θ` and Mertens' product (`Prelim/ThetaExplicit`,
+  `PsiTwoSided`, `MertensProduct`), which reach the minor arcs: [H, (2.13)–(2.15), (2.17), (2.19), (5.5)]
+  and Lemma C.2.2. Helfgott has proposed to prove these from minimal inputs; RH to `10⁸` already
+  follows from `PlattGRH` at `q = 1`.
 
 * `ramare_moebius` is the only hypothesis that is a single analytic estimate; see `HYPOTHESES.md`,
   "Outlook", for why proving it is out of reach.
