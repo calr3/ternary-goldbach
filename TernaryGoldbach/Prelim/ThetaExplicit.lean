@@ -785,61 +785,6 @@ theorem sum_epl_div_le_const (a b : ℕ) : ∑ n ∈ Ioo a b, epl n / ((n : ℝ)
     nlinarith
   · norm_num
 
-/-- The plateau mass beyond `M`: `1.83·10⁻⁹ (20000.0001 − max(780, log M)) + 3.66·10⁻⁹` if
-`log M < 20000`, else `0`. -/
-noncomputable def Pth (M : ℝ) : ℝ :=
-  if Real.log M < 20000 then 1.83e-9 * (20000.0001 - max 780 (Real.log M)) + 3.66e-9 else 0
-
-theorem Pth_nonneg (M : ℝ) : 0 ≤ Pth M := by
-  unfold Pth; split_ifs with h
-  · have : max 780 (Real.log M) < 20000 := max_lt (by norm_num) h
-    nlinarith
-  · exact le_rfl
-
-theorem Pth_le (M : ℝ) : Pth M ≤ 3.52e-5 := by
-  unfold Pth; split_ifs with h
-  · have := le_max_left 780 (Real.log M); nlinarith
-  · norm_num
-
-/-- `P(M) log M ≤ 0.0275` for `log M ≤ 780`. -/
-theorem Pth_mul_log_le_small {M : ℝ} (hM : 1 ≤ M) (h780 : Real.log M ≤ 780) :
-    Pth M * Real.log M ≤ 0.0275 := by
-  have := Real.log_nonneg hM
-  have := Pth_le M; have := Pth_nonneg M
-  nlinarith
-
-/-- `P(M) log M ≤ 0.1831`: the maximum of `1.83·10⁻⁹ (20000 − L) L` is at `L = 10000`. -/
-theorem Pth_mul_log_le {M : ℝ} (hM : 1 ≤ M) : Pth M * Real.log M ≤ 0.1831 := by
-  have hL0 := Real.log_nonneg hM
-  rcases le_or_gt (Real.log M) 780 with h | h
-  · exact (Pth_mul_log_le_small hM h).trans (by norm_num)
-  unfold Pth; split_ifs with h2
-  · rw [max_eq_right h.le]
-    nlinarith [sq_nonneg (Real.log M - 10000.00005)]
-  · rw [zero_mul]; norm_num
-
-/-- `Σ_{M<n<N} ε_pl(n)/(n+1) + ε_pl(N) + ε_pl(M) ≤ P(M)`. -/
-theorem epl_total_le {M N : ℕ} (hM : 1 ≤ M) (hMN : M ≤ N) :
-    ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) + epl N + epl M ≤ Pth M := by
-  have hS := sum_epl_div_le M N
-  have hM0 : (0 : ℝ) < M := by exact_mod_cast hM
-  have hMN' : (M : ℝ) ≤ N := by exact_mod_cast hMN
-  by_cases h : Real.log (M : ℝ) < 20000
-  · have hlM : Real.log (M : ℝ) ≤ Real.log ((M : ℝ) + 1) := Real.log_le_log hM0 (by linarith)
-    have hS' : ∑ n ∈ Ioo M N, epl n / ((n : ℝ) + 1) ≤ 1.83e-9 * (20000.0001 - max 780 (Real.log M)) := by
-      refine hS.trans ?_
-      split_ifs
-      · have := max_le_max_left 780 hlM; nlinarith
-      · have := max_lt (by norm_num : (780 : ℝ) < 20000) h; nlinarith
-    have := epl_le (N : ℝ); have := epl_le (M : ℝ)
-    unfold Pth; rw [if_pos h]; linarith
-  · push Not at h
-    have h1 : ¬ Real.log ((M : ℝ) + 1) < 20000 := by
-      push Not; exact h.trans (Real.log_le_log hM0 (by linarith))
-    rw [if_neg h1] at hS
-    have hN : 20000 ≤ Real.log (N : ℝ) := h.trans (Real.log_le_log hM0 hMN')
-    unfold Pth; rw [if_neg (not_lt.2 h), epl_eq_zero hN, epl_eq_zero h]; linarith
-
 theorem epl_mul_log_le (x : ℝ) : epl x * Real.log x ≤ 3.66e-5 := by
   unfold epl; split_ifs with h
   · nlinarith [h.1, h.2]

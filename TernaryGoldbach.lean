@@ -40,6 +40,7 @@ import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallProdAp
 import TernaryGoldbach.Prelim.SmallFsq
 import TernaryGoldbach.Prelim.PNTMertens
+import TernaryGoldbach.Prelim.MertensWindow
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.MoebiusLog
 import TernaryGoldbach.Prelim.MoebiusDecay

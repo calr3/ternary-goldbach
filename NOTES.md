@@ -304,6 +304,18 @@ tables. The pieces, by range:
   `∑_{d≤x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)`. With
   `log ∏ p/(p−1) ≤ ∑ Λ(d)/(d log d) + 7/(6⌊√x⌋)` this gives [RS62, Thm 15]
   `∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`.
+* `|E₂Λ(x)| ≤ 2D/log x` for `x ≥ 10¹²` (`F_large`) needs `|E₁Λ(t) − E₁Λ(x)| ≤ D` for all `t ≥ x`.
+  Summation by parts against the pointwise `θ` bound would integrate its plateau `ε_pl` over
+  `log(t/x)` up to `20000`. `E1_var` instead integrates the explicit formula for
+  `Ψ(y) = Σ Λ(n) gsm(n/y)` (window `[1, e²]`, `δ = 10⁻⁸`) against `dy/y²`
+  (`Prelim/MertensWindow.lean`):
+  `∫₀^∞ (E₁Λ(Y₂v) − E₁Λ(Y₁v)) gsm(v) dv = ∫_{Y₁}^{Y₂} (Ψ(y) − M y)/y² dy`, `M = ∫₀^∞ gsm`. The two edge
+  terms `∫ |E₁Λ(Yv) − E₁Λ(Y)| gsm(v) dv` use `E1_local` (`A + B log v`, from `theta_explicit`) for
+  `v > 1` and the Chernoff bound `gsm(v) ≤ e^{1/2} v^{1/δ}` below `v = 1`. The zeros enter through
+  `ErrG ≤ 4247√y + 3·10⁻³⁰ y` (those above `3·10¹⁰` are killed by `e^{−δ²γ²/2}`), and the pointwise
+  errors only at `x` and `t`: `D(x) = 1443/√x + 13/x + 16/log³x + 1.1·10⁻⁷` while `log x < 20000`;
+  beyond `e^{20000}` (`ε_pl = 0`) summation by parts (`E1_diff`). `F_large` uses `η L² ≤ 0.24` of
+  its budget `0.6174`; `|E₂Λ(10¹⁸)| ≤ 1.2·10⁻⁵`.
 * `|E₂Λ(M)|` on `[10⁵, 10¹²)`: the variation of `∑ Λ(n)/(n log n) − log log n` up to `10¹⁸`
   (`E2_var`: summation by parts against `ψ(n) − n` with weight `1/(n log n)`; `E2_le_bin`), plus
   `|E₂Λ(10¹⁸)|`. This gives `|E₂Λ(M)| ≤ 0.0027` already at `M = 10⁵`. `F_mid` covers `[10⁵, 10¹²)` in
