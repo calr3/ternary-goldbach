@@ -17,6 +17,11 @@ open scoped Real Interval Topology
 
 namespace TernaryGoldbach.Explicit
 
+/-- RH up to height `H`: every zero of `ζ` in the critical strip with `|ℑρ| ≤ H` is on the critical
+line. -/
+def RHBelow (H : ℝ) : Prop :=
+  ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ H → ρ.re = 1 / 2
+
 /-- **Numerical hypothesis** ([Platt 2015], *Computing π(x) analytically*, Math. Comp. 84 (2015),
 arXiv:1203.5712): every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹⁰` lies on the critical
 line. [Pla15] verifies `0 < ℑρ ≤ 3.0610046·10¹⁰`. Zeros with `ℑρ < 0` are the
@@ -29,8 +34,7 @@ theorem rh_upto [h : Fact RHUpTo] :
 /-- **RH up to `10⁸` from `PlattGRH`**: the trivial character mod `1` is primitive (odd conductor
 `1 ≤ 3·10⁵`) and its `L`-function is `ζ`, so [Plab, Thm 7.1] at `q = 1` puts every zero of `ζ` in
 the critical strip with `|ℑρ| ≤ 10⁸` on the critical line. -/
-theorem rh_upto_1e8 [h : Fact TernaryGoldbach.PlattGRH] :
-    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 1e8 → ρ.re = 1 / 2 := by
+theorem rh_upto_1e8 [h : Fact TernaryGoldbach.PlattGRH] : RHBelow 1e8 := by
   intro ρ hz h0 h1 him
   refine (h.out 1 (1 : DirichletCharacter ℂ 1) DirichletCharacter.isPrimitive_one_level_one).1
     odd_one (by norm_num) ρ (by rw [DirichletCharacter.LFunction_modOne_eq]; exact hz) h0 h1 ?_

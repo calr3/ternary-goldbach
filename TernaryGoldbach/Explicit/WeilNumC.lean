@@ -533,22 +533,36 @@ theorem Jtot_le {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) :
   rw [hC1]
   linarith [hA, hB, hC2, hD, hF, p1, p2, p3, p4, p5, p6, hc0a, hc0b]
 
+/-- **The line zeros `|γ| ≤ H` in numbers**, under RH up to `H ∈ [10⁸, 3·10¹⁰]`: for
+`1/2 ≤ Y₁`, `Y₁ + 13 ≤ H/2`, `3/Y₁ ≤ δ ≤ 1/208`,
+`Σ m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²Y₁²/2} LWH(H))`. -/
+theorem line_sum_numH {H Y₁ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10) (hY₁0 : 1 / 2 ≤ Y₁)
+    (hY₁ : Y₁ + 13 ≤ H / 2) {δ : ℝ} (hδ0 : 3 / Y₁ ≤ δ) (hδ1 : δ ≤ 1 / 208) (a b T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
+        (JW δ + Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) * LWH H) := by
+  have hY0 : 0 < Y₁ := by linarith
+  have hδ : 0 < δ := lt_of_lt_of_le (by positivity) hδ0
+  have hUδ : (2.39 : ℝ) * 1.25 ^ 20 ≤ 1 / δ := by
+    rw [le_div_iff₀ hδ]
+    have : (2.39 : ℝ) * 1.25 ^ 20 ≤ 208 := by norm_num
+    nlinarith
+  have hW : 3 / δ ≤ Y₁ := by
+    rw [div_le_iff₀ hδ]; rw [div_le_iff₀ hY0] at hδ0; linarith
+  refine (line_sum_closedH (ℓ := 0.173) (by norm_num) (by norm_num) exp_692_lt (N := 20) (by norm_num)
+    hRH hH1 hH2 (R := 13) (by norm_num) hY₁0 hY₁ (by norm_num) kB_pos p0_le kap1_le kap0_le kap_pos
+    (r := 1.25) (by norm_num) (nA := 8) (nB := 20) (by norm_num) (by norm_num) hδ hUδ hW a b T).trans ?_
+  gcongr
+  exact Jtot_le hδ hδ1
+
 /-- **The line zeros `|γ| ≤ 3·10¹⁰` in numbers**: for `3·10⁻¹⁰ ≤ δ ≤ 1/208`,
 `Σ m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²10²⁰/2} LW)`. -/
 theorem line_sum_num [Fact TernaryGoldbach.RHUpTo] {δ : ℝ} (hδ0 : 3e-10 ≤ δ) (hδ1 : δ ≤ 1 / 208) (a b T : ℝ) :
     ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
         (JW δ + Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW) := by
-  have hδ : 0 < δ := lt_of_lt_of_le (by norm_num) hδ0
-  have hUδ : (2.39 : ℝ) * 1.25 ^ 20 ≤ 1 / δ := by
-    rw [le_div_iff₀ hδ]
-    have : (2.39 : ℝ) * 1.25 ^ 20 ≤ 208 := by norm_num
-    nlinarith
-  have hW : 3 / δ ≤ 1e10 := by rw [div_le_iff₀ hδ]; linarith
-  refine (line_sum_closed (ℓ := 0.173) (by norm_num) (by norm_num) exp_692_lt (N := 20) (by norm_num)
-    (R := 13) (by norm_num) (by norm_num) (by norm_num) kB_pos p0_le kap1_le kap0_le kap_pos (r := 1.25)
-    (by norm_num) (nA := 8) (nB := 20) (by norm_num) (by norm_num) hδ hUδ hW a b T).trans ?_
-  gcongr
-  exact Jtot_le hδ hδ1
+  have h := line_sum_numH (H := 3e10) (Y₁ := 1e10) rh_upto (by norm_num) le_rfl (by norm_num) (by norm_num)
+    (le_trans (by norm_num) hδ0) hδ1 a b T
+  rwa [show ((1e10 : ℝ)) ^ 2 = 1e20 by norm_num] at h
 
 end TernaryGoldbach.Explicit

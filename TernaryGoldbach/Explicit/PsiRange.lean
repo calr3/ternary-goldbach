@@ -15,13 +15,29 @@ open scoped Real Interval Topology ArithmeticFunction.vonMangoldt
 
 namespace TernaryGoldbach.Explicit
 
-theorem LW_le : LW ≤ 1142 := by unfold LW; linarith [window_sum_le]
-
-theorem LW_nonneg : 0 ≤ LW := by
-  unfold LW
+theorem LWH_nonneg (H : ℝ) : 0 ≤ LWH H := by
+  unfold LWH
   refine mul_nonneg (by norm_num) (Finset.sum_nonneg fun m _ => mul_nonneg
     (div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le)
     (one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _))))
+
+/-- `LWH H ≤ 1142` for `H ≤ 3·10¹⁰`: a sub-sum of `window_sum_le`. -/
+theorem LWH_le {H : ℝ} (hH : H ≤ 3e10) : LWH H ≤ 1142 := by
+  have hsub : Finset.range (JlH 6 H) ⊆ Finset.range (JlH 6 3e10) := by
+    refine Finset.range_mono ?_
+    unfold JlH
+    exact Nat.add_le_add_right (Nat.floor_mono (div_le_div_of_nonneg_right hH (by norm_num))) 1
+  have h := Finset.sum_le_sum_of_subset_of_nonneg hsub (f := fun m : ℕ =>
+      Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) / Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))))
+    fun m _ _ => mul_nonneg
+      (div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le)
+      (one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _)))
+  unfold LWH
+  linarith [window_sum_le]
+
+theorem LW_le : LW ≤ 1142 := LWH_le le_rfl
+
+theorem LW_nonneg : 0 ≤ LW := LWH_nonneg _
 
 /-- `e^{−x} ≤ (1 + x/10)^{−10}` for `x ≥ 0`. -/
 theorem exp_neg_big_le {x : ℝ} (hx : 0 ≤ x) : Real.exp (-x) ≤ 1 / (1 + x / 10) ^ 10 := by

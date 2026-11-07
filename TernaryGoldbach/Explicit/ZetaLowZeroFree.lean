@@ -264,12 +264,13 @@ theorem zetaF_half_ne_zero {t : ℝ} (ht : |t| < 2.39) : zetaF ((1 / 2 : ℂ) + 
 
 variable [Fact TernaryGoldbach.RHUpTo]
 
-/-- **Every nontrivial zero has `|γ| ≥ 2.39`** (with RH up to `3·10¹⁰`). -/
-theorem abs_im_ge_of_zero {ρ : ℂ} (hz : riemannZeta ρ = 0) (h0 : 0 < ρ.re) (h1 : ρ.re < 1) :
-    2.39 ≤ |ρ.im| := by
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- Every zero of `ζ` in the critical strip has `|γ| ≥ 2.39`, under RH up to any `H ≥ 2.39`. -/
+theorem abs_im_ge_of_zeroH {H : ℝ} (hRH : RHBelow H) (hH : 2.39 ≤ H) {ρ : ℂ} (hz : riemannZeta ρ = 0)
+    (h0 : 0 < ρ.re) (h1 : ρ.re < 1) : 2.39 ≤ |ρ.im| := by
   by_contra hlt
   push Not at hlt
-  have hre := rh_upto ρ hz h0 h1 (by linarith)
+  have hre := hRH ρ hz h0 h1 (by linarith)
   have hρ : ρ = (1 / 2 : ℂ) + (ρ.im : ℂ) * I := by
     apply Complex.ext <;> simp [hre]
   have hne := zetaF_half_ne_zero hlt
@@ -277,5 +278,10 @@ theorem abs_im_ge_of_zero {ρ : ℂ} (hz : riemannZeta ρ = 0) (h0 : 0 < ρ.re) 
   apply hne
   have hρ1 : ρ ≠ 1 := by intro h; rw [h] at h1; simp at h1
   rw [zetaF_of_ne hρ1, hz, mul_zero]
+
+/-- **Every nontrivial zero has `|γ| ≥ 2.39`** (with RH up to `3·10¹⁰`). -/
+theorem abs_im_ge_of_zero {ρ : ℂ} (hz : riemannZeta ρ = 0) (h0 : 0 < ρ.re) (h1 : ρ.re < 1) :
+    2.39 ≤ |ρ.im| :=
+  abs_im_ge_of_zeroH rh_upto (by norm_num) hz h0 h1
 
 end TernaryGoldbach.Explicit

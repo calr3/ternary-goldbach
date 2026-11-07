@@ -45,30 +45,33 @@ theorem integral_Bsq_shift (ℓ : ℝ) (m : ℕ) (γ R : ℝ) :
   have h := intervalIntegral.integral_comp_sub_left (fun u => Bsq ℓ m u) (a := γ - R) (b := γ + R) γ
   rw [h, show γ - (γ + R) = -R by ring, show γ - (γ - R) = R by ring]
 
-/-- **The weighted zero sum.** -/
-theorem weil_weighted {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
-    (h2 : Real.exp (2 * m * ℓ) < 2) {R : ℝ} (hR : 0 < R) (hR1 : R ≤ 1e9)
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- **The weighted zero sum** under RH up to `H ∈ [10⁸, 3·10¹⁰]`, for the line zeros `|γ| ≤ Y₁` with
+`Y₁ + R ≤ H/2`. -/
+theorem weil_weightedH {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {H Y₁ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10)
+    {R : ℝ} (hR : 0 < R) (hY₁0 : 0 ≤ Y₁) (hY₁ : Y₁ + R ≤ H / 2)
     {g : ℝ → ℝ} (hg0 : ∀ t, 0 ≤ g t) (hganti : AntitoneOn g (Ici 0)) (hgc : Continuous g)
     (hK : 0 < ∫ u in (-R)..R, Bsq ℓ m u)
-    {Φ : ℝ → ℝ} (hΦc : Continuous Φ) (hΦ : ∀ t, |t| ≤ 1.5e10 → WPhi ℓ m t + OffC ℓ m ≤ Φ t) (T : ℝ) :
-    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10), (multRectD zetaF T u : ℝ) * g |u.im| ≤
-      (∫ t in (-(1e10 + R))..(1e10 + R), g (max 0 (|t| - R)) * Φ t) / ∫ u in (-R)..R, Bsq ℓ m u := by
-  set S := (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10) with hS
+    {Φ : ℝ → ℝ} (hΦc : Continuous Φ) (hΦ : ∀ t, |t| ≤ H / 2 → WPhi ℓ m t + OffC ℓ m ≤ Φ t) (T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ Y₁), (multRectD zetaF T u : ℝ) * g |u.im| ≤
+      (∫ t in (-(Y₁ + R))..(Y₁ + R), g (max 0 (|t| - R)) * Φ t) / ∫ u in (-R)..R, Bsq ℓ m u := by
+  set S := (zerosRectD zetaF T).filter (fun u => |u.im| ≤ Y₁) with hS
   set KR := ∫ u in (-R)..R, Bsq ℓ m u with hKR
-  set Y := 1e10 + R with hY
+  set Y := Y₁ + R with hY
   set G : ℝ → ℝ := fun t => g (max 0 (|t| - R)) with hG
   have hGc : Continuous G := hgc.comp (continuous_const.max (continuous_abs.sub continuous_const))
   have hG0 : ∀ t, 0 ≤ G t := fun t => hg0 _
-  have hmemS : ∀ u ∈ S, u ∈ zerosRectD zetaF T ∧ |u.im| ≤ 1e10 := fun u hu => Finset.mem_filter.1 hu
+  have hmemS : ∀ u ∈ S, u ∈ zerosRectD zetaF T ∧ |u.im| ≤ Y₁ := fun u hu => Finset.mem_filter.1 hu
   have hline : ∀ u ∈ S, u.re = 1 / 2 := by
     intro u hu
     obtain ⟨hz, h0, h1, -⟩ := zerosRectD_zetaF_strip (hmemS u hu).1
-    exact rh_upto u hz h0 h1 (by linarith [(hmemS u hu).2])
+    exact hRH u hz h0 h1 (by linarith [(hmemS u hu).2])
   -- (1) `g(|γ|) K_R ≤ ∫_{−Y}^{Y} G(t) B(γ − t)² dt`
   have hpt : ∀ u ∈ S, g |u.im| * KR ≤ ∫ t in (-Y)..Y, G t * Bsq ℓ m (u.im - t) := by
     intro u hu
     set γ := u.im with hγ
-    have hγY : |γ| ≤ 1e10 := (hmemS u hu).2
+    have hγY : |γ| ≤ Y₁ := (hmemS u hu).2
     have hcont : Continuous fun t => G t * Bsq ℓ m (γ - t) :=
       hGc.mul ((continuous_Bsq ℓ m).comp (continuous_const.sub continuous_id))
     have hsub : ∫ t in (γ - R)..(γ + R), G t * Bsq ℓ m (γ - t) ≤ ∫ t in (-Y)..Y, G t * Bsq ℓ m (γ - t) := by
@@ -108,10 +111,10 @@ theorem weil_weighted {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ
   -- (3) one window per `t`
   have hwin : ∀ t ∈ Icc (-Y) Y, ∑ u ∈ S, (multRectD zetaF T u : ℝ) * Bsq ℓ m (u.im - t) ≤ Φ t := by
     intro t ht
-    have htY : |t| ≤ 1.5e10 := by rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
-    have hw := weil_window hℓ0 hℓ1 hm h2 htY T
+    have htY : |t| ≤ H / 2 := by rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
+    have hw := weil_windowH hℓ0 hℓ1 hm h2 hRH hH1 hH2 htY T
     refine le_trans ?_ (hw.trans (hΦ t htY))
-    have hsub : S ⊆ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10) := by
+    have hsub : S ⊆ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H) := by
       intro u hu
       exact Finset.mem_filter.2 ⟨(hmemS u hu).1, by linarith [(hmemS u hu).2]⟩
     calc ∑ u ∈ S, (multRectD zetaF T u : ℝ) * Bsq ℓ m (u.im - t) =
@@ -122,7 +125,7 @@ theorem weil_weighted {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ
           obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
           obtain ⟨hz, h0, h1, -⟩ := zerosRectD_zetaF_strip hu1
           exact mul_nonneg (Nat.cast_nonneg _)
-            (WH_re_nonneg_of_line ℓ m t (rh_upto u hz h0 h1 hu2))
+            (WH_re_nonneg_of_line ℓ m t (hRH u hz h0 h1 hu2))
   have hmono : ∫ t in (-Y)..Y, G t * ∑ u ∈ S, (multRectD zetaF T u : ℝ) * Bsq ℓ m (u.im - t) ≤
       ∫ t in (-Y)..Y, G t * Φ t := by
     refine intervalIntegral.integral_mono_on (by linarith) ?_ ((hGc.mul hΦc).intervalIntegrable _ _)
@@ -131,5 +134,16 @@ theorem weil_weighted {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ
       ((continuous_Bsq ℓ m).comp (continuous_const.sub continuous_id)))).intervalIntegrable _ _
   rw [le_div_iff₀ hK]
   exact hsum.trans hmono
+
+/-- **The weighted zero sum.** -/
+theorem weil_weighted {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {R : ℝ} (hR : 0 < R) (hR1 : R ≤ 1e9)
+    {g : ℝ → ℝ} (hg0 : ∀ t, 0 ≤ g t) (hganti : AntitoneOn g (Ici 0)) (hgc : Continuous g)
+    (hK : 0 < ∫ u in (-R)..R, Bsq ℓ m u)
+    {Φ : ℝ → ℝ} (hΦc : Continuous Φ) (hΦ : ∀ t, |t| ≤ 1.5e10 → WPhi ℓ m t + OffC ℓ m ≤ Φ t) (T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10), (multRectD zetaF T u : ℝ) * g |u.im| ≤
+      (∫ t in (-(1e10 + R))..(1e10 + R), g (max 0 (|t| - R)) * Φ t) / ∫ u in (-R)..R, Bsq ℓ m u :=
+  weil_weightedH hℓ0 hℓ1 hm h2 rh_upto (by norm_num) le_rfl hR (by norm_num) (by linarith) hg0 hganti hgc hK hΦc
+    (fun t ht => hΦ t (by linarith)) T
 
 end TernaryGoldbach.Explicit

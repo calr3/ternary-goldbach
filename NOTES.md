@@ -245,6 +245,11 @@ tables. The pieces, by range:
   region (`PsiLarge`).
 * `rh_upto_1e8` (`ZetaZeroSums`): RH up to `10⁸` from `PlattGRH` at `q = 1` (the trivial character
   mod `1` is primitive and its `L`-function is `ζ`). It is not used yet.
+* The explicit-formula error bounds take the RH height as a parameter, `RHBelow H` with
+  `H ∈ [10⁸, 3·10¹⁰]`: `SsumG_gsm_errH` (Jensen windows), `SsumG_gsm_errWH` (Weil windows for
+  `|γ| ≤ Y₁`, centres `|T₀| ≤ H/2`, `Y₁ + 13 ≤ H/2`, `3/Y₁ ≤ δ`; Jensen windows on `(Y₁, H]` with the
+  factor `e^{−δ²Y₁²/2}`; the zeros above `H` cost at most `OffC`), `SsumG_gsm_err_zfH` (zero-free
+  region on `(H, Γ]`). The `3·10¹⁰` statements are their instances.
 * **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`, without
   the Hadamard product. `XiPartial`: `ξ(s) = s(s−1)Λ₀(s) + 1`, squares at good heights,
   `|ξ'/ξ| = O(log² k)` on their boundary; the symmetry `w ↦ 1 − w` gives a kernel `O(|w|⁻²)`, so

@@ -73,17 +73,19 @@ theorem antitoneOn_gW (δ : ℝ) {t₀ : ℝ} (ht₀ : 0 < t₀) : AntitoneOn (g
     _ ≤ Real.exp (-(δ ^ 2 * max u t₀ ^ 2 / 2)) / max u t₀ :=
         div_le_div_of_nonneg_left (by positivity) hu0 hm
 
-/-- **The line zeros up to `10¹⁰`**, by the Weil formula. -/
-theorem line_sum_weil {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
-    (h2 : Real.exp (2 * m * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R) (hR1 : R ≤ 1e9)
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- The line zeros `|γ| ≤ Y₁` by `weil_weightedH`, under RH up to `H ∈ [10⁸, 3·10¹⁰]`, `Y₁ + R ≤ H/2`. -/
+theorem line_sum_weilH {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {H Y₁ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H)
+    (hH2 : H ≤ 3e10) {R : ℝ} (hR : 1 ≤ R) (hY₁0 : 0 ≤ Y₁) (hY₁ : Y₁ + R ≤ H / 2)
     (hK : 0 < KRB ℓ m R) (a b δ : ℝ) (T : ℝ) :
-    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ Y₁), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
-        ((∫ t in (-(1e10 + R))..(1e10 + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ m N R t) / KRB ℓ m R) := by
+        ((∫ t in (-(Y₁ + R))..(Y₁ + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ m N R t) / KRB ℓ m R) := by
   set C := Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) with hC
   have hC0 : 0 ≤ C := by positivity
   have ht₀ : (0 : ℝ) < 2.39 := by norm_num
-  have hW := weil_weighted hℓ0 hℓ1 hm h2 (R := R) (by linarith) hR1 (gW_nonneg δ ht₀)
+  have hW := weil_weightedH hℓ0 hℓ1 hm h2 hRH hH1 hH2 (R := R) (by linarith) hY₁0 hY₁ (gW_nonneg δ ht₀)
     (antitoneOn_gW δ ht₀) (continuous_gW δ ht₀) hK (continuous_PhiUp ℓ m N R)
     (fun t _ => WPhi_le_PhiUp hℓ0 hℓ1 hm hN hR t) T
   rw [KRB]
@@ -92,8 +94,8 @@ theorem line_sum_weil {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ
   refine Finset.sum_le_sum fun u hu => ?_
   obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
   obtain ⟨hz, h0, h1, -⟩ := zerosRectD_zetaF_strip hu1
-  have hre := rh_upto u hz h0 h1 (by linarith)
-  have hγ := abs_im_ge_of_zero hz h0 h1
+  have hre := hRH u hz h0 h1 (by linarith)
+  have hγ := abs_im_ge_of_zeroH hRH (by linarith) hz h0 h1
   have hy0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hγ; norm_num at hγ
   have e : u = ((1 / 2 : ℝ) : ℂ) + (u.im : ℂ) * I := by apply Complex.ext <;> simp [hre]
   have hM := norm_Mg_line_gauss a b δ hy0
@@ -105,41 +107,51 @@ theorem line_sum_weil {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ
         rw [hC, ← hg]; ring
     _ = C * ((multRectD zetaF T u : ℝ) * gW δ 2.39 |u.im|) := by ring
 
-/-- The Jensen-window constant of `LineB2` (`window_sum_le`: the sum is at most `571`). -/
-noncomputable def LW : ℝ :=
-  2 * ∑ m ∈ Finset.range (JlH 6 3e10), Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
+theorem line_sum_weil {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R) (hR1 : R ≤ 1e9)
+    (hK : 0 < KRB ℓ m R) (a b δ : ℝ) (T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
+        ((∫ t in (-(1e10 + R))..(1e10 + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ m N R t) / KRB ℓ m R) :=
+  line_sum_weilH hℓ0 hℓ1 hm h2 hN rh_upto (by norm_num) le_rfl hR (by norm_num) (by linarith) hK a b δ T
+
+/-- The Jensen-window constant of `LineB2H` at height `H`. -/
+noncomputable def LWH (H : ℝ) : ℝ :=
+  2 * ∑ m ∈ Finset.range (JlH 6 H), Real.log (BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
     Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ)))
 
-/-- **The line zeros with `10¹⁰ < |γ| ≤ 3·10¹⁰`**: Jensen windows, with the Gaussian factor. -/
-theorem line_sum_mid (a b δ T : ℝ) :
-    ∑ u ∈ ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10)).filter (fun u => ¬ |u.im| ≤ 1e10),
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- **The line zeros with `Y₁ < |γ| ≤ H`** under RH up to `H`: Jensen windows, with the Gaussian factor. -/
+theorem line_sum_midH {H Y₁ : ℝ} (hRH : RHBelow H) (hH : 0 ≤ H) (hY₁ : 1 / 2 ≤ Y₁) (a b δ T : ℝ) :
+    ∑ u ∈ ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ H)).filter (fun u => ¬ |u.im| ≤ Y₁),
         (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
-      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) * Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW := by
-  set S := ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10)).filter (fun u => ¬ |u.im| ≤ 1e10) with hS
+      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) * Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) *
+        LWH H := by
+  set S := ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ H)).filter (fun u => ¬ |u.im| ≤ Y₁) with hS
   have hSZ : S ⊆ zerosRectD zetaF T := (Finset.filter_subset _ _).trans (Finset.filter_subset _ _)
-  have hmem : ∀ u ∈ S, |u.im| ≤ 3e10 ∧ 1e10 < |u.im| := by
+  have hmem : ∀ u ∈ S, |u.im| ≤ H ∧ Y₁ < |u.im| := by
     intro u hu
     obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
     exact ⟨(Finset.mem_filter.1 hu1).2, not_le.1 hu2⟩
   have hre : ∀ u ∈ S, u.re = 1 / 2 := by
     intro u hu
     obtain ⟨hz, hr1, hr2, -⟩ := zerosRectD_zetaF_strip (hSZ hu)
-    exact rh_upto u hz hr1 hr2 (hmem u hu).1
-  rw [LW]
-  refine line_sum_leH (H := 3e10) (h := 6) (r := 3.36) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    exact hRH u hz hr1 hr2 (hmem u hu).1
+  rw [LWH]
+  refine line_sum_leH (H := H) (h := 6) (r := 3.36) hH (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) S hSZ hre (fun u hu => (hmem u hu).1) (fun u => ‖Mg a b δ u‖) (fun u _ => norm_nonneg _)
     (by positivity) (fun u hu => ?_)
   obtain ⟨-, hγ⟩ := hmem u hu
-  have hy0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hγ; norm_num at hγ
+  have hy0 : u.im ≠ 0 := by intro h; rw [h, abs_zero] at hγ; linarith
   have e : u = ((1 / 2 : ℝ) : ℂ) + (u.im : ℂ) * I := by apply Complex.ext <;> simp [hre u hu]
   have hM := norm_Mg_line_gauss a b δ hy0
   rw [← e] at hM
   have hpos : 0 < |u.im| := by linarith
   rw [max_eq_right (by linarith)]
-  have hg : Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) ≤ Real.exp (-(δ ^ 2 * 1e20 / 2)) := by
+  have hg : Real.exp (-(δ ^ 2 * u.im ^ 2 / 2)) ≤ Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) := by
     apply Real.exp_le_exp.2
-    have : (1e20 : ℝ) ≤ u.im ^ 2 := by
-      rw [← sq_abs]; nlinarith
+    have : Y₁ ^ 2 ≤ u.im ^ 2 := by
+      rw [← sq_abs u.im]; exact pow_le_pow_left₀ (by linarith) hγ.le 2
     have := mul_le_mul_of_nonneg_left this (sq_nonneg δ)
     linarith
   calc ‖Mg a b δ u‖ * |u.im| ≤
@@ -149,6 +161,38 @@ theorem line_sum_mid (a b δ T : ℝ) :
         field_simp
     _ ≤ _ := by gcongr
 
+/-- The Jensen-window constant of `LineB2` (`window_sum_le`: the sum is at most `571`). -/
+noncomputable def LW : ℝ := LWH 3e10
+
+/-- **The line zeros with `10¹⁰ < |γ| ≤ 3·10¹⁰`**: Jensen windows, with the Gaussian factor. -/
+theorem line_sum_mid (a b δ T : ℝ) :
+    ∑ u ∈ ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10)).filter (fun u => ¬ |u.im| ≤ 1e10),
+        (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) * Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW := by
+  have h := line_sum_midH (H := 3e10) (Y₁ := 1e10) rh_upto (by norm_num) (by norm_num) a b δ T
+  rwa [show ((1e10 : ℝ)) ^ 2 = 1e20 by norm_num] at h
+
+omit [Fact TernaryGoldbach.RHUpTo] in
+/-- **All line zeros `|γ| ≤ H`** under RH up to `H ∈ [10⁸, 3·10¹⁰]`: `weil_weightedH` below `Y₁`
+(`Y₁ + R ≤ H/2`), Jensen windows above. -/
+theorem line_sum_weil_allH {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {H Y₁ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H)
+    (hH2 : H ≤ 3e10) {R : ℝ} (hR : 1 ≤ R) (hY₁0 : 1 / 2 ≤ Y₁) (hY₁ : Y₁ + R ≤ H / 2)
+    (hK : 0 < KRB ℓ m R) (a b δ : ℝ) (T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+      Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
+        ((∫ t in (-(Y₁ + R))..(Y₁ + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ m N R t) / KRB ℓ m R +
+          Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) * LWH H) := by
+  rw [← Finset.sum_filter_add_sum_filter_not _ (fun u => |u.im| ≤ Y₁)]
+  have e : ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ H)).filter (fun u => |u.im| ≤ Y₁) =
+      (zerosRectD zetaF T).filter (fun u => |u.im| ≤ Y₁) := by
+    rw [Finset.filter_filter]
+    exact Finset.filter_congr fun u _ => ⟨fun h => h.2, fun h => ⟨h.trans (by linarith), h⟩⟩
+  rw [e, mul_add]
+  refine add_le_add (line_sum_weilH hℓ0 hℓ1 hm h2 hN hRH hH1 hH2 hR (by linarith) hY₁ hK a b δ T) ?_
+  rw [← mul_assoc]
+  exact line_sum_midH hRH (by linarith) hY₁0 a b δ T
+
 /-- **All line zeros `|γ| ≤ 3·10¹⁰`**: `weil_weighted` below `10¹⁰`, Jensen windows above. -/
 theorem line_sum_weil_all {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
     (h2 : Real.exp (2 * m * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R) (hR1 : R ≤ 1e9)
@@ -157,14 +201,8 @@ theorem line_sum_weil_all {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m :
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
         ((∫ t in (-(1e10 + R))..(1e10 + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ m N R t) / KRB ℓ m R +
           Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW) := by
-  rw [← Finset.sum_filter_add_sum_filter_not _ (fun u => |u.im| ≤ 1e10)]
-  have e : ((zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10)).filter (fun u => |u.im| ≤ 1e10) =
-      (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 1e10) := by
-    rw [Finset.filter_filter]
-    exact Finset.filter_congr fun u _ => ⟨fun h => h.2, fun h => ⟨h.trans (by norm_num), h⟩⟩
-  rw [e, mul_add]
-  refine add_le_add (line_sum_weil hℓ0 hℓ1 hm h2 hN hR hR1 hK a b δ T) ?_
-  rw [← mul_assoc]
-  exact line_sum_mid a b δ T
+  have h := line_sum_weil_allH hℓ0 hℓ1 hm h2 hN rh_upto (by norm_num) le_rfl hR (by norm_num) (by linarith) hK
+    a b δ T (H := 3e10) (Y₁ := 1e10)
+  rwa [show ((1e10 : ℝ)) ^ 2 = 1e20 by norm_num] at h
 
 end TernaryGoldbach.Explicit
