@@ -2,8 +2,7 @@ import TernaryGoldbach.Helfgott.Inputs
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.SmallCases
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # Assembling Helfgott's proof
@@ -52,8 +51,7 @@ theorem repSum_lower_bound (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
   linarith
 
 open Classical in
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- Step 4: a nonzero count over a set of primes gives a representation. -/
 theorem isSumOfThreePrimes_of_repSum_ne_zero {P : ℕ → Prop} (hP : ∀ n, P n → n.Prime)
     (N : ℕ) (h : repSum P N ≠ 0) : IsSumOfThreePrimes N := by
@@ -78,14 +76,14 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
 
 omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- The small cases: ternary Goldbach for odd `5 < N ≤ 10²⁷` (`SmallCases.lean`). -/
-theorem ternaryGoldbachUpTo [Fact TernaryGoldbach.BinaryGoldbachInput] :
+theorem ternaryGoldbachUpTo [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.BinaryGoldbachInput] :
     TernaryGoldbachUpTo (10 ^ 27) := ternaryGoldbachUpTo_1e27
 
 end TernaryGoldbach.Helfgott
 
 namespace TernaryGoldbach
 
-variable [Fact BinaryGoldbachInput]
+variable [Fact RHUpTo] [Fact BinaryGoldbachInput]
 
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5`
 is a sum of three primes.

@@ -32,7 +32,7 @@ theorem primeSetRq_prime {R : ℝ} {q : ℕ} : ∀ p ∈ primeSetRq R q, p.Prime
   · exact (mem_filter.1 h).2
   · exact Nat.prime_of_mem_primeFactors h
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `log P ≤ log q + 1.039 R` for `P = ∏_{p ≤ R or p ∣ q} p`. -/
 theorem log_prod_primeSetRq_le {R : ℝ} (hR : 0 ≤ R) {q : ℕ} (hq : 1 ≤ q) :
     Real.log (∏ p ∈ primeSetRq R q, p : ℕ) ≤ Real.log q + 1.039 * R := by
@@ -70,7 +70,7 @@ theorem poly_regionS {X l L : ℝ} (hX : X ≤ 0.4 * l + 0.86) (hX0 : 0 ≤ X) (
   have hLl : 0 ≤ 0.6 * L - l := by linarith
   nlinarith [mul_nonneg h06 hLl, mul_le_mul_of_nonneg_right hX hLc]
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **Small `R`** ([H, Lemmas 12.2.1–12.2.3], with `log Q + c_E` in the denominator). -/
 theorem regionS {Q Q₀ : ℝ} (hQ : 20000 * Q₀ ≤ Q) (hQ₀ : 1e5 ≤ Q₀)
     (hρ : Real.log Q₀ ≤ 0.6 * Real.log Q) {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs : 1 ≤ s)

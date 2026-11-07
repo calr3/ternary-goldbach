@@ -10,9 +10,9 @@ Rosser–Schoenfeld's bound [RS62, Thm. 15], proved here from
 * Mertens' second theorem in the form `∑_{d ≤ x} Λ(d)/(d log d) = log log x + γ + E₂Λ(x)` with
   `E₂Λ(x) = E₁Λ(x)/log x − ∫_x^∞ E₁Λ(t)/(t log² t) dt` (ported from PNT+, `Prelim/PNTMertens.lean`);
 * `|E₂Λ(x)| ≤ 2D/log x` when `E₁Λ` stays within `D` of `E₁Λ(x)` on `[x, ∞)` (`E2_le_of`), with
-  `D(x) = 1443/√x + 13/x + 16/log³x + 1.1·10⁻⁷` for `x ≥ 10¹²`, `log x < 20000` (`E1_var`): the
-  Gaussian-smoothed explicit formula integrated against `dy/y²` (`Prelim/MertensWindow.lean`,
-  window `[1, e²]`, `δ = 10⁻⁸`) with the local bound `E1_local` from `theta_explicit` at the two ends
+  `D(x) = 1443/√x + 13/x + 16/log³x + 8.5·10⁻⁶` for `x ≥ 10¹²`, `log x < 20000` (`E1_var`): the
+  Gaussian-smoothed explicit formula with RH up to `10⁸` integrated against `dy/y²`
+  (`Prelim/MertensWindow.lean`, window `[1, e²]`, `δ = 8·10⁻⁸`) with the local bound `E1_local` from `theta_explicit` at the two ends
   only, so the plateau `ε_pl` of `|θ(n) − n| < n/log³ n + ε_pl(n) n` (`Prelim/ThetaExplicit.lean`) is
   not integrated over `[x, ∞)`; beyond `e^{20000}` (where `ε_pl = 0`) summation by parts (`E1_diff`);
 * `log ∏_{p ≤ x} p/(p−1) ≤ ∑_{d ≤ x} Λ(d)/(d log d) + 3/⌊√x⌋` (the log series);
@@ -64,7 +64,7 @@ theorem E2_le_of {x c D : ℝ} (hx : 2 ≤ x) (h : ∀ t, x < t → |E₁Λ t - 
   have e1 : (c + D) / Real.log x - (c - D) / Real.log x = 2 * D / Real.log x := by ring
   rw [abs_le]; constructor <;> linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `|ψ(n) − n| ≤ n/log³ n + ε_pl(n) n + 7.04 √n` for `n ≥ 10¹²`. -/
 theorem psi_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     |psiN n - n| ≤ n / Real.log n ^ 3 + epl n * n + 7.04 * √(n : ℝ) := by
@@ -95,7 +95,7 @@ theorem sum_inv_succ_le {a b : ℕ} (hab : a < b) :
       rw [Ioo_self_succ]
       push_cast; simp
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- The Abel summation term, centred: `|ψ(n)(1/n − 1/(n+1)) − 1/(n+1)| ≤ …`. -/
 theorem abel_term_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     |psiN n * (1 / (n : ℝ) - 1 / ((n + 1 : ℕ) : ℝ)) - 1 / ((n : ℝ) + 1)| ≤
@@ -117,7 +117,7 @@ theorem abel_term_err {n : ℕ} (hn : 1000000000000 ≤ n) :
     rw [add_mul, add_mul, mul_assoc (7.04 : ℝ), this, e3]; field_simp; ring
   linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- Summation by parts for `E₁Λ(t) − E₁Λ(M)`, `M ≥ 10¹²`, `N = ⌊t⌋`: if the interior error sum
 `Σ_{M<n<N} (1/((n+1) log³n) + 7.04/(√n (n+1)) + ε_pl(n)/(n+1)) + ε_pl(N) + ε_pl(M)` is at most `I`,
 then `|E₁Λ(t) − E₁Λ(M)| ≤ 3/M + 2(1/log³M + 7.04/√M) + I`. -/
@@ -219,7 +219,7 @@ theorem E1_core {M : ℕ} (hM : 1000000000000 ≤ M) {t : ℝ} (ht : (M : ℝ) �
   constructor <;> linarith [hint.1, hint.2, hbN.1, hbN.2, hbM.1, hbM.2]
 
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `E₁Λ` varies by at most `D(M)` on `[M, ∞)` once `log M ≥ 20000` (no plateau term). -/
 theorem E1_diff {M : ℕ} (hM : 1000000000000 ≤ M) (hL : 20000 ≤ Real.log M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ 3 / M + 2 * (1 / Real.log M ^ 3 + 7.04 / √(M : ℝ)) +
@@ -247,8 +247,8 @@ theorem E1_diff {M : ℕ} (hM : 1000000000000 ≤ M) (hL : 20000 ≤ Real.log M)
   linarith
 
 /-- The constants of `E1_local`. -/
-noncomputable def Aloc (M₀ : ℕ) : ℝ := 3 / M₀ + 2 / Real.log M₀ ^ 3 + 28.16 / √(M₀ : ℝ) + 3.66e-9
-noncomputable def Bloc (M₀ : ℕ) : ℝ := 1 / Real.log M₀ ^ 3 + 1.83e-9
+noncomputable def Aloc (M₀ : ℕ) : ℝ := 3 / M₀ + 2 / Real.log M₀ ^ 3 + 28.16 / √(M₀ : ℝ) + 9.84e-7
+noncomputable def Bloc (M₀ : ℕ) : ℝ := 1 / Real.log M₀ ^ 3 + 4.92e-7
 
 theorem Bloc_nonneg (M₀ : ℕ) : 0 ≤ Bloc M₀ := by
   unfold Bloc; have := Real.log_natCast_nonneg M₀; positivity
@@ -256,9 +256,9 @@ theorem Bloc_nonneg (M₀ : ℕ) : 0 ≤ Bloc M₀ := by
 theorem Aloc_nonneg (M₀ : ℕ) : 0 ≤ Aloc M₀ := by
   unfold Aloc; have := Real.log_natCast_nonneg M₀; positivity
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **The local variation of `E₁Λ`**: `|E₁Λ(t) − E₁Λ(M)| ≤ A + B log(t/M)` for `t ≥ M ≥ M₀ ≥ 10¹²`,
-`A = 3/M₀ + 2/log³M₀ + 28.16/√M₀ + 3.66·10⁻⁹`, `B = 1/log³M₀ + 1.83·10⁻⁹`. -/
+`A = 3/M₀ + 2/log³M₀ + 28.16/√M₀ + 9.84·10⁻⁷`, `B = 1/log³M₀ + 4.92·10⁻⁷`. -/
 theorem E1_local {M₀ M : ℕ} (hM₀ : 1000000000000 ≤ M₀) (hM : M₀ ≤ M) {t : ℝ} (ht : (M : ℝ) ≤ t) :
     |E₁Λ t - E₁Λ M| ≤ Aloc M₀ + Bloc M₀ * Real.log (t / M) := by
   have hM1 : 1000000000000 ≤ M := le_trans hM₀ hM
@@ -269,8 +269,8 @@ theorem E1_local {M₀ M : ℕ} (hM₀ : 1000000000000 ≤ M₀) (hM : M₀ ≤ 
   have hLL : Real.log M₀ ≤ Real.log M := Real.log_le_log hM₀0 hMM
   have ht0 : 0 < t := lt_of_lt_of_le hM0 ht
   have hlt0 : 0 ≤ Real.log (t / M) := Real.log_nonneg ((one_le_div hM0).2 ht)
-  set B := 1 / Real.log M ^ 3 + 1.83e-9 with hB
-  have hcore := E1_core hM1 ht (I := B * Real.log (t / M) + 14.08 / √(M : ℝ) + 3.66e-9)
+  set B := 1 / Real.log M ^ 3 + 4.92e-7 with hB
+  have hcore := E1_core hM1 ht (I := B * Real.log (t / M) + 14.08 / √(M : ℝ) + 9.84e-7)
     (by positivity) fun hlt => ?_
   · -- monotonicity in `M`
     have hc1 : 1 / Real.log M ^ 3 ≤ 1 / Real.log M₀ ^ 3 :=
@@ -301,7 +301,7 @@ theorem E1_local {M₀ M : ℕ} (hM₀ : 1000000000000 ≤ M₀) (hM : M₀ ≤ 
         rw [one_div_mul_one_div, mul_comm (Real.log M ^ 3)]
         exact one_div_le_one_div_of_le (mul_pos hn1 (pow_pos hL 3))
           (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hL.le hln 3) hn1.le)
-      have h2 : epl n / ((n : ℝ) + 1) ≤ 1.83e-9 * (1 / ((n : ℝ) + 1)) := by
+      have h2 : epl n / ((n : ℝ) + 1) ≤ 4.92e-7 * (1 / ((n : ℝ) + 1)) := by
         rw [div_eq_mul_one_div]; exact mul_le_mul_of_nonneg_right (epl_le _) (by positivity)
       rw [hB]; nlinarith
     have hsum := sum_le_sum hS
@@ -325,10 +325,11 @@ theorem E1_local {M₀ M : ℕ} (hM₀ : 1000000000000 ≤ M₀) (hM : M₀ ≤ 
     have e : (14.08 : ℝ) / √(M : ℝ) = 7.04 * (2 / √(M : ℝ)) := by ring
     linarith
 
-/-! ### `E₁Λ` over long ranges: the smoothed explicit formula at `a = 2`, `b = 0`, `δ = 10⁻⁸`
+/-! ### `E₁Λ` over long ranges: the smoothed explicit formula at `a = 2`, `b = 0`, `δ = 8·10⁻⁸`
 
-`E1_window` and `edge_le` (`Prelim/MertensWindow.lean`) with `ErrG 2 0 10⁻⁸ y ≤ 4247 √y + 3·10⁻³⁰ y`
-(the zeros above `3·10¹⁰` are killed by the Gaussian factor `e^{−δ²γ²/2}`) and `E1_local` at both ends. -/
+`E1_window` and `edge_le` (`Prelim/MertensWindow.lean`) with RH up to `H = 10⁸` (`rh_upto_1e8`) and
+`ErrGH 2 0 (8·10⁻⁸) 10⁸ y ≤ 4247 √y + 3·10⁻¹³ y` (the zeros above `10⁸` are damped by the Gaussian
+factor `e^{−δ²γ²/2} ≤ e^{−32}`) and `E1_local` at both ends. -/
 
 theorem one_e12_le {x : ℕ} (hx : 10 ^ 12 ≤ x) : (1e12 : ℝ) ≤ x := by
   have h : ((10 ^ 12 : ℕ) : ℝ) ≤ (x : ℝ) := Nat.cast_le.2 hx
@@ -359,33 +360,42 @@ theorem exp_three_le : Real.exp 3 ≤ 20.0856 := by
   have h1 : Real.exp 1 * Real.exp 1 ≤ 2.7182818286 * 2.7182818286 := by nlinarith
   nlinarith
 
-theorem LineB2_win_le : Explicit.LineB2 2 0 1e-8 ≤ 4246.5 := by
-  unfold Explicit.LineB2
-  have he1 : Real.exp ((1e-8 : ℝ) ^ 2 / 2) ≤ 1.000001 := by
-    have h := Explicit.exp_small_le (t := (1e-8 : ℝ) ^ 2 / 2) (by positivity) (by norm_num)
+theorem LineB2_win_le : Explicit.LineB2H 2 0 8e-8 1e8 ≤ 4246.5 := by
+  unfold Explicit.LineB2H
+  have he1 : Real.exp ((8e-8 : ℝ) ^ 2 / 2) ≤ 1.000001 := by
+    have h := Explicit.exp_small_le (t := (8e-8 : ℝ) ^ 2 / 2) (by positivity) (by norm_num)
     norm_num at h ⊢; linarith
   have he2 : Real.exp (2 / 2) ≤ 2.7182818286 := by
     rw [show (2 : ℝ) / 2 = 1 by norm_num]; exact Real.exp_one_lt_d9.le
   have he3 : Real.exp (0 / 2) = 1 := by simp
-  have hS := Explicit.window_sum_le
-  have hS0 : 0 ≤ ∑ m ∈ Finset.range (Explicit.JlH 6 3e10),
+  have hsub : Finset.range (Explicit.JlH 6 1e8) ⊆ Finset.range (Explicit.JlH 6 3e10) := by
+    refine Finset.range_mono ?_
+    unfold Explicit.JlH
+    exact Nat.add_le_add_right (Nat.floor_mono (by norm_num)) 1
+  have hnn : ∀ m : ℕ, 0 ≤ Real.log (Explicit.BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
+      Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))) := fun m => mul_nonneg
+    (div_nonneg (Explicit.polyDatum_zeta2.log_pos _).le
+      (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le)
+    (one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _)))
+  have hS : ∑ m ∈ Finset.range (Explicit.JlH 6 1e8),
+      Real.log (Explicit.BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
+      Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))) ≤ 571 :=
+    le_trans (Finset.sum_le_sum_of_subset_of_nonneg hsub fun m _ _ => hnn m) Explicit.window_sum_le
+  have hS0 : 0 ≤ ∑ m ∈ Finset.range (Explicit.JlH 6 1e8),
       Real.log (Explicit.BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
       Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))) :=
-    Finset.sum_nonneg fun m _ => mul_nonneg
-      (div_nonneg (Explicit.polyDatum_zeta2.log_pos _).le
-        (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le)
-      (one_div_nonneg.2 (le_trans (by norm_num) (le_max_left _ _)))
+    Finset.sum_nonneg fun m _ => hnn m
   rw [he3]
-  calc (Real.exp ((1e-8 : ℝ) ^ 2 / 2) * (Real.exp (2 / 2) + 1)) *
-        (2 * ∑ m ∈ Finset.range (Explicit.JlH 6 3e10),
+  calc (Real.exp ((8e-8 : ℝ) ^ 2 / 2) * (Real.exp (2 / 2) + 1)) *
+        (2 * ∑ m ∈ Finset.range (Explicit.JlH 6 1e8),
           Real.log (Explicit.BPz2 (((m : ℝ) + 1 / 2) * 6) / 0.355) /
           Real.log (10 / 3.36) * (1 / max (1 / 2 : ℝ) (6 * (m : ℝ))))
       ≤ (1.000001 * (2.7182818286 + 1)) * (2 * 571) := by gcongr
     _ ≤ 4246.5 := by norm_num
 
-theorem TailB_win_le : Explicit.TailB 2 1e-8 ≤ 3e-30 := by
-  unfold Explicit.TailB Explicit.EBg Explicit.rhoG
-  set t : ℝ := 4.4 * (1e-8 : ℝ) ^ 2 * 3e10 with ht
+theorem TailB_win_le : Explicit.TailBH 2 8e-8 1e8 ≤ 3e-13 := by
+  unfold Explicit.TailBH Explicit.EBg Explicit.rhoG
+  set t : ℝ := 4.4 * (8e-8 : ℝ) ^ 2 * 1e8 with ht
   have ht0 : 0 < t := by rw [ht]; positivity
   have h1r : t / (1 + t) ≤ 1 - Real.exp (-t) := by
     have h := Real.add_one_le_exp t
@@ -394,41 +404,55 @@ theorem TailB_win_le : Explicit.TailB 2 1e-8 ≤ 3e-30 := by
     rw [div_le_iff₀ (by linarith), sub_mul, one_mul, inv_mul_eq_div]
     have : (1 + t) / Real.exp t ≤ 1 := by rw [div_le_one hp]; linarith
     linarith
-  have htv : (1.3e-5 : ℝ) ≤ t / (1 + t) := by
+  have htv : (2.815e-6 : ℝ) ≤ t / (1 + t) := by
     rw [le_div_iff₀ (by linarith), ht]; norm_num
-  have hr : (1.3e-5 : ℝ) ≤ 1 - Real.exp (-t) := htv.trans h1r
-  have he : Real.exp ((1e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) ≤ 7.3892 := by
-    rw [abs_of_pos (by norm_num : (0 : ℝ) < 2), Real.exp_add]
-    have h := Explicit.exp_small_le (t := (1e-8 : ℝ) ^ 2 / 2) (by positivity) (by norm_num)
-    have h2 := exp_two_le
-    have h3 : Real.exp ((1e-8 : ℝ) ^ 2 / 2) ≤ 1.000001 := by norm_num at h ⊢; linarith
-    nlinarith [Real.exp_pos 2, Real.exp_pos ((1e-8 : ℝ) ^ 2 / 2)]
-  have hg : Real.exp (-((1e-8 : ℝ) ^ 2 * (3e10 : ℝ) ^ 2 / 2)) ≤ 1.7e-28 :=
-    le_trans (Real.exp_le_exp.2 (by norm_num)) exp_neg64_le
-  have hZ := Explicit.Z3g_H_le; have hZ0 := Explicit.Z3g_H_nonneg
-  have hc := Explicit.c3g_H_le; have hc0 := Explicit.c3g_H_nonneg
+  have hr : (2.815e-6 : ℝ) ≤ 1 - Real.exp (-t) := htv.trans h1r
   have hr0 : 0 < 1 - Real.exp (-t) := lt_of_lt_of_le (by norm_num) hr
-  have hA : 2 * Explicit.Z3g Explicit.BPz2 3e10 / (1 - Real.exp (-t)) ≤ 2 * 210.6 / 1.3e-5 := by
-    rw [div_le_div_iff₀ hr0 (by norm_num)]; nlinarith
-  have hB : 2 * Explicit.c3g 10 3e10 / (1 - Real.exp (-t)) ^ 2 ≤ 2 * 1.22e-9 / (1.3e-5) ^ 2 := by
-    rw [div_le_div_iff₀ (by positivity) (by norm_num)]
-    have : (1.3e-5 : ℝ) ^ 2 ≤ (1 - Real.exp (-t)) ^ 2 := pow_le_pow_left₀ (by norm_num) hr 2
+  have he : Real.exp ((8e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) ≤ 7.3892 := by
+    rw [abs_of_pos (by norm_num : (0 : ℝ) < 2), Real.exp_add]
+    have h := Explicit.exp_small_le (t := (8e-8 : ℝ) ^ 2 / 2) (by positivity) (by norm_num)
+    have h2 := exp_two_le
+    have h3 : Real.exp ((8e-8 : ℝ) ^ 2 / 2) ≤ 1.000001 := by norm_num at h ⊢; linarith
+    nlinarith [Real.exp_pos 2, Real.exp_pos ((8e-8 : ℝ) ^ 2 / 2)]
+  have hg : Real.exp (-((8e-8 : ℝ) ^ 2 * (1e8 : ℝ) ^ 2 / 2)) ≤ 1.3e-14 :=
+    le_trans (Real.exp_le_exp.2 (by norm_num)) Explicit.exp_neg32_le
+  have hl := Explicit.log_10_3_ge
+  have hZ : Explicit.Z3g Explicit.BPz2 1e8 ≤ 210.6 := by
+    refine le_trans ?_ Explicit.Z3g_H_le
+    unfold Explicit.Z3g
+    refine div_le_div_of_nonneg_right (Explicit.polyDatum_zeta2.log_mono ?_)
+      (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_pos (by norm_num : (0 : ℝ) < 1e8), abs_of_pos (by norm_num : (0 : ℝ) < 3e10)]; norm_num
+  have hZ0 : 0 ≤ Explicit.Z3g Explicit.BPz2 1e8 :=
+    div_nonneg (Explicit.polyDatum_zeta2.log_pos _).le (lt_of_lt_of_le (by norm_num) hl).le
+  have hc : Explicit.c3g 10 1e8 ≤ 3.66e-7 := by
+    unfold Explicit.c3g
+    rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) hl)]
     nlinarith
-  have hE : 2 * Real.exp ((1e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) *
-      Real.exp (-((1e-8 : ℝ) ^ 2 * (3e10 : ℝ) ^ 2 / 2)) / 3e10 ≤ 2 * 7.3892 * 1.7e-28 / 3e10 := by
+  have hc0 : 0 ≤ Explicit.c3g 10 1e8 := by
+    unfold Explicit.c3g; exact div_nonneg (by norm_num) (lt_of_lt_of_le (by norm_num) hl).le
+  have hA : 2 * Explicit.Z3g Explicit.BPz2 1e8 / (1 - Real.exp (-t)) ≤ 2 * 210.6 / 2.815e-6 := by
+    rw [div_le_div_iff₀ hr0 (by norm_num)]; nlinarith
+  have hB : 2 * Explicit.c3g 10 1e8 / (1 - Real.exp (-t)) ^ 2 ≤ 2 * 3.66e-7 / (2.815e-6) ^ 2 := by
+    rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+    have : (2.815e-6 : ℝ) ^ 2 ≤ (1 - Real.exp (-t)) ^ 2 := pow_le_pow_left₀ (by norm_num) hr 2
+    nlinarith
+  have hE : 2 * Real.exp ((8e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) *
+      Real.exp (-((8e-8 : ℝ) ^ 2 * (1e8 : ℝ) ^ 2 / 2)) / 1e8 ≤ 2 * 7.3892 * 1.3e-14 / 1e8 := by
     gcongr
-  have hS0 : 0 ≤ 2 * Explicit.Z3g Explicit.BPz2 3e10 / (1 - Real.exp (-t)) +
-      2 * Explicit.c3g 10 3e10 / (1 - Real.exp (-t)) ^ 2 := by positivity
-  calc 2 * Real.exp ((1e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) *
-        Real.exp (-((1e-8 : ℝ) ^ 2 * (3e10 : ℝ) ^ 2 / 2)) / 3e10 *
-        (2 * Explicit.Z3g Explicit.BPz2 3e10 / (1 - Real.exp (-t)) +
-          2 * Explicit.c3g 10 3e10 / (1 - Real.exp (-t)) ^ 2)
-      ≤ (2 * 7.3892 * 1.7e-28 / 3e10) * (2 * 210.6 / 1.3e-5 + 2 * 1.22e-9 / (1.3e-5) ^ 2) :=
+  have hS0 : 0 ≤ 2 * Explicit.Z3g Explicit.BPz2 1e8 / (1 - Real.exp (-t)) +
+      2 * Explicit.c3g 10 1e8 / (1 - Real.exp (-t)) ^ 2 :=
+    add_nonneg (div_nonneg (by linarith) hr0.le) (div_nonneg (by linarith) (by positivity))
+  calc 2 * Real.exp ((8e-8 : ℝ) ^ 2 / 2 + |(2 : ℝ)|) *
+        Real.exp (-((8e-8 : ℝ) ^ 2 * (1e8 : ℝ) ^ 2 / 2)) / 1e8 *
+        (2 * Explicit.Z3g Explicit.BPz2 1e8 / (1 - Real.exp (-t)) +
+          2 * Explicit.c3g 10 1e8 / (1 - Real.exp (-t)) ^ 2)
+      ≤ (2 * 7.3892 * 1.3e-14 / 1e8) * (2 * 210.6 / 2.815e-6 + 2 * 3.66e-7 / (2.815e-6) ^ 2) :=
         mul_le_mul hE (add_le_add hA hB) hS0 (by norm_num)
-    _ ≤ 3e-30 := by norm_num
+    _ ≤ 3e-13 := by norm_num
 
 theorem Vg_win_le {y : ℝ} (hy : 1e12 ≤ y) :
-    y ^ (-(1 / 2) : ℝ) * Explicit.Vg 2 0 1e-8 / (2 * Real.pi) ≤ 0.035 * √y := by
+    y ^ (-(1 / 2) : ℝ) * Explicit.Vg 2 0 8e-8 / (2 * Real.pi) ≤ 0.0044 * √y := by
   have hy0 : 0 < y := by linarith
   have hsy : y ^ (-(1 / 2) : ℝ) = 1 / √y := by
     rw [Real.rpow_neg hy0.le, ← Real.sqrt_eq_rpow, one_div]
@@ -441,8 +465,8 @@ theorem Vg_win_le {y : ℝ} (hy : 1e12 ≤ y) :
     linarith
   have hc10 : 0 ≤ 2 / Real.log 2 + 4.8 := by
     have := Real.log_pos (by norm_num : (1:ℝ) < 2); positivity
-  have hδe : Real.exp ((1e-8 : ℝ) ^ 2 / 8) ≤ 1.000001 := by
-    have h := Explicit.exp_small_le (t := (1e-8 : ℝ) ^ 2 / 8) (by positivity) (by norm_num)
+  have hδe : Real.exp ((8e-8 : ℝ) ^ 2 / 8) ≤ 1.000001 := by
+    have h := Explicit.exp_small_le (t := (8e-8 : ℝ) ^ 2 / 8) (by positivity) (by norm_num)
     norm_num at h ⊢; linarith
   have hae : Real.exp (-((2 : ℝ) / 2)) ≤ 0.3679 := by
     rw [show -((2 : ℝ) / 2) = -1 by norm_num, Real.exp_neg,
@@ -456,73 +480,74 @@ theorem Vg_win_le {y : ℝ} (hy : 1e12 ≤ y) :
   unfold Explicit.Vg
   rw [hsy, hb]
   set c₁ := 2 / Real.log 2 + 4.8
-  set E := Real.exp ((1e-8 : ℝ) ^ 2 / 8)
+  set E := Real.exp ((8e-8 : ℝ) ^ 2 / 8)
   set A := Real.exp (-((2 : ℝ) / 2))
   set P := √(2 * Real.pi) with hP
   have hP2 : P * P = 2 * Real.pi := Real.mul_self_sqrt (by positivity)
   have hP0 : 0 < P := lt_of_lt_of_le (by norm_num) hpi
   have hsy0 : 0 < √y := lt_of_lt_of_le (by norm_num) hS
-  have e : 1 / √y * (c₁ * 82.6 * E * (A + 1) * (P / 1e-8)) / (2 * Real.pi) =
-      (c₁ * 82.6 * E * (A + 1) * 1e8) * (1 / P) * (1 / √y) := by
+  have e : 1 / √y * (c₁ * 82.6 * E * (A + 1) * (P / 8e-8)) / (2 * Real.pi) =
+      (c₁ * 82.6 * E * (A + 1) * 1.25e7) * (1 / P) * (1 / √y) := by
     rw [← hP2]; field_simp; ring
   rw [e]
   have hE0 : 0 ≤ E := (Real.exp_pos _).le
   have hA0 : 0 ≤ A := (Real.exp_pos _).le
-  have h1 : c₁ * 82.6 * E * (A + 1) * 1e8 ≤ 7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1e8 := by gcongr
+  have h1 : c₁ * 82.6 * E * (A + 1) * 1.25e7 ≤ 7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1.25e7 := by gcongr
   have h2 : 1 / P ≤ 1 / 2.5066 := one_div_le_one_div_of_le (by norm_num) hpi
   have h3 : 1 / √y ≤ √y / 1e12 := by
     rw [div_le_div_iff₀ hsy0 (by norm_num), one_mul, Real.mul_self_sqrt hy0.le]; exact hy
-  calc (c₁ * 82.6 * E * (A + 1) * 1e8) * (1 / P) * (1 / √y)
-      ≤ (7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1e8) * (1 / 2.5066) * (√y / 1e12) := by gcongr
-    _ = (7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1e8 / 2.5066 / 1e12) * √y := by ring
-    _ ≤ 0.035 * √y := mul_le_mul_of_nonneg_right (by norm_num) (Real.sqrt_nonneg y)
+  calc (c₁ * 82.6 * E * (A + 1) * 1.25e7) * (1 / P) * (1 / √y)
+      ≤ (7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1.25e7) * (1 / 2.5066) * (√y / 1e12) := by gcongr
+    _ = (7.6856 * 82.6 * 1.000001 * (0.3679 + 1) * 1.25e7 / 2.5066 / 1e12) * √y := by ring
+    _ ≤ 0.0044 * √y := mul_le_mul_of_nonneg_right (by norm_num) (Real.sqrt_nonneg y)
 
-theorem ErrG_win_le {y : ℝ} (hy : 1e12 ≤ y) : Explicit.ErrG 2 0 1e-8 y ≤ 4247 * √y + 3e-30 * y := by
-  unfold Explicit.ErrG
+theorem ErrG_win_le {y : ℝ} (hy : 1e12 ≤ y) :
+    Explicit.ErrGH 2 0 8e-8 1e8 y ≤ 4247 * √y + 3e-13 * y := by
+  unfold Explicit.ErrGH
   have h1 := mul_le_mul_of_nonneg_left LineB2_win_le (Real.sqrt_nonneg y)
   have h2 := mul_le_mul_of_nonneg_left TailB_win_le (by linarith : (0 : ℝ) ≤ y)
   have h3 := Vg_win_le hy
   have := Real.sqrt_nonneg y
   linarith
 
-theorem M1_win_ge : 6.389 ≤ Real.exp ((1e-8 : ℝ) ^ 2 / 2) * (Real.exp 2 - 1) := by
-  have h1 : 1 ≤ Real.exp ((1e-8 : ℝ) ^ 2 / 2) := Real.one_le_exp (by positivity)
+theorem M1_win_ge : 6.389 ≤ Real.exp ((8e-8 : ℝ) ^ 2 / 2) * (Real.exp 2 - 1) := by
+  have h1 : 1 ≤ Real.exp ((8e-8 : ℝ) ^ 2 / 2) := Real.one_le_exp (by positivity)
   have h2 := exp_two_ge
   nlinarith
 
 theorem Mg32_win_le :
-    Real.exp ((1e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) * (Real.exp (2 * (3 / 2)) - 1) / (3 / 2) ≤ 12.724 := by
-  have h := Explicit.exp_small_le (t := (1e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) (by positivity) (by norm_num)
+    Real.exp ((8e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) * (Real.exp (2 * (3 / 2)) - 1) / (3 / 2) ≤ 12.724 := by
+  have h := Explicit.exp_small_le (t := (8e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) (by positivity) (by norm_num)
   have h3 := exp_three_le
   rw [show (2 : ℝ) * (3 / 2) = 3 by norm_num]
-  have h4 : Real.exp ((1e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) ≤ 1.000001 := by norm_num at h ⊢; linarith
+  have h4 : Real.exp ((8e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) ≤ 1.000001 := by norm_num at h ⊢; linarith
   have h30 : 0 ≤ Real.exp 3 - 1 := by have := Real.add_one_le_exp 3; linarith
   rw [div_le_iff₀ (by norm_num)]
-  nlinarith [Real.exp_pos ((1e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2)]
+  nlinarith [Real.exp_pos ((8e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2)]
 
-variable [Fact TernaryGoldbach.RHUpTo] in
-/-- **`E₁Λ` over a window**: `|E₁Λ(Y) − E₁Λ(x)| ≤ 1443/√x + 13/x + 16/log³x + 9.6·10⁻⁸` for
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **`E₁Λ` over a window**: `|E₁Λ(Y) − E₁Λ(x)| ≤ 1443/√x + 13/x + 16/log³x + 8.4·10⁻⁶` for
 `10¹² ≤ x ≤ Y ≤ x e^{20001}` (`E1_window`, `edge_le`, `E1_local`). -/
 theorem E1_win_num {x : ℕ} (hx : 10 ^ 12 ≤ x) {Y : ℝ} (hY : (x : ℝ) ≤ Y)
     (hlog : Real.log (Y / x) ≤ 20001) :
-    |E₁Λ Y - E₁Λ x| ≤ 1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 9.6e-8 := by
+    |E₁Λ Y - E₁Λ x| ≤ 1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 8.4e-6 := by
   have hx' : 1000000000000 ≤ x := by norm_num at hx; omega
   have hx1 : (1e12 : ℝ) ≤ x := one_e12_le hx
   have hx0 : (0 : ℝ) < x := by linarith
   have hY1 : (1 : ℝ) ≤ Y := by linarith
   have hxfl : x ≤ ⌊Y⌋₊ := Nat.le_floor hY
   have hxfl' : (x : ℝ) ≤ ⌊Y⌋₊ := by exact_mod_cast hxfl
-  set M1 := Real.exp ((1e-8 : ℝ) ^ 2 / 2) * (Real.exp 2 - 1) with hM1
-  set G := Real.exp ((1e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) * (Real.exp (2 * (3 / 2)) - 1) / (3 / 2) with hG
-  have hW := E1_window (a := 2) (b := 0) (δ := 1e-8) (α := 4247) (β := 3e-30) (by norm_num)
+  set M1 := Real.exp ((8e-8 : ℝ) ^ 2 / 2) * (Real.exp 2 - 1) with hM1
+  set G := Real.exp ((8e-8 : ℝ) ^ 2 * (3 / 2) ^ 2 / 2) * (Real.exp (2 * (3 / 2)) - 1) / (3 / 2) with hG
+  have hW := E1_window (a := 2) (b := 0) (δ := 8e-8) (α := 4247) (β := 3e-13) (by norm_num)
     (by norm_num) hx0 hY (by norm_num) fun y hy => by
-      have h1 := Explicit.tsum_gsm_le (a := 2) (b := 0) (δ := 1e-8) (x := y) (by norm_num) (by norm_num)
-        le_rfl (by linarith [hy.1])
+      have h1 := Explicit.tsum_gsm_leH (a := 2) (b := 0) (δ := 8e-8) (x := y) (H := 1e8) (by norm_num)
+        Explicit.rh_upto_1e8 (by norm_num) (by norm_num) le_rfl (by linarith [hy.1])
       exact h1.trans (ErrG_win_le (by linarith [hy.1]))
   rw [Real.exp_zero, ← hM1] at hW
-  have hE2 := edge_le (a := 2) (δ := 1e-8) (Y := Y) (A := Aloc x) (B := Bloc x) (by norm_num) (by norm_num)
+  have hE2 := edge_le (a := 2) (δ := 8e-8) (Y := Y) (A := Aloc x) (B := Bloc x) (by norm_num) (by norm_num)
     hY1 (Aloc_nonneg x) (Bloc_nonneg x) fun t ht => E1_local hx' hxfl ht
-  have hE1 := edge_le (a := 2) (δ := 1e-8) (Y := (x : ℝ)) (A := Aloc x) (B := Bloc x) (by norm_num)
+  have hE1 := edge_le (a := 2) (δ := 8e-8) (Y := (x : ℝ)) (A := Aloc x) (B := Bloc x) (by norm_num)
     (by norm_num) (by linarith) (Aloc_nonneg x) (Bloc_nonneg x) fun t ht => by
       rw [Nat.floor_natCast] at ht ⊢; exact E1_local hx' le_rfl ht
   rw [Nat.floor_natCast, ← hM1, ← hG] at hE1
@@ -547,21 +572,21 @@ theorem E1_win_num {x : ℕ} (hx : 10 ^ 12 ≤ x) {Y : ℝ} (hY : (x : ℝ) ≤ 
   -- `M₁ |ΔE₁| ≤ M₁ X + Z`
   set D := |E₁Λ Y - E₁Λ x| with hD
   set X := 4 * Aloc x + 2 * (Bloc x / ⌊Y⌋₊) + 2 * (Bloc x / x) with hX
-  set Z := 2 * 4247 / √(x : ℝ) + 3e-30 * Real.log (Y / x) + 4 * Bloc x * G + 2 * (21.1 * 1e-8) with hZ
+  set Z := 2 * 4247 / √(x : ℝ) + 3e-13 * Real.log (Y / x) + 4 * Bloc x * G + 2 * (21.1 * 8e-8) with hZ
   have hG0 : 0 ≤ G := by
     rw [hG]
     have := Real.add_one_le_exp (2 * (3 / 2) : ℝ)
     exact div_nonneg (mul_nonneg (Real.exp_pos _).le (by linarith)) (by norm_num)
   have hMZ : M1 * D ≤ M1 * X + Z := by
-    have e : M1 * X + Z = 2 * 4247 / √(x : ℝ) + 3e-30 * Real.log (Y / x) +
-        ((2 * Aloc x + 2 * Bloc x / ⌊Y⌋₊) * M1 + 2 * Bloc x * G + 21.1 * 1e-8) +
-        ((2 * Aloc x + 2 * Bloc x / x) * M1 + 2 * Bloc x * G + 21.1 * 1e-8) := by
+    have e : M1 * X + Z = 2 * 4247 / √(x : ℝ) + 3e-13 * Real.log (Y / x) +
+        ((2 * Aloc x + 2 * Bloc x / ⌊Y⌋₊) * M1 + 2 * Bloc x * G + 21.1 * 8e-8) +
+        ((2 * Aloc x + 2 * Bloc x / x) * M1 + 2 * Bloc x * G + 21.1 * 8e-8) := by
       rw [hX, hZ]; ring
     rw [e]; linarith
   have hZ0 : 0 ≤ Z := by
     rw [hZ]
     have := mul_nonneg (mul_nonneg (by norm_num : (0 : ℝ) ≤ 4) hB0) hG0
-    have := mul_nonneg (by norm_num : (0 : ℝ) ≤ 3e-30) hlog0
+    have := mul_nonneg (by norm_num : (0 : ℝ) ≤ 3e-13) hlog0
     have : 0 ≤ 2 * 4247 / √(x : ℝ) := by positivity
     linarith
   have hDle : D ≤ X + Z * (1000 / 6389) := by
@@ -573,10 +598,10 @@ theorem E1_win_num {x : ℕ} (hx : 10 ^ 12 ≤ x) {Y : ℝ} (hY : (x : ℝ) ≤ 
       calc Z = Z * (1000 / 6389) * (6389 / 1000) := by ring
         _ ≤ Z * (1000 / 6389) * M1 := mul_le_mul_of_nonneg_left h6 (by positivity)
     linarith
-  have hZ' : Z ≤ 8494 * (1 / √(x : ℝ)) + 6.0003e-26 + 4 * 12.724 * Bloc x + 4.22e-7 := by
+  have hZ' : Z ≤ 8494 * (1 / √(x : ℝ)) + 6.0003e-9 + 4 * 12.724 * Bloc x + 3.376e-6 := by
     rw [hZ]
     have : 4 * Bloc x * G ≤ 4 * Bloc x * 12.724 := mul_le_mul_of_nonneg_left hGl (by linarith)
-    have : 3e-30 * Real.log (Y / x) ≤ 3e-30 * 20001 := mul_le_mul_of_nonneg_left hlog (by norm_num)
+    have : 3e-13 * Real.log (Y / x) ≤ 3e-13 * 20001 := mul_le_mul_of_nonneg_left hlog (by norm_num)
     have e : 2 * 4247 / √(x : ℝ) = 8494 * (1 / √(x : ℝ)) := by ring
     linarith
   have hBq : Bloc x / x ≤ 1 / 4 * (1 / x) := by
@@ -601,14 +626,14 @@ theorem E1_win_num {x : ℕ} (hx : 10 ^ 12 ≤ x) {Y : ℝ} (hY : (x : ℝ) ≤ 
 /-- `D(x)` in `E1_var`. -/
 noncomputable def Dvar (x : ℕ) : ℝ :=
   1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 +
-    if Real.log x < 20000 then 1.1e-7 else 2 / Real.log x ^ 2
+    if Real.log x < 20000 then 8.5e-6 else 2 / Real.log x ^ 2
 
 theorem Dvar_nonneg (x : ℕ) : 0 ≤ Dvar x := by
   unfold Dvar
   have := Real.log_natCast_nonneg x
   split_ifs <;> positivity
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`E₁Λ` varies by at most `D(x)` on `[x, ∞)`**, `x ≥ 10¹²`: the window bound `E1_win_num` up to
 `T = ⌈e^{20000}⌉`, and `E1_diff` beyond `T` (and for `log x ≥ 20000`). -/
 theorem E1_var {x : ℕ} (hx : 10 ^ 12 ≤ x) {t : ℝ} (ht : (x : ℝ) ≤ t) : |E₁Λ t - E₁Λ x| ≤ Dvar x := by
@@ -641,8 +666,8 @@ theorem E1_var {x : ℕ} (hx : 10 ^ 12 ≤ x) {t : ℝ} (ht : (x : ℝ) ≤ t) :
     have hlogT' : 20000 ≤ Real.log T := (Real.le_log_iff_exp_le hT0).2 hT1
     have hlogTx : Real.log (T / x) ≤ 20001 := by
       rw [Real.log_div hT0.ne' hx0.ne']; linarith
-    have key : 1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 9.6e-8 + 8e-9 ≤
-        1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 1.1e-7 := by linarith
+    have key : 1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 8.4e-6 + 8e-9 ≤
+        1443 / √(x : ℝ) + 13 / x + 16 / Real.log x ^ 3 + 8.5e-6 := by linarith
     rcases le_or_gt t T with htT | htT
     · have hlog : Real.log (t / x) ≤ 20001 := by
         refine le_trans (Real.log_le_log (div_pos (lt_of_lt_of_le hx0 ht) hx0) ?_) hlogTx
@@ -912,7 +937,7 @@ theorem log_le_sqrt_small {x : ℝ} (hx : 1e12 ≤ x) : Real.log x ≤ 2.8e-5 * 
   rw [Real.log_div hs0.ne' (by norm_num)] at h1
   rw [hL]; linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Lemma C.2.2]** for `x ≥ 10¹²`: `∏_{p ≤ x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`. -/
 theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
@@ -974,7 +999,7 @@ theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
     rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
     have : L ^ 3 = L * L ^ 2 := by ring
     rw [this]; nlinarith only [hLL, hL0]
-  have hDL : 2 * D * L ≤ 0.2 := by
+  have hDL : 2 * D * L ≤ 0.47 := by
     have t1 : 1443 / sx * L ≤ 1443 * 2.8e-5 := by
       have h : L / sx ≤ 2.8e-5 := by rw [div_le_iff₀ hsx0]; linarith only [hLs]
       calc 1443 / sx * L = 1443 * (L / sx) := by ring
@@ -987,13 +1012,13 @@ theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
       have h729 : (729 : ℝ) ≤ L ^ 2 := by nlinarith only [hL27]
       have e : L ^ 3 = L * L ^ 2 := by ring
       rw [e]; nlinarith only [h729, hL0]
-    have t4 : (if L < 20000 then (1.1e-7 : ℝ) else 2 / L ^ 2) * L ≤ 0.0022 := by
+    have t4 : (if L < 20000 then (8.5e-6 : ℝ) else 2 / L ^ 2) * L ≤ 0.17 := by
       split_ifs with h
       · linarith only [h]
       · push Not at h
         rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]; nlinarith only [h]
     have e : 2 * D * L = 2 * (1443 / sx * L + 13 / (x : ℝ) * L + 16 / L ^ 3 * L +
-        (if L < 20000 then (1.1e-7 : ℝ) else 2 / L ^ 2) * L) := by
+        (if L < 20000 then (8.5e-6 : ℝ) else 2 / L ^ 2) * L) := by
       rw [hD]; unfold Dvar; rw [← hLdef, ← hsx]; ring
     rw [e]; linarith only [t1, t2, t3, t4]
   have hηL : η * L ^ 2 ≤ 0.6174 := by
@@ -1070,13 +1095,13 @@ theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
     rw [lt_div_iff₀ hL0]
     have hk : (2 * (G * η * L) + 2 * (G * u)) * L = 2 * (G * (η * L ^ 2)) + 2 * (G * (u * L)) := by
       ring
-    have huL : u * L ≤ 0.0032 := by
+    have huL : u * L ≤ 0.013 := by
       have := epl_mul_log_le (x : ℝ)
       have e : u * L = 1 / L ^ 3 * L + epl x * L := by rw [hu]; ring
       rw [e]; linarith [k6]
     have a1 : G * (η * L ^ 2) ≤ 1.95 * 0.6174 :=
       mul_le_mul hG1.le hηL (by positivity) (by norm_num)
-    have a2 : G * (u * L) ≤ 1.95 * 0.0032 :=
+    have a2 : G * (u * L) ≤ 1.95 * 0.013 :=
       mul_le_mul hG1.le huL (by positivity) (by norm_num)
     rw [hk]; linarith only [a1, a2]
   linarith only [hF, hGL, hc, key]
@@ -1086,7 +1111,8 @@ theorem F_large {x : ℕ} (hx : 10 ^ 12 ≤ x) :
 `E₂Λ(M) − E₂Λ(N) = −(∑_{M<n≤N} Λ(n) w(n) − (log log N − log log M))`, `w(n) = 1/(n log n)`; by
 summation by parts against `ψ(n) − n` (`E2_var`) the `ψ`-errors at `n` enter with weight
 `w(n) − w(n+1) ≈ 1/(n² log n)`. With `|ψ(n) − n| ≤ c(n)√n` (`c = 1` below `10⁶`, `5` up to `5·10⁷`
-(`thetaN_sieve`), `cB` up to `10¹⁷`) this gives `|E₂Λ(M)| ≤ 0.0027` already at `M = 10⁵`
+(`thetaN_sieve`), `cB ≤ 72` up to `10¹⁵`, `cB ≤ 200` up to `10¹⁷`) this gives `|E₂Λ(M)| ≤ 0.003` already
+at `M = 10⁵`
 (`E2_le_bin`). -/
 
 /-- `w(n) = 1/(n log n)`. -/
@@ -1263,7 +1289,7 @@ theorem E2_var {M N : ℕ} (hM : 3 ≤ M) (hMN : M < N) :
   rw [key, abs_le]
   constructor <;> linarith [hX.1, hX.2, hY.1, hY.2, hZ.1, hZ.2]
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `|E₂Λ(10¹⁸)| ≤ 2 D(10¹⁸)/log 10¹⁸` (`E1_var`). -/
 theorem E2_1e18 : |E₂Λ ((10 ^ 18 : ℕ) : ℝ)| ≤ 0.0000683 := by
   have hN : (2 : ℝ) ≤ ((10 ^ 18 : ℕ) : ℝ) := by norm_num
@@ -1291,10 +1317,10 @@ theorem E2_1e18 : |E₂Λ ((10 ^ 18 : ℕ) : ℝ)| ≤ 0.0000683 := by
   norm_num at h3 ⊢
   nlinarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- The tail `n > 10¹⁷` of the error sum (`psi_err`, `big_sum_le`). -/
-theorem tail_sum_le (M N : ℕ) :
-    ∑ n ∈ Ioo M N, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤ 0.0000358 := by
+theorem tail_sum_le17 (M N : ℕ) :
+    ∑ n ∈ Ioo M N, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤ 0.0002922 := by
   have hterm : ∀ n ∈ Ioo M N, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
       (1 / 39 + 1 / 39 ^ 2) * ((if 10 ^ 17 < n then 1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1)
         else 0) + 7.04 * (if 10 ^ 17 < n then 1 / (√(n : ℝ) * (n + 1)) else 0)) := by
@@ -1344,18 +1370,77 @@ theorem tail_sum_le (M N : ℕ) :
     · exact le_rfl
   nlinarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
-/-- **`|E₂Λ(M)|` for `10⁵ ≤ M < 10¹⁷`**, given `|ψ(n) − n| ≤ c(n)√n` on `[M, 10¹⁷]` with
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- The tail `n > 10¹⁵` of the error sum: `|ψ(n) − n| ≤ 200√n` up to `10¹⁷` (`psi_two_sided`),
+`tail_sum_le17` above. -/
+theorem tail_sum_le (M N : ℕ) :
+    ∑ n ∈ Ioo M N, (if 10 ^ 15 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤ 0.0002926 := by
+  have hsplit : ∑ n ∈ Ioo M N, (if 10 ^ 15 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) =
+      ∑ n ∈ Ioo M N, (if 10 ^ 15 < n ∧ n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0) +
+      ∑ n ∈ Ioo M N, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) := by
+    rw [← sum_add_distrib]
+    refine sum_congr rfl fun n _ => ?_
+    by_cases h1 : 10 ^ 15 < n
+    · by_cases h2 : n ≤ 10 ^ 17
+      · rw [if_pos h1, if_pos ⟨h1, h2⟩, if_neg (by omega), add_zero]
+      · rw [if_pos h1, if_neg (by omega), if_pos (by omega), zero_add]
+    · rw [if_neg h1, if_neg (by omega), if_neg (by omega), add_zero]
+  set g : ℕ → ℝ := fun n => 1 / (√(n : ℝ) * (n + 1)) with hg
+  have hg0 : ∀ n, 0 ≤ g n := fun n => by simp only [hg]; positivity
+  have hmid : ∀ n ∈ Ioo M N,
+      (if 10 ^ 15 < n ∧ n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
+        200 * (1 / 34 + 1 / 34 ^ 2) * (if 10 ^ 15 < n then g n else 0) := by
+    intro n _
+    by_cases h : 10 ^ 15 < n ∧ n ≤ 10 ^ 17
+    · rw [if_pos h, if_pos h.1]
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+      have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0.le
+      have hL : (34 : ℝ) ≤ Real.log n := by
+        have h' : (1000000000000000 : ℝ) < n := by exact_mod_cast h.1
+        exact_mod_cast nat_le_log (N := (n : ℝ)) (k := 34)
+          (le_trans (by norm_num : (2.7182818286 : ℝ) ^ 34 ≤ 1000000000000000) h'.le)
+      have hw := wl_diff (n := n) (by omega)
+      have he : |psiN n - n| ≤ 200 * √(n : ℝ) := by
+        have hb := psi_two_sided (n := n) (by omega) h.2
+        have := mul_le_mul_of_nonneg_right (cB_le_200 n) (Real.sqrt_nonneg (n : ℝ))
+        unfold psiN; linarith
+      have hk : 1 / Real.log n + 1 / Real.log n ^ 2 ≤ 1 / 34 + 1 / 34 ^ 2 := by gcongr
+      have hd := hw.2.trans (mul_le_mul_of_nonneg_left hk (by positivity))
+      have h1 := mul_le_mul he hd hw.1 (by positivity)
+      refine h1.trans (le_of_eq ?_)
+      have c : √(n : ℝ) * (1 / (n * ((n : ℝ) + 1))) = g n := by
+        simp only [hg]
+        rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
+      calc 200 * √(n : ℝ) * (1 / (n * ((n : ℝ) + 1)) * (1 / 34 + 1 / 34 ^ 2))
+          = 200 * (1 / 34 + 1 / 34 ^ 2) * (√(n : ℝ) * (1 / (n * ((n : ℝ) + 1)))) := by ring
+        _ = _ := by rw [c]
+    · rw [if_neg h]
+      exact mul_nonneg (by norm_num) (by split_ifs; exacts [hg0 n, le_rfl])
+  have hm := sum_le_sum hmid
+  rw [← mul_sum] at hm
+  have h2 := (sum_Ioo_ite_le g hg0 (10 ^ 15) M N).trans (sum_Ioo_inv_sqrt_le (10 ^ 15) N)
+  have h3 : 2 / √(((10 ^ 15 : ℕ) : ℝ) + 1) ≤ 6.4e-8 := by
+    have : (31622776 : ℝ) ≤ √(((10 ^ 15 : ℕ) : ℝ) + 1) := Real.le_sqrt_of_sq_le (by norm_num)
+    exact (div_le_div_of_nonneg_left (by norm_num) (by norm_num) this).trans (by norm_num)
+  have ht := tail_sum_le17 M N
+  rw [hsplit]
+  have h4 := mul_le_mul_of_nonneg_left (h2.trans h3)
+    (by norm_num : (0 : ℝ) ≤ 200 * (1 / 34 + 1 / 34 ^ 2))
+  have : (200 : ℝ) * (1 / 34 + 1 / 34 ^ 2) * 6.4e-8 ≤ 4e-7 := by norm_num
+  linarith
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **`|E₂Λ(M)|` for `10⁵ ≤ M < 10¹⁷`**, given `|ψ(n) − n| ≤ c(n)√n` on `[M, 10¹⁵]` with
 `c(n) = c₀ + d₁[n ≥ 10⁶] + d₂[n ≥ 5·10⁷] + d₃[n > 10⁸] + d₄[n > 3.2·10¹⁰]`, `L₀ ≤ log M`, `s₀ ≤ √M`. -/
 theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ d₂ d₃ d₄ L₀ s₀ : ℝ}
     (hc₀ : 0 ≤ c₀) (hd₁ : 0 ≤ d₁) (hd₂ : 0 ≤ d₂) (hd₃ : 0 ≤ d₃) (hd₄ : 0 ≤ d₄)
-    (hc : ∀ n : ℕ, M < n → n ≤ 10 ^ 17 → |psiN n - n| ≤ (c₀ + d₁ * (if 999999 < n then 1 else 0) +
+    (hc : ∀ n : ℕ, M < n → n ≤ 10 ^ 15 → |psiN n - n| ≤ (c₀ + d₁ * (if 999999 < n then 1 else 0) +
       d₂ * (if 49999999 < n then 1 else 0) + d₃ * (if 10 ^ 8 < n then 1 else 0) +
       d₄ * (if 32000000000 < n then 1 else 0)) * √(n : ℝ))
     (hcM : |psiN M - M| ≤ c₀ * √(M : ℝ))
     (hL₀ : L₀ ≤ Real.log M) (hL₀0 : 0 < L₀) (hs₀ : s₀ ≤ √(M : ℝ)) (hs₀0 : 0 < s₀) :
     |E₂Λ (M : ℝ)| ≤ (1 / L₀ + 1 / L₀ ^ 2) * (c₀ * (2 / s₀) + d₁ * 0.002 + d₂ * 0.00028285 +
-      d₃ * 0.0002 + d₄ * 0.0000111804) + c₀ / (s₀ * L₀) + 0.00011 := by
+      d₃ * 0.0002 + d₄ * 0.0000111804) + c₀ / (s₀ * L₀) + 0.00037 := by
   set N₁ : ℕ := 10 ^ 18 with hN₁
   have hMN : M < N₁ := by omega
   have hM0 : (0 : ℝ) < M := by exact_mod_cast (by omega : 0 < M)
@@ -1363,7 +1448,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
   have hvar := E2_var (M := M) (N := N₁) (by omega) hMN
   have hE1 := E2_1e18
   -- boundary at `N₁`
-  have hbN : |psiN N₁ - N₁| * wl N₁ ≤ 0.00000036 := by
+  have hbN : |psiN N₁ - N₁| * wl N₁ ≤ 0.00000037 := by
     have he := psi_err (n := N₁) (by norm_num)
     have hN0 : (0 : ℝ) < N₁ := by norm_num
     have hL : (41 : ℝ) ≤ Real.log N₁ := by
@@ -1385,11 +1470,11 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
     rw [hw, add_mul, add_mul, t1, t2, t3] at h1
     have a : 1 / Real.log N₁ ^ 4 ≤ 1 / 41 ^ 4 :=
       div_le_div_of_nonneg_left (by norm_num) (by norm_num) (pow_le_pow_left₀ (by norm_num) hL 4)
-    have b : epl N₁ / Real.log N₁ ≤ 1.83e-9 / 41 :=
+    have b : epl N₁ / Real.log N₁ ≤ 4.92e-7 / 41 :=
       div_le_div₀ (by norm_num) hep (by norm_num) hL
     have c : 7.04 / (√(N₁ : ℝ) * Real.log N₁) ≤ 7.04 / (1000000000 * 41) :=
       div_le_div_of_nonneg_left (by norm_num) (by norm_num) (mul_le_mul hs hL (by norm_num) hs0.le)
-    have : (1 : ℝ) / 41 ^ 4 + 1.83e-9 / 41 + 7.04 / (1000000000 * 41) ≤ 0.00000036 := by norm_num
+    have : (1 : ℝ) / 41 ^ 4 + 4.92e-7 / 41 + 7.04 / (1000000000 * 41) ≤ 0.00000037 := by norm_num
     rw [hw]; linarith
   -- boundary at `M`
   have hbM : |psiN M - M| * wl (M + 1) ≤ c₀ / (s₀ * L₀) := by
@@ -1419,11 +1504,11 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
     nlinarith
   -- the interior: split at `10¹⁷`
   have hsplit : ∑ n ∈ Ioo M N₁, |psiN n - n| * (wl n - wl (n + 1)) =
-      ∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0) +
-      ∑ n ∈ Ioo M N₁, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) := by
+      ∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 15 then |psiN n - n| * (wl n - wl (n + 1)) else 0) +
+      ∑ n ∈ Ioo M N₁, (if 10 ^ 15 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0) := by
     rw [← sum_add_distrib]
     refine sum_congr rfl fun n _ => ?_
-    by_cases h : n ≤ 10 ^ 17
+    by_cases h : n ≤ 10 ^ 15
     · rw [if_pos h, if_neg (by omega), add_zero]
     · rw [if_neg h, if_pos (by omega), zero_add]
   have htail := tail_sum_le M N₁
@@ -1431,7 +1516,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
   have hκ0 : 0 ≤ κ := by positivity
   set g : ℕ → ℝ := fun n => 1 / (√(n : ℝ) * (n + 1)) with hg
   have hg0 : ∀ n, 0 ≤ g n := fun n => by simp only [hg]; positivity
-  have hmain : ∀ n ∈ Ioo M N₁, (if n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
+  have hmain : ∀ n ∈ Ioo M N₁, (if n ≤ 10 ^ 15 then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
       κ * (c₀ * g n + d₁ * (if 999999 < n then g n else 0) + d₂ * (if 49999999 < n then g n else 0) +
         d₃ * (if 10 ^ 8 < n then g n else 0) + d₄ * (if 32000000000 < n then g n else 0)) := by
     intro n hn
@@ -1446,7 +1531,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
     have hgn : √(n : ℝ) * (1 / (n * ((n : ℝ) + 1))) = g n := by
       simp only [hg]
       rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
-    by_cases h17 : n ≤ 10 ^ 17
+    by_cases h17 : n ≤ 10 ^ 15
     · rw [if_pos h17]
       have he := hc n hn1 h17
       have hcpos : 0 ≤ c₀ + d₁ * (if 999999 < n then 1 else 0) + d₂ * (if 49999999 < n then 1 else 0) +
@@ -1492,7 +1577,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
   have hE' : 2 / √(((32000000000 : ℕ) : ℝ) + 1) ≤ 0.0000111804 := by
     have : (178885.4 : ℝ) ≤ √(((32000000000 : ℕ) : ℝ) + 1) := Real.le_sqrt_of_sq_le (by norm_num)
     exact (div_le_div_of_nonneg_left (by norm_num) (by norm_num) this).trans (by norm_num)
-  have hint : ∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
+  have hint : ∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 15 then |psiN n - n| * (wl n - wl (n + 1)) else 0) ≤
       κ * (c₀ * (2 / s₀) + d₁ * 0.002 + d₂ * 0.00028285 + d₃ * 0.0002 + d₄ * 0.0000111804) := by
     refine hsum.trans (mul_le_mul_of_nonneg_left ?_ hκ0)
     have := mul_le_mul_of_nonneg_left hA hc₀
@@ -1509,11 +1594,11 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
   rw [this] at hE1
   calc |E₂Λ (M : ℝ)| ≤ |E₂Λ (M : ℝ) - E₂Λ (N₁ : ℝ)| + |E₂Λ (N₁ : ℝ)| := htri
     _ ≤ (|psiN N₁ - N₁| * wl N₁ + |psiN M - M| * wl (M + 1) +
-          ((∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 17 then |psiN n - n| * (wl n - wl (n + 1)) else 0)) +
-            ∑ n ∈ Ioo M N₁, (if 10 ^ 17 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0)) + wl M) +
+          ((∑ n ∈ Ioo M N₁, (if n ≤ 10 ^ 15 then |psiN n - n| * (wl n - wl (n + 1)) else 0)) +
+            ∑ n ∈ Ioo M N₁, (if 10 ^ 15 < n then |psiN n - n| * (wl n - wl (n + 1)) else 0)) + wl M) +
           0.0000683 := add_le_add hvar hE1
-    _ ≤ (0.00000036 + c₀ / (s₀ * L₀) + (κ * (c₀ * (2 / s₀) + d₁ * 0.002 + d₂ * 0.00028285 +
-          d₃ * 0.0002 + d₄ * 0.0000111804) + 0.0000358) + 0.00000091) + 0.0000683 := by
+    _ ≤ (0.00000037 + c₀ / (s₀ * L₀) + (κ * (c₀ * (2 / s₀) + d₁ * 0.002 + d₂ * 0.00028285 +
+          d₃ * 0.0002 + d₄ * 0.0000111804) + 0.0002926) + 0.00000091) + 0.0000683 := by
         gcongr
     _ ≤ _ := by rw [hκ]; linarith
 
@@ -1851,17 +1936,17 @@ theorem log_5e7_le : Real.log 50000000 ≤ 17.73 := by
   rw [e] at h; refine le_trans ?_ h
   norm_num [Finset.sum_range_succ, Nat.factorial]
 
-/-- The envelope `c(n)` of `|ψ(n) − n|/√n` on `[12, 10¹⁷]`: `1` below `10⁶` (`small_table`), `5` up to
+/-- The envelope `c(n)` of `|ψ(n) − n|/√n` on `[12, 10¹⁵]`: `1` below `10⁶` (`small_table`), `5` up to
 `5·10⁷` (`thetaN_sieve`, `nonprime_small`), then `31.5`, `35.5`, `72` (`cB`). -/
 noncomputable def cE (n : ℕ) : ℝ :=
   1 + 4 * (if 999999 < n then 1 else 0) + 26.5 * (if 49999999 < n then 1 else 0) +
     4 * (if 10 ^ 8 < n then 1 else 0) + 36.5 * (if 32000000000 < n then 1 else 0)
 
-variable [Fact TernaryGoldbach.RHUpTo] in
-theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 17) : |psiN n - n| ≤ cE n * √(n : ℝ) := by
+variable [Fact TernaryGoldbach.PlattGRH] in
+theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 15) : |psiN n - n| ≤ cE n * √(n : ℝ) := by
   have hs := Real.sqrt_nonneg (n : ℝ)
   rcases lt_or_ge n 1000000 with h6 | h6
-  · have hb := psi_two_sided h12 h17
+  · have hb := psi_two_sided h12 (by omega)
     rw [cB_small h6] at hb
     have : cE n = 1 := by unfold cE; simp only [if_neg (show ¬ 999999 < n by omega),
       if_neg (show ¬ 49999999 < n by omega), if_neg (show ¬ 10 ^ 8 < n by omega),
@@ -1876,7 +1961,7 @@ theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 17) : |psiN n - n| �
       if_neg (show ¬ 49999999 < n by omega), if_neg (show ¬ 10 ^ 8 < n by omega),
       if_neg (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this, abs_le]; constructor <;> linarith
-  have hb := psi_two_sided h12 h17
+  have hb := psi_two_sided h12 (by omega)
   rcases le_or_gt n (10 ^ 8) with h8 | h8
   · have hc := cB_le_315 (n := n) (by omega) h8
     have : cE n = 31.5 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
@@ -1889,7 +1974,7 @@ theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 17) : |psiN n - n| �
       if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega),
       if_neg (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this]; exact hb.trans (mul_le_mul_of_nonneg_right hc hs)
-  · have hc := cB_le_72 n
+  · have hc := cB_le_72 h17
     have : cE n = 72 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
       if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega),
       if_pos (show 32000000000 < n by omega)]; norm_num
@@ -1907,7 +1992,7 @@ theorem cE_eq {n : ℕ} {c₀ d₁ d₂ d₃ d₄ : ℝ}
 theorem lnat (N : ℝ) (k : ℕ) (h : (2.7182818286 : ℝ) ^ k ≤ N) : (k : ℝ) ≤ Real.log N := nat_le_log h
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[RS62, Thm 15] for `10⁵ ≤ x < 10¹²`**: seven bins, each with `E2_le_bin` and `F_mid_gen`. -/
 theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
@@ -1954,7 +2039,7 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
     refine F_mid_gen (S0 := 547) (Lm := 13.82) (cθ := 2.3662) hx1 (by norm_num) (by rw [Nat.le_sqrt]; omega)
       ((hlogmono 1000000 (by exact_mod_cast h2.le)).trans log_1e6_le) hE (hθlo h2) (by norm_num)
       (by norm_num) (by norm_num) (by norm_num)
-  have hc5 : ∀ n : ℕ, x < n → n ≤ 10 ^ 17 → |psiN n - n| ≤ (5 + 0 * (if 999999 < n then 1 else 0) +
+  have hc5 : ∀ n : ℕ, x < n → n ≤ 10 ^ 15 → |psiN n - n| ≤ (5 + 0 * (if 999999 < n then 1 else 0) +
       26.5 * (if 49999999 < n then 1 else 0) + 4 * (if 10 ^ 8 < n then 1 else 0) +
       36.5 * (if 32000000000 < n then 1 else 0)) * √(n : ℝ) := fun n hn h17 =>
     cE_eq (by unfold cE; rw [if_pos (show 999999 < n by omega)]; ring) (psi_cE (by omega) h17)
@@ -2038,7 +2123,7 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
       (by rw [Nat.le_sqrt]; omega)
       ((hlogmono 1e12 (by have : (x : ℝ) < 1000000000000 := by exact_mod_cast hx2
                           norm_num; linarith)).trans log_1e12_le) hE
-      (hθcB 72 (cB_le_72 x)) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      (hθcB 72 (cB_le_72 (by omega))) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- `q/φ(q) = ∏_{p ∣ q} p/(p−1)`. -/
 theorem div_totient_eq_prod {q : ℕ} (hq : 1 ≤ q) :
@@ -2131,7 +2216,7 @@ theorem image_nth (k : ℕ) (hk : 1 ≤ k) :
       rw [Nat.count_succ]; simp [hpp]
     omega
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem F_all {x : ℕ} (hx : x.Prime) (h5 : 5 ≤ x) :
     ∏ p ∈ (Icc 1 x).filter Nat.Prime, ((p : ℝ) / (p - 1)) <
       Real.exp Real.eulerMascheroniConstant * Real.log (thetaN x) +
@@ -2167,7 +2252,7 @@ theorem bigF_gt {r : ℝ} (hr : 3 ≤ r) :
     nlinarith [sq_nonneg (t - 1.15385)]
   linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Lemma C.2.2]** ([RS62, Thm. 15]): `q/φ(q) < e^γ log log r + 2.50637/log log r` for `q ≥ 1`,
 `r ≥ max(3, q)`. -/
 theorem div_totient_lt {q : ℕ} (hq : 1 ≤ q) {r : ℝ} (hr : 3 ≤ r) (hqr : (q : ℝ) ≤ r) :

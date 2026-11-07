@@ -126,14 +126,15 @@ differences from [H]; `NOTES.md` has the details.
 (2.12)–(2.15), (2.17), (2.19), (5.5)  (Prelim/LambdaMu.lean); Lemma C.2.2 (Prelim/MertensProduct.lean, Prelim/MertensWindow.lean)
  ├─ psi_two_sided  (Prelim/PsiTwoSided.lean: |ψ(n) − n| ≤ c(n)√n, 12 ≤ n ≤ 10¹⁷)
  │   ├─ the trial-division table on [12, 10⁶) (Prelim/SmallPsiTable*.lean, kernel)
- │   └─ psi_mid on [10⁶, 10¹⁷] (Explicit/PsiRanges.lean ⇐ PsiRange ⇐ PsiWeil ⇐ the Weil explicit
+ │   └─ psi_mid8 on [10⁶, 10¹⁷] (Explicit/PsiRanges1e8.lean ⇐ PsiRange ⇐ PsiWeil ⇐ the Weil explicit
  │      formula with a compactly supported test function: Weil*.lean; low zeros |γ| ≥ 2.39:
- │      ZetaLowZeroFree.lean)
+ │      ZetaLowZeroFree.lean; RH up to 10⁸: rh_upto_1e8 from PlattGRH at q = 1)
  ├─ the bit-sieve table on [10⁶, 5·10⁷) (Prelim/PsiSieve*.lean, kernel)
  ├─ theta_explicit (Prelim/ThetaExplicit.lean: |θ(n) − n| < n/log³n + ε_pl(n) n, n ≥ 10¹²)
  │   ├─ psi_two_sided below 10¹⁷
- │   └─ above 10¹⁷: the Gaussian-smoothed explicit formula (Explicit/PsiExplicit, PsiPlateau,
- │      PsiLarge, PsiRange1, PsiAsymp) with the zero-free region β ≤ 1 − 1/(11 log|γ|), |γ| ≥ 10⁸
+ │   └─ above 10¹⁷: the Gaussian-smoothed explicit formula with RH up to 10⁸ (Explicit/PsiExplicit,
+ │      PsiPlateau1e8, PsiLarge, PsiRange1, PsiAsymp) with the zero-free region
+ │      β ≤ 1 − 1/(11 log|γ|), |γ| ≥ 10⁸
  │      (Explicit/XiPartial, ZeroFree, ZeroFreeRegion)
  └─ for Lemma C.2.2 above 10¹², the variation of E₁Λ: the same smoothed explicit formula
     integrated against dy/y² (Prelim/MertensWindow.lean, E1_var), theta_explicit at the two ends

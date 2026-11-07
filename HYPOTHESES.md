@@ -22,11 +22,13 @@ later papers and the float check below stand in.
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The hypotheses are stated as in the papers or weaker. Where they are used:
-* `rh_upto`: the explicit formulas for `ψ` (`Explicit/`): the Weil-window formula on `[10⁶, 10¹⁷]` and
-  the Gaussian-smoothed formula above `10¹⁷`. Through them it enters every bound of [H, §2] for `ψ` and
-  `θ`, and the small cases;
+* `rh_upto`: the small cases, through the `θ` bounds near `10²⁷` (`Explicit/PsiPlateau.lean`,
+  `Helfgott/SmallCases.lean`). The bounds of [H, §2] for `ψ` and `θ` use RH only up to `10⁸`, which
+  `platt_verification` gives at `q = 1` (`Explicit.rh_upto_1e8`);
 * `platt_verification`: [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5] (including `q = 1`), hence (14.7),
-  (14.27) and the base gap of the minor arcs;
+  (14.27) and the base gap of the minor arcs; at `q = 1`, RH up to `10⁸` (`Explicit.rh_upto_1e8`) for
+  the explicit formulas for `ψ` (`Explicit/`: the Weil-window formula on `[10⁶, 10¹⁷]` and the
+  Gaussian-smoothed formula above `10¹⁷`), hence every bound of [H, §2] for `ψ` and `θ`;
 * `binary_goldbach_input`: the small cases `n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), together with a
   prime in `(n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from `rh_upto` (through
   `Explicit/PsiPlateau.lean`) and the elementary `θ(m) ≤ m log 4`. This replaces [H]'s use of the
@@ -35,7 +37,7 @@ The hypotheses are stated as in the papers or weaker. Where they are used:
   `MoebiusBound.lean`) and the tail of `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
 The bounds for `ψ` and `θ` that [H] quotes from [RS62], [RS75] and [RR96] are not hypotheses: they are
-proved from RH up to `3·10¹⁰` and kernel-checked tables (see "Proved in Lean" below).
+proved from RH up to `10⁸` (from `PlattGRH`) and kernel-checked tables (see "Proved in Lean" below).
 
 ## Errors found in the sources
 
@@ -103,7 +105,7 @@ These inputs are theorems:
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
 | [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: above `10¹²`, the Gaussian-smoothed explicit formula integrated against `dy/y²` (`MertensWindow.lean`), with `theta_explicit` only at the ends of the range; on `[10⁵, 10¹²)`, `\|E₂Λ(x)\|` from the variation of `∑ Λ(n)/(n log n) − log log n` (`E2_var`, `E2_le_bin`: summation by parts against `ψ(n) − n`), the θ tables, `psi_two_sided` and a sharper prime-power tail (`F_mid`, 7 bins); kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `3·10¹⁰` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `10⁸` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 

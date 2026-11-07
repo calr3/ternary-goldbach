@@ -326,7 +326,7 @@ theorem sum_Ioc_int_eq_nat {A B : ℝ} (hA : 0 ≤ A) (f : ℤ → ℝ) :
   · simp only [mem_Ioc] at hm
     rw [Int.toNat_of_nonneg (by omega)]
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- [H, (5.4)–(5.5)]: `|IIsum(W)| ≤ √S₁(U, W) (√S₂(U', W', W) + √S₃(W))` with
 `U' = max(U, x/2W)`, `W' = max(V, W/2)`, `S₃(W) ≤ (x/2W + 1)(1.4262 √W)²` ([RS62, Thm. 13]). -/
 theorem norm_IIsum_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hV : 2 ≤ V) {W : ℝ} (hW : 0 < W) :
@@ -431,7 +431,7 @@ theorem norm_IIsum_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hV : 2 ≤ 
         gcongr
 
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (5.3)–(5.5)]**: `|S_{II}| ≤ 4 ∫_V^{x/U} g(W) dW/W` for any integrable `g` with
 `√S₁(U, W) (√S₂(U', W', W) + √S₃(W)) ≤ g(W)` on `[V, x/U]` (`U' = max(U, x/2W)`,
 `W' = max(V, W/2)`, `S₃(W) ≤ (x/2W + 1)(1.4262² W)`). -/

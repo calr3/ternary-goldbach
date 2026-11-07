@@ -74,9 +74,9 @@ def RamareMoebius : Prop :=
 
 /-! ## Main theorems -/
 
-/-- Every odd `n ≥ 10²⁷` is a sum of three primes, given three of the hypotheses. -/
-theorem ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
-    (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27) := by
+/-- Every odd `n ≥ 10²⁷` is a sum of three primes, given two of the hypotheses. -/
+theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : RamareMoebius) :
+    TernaryGoldbachFrom (10 ^ 27) := by
   sorry
 
 /-- The ternary Goldbach conjecture, given the four hypotheses. -/

@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITools
 
-variable [Fact TernaryGoldbach.RHUpTo]
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-!
 # Type II total [H, §6.2.3]
@@ -42,19 +42,19 @@ theorem logSqSum_le_half {W' W : ℝ} (hW : 2e6 ≤ W) (hW' : W / 2 ≤ W') :
 /-- `κ₀ζ(3/2)³ = 1.27 ζ(3/2)³` [H, (6.16)]. -/
 noncomputable def zeta3 : ℝ := 1.27 * (riemannZeta (3 / 2)).re ^ 3
 
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem zeta3_nonneg : 0 ≤ zeta3 := by
   unfold zeta3; have := zeta_three_halves_nonneg; positivity
 
 /-- `κ₁ = 2/π² + κ₀ζ(3/2)³ √(x/V)/U` [H, (6.18)] (we keep it as an expression). -/
 noncomputable def kap1 (x U V : ℝ) : ℝ := 2 / π ^ 2 + zeta3 * √(x / V) / U
 
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem sqrt_le_amgm {u v : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) : √(u * v) ≤ (u + v) / 2 := by
   rw [Real.sqrt_le_left (by positivity)]
   nlinarith [sq_nonneg (u - v)]
 
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem sqrt_one_add_le {t : ℝ} (ht : 0 ≤ t) : √(1 + t) ≤ 1 + √t := by
   rw [Real.sqrt_le_left (by positivity)]
   nlinarith [Real.sq_sqrt ht, Real.sqrt_nonneg t]
@@ -209,7 +209,7 @@ theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
 
 
 set_option maxHeartbeats 2000000 in
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- Integrating `G637` over `[V, x/U]`. -/
 theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
     (hV : 0 < (V : ℝ)) (hVU : (V : ℝ) ≤ x / U) (hqV : 2 * rexp 1 * q ≤ V) {β : ℝ} (hβ : 0 < β) :

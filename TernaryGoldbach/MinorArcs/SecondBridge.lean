@@ -51,7 +51,7 @@ theorem loglog_T6_ge {T : ℝ} (hT : 6e6 ≤ T) : 2.50637 ≤ Real.log (Real.log
     rw [Real.le_log_iff_exp_le (by linarith)]; linarith
   rw [Real.le_log_iff_exp_le (by linarith)]; linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `q/φ(q) ≤ 1.948 log log T + 1` for `q ≤ T/6`, `T ≥ 6·10⁶` (Lemma C.2.2). -/
 theorem div_totient_le_loglog {q : ℕ} (hq : 1 ≤ q) {T : ℝ} (hT : 6e6 ≤ T) (hqT : (q : ℝ) ≤ T / 6) :
     (q : ℝ) / Nat.totient q ≤ 1.948 * Real.log (Real.log T) + 1 := by
@@ -207,7 +207,7 @@ theorem bridge_numeric_third {T : ℝ} (hT : 6e6 ≤ T) :
   linarith
 
 set_option maxHeartbeats 1600000 in
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **The bridge case** (case (c) of `second_case_split`): `|S| ≤ 1.434 T^{5/2} (log T)^{3/2}`. -/
 theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ' a' q' (3 / 4 * T ^ 2)) (hq : (q' : ℝ) ≤ T / 6)

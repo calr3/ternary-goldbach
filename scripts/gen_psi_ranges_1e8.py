@@ -211,7 +211,7 @@ for i in range(n - 1):
 proof.append(f"  push Not at h{n-2}")
 proof.append(f"  exact psi_range8_{n-1} h{n-2}.le (by norm_num at h2 ⊢; linarith)")
 def chain(name, stmt, bound, upto):
-    lines = [f"theorem {name} {stmt} := by", "  unfold cW"]
+    lines = ["omit [Fact TernaryGoldbach.PlattGRH] in", f"theorem {name} {stmt} := by", "  unfold cW8"]
     for i in range(n - 1):
         if i < upto:
             lines.append(f"  by_cases h{i} : x ≤ {lq(bounds[i+1])}")
@@ -223,8 +223,8 @@ def chain(name, stmt, bound, upto):
     lines.append("  norm_num")
     return "\n".join(lines)
 def chain_lo(name, stmt, start, upto):
-    """cW x ≤ bound for bounds[start] < x ≤ bounds[upto]."""
-    lines = [f"theorem {name} {stmt} := by", "  unfold cW"]
+    """cW8 x ≤ bound for bounds[start] < x ≤ bounds[upto]."""
+    lines = ["omit [Fact TernaryGoldbach.PlattGRH] in", f"theorem {name} {stmt} := by", "  unfold cW8"]
     for i in range(n - 1):
         lines.append(f"  by_cases h{i} : x ≤ {lq(bounds[i+1])}")
         if i < start:
@@ -237,6 +237,6 @@ def chain_lo(name, stmt, start, upto):
             return "\n".join(lines)
     lines.append("  norm_num")
     return "\n".join(lines)
-env = "\n"
+env = "\n\n" + chain_lo("cW8_le_4282", "{x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW8 x ≤ 42.82", 11, 13) + "\n\n" + chain_lo("cW8_le_4508", "{x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW8 x ≤ 45.08", 11, 14) + "\n\n" + chain_lo("cW8_le_315", "{x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW8 x ≤ 31.5", 2, 4) + "\n\n" + chain_lo("cW8_le_355", "{x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW8 x ≤ 35.5", 0, 9) + "\n\n" + chain("cW8_le_200", "(x : ℝ) : cW8 x ≤ 200", 200, n) + "\n\n" + chain("cW8_le_72", "{x : ℝ} (hx : x ≤ 1e15) : cW8 x ≤ 72", 72, 18) + "\n\n" + chain("cW8_le_33", "{x : ℝ} (hx : x ≤ 1e8) : cW8 x ≤ 33", 33, 4) + "\n"
 txt = txt.replace("\nend TernaryGoldbach.Explicit\n", "\n" + defn + "\n\n" + "\n".join(proof) + "\n" + env + "\nend TernaryGoldbach.Explicit\n")
 open('TernaryGoldbach/Explicit/PsiRanges1e8.lean', 'w').write(txt)

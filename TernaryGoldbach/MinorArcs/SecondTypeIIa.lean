@@ -165,7 +165,7 @@ noncomputable def a1SEC (L : ℝ) : ℝ :=
 
 /-! ### `q/φ(q)` for `q ≥ 10⁶` -/
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem div_totient_le_large {q : ℕ} (hq : (1e6 : ℝ) ≤ q) :
     (q : ℝ) / Nat.totient q ≤ 1.7882 * Real.log (Real.log q) + 0.9549 := by
   have hq1 : 1 ≤ q := by exact_mod_cast (show (1 : ℝ) ≤ q by linarith)
@@ -182,7 +182,7 @@ theorem div_totient_le_large {q : ℕ} (hq : (1e6 : ℝ) ≤ q) :
 /-! ### The main term -/
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- The main term of `typeII_638` (with `θ = 8`) at the second parameters, for `T/6 < q`,
 `16q ≤ x/U`: `≤ √(12 F₀ X₀ B₀) T^{5/2}`. -/
 theorem a1_M1_le {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
@@ -364,7 +364,7 @@ theorem a1_facts {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
     have := hq16.trans h1; rwa [le_div_iff₀ (by norm_num)] at this
   refine ⟨by linarith, h1, by linarith⟩
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem a1_M2_le {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
     (hq16 : 16 * (q : ℝ) ≤ T ^ 3 / U2 T) :
     4 * √(kap1 (T ^ 3) (U2 T) (V2 T) * q * T ^ 3 / (2 * Nat.totient q)) *
@@ -694,7 +694,7 @@ theorem approx2_abs {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (hx : 0 < x) (h : Appr
   obtain ⟨-, -, ⟨k, hk⟩, hδ, -⟩ := h
   exact ⟨k, by rw [show 2 * α - a / q - k = δ / x by rw [hk]; ring]; exact hδ⟩
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Case (a1) of the second choice**: `T/6 < q`, `16q ≤ x/U`:
 `|S_{II}| ≤ (√(12 F₀ X₀ B₀) + SEC(L)) T^{5/2}`. -/
 theorem typeII_a1 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
