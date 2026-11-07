@@ -133,7 +133,7 @@ differences from [H]; `NOTES.md` has the details.
  ├─ theta_explicit (Prelim/ThetaExplicit.lean: |θ(n) − n| < n/log³n + ε_pl(n) n, n ≥ 10¹²)
  │   ├─ psi_two_sided below 10¹⁷
  │   └─ above 10¹⁷: the Gaussian-smoothed explicit formula (Explicit/PsiExplicit, PsiPlateau,
- │      PsiLarge, PsiRange1, PsiAsymp) with the zero-free region β ≤ 1 − 1/(11 log|γ|), |γ| ≥ 10⁹
+ │      PsiLarge, PsiRange1, PsiAsymp) with the zero-free region β ≤ 1 − 1/(11 log|γ|), |γ| ≥ 10⁸
  │      (Explicit/XiPartial, ZeroFree, ZeroFreeRegion)
  └─ for Lemma C.2.2 above 10¹², the variation of E₁Λ: the same smoothed explicit formula
     integrated against dy/y² (Prelim/MertensWindow.lean, E1_var), theta_explicit at the two ends

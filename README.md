@@ -160,7 +160,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     up to `3·10¹⁰` and a compactly supported test function, with a zero-free region `|γ| ≥ 2.39`
     near the real axis;
   * above `10¹⁷`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹⁰` and the
-    zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
+    zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
   With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`

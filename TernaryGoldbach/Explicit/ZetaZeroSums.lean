@@ -26,6 +26,16 @@ theorem rh_upto [h : Fact RHUpTo] :
     ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2 :=
   h.out
 
+/-- **RH up to `10⁸` from `PlattGRH`**: the trivial character mod `1` is primitive (odd conductor
+`1 ≤ 3·10⁵`) and its `L`-function is `ζ`, so [Plab, Thm 7.1] at `q = 1` puts every zero of `ζ` in
+the critical strip with `|ℑρ| ≤ 10⁸` on the critical line. -/
+theorem rh_upto_1e8 [h : Fact TernaryGoldbach.PlattGRH] :
+    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 1e8 → ρ.re = 1 / 2 := by
+  intro ρ hz h0 h1 him
+  refine (h.out 1 (1 : DirichletCharacter ℂ 1) DirichletCharacter.isPrimitive_one_level_one).1
+    odd_one (by norm_num) ρ (by rw [DirichletCharacter.LFunction_modOne_eq]; exact hz) h0 h1 ?_
+  simpa using him
+
 theorem zetaF_zero_ne_zero : zetaF 0 ≠ 0 := by
   rw [zetaF_of_ne (by norm_num), riemannZeta_zero]; norm_num
 

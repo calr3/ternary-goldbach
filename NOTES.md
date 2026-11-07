@@ -243,7 +243,9 @@ tables. The pieces, by range:
 * Zeros with `|γ| ≤ 3·10¹⁰` lie on the line (`rh_upto`) and are counted in Jensen windows
   (`ZetaZeroSums`); zeros above are damped by `e^{−δ²γ²/2}` and, up to a height `Γ`, by the zero-free
   region (`PsiLarge`).
-* **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`, without
+* `rh_upto_1e8` (`ZetaZeroSums`): RH up to `10⁸` from `PlattGRH` at `q = 1` (the trivial character
+  mod `1` is primitive and its `L`-function is `ζ`). It is not used yet.
+* **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`, without
   the Hadamard product. `XiPartial`: `ξ(s) = s(s−1)Λ₀(s) + 1`, squares at good heights,
   `|ξ'/ξ| = O(log² k)` on their boundary; the symmetry `w ↦ 1 − w` gives a kernel `O(|w|⁻²)`, so
   `ξ'/ξ(s) ≈ Σ_{ρ in square} m_ρ/(s − ρ)` uniformly on discs. `ZeroFree`: Stechkin's lemma

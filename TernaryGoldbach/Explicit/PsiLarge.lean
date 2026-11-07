@@ -38,8 +38,8 @@ theorem count_mid {T H Γ : ℝ} (hH : 0 < H) (S : Finset ℂ) (hS : S ⊆ zeros
         nlinarith
     _ = _ := by rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]; push_cast; ring
 
-/-- `x^β ≤ x e^{−log x/(11 log Γ)}` for zeros with `10⁹ ≤ |γ| ≤ Γ`. -/
-theorem rpow_re_le_zf {x Γ : ℝ} (hx : 1 < x) {u : ℂ} (hu : xiF u = 0) (h1 : 1e9 ≤ |u.im|) (h2 : |u.im| ≤ Γ) :
+/-- `x^β ≤ x e^{−log x/(11 log Γ)}` for zeros with `10⁸ ≤ |γ| ≤ Γ`. -/
+theorem rpow_re_le_zf {x Γ : ℝ} (hx : 1 < x) {u : ℂ} (hu : xiF u = 0) (h1 : 1e8 ≤ |u.im|) (h2 : |u.im| ≤ Γ) :
     x ^ u.re ≤ x * Real.exp (-(Real.log x / (11 * Real.log Γ))) := by
   have hzf := zero_free hu h1
   have hx0 : 0 < x := by linarith
@@ -69,8 +69,8 @@ noncomputable def MidB0 (a δ H₁ Γ x : ℝ) : ℝ :=
 anchored at `H` would count the zeros near `Γ` with `log B(H) + 10 (Γ − H)/H`, far too crudely.) -/
 noncomputable def MidB (a δ Γ x : ℝ) : ℝ := MidB0 a δ 3e10 3e12 x + MidB0 a δ 3e12 Γ x
 
-/-- The zero-free-region estimate for the zeros with `H₁ < |γ| ≤ Γ`, `H₁ ≥ 10⁹`. -/
-theorem mid_sum_le {a b δ x H₁ Γ T : ℝ} (hb : b ≤ 0) (hx : 1 < x) (hH₁ : 1e9 ≤ H₁) (S : Finset ℂ)
+/-- The zero-free-region estimate for the zeros with `H₁ < |γ| ≤ Γ`, `H₁ ≥ 10⁸`. -/
+theorem mid_sum_le {a b δ x H₁ Γ T : ℝ} (hb : b ≤ 0) (hx : 1 < x) (hH₁ : 1e8 ≤ H₁) (S : Finset ℂ)
     (hS : S ⊆ zerosRectD zetaF T) (him : ∀ u ∈ S, H₁ < |u.im| ∧ |u.im| ≤ Γ) :
     ∑ u ∈ S, (multRectD zetaF T u : ℝ) * (‖Mg a b δ u‖ * x ^ u.re) ≤ x * MidB0 a δ H₁ Γ x := by
   have hH0 : 0 < H₁ := by linarith
