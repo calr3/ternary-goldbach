@@ -250,6 +250,12 @@ tables. The pieces, by range:
   `|γ| ≤ Y₁`, centres `|T₀| ≤ H/2`, `Y₁ + 13 ≤ H/2`, `3/Y₁ ≤ δ`; Jensen windows on `(Y₁, H]` with the
   factor `e^{−δ²Y₁²/2}`; the zeros above `H` cost at most `OffC`), `SsumG_gsm_err_zfH` (zero-free
   region on `(H, Γ]`). The `3·10¹⁰` statements are their instances.
+* With RH only up to `10⁸` (`PlattGRH`): `psi_mid8` (`PsiRanges1e8`, `scripts/gen_psi_ranges_1e8.py`;
+  `|ψ(x) − x| ≤ cW8(x)√x` on `[10⁶, 10¹⁷]`, `cW8 = cW` up to `10¹⁴`, then up to `199` near `10¹⁷`),
+  `psi_plateau8` (`4.91·10⁻⁷ x + 1145√x + 4.2·10¹⁰` from `10¹⁷`), `psi_range1_8` (`2.1·10⁻¹⁴ x` from
+  `e^{20000}`) and `psi_asymp8` (`0.2x/log³x` from `e^{35000}`); the last two count the zeros in
+  `(10⁸, 3·10¹⁰]` with the zero-free region (`SsumG_gsm_err_zf3H`, `MidB0_8_le`, `MidB0_8_asymp_le`).
+  These are not used yet.
 * **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`, without
   the Hadamard product. `XiPartial`: `ξ(s) = s(s−1)Λ₀(s) + 1`, squares at good heights,
   `|ξ'/ξ| = O(log² k)` on their boundary; the symmetry `w ↦ 1 − w` gives a kernel `O(|w|⁻²)`, so

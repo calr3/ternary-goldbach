@@ -200,6 +200,97 @@ theorem SsumG_gsm_err_zfH {a b δ x Γ H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤
   rw [e, norm_neg]
   exact (norm_add_le _ _).trans (add_le_add h1 h2)
 
+/-- **The explicit-formula bound with the zero-free region**, under RH up to `H`, with the zeros
+in `(H, Γ]` in three ranges `(H, H₂]`, `(H₂, 3·10¹²]`, `(3·10¹², Γ]`. -/
+theorem SsumG_gsm_err_zf3H {a b δ x Γ H H₂ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH₂ : H ≤ H₂)
+    (hH₂' : H₂ ≤ 3e12) (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
+    ‖SsumG (1 : DirichletCharacter ℂ 1) (fun u => (gsm a b δ u : ℂ)) x - Mg a b δ 1 * x‖ ≤
+      √x * LineBH a δ H + x * (MidB0 a δ H H₂ x + MidBH a δ H₂ Γ x) + x * TailBG a δ Γ +
+        x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
+  have hx0 : 0 < x := by linarith
+  set φ : ℝ → ℂ := fun u => (gsm a b δ u : ℂ) with hφ
+  have hgood := goodSmoothing_gsm hδ hab
+  have hM : mellin φ = Mg a b δ := funext (mellin_gsm hδ hab)
+  obtain ⟨Tk, -, hlim⟩ := explicit_formula_zeta hgood hx0
+  set I0 := ∫ y : ℝ, hZeta φ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hI0
+  have hbound : ∀ T : ℝ, ‖∑ u ∈ zerosRectD zetaF T, (multRectD zetaF T u : ℂ) * (mellin φ u * (x : ℂ) ^ u)‖ ≤
+      √x * LineBH a δ H + x * (MidB0 a δ H H₂ x + MidBH a δ H₂ Γ x) + x * TailBG a δ Γ := by
+    intro T
+    set Z := zerosRectD zetaF T with hZ
+    set m : ℂ → ℝ := fun u => (multRectD zetaF T u : ℝ) with hm
+    have h1 : ‖∑ u ∈ Z, (multRectD zetaF T u : ℂ) * (mellin φ u * (x : ℂ) ^ u)‖ ≤
+        ∑ u ∈ Z, m u * (‖Mg a b δ u‖ * x ^ u.re) := by
+      refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun u _ => ?_)
+      rw [norm_mul, norm_mul, Complex.norm_natCast, norm_cpow_x hx0, hM]
+    refine h1.trans ?_
+    set Z1 := Z.filter fun u => ¬ |u.im| ≤ H with hZ1
+    set Z1b := Z1.filter fun u => ¬ |u.im| ≤ H₂ with hZ1b
+    set Z2 := Z1b.filter fun u => ¬ |u.im| ≤ 3e12 with hZ2
+    rw [← Finset.sum_filter_add_sum_filter_not Z (fun u => |u.im| ≤ H),
+      ← Finset.sum_filter_add_sum_filter_not Z1 (fun u => |u.im| ≤ H₂),
+      ← Finset.sum_filter_add_sum_filter_not Z1b (fun u => |u.im| ≤ 3e12),
+      ← Finset.sum_filter_add_sum_filter_not Z2 (fun u => |u.im| ≤ Γ)]
+    have hZ1Z : Z1 ⊆ Z := Finset.filter_subset _ _
+    have hZ1bZ : Z1b ⊆ Z := (Finset.filter_subset _ _).trans hZ1Z
+    have hZ2Z : Z2 ⊆ Z := (Finset.filter_subset _ _).trans hZ1bZ
+    have hA : ∑ u ∈ Z.filter (fun u => |u.im| ≤ H), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤ √x * LineBH a δ H := by
+      -- the line zeros (as in `SsumG_gsm_err`)
+      set S := Z.filter (fun u => |u.im| ≤ H) with hS
+      have hSZ : S ⊆ Z := Finset.filter_subset _ _
+      have hre : ∀ u ∈ S, u.re = 1 / 2 := by
+        intro u hu
+        obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
+        obtain ⟨hz, hr1, hr2, -⟩ := zerosRectD_zetaF_strip hu1
+        exact hRH u hz hr1 hr2 hu2
+      have him : ∀ u ∈ S, |u.im| ≤ H := fun u hu => (Finset.mem_filter.1 hu).2
+      have heq : ∀ u ∈ S, m u * (‖Mg a b δ u‖ * x ^ u.re) = √x * (m u * ‖Mg a b δ u‖) := by
+        intro u hu
+        rw [hre u hu, ← Real.sqrt_eq_rpow]; ring
+      rw [Finset.sum_congr rfl heq, ← Finset.mul_sum]
+      refine mul_le_mul_of_nonneg_left ?_ (Real.sqrt_nonneg _)
+      refine line_sum_le (by linarith) S hSZ hre him (fun u => ‖Mg a b δ u‖) (fun u _ => norm_nonneg _)
+        (by positivity) (fun u hu => ?_)
+      have hu' : u = ((1 / 2 : ℝ) : ℂ) + (u.im : ℂ) * I := by
+        apply Complex.ext <;> simp [hre u hu]
+      rw [hu']
+      have := norm_Mg_line_le (δ := δ) hab hb u.im
+      simpa using this
+    have hB0 : ∑ u ∈ Z1.filter (fun u => |u.im| ≤ H₂), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * MidB0 a δ H H₂ x := by
+      refine mid_sum_le hb hx hH1 _ ((Finset.filter_subset _ _).trans hZ1Z) fun u hu => ?_
+      exact ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
+    have hB : ∑ u ∈ Z1b.filter (fun u => |u.im| ≤ 3e12), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * MidB0 a δ H₂ 3e12 x := by
+      refine mid_sum_le hb hx (hH1.trans hH₂) _ ((Finset.filter_subset _ _).trans hZ1bZ) fun u hu => ?_
+      exact ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
+    have hC : ∑ u ∈ Z2.filter (fun u => |u.im| ≤ Γ), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * MidB0 a δ 3e12 Γ x := by
+      refine mid_sum_le hb hx (by norm_num) _ ((Finset.filter_subset _ _).trans hZ2Z) fun u hu => ?_
+      exact ⟨not_le.1 (Finset.mem_filter.1 (Finset.mem_filter.1 hu).1).2, (Finset.mem_filter.1 hu).2⟩
+    have hD : ∑ u ∈ Z2.filter (fun u => ¬ |u.im| ≤ Γ), m u * (‖Mg a b δ u‖ * x ^ u.re) ≤
+        x * TailBG a δ Γ := by
+      have hSZ := (Finset.filter_subset (fun u => ¬ |u.im| ≤ Γ) Z2).trans hZ2Z
+      have him : ∀ u ∈ Z2.filter (fun u => ¬ |u.im| ≤ Γ), Γ < |u.im| := fun u hu =>
+        not_le.1 (Finset.mem_filter.1 hu).2
+      exact tail_sum_gauss (by linarith) hδ hb hx.le _ hSZ him
+    rw [MidBH, mul_add, mul_add]
+    linarith
+  have h1 : ‖mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x - (1 / (2 * π) : ℂ) * I0‖ ≤
+      √x * LineBH a δ H + x * (MidB0 a δ H H₂ x + MidBH a δ H₂ Γ x) + x * TailBG a δ Γ :=
+    le_of_tendsto' ((continuous_norm.tendsto _).comp hlim) fun k => hbound (Tk k)
+  have h2 : ‖(1 / (2 * π) : ℂ) * I0‖ ≤ x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
+    rw [norm_mul]
+    have : ‖(1 / (2 * π) : ℂ)‖ = 1 / (2 * π) := by
+      rw [norm_div, norm_one, norm_mul, Complex.norm_ofNat, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos Real.pi_pos]
+    rw [this, div_mul_eq_mul_div, one_mul]
+    exact div_le_div_of_nonneg_right (norm_integral_hZeta_gsm hδ hab hx0) (by positivity)
+  have e : SsumG (1 : DirichletCharacter ℂ 1) φ x - Mg a b δ 1 * x =
+      -((mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x - (1 / (2 * π) : ℂ) * I0) +
+        (1 / (2 * π) : ℂ) * I0) := by rw [hM]; ring
+  rw [e, norm_neg]
+  exact (norm_add_le _ _).trans (add_le_add h1 h2)
+
 variable [Fact TernaryGoldbach.RHUpTo] in
 /-- **The explicit-formula bound with the zero-free region.** -/
 theorem SsumG_gsm_err_zf {a b δ x Γ : ℝ} (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x)
@@ -279,6 +370,21 @@ theorem tsum_gsm_le_zfH {a b δ x Γ H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H
     |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤
       √x * LineBH a δ H + x * MidBH a δ H Γ x + x * TailBG a δ Γ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
   have h := SsumG_gsm_err_zfH hRH hH1 hH2 hδ hab hb hx hΓ
+  rw [SsumG_one_ofReal, Mg_one] at h
+  rw [show ((∑' n : ℕ, Λ n * gsm a b δ (n / x) : ℝ) : ℂ) -
+      ((Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) : ℝ) : ℂ) * (x : ℂ) =
+      ((∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x : ℝ) : ℂ) by
+      push_cast; ring, Complex.norm_real, Real.norm_eq_abs] at h
+  exact h
+
+
+/-- The tsum version of `SsumG_gsm_err_zf3H`. -/
+theorem tsum_gsm_le_zf3H {a b δ x Γ H H₂ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH₂ : H ≤ H₂)
+    (hH₂' : H₂ ≤ 3e12)
+    (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
+    |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤
+      √x * LineBH a δ H + x * (MidB0 a δ H H₂ x + MidBH a δ H₂ Γ x) + x * TailBG a δ Γ + x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by
+  have h := SsumG_gsm_err_zf3H hRH hH1 hH₂ hH₂' hδ hab hb hx hΓ
   rw [SsumG_one_ofReal, Mg_one] at h
   rw [show ((∑' n : ℕ, Λ n * gsm a b δ (n / x) : ℝ) : ℂ) -
       ((Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) : ℝ) : ℂ) * (x : ℂ) =

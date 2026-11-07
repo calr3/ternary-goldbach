@@ -198,6 +198,73 @@ theorem LineB_le_gen {a δ : ℝ} (h : δ ^ 2 / 2 + |a| ≤ 3e-11) : LineB a δ 
       ≤ 172.6 * (2 * 1.000001) * (4 * (1 + (1 + 22.88) / 3.48)) := by gcongr
     _ ≤ 14990 := by norm_num
 
+/-- `LineBH a δ H ≤ 14990` for `H ≤ 3·10¹⁰` (monotone in `H`). -/
+theorem LineBH_le_gen {a δ H : ℝ} (hH0 : 0 ≤ H) (hH : H ≤ 3e10) (h : δ ^ 2 / 2 + |a| ≤ 3e-11) :
+    LineBH a δ H ≤ 14990 := by
+  unfold LineBH
+  have he : Real.exp (δ ^ 2 / 2 + |a|) ≤ 1.000001 := by
+    have h' := exp_small_le (t := δ ^ 2 / 2 + |a|) (by positivity) (by linarith)
+    linarith
+  have hZ : ZLg BPz2 H ≤ 172.6 := by
+    refine le_trans ?_ ZLg_H_le
+    unfold ZLg
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono ?_) (log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_nonneg (by linarith), abs_of_nonneg (by norm_num)]; linarith
+  have hJ : Real.log (Jl H) ≤ 22.88 := by
+    refine le_trans (Real.log_le_log (by unfold Jl; positivity) ?_) log_Jl_H_le
+    unfold Jl
+    exact_mod_cast Nat.add_le_add_right (Nat.floor_mono (div_le_div_of_nonneg_right hH (by norm_num))) 1
+  have hZ0 : 0 ≤ ZLg BPz2 H :=
+    div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le
+  have hJ0 : 0 ≤ Real.log (Jl H) := Real.log_nonneg (by unfold Jl; norm_num)
+  calc ZLg BPz2 H * (2 * Real.exp (δ ^ 2 / 2 + |a|)) * (4 * (1 + (1 + Real.log (Jl H)) / 3.48))
+      ≤ 172.6 * (2 * 1.000001) * (4 * (1 + (1 + 22.88) / 3.48)) := by gcongr
+    _ ≤ 14990 := by norm_num
+
+theorem exp_neg_75_le : Real.exp (-75) ≤ 1e-32 := by
+  rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by norm_num)]
+  have := exp_nat_ge' 75
+  norm_num at this ⊢; linarith
+
+/-- The zeros in `(10⁸, 3·10¹⁰]` for `log x ≥ 20000`: `MidB0 a δ 10⁸ 3·10¹⁰ x ≤ 10⁻²⁰`. -/
+theorem MidB0_8_le {a δ x : ℝ} (hδa : δ ^ 2 / 2 + |a| ≤ 1e-10) (hx : 20000 ≤ Real.log x) :
+    MidB0 a δ 1e8 3e10 x ≤ 1e-20 := by
+  unfold MidB0
+  have he : Real.exp (δ ^ 2 / 2 + |a|) ≤ 1.000001 := by
+    have h := exp_small_le (t := δ ^ 2 / 2 + |a|) (by positivity) (by linarith)
+    linarith
+  have hlg := log_3e10_le
+  have hlg' : Real.log 3e10 ≤ 24.1245 := (Real.log_le_log (by norm_num) (by norm_num)).trans hlg
+  have hlg0 : 0 < Real.log 3e10 := Real.log_pos (by norm_num)
+  have hzf : Real.exp (-(Real.log x / (11 * Real.log 3e10))) ≤ 1e-32 := by
+    refine le_trans (Real.exp_le_exp.2 ?_) exp_neg_75_le
+    rw [neg_le_neg_iff, le_div_iff₀ (by positivity)]
+    nlinarith
+  have hK : ((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.8e9 := by
+    have := Nat.floor_le (show (0:ℝ) ≤ ((3e10 : ℝ) - 1e8) / 4.4 by norm_num)
+    norm_num at this ⊢
+  have hl := log_10_3_ge
+  have hZ : Z3g BPz2 1e8 ≤ 210.6 := by
+    refine le_trans ?_ Z3g_H_le
+    unfold Z3g
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono ?_) (log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_pos (by norm_num : (0 : ℝ) < 1e8), abs_of_pos (by norm_num : (0 : ℝ) < 3e10)]; norm_num
+  have hZ0 : 0 ≤ Z3g BPz2 1e8 :=
+    div_nonneg (polyDatum_zeta2.log_pos _).le (lt_of_lt_of_le (by norm_num) hl).le
+  have hc : c3g 10 1e8 ≤ 3.66e-7 := by
+    unfold c3g
+    rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) hl)]
+    nlinarith
+  have hc0 : 0 ≤ c3g 10 1e8 := by
+    unfold c3g; exact div_nonneg (by norm_num) (lt_of_lt_of_le (by norm_num) hl).le
+  have hK0 : (0:ℝ) ≤ ((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
+  calc 2 * Real.exp (δ ^ 2 / 2 + |a|) / 1e8 * Real.exp (-(Real.log x / (11 * Real.log 3e10))) *
+        ((((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 1e8 + 2 * c3g 10 1e8 *
+          (((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1)))
+      ≤ 2 * 1.000001 / 1e8 * 1e-32 * (6.8e9 * (2 * 210.6 + 2 * 3.66e-7 * 6.8e9)) := by
+        gcongr
+    _ ≤ 1e-20 := by norm_num
+
 theorem Vg_le_gen {a δ x : ℝ} (hδ : 0 < δ) (hδ1 : δ ≤ 1e-11) (ha : |a| ≤ 1e-10) (hx : 1e19 ≤ x) :
     x ^ (-(1 / 2) : ℝ) * Vg a (Real.log (1e10 / x)) δ / (2 * π) ≤ 2.54e-3 / δ := by
   have hx0 : 0 < x := by linarith
@@ -273,9 +340,14 @@ theorem abs_terms_le {x : ℝ} (hx : 1e40 ≤ x) : 15000 * √x + 1e13 ≤ 1.6e-
   have h2 : (1e13 : ℝ) ≤ 1e-17 * x := by nlinarith
   linarith
 
-variable [Fact TernaryGoldbach.RHUpTo] in
-/-- **`|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x`** for `x ≥ e^{20000}`. -/
-theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e-14 * x := by
+/-- `psi_range1` from an explicit-formula error bound of the shape of `tsum_gsm_le_zf` at
+`δ = 1.4·10⁻¹⁵`, `Γ = 6.43·10¹⁵`, with the zero-free-region terms at most `7.61·10⁻¹⁵ x`. -/
+theorem psi_range1_of {x : ℝ} (hx : Real.exp 20000 ≤ x)
+    (hErr : ∀ a : ℝ, |a| ≤ 1.26e-14 → Real.log (1e10 / x) ≤ a →
+      |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) 1.4e-15 (n / x) -
+        Real.exp ((1.4e-15 : ℝ) ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
+        14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12) :
+    |psiR x - x| ≤ 2.1e-14 * x := by
   have hx40 : 1e40 ≤ x := exp_20000_ge.trans hx
   have hx0 : 0 < x := by linarith
   have hx1 : 1 < x := by linarith
@@ -292,26 +364,6 @@ theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e
     have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1e10 / x by positivity)
     have : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
     linarith
-  -- the error terms
-  have hErr : ∀ a : ℝ, |a| ≤ 1.26e-14 → Real.log (1e10 / x) ≤ a →
-      |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) δ (n / x) -
-        Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
-        14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12 := by
-    intro a ha hab
-    have hT := tsum_gsm_le_zf (a := a) (Γ := 6.43e15) hδ0 hab (hb0.trans (by norm_num)) hx1 (by norm_num)
-    have h1 := LineB_le_gen (a := a) (δ := δ) (by rw [hδ]; norm_num at ha ⊢; linarith)
-    have h2 : MidB a δ 6.43e15 x ≤ 7.6e-15 := by rw [hδ]; exact MidB_r1_le (a := a) (x := x) (by linarith) hlx
-    have h3 : TailBG a δ 6.43e15 ≤ 1e-17 := by rw [hδ]; exact TailBG_r1_le (a := a) (by linarith)
-    have h4 := Vg_le_gen (a := a) (δ := δ) (x := x) hδ0 (by norm_num) (by linarith) (by linarith)
-    have h4' : 2.54e-3 / δ ≤ 1.82e12 := by rw [hδ]; norm_num
-    refine hT.trans ?_
-    have e1 := mul_le_mul_of_nonneg_left h1 hsx
-    have e2 := mul_le_mul_of_nonneg_left h2 hx0.le
-    have e3 := mul_le_mul_of_nonneg_left h3 hx0.le
-    have e4 := h4.trans h4'
-    have hsum := add_le_add (add_le_add (add_le_add e1 e2) e3) e4
-    refine hsum.trans (le_of_eq ?_)
-    ring
   -- upper
   have hK1 : 2 * Real.exp (-((9 : ℝ) ^ 2 / 2)) < 1 := by rw [hK2]; linarith
   have hYx : 1e10 * Real.exp (9 * δ) ≤ x := by
@@ -331,13 +383,13 @@ theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e
   have hden : 1 / (1 - 2 * Real.exp (-40.5)) ≤ 1 + 1.1e-17 := by
     rw [div_le_iff₀ (by linarith)]; nlinarith
   have hup : psiR x ≤ x + 2.1e-14 * x := by
-    have hnum : Real.exp (δ ^ 2 / 2 + 1.26e-14) * x + (14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12) ≤
-        (1 + 1.2602e-14) * x + (14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12) := by
+    have hnum : Real.exp (δ ^ 2 / 2 + 1.26e-14) * x + (14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12) ≤
+        (1 + 1.2602e-14) * x + (14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12) := by
       have := mul_le_mul_of_nonneg_right hexp1 hx0.le; linarith
-    have hnum0 : 0 ≤ (1 + 1.2602e-14) * x + (14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12) := by positivity
-    have hq : (Real.exp (δ ^ 2 / 2 + 1.26e-14) * x + (14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12)) /
+    have hnum0 : 0 ≤ (1 + 1.2602e-14) * x + (14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12) := by positivity
+    have hq : (Real.exp (δ ^ 2 / 2 + 1.26e-14) * x + (14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12)) /
         (1 - 2 * Real.exp (-40.5)) ≤
-        ((1 + 1.2602e-14) * x + (14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12)) * (1 + 1.1e-17) := by
+        ((1 + 1.2602e-14) * x + (14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12)) * (1 + 1.1e-17) := by
       rw [div_eq_mul_one_div]
       exact mul_le_mul hnum hden (by apply div_nonneg zero_le_one; linarith) hnum0
     have h4 : 4 * (1e10 * Real.exp (1.26e-14)) ≤ 4.0001e10 := by nlinarith
@@ -356,5 +408,87 @@ theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e
       have := mul_le_mul_of_nonneg_left he405 (by positivity : (0:ℝ) ≤ 4 * x); linarith
     nlinarith
   rw [abs_le]; constructor <;> linarith
+
+variable [Fact TernaryGoldbach.RHUpTo] in
+/-- The explicit-formula error of `psi_range1` with RH up to `3·10¹⁰`. -/
+theorem psi_range1_err {x : ℝ} (hx : Real.exp 20000 ≤ x) (a : ℝ) (ha : |a| ≤ 1.26e-14)
+    (hab : Real.log (1e10 / x) ≤ a) :
+    |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) 1.4e-15 (n / x) -
+      Real.exp ((1.4e-15 : ℝ) ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
+      14990 * √x + 7.6e-15 * x + 1e-17 * x + 1.82e12 := by
+  have hx40 : 1e40 ≤ x := exp_20000_ge.trans hx
+  have hx0 : 0 < x := by linarith
+  have hx1 : 1 < x := by linarith
+  have hlx : 20000 ≤ Real.log x := by rw [Real.le_log_iff_exp_le hx0]; exact hx
+  set δ : ℝ := 1.4e-15 with hδ
+  have hδ0 : 0 < δ := by norm_num
+  have hsx := Real.sqrt_nonneg x
+  have hb0 : Real.log (1e10 / x) ≤ -(1.26e-14) := by
+    have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1e10 / x by positivity)
+    have : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
+    linarith
+  have hT := tsum_gsm_le_zf (a := a) (Γ := 6.43e15) hδ0 hab (hb0.trans (by norm_num)) hx1 (by norm_num)
+  have h1 := LineB_le_gen (a := a) (δ := δ) (by rw [hδ]; norm_num at ha ⊢; linarith)
+  have h2 : MidB a δ 6.43e15 x ≤ 7.6e-15 := by rw [hδ]; exact MidB_r1_le (a := a) (x := x) (by linarith) hlx
+  have h3 : TailBG a δ 6.43e15 ≤ 1e-17 := by rw [hδ]; exact TailBG_r1_le (a := a) (by linarith)
+  have h4 := Vg_le_gen (a := a) (δ := δ) (x := x) hδ0 (by norm_num) (by linarith) (by linarith)
+  have h4' : 2.54e-3 / δ ≤ 1.82e12 := by rw [hδ]; norm_num
+  refine hT.trans ?_
+  have e1 := mul_le_mul_of_nonneg_left h1 hsx
+  have e2 := mul_le_mul_of_nonneg_left h2 hx0.le
+  have e3 := mul_le_mul_of_nonneg_left h3 hx0.le
+  have e4 := h4.trans h4'
+  have hsum := add_le_add (add_le_add (add_le_add e1 e2) e3) e4
+  refine hsum.trans (le_of_eq ?_)
+  ring
+
+variable [Fact TernaryGoldbach.RHUpTo] in
+/-- **`|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x`** for `x ≥ e^{20000}`. -/
+theorem psi_range1 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e-14 * x :=
+  psi_range1_of hx fun a ha hab => (psi_range1_err hx a ha hab).trans (by
+    have : 0 ≤ x := by have := exp_20000_ge.trans hx; linarith
+    nlinarith)
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- The explicit-formula error of `psi_range1` with RH up to `10⁸` (`tsum_gsm_le_zf3H`: the zeros in
+`(10⁸, 3·10¹⁰]` through the zero-free region, `MidB0_8_le`). -/
+theorem psi_range1_err8 {x : ℝ} (hx : Real.exp 20000 ≤ x) (a : ℝ) (ha : |a| ≤ 1.26e-14)
+    (hab : Real.log (1e10 / x) ≤ a) :
+    |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) 1.4e-15 (n / x) -
+      Real.exp ((1.4e-15 : ℝ) ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
+      14990 * √x + 7.61e-15 * x + 1e-17 * x + 1.82e12 := by
+  have hx40 : 1e40 ≤ x := exp_20000_ge.trans hx
+  have hx0 : 0 < x := by linarith
+  have hx1 : 1 < x := by linarith
+  have hlx : 20000 ≤ Real.log x := by rw [Real.le_log_iff_exp_le hx0]; exact hx
+  set δ : ℝ := 1.4e-15 with hδ
+  have hδ0 : 0 < δ := by norm_num
+  have hsx := Real.sqrt_nonneg x
+  have hb0 : Real.log (1e10 / x) ≤ -(1.26e-14) := by
+    have := Real.log_le_sub_one_of_pos (show (0:ℝ) < 1e10 / x by positivity)
+    have : 1e10 / x ≤ 1e-9 := by rw [div_le_iff₀ hx0]; linarith
+    linarith
+  have hT := tsum_gsm_le_zf3H (a := a) (Γ := 6.43e15) (H := 1e8) (H₂ := 3e10) rh_upto_1e8 (by norm_num)
+    (by norm_num) (by norm_num) hδ0 hab (hb0.trans (by norm_num)) hx1 (by norm_num)
+  have h1 := LineBH_le_gen (a := a) (δ := δ) (H := 1e8) (by norm_num) (by norm_num)
+    (by rw [hδ]; norm_num at ha ⊢; linarith)
+  have h2 : MidBH a δ 3e10 6.43e15 x ≤ 7.6e-15 := by rw [hδ]; exact MidB_r1_le (a := a) (x := x) (by linarith) hlx
+  have h2' : MidB0 a δ 1e8 3e10 x ≤ 1e-20 := MidB0_8_le (by rw [hδ]; norm_num at ha ⊢; linarith) hlx
+  have h3 : TailBG a δ 6.43e15 ≤ 1e-17 := by rw [hδ]; exact TailBG_r1_le (a := a) (by linarith)
+  have h4 := Vg_le_gen (a := a) (δ := δ) (x := x) hδ0 (by norm_num) (by linarith) (by linarith)
+  have h4' : 2.54e-3 / δ ≤ 1.82e12 := by rw [hδ]; norm_num
+  refine hT.trans ?_
+  have e1 := mul_le_mul_of_nonneg_left h1 hsx
+  have e2 := mul_le_mul_of_nonneg_left (add_le_add h2' h2) hx0.le
+  have e3 := mul_le_mul_of_nonneg_left h3 hx0.le
+  have e4 := h4.trans h4'
+  have hsum := add_le_add (add_le_add (add_le_add e1 e2) e3) e4
+  refine hsum.trans ?_
+  nlinarith
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **`|ψ(x) − x| ≤ 2.1·10⁻¹⁴ x`** for `x ≥ e^{20000}`, with RH up to `10⁸`. -/
+theorem psi_range1_8 {x : ℝ} (hx : Real.exp 20000 ≤ x) : |psiR x - x| ≤ 2.1e-14 * x :=
+  psi_range1_of hx (psi_range1_err8 hx)
 
 end TernaryGoldbach.Explicit
