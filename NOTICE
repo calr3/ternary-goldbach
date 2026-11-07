@@ -1,0 +1,10 @@
+Ternary Goldbach in Lean 4
+Copyright 2026 Charlie Reams
+
+A formalization of H. A. Helfgott's proof of the ternary Goldbach conjecture
+(H. A. Helfgott, "The ternary Goldbach problem", arXiv:1501.05438).
+Canonical repository: https://github.com/calr3/ternary-goldbach
+
+TernaryGoldbach/Prelim/PNTMertens.lean is derived from the PrimeNumberTheoremAnd
+project (https://github.com/AlexKontorovich/PrimeNumberTheoremAnd), licensed under
+the Apache License 2.0.

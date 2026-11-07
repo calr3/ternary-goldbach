@@ -1,8 +1,8 @@
 /-
 Ported from the PrimeNumberTheoremAnd project (https://github.com/AlexKontorovich/PrimeNumberTheoremAnd),
 files `PrimeNumberTheoremAnd/EulerMaclaurin.lean` and `PrimeNumberTheoremAnd/IEANTN/Mertens.lean`
-(revision of 2026-10-20), licensed under the Apache License 2.0 (a copy is in
-`licenses/PrimeNumberTheoremAnd-LICENSE`).  Changes: the two files are merged; the blueprint
+(revision of 2026-10-20), licensed under the Apache License 2.0 (see `LICENSE`).  Changes: the
+two files are merged; the blueprint
 annotations are removed; three integral lemmas are made public; `namespace Mertens` is renamed `TernaryGoldbach.PNTMertens`; the file is
 truncated after `sum_mangoldt_div_log_eq` (Mertens' second theorem, von Mangoldt form, with the
 constant identified as Euler's `γ`).

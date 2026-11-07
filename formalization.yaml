@@ -10,7 +10,7 @@ project:
     `TernaryGoldbach/Statement.lean`). The main theorems use only Lean's standard axioms.
   authors: ["Charlie Reams", "Harald Helfgott"]
   responsible_maintainers: ["Charlie Reams"]
-  license: "MIT"  # except `Prelim/PNTMertens.lean`, ported under Apache-2.0 (see `licenses/`)
+  license: "Apache-2.0"
 
 sources:
   - title: "The ternary Goldbach problem"
@@ -57,7 +57,7 @@ sources:
     location: "Prelim/PNTMertens.lean"
     relationship: "adapts"
     license: "Apache-2.0"
-    note: "Ported code; license in `licenses/`."
+    note: "Ported code."
     author_endorsement: "n/a"
 
 related_formalizations: []

@@ -280,10 +280,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   (1995), 645–706.
 * O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius
   bound).
-* `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0; see
-  `licenses/`).
+* `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).
 
 Toolchain: Lean `v4.35.0`, Mathlib `v4.35.0`.
 
-License: MIT (see [`LICENSE`](LICENSE)), except for code ported from PrimeNumberTheoremAnd,
-which is under Apache 2.0 (see `licenses/`).
+License: Apache 2.0 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)).
