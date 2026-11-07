@@ -5,6 +5,9 @@ chain on `[46992688, 50000000)`. -/
 
 namespace TernaryGoldbach.Prelim.SieveTab
 
+-- one theorem at a time: parallel elaboration of the chunks only adds memory
+set_option Elab.async false
+
 set_option maxRecDepth 100000 in
 def gs120 : List (ℕ × ℕ × ℕ) := [(24264, 17666018773, 17666018778), (24014, 0, 0), (25132, 0, 0), (25332, 0, 0), (25112, 0, 0), (24948, 0, 0), (24918, 0, 0), (24762, 0, 0), (24358, 0, 0), (24914, 0, 0), (25284, 0, 0), (24666, 0, 0), (24334, 0, 0), (24434, 0, 0), (25056, 0, 0), (24552, 0, 0), (24684, 0, 0)]
 

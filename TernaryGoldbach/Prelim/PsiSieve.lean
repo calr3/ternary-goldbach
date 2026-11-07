@@ -5,8 +5,10 @@ import TernaryGoldbach.Prelim.SmallPsiTable
 
 The trial-division table (`SmallPsiTable`) costs about `3·10⁻³ s` per integer near `10⁶`. Here a window
 `(n, n + W]` (`W ≤ 2¹⁵`) is sieved with one bit mask per prime `p ≤ 7100`, built by doubling
-(`maskP`), or-ed together (`orAll`) and counted by halves (`pc`); every step is a GMP operation on
-a `W`-bit `Nat`. `cnt_spec`: `cnt n W` is the number of primes in `(n, n + W]` for
+(`maskP`) once per declaration (`pats`); per window each mask is shifted into place and or-ed in
+(`orP`, three operations per prime). The primes are the set bits of the complement, counted by halving
+down to 256-bit leaves and clearing the lowest set bit there (`pcL`, `popc`). Every step is a GMP
+operation on a `W`-bit `Nat`. `cnt_spec`: `cnt n W` is the number of primes in `(n, n + W]` for
 `7100 ≤ n`, `n + W < 7103²`.
 
 The window chain `outerT` (the analogue of `SmallTab.outer`, tracking `θ` only) then gives
@@ -83,72 +85,163 @@ theorem maskP_spec {p r W : ℕ} (hp : 0 < p) (hr : r < p) (hW : W ≤ 2 ^ 64) (
   · simp [h, show i < len' by omega]
   · simp [h]
 
-/-- The residue `r` with `p ∣ n + 1 + i ↔ i ≡ r (mod p)`. -/
-theorem dvd_iff_mod {p n i : ℕ} (hp : 0 < p) :
-    p ∣ n + 1 + i ↔ i % p = (p - (n + 1) % p) % p := by
-  have h1 := Nat.mod_add_div (n + 1) p
-  have h2 := Nat.mod_add_div i p
-  have ha := Nat.mod_lt (n + 1) hp
-  have hk := Nat.mod_lt i hp
-  set a := (n + 1) % p
-  set k := i % p
-  have e : n + 1 + i = (a + k) + p * ((n + 1) / p + i / p) := by rw [mul_add]; omega
-  rw [Nat.dvd_iff_mod_eq_zero, e, Nat.add_mul_mod_self_left]
-  rcases Nat.eq_zero_or_pos a with h0 | h0
-  · rw [h0, Nat.sub_zero, Nat.mod_self, zero_add, Nat.mod_eq_of_lt hk]
-  · rw [Nat.mod_eq_of_lt (show p - a < p by omega)]
-    constructor
-    · intro h
-      by_cases hlt : a + k < p
-      · rw [Nat.mod_eq_of_lt hlt] at h; omega
-      · push Not at hlt
-        rw [Nat.mod_eq_sub_mod hlt, Nat.mod_eq_of_lt (by omega)] at h; omega
-    · intro h
-      rw [show a + k = p by omega, Nat.mod_self]
+/-! ### Counting set bits -/
 
-def orAll (W n : ℕ) : List ℕ → ℕ
-  | [] => 0
-  | p :: ps => maskP p ((p - (n + 1) % p) % p) W ||| orAll W n ps
+/-- The number of set bits among the first `B`. -/
+def nbits (B y : ℕ) : ℕ := ∑ i ∈ range B, (if y.testBit i then 1 else 0)
 
-theorem orAll_spec (W n : ℕ) (hW : W ≤ 2 ^ 64) : ∀ (Ps : List ℕ), (∀ p ∈ Ps, 0 < p) → ∀ i,
-    (orAll W n Ps).testBit i = decide (i < W ∧ ∃ p ∈ Ps, p ∣ n + 1 + i) := by
-  intro Ps
-  induction Ps with
-  | nil => intro _ i; simp [orAll]
-  | cons p ps ih =>
-    intro hP i
-    have hp : 0 < p := hP p (by simp)
-    rw [orAll, Nat.testBit_or, maskP_spec hp (Nat.mod_lt _ hp) hW, ih (fun q hq => hP q (by simp [hq]))]
-    have hd := (dvd_iff_mod (n := n) (i := i) hp).symm
-    simp only [hd]
-    by_cases h : i < W
-    · by_cases h' : p ∣ n + 1 + i
-      · simp [h, h']
-      · simp [h, h']
-    · simp [h]
+/-- `f` minus the number of set bits of `y`, if there are at most `f`: clear the lowest set bit
+(`y &&& (y − 1)`, GMP operations in the kernel) until `y = 0`, and return the fuel left. One step per
+set bit; returning the fuel (a literal at each step) instead of a count avoids a chain of
+unevaluated additions. -/
+noncomputable def popc (f : ℕ) : ℕ → ℕ :=
+  Nat.rec (motive := fun _ => ℕ → ℕ) (fun _ => 0)
+    (fun n ih y => Bool.rec (ih (Nat.land y (Nat.sub y 1))) (Nat.succ n) (Nat.beq y 0)) f
 
-/-! ### Counting by halves -/
+theorem popc_succ (f y : ℕ) : popc (f + 1) y =
+    Bool.rec (popc f (Nat.land y (Nat.sub y 1))) (Nat.succ f) (Nat.beq y 0) := rfl
 
-def pc : ℕ → ℕ → ℕ
-  | 0, x => x % 2
-  | k + 1, x => pc k (x % (1 <<< (1 <<< k))) + pc k (x >>> (1 <<< k))
+/-- `y &&& (y − 1)` is `y` without its lowest set bit `k`. -/
+theorem testBit_land_sub_one {y : ℕ} (hy : y ≠ 0) : ∃ k, y.testBit k = true ∧
+    ∀ j, (y &&& (y - 1)).testBit j = (y.testBit j && decide (j ≠ k)) := by
+  have hex := Nat.exists_testBit_of_ne_zero hy
+  classical
+  set k := Nat.find hex with hk
+  have hkb : y.testBit k = true := Nat.find_spec hex
+  have hlow : ∀ j < k, y.testBit j = false := fun j hj => by
+    have := Nat.find_min hex hj; simpa using this
+  -- `y = 2^k q` with `q` odd
+  have hmod : y % 2 ^ k = 0 := Nat.eq_of_testBit_eq fun j => by
+    rw [Nat.testBit_mod_two_pow, Nat.zero_testBit]
+    by_cases hj : j < k
+    · simp [hj, hlow j hj]
+    · simp [hj]
+  set q := y / 2 ^ k with hq
+  have hyq : y = 2 ^ k * q + 0 := by
+    rw [add_zero, hq]; exact (Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hmod)).symm
+  have hq0 : q.testBit 0 = true := by rw [hq, Nat.testBit_div_two_pow, zero_add]; exact hkb
+  have hq1 : 1 ≤ q := by
+    rcases Nat.eq_zero_or_pos q with h | h
+    · rw [h, Nat.zero_testBit] at hq0; exact absurd hq0 (by simp)
+    · exact h
+  have hy1 : y - 1 = 2 ^ k * (q - 1) + (2 ^ k - 1) := by
+    have : 2 ^ k * (q - 1) + 2 ^ k = 2 ^ k * q := by
+      rw [← Nat.mul_succ, Nat.succ_eq_add_one, Nat.sub_add_cancel hq1]
+    have hp : 0 < 2 ^ k := Nat.two_pow_pos k
+    omega
+  -- `q − 1` is `q` without bit `0`
+  have hqq : ∀ m, (q - 1).testBit m = (q.testBit m && decide (m ≠ 0)) := by
+    intro m
+    have hqo : q % 2 = 1 := by simpa using hq0
+    obtain ⟨r, hr⟩ : ∃ r, q = 2 ^ 1 * r + 1 := ⟨q / 2, by have := Nat.div_add_mod q 2; omega⟩
+    have e2 : q - 1 = 2 ^ 1 * r + 0 := by omega
+    rw [e2, hr, Nat.testBit_two_pow_mul_add _ (by norm_num), Nat.testBit_two_pow_mul_add _ (by norm_num)]
+    rcases Nat.eq_zero_or_pos m with h | h
+    · subst h; simp
+    · simp [show ¬ m < 1 by omega, show m ≠ 0 by omega]
+  refine ⟨k, hkb, fun j => ?_⟩
+  rw [Nat.testBit_and, hy1, Nat.testBit_two_pow_mul_add _ (Nat.sub_lt (Nat.two_pow_pos k) one_pos),
+    hyq, Nat.testBit_two_pow_mul_add _ (Nat.two_pow_pos k), Nat.testBit_two_pow_sub_one]
+  by_cases hj : j < k
+  · simp [hj, show j ≠ k by omega]
+  · simp only [hj, ↓reduceIte]
+    rw [hqq]
+    by_cases hjk : j = k
+    · subst hjk; simp
+    · simp [show j - k ≠ 0 by omega, hjk]
 
-theorem pc_spec : ∀ k x, pc k x = ∑ i ∈ range (2 ^ k), (if x.testBit i then 1 else 0) := by
+/-- Clearing the lowest set bit removes one set bit. -/
+theorem nbits_clear {B y : ℕ} (hy : y ≠ 0) (hB : y < 2 ^ B) :
+    nbits B y = nbits B (y &&& (y - 1)) + 1 := by
+  obtain ⟨k, hk, hbits⟩ := testBit_land_sub_one hy
+  have hkB : k < B := by
+    by_contra h
+    push Not at h
+    rw [Nat.testBit_lt_two_pow (lt_of_lt_of_le hB (Nat.pow_le_pow_right (by norm_num) h))] at hk
+    exact absurd hk (by simp)
+  have hbit : ∀ i, (if y.testBit i then 1 else 0) =
+      (if (y &&& (y - 1)).testBit i then 1 else 0) + (if i = k then 1 else 0) := by
+    intro i
+    rw [hbits]
+    by_cases hi : i = k
+    · subst hi; simp [hk]
+    · simp [hi]
+  unfold nbits
+  rw [sum_congr rfl fun i _ => hbit i, sum_add_distrib, sum_ite_eq' (range B) k (fun _ => 1)]
+  simp [mem_range.2 hkB]
+
+theorem nbits_le (B y : ℕ) : nbits B y ≤ B := by
+  unfold nbits
+  calc ∑ i ∈ range B, (if y.testBit i then 1 else 0) ≤ ∑ _i ∈ range B, 1 :=
+        sum_le_sum fun i _ => by split_ifs <;> norm_num
+    _ = B := by simp
+
+theorem popc_spec {B : ℕ} : ∀ f y, y < 2 ^ B → nbits B y ≤ f → popc f y = f - nbits B y := by
+  intro f
+  induction f with
+  | zero => intro y _ hf; rw [Nat.zero_sub]; rfl
+  | succ f ih =>
+    intro y hy hf
+    rw [popc_succ]
+    rcases Nat.eq_zero_or_pos y with h0 | h0
+    · subst h0
+      have : nbits B 0 = 0 := by simp [nbits]
+      rw [this]; rfl
+    · have hb : Nat.beq y 0 = false := by
+        rw [Bool.eq_false_iff]; intro h; exact h0.ne' (Nat.eq_of_beq_eq_true h)
+      rw [hb]
+      show popc f (Nat.land y (Nat.sub y 1)) = f + 1 - nbits B y
+      rw [Nat.sub_eq, Nat.land_eq]
+      have hc := nbits_clear h0.ne' hy
+      have hlt : y &&& (y - 1) < 2 ^ B := lt_of_le_of_lt Nat.and_le_left hy
+      rw [ih _ hlt (by omega)]
+      omega
+
+/-- The set bits of `x` below `2^(k+8)`: halve `k` times, then count each 256-bit leaf with `popc`
+(the kernel's whnf recursion depth grows with the length of a loop, so loops stay short). -/
+noncomputable def pcL (k : ℕ) : ℕ → ℕ :=
+  Nat.rec (motive := fun _ => ℕ → ℕ)
+    (fun x => Nat.sub 256 (popc 256 (Nat.mod x 115792089237316195423570985008687907853269984665640564039457584007913129639936)))
+    (fun k ih x => Nat.add (ih (Nat.mod x (Nat.shiftLeft 1 (Nat.shiftLeft 1 (Nat.add k 8)))))
+      (ih (Nat.shiftRight x (Nat.shiftLeft 1 (Nat.add k 8))))) k
+
+theorem pcL_zero : pcL 0 = fun x => Nat.sub 256 (popc 256 (Nat.mod x
+    115792089237316195423570985008687907853269984665640564039457584007913129639936)) := rfl
+
+theorem pcL_succ (k : ℕ) : pcL (k + 1) = fun x => Nat.add (pcL k (Nat.mod x (Nat.shiftLeft 1
+    (Nat.shiftLeft 1 (Nat.add k 8))))) (pcL k (Nat.shiftRight x (Nat.shiftLeft 1 (Nat.add k 8)))) := rfl
+
+theorem natMod_eq (x y : ℕ) : Nat.mod x y = x % y := rfl
+
+theorem nbits_mod_two_pow (B x : ℕ) : nbits B (x % 2 ^ B) = nbits B x := by
+  unfold nbits
+  refine sum_congr rfl fun i hi => ?_
+  rw [Nat.testBit_mod_two_pow, decide_eq_true (mem_range.1 hi), Bool.true_and]
+
+theorem pcL_spec : ∀ k x, pcL k x = nbits (2 ^ (k + 8)) x := by
   intro k
   induction k with
   | zero =>
     intro x
-    simp only [pc, pow_zero, sum_range_one, Nat.testBit_zero]
-    rcases Nat.mod_two_eq_zero_or_one x with h | h <;> simp [h]
+    rw [pcL_zero]
+    show Nat.sub 256 (popc 256 (Nat.mod x _)) = _
+    rw [Nat.sub_eq, show (115792089237316195423570985008687907853269984665640564039457584007913129639936 : ℕ)
+      = 2 ^ 256 by norm_num, natMod_eq, popc_spec (B := 256) 256 _ (Nat.mod_lt _ (by positivity))
+      (nbits_le _ _), Nat.sub_sub_self (nbits_le _ _), nbits_mod_two_pow, zero_add,
+      show (2 : ℕ) ^ 8 = 256 by norm_num]
   | succ k ih =>
     intro x
-    rw [pc, ih, ih, Nat.one_shiftLeft, Nat.one_shiftLeft, pow_succ, mul_two, sum_range_add]
+    rw [pcL_succ]
+    show Nat.add (pcL k (Nat.mod x _)) (pcL k (Nat.shiftRight x _)) = _
+    rw [Nat.add_eq, ih, ih, Nat.shiftLeft_eq', Nat.shiftLeft_eq', Nat.add_eq, Nat.one_shiftLeft,
+      Nat.one_shiftLeft, natMod_eq, Nat.shiftRight_eq', nbits_mod_two_pow]
+    unfold nbits
+    have e : 2 ^ (k + 1 + 8) = 2 ^ (k + 8) + 2 ^ (k + 8) := by
+      rw [show k + 1 + 8 = (k + 8) + 1 by ring, pow_succ]; ring
+    rw [e, sum_range_add]
     congr 1
-    · refine sum_congr rfl fun i hi => ?_
-      rw [Nat.testBit_mod_two_pow]
-      simp [mem_range.1 hi]
-    · refine sum_congr rfl fun i _ => ?_
-      rw [Nat.testBit_shiftRight]
+    refine sum_congr rfl fun i _ => ?_
+    rw [Nat.testBit_shiftRight]
 
 /-! ### The primes up to `7100` -/
 
@@ -215,44 +308,104 @@ theorem prime_iff_PS {m : ℕ} (h1 : 7100 < m) (h2 : m < 50452609) : m.Prime ↔
     have hlt : m.minFac < 7103 := by nlinarith
     exact h _ (mem_PS.2 ⟨prime_le_7100 hmf hlt, hmf⟩) (Nat.minFac_dvd m)
 
+/-! ### Shifted patterns -/
+
+/-- Each `p ∈ PS` with its pattern: the bits at the multiples of `p` below `40000 ≥ 2¹⁵ + 7100`.
+The kernel builds it once per declaration. -/
+def pats : List (ℕ × ℕ) := PS.map fun p => (p, maskP p 0 40000)
+
+/-- The or of the patterns, each shifted by `(n + 1) mod p`: bit `i` (for `i + 7100 ≤ 40000`) is set
+iff some `p ∈ PS` divides `n + 1 + i`. Three GMP operations per prime. -/
+noncomputable def orP (n : ℕ) (ps : List (ℕ × ℕ)) : ℕ :=
+  @List.rec (ℕ × ℕ) (fun _ => ℕ) 0
+    (fun hd _ ih => Nat.lor (Nat.shiftRight hd.2 (Nat.mod (Nat.add n 1) hd.1)) ih) ps
+
+theorem orP_cons (n : ℕ) (q : ℕ × ℕ) (ps : List (ℕ × ℕ)) :
+    orP n (q :: ps) = Nat.lor (Nat.shiftRight q.2 (Nat.mod (Nat.add n 1) q.1)) (orP n ps) := rfl
+
+theorem orP_spec (n : ℕ) : ∀ (ps : List (ℕ × ℕ)), (∀ q ∈ ps, 0 < q.1 ∧ q.1 ≤ 7100 ∧
+    q.2 = maskP q.1 0 40000) → ∀ i, i + 7100 ≤ 40000 →
+    (orP n ps).testBit i = decide (∃ q ∈ ps, q.1 ∣ n + 1 + i) := by
+  intro ps
+  induction ps with
+  | nil => intro _ i _; simp [orP]
+  | cons q ps ih =>
+    intro hq i hi
+    obtain ⟨h0, h1, h2⟩ := hq q (by simp)
+    rw [orP_cons, Nat.lor_eq, Nat.testBit_or, Nat.shiftRight_eq', Nat.testBit_shiftRight,
+      h2, maskP_spec h0 h0 (by norm_num), ih (fun r hr => hq r (by simp [hr])) i hi]
+    have hs : Nat.mod (Nat.add n 1) q.1 + i < 40000 := by
+      have := Nat.mod_lt (n + 1) h0; show (n + 1) % q.1 + i < 40000; omega
+    have hdvd : (Nat.mod (Nat.add n 1) q.1 + i) % q.1 = 0 ↔ q.1 ∣ n + 1 + i := by
+      show ((n + 1) % q.1 + i) % q.1 = 0 ↔ _
+      rw [Nat.dvd_iff_mod_eq_zero, Nat.add_mod, Nat.mod_mod, ← Nat.add_mod]
+    by_cases hd : q.1 ∣ n + 1 + i
+    · simp [hs, hdvd.2 hd, hd]
+    · have : ¬ (Nat.mod (Nat.add n 1) q.1 + i) % q.1 = 0 := fun h => hd (hdvd.1 h)
+      simp only [hs, this, and_false, decide_false, Bool.false_or, List.mem_cons, exists_eq_or_imp, hd,
+        false_or]
+
+theorem mem_pats {q : ℕ × ℕ} : q ∈ pats ↔ ∃ p ∈ PS, q = (p, maskP p 0 40000) := by
+  simp only [pats, List.mem_map]
+  constructor
+  · rintro ⟨p, hp, rfl⟩; exact ⟨p, hp, rfl⟩
+  · rintro ⟨p, hp, rfl⟩; exact ⟨p, hp, rfl⟩
+
 /-! ### Prime counts of windows -/
 
-def cnt (n W : ℕ) : ℕ := W - pc (W.log2 + 1) (orAll W n PS)
+/-- The number of primes in `(n, n + W]`: the set bits of the complement of the sieve. -/
+noncomputable def cnt (n W : ℕ) : ℕ := pcL 7 ((2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1)))
 
 theorem cnt_spec {n W : ℕ} (h1 : 7100 ≤ n) (h2 : n + W < 50452609) (hW : W ≤ 32768) :
     cnt n W = ((Ioc n (n + W)).filter Nat.Prime).card := by
-  have hP : ∀ p ∈ PS, 0 < p := fun p hp => (mem_PS.1 hp).2.pos
-  have hlog := Nat.lt_log2_self (n := W)
-  have hpc : pc (W.log2 + 1) (orAll W n PS) =
-      ∑ i ∈ range W, (if ∃ p ∈ PS, p ∣ n + 1 + i then 1 else 0) := by
-    rw [pc_spec, show (2 : ℕ) ^ (W.log2 + 1) = W + (2 ^ (W.log2 + 1) - W) by omega, sum_range_add]
-    have e2 : ∑ i ∈ range (2 ^ (W.log2 + 1) - W), (if (orAll W n PS).testBit (W + i) then 1 else 0) = 0 := by
-      refine sum_eq_zero fun i _ => ?_
-      simp [orAll_spec W n (by omega) PS hP]
-    rw [e2, add_zero]
-    refine sum_congr rfl fun i hi => ?_
-    rw [orAll_spec W n (by omega) PS hP]
-    simp [mem_range.1 hi]
+  have hq : ∀ q ∈ pats, 0 < q.1 ∧ q.1 ≤ 7100 ∧ q.2 = maskP q.1 0 40000 := by
+    intro q hq
+    obtain ⟨p, hp, rfl⟩ := mem_pats.1 hq
+    exact ⟨(mem_PS.1 hp).2.pos, (mem_PS.1 hp).1, rfl⟩
+  have hex : ∀ m, (∃ q ∈ pats, q.1 ∣ m) ↔ ∃ p ∈ PS, p ∣ m := by
+    intro m
+    constructor
+    · rintro ⟨q, hq', hd⟩
+      obtain ⟨p, hp, rfl⟩ := mem_pats.1 hq'
+      exact ⟨p, hp, hd⟩
+    · rintro ⟨p, hp, hd⟩
+      exact ⟨(p, maskP p 0 40000), mem_pats.2 ⟨p, hp, rfl⟩, hd⟩
+  have hbits : ∀ i, ((2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1))).testBit i =
+      decide (i < W ∧ ¬ ∃ p ∈ PS, p ∣ n + 1 + i) := by
+    intro i
+    rw [Nat.testBit_xor, Nat.testBit_and, Nat.testBit_two_pow_sub_one]
+    by_cases hi : i < W
+    · rw [orP_spec n pats hq i (by omega)]
+      by_cases he : ∃ p ∈ PS, p ∣ n + 1 + i
+      · have : ∃ q ∈ pats, q.1 ∣ n + 1 + i := (hex _).2 he
+        simp [hi, he, this]
+      · have : ¬ ∃ q ∈ pats, q.1 ∣ n + 1 + i := fun h => he ((hex _).1 h)
+        simp [hi, he, this]
+    · simp [hi]
+  have hlt : (2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1)) < 2 ^ W :=
+    Nat.lt_pow_two_of_testBit _ fun i hi => by rw [hbits]; simp; omega
+  have hpc : pcL 7 ((2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1))) = nbits W ((2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1))) := by
+    rw [pcL_spec, show (2 : ℕ) ^ (7 + 8) = W + (32768 - W) by norm_num; omega]
+    unfold nbits
+    rw [sum_range_add]
+    have : ∑ i ∈ range (32768 - W), (if ((2 ^ W - 1) ^^^ (orP n pats &&& (2 ^ W - 1))).testBit (W + i) then 1 else 0) = 0 :=
+      sum_eq_zero fun i _ => by rw [hbits]; simp
+    rw [this, add_zero]
   have hcard : ((Ioc n (n + W)).filter Nat.Prime).card =
       ∑ i ∈ range W, (if (n + 1 + i).Prime then 1 else 0) := by
     rw [card_eq_sum_ones, sum_filter, show Ioc n (n + W) = Ico (n + 1) (n + W + 1) by ext; simp only [mem_Ioc, mem_Ico]; omega,
       sum_Ico_eq_sum_range, show n + W + 1 - (n + 1) = W by omega]
-  rw [cnt, hpc, hcard]
-  have hsplit : ∀ i ∈ range W, (if (n + 1 + i).Prime then 1 else 0) =
-      1 - (if ∃ p ∈ PS, p ∣ n + 1 + i then 1 else 0) := by
-    intro i hi
-    have hi' := mem_range.1 hi
-    have hiff := prime_iff_PS (m := n + 1 + i) (by omega) (by omega)
-    by_cases hp : (n + 1 + i).Prime
-    · have : ¬ ∃ p ∈ PS, p ∣ n + 1 + i := by push Not; exact hiff.1 hp
-      rw [if_pos hp, if_neg this]
-    · have : ∃ p ∈ PS, p ∣ n + 1 + i := by
-        by_contra hc; push Not at hc; exact hp (hiff.2 hc)
-      rw [if_neg hp, if_pos this]
-  rw [sum_congr rfl hsplit]
-  have hle : ∀ i ∈ range W, (if ∃ p ∈ PS, p ∣ n + 1 + i then 1 else 0) ≤ 1 := fun i _ => by
-    split_ifs <;> norm_num
-  rw [sum_tsub_distrib _ hle, sum_const, card_range, smul_eq_mul, mul_one]
+  rw [cnt, hpc, hcard, nbits]
+  refine sum_congr rfl fun i hi => ?_
+  have hi' := mem_range.1 hi
+  have hiff := prime_iff_PS (m := n + 1 + i) (by omega) (by omega)
+  rw [hbits]
+  by_cases hp : (n + 1 + i).Prime
+  · have : ¬ ∃ p ∈ PS, p ∣ n + 1 + i := by push Not; exact hiff.1 hp
+    simp [hi', this, hp]
+  · have : ∃ p ∈ PS, p ∣ n + 1 + i := by
+      by_contra hc; push Not at hc; exact hp (hiff.2 hc)
+    simp [hi', this, hp]
 
 /-! ### The window chain (`θ` only) -/
 
@@ -299,7 +452,7 @@ theorem window_okT {n G tlo thi a b aN aD bN bD : ℕ} (haD : 0 < aD) (hbD : 0 <
 
 /-- The checkpoint loop: each window `(G, L1, H1)` (`L1 = 0`: the log chain; otherwise
 `L1 ≤ S log e < H1` is certified) is sieved, `θ` grows by `cnt · [LL, LHe]/S`. -/
-def outerT (aN aD bN bD : ℕ) : ℕ → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ × ℕ) →
+noncomputable def outerT (aN aD bN bD : ℕ) : ℕ → ℕ → ℕ → ℕ → ℕ → List (ℕ × ℕ × ℕ) →
     Option (ℕ × ℕ × ℕ × ℕ × ℕ)
   | n, tlo, thi, LL, LH, [] => some (n, tlo, thi, LL, LH)
   | n, tlo, thi, LL, LH, (G, L1, H1) :: gs =>

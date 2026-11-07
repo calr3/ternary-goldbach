@@ -118,7 +118,7 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallW.lean` | [MV73, Lemma 8], `6 ≤ R < 1000` | seconds |
 | `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` (not used by the main theorems: they need (2.19) only for `y ≥ 2·10⁶`) | 78 s |
 | `Prelim/SmallPsiData1–6.lean` | `\|ψ(t) − t\| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)`, by trial division (`SmallPsiTable`) | about 3 min per file |
-| `Prelim/PsiSieveData1–13.lean` | `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)`: 3343 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` (`PsiSieve.cnt_spec`) | 66 min, up to 15 GB resident |
+| `Prelim/PsiSieveData1–13.lean` | `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)`: 3343 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` (`PsiSieve.cnt_spec`) | 2.5 min in all, 7.5 GB resident (6.9 GB of it the Mathlib import) |
 | `Prelim/SmallLiouville.lean` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `k ≤ 10⁵` | 4.7 min |
 | `Prelim/SmallMuPhi.lean` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | about 10 min |
 | `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |

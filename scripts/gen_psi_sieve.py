@@ -85,6 +85,9 @@ HDR = """import {imp}
 chain on `[{a}, {b})`. -/
 
 namespace TernaryGoldbach.Prelim.SieveTab
+
+-- one theorem at a time: parallel elaboration of the chunks only adds memory
+set_option Elab.async false
 """
 def emit(chunks, per_file=10):
     files = []

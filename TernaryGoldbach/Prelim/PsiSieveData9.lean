@@ -5,6 +5,9 @@ chain on `[30471070, 34595213)`. -/
 
 namespace TernaryGoldbach.Prelim.SieveTab
 
+-- one theorem at a time: parallel elaboration of the chunks only adds memory
+set_option Elab.async false
+
 set_option maxRecDepth 100000 in
 def gs80 : List (ℕ × ℕ × ℕ) := [(19866, 17232940015, 17232940020), (20172, 0, 0), (19884, 0, 0), (19404, 0, 0), (19574, 0, 0), (19396, 0, 0), (19020, 0, 0), (18822, 0, 0), (18782, 0, 0), (18106, 0, 0), (18146, 0, 0), (18144, 0, 0), (18432, 0, 0), (18148, 0, 0), (18402, 0, 0), (18620, 0, 0), (18918, 0, 0), (18754, 0, 0), (18378, 0, 0), (18672, 0, 0), (18270, 0, 0), (17876, 0, 0)]
 
