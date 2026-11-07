@@ -2,7 +2,7 @@ import TernaryGoldbach.Explicit.ZeroFree
 import TernaryGoldbach.Explicit.Digamma
 
 /-!
-# A zero-free region for `ζ`: `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`
+# A zero-free region for `ζ`: `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`
 
 The classical argument with Stechkin's refinement: the non-negative trigonometric polynomial
 `18 + 30 cos θ + 17 cos 2θ + 6 cos 3θ + cos 4θ = 8(½ + (3/2) cos θ + cos²θ)²` applied to
@@ -253,11 +253,6 @@ theorem log_pi_ge : 1.1447 ≤ Real.log π := by
 theorem log_le_of_le_exp' {x c : ℝ} (hx : 0 < x) (h : x ≤ Real.exp c) : Real.log x ≤ c :=
   (Real.log_le_iff_le_exp hx).2 h
 
-theorem log2508_le : Real.log 2.508 ≤ 0.9197 := by
-  refine log_le_of_le_exp' (by norm_num) ?_
-  have h := exp_split_ge' 0 (u := 0.9197) (by norm_num) 8
-  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
-
 theorem log280905_le : Real.log 2.80905 ≤ 1.0329 := by
   refine log_le_of_le_exp' (by norm_num) ?_
   have h := exp_split_ge' 1 (u := 0.0329) (by norm_num) 6
@@ -270,15 +265,24 @@ theorem log3_le' : Real.log 3 ≤ 1.0987 := by
   have h := exp_split_ge' 1 (u := 0.0987) (by norm_num) 6
   norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
 
-theorem log_1e9_ge : 20 ≤ Real.log 1e9 := by
+theorem log2585_le : Real.log 2.5085 ≤ 0.9197 := by
+  refine log_le_of_le_exp' (by norm_num) ?_
+  have h := exp_split_ge' 0 (u := 0.9197) (by norm_num) 10
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+
+theorem log_1e8_ge : 18.4 ≤ Real.log 1e8 := by
   rw [Real.le_log_iff_exp_le (by norm_num)]
   have h1 := Real.exp_one_lt_d9
-  have h2 : Real.exp 20 = Real.exp 1 ^ 20 := by rw [← Real.exp_nat_mul]; norm_num
+  have h2 : Real.exp 18.4 = Real.exp 1 ^ 18 * Real.exp 0.4 := by
+    rw [← Real.exp_nat_mul, ← Real.exp_add]; norm_num
+  have h3 := Real.exp_bound' (x := 0.4) (by norm_num) (by norm_num) (n := 5) (by norm_num)
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h3
   rw [h2]
-  calc Real.exp 1 ^ 20 ≤ 2.7182818286 ^ 20 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 20
-    _ ≤ 1e9 := by norm_num
+  calc Real.exp 1 ^ 18 * Real.exp 0.4 ≤ 2.7182818286 ^ 18 * 1.4919 :=
+        mul_le_mul (pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 18) (by linarith) (Real.exp_pos _).le
+          (by positivity)
+    _ ≤ 1e8 := by norm_num
 
-/-- `ℜ(−ζ'/ζ)(σ) ≤ 1/σ + 1/(σ−1) − ½ log π + ½(log(σ/2 + 2) − 2/σ − 1/(σ/2 + 1))` for `σ > 1`. -/
 theorem vM_real_le {σ : ℝ} (hσ : 1 < σ) :
     (LSeries (fun n => (Λ n : ℂ)) ((σ : ℂ) + ((0 : ℝ) : ℂ) * I)).re ≤
       1 / σ + 1 / (σ - 1) - 1 / 2 * Real.log π + 1 / 2 * (Real.log (σ / 2 + 2) - 2 / σ - 1 / (σ / 2 + 1)) := by
@@ -412,9 +416,9 @@ theorem stech_wrap_rho {σ : ℝ} (hσ1 : 1 < σ) (hσ2 : σ ≤ 1.02) {ρ : ℂ
   exact h
 
 set_option maxHeartbeats 1000000 in
-/-- **Zero-free region** (Stechkin-type, `R = 11`): every zero `ρ = β + iγ` of `ξ` with `γ ≥ 10⁹` has
+/-- **Zero-free region** (Stechkin-type, `R = 11`): every zero `ρ = β + iγ` of `ξ` with `γ ≥ 10⁸` has
 `β ≤ 1 − 1/(11 log γ)`. -/
-theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
+theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e8 ≤ ρ.im) :
     ρ.re ≤ 1 - 1 / (11 * Real.log ρ.im) := by
   obtain ⟨t, htdef⟩ : ∃ t, t = ρ.im := ⟨_, rfl⟩
   obtain ⟨L, hLdef⟩ : ∃ L, L = Real.log t := ⟨_, rfl⟩
@@ -422,7 +426,7 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
   rw [← htdef] at ht ⊢
   rw [← hLdef, ← hβdef]
   have ht0 : 0 < t := by linarith
-  have hL : 20 ≤ L := hLdef ▸ log_1e9_ge.trans (Real.log_le_log (by norm_num) ht)
+  have hL : 18.4 ≤ L := hLdef ▸ log_1e8_ge.trans (Real.log_le_log (by norm_num) ht)
   have hL0 : 0 < L := by linarith
   by_contra hβ
   push Not at hβ
@@ -434,11 +438,11 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
   obtain ⟨σ, hσ⟩ : ∃ σ, σ = 1 + 0.31 / L := ⟨_, rfl⟩
   have hσL0 : 0 < 0.31 / L := by positivity
   have hσ1 : 1 < σ := by linarith
-  have hσL : 0.31 / L ≤ 0.0155 := by rw [div_le_iff₀ hL0]; linarith
-  have hσ2 : σ ≤ 1.0155 := by linarith
+  have hσL : 0.31 / L ≤ 0.01685 := by rw [div_le_iff₀ hL0]; linarith
+  have hσ2 : σ ≤ 1.01685 := by linarith
   obtain ⟨κ, hκ⟩ : ∃ κ, κ = (σ - 1 / 2) / (1.6181 - 1 / 2) := ⟨_, rfl⟩
   have hκl : 0.4471 ≤ κ := by rw [hκ, le_div_iff₀ (by norm_num)]; norm_num; linarith
-  have hκu : κ ≤ 0.46105 := by rw [hκ, div_le_iff₀ (by norm_num)]; norm_num; linarith
+  have hκu : κ ≤ 0.46226 := by rw [hκ, div_le_iff₀ (by norm_num)]; norm_num; linarith
   -- numerical constants
   have lπ := log_pi_ge
   have lπu := log_pi_le
@@ -446,16 +450,16 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
   have l2' := Real.log_nonneg (by norm_num : (1:ℝ) ≤ 2)
   have l3 := log3_le'
   have l3' := Real.log_nonneg (by norm_num : (1:ℝ) ≤ 3)
-  have l2508 := log2508_le
+  have l2508 := log2585_le
   -- tiny terms
-  have tt : ∀ j : ℝ, 1 ≤ j → 2 / (j * t) ^ 2 + 1 / 2 * κ * (0.20604 + 11 / (j * t) ^ 2) ≤ 1 / 2 * κ * 0.20604 + 1e-17 := by
+  have tt : ∀ j : ℝ, 1 ≤ j → 2 / (j * t) ^ 2 + 1 / 2 * κ * (0.20604 + 11 / (j * t) ^ 2) ≤ 1 / 2 * κ * 0.20604 + 1e-15 := by
     intro j hj
-    have hjt : 1 * 1e9 ≤ j * t := mul_le_mul hj ht (by norm_num) (by linarith)
-    have hsq : (1e9 : ℝ) ^ 2 ≤ (j * t) ^ 2 := pow_le_pow_left₀ (by norm_num) (by linarith) 2
-    have hsq' : (1e18 : ℝ) ≤ (j * t) ^ 2 := by norm_num at hsq ⊢; linarith
-    have a : 2 / (j * t) ^ 2 ≤ 2 / 1e18 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsq'
-    have b : 11 / (j * t) ^ 2 ≤ 11 / 1e18 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsq'
-    have c : κ * (11 / (j * t) ^ 2) ≤ 1 * (11 / 1e18) :=
+    have hjt : 1 * 1e8 ≤ j * t := mul_le_mul hj ht (by norm_num) (by linarith)
+    have hsq : (1e8 : ℝ) ^ 2 ≤ (j * t) ^ 2 := pow_le_pow_left₀ (by norm_num) (by linarith) 2
+    have hsq' : (1e16 : ℝ) ≤ (j * t) ^ 2 := by norm_num at hsq ⊢; linarith
+    have a : 2 / (j * t) ^ 2 ≤ 2 / 1e16 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsq'
+    have b : 11 / (j * t) ^ 2 ≤ 11 / 1e16 := div_le_div_of_nonneg_left (by norm_num) (by norm_num) hsq'
+    have c : κ * (11 / (j * t) ^ 2) ≤ 1 * (11 / 1e16) :=
       mul_le_mul (by linarith) b (by positivity) (by norm_num)
     have e : 2 / (j * t) ^ 2 + 1 / 2 * κ * (0.20604 + 11 / (j * t) ^ 2) =
         1 / 2 * κ * 0.20604 + (2 / (j * t) ^ 2 + 1 / 2 * (κ * (11 / (j * t) ^ 2))) := by ring
@@ -479,9 +483,9 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
   have hZ2 : 1 / σ ≤ 1 / (σ + β - 1) := one_div_le_one_div_of_le (by linarith) (by linarith)
   have hZ3 : 1 / (1.6181 - β) ≤ 1 / 0.6181 := one_div_le_one_div_of_le (by norm_num) (by linarith)
   have hZ4 : 1 / (1.6181 + β - 1) ≤ 1 / 1.5681 := one_div_le_one_div_of_le (by norm_num) (by linarith)
-  have hσinv : 0.9847 ≤ 1 / σ := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
-  have hσinv2 : 1.96947 ≤ 2 / σ := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
-  have hσinv3 : 0.6632 ≤ 1 / (σ / 2 + 1) := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
+  have hσinv : 0.9834 ≤ 1 / σ := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
+  have hσinv2 : 1.9668 ≤ 2 / σ := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
+  have hσinv3 : 0.6629 ≤ 1 / (σ / 2 + 1) := by rw [le_div_iff₀ (by linarith)]; linarith only [hσ2]
   have hσ1L : 1 / (σ - 1) = 100 / 31 * L := by rw [hσ]; field_simp; ring
   have hlogσ : Real.log (σ / 2 + 2) ≤ 0.9197 := (Real.log_le_log (by linarith) (by linarith)).trans l2508
   have hσinv1 : 1 / σ ≤ 1 := by rw [div_le_one (by linarith)]; linarith
@@ -495,25 +499,25 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
     rw [hE1, show (1.6181 : ℝ) / 2 + 2 = 2.80905 by norm_num]
     have : 0 ≤ Real.log 2.80905 := Real.log_nonneg (by norm_num)
     norm_num; linarith
-  have pE : κ * E1 ≤ 0.5928 := by
-    calc κ * E1 ≤ 0.46105 * E1 := mul_le_mul_of_nonneg_right hκu hE1l
-      _ ≤ 0.46105 * 1.2857 := by gcongr
-      _ ≤ 0.5928 := by norm_num
+  have pE : κ * E1 ≤ 0.5944 := by
+    calc κ * E1 ≤ 0.46226 * E1 := mul_le_mul_of_nonneg_right hκu hE1l
+      _ ≤ 0.46226 * 1.2857 := by gcongr
+      _ ≤ 0.5944 := by norm_num
   have pW : ∀ X : ℝ, 0 ≤ X → (1 - κ) * X ≤ 0.5529 * X := fun X hX =>
     mul_le_mul_of_nonneg_right (by linarith) hX
   have pW1 := pW (1 / 2 * L + 0.36 - 1 / 2 * Real.log π) (by linarith)
   have pW2 := pW (1 / 2 * (Real.log 2 + L) + 0.36 - 1 / 2 * Real.log π) (by linarith)
   have pW3 := pW (1 / 2 * (Real.log 3 + L) + 0.36 - 1 / 2 * Real.log π) (by linarith)
   have pW4 := pW (1 / 2 * (2 * Real.log 2 + L) + 0.36 - 1 / 2 * Real.log π) (by linarith)
-  have pZ : κ * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) ≤ 1.04 := by
+  have pZ : κ * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) ≤ 1.0427 := by
     have : 0 ≤ 1 / (1.6181 - β) + 1 / (1.6181 + β - 1) := by
       have : 0 < 1.6181 - β := by linarith
       have : 0 < 1.6181 + β - 1 := by linarith
       positivity
-    calc κ * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) ≤ 0.46105 * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) :=
+    calc κ * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) ≤ 0.46226 * (1 / (1.6181 - β) + 1 / (1.6181 + β - 1)) :=
           mul_le_mul_of_nonneg_right hκu this
-      _ ≤ 0.46105 * (1 / 0.6181 + 1 / 1.5681) := by gcongr
-      _ ≤ 1.04 := by norm_num
+      _ ≤ 0.46226 * (1 / 0.6181 + 1 / 1.5681) := by gcongr
+      _ ≤ 1.0427 := by norm_num
   -- the positivity and the five terms
   have hP := vM_positivity hσ1 t
   rw [show (0:ℝ) * t = 0 by ring, show (1:ℝ) * t = t by ring] at hP
@@ -538,8 +542,8 @@ theorem zero_free_pos {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ ρ.im) :
     lπ, l2, l3, pE, pW1, pW2, pW3, pW4, pZ, hκu, hκl, hL]
 
 /-- **Zero-free region**: every zero `ρ = β + iγ` of `ξ` (equivalently a nontrivial zero of `ζ`) with
-`|γ| ≥ 10⁹` has `β ≤ 1 − 1/(11 log|γ|)`. -/
-theorem zero_free {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e9 ≤ |ρ.im|) :
+`|γ| ≥ 10⁸` has `β ≤ 1 − 1/(11 log|γ|)`. -/
+theorem zero_free {ρ : ℂ} (hρ : xiF ρ = 0) (ht : 1e8 ≤ |ρ.im|) :
     ρ.re ≤ 1 - 1 / (11 * Real.log |ρ.im|) := by
   rcases le_or_gt 0 ρ.im with h | h
   · rw [abs_of_nonneg h] at ht ⊢; exact zero_free_pos hρ ht

@@ -123,7 +123,7 @@ theorem fourth_root_facts {T : ℝ} (hT : 6e6 ≤ T) :
   norm_num; linarith
 
 set_option maxHeartbeats 1600000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (6.60), (6.61)], lower-order terms** of `typeII_637`/`typeII_640` at the parameters
 of (6.49): at most `3.2 x^{5/6}` (cf. [H]'s `2.73908 x^{5/6}` in (6.62)). Here `c ∈ [t, 1.0015 t]`
 (`c = 2q` resp. `δ₀q(1 + ε₁)`). -/
@@ -322,7 +322,7 @@ theorem first_choice_t {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     · rw [max_eq_left h]; linarith
 
 set_option maxHeartbeats 1600000 in
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.60), (6.61)]**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
 `|S_{II}| ≤ x/√(δ₀φ(q)) · √(C_{x,t}(log t + 0.002) + log(4t)/2) · √(0.30214 log t + 0.7468)`
 `+ 3.2 x^{5/6}`, `t = δ₀q`. -/

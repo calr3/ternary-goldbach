@@ -650,6 +650,38 @@ noncomputable def RegC (ℓ p₀ κ₁ κ₀ R U δ : ℝ) : ℝ :=
 noncomputable def RegD (ℓ p₀ κ₁ κ₀ R U δ : ℝ) : ℝ :=
   (c0C ℓ p₀ κ₀ R U + κ₁ * Real.log (1 / δ) + c2C κ₁ R U * δ) * EpD + κ₁ * FpD
 
+/-- **The window integral** over `[−(Y₁ + R), Y₁ + R]`, `(∫ G Φ⁺)/B_R ≤ 2(A + B + C + D)`, for
+`3/δ ≤ Y₁`. -/
+theorem window_int_regionsH {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R)
+    (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
+    (hk0 : kap0 ℓ N R ≤ κ₀) (hκ : 0 ≤ κ₀ + κ₁ * Real.log R)
+    {r : ℝ} (hr : 1 ≤ r) {nA nB : ℕ} (hnA : 0 < nA) (hRU : R ≤ 2.39 * r ^ nB) {δ : ℝ} (hδ : 0 < δ)
+    (hUδ : 2.39 * r ^ nB ≤ 1 / δ) {Y₁ : ℝ} (hW : 3 / δ ≤ Y₁) :
+    (∫ t in (-(Y₁ + R))..(Y₁ + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t) / KRB ℓ 2 R ≤
+      2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) := by
+  have hR0 : 0 < R := by linarith
+  have hKK := KRB_ge hℓ hR0.le hlR
+  have hU0 : 2.39 ≤ 2.39 * r ^ nB := le_mul_of_one_le_right (by norm_num) (one_le_pow₀ hr)
+  have hδW : 1 / δ ≤ Y₁ := by
+    have : 1 / δ ≤ 3 / δ := div_le_div_of_nonneg_right (by norm_num) hδ.le
+    linarith
+  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
+  have hp₀ : 0 ≤ p₀ := le_trans (by unfold p0; positivity) hp
+  have hk₁ : 0 ≤ κ₁ := le_trans (kap1_nonneg hR0 hK0) hk
+  refine (window_int_le hℓ hN hR hkB hKK hp hk hk0 δ (Y₁ + R) (by linarith)).trans ?_
+  have hi : ∀ a b : ℝ, IntervalIntegrable (WI δ ℓ p₀ κ₁ κ₀ R) volume a b :=
+    fun a b => (continuous_WI δ ℓ p₀ κ₁ κ₀ hR0).intervalIntegrable a b
+  rw [← intervalIntegral.integral_add_adjacent_intervals (hi 0 (R + 2.39)) (hi _ (Y₁ + R)),
+    ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 2.39 * r ^ nB)) (hi _ (Y₁ + R)),
+    ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 1 / δ)) (hi _ (Y₁ + R))]
+  have hA := regionA_le hℓ hR0 hp₀ hk₁ hκ δ nA hnA
+  have hB := regionB_le hℓ hR0 hp₀ hk₁ hκ δ hr nB
+  have hC := regionC_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ
+  have hD := regionD_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ hW
+  rw [show Y₁ + R = R + Y₁ by ring]
+  unfold RegA RegB RegC RegD
+  linarith
+
 /-- **The window integral**, `(∫ G Φ⁺)/B_R ≤ 2(A + B + C + D)`. -/
 theorem window_int_regions {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R)
     (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
@@ -657,45 +689,26 @@ theorem window_int_regions {ℓ : ℝ} (hℓ : 0 < ℓ) {N : ℕ} (hN : 3 ≤ N)
     {r : ℝ} (hr : 1 ≤ r) {nA nB : ℕ} (hnA : 0 < nA) (hRU : R ≤ 2.39 * r ^ nB) {δ : ℝ} (hδ : 0 < δ)
     (hUδ : 2.39 * r ^ nB ≤ 1 / δ) (hW : 3 / δ ≤ 1e10) :
     (∫ t in (-(1e10 + R))..(1e10 + R), gW δ 2.39 (max 0 (|t| - R)) * PhiUp ℓ 2 N R t) / KRB ℓ 2 R ≤
-      2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) := by
-  have hR0 : 0 < R := by linarith
-  have hKK := KRB_ge hℓ hR0.le hlR
-  have hU0 : 2.39 ≤ 2.39 * r ^ nB := le_mul_of_one_le_right (by norm_num) (one_le_pow₀ hr)
-  have hδW : 1 / δ ≤ 1e10 := by
-    have : 1 / δ ≤ 3 / δ := div_le_div_of_nonneg_right (by norm_num) hδ.le
-    linarith
-  have hK0 : 0 < K0 ℓ R := by unfold K0; positivity
-  have hp₀ : 0 ≤ p₀ := le_trans (by unfold p0; positivity) hp
-  have hk₁ : 0 ≤ κ₁ := le_trans (kap1_nonneg hR0 hK0) hk
-  refine (window_int_le hℓ hN hR hkB hKK hp hk hk0 δ (1e10 + R) (by linarith)).trans ?_
-  have hi : ∀ a b : ℝ, IntervalIntegrable (WI δ ℓ p₀ κ₁ κ₀ R) volume a b :=
-    fun a b => (continuous_WI δ ℓ p₀ κ₁ κ₀ hR0).intervalIntegrable a b
-  rw [← intervalIntegral.integral_add_adjacent_intervals (hi 0 (R + 2.39)) (hi _ (1e10 + R)),
-    ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 2.39 * r ^ nB)) (hi _ (1e10 + R)),
-    ← intervalIntegral.integral_add_adjacent_intervals (hi _ (R + 1 / δ)) (hi _ (1e10 + R))]
-  have hA := regionA_le hℓ hR0 hp₀ hk₁ hκ δ nA hnA
-  have hB := regionB_le hℓ hR0 hp₀ hk₁ hκ δ hr nB
-  have hC := regionC_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ
-  have hD := regionD_le hℓ hR0 hp₀ hk₁ hκ hδ hRU hU0 hUδ hW
-  rw [show (1e10 : ℝ) + R = R + 1e10 by ring]
-  unfold RegA RegB RegC RegD
-  linarith
+      2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) :=
+  window_int_regionsH hℓ hN hR hlR hkB hp hk hk0 hκ hr hnA hRU hδ hUδ hW
 
-/-- **The line zeros `|γ| ≤ 3·10¹⁰`, in closed form.** -/
-theorem line_sum_closed [Fact TernaryGoldbach.RHUpTo] {ℓ : ℝ} (hℓ : 0 < ℓ) (hℓ1 : ℓ ≤ 1)
-    (h2 : Real.exp (2 * (2 : ℕ) * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {R : ℝ} (hR : 1 ≤ R) (hR1 : R ≤ 1e9)
+/-- **The line zeros `|γ| ≤ H`, in closed form**, under RH up to `H ∈ [10⁸, 3·10¹⁰]`
+(`1/2 ≤ Y₁`, `Y₁ + R ≤ H/2`, `3/δ ≤ Y₁`). -/
+theorem line_sum_closedH {ℓ : ℝ} (hℓ : 0 < ℓ) (hℓ1 : ℓ ≤ 1)
+    (h2 : Real.exp (2 * (2 : ℕ) * ℓ) < 2) {N : ℕ} (hN : 3 ≤ N) {H Y₁ : ℝ} (hRH : RHBelow H)
+    (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10) {R : ℝ} (hR : 1 ≤ R) (hY₁0 : 1 / 2 ≤ Y₁) (hY₁ : Y₁ + R ≤ H / 2)
     (hlR : ℓ ^ 2 * R ^ 2 ≤ 6) (hkB : 0 < kB ℓ R) {p₀ κ₁ κ₀ : ℝ} (hp : p0 ℓ R ≤ p₀) (hk : kap1 ℓ R ≤ κ₁)
     (hk0 : kap0 ℓ N R ≤ κ₀) (hκ : 0 ≤ κ₀ + κ₁ * Real.log R)
     {r : ℝ} (hr : 1 ≤ r) {nA nB : ℕ} (hnA : 0 < nA) (hRU : R ≤ 2.39 * r ^ nB) {δ : ℝ} (hδ : 0 < δ)
-    (hUδ : 2.39 * r ^ nB ≤ 1 / δ) (hW : 3 / δ ≤ 1e10) (a b T : ℝ) :
-    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+    (hUδ : 2.39 * r ^ nB ≤ 1 / δ) (hW : 3 / δ ≤ Y₁) (a b T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
         (2 * (RegA ℓ p₀ κ₁ κ₀ R nA + RegB ℓ p₀ κ₁ κ₀ R r nB + RegC ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ + RegD ℓ p₀ κ₁ κ₀ R (2.39 * r ^ nB) δ) +
-          Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW) := by
+          Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) * LWH H) := by
   have hR0 : 0 < R := by linarith
   have hK : 0 < KRB ℓ 2 R := lt_of_lt_of_le (by positivity) (KRB_ge hℓ hR0.le hlR)
-  refine (line_sum_weil_all hℓ hℓ1 (le_refl 2) h2 hN hR hR1 hK a b δ T).trans ?_
-  have hreg := window_int_regions hℓ hN hR hlR hkB hp hk hk0 hκ hr hnA hRU hδ hUδ hW
+  refine (line_sum_weil_allH hℓ hℓ1 (le_refl 2) h2 hN hRH hH1 hH2 hR hY₁0 hY₁ hK a b δ T).trans ?_
+  have hreg := window_int_regionsH hℓ hN hR hlR hkB hp hk hk0 hκ hr hnA hRU hδ hUδ hW
   gcongr
 
 end TernaryGoldbach.Explicit

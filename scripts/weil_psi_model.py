@@ -1,4 +1,4 @@
-# The exact Lean bounds psi_upper_W / psi_lower_W (Explicit/PsiWeil.lean), evaluated.
+# The exact Lean bounds psi_upper_WH / psi_lower_WH (Explicit/PsiWeil.lean) at H = 3e10, evaluated.
 import math
 LW = 2*571
 c1 = 2/math.log(2) + 4.8

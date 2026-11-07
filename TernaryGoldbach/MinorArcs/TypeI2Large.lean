@@ -1,6 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeI2Sum
 
-variable [Fact TernaryGoldbach.RHUpTo]
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-!
 # Type I totals [H, §6.2.2]: the case `|δ| ≥ 1/2c₂` ((6.8), (6.14))
@@ -116,11 +116,11 @@ theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) 
   have := mul_le_mul_of_nonneg_left (p2b.trans (add_le_add_left p2d _)) hB0.le
   nlinarith
 
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem logPlus_le_logPlus {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) : logPlus a ≤ logPlus b :=
   max_le_max (Real.log_le_log ha hab) le_rfl
 
-omit [Fact TernaryGoldbach.RHUpTo] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- [H, (6.8)], per `v`: (4.32) for `x/v`, `q_v = q/(q,v)`, `Q/v`, keeping
 `m_v = min(⌊x/v/|δ|q_v⌋ + 1, 2U)` (summed in `sum_min_floor_le`). -/
 theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)

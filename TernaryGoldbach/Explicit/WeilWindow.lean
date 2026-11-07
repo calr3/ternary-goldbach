@@ -1,17 +1,15 @@
 import TernaryGoldbach.Explicit.WeilBridge
 import TernaryGoldbach.Explicit.PsiPlateau
 
-variable [Fact TernaryGoldbach.RHUpTo]
-
 /-!
 # One window of the Weil formula
 
-For the on-line zeros `S` of `zerosRectD zetaF T` with `|γ| ≤ 3·10¹⁰` (all of them are on the line by
-`rh_upto`) and a window centre `|T₀| ≤ 1.5·10¹⁰`:
-`Σ_S m_ρ B(γ − T₀)² ≤ Φ(T₀) + Off` (`weil_window`), where
+For the zeros `S` of `zerosRectD zetaF T` with `|γ| ≤ H`, `H ∈ [10⁸, 3·10¹⁰]` (all of them on the line
+by `RHBelow H`), and a window centre `|T₀| ≤ H/2`:
+`Σ_S m_ρ B(γ − T₀)² ≤ Φ(T₀) + Off` (`weil_windowH`), where
 `Φ(T₀) = Re [H̃_{T₀}(1) + (1/2π) ∫ A(½ + iy) H̃_{T₀}(½ + iy) dy]` is the right-hand side of the Weil
-formula, and `Off = 10⁻¹⁵ · 4^m e^{mℓ}` bounds the zeros with `|γ| > 3·10¹⁰` (`|H| ≤ 4^m e^{mℓ} · 64/γ⁴`,
-counted in windows of width `4.4` by `count_tail_windowG`).
+formula, and `Off = 10⁻¹⁵ · 4^m e^{mℓ}` (`OffC`) bounds the zeros with `|γ| > H`
+(`|H̃| ≤ 4^m e^{mℓ} · 64/γ⁴`, counted in windows of width `4.4` by `count_tail_windowG`; `off_line_leH`).
 -/
 
 open Complex Metric Set Filter Finset
@@ -21,7 +19,6 @@ namespace TernaryGoldbach.Explicit
 
 /-! ### Zeros of `ξ` in the rectangle are zeros of `zetaF` -/
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem xiF_eq_zero_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : xiF u = 0 := by
   rw [rectZerosXi, Finset.mem_filter] at hu
   have hd := (mem_zerosIn hu.1).2
@@ -34,21 +31,18 @@ theorem xiF_eq_zero_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZeros
     simp
   · exact Function.locallyFinsuppWithin.apply_eq_zero_of_notMem _ hb
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem strip_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : 0 < u.re ∧ u.re < 1 := by
   have h := xiF_eq_zero_of_mem_rectZerosXi hu
   constructor
   · by_contra h0; exact xiF_ne_zero_of_re_nonpos (not_lt.1 h0) h
   · by_contra h1; exact xiF_ne_zero_of_one_le_re (not_lt.1 h1) h
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem im_lt_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) : |u.im| < T := by
   rw [rectZerosXi, Finset.mem_filter] at hu
   obtain ⟨-, -, -, h3, h4⟩ := hu
   rw [zT_im] at h3; rw [wT_im] at h4
   exact abs_lt.2 ⟨h3, h4⟩
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- **The reverse bridge**: a zero of `ξ` in `R_T` is a zero of `zetaF` in `R_T`, with the same
 multiplicity. -/
 theorem mem_zerosRectD_of_mem_rectZerosXi {T : ℝ} (hT : 1 ≤ T) {u : ℂ} (hu : u ∈ rectZerosXi T) :
@@ -68,7 +62,6 @@ theorem mem_zerosRectD_of_mem_rectZerosXi {T : ℝ} (hT : 1 ≤ T) {u : ℂ} (hu
 
 /-! ### Zeros above `3·10¹⁰` -/
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 /-- `Σ_{k<K} 1/(H + 4.4k)² ≤ 1/H² + 1/(4.4H)`. -/
 theorem sum_inv_sq_lin_le {H : ℝ} (hH : 0 < H) (K : ℕ) :
     ∑ k ∈ range K, 1 / (H + 4.4 * k) ^ 2 ≤ 1 / H ^ 2 + 1 / (4.4 * H) := by
@@ -101,16 +94,13 @@ theorem sum_inv_sq_lin_le {H : ℝ} (hH : 0 < H) (K : ℕ) :
 /-- The off-line constant. -/
 noncomputable def OffC (ℓ : ℝ) (m : ℕ) : ℝ := 4 ^ m * Real.exp (m * ℓ) * 1e-15
 
-omit [Fact TernaryGoldbach.RHUpTo] in
-theorem OffC_nonneg (ℓ : ℝ) (m : ℕ) : 0 ≤ OffC ℓ m := by unfold OffC; positivity
-
-omit [Fact TernaryGoldbach.RHUpTo] in
-/-- **The zeros above `3·10¹⁰`** contribute at most `OffC` to the Weil sum. -/
-theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m) {T₀ : ℝ}
-    (hT₀ : |T₀| ≤ 1.5e10) {T : ℝ} (hT : 1 ≤ T) :
-    ∑ u ∈ (rectZerosXi T).filter (fun u => ¬ |u.im| ≤ 3e10), (mult T u : ℝ) * ‖WH ℓ m T₀ u‖ ≤ OffC ℓ m := by
-  set Z := (rectZerosXi T).filter (fun u => ¬ |u.im| ≤ 3e10) with hZ
-  set H : ℝ := 3e10 with hH
+/-- **The zeros above a height `H ∈ [10⁸, 3·10¹⁰]`** contribute at most `OffC` to the Weil sum of a
+window centred at `|T₀| ≤ H/2`. -/
+theorem off_line_leH {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m) {H T₀ : ℝ}
+    (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10) (hT₀ : |T₀| ≤ H / 2) {T : ℝ} (hT : 1 ≤ T) :
+    ∑ u ∈ (rectZerosXi T).filter (fun u => ¬ |u.im| ≤ H), (mult T u : ℝ) * ‖WH ℓ m T₀ u‖ ≤ OffC ℓ m := by
+  set Z := (rectZerosXi T).filter (fun u => ¬ |u.im| ≤ H) with hZ
+  have hH0 : 0 < H := by linarith
   have hZD : ∀ u ∈ Z, u ∈ rectZerosXi T ∧ H < |u.im| := fun u hu =>
     ⟨(Finset.mem_filter.1 hu).1, not_le.1 (Finset.mem_filter.1 hu).2⟩
   -- the pointwise bound `|H(u)| ≤ 4^m e^{mℓ} · 64/(H + 4.4 idx)⁴`
@@ -152,11 +142,20 @@ theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
       2 * Z3g BPz2 H + 2 * c3g 10 H * (k + 1) := by
     intro k
     rw [Finset.sum_congr rfl fun u hu => hmult u (Finset.mem_filter.1 hu).1]
-    exact count_tail_windowG polyDatum_zeta2 (by norm_num) Z hZsub
+    exact count_tail_windowG polyDatum_zeta2 hH0 Z hZsub
       (fun u hu => strip_of_mem_rectZerosXi (hZD u hu).1) (fun u hu => (hZD u hu).2) k
-  have hZ3 : Z3g BPz2 H ≤ 210.6 := Z3g_H_le
-  have hc3 : c3g 10 H ≤ 1.22e-9 := c3g_H_le
-  have hc30 : 0 ≤ c3g 10 H := c3g_H_nonneg
+  have hZ3 : Z3g BPz2 H ≤ 210.6 := by
+    refine le_trans ?_ Z3g_H_le
+    unfold Z3g
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono ?_) (log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_pos hH0, abs_of_pos (by norm_num : (0 : ℝ) < 3e10)]; exact hH2
+  have hc3 : c3g 10 H ≤ 3.66e-7 := by
+    unfold c3g
+    have hl := log_10_3_ge
+    rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) hl), div_le_iff₀ hH0]
+    nlinarith
+  have hc30 : 0 ≤ c3g 10 H := by
+    unfold c3g; exact div_nonneg (by positivity) (lt_of_lt_of_le (by norm_num) log_10_3_ge).le
   -- fiberwise
   set K := (Z.image idx).sup id + 1 with hK
   have hmaps : ∀ u ∈ Z, idx u ∈ range K := by
@@ -179,12 +178,12 @@ theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun u hu => ?_
         rw [(Finset.mem_filter.1 hu).2]; ring
-    _ ≤ ∑ k ∈ range K, (E * f k ^ 2) * (421.2 + 2.44e-9 * (k + 1)) := by
+    _ ≤ ∑ k ∈ range K, (E * f k ^ 2) * (421.2 + 7.32e-7 * (k + 1)) := by
         refine Finset.sum_le_sum fun k _ => mul_le_mul_of_nonneg_left ?_ (by positivity)
         refine (hcnt k).trans ?_
         have : (0 : ℝ) ≤ k + 1 := by positivity
         nlinarith
-    _ ≤ ∑ k ∈ range K, E * (421.2 / H ^ 2 + 2.44e-9 * (1 / (8.8 * H) + 1 / H ^ 2)) * f k := by
+    _ ≤ ∑ k ∈ range K, E * (421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2)) * f k := by
         refine Finset.sum_le_sum fun k _ => ?_
         have hHk : 0 < H + 4.4 * k := by positivity
         have hfk : f k * (H + 4.4 * k) ^ 2 = 1 := by simp only [hf]; field_simp
@@ -194,7 +193,6 @@ theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
           rw [sq]; exact mul_le_mul_of_nonneg_right (hfle k) (hf0 k)
         have h2 : ((k : ℝ) + 1) * f k ^ 2 ≤ (1 / (8.8 * H) + 1 / H ^ 2) * f k := by
           have hle : (k : ℝ) + 1 ≤ (1 / (8.8 * H) + 1 / H ^ 2) * (H + 4.4 * k) ^ 2 := by
-            have hH0 : 0 < H := by norm_num
             have e : (1 / (8.8 * H) + 1 / H ^ 2) * (H + 4.4 * k) ^ 2 =
                 (H + 4.4 * k) ^ 2 / (8.8 * H) + (H + 4.4 * k) ^ 2 / H ^ 2 := by ring
             rw [e]
@@ -209,20 +207,32 @@ theorem off_line_le {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
             _ = (1 / (8.8 * H) + 1 / H ^ 2) * f k * (f k * (H + 4.4 * k) ^ 2) := by ring
             _ = (1 / (8.8 * H) + 1 / H ^ 2) * f k := by rw [hfk, mul_one]
         have hE0 : 0 ≤ E := by positivity
-        calc E * f k ^ 2 * (421.2 + 2.44e-9 * ((k : ℝ) + 1)) =
-            E * (421.2 * f k ^ 2 + 2.44e-9 * (((k : ℝ) + 1) * f k ^ 2)) := by ring
-          _ ≤ E * (421.2 * ((1 / H ^ 2) * f k) + 2.44e-9 * ((1 / (8.8 * H) + 1 / H ^ 2) * f k)) := by
+        calc E * f k ^ 2 * (421.2 + 7.32e-7 * ((k : ℝ) + 1)) =
+            E * (421.2 * f k ^ 2 + 7.32e-7 * (((k : ℝ) + 1) * f k ^ 2)) := by ring
+          _ ≤ E * (421.2 * ((1 / H ^ 2) * f k) + 7.32e-7 * ((1 / (8.8 * H) + 1 / H ^ 2) * f k)) := by
               gcongr
-          _ = E * (421.2 / H ^ 2 + 2.44e-9 * (1 / (8.8 * H) + 1 / H ^ 2)) * f k := by ring
-    _ = E * (421.2 / H ^ 2 + 2.44e-9 * (1 / (8.8 * H) + 1 / H ^ 2)) * ∑ k ∈ range K, f k := by
+          _ = E * (421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2)) * f k := by ring
+    _ = E * (421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2)) * ∑ k ∈ range K, f k := by
         rw [Finset.mul_sum]
-    _ ≤ E * (421.2 / H ^ 2 + 2.44e-9 * (1 / (8.8 * H) + 1 / H ^ 2)) * (1 / H ^ 2 + 1 / (4.4 * H)) :=
-        mul_le_mul_of_nonneg_left (sum_inv_sq_lin_le (by norm_num) K) (by positivity)
+    _ ≤ E * (421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2)) * (1 / H ^ 2 + 1 / (4.4 * H)) :=
+        mul_le_mul_of_nonneg_left (sum_inv_sq_lin_le hH0 K) (by positivity)
     _ ≤ OffC ℓ m := by
-        rw [hE, OffC, hH]
-        have : (0 : ℝ) ≤ 4 ^ m * Real.exp (m * ℓ) := by positivity
-        norm_num
-        nlinarith
+        have hu0 : 0 ≤ 1 / H := by positivity
+        have hu1 : 1 / H ≤ 1e-8 := by rw [div_le_iff₀ hH0]; linarith
+        have hA : 421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2) ≤ 4.3e-14 := by
+          have e : 421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2) =
+              (421.2 + 7.32e-7) * (1 / H) ^ 2 + 7.32e-7 / 8.8 * (1 / H) := by ring
+          rw [e]; nlinarith
+        have hB : 1 / H ^ 2 + 1 / (4.4 * H) ≤ 2.3e-9 := by
+          have e : 1 / H ^ 2 + 1 / (4.4 * H) = (1 / H) ^ 2 + 1 / 4.4 * (1 / H) := by ring
+          rw [e]; nlinarith
+        have hA0 : 0 ≤ 421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2) := by positivity
+        have hP : (0 : ℝ) ≤ 4 ^ m * Real.exp (m * ℓ) := by positivity
+        rw [hE, OffC]
+        calc 4 ^ m * Real.exp (m * ℓ) * 64 * (421.2 / H ^ 2 + 7.32e-7 * (1 / (8.8 * H) + 1 / H ^ 2)) *
+              (1 / H ^ 2 + 1 / (4.4 * H)) ≤ 4 ^ m * Real.exp (m * ℓ) * 64 * 4.3e-14 * 2.3e-9 := by
+              gcongr
+          _ ≤ 4 ^ m * Real.exp (m * ℓ) * 1e-15 := by nlinarith
 
 /-! ### One window -/
 
@@ -231,26 +241,27 @@ noncomputable def WPhi (ℓ : ℝ) (m : ℕ) (T₀ : ℝ) : ℝ :=
   (WHt ℓ m T₀ 1 + (1 / (2 * π) : ℂ) *
     ∫ y : ℝ, archF (((1 / 2 : ℝ) : ℂ) + y * I) * WHt ℓ m T₀ (((1 / 2 : ℝ) : ℂ) + y * I)).re
 
-/-- A zero of `ξ` in the strip with `|γ| ≤ 3·10¹⁰` is on the critical line. -/
-theorem re_eq_half_of_mem_rectZerosXi {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T) (him : |u.im| ≤ 3e10) :
-    u.re = 1 / 2 := by
+/-- A zero of `ξ` in the strip with `|γ| ≤ H` is on the critical line, under RH up to `H`. -/
+theorem re_eq_half_of_mem_rectZerosXiH {H : ℝ} (hRH : RHBelow H) {T : ℝ} {u : ℂ} (hu : u ∈ rectZerosXi T)
+    (him : |u.im| ≤ H) : u.re = 1 / 2 := by
   obtain ⟨h0, h1⟩ := strip_of_mem_rectZerosXi hu
   have hz : riemannZeta u = 0 := (xiF_eq_zero_iff h0 h1).1 (xiF_eq_zero_of_mem_rectZerosXi hu)
-  exact rh_upto u hz h0 h1 him
+  exact hRH u hz h0 h1 him
 
-omit [Fact TernaryGoldbach.RHUpTo] in
 theorem WH_re_nonneg_of_line (ℓ : ℝ) (m : ℕ) (T₀ : ℝ) {u : ℂ} (hu : u.re = 1 / 2) :
     0 ≤ (WH ℓ m T₀ u).re := by
   have e : u = 1 / 2 + (u.im : ℂ) * I := by
     apply Complex.ext <;> simp [hu]
   rw [e]; exact WH_line_re_nonneg ℓ m T₀ u.im
 
-/-- **One window of the Weil formula**: `Σ_{|γ| ≤ 3·10¹⁰} m_ρ Re H_{T₀}(ρ) ≤ Φ(T₀) + Off`. -/
-theorem weil_window {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
-    (h2 : Real.exp (2 * m * ℓ) < 2) {T₀ : ℝ} (hT₀ : |T₀| ≤ 1.5e10) (T : ℝ) :
-    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * (WH ℓ m T₀ u).re ≤
+/-- **One window of the Weil formula** under RH up to `H ∈ [10⁸, 3·10¹⁰]`, `|T₀| ≤ H/2`:
+`Σ_{|γ| ≤ H} m_ρ Re H_{T₀}(ρ) ≤ Φ(T₀) + Off`. -/
+theorem weil_windowH {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} (hm : 2 ≤ m)
+    (h2 : Real.exp (2 * m * ℓ) < 2) {H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10) {T₀ : ℝ}
+    (hT₀ : |T₀| ≤ H / 2) (T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H), (multRectD zetaF T u : ℝ) * (WH ℓ m T₀ u).re ≤
       WPhi ℓ m T₀ + OffC ℓ m := by
-  set S := (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10) with hS
+  set S := (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H) with hS
   set Z : ℕ → Finset ℂ := fun k => rectZerosXi (goodT k) with hZ
   have hlim := weil_formula hℓ0 hℓ1 hm h2 T₀
   have hre := (Complex.continuous_re.tendsto _).comp hlim
@@ -269,17 +280,17 @@ theorem weil_window {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
     simp only [Function.comp_def, e1, e2] at h
     exact h
   refine ge_of_tendsto (hlimR.add_const (OffC ℓ m)) ?_
-  filter_upwards [eventually_ge_atTop (⌈max T 3e10⌉₊ + 1)] with k hk
+  filter_upwards [eventually_ge_atTop (⌈max T H⌉₊ + 1)] with k hk
   set T' := goodT k with hT'
-  have hkT : max T 3e10 + 1 ≤ (k : ℝ) := by
-    have := Nat.le_ceil (max T 3e10)
-    have : ((⌈max T 3e10⌉₊ + 1 : ℕ) : ℝ) ≤ k := by exact_mod_cast hk
+  have hkT : max T H + 1 ≤ (k : ℝ) := by
+    have := Nat.le_ceil (max T H)
+    have : ((⌈max T H⌉₊ + 1 : ℕ) : ℝ) ≤ k := by exact_mod_cast hk
     push_cast at this; linarith
   have hT'k : (k : ℝ) ≤ T' := (goodT_mem k).1
-  have hT'1 : 1 ≤ T' := by linarith [le_max_right T 3e10]
-  have hT'3 : 3e10 < T' := by linarith [le_max_right T 3e10]
+  have hT'1 : 1 ≤ T' := by linarith [le_max_right T H]
+  have hT'3 : H < T' := by linarith [le_max_right T H]
   -- `S` sits inside the on-line part of `Z k`, with the same multiplicities
-  have hmemS : ∀ u ∈ S, u ∈ zerosRectD zetaF T ∧ |u.im| ≤ 3e10 := fun u hu => Finset.mem_filter.1 hu
+  have hmemS : ∀ u ∈ S, u ∈ zerosRectD zetaF T ∧ |u.im| ≤ H := fun u hu => Finset.mem_filter.1 hu
   have hstrip : ∀ u ∈ S, 0 < u.re ∧ u.re < 1 := fun u hu => by
     obtain ⟨-, h0, h1, -⟩ := zerosRectD_zetaF_strip (hmemS u hu).1; exact ⟨h0, h1⟩
   have himT : ∀ u ∈ S, |u.im| < T := by
@@ -289,7 +300,7 @@ theorem weil_window {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
     obtain ⟨-, -, -, h3, h4⟩ := h
     rw [zT_im] at h3; rw [wT_im] at h4
     exact abs_lt.2 ⟨h3, h4⟩
-  have hsub : S ⊆ (Z k).filter (fun u => |u.im| ≤ 3e10) := by
+  have hsub : S ⊆ (Z k).filter (fun u => |u.im| ≤ H) := by
     intro u hu
     refine Finset.mem_filter.2 ⟨mem_rectZerosXi_of_mem hT'1 (hmemS u hu).1 (hstrip u hu).1
       (hstrip u hu).2 (by linarith [(hmemS u hu).2]), (hmemS u hu).2⟩
@@ -302,17 +313,17 @@ theorem weil_window {ℓ : ℝ} (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) {m : ℕ} 
     rw [Complex.re_sum]
     refine Finset.sum_congr rfl fun u _ => ?_
     simp [Complex.mul_re]
-  rw [hre_sum, ← Finset.sum_filter_add_sum_filter_not (Z k) (fun u => |u.im| ≤ 3e10)]
+  rw [hre_sum, ← Finset.sum_filter_add_sum_filter_not (Z k) (fun u => |u.im| ≤ H)]
   have hon : ∑ u ∈ S, (multRectD zetaF T u : ℝ) * (WH ℓ m T₀ u).re ≤
-      ∑ u ∈ (Z k).filter (fun u => |u.im| ≤ 3e10), (mult T' u : ℝ) * (WH ℓ m T₀ u).re := by
+      ∑ u ∈ (Z k).filter (fun u => |u.im| ≤ H), (mult T' u : ℝ) * (WH ℓ m T₀ u).re := by
     rw [Finset.sum_congr rfl fun u hu => by rw [hmul u hu]]
     refine Finset.sum_le_sum_of_subset_of_nonneg hsub fun u hu _ => ?_
     obtain ⟨hu1, hu2⟩ := Finset.mem_filter.1 hu
-    exact mul_nonneg (Nat.cast_nonneg _) (WH_re_nonneg_of_line ℓ m T₀ (re_eq_half_of_mem_rectZerosXi hu1 hu2))
-  have hoff := off_line_le hℓ0 hℓ1 hm hT₀ hT'1
-  have hoff' : -(OffC ℓ m) ≤ ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ 3e10), (mult T' u : ℝ) * (WH ℓ m T₀ u).re := by
-    have : ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ 3e10), -((mult T' u : ℝ) * ‖WH ℓ m T₀ u‖) ≤
-        ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ 3e10), (mult T' u : ℝ) * (WH ℓ m T₀ u).re :=
+    exact mul_nonneg (Nat.cast_nonneg _) (WH_re_nonneg_of_line ℓ m T₀ (re_eq_half_of_mem_rectZerosXiH hRH hu1 hu2))
+  have hoff := off_line_leH hℓ0 hℓ1 hm hH1 hH2 hT₀ hT'1
+  have hoff' : -(OffC ℓ m) ≤ ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ H), (mult T' u : ℝ) * (WH ℓ m T₀ u).re := by
+    have : ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ H), -((mult T' u : ℝ) * ‖WH ℓ m T₀ u‖) ≤
+        ∑ u ∈ (Z k).filter (fun u => ¬ |u.im| ≤ H), (mult T' u : ℝ) * (WH ℓ m T₀ u).re :=
       Finset.sum_le_sum fun u _ => by
         have h1 : -‖WH ℓ m T₀ u‖ ≤ (WH ℓ m T₀ u).re := by
           have := Complex.abs_re_le_norm (WH ℓ m T₀ u); linarith [neg_abs_le (WH ℓ m T₀ u).re]

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.Assembly
 
-variable [Fact TernaryGoldbach.RHUpTo]
+variable [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -18,7 +18,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 theorem Cxt_nonneg {T t : ℝ} (ht2 : 2 ≤ t) (htT : t ≤ T / 3) : 0 ≤ Cxt T t := by
   have ht0 : 0 < t := by linarith
   have hL := two_le_logL ht0 htT

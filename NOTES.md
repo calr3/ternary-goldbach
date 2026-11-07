@@ -13,7 +13,7 @@ the hypotheses and checks them against their sources.
 * Where the final inequality has room, we prove cruder constants than the book's sharp ones (e.g.
   the non-prime terms: `6.7·10⁶` instead of `7.3306`). Each change is recorded in the docstrings and
   in the README.
-* Published results enter only as the four hypotheses of `Statement.lean`, as `Fact` instances.
+* Published results enter only as the three hypotheses of `Statement.lean`, as `Fact` instances.
   Everything else is proved. Each theorem takes only the instances its proof uses, so its statement
   shows what it depends on; the `unusedSectionVars` linter reports any other. A file's
   `variable [Fact …]` line lists an instance only if most of its theorems use it; otherwise theorems add
@@ -169,21 +169,21 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
 [H, §2.5] quotes them: (2.12), (2.13) from [RS62, (3.23), (3.21)]; (2.14) `ψ(y) ≤ 1.0004y` for
 `y ≥ 2·10⁶` from the second table of [RR96, p. 423] plus a computation; (2.15) [RS62, Thm 12];
 (2.17) from [RR96] and computations below `10⁷`; (2.19) [RS75, Cor. 2] plus a computation; (5.5)
-[RS62, Thm 13]; (C.19) [RS62, Thm 15]. We prove all of them from RH up to `3·10¹⁰` and kernel
-tables. The pieces, by range:
+[RS62, Thm 13]; (C.19) [RS62, Thm 15]. We prove all of them from RH up to `10⁸` (`rh_upto_1e8`, from
+`PlattGRH`) and kernel tables. The pieces, by range:
 
 | range | bound | file |
 |---|---|---|
 | `[12, 10⁶)` | `\|ψ(t) − t\| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` | `Prelim/SmallPsiTable*.lean` (kernel, trial division) |
 | `[10⁶, 5·10⁷)` | `t − 5√t ≤ θ(t) ≤ t + 3√t` | `Prelim/PsiSieve*.lean` (kernel, bit sieve) |
-| `[10⁶, 10¹⁷]` | `\|ψ(x) − x\| ≤ cW(x)√x`, `cW` from `32.84` to `71.48` (`≤ 33` up to `10⁸`) | `Explicit/PsiRanges.lean` (Weil windows) |
-| `x ≥ 10¹⁷` | `\|ψ(x) − x\| ≤ 1.82·10⁻⁹x + 1145√x + 4.2·10¹⁰` | `Explicit/PsiPlateau.lean` |
-| `x ≥ e^{20000}` | `2.1·10⁻¹⁴ x` | `Explicit/PsiRange1.lean` |
-| `x ≥ e^{35000}` | `0.2 x/log³x` | `Explicit/PsiAsymp.lean` |
+| `[10⁶, 10¹⁷]` | `\|ψ(x) − x\| ≤ cW8(x)√x`, `cW8` from `32.84` to `199` (`≤ 33` up to `10⁸`, `≤ 72` up to `10¹⁵`) | `Explicit/PsiRanges1e8.lean` (Weil windows) |
+| `x ≥ 10¹⁷` | `\|ψ(x) − x\| ≤ 4.91·10⁻⁷x + 1145√x + 4.2·10¹⁰` | `Explicit/PsiPlateau1e8.lean` |
+| `x ≥ e^{20000}` | `2.1·10⁻¹⁴ x` | `Explicit/PsiRange1.lean` (`psi_range1_8`) |
+| `x ≥ e^{35000}` | `0.2 x/log³x` | `Explicit/PsiAsymp.lean` (`psi_asymp8`) |
 
-`psi_two_sided` combines the first and third rows (`cB(n) = 1` below `10⁶`, `cW(n)` above), and
-`theta_explicit` (`|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`, `ε_pl = 1.83·10⁻⁹` for
-`780 < log n < 20000`) the rest, with `ψ(n) − θ(n) ≤ √n (1.036 + 0.049 log n)`.
+`psi_two_sided` combines the first and third rows (`cB(n) = 1` below `10⁶`, `cW8(n)` above), and
+`theta_explicit` (`|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`, `ε_pl = 4.92·10⁻⁷` for
+`120 < log n < 20000`) the rest, with `ψ(n) − θ(n) ≤ √n (1.036 + 0.049 log n)`.
 
 ### The Weil explicit formula on `[10⁶, 10¹⁷]` (`Explicit/Weil*.lean`, `PsiWeil`, `PsiRange*`)
 
@@ -203,7 +203,7 @@ tables. The pieces, by range:
   the ideal `Z ≈ 10`. The Weil identity is exact near `T = 0` (`Σ_γ B(γ)² = 0.029`), so phantoms never
   arise.
 * **Windows** (`WeilWindow`, `WeilWeights`): per window, `Σ_S m B(γ − T₀)² ≤ Φ(T₀) + Off` (zeros above
-  `3·10¹⁰` counted crudely, `|H| ≤ 4^m e^{mℓ} 64/γ⁴`); for a weight `w ≥ 0` with
+  the RH height `H` counted crudely, `|H| ≤ 4^m e^{mℓ} 64/γ⁴`); for a weight `w ≥ 0` with
   `w̄(T) = sup_{|γ−T|≤R} w(γ)`, `w(γ) ≤ (K − tail_R)⁻¹ ∫ w̄(T) B(γ − T)² dT` (`K = ∫ B²`), so
   `Σ_S m w ≤ (K − tail_R)⁻¹ ∫ w̄(T)(Φ(T) + Off) dT`. No Poisson summation is needed.
 * **Archimedean part** (`WeilArch`, `WeilPhiBound`): `Re ψ(¼ + iy) ≤ ψ_N(y)` (`re_digamma_le` and
@@ -214,19 +214,24 @@ tables. The pieces, by range:
   nonincreasing. Without this, a crude `Φ⁺` puts phantom mass near `γ = 0` and the bound is several
   times the ideal one.
 * **Numbers** (`WeilLineSum`, `WeilNumA/B/C`): `‖Mg(½+iγ)‖ ≤ C e^{−δ²γ²/2}/|γ|`,
-  `C = e^{δ²/8}(e^{a/2} + e^{b/2})`; zeros `|γ| ≤ 10¹⁰` by the windows, `10¹⁰ < |γ| ≤ 3·10¹⁰` by Jensen
-  times `e^{−δ²10²⁰/2}`. `ψ_N(y) ≤ log((N+¼)/(N−¾)) + log y + 1/(2y) + 1/(32y²)`; `B_R ≥ (2ℓ)⁴k₀`
+  `C = e^{δ²/8}(e^{a/2} + e^{b/2})`; zeros `|γ| ≤ Y₁` by the windows, `Y₁ < |γ| ≤ H` by Jensen times
+  `e^{−δ²Y₁²/2}`. `ψ_N(y) ≤ log((N+¼)/(N−¾)) + log y + 1/(2y) + 1/(32y²)`; `B_R ≥ (2ℓ)⁴k₀`
   from `sin x ≥ x − x³/6`; four regions of integration (Riemann sums on `[0, R+t₀]` and
   `[R+t₀, R+t₀r^n]`, a closed form up to `1/δ`, Gaussian pieces beyond). Parameters `N = 20`,
   `R = 13`, `n_A = 8`, `r = 5/4`, `n_B = 20`; the Riemann sums are kernel-checked rationals with
-  certified logs. Result `line_sum_num`, for `3·10⁻¹⁰ ≤ δ ≤ 1/208`:
-  `Σ_{|γ|≤3·10¹⁰} m_ρ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2}+e^{b/2})(JW(δ) + e^{−δ²10²⁰/2}LW)`,
+  certified logs. Result `line_sum_numH`, for `RHBelow H`, `10⁸ ≤ H ≤ 3·10¹⁰`, `Y₁ + 13 ≤ H/2` and
+  `3/Y₁ ≤ δ ≤ 1/208`:
+  `Σ_{|γ|≤H} m_ρ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2}+e^{b/2})(JW(δ) + e^{−δ²Y₁²/2}LWH(H))`,
   `JW(δ) = 0.16385 L² − 0.4271 L + 7.2032 + 57.73δ`, `L = log(1/δ)`; 2–8% above the exact window bound
   (`scripts/weil_chain.py`).
-* **Ranges** (`PsiRange`, `PsiRanges`, generated by `scripts/gen_psi_ranges.py`): one `(δ, K, y₀)` per
-  half-decade of `[10⁶, 10¹⁷]` (22 ranges), each error term of `psi_upper_W`/`psi_lower_W` maximised
-  separately over the range (`scripts/weil_psi_model.py`), atoms certified by `decide +kernel`. The
-  model's `ε(x) = |ψ(x) − x|/x`:
+* **Ranges** (`PsiRange`, `PsiRanges1e8`, generated by `scripts/gen_psi_ranges_1e8.py`): one
+  `(δ, K, y₀)` per half-decade of `[10⁶, 10¹⁷]` (22 ranges), each error term of
+  `psi_upper_WH`/`psi_lower_WH` maximised separately over the range, atoms certified by
+  `decide +kernel`. With RH up to `H = 10⁸`: Weil windows for `|γ| ≤ Y₁ = 4.9·10⁷`, Jensen windows on
+  `(Y₁, H]` with `e^{−δ²Y₁²/2} LWH(H) ≤ 1142 e^{−δ²Y₁²/2}`, and `TailBH ≤ 10.7 e^{−δ²H²/2}`
+  (`TailBH_1e8_le`), so `δ ≥ 7·10⁻⁸`. Then `cW8 ≤ 72` up to `10¹⁴`, and the
+  smoothing term makes it grow to `199` at `10¹⁷`. The model's `ε(x) = |ψ(x) − x|/x` with RH to
+  `3·10¹⁰` (`scripts/weil_psi_model.py`), the same as at `10⁸` up to `10¹⁴`:
 
   | `x` | `10⁶` | `10⁷` | `2.7·10⁷` | `10⁸` | `10⁹` | `10¹⁰` | `10¹²` | `10¹⁴` | `10¹⁷` |
   |---|---|---|---|---|---|---|---|---|---|
@@ -240,20 +245,33 @@ tables. The pieces, by range:
 * `GaussSmooth`: `φ(u) = Φ((a − log u)/δ) − Φ((b − log u)/δ)` (`Φ` the normal cdf), with the entire
   Mellin transform `M(s) = e^{δ²s²/2}(e^{as} − e^{bs})/s`. `PsiSandwich`: `ψ` between the sums with
   `a = ±K₀δ`.
-* Zeros with `|γ| ≤ 3·10¹⁰` lie on the line (`rh_upto`) and are counted in Jensen windows
+* Zeros with `|γ| ≤ H` lie on the line (`RHBelow H`) and are counted in Jensen windows
   (`ZetaZeroSums`); zeros above are damped by `e^{−δ²γ²/2}` and, up to a height `Γ`, by the zero-free
   region (`PsiLarge`).
-* **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`, without
+* `rh_upto_1e8` (`ZetaZeroSums`): `RHBelow 10⁸` from `PlattGRH` at `q = 1` (the trivial character
+  mod `1` is primitive and its `L`-function is `ζ`). This is the only RH height the proof uses.
+* The explicit-formula error bounds take the RH height as a parameter, `RHBelow H` with
+  `H ∈ [10⁸, 3·10¹⁰]`: `SsumG_gsm_errH` (Jensen windows), `SsumG_gsm_errWH` (Weil windows for
+  `|γ| ≤ Y₁`, centres `|T₀| ≤ H/2`, `Y₁ + 13 ≤ H/2`, `3/Y₁ ≤ δ`; Jensen windows on `(Y₁, H]` with the
+  factor `e^{−δ²Y₁²/2}`; the zeros above `H` cost at most `OffC`), `SsumG_gsm_err_zfH` (zero-free
+  region on `(H, Γ]`). The proof instantiates them at `H = 10⁸`.
+* With RH only up to `10⁸` (`PlattGRH`): `psi_mid8` (`PsiRanges1e8`, `scripts/gen_psi_ranges_1e8.py`;
+  `|ψ(x) − x| ≤ cW8(x)√x` on `[10⁶, 10¹⁷]`, `cW8 ≤ 72` up to `10¹⁴`, then up to `199` near `10¹⁷`),
+  `psi_plateau8` (`4.91·10⁻⁷ x + 1145√x + 4.2·10¹⁰` from `10¹⁷`), `psi_range1_8` (`2.1·10⁻¹⁴ x` from
+  `e^{20000}`) and `psi_asymp8` (`0.2x/log³x` from `e^{35000}`); the last two count the zeros in
+  `(10⁸, 3·10¹⁰]` with the zero-free region (`SsumG_gsm_err_zf3H`, `MidB0_8_le`, `MidB0_8_asymp_le`).
+  `psi_two_sided` and `theta_explicit` are built from these.
+* **Zero-free region** (`ZeroFreeRegion.zero_free`): `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`, without
   the Hadamard product. `XiPartial`: `ξ(s) = s(s−1)Λ₀(s) + 1`, squares at good heights,
   `|ξ'/ξ| = O(log² k)` on their boundary; the symmetry `w ↦ 1 − w` gives a kernel `O(|w|⁻²)`, so
   `ξ'/ξ(s) ≈ Σ_{ρ in square} m_ρ/(s − ρ)` uniformly on discs. `ZeroFree`: Stechkin's lemma
   (`Φ_s(ρ) ≥ κ Φ_{s₁}(ρ)` for `(σ−½)² + (σ₁−½)² ≥ 3/2`), proved algebraically. `ZeroFreeRegion`:
   `18 + 30cos θ + 17cos 2θ + 6cos 3θ + cos 4θ = 8(½ + (3/2)cos θ + cos²θ)² ≥ 0`, `σ = 1 + 0.31/log t`,
   `σ₁ = 1.6181`.
-* `psi_plateau` (`δ = 7/H`, `K₀ = 7`, `y₀ = 10¹⁰`, `H = 3·10¹⁰`); `psi_range1` (`δ = 1.4·10⁻¹⁵`, `K₀ = 9`,
-  `Γ = 6.43·10¹⁵`); `psi_asymp` (`K₀ = log L + 4`, `Γ = L⁴/5`, `δ = 5(log L + 5)/L⁴`, `L = log x`). The
-  `x`-term of `psi_plateau` is forced by the smoothing width needed to kill the zeros above `H`; the
-  `√x`-term is Jensen's zero count, about 8 times the true density.
+* `psi_plateau8` (`δ = 7/H`, `K₀ = 7`, `y₀ = 10¹⁰`, `H = 10⁸`); `psi_range1_8` (`δ = 1.4·10⁻¹⁵`,
+  `K₀ = 9`, `Γ = 6.43·10¹⁵`); `psi_asymp8` (`K₀ = log L + 4`, `Γ = L⁴/5`, `δ = 5(log L + 5)/L⁴`,
+  `L = log x`). The `x`-term of `psi_plateau8` is forced by the smoothing width needed to kill the
+  zeros above `H`; the `√x`-term is Jensen's zero count, about 8 times the true density.
 
 ### The kernel tables
 
@@ -280,14 +298,15 @@ tables. The pieces, by range:
 ### The bounds of [H, §2.5] (`Prelim/LambdaMu.lean`)
 
 * (2.15) `ψ(y) < 1.03883y`: kernel `lcm` check to 700 (`SmallPsi700.lean`), the table (from 663),
-  `psi_mid` from `10⁶` (`cW ≤ 33` beats `0.0388√n`), `psi_plateau` above `10¹⁷`. (2.12) via
+  `psi_two_sided` from `10⁶` (`cW8 ≤ 33` up to `10⁸`, `≤ 200` above, beats `0.0388√n`),
+  `theta_explicit` above `10¹⁷`. (2.12) via
   `∑ Λ(n)⌊N/n⌋ = log N! ≤ N log N − N + 1 + log N` and Abel summation of `∑ Λ(n){N/n}` over `(N/2, N]`.
 * (5.5) `ψ − θ < 1.4262√N`: kernel to `10⁶` (`SmallNonprime.lean`); on `[10⁶, 10¹²)` via
   `ψ − θ ≤ θ(√n) + θ(n^{1/3}) + θ(n^{1/4}) + n^{1/5} log n` (`nonprime_mid`); above via
   `ψ − θ ≤ ψ(√y) + y^{1/3} log y`.
 * (2.14), (2.17): the minor arcs use them at `V = ⌊9T/2⌋` for every level `wy ≥ 2.16·10²⁰`, so `V`
   goes down to `2.7·10⁷`. There `|ψ(y) − y| ≤ 31.5√y` gives only `ψ(y) ≤ 1.0064y` and
-  `∑ Λ(n)n < 1.022y²/2` (`psi_mul_of`, partial summation with four ranges of `c`), stated for
+  `∑ Λ(n)n < 1.022y²/2` (`psi_mul_of`, partial summation with five ranges of `c`), stated for
   `y ≥ 2.5·10⁷`. [H]'s `1.0004`, `1.0008` are not reachable analytically below about `10⁹`. The Type I
   files (`TypeI2Large`, `TypeI2Sum`, `FirstChoiceTypeI2*`) carry these constants.
 * (2.13): summation by parts from `X = 10⁴` with `|ψ(n) − n| ≤ cPsi(n)√n` (the tables below `5·10⁷`,
@@ -309,19 +328,21 @@ tables. The pieces, by range:
 * `|E₂Λ(x)| ≤ 2D/log x` for `x ≥ 10¹²` (`F_large`) needs `|E₁Λ(t) − E₁Λ(x)| ≤ D` for all `t ≥ x`.
   Summation by parts against the pointwise `θ` bound would integrate its plateau `ε_pl` over
   `log(t/x)` up to `20000`. `E1_var` instead integrates the explicit formula for
-  `Ψ(y) = Σ Λ(n) gsm(n/y)` (window `[1, e²]`, `δ = 10⁻⁸`) against `dy/y²`
+  `Ψ(y) = Σ Λ(n) gsm(n/y)` (window `[1, e²]`, `δ = 8·10⁻⁸`, RH up to `10⁸`) against `dy/y²`
   (`Prelim/MertensWindow.lean`):
   `∫₀^∞ (E₁Λ(Y₂v) − E₁Λ(Y₁v)) gsm(v) dv = ∫_{Y₁}^{Y₂} (Ψ(y) − M y)/y² dy`, `M = ∫₀^∞ gsm`. The two edge
   terms `∫ |E₁Λ(Yv) − E₁Λ(Y)| gsm(v) dv` use `E1_local` (`A + B log v`, from `theta_explicit`) for
   `v > 1` and the Chernoff bound `gsm(v) ≤ e^{1/2} v^{1/δ}` below `v = 1`. The zeros enter through
-  `ErrG ≤ 4247√y + 3·10⁻³⁰ y` (those above `3·10¹⁰` are killed by `e^{−δ²γ²/2}`), and the pointwise
-  errors only at `x` and `t`: `D(x) = 1443/√x + 13/x + 16/log³x + 1.1·10⁻⁷` while `log x < 20000`;
-  beyond `e^{20000}` (`ε_pl = 0`) summation by parts (`E1_diff`). `F_large` uses `η L² ≤ 0.24` of
-  its budget `0.6174`; `|E₂Λ(10¹⁸)| ≤ 1.2·10⁻⁵`.
+  `ErrGH ≤ 4247√y + 3·10⁻¹³ y` (those above `10⁸` are damped by `e^{−δ²γ²/2} ≤ e^{−32}`), and the
+  pointwise errors only at `x` and `t`: `D(x) = 1443/√x + 13/x + 16/log³x + 8.5·10⁻⁶` while
+  `log x < 20000` (`8.4·10⁻⁶` of it from `ε_pl` in `E1_local`); beyond `e^{20000}` (`ε_pl = 0`)
+  summation by parts (`E1_diff`). `F_large` uses `η L² ≤ 0.58` of its budget `0.6174`;
+  `|E₂Λ(10¹⁸)| ≤ 1.2·10⁻⁵`.
 * `|E₂Λ(M)|` on `[10⁵, 10¹²)`: the variation of `∑ Λ(n)/(n log n) − log log n` up to `10¹⁸`
   (`E2_var`: summation by parts against `ψ(n) − n` with weight `1/(n log n)`; `E2_le_bin`), plus
-  `|E₂Λ(10¹⁸)|`. This gives `|E₂Λ(M)| ≤ 0.0027` already at `M = 10⁵`. `F_mid` covers `[10⁵, 10¹²)` in
-  7 bins (worst `2.388 < 2.5`); `F_large` starts at `10¹²`; `e^η ≤ 1 + 1.02η`. With `c ≈ 33` from
+  `|E₂Λ(10¹⁸)|`. The `ψ`-errors above `10¹⁵` (`c ≤ 200` up to `10¹⁷`, then `ε_pl`) contribute
+  `≤ 2.93·10⁻⁴` (`tail_sum_le`). This gives `|E₂Λ(M)| ≤ 0.003` already at `M = 10⁵`. `F_mid` covers
+  `[10⁵, 10¹²)` in 7 bins (worst `2.470 < 2.5`); `F_large` starts at `10¹²`; `e^η ≤ 1 + 1.02η`. With `c ≈ 33` from
   `10⁶`, `F_mid` would fail on `[10⁶, 5·10⁶]` (the `log θ(x)` term alone uses most of the budget),
   which is why it needs the sieve table.
 * Kernel for primes `≤ 10⁵` (`SmallMertensProd.lean`, 5.5 min; tight only at `x = 23`, margin
@@ -744,10 +765,9 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 
 ## Open directions
 
-* `RHUpTo` is used only through the bounds for `ψ`, `θ` and Mertens' product (`Prelim/ThetaExplicit`,
-  `PsiTwoSided`, `MertensProduct`), which reach the minor arcs: [H, (2.13)–(2.15), (2.17), (2.19), (5.5)]
-  and Lemma C.2.2. Helfgott has proposed to prove these from minimal inputs; RH to `10⁸` already
-  follows from `PlattGRH` at `q = 1`.
+* The bounds for `ψ`, `θ` and Mertens' product ([H, (2.13)–(2.15), (2.17), (2.19), (5.5)] and Lemma
+  C.2.2) use RH up to `10⁸` from `PlattGRH` at `q = 1`. Helfgott has proposed proofs from smaller
+  inputs (RH to a lower height, as in [RS75]).
 
 * `ramare_moebius` is the only hypothesis that is a single analytic estimate; see `HYPOTHESES.md`,
   "Outlook", for why proving it is out of reach.

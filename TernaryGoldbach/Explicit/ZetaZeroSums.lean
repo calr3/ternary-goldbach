@@ -6,7 +6,8 @@ import TernaryGoldbach.Explicit.XiPartial
 /-!
 # Sums over the zeros of `ζ` for the Gaussian smoothing
 
-* zeros with `|γ| ≤ H = 3·10¹⁰` lie on the critical line ([Platt 2015], numerical hypothesis);
+* zeros with `|γ| ≤ H` lie on the critical line (`RHBelow H`; `rh_upto_1e8` gives `H = 10⁸` from
+  `PlattGRH`);
   they are counted in windows of width `3.48` (`count_line_windowG`) and weighted by `1/max(1, |γ|)`;
 * zeros with `|γ| > H` are weighted by the Gaussian factor `e^{−δ²γ²/2}` (geometric windows,
   `count_tail_windowG`, `sum_geom_windows`).
@@ -17,14 +18,19 @@ open scoped Real Interval Topology
 
 namespace TernaryGoldbach.Explicit
 
-/-- **Numerical hypothesis** ([Platt 2015], *Computing π(x) analytically*, Math. Comp. 84 (2015),
-arXiv:1203.5712): every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹⁰` lies on the critical
-line. [Pla15] verifies `0 < ℑρ ≤ 3.0610046·10¹⁰`. Zeros with `ℑρ < 0` are the
-conjugates of those (`ζ(s̄) = conj ζ(s)`), and there are none with `ℑρ = 0`, since `ζ(σ) < 0` for
-`0 < σ < 1` (classical). -/
-theorem rh_upto [h : Fact RHUpTo] :
-    ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2 :=
-  h.out
+/-- RH up to height `H`: every zero of `ζ` in the critical strip with `|ℑρ| ≤ H` is on the critical
+line. -/
+def RHBelow (H : ℝ) : Prop :=
+  ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ H → ρ.re = 1 / 2
+
+/-- **RH up to `10⁸` from `PlattGRH`**: the trivial character mod `1` is primitive (odd conductor
+`1 ≤ 3·10⁵`) and its `L`-function is `ζ`, so [Plab, Thm 7.1] at `q = 1` puts every zero of `ζ` in
+the critical strip with `|ℑρ| ≤ 10⁸` on the critical line. -/
+theorem rh_upto_1e8 [h : Fact TernaryGoldbach.PlattGRH] : RHBelow 1e8 := by
+  intro ρ hz h0 h1 him
+  refine (h.out 1 (1 : DirichletCharacter ℂ 1) DirichletCharacter.isPrimitive_one_level_one).1
+    odd_one (by norm_num) ρ (by rw [DirichletCharacter.LFunction_modOne_eq]; exact hz) h0 h1 ?_
+  simpa using him
 
 theorem zetaF_zero_ne_zero : zetaF 0 ≠ 0 := by
   rw [zetaF_of_ne (by norm_num), riemannZeta_zero]; norm_num

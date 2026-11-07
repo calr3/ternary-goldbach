@@ -1,4 +1,4 @@
-# Certified exp/log tables for the generated Lean files (WeilNumC.lean, PsiRanges.lean, SmallPsiTable,
+# Certified exp/log tables for the generated Lean files (WeilNumC.lean, PsiRanges1e8.lean, SmallPsiTable,
 # PsiSieve). Mirrors ELpow/T12 (Prelim/SmallPsi.lean) exactly.
 from fractions import Fraction as Q
 from math import factorial, log, ceil, floor

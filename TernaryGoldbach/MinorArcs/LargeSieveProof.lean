@@ -371,7 +371,7 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
         mul_le_mul_of_nonneg_left (sum_arcs_le_integral hg hper hg0 hx0 hδ0 hQ0 hδQ2.le hδQ) hC0
     _ = C * ∑' n, ‖a n‖ ^ 2 := by rw [TernaryGoldbach.setIntegral_norm_sq_expTsum hsum]
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, Cor. 12.2.5, (12.42)]** (with `δ₀ ≥ 2`).  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 2`,
 `(20000 Q₀)² ≤ x/2δ₀`, `Q = √(x/2δ₀)`, `2Q₀ ≤ (2Q)^{0.6}`.  Then
 `∫_{𝔐_{δ₀,Q₀}} |S|² ≤ (log 2Q₀ + 2)/(log 2Q + c_E) Σ|aₙ|²`. -/

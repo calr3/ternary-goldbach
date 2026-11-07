@@ -6,7 +6,7 @@ project:
   description: >-
     A formalization of Helfgott's proof of the ternary Goldbach conjecture: every odd integer
     greater than 5 is a sum of three primes. The proof is complete (no `sorry`), conditional on
-    four published numerical results that are stated as explicit hypotheses (`Prop`s in
+    three published numerical results that are stated as explicit hypotheses (`Prop`s in
     `TernaryGoldbach/Statement.lean`). The main theorems use only Lean's standard axioms.
   authors: ["Charlie Reams", "Harald Helfgott"]
   responsible_maintainers: ["Charlie Reams"]
@@ -23,13 +23,6 @@ sources:
       The proof follows [H] closely. Some constants are re-derived or re-tuned. For example,
       Prop. 12.2.4 is proved with c₊ = 2. See BLUEPRINT.md and NOTES.md.
     author_endorsement: "participated"
-  - title: "Computing π(x) analytically"
-    authors: ["D. J. Platt"]
-    id: "arXiv:1203.5712"
-    type: "article"
-    location: "Math. Comp. 84 (2015); RH verified up to height 3.0610046·10¹⁰"
-    relationship: "background"
-    note: "Assumed as the hypothesis `TernaryGoldbach.RHUpTo`."
   - title: "Numerical computations concerning the GRH"
     authors: ["D. J. Platt"]
     id: "arXiv:1305.3087"
@@ -68,11 +61,11 @@ classification:
 
 status:
   scope: >-
-    The complete proof of the ternary Goldbach conjecture following [H], relative to four
-    published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), three
-    hypotheses are used: RH to 3·10¹⁰, Platt's GRH verification, and Ramaré's Möbius bound. The
-    small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸ and a prime ladder of 2.5·10⁸ Proth
-    primes up to 10²⁷, which the Lean kernel checks.
+    The complete proof of the ternary Goldbach conjecture following [H], relative to three
+    published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), two
+    hypotheses are used: Platt's GRH verification (which also gives RH up to 10⁸) and Ramaré's
+    Möbius bound. The small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸ and a prime ladder
+    of 2.5·10⁸ Proth primes up to 10²⁷, which the Lean kernel checks.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -86,8 +79,6 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/config.json"
       literature_dependencies:
-        - statement: "`RHUpTo`: every zero of ζ in the critical strip with |ℑρ| ≤ 3·10¹⁰ has ℜρ = 1/2"
-          source: "Platt, arXiv:1203.5712"
         - statement: "`PlattGRH`: GRH for primitive χ mod q to height 10⁸/q (odd q ≤ 3·10⁵) or max(10⁸/q, 200 + 7.5·10⁷/q) (even q ≤ 4·10⁵)"
           source: "Platt, arXiv:1305.3087, Thm 7.1"
         - statement: "`BinaryGoldbachInput`: every even 4 ≤ n ≤ 4·10¹⁸ is a sum of two primes"
@@ -100,8 +91,6 @@ status:
       axioms: ["propext", "Classical.choice", "Quot.sound"]
       comparator_config: "comparator/config.json"
       literature_dependencies:
-        - statement: "`RHUpTo`"
-          source: "Platt, arXiv:1203.5712"
         - statement: "`PlattGRH`"
           source: "Platt, arXiv:1305.3087, Thm 7.1"
         - statement: "`RamareMoebius`"
@@ -124,9 +113,10 @@ fidelity:
   divergences: >-
     Some constants and intermediate statements differ from [H]. For example, Prop. 12.2.4 is
     proved with c₊ = 2 instead of a finite check, and the ψ and θ bounds that [H, §2.5] quotes
-    from Rosser–Schoenfeld and Ramaré–Rumely are proved (from RH up to 3·10¹⁰ and kernel-checked
-    tables), with weaker constants in (2.14) and (2.17). The small cases use a kernel-checked prime
-    ladder up to 10²⁷ instead of the Helfgott–Platt ladder. Several errors in [H] are corrected (e.g. (5.32),
+    from Rosser–Schoenfeld and Ramaré–Rumely are proved (from RH up to 10⁸, which Platt's GRH
+    verification gives at q = 1, and kernel-checked tables), with weaker constants in (2.14) and
+    (2.17). The small cases use a kernel-checked prime ladder up to 10²⁷ instead of the
+    Helfgott–Platt ladder. Several errors in [H] are corrected (e.g. (5.32),
     (6.77), and the two scales of major arcs in the proof of Thm 13.2.1); one step of Ramaré's 1995
     proof ((3.9) of [Ram95]) is false, and the formal proof avoids it. README.md, NOTES.md and
     HYPOTHESES.md list these.
@@ -147,7 +137,7 @@ alignment:
       lean: "TernaryGoldbach.ternary_goldbach_of_hypotheses"
       module: "TernaryGoldbach.MainTheorems"
       status: "proved"
-      note: "Conditional on the four hypotheses above."
+      note: "Conditional on the three hypotheses above."
     - source: "[H, §14.4] (n ≥ 10²⁷)"
       lean: "TernaryGoldbach.ternary_goldbach_large_of_hypotheses"
       module: "TernaryGoldbach.MainTheorems"

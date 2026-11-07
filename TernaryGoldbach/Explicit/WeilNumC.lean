@@ -8,8 +8,9 @@ Parameters `ℓ = 0.173`, `m = 2`, `N = 20`, `R = 13`, grids `n_A = 8`, `r = 5/4
 (`U = 2.39 · 1.25²⁰ ≈ 207.3`). Constants: `p0 ≤ 0.24567`, `kap1 ≤ 0.16385`, `kap0 ≤ −0.23516`.
 The Riemann sums of regions A and B are rational computations with certified logarithms
 (`x ≤ e_lo^a T₁₂(f)` gives `log x ≤ a + f`), checked by the kernel (`decide +kernel`, no
-`native_decide`). Result (`line_sum_num`): for `3·10⁻¹⁰ ≤ δ ≤ 1/208`, with `L = log(1/δ)`,
-`Σ_{|γ| ≤ 3·10¹⁰} m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²10²⁰/2} LW)`,
+`native_decide`). Result (`line_sum_numH`): given `RHBelow H` with `10⁸ ≤ H ≤ 3·10¹⁰`, for
+`3/Y₁ ≤ δ ≤ 1/208` (`Y₁ + 13 ≤ H/2`), with `L = log(1/δ)`,
+`Σ_{|γ| ≤ H} m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²Y₁²/2} LWH(H))`,
 `JW(δ) = 0.16385 L² − 0.4271 L + 7.2032 + 57.73 δ`. (`scripts/weil_chain.py`, `weil_numbers.py`,
 `cert_tables.py`.)
 -/
@@ -533,21 +534,25 @@ theorem Jtot_le {δ : ℝ} (hδ0 : 0 < δ) (hδ1 : δ ≤ 1 / 208) :
   rw [hC1]
   linarith [hA, hB, hC2, hD, hF, p1, p2, p3, p4, p5, p6, hc0a, hc0b]
 
-/-- **The line zeros `|γ| ≤ 3·10¹⁰` in numbers**: for `3·10⁻¹⁰ ≤ δ ≤ 1/208`,
-`Σ m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²10²⁰/2} LW)`. -/
-theorem line_sum_num [Fact TernaryGoldbach.RHUpTo] {δ : ℝ} (hδ0 : 3e-10 ≤ δ) (hδ1 : δ ≤ 1 / 208) (a b T : ℝ) :
-    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ 3e10), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
+/-- **The line zeros `|γ| ≤ H` in numbers**, under RH up to `H ∈ [10⁸, 3·10¹⁰]`: for
+`1/2 ≤ Y₁`, `Y₁ + 13 ≤ H/2`, `3/Y₁ ≤ δ ≤ 1/208`,
+`Σ m_ρ ‖Mg(ρ)‖ ≤ e^{δ²/8}(e^{a/2} + e^{b/2}) (JW(δ) + e^{−δ²Y₁²/2} LWH(H))`. -/
+theorem line_sum_numH {H Y₁ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e10) (hY₁0 : 1 / 2 ≤ Y₁)
+    (hY₁ : Y₁ + 13 ≤ H / 2) {δ : ℝ} (hδ0 : 3 / Y₁ ≤ δ) (hδ1 : δ ≤ 1 / 208) (a b T : ℝ) :
+    ∑ u ∈ (zerosRectD zetaF T).filter (fun u => |u.im| ≤ H), (multRectD zetaF T u : ℝ) * ‖Mg a b δ u‖ ≤
       Real.exp (δ ^ 2 / 8) * (Real.exp (a / 2) + Real.exp (b / 2)) *
-        (JW δ + Real.exp (-(δ ^ 2 * 1e20 / 2)) * LW) := by
-  have hδ : 0 < δ := lt_of_lt_of_le (by norm_num) hδ0
+        (JW δ + Real.exp (-(δ ^ 2 * Y₁ ^ 2 / 2)) * LWH H) := by
+  have hY0 : 0 < Y₁ := by linarith
+  have hδ : 0 < δ := lt_of_lt_of_le (by positivity) hδ0
   have hUδ : (2.39 : ℝ) * 1.25 ^ 20 ≤ 1 / δ := by
     rw [le_div_iff₀ hδ]
     have : (2.39 : ℝ) * 1.25 ^ 20 ≤ 208 := by norm_num
     nlinarith
-  have hW : 3 / δ ≤ 1e10 := by rw [div_le_iff₀ hδ]; linarith
-  refine (line_sum_closed (ℓ := 0.173) (by norm_num) (by norm_num) exp_692_lt (N := 20) (by norm_num)
-    (R := 13) (by norm_num) (by norm_num) (by norm_num) kB_pos p0_le kap1_le kap0_le kap_pos (r := 1.25)
-    (by norm_num) (nA := 8) (nB := 20) (by norm_num) (by norm_num) hδ hUδ hW a b T).trans ?_
+  have hW : 3 / δ ≤ Y₁ := by
+    rw [div_le_iff₀ hδ]; rw [div_le_iff₀ hY0] at hδ0; linarith
+  refine (line_sum_closedH (ℓ := 0.173) (by norm_num) (by norm_num) exp_692_lt (N := 20) (by norm_num)
+    hRH hH1 hH2 (R := 13) (by norm_num) hY₁0 hY₁ (by norm_num) kB_pos p0_le kap1_le kap0_le kap_pos
+    (r := 1.25) (by norm_num) (nA := 8) (nB := 20) (by norm_num) (by norm_num) hδ hUδ hW a b T).trans ?_
   gcongr
   exact Jtot_le hδ hδ1
 

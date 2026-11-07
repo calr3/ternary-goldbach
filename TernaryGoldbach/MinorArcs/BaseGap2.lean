@@ -237,7 +237,7 @@ theorem S_etaStar_eq_expTsum {x : ℝ} (hx : 0 < x) (α : ℝ) :
     congr 3; field_simp
 
 set_option maxHeartbeats 1000000 in
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **The base gap**: on `𝔐_{8,r₀}(y) \ 𝔐_{8,r₀}(x)`, `|S_{η_*}(α, x)| ≤ 0.0121 y`
 (from [H, Cor 7.1.3]). -/
 theorem norm_S_etaStar_le_gap {x α : ℝ} (hx : 4.9e26 ≤ x) (h1 : α ∈ majorArcs 8 r₀ (x / κ))

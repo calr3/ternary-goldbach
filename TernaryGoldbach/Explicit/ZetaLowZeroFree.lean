@@ -8,7 +8,7 @@ One more integration by parts in `Izeta` (`ZetaGrowth`): with `P₂(t) = ({t}² 
 `Izeta(s) = −1/(2s) − (s + 1) J(s)`, `J(s) = ∫₁^∞ P₂(t) t^{−s−2} dt` (`Izeta_eq`), so
 `zetaF(s) = (s + 1)/2 − s(s² − 1) J(s)` and `|J(½ + it)| ≤ 1/12`. Since `|s| = |s − 1|` on the critical
 line, `zetaF(½ + it) = 0` needs `|s|² ≥ 6`, i.e. `|t| ≥ 2.39…` (`zetaF_half_ne_zero`). With RH up to
-`3·10¹⁰`, every nontrivial zero has `|γ| ≥ 2.39` (`abs_im_ge_of_zero`).
+a height `H ≥ 2.39`, every nontrivial zero has `|γ| ≥ 2.39` (`abs_im_ge_of_zeroH`).
 -/
 
 open Complex MeasureTheory Set Filter
@@ -262,14 +262,13 @@ theorem zetaF_half_ne_zero {t : ℝ} (ht : |t| < 2.39) : zetaF ((1 / 2 : ℂ) + 
     nlinarith
   linarith
 
-variable [Fact TernaryGoldbach.RHUpTo]
 
-/-- **Every nontrivial zero has `|γ| ≥ 2.39`** (with RH up to `3·10¹⁰`). -/
-theorem abs_im_ge_of_zero {ρ : ℂ} (hz : riemannZeta ρ = 0) (h0 : 0 < ρ.re) (h1 : ρ.re < 1) :
-    2.39 ≤ |ρ.im| := by
+/-- Every zero of `ζ` in the critical strip has `|γ| ≥ 2.39`, under RH up to any `H ≥ 2.39`. -/
+theorem abs_im_ge_of_zeroH {H : ℝ} (hRH : RHBelow H) (hH : 2.39 ≤ H) {ρ : ℂ} (hz : riemannZeta ρ = 0)
+    (h0 : 0 < ρ.re) (h1 : ρ.re < 1) : 2.39 ≤ |ρ.im| := by
   by_contra hlt
   push Not at hlt
-  have hre := rh_upto ρ hz h0 h1 (by linarith)
+  have hre := hRH ρ hz h0 h1 (by linarith)
   have hρ : ρ = (1 / 2 : ℂ) + (ρ.im : ℂ) * I := by
     apply Complex.ext <;> simp [hre]
   have hne := zetaF_half_ne_zero hlt

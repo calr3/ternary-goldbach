@@ -330,9 +330,14 @@ theorem sqrt_big {x : ℝ} (hx : Real.exp 35000 ≤ x) : 1e20 * Real.log x ^ 7 �
   linarith
 
 set_option maxHeartbeats 1000000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
-/-- **`|ψ(x) − x| ≤ 0.2 x/log³x`** for `x ≥ e^{35000}`. -/
-theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 * x / Real.log x ^ 3 := by
+/-- The bound of `psi_asymp8` from a zero-free-region error bound in the shape of `tsum_gsm_le_zf3H`, with
+`10⁻⁴/log³x` of room in the middle-zero term. -/
+theorem psi_asymp_of {x : ℝ} (hx : Real.exp 35000 ≤ x)
+    (hZF : ∀ a b δ Γ : ℝ, 0 < δ → b ≤ a → b ≤ 0 → 3e12 ≤ Γ → δ ^ 2 / 2 + |a| ≤ 1e-6 →
+      |∑' n : ℕ, Λ n * gsm a b δ (n / x) - Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * x| ≤
+        √x * LineB a δ + x * (MidB a δ Γ x + 1e-4 / Real.log x ^ 3) + x * TailBG a δ Γ +
+          x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)) :
+    |psiR x - x| ≤ 0.2 * x / Real.log x ^ 3 := by
   have hx0 : 0 < x := lt_of_lt_of_le (Real.exp_pos _) hx
   have hx1 : 1 < x := lt_of_lt_of_le (by have := Real.add_one_le_exp (35000 : ℝ); linarith) hx
   have hℓ := log_log_ge hx
@@ -433,12 +438,13 @@ theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 *
   have hErr : ∀ a : ℝ, |a| ≤ K * δ → Real.log (1e10 / x) ≤ a →
       |∑' n : ℕ, Λ n * gsm a (Real.log (1e10 / x)) δ (n / x) -
         Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp (Real.log (1e10 / x))) * x| ≤
-        14990 * √x + 0.0101 * x / L ^ 3 + 2.54e-3 * L ^ 4 := by
+        14990 * √x + 0.0102 * x / L ^ 3 + 2.54e-3 * L ^ 4 := by
     intro a ha hab
     have hb0 : Real.log (1e10 / x) ≤ 0 := Real.log_nonpos (by positivity)
       ((div_le_one hx0).2 (by linarith))
-    have hT := tsum_gsm_le_zf (a := a) (Γ := L ^ 4 / 5) hδ0 hab hb0 hx1 hΓ
     have hδa : δ ^ 2 / 2 + |a| ≤ 1e-6 := by linarith
+    have hT := hZF a _ δ (L ^ 4 / 5) hδ0 hab hb0 hΓ hδa
+    rw [← hLdef] at hT
     have h1 := LineB_le_gen (a := a) (δ := δ) (by linarith)
     have h2 : MidB a δ (L ^ 4 / 5) x ≤ 0.01 / L ^ 3 := by
       have := MidB_asymp_le (a := a) (δ := δ) hx hδa; rwa [← hLdef] at this
@@ -452,13 +458,13 @@ theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 *
       rw [mul_assoc, mul_div_assoc', mul_div_cancel_left₀ _ (by positivity)]; nlinarith
     refine hT.trans ?_
     have e1 := mul_le_mul_of_nonneg_left h1 hsx
-    have e2 := mul_le_mul_of_nonneg_left h2 hx0.le
+    have e2 := mul_le_mul_of_nonneg_left (add_le_add h2 (le_refl (1e-4 / L ^ 3))) hx0.le
     have e3 := mul_le_mul_of_nonneg_left h3 hx0.le
     have e4 := h4.trans h4'
     have hsum := add_le_add (add_le_add (add_le_add e1 e2) e3) e4
     refine hsum.trans ?_
-    have : x * (0.01 / L ^ 3) + x * (1e-4 / L ^ 3) ≤ 0.0101 * x / L ^ 3 := by
-      rw [show x * (0.01 / L ^ 3) + x * (1e-4 / L ^ 3) = 0.0101 * x / L ^ 3 by ring]
+    have : x * (0.01 / L ^ 3 + 1e-4 / L ^ 3) + x * (1e-4 / L ^ 3) ≤ 0.0102 * x / L ^ 3 := by
+      rw [show x * (0.01 / L ^ 3 + 1e-4 / L ^ 3) + x * (1e-4 / L ^ 3) = 0.0102 * x / L ^ 3 by ring]
     linarith
   -- the combination
   set q := x / L ^ 3 with hq
@@ -492,8 +498,8 @@ theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 *
   have hε0 : 0 ≤ ε := hKt0.le
   have hden : 1 / (1 - 2 * ε) ≤ 1 + 4 * ε := by
     rw [div_le_iff₀ (by linarith only [hKt''])]; nlinarith only [hε0, hKt'']
-  set N := Real.exp (δ ^ 2 / 2 + K * δ) * x + (14990 * √x + 0.0101 * q + 2.54e-3 * L ^ 4) with hNdef
-  have hN : N ≤ x + 0.1058 * q - 1e11 := by
+  set N := Real.exp (δ ^ 2 / 2 + K * δ) * x + (14990 * √x + 0.0102 * q + 2.54e-3 * L ^ 4) with hNdef
+  have hN : N ≤ x + 0.1059 * q - 1e11 := by
     have h1 := mul_le_mul_of_nonneg_right hexp2 hx0.le
     have e : (1 + 0.0956 / L ^ 3) * x = x + 0.0956 * q := by rw [hq]; ring
     have h2 : 14990 * √x ≤ 15000 * √x := by linarith only [hsx]
@@ -532,4 +538,108 @@ theorem psi_asymp {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 *
   · rw [hxq]; linarith
   · rw [hxq]; linarith
 
+/-- `MidB0 a δ 10⁸ 3·10¹⁰ x ≤ 10⁻⁴/log³x` for `log x ≥ 35000`: `L³ e^{−L/(11 log 3·10¹⁰)} ≤ e^{−60}`. -/
+theorem MidB0_8_asymp_le {a δ x : ℝ} (hδa : δ ^ 2 / 2 + |a| ≤ 1e-6) (hx : 35000 ≤ Real.log x) :
+    MidB0 a δ 1e8 3e10 x ≤ 1e-4 / Real.log x ^ 3 := by
+  set L := Real.log x with hL
+  have hL0 : 0 < L := by linarith
+  unfold MidB0
+  have he : Real.exp (δ ^ 2 / 2 + |a|) ≤ 1.000003 := by
+    have h := exp_small_le (t := δ ^ 2 / 2 + |a|) (by positivity) (by linarith)
+    linarith
+  have hlg : Real.log 3e10 ≤ 24.1245 := (Real.log_le_log (by norm_num) (by norm_num)).trans log_3e10_le
+  have hlg0 : 0 < Real.log 3e10 := Real.log_pos (by norm_num)
+  -- `log L ≤ L/1500`
+  have h15 : Real.log 15000 ≤ 9.62 := by
+    refine log_le_of_le_exp'' (by norm_num) ?_
+    have h := exp_split_ge' 9 (u := 0.62) (by norm_num) 10
+    norm_num [Finset.sum_range_succ, Nat.factorial] at h ⊢; linarith
+  have hlL : Real.log L ≤ L / 1500 := by
+    have h1 := Real.log_le_sub_one_of_pos (x := L / 15000) (by positivity)
+    rw [Real.log_div hL0.ne' (by norm_num)] at h1
+    have : L / 15000 - 1 + 9.62 ≤ L / 1500 := by
+      rw [show L / 15000 - 1 + 9.62 = L / 15000 + 8.62 by ring]
+      have : 8.62 ≤ L / 1500 - L / 15000 := by
+        rw [show L / 1500 - L / 15000 = L * 6e-4 by ring]; nlinarith
+      linarith
+    linarith
+  have hzf : L ^ 3 * Real.exp (-(L / (11 * Real.log 3e10))) ≤ Real.exp (-60) := by
+    have hL3 : L ^ 3 = Real.exp (3 * Real.log L) := by
+      rw [show (3 : ℝ) * Real.log L = ((3 : ℕ) : ℝ) * Real.log L by norm_num, Real.exp_nat_mul,
+        Real.exp_log hL0]
+    rw [hL3, ← Real.exp_add]
+    apply Real.exp_le_exp.2
+    have h1 : L / (26537 / 100) ≤ L / (11 * Real.log 3e10) :=
+      div_le_div_of_nonneg_left hL0.le (by positivity) (by linarith)
+    have e1 : L / (26537 / 100) = L * 100 / 26537 := by ring
+    rw [e1] at h1
+    linarith
+  have he60 : Real.exp (-60) ≤ 1e-26 := by
+    rw [Real.exp_neg, inv_le_comm₀ (Real.exp_pos _) (by norm_num)]
+    have := exp_nat_ge' 60
+    norm_num at this ⊢; linarith
+  have hK : ((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.8e9 := by
+    have := Nat.floor_le (show (0:ℝ) ≤ ((3e10 : ℝ) - 1e8) / 4.4 by norm_num)
+    norm_num at this ⊢
+  have hl := log_10_3_ge
+  have hZ : Z3g BPz2 1e8 ≤ 210.6 := by
+    refine le_trans ?_ Z3g_H_le
+    unfold Z3g
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono ?_) (log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_pos (by norm_num : (0 : ℝ) < 1e8), abs_of_pos (by norm_num : (0 : ℝ) < 3e10)]; norm_num
+  have hZ0 : 0 ≤ Z3g BPz2 1e8 :=
+    div_nonneg (polyDatum_zeta2.log_pos _).le (lt_of_lt_of_le (by norm_num) hl).le
+  have hc : c3g 10 1e8 ≤ 3.66e-7 := by
+    unfold c3g
+    rw [div_le_iff₀ (lt_of_lt_of_le (by norm_num) hl)]
+    nlinarith
+  have hc0 : 0 ≤ c3g 10 1e8 := by
+    unfold c3g; exact div_nonneg (by norm_num) (lt_of_lt_of_le (by norm_num) hl).le
+  have hK0 : (0:ℝ) ≤ ((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
+  set E := Real.exp (-(L / (11 * Real.log 3e10))) with hE
+  have hE0 : 0 ≤ E := (Real.exp_pos _).le
+  set C := (((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1) * (2 * Z3g BPz2 1e8 + 2 * c3g 10 1e8 *
+      (((⌊((3e10 : ℝ) - 1e8) / 4.4⌋₊ : ℕ) : ℝ) + 1)) with hC
+  have hCb : C ≤ 6.8e9 * (2 * 210.6 + 2 * 3.66e-7 * 6.8e9) := by rw [hC]; gcongr
+  have hC0 : 0 ≤ C := by rw [hC]; positivity
+  rw [le_div_iff₀ (by positivity)]
+  calc 2 * Real.exp (δ ^ 2 / 2 + |a|) / 1e8 * E * C * L ^ 3
+      = 2 * Real.exp (δ ^ 2 / 2 + |a|) / 1e8 * C * (L ^ 3 * E) := by ring
+    _ ≤ 2 * 1.000003 / 1e8 * (6.8e9 * (2 * 210.6 + 2 * 3.66e-7 * 6.8e9)) * 1e-26 := by
+        gcongr
+        exact hzf.trans he60
+    _ ≤ 1e-4 := by norm_num
+
+theorem LineBH_le_LineB {a δ H : ℝ} (hH0 : 0 ≤ H) (hH : H ≤ 3e10) : LineBH a δ H ≤ LineB a δ := by
+  unfold LineBH LineB
+  have hZ : ZLg BPz2 H ≤ ZLg BPz2 3e10 := by
+    unfold ZLg
+    refine div_le_div_of_nonneg_right (polyDatum_zeta2.log_mono ?_) (log_ratio_pos (by norm_num) (by norm_num)).le
+    rw [abs_of_nonneg (by linarith), abs_of_nonneg (by norm_num)]; linarith
+  have hJ : Real.log (Jl H) ≤ Real.log (Jl 3e10) := by
+    refine Real.log_le_log (by unfold Jl; positivity) ?_
+    unfold Jl
+    exact_mod_cast Nat.add_le_add_right (Nat.floor_mono (div_le_div_of_nonneg_right hH (by norm_num))) 1
+  have hJ0 : 0 ≤ Real.log (Jl H) := Real.log_nonneg (by unfold Jl; norm_num)
+  have hZ0 : 0 ≤ ZLg BPz2 H :=
+    div_nonneg (polyDatum_zeta2.log_pos _).le (log_ratio_pos (by norm_num) (by norm_num)).le
+  have hZ3 : 0 ≤ ZLg BPz2 3e10 := hZ0.trans hZ
+  have hE0 : 0 ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) := by positivity
+  exact mul_le_mul (mul_le_mul_of_nonneg_right hZ hE0) (by gcongr) (by positivity) (mul_nonneg hZ3 hE0)
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **`|ψ(x) − x| ≤ 0.2 x/log³x`** for `x ≥ e^{35000}`, with RH up to `10⁸`. -/
+theorem psi_asymp8 {x : ℝ} (hx : Real.exp 35000 ≤ x) : |psiR x - x| ≤ 0.2 * x / Real.log x ^ 3 := by
+  refine psi_asymp_of hx fun a b δ Γ hδ hab hb hΓ hδa => ?_
+  have hx0 : 0 < x := lt_of_lt_of_le (Real.exp_pos _) hx
+  have hx1 : 1 < x := lt_of_lt_of_le (by have := Real.add_one_le_exp (35000 : ℝ); linarith) hx
+  have hlx : 35000 ≤ Real.log x := by rw [Real.le_log_iff_exp_le hx0]; exact hx
+  have h := tsum_gsm_le_zf3H (a := a) (Γ := Γ) (H := 1e8) (H₂ := 3e10) rh_upto_1e8 (by norm_num)
+    (by norm_num) (by norm_num) hδ hab hb hx1 hΓ
+  have h1 := mul_le_mul_of_nonneg_left (LineBH_le_LineB (a := a) (δ := δ) (H := 1e8) (by norm_num)
+    (by norm_num)) (Real.sqrt_nonneg x)
+  have h2 := mul_le_mul_of_nonneg_left (MidB0_8_asymp_le (a := a) (δ := δ) hδa hlx) hx0.le
+  have e : MidBH a δ 3e10 Γ x = MidB a δ Γ x := rfl
+  rw [e] at h
+  nlinarith
 end TernaryGoldbach.Explicit

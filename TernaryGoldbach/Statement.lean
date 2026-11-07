@@ -45,15 +45,9 @@ theorem statement_of_upTo_of_from {C : ℕ} (h₁ : TernaryGoldbachUpTo C)
 
 /-! ## Hypotheses
 
-The proof rests on four published numerical results, stated here as `Prop`s and passed to the
+The proof rests on three published numerical results, stated here as `Prop`s and passed to the
 theorems that need them as `Fact` instances. Each is a large computation, and none
 is formalized. -/
-
-/-- D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535, arXiv:1203.5712:
-every zero of `ζ` in the critical strip with `|ℑρ| ≤ 3·10¹⁰` is on the critical line (Platt verifies
-RH up to height `3.0610046·10¹⁰`, rigorously, with interval arithmetic). -/
-def RHUpTo : Prop :=
-  ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ 3e10 → ρ.re = 1 / 2
 
 /-- D. Platt [Plab, Thm 7.1], [H, §9.6]: for every primitive character `χ` of conductor `q`, GRH
 holds for `L(s, χ)` up to height `10⁸/q` if `q ≤ 3·10⁵` is odd, and up to height

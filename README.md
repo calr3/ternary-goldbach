@@ -8,39 +8,37 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 ## Status
 
 The proof is complete: there is no `sorry`, and the main theorems use only Lean's standard three
-axioms. They take 4 published numerical results as explicit hypotheses, stated in
+axioms. They take 3 published numerical results as explicit hypotheses, stated in
 `TernaryGoldbach/Statement.lean`:
 
-* `RHUpTo`: RH up to `3·10¹⁰` ([Pla15], rigorous, 2012);
-* `PlattGRH`: Platt's GRH verification;
+* `PlattGRH`: Platt's GRH verification (at `q = 1`, RH up to `10⁸`);
 * `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
 * `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
   is checked against a later published bound (see `HYPOTHESES.md`).
 
 ```lean
-theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
+theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hGRH : PlattGRH)
     (hBG : BinaryGoldbachInput) (hμ : RamareMoebius) : Statement
-theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hRH : RHUpTo) (hGRH : PlattGRH)
+theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH)
     (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27)
 ```
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
-`Explicit.rh_upto`, `MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and
-`Prelim.ramare_moebius`. Each theorem takes only the instances its proof uses (the
+`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.ramare_moebius`. Each theorem takes only the instances its proof uses (the
 `unusedSectionVars` linter checks this), so its statement shows what it depends on:
 
 | Stage of [H, §14.4] | Lean | Hypotheses |
 |---|---|---|
 | major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
-| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `RHUpTo`, `PlattGRH`, `RamareMoebius` |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH`, `RamareMoebius` |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
 
-`RHUpTo` reaches the minor arcs only through `Prelim.theta_explicit` and `Prelim.psi_two_sided`,
-that is, through the bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s
-citations of [RS62], [RS75] and [RR96].
+The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s citations of
+[RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
+which `PlattGRH` gives at `q = 1` (`Explicit.rh_upto_1e8`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -85,7 +83,7 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
   behind the tail of `∫ |g₂|/y` in `MinorArcs/G2TailNum.lean`;
 * the bisection grids behind `|η̂₂''|_∞ ≤ 32` ([H, Lemma B.1.2]) in `MinorArcs/Eta2DDBound.lean`;
 * the Riemann sums of the Weil-window bound (`Explicit/WeilNumC.lean`) and the constants of the
-  `ψ` ranges (`Explicit/PsiRanges.lean`);
+  `ψ` ranges (`Explicit/PsiRanges1e8.lean`);
 * the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`);
 * the prime ladder up to `10²⁷`: `2.5·10⁸` Proth primes (`Ladder/`, below).
 
@@ -163,17 +161,17 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
   * (2.23) in the form `q/φ(q) + 2.67`.
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
-  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 1.83·10⁻⁹` for
-  `780 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
+  `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 4.92·10⁻⁷` for
+  `120 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
   [RS62], [RS75] and [RR96]. We prove them instead, from this and from bounds `|ψ(x) − x| ≤ c√x` for
   moderate `x`:
   * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on
     `[10⁶, 5·10⁷)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
-  * `c = 31`–`72` on `[10⁶, 10¹⁷]` (`Prelim/PsiTwoSided.lean`), from the Weil explicit formula with RH
-    up to `3·10¹⁰` and a compactly supported test function, with a zero-free region `|γ| ≥ 2.39`
-    near the real axis;
-  * above `10¹⁷`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `3·10¹⁰` and the
-    zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁹`. The zero-free region is proved with
+  * `c = 31`–`200` on `[10⁶, 10¹⁷]` (`c ≤ 72` up to `10¹⁵`; `Prelim/PsiTwoSided.lean`), from the Weil
+    explicit formula with RH up to `10⁸` and a compactly supported test function, with a zero-free
+    region `|γ| ≥ 2.39` near the real axis;
+  * above `10¹⁷`, a Gaussian-smoothed explicit formula for `ψ`, with RH up to `10⁸` and the
+    zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
   With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`
@@ -278,8 +276,6 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [OeSHP14] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even Goldbach
   conjecture and computation of prime gaps up to 4·10¹⁸*, Math. Comp. 83 (2014).
 * [Pla] D. J. Platt, *Numerical computations concerning the GRH*, arXiv:1305.3087.
-* [Pla15] D. Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), 1521–1535,
-  arXiv:1203.5712 (RH up to `3.0610046·10¹⁰`).
 * [RS62] J. B. Rosser, L. Schoenfeld, *Approximate formulas for some functions of prime numbers*,
   Illinois J. Math. 6 (1962).
 * [RS75] J. B. Rosser, L. Schoenfeld, *Sharper bounds for the Chebyshev functions θ(x) and ψ(x)*,

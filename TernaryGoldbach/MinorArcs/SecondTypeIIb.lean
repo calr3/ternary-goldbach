@@ -16,7 +16,7 @@ namespace TernaryGoldbach.MinorArcs
 theorem log_e_le_one_sqrt {T : ℝ} (hT : 6e6 ≤ T) : (2449 : ℝ) ≤ √T := sqrt_ge_2449 hT
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Case (a2)**: `x/16U < q ≤ Q₀`. -/
 theorem typeII_a2 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hq16 : T ^ 3 / U2 T < 16 * (q : ℝ)) :
@@ -208,7 +208,7 @@ noncomputable def bSEC (L : ℝ) : ℝ :=
   8 * 1.4262 * 1.73207 * √(0.24083 * 0.50001) +
   4 * √(0.24083 * a1F0 L / 2) * (0.057144 + 0.0848 * √(L + 4.603))
 
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `q/φ(q) ≤ F₀(L)` for `q ≤ T/6`. -/
 theorem div_totient_le_F0 {q : ℕ} (hq : 1 ≤ q) {T : ℝ} (hT : 6e6 ≤ T) (hqT : (q : ℝ) ≤ T / 6) :
     (q : ℝ) / Nat.totient q ≤ a1F0 (Real.log T) := by
@@ -266,7 +266,7 @@ theorem eps1_bounds {T : ℝ} (hT : 6e6 ≤ T) :
   · rw [div_le_iff₀ (by positivity)]; nlinarith
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem b_M1_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hq : (q : ℝ) ≤ T / 6) (hδq : 8 * (T / 6) < |δ| * q) :
     4 * T ^ 3 * √(2 / |δ| / (2 * Nat.totient q)) *
@@ -431,7 +431,7 @@ theorem b_M1_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
         rw [this]; field_simp
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.RHUpTo] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem b_M2_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hq : (q : ℝ) ≤ T / 6) (hδq : 8 * (T / 6) < |δ| * q) :
     4 * √(kap1 (T ^ 3) (U2 T) (V2 T) * q * T ^ 3 / (2 * Nat.totient q)) *
@@ -735,7 +735,7 @@ theorem b_M3_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
           0.02158 * √(2 * L - 7.1106)) * (T ^ 2 * √T))) := by gcongr
     _ = _ := by ring
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Case (b) of the second choice**: `q ≤ T/6`, `|δ| > 8`, `|δ|q > 8T/6`:
 `|S_{II}| ≤ (√(12 F₀ X₀ᵇ B₀ᵇ) + SECᵇ(L)) T^{5/2}`. -/
 theorem typeII_b {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)

@@ -1,32 +1,30 @@
 # Hypotheses and literature dependencies
 
 `ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
-`Classical.choice`, `Quot.sound`) and takes 4 hypotheses, all published results. They are defined in
-`TernaryGoldbach/Statement.lean` (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
+`Classical.choice`, `Quot.sound`) and takes 3 hypotheses, all published results. They are defined in
+`TernaryGoldbach/Statement.lean` (`PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
 Inside the development they are `Fact` instances, and the theorems in the first column below restate
 them for use in the proofs. None is a computation of our own.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Published results (4 hypotheses)
+## Published results (3 hypotheses)
 
 Each row has been checked against the paper, except Ramaré's Acta Arith. 157 paper, for which the
 later papers and the float check below stand in.
 
 | Theorem (hypothesis) | Statement | Source | Check |
 |---|---|---|---|
-| `Explicit.rh_upto` | zeros of `ζ` with `0 < ℜρ < 1`, `\|ℑρ\| ≤ 3·10¹⁰` have `ℜρ = 1/2` | Platt, *Computing π(x) analytically*, Math. Comp. 84 (2015), arXiv:1203.5712 | §7, footnote 1: "We isolated all the zeros of ζ to a height of 30,610,046,000 (103,800,788,359 zeros)", computed in interval arithmetic (§2, §7); [H] cites this as RH up to `3.0610046·10¹⁰`. The hypothesis also covers `γ ≤ 0`: `γ < 0` by `ζ(s̄) = conj ζ(s)`, and `γ = 0` because `ζ(σ) < 0` on `(0, 1)` |
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range: the ladder rungs are up to `(111616 + 2047)·2⁴⁵ ≈ 3.9992·10¹⁸` apart |
 | `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
 
 The hypotheses are stated as in the papers or weaker. Where they are used:
-* `rh_upto`: the explicit formulas for `ψ` (`Explicit/`): the Weil-window formula on `[10⁶, 10¹⁷]` and
-  the Gaussian-smoothed formula above `10¹⁷`. Through them it enters every bound of [H, §2] for `ψ` and
-  `θ`;
 * `platt_verification`: [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5] (including `q = 1`), hence (14.7),
-  (14.27) and the base gap of the minor arcs;
+  (14.27) and the base gap of the minor arcs; at `q = 1`, RH up to `10⁸` (`Explicit.rh_upto_1e8`) for
+  the explicit formulas for `ψ` (`Explicit/`: the Weil-window formula on `[10⁶, 10¹⁷]` and the
+  Gaussian-smoothed formula above `10¹⁷`), hence every bound of [H, §2] for `ψ` and `θ`;
 * `binary_goldbach_input`: the small cases `n ≤ 10²⁷` (`Helfgott/SmallCases.lean`), together with a
   prime in `[n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from a prime ladder of Proth primes up
   to `10²⁷` that the kernel checks (`Ladder/`). [H, §1.6] takes the ladder from Helfgott–Platt
@@ -35,7 +33,7 @@ The hypotheses are stated as in the papers or weaker. Where they are used:
   `MoebiusBound.lean`) and the tail of `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
 The bounds for `ψ` and `θ` that [H] quotes from [RS62], [RS75] and [RR96] are not hypotheses: they are
-proved from RH up to `3·10¹⁰` and kernel-checked tables (see "Proved in Lean" below).
+proved from RH up to `10⁸` (from `PlattGRH`) and kernel-checked tables (see "Proved in Lean" below).
 
 ## Errors found in the sources
 
@@ -103,7 +101,7 @@ These inputs are theorems:
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
 | [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: above `10¹²`, the Gaussian-smoothed explicit formula integrated against `dy/y²` (`MertensWindow.lean`), with `theta_explicit` only at the ends of the range; on `[10⁵, 10¹²)`, `\|E₂Λ(x)\|` from the variation of `∑ Λ(n)/(n log n) − log log n` (`E2_var`, `E2_le_bin`: summation by parts against `ψ(n) − n`), the θ tables, `psi_two_sided` and a sharper prime-power tail (`F_mid`, 7 bins); kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `3·10¹⁰` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `10⁸` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 

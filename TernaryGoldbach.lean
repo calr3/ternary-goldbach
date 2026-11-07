@@ -252,4 +252,6 @@ import TernaryGoldbach.Explicit.WeilNumB
 import TernaryGoldbach.Explicit.WeilNumC
 import TernaryGoldbach.Explicit.PsiWeil
 import TernaryGoldbach.Explicit.PsiRange
-import TernaryGoldbach.Explicit.PsiRanges
+import TernaryGoldbach.Explicit.PsiRangeCert
+import TernaryGoldbach.Explicit.PsiRanges1e8
+import TernaryGoldbach.Explicit.PsiPlateau1e8

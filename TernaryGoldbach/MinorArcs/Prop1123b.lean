@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.Prop1123
 import TernaryGoldbach.MinorArcs.OffArcs
 import TernaryGoldbach.MinorArcs.SecondChoice
 
-variable [Fact TernaryGoldbach.RHUpTo]
+variable [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
@@ -30,7 +30,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 etaStar S phi κ majorArcs)
 
-omit [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- The integration step of Prop 11.2.3: a pointwise bound `|S_{η₂}(α, wy)| ≤ G(w) wy` on
 `[w₀, w₁]`, the trivial bound elsewhere. -/
 theorem norm_S_etaStar_le_of_pointwise {α x w₀ w₁ : ℝ} {G : ℝ → ℝ} (hx : 0 < x)

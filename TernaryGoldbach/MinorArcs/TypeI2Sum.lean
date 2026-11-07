@@ -288,7 +288,7 @@ theorem coefQ_nonneg (x : ℝ) (q : ℕ) (U V : ℝ) {c : ℝ} (hc : 0 ≤ c) : 
   have : (0 : ℝ) < c₀ := by norm_num [c₀]
   positivity
 
-variable [Fact TernaryGoldbach.RHUpTo] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
 `|S_{I,2}| ≤ (x/2q) min(1, c₀/(πδ)²) μ log(Vq)`
 `+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.511V² + Vq log q) + 0.511 (2U + q) V²)`
