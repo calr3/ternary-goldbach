@@ -770,7 +770,24 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   inputs (RH to a lower height, as in [RS75]).
 
 * `ramare_moebius` is the only hypothesis that is a single analytic estimate; see `HYPOTHESES.md`,
-  "Outlook", for why proving it is out of reach.
+  "Outlook", for why proving it is out of reach. Write `m(x) = ∑_{n≤x} μ(n)/n`. What its two uses need
+  (float models `scripts/g2_tail_moebius_model.py`, `scripts/liouville_222_model.py`):
+  * the `g₂` tail behind (5.31) (`G2Tail.lean`) needs `|m(x)| ≤ 0.073/log x` for all `x ≥ 11815`
+    (the tail of `V` beyond `11815` at most `5.7·10⁻⁴`). With `0.55/(log x − 0.7521)` the tail is
+    `0.27` and `T₂ ≤ 0.70`. Exact `m(j)` further out barely helps: the tail decays like `1/log J`.
+  * (2.22) with `2.8` (`LiouvilleBound.lean`; nothing downstream changes) needs
+    `|m(x)| ≤ K/(log x − 0.7521)` for all `x ≥ 11815` with `K ≲ 0.65` (Liouville constant `≤ 1.25`;
+    `K = 0.55` gives `1.06`). `MoebiusDecay.mlog_identity` with exact `E(y) = ∑_{n≤y} Λ(n)/n − log y`
+    below `10⁵` and our `ψ` bounds gives `K ≈ 1.1` for `x ≥ 10¹⁰` (`c ≤ 72` beyond `5·10⁷` adds an
+    offset to every term), so (2.22) would be about `4.0–4.6`, and there is no bound yet for
+    `11815 ≤ x < 10¹⁰`. Two routes: accept about `4.6` and regenerate the minor-arc numerics (the
+    `7.82` slot of Thm 3.1.1), or certify `|ψ(x) − x| ≤ √x` up to `10⁹–10¹⁰` in the kernel, which
+    brings `K` to about `0.6` and keeps `2.8`. Either way the middle range needs its own argument, and
+    the hypothesis stays for (5.31).
+  * Ramaré's proof itself needs `√x`-quality `ψ` bounds up to `10¹⁹`, Cohen–Dress–El Marraki's
+    `|M(x)| ≤ x/4345` and `M(x)` computations to `10¹²–10¹⁶`. RH up to a height `T` cannot replace
+    them: without the zeros' positions `|ψ(x) − x|` is only `≈ log²(T/2π)/(2π) · √x` (`≈ 44√x` at
+    `T = 10⁸`), and the explicit formula for `M` needs `1/ζ′(ρ)`.
 * Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`
   (`MVLemma7.lean`), `Prelim/SmallLogSq.lean`, and [H]'s form of Prop 11.2.3 (`Prop1123.lean`).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.
