@@ -1,5 +1,6 @@
-# Data for Prelim/PsiSieve*.lean: the sieve window chains `outerT` on [10^6, 5·10^7) (primes <= 7100)
-# and `outerT2` on [5·10^7, 2·10^8) (primes <= 14142), simulated exactly.
+# Data for Prelim/PsiSieve*.lean: the sieve window chains `outerT` on [10^6, 5·10^7) (primes <= 7100),
+# `outerT2` on [5·10^7, 2·10^8) (primes <= 14142) and `outerT3` on [2·10^8, 10^9) (primes <= 31622),
+# simulated exactly.
 # Targets: theta(t) <= t + 0.1 sqrt t, t - theta(t) <= 2 sqrt t.
 import math, sys, time
 sys.path.insert(0, 'scripts')
@@ -10,7 +11,8 @@ with contextlib.redirect_stdout(io.StringIO()):
     from cert_tables import ELpow, T12, EHpow, T12up
 S = 10**9
 AN, AD, BN, BD = 2, 1, 1, 10
-N0, END1, END = 10**6, 50_000_000, 200_000_000
+N0, END1, END2, END = 10**6, 50_000_000, 200_000_000, 1_000_000_000
+LANES = 4
 ST0 = (10**6, 998471582592719, 998496396556575, 13815509781, 13815511333)   # SmallTab.stage117
 def chkStep(cN, cD, n, L):
     a = cN*n//cD; r = cN*n % cD
@@ -32,12 +34,13 @@ M = END + 33000
 sv = np.ones(M + 1, dtype=bool); sv[:2] = False
 for p in range(2, int(M**0.5) + 1):
     if sv[p]: sv[p*p::p] = False
-pref = np.cumsum(sv, dtype=np.int64)
+pref = np.cumsum(sv, dtype=np.int32)
+del sv
 def cnt(n, G): return int(pref[n + G] - pref[n])
 def step(st, G, L1, H1):
     n, tlo, thi, LL, LH = st
-    lim = 50452609 if n < END1 else 200024449
-    plo = 7100 if n < END1 else 14142
+    lim = 50452609 if n < END1 else 200024449 if n < END2 else 1000014129
+    plo = 7100 if n < END1 else 14142 if n < END2 else 31622
     LLe = LL + S*G//(n + G) if L1 == 0 else L1
     LHe = LH + (S*G + n - 1)//n if L1 == 0 else H1
     assert 1 <= G <= 32768 and plo <= n and n + G < lim
@@ -47,7 +50,7 @@ def step(st, G, L1, H1):
     return (n + G, tlo + c*LL, thi1, LLe, LHe)
 def best(st, cert):
     n = st[0]
-    lo, hi = 1, min(32768, (END1 if n < END1 else END) - n)
+    lo, hi = 1, min(32768, (END1 if n < END1 else END2 if n < END2 else END) - n)
     def ok(G):
         if cert:
             L1, H1 = logcert(n + G)
@@ -78,7 +81,7 @@ def chain(per_chunk=40, budget=400000):
         else:
             r, g = best(st, False)
         cur.append(g); st = r
-        if len(cur) == per_chunk or st[0] - st_start[0] >= budget or st[0] >= END or st[0] == END1:
+        if len(cur) == per_chunk or st[0] - st_start[0] >= budget or st[0] >= END or st[0] == END1 or st[0] == END2:
             chunks.append((st_start, cur, st)); cur = []; st_start = st
     return chunks
 
@@ -92,21 +95,31 @@ namespace TernaryGoldbach.Prelim.SieveTab
 -- one theorem at a time: parallel elaboration of the chunks only adds memory
 set_option Elab.async false
 """
+def fname(k): return 'outerT' if k < END1 else 'outerT2' if k < END2 else 'outerT3'
 def emit(chunks, per_file=10):
     files = []
-    for f0 in range(0, len(chunks), per_file):
-        i = f0 // per_file + 1
-        imp = "TernaryGoldbach.Prelim.PsiSieve2" if i == 1 else f"TernaryGoldbach.Prelim.PsiSieveData{i-1}"
-        a = chunks[f0][0][0]; b = chunks[min(f0 + per_file, len(chunks)) - 1][2][0]
+    # the chains below `2·10⁸`: one linear sequence of files; above: `LANES` independent sequences
+    c12 = [c for c in chunks if c[0][0] < END2]
+    starts = list(range(0, len(c12), per_file)) + list(range(len(c12), len(chunks), per_file))
+    nlow = len(range(0, len(c12), per_file))
+    for fi, f0 in enumerate(starts):
+        i = fi + 1
+        if i <= nlow:
+            imp = "TernaryGoldbach.Prelim.PsiSieve2" if i == 1 else f"TernaryGoldbach.Prelim.PsiSieveData{i-1}"
+            fend = min(f0 + per_file, len(c12))
+        else:
+            imp = "TernaryGoldbach.Prelim.PsiSieve3" if i <= nlow + LANES else f"TernaryGoldbach.Prelim.PsiSieveData{i-LANES}"
+            fend = min(f0 + per_file, len(chunks))
+        a = chunks[f0][0][0]; b = chunks[fend - 1][2][0]
         body = [HDR.format(imp=imp, i=i, a=a, b=b)]
-        for k in range(f0, min(f0 + per_file, len(chunks))):
+        for k in range(f0, fend):
             st, gs, st1 = chunks[k]
             gsl = "[" + ", ".join(f"({x}, {y}, {z})" for x, y, z in gs) + "]"
             body.append(f"""set_option maxRecDepth 100000 in
 def gs{k} : List (ℕ × ℕ × ℕ) := {gsl}
 
 set_option maxRecDepth 100000 in
-theorem chunk{k} : resEqT ({'outerT' if st[0] < END1 else 'outerT2'} {AN} {AD} {BN} {BD} {' '.join(map(str, st))} gs{k})
+theorem chunk{k} : resEqT ({fname(st[0])} {AN} {AD} {BN} {BD} {' '.join(map(str, st))} gs{k})
     {' '.join(map(str, st1))} = true := by
   decide +kernel
 """)
@@ -114,18 +127,19 @@ theorem chunk{k} : resEqT ({'outerT' if st[0] < END1 else 'outerT2'} {AN} {AD} {
         open(f"TernaryGoldbach/Prelim/PsiSieveData{i}.lean", "w").write("\n".join(body))
         files.append(i)
     # the main file
-    last = files[-1]
-    M = [f"""import TernaryGoldbach.Prelim.PsiSieveData{last}
+    imps = sorted({nlow} | set(files[-LANES:]))
+    M = ["\n".join(f"import TernaryGoldbach.Prelim.PsiSieveData{j}" for j in imps) + """
 import TernaryGoldbach.Prelim.SmallPsiTableMain
 
 /-!
-# `θ` on `[10⁶, 2·10⁸)` from the sieve chain
+# `θ` on `[10⁶, 10⁹)` from the sieve chain
 
-`sieve_table2`: `θ(t) ≤ t + 0.1√t` and `t − θ(t) ≤ 2√t` for `10⁶ ≤ t < 2·10⁸`, hence `sieve_table`
-(`θ(t) ≤ t + 3√t`, `t − θ(t) ≤ 5√t` on `[10⁶, 5·10⁷)`). The chain starts from the state of the
+`sieve_table3`: `θ(t) ≤ t + 0.1√t` and `t − θ(t) ≤ 2√t` for `10⁶ ≤ t < 10⁹`; `sieve_table2` is its
+restriction to `[10⁶, 2·10⁸)`, `sieve_table` the weaker `θ(t) ≤ t + 3√t`, `t − θ(t) ≤ 5√t` on
+`[10⁶, 5·10⁷)`. The chain starts from the state of the
 trial-division table at `10⁶` (`SmallTab.stage117`); each stage is one kernel-checked chunk
 (`Prelim/PsiSieveData*.lean`, generated by `scripts/gen_psi_sieve.py`): `outerT` (primes `≤ 7100`)
-below `5·10⁷`, `outerT2` (primes `≤ 14142`) above.
+below `5·10⁷`, `outerT2` (primes `≤ 14142`) on `[5·10⁷, 2·10⁸)`, `outerT3` (primes `≤ 31622`) above.
 -/
 
 namespace TernaryGoldbach.Prelim.SieveTab
@@ -135,7 +149,7 @@ namespace TernaryGoldbach.Prelim.SieveTab
         n1, tlo1, thi1, LL1, LH1 = st1
         stmt = (f"(∀ t : ℝ, 1000000 ≤ t → t < {n1} → RtT {AN} {AD} {BN} {BD} t) ∧ InvT {n1} {tlo1} {thi1} ∧\n"
                 f"    (({LL1} : ℕ) : ℝ) / (SmallTab.S : ℝ) ≤ Real.log (({n1} : ℕ) : ℝ) ∧ Real.log (({n1} : ℕ) : ℝ) ≤ (({LH1} : ℕ) : ℝ) / (SmallTab.S : ℝ)")
-        spec = 'outerT_spec' if n < END1 else 'outerT2_spec'
+        spec = fname(n) + '_spec'
         call = (f"{spec} (aN := {AN}) (aD := {AD}) (bN := {BN}) (bD := {BD}) (by norm_num) (by norm_num)\n"
                 f"    gs{k} {n} {tlo} {thi} {LL} {LH} {n1} {tlo1} {thi1} {LL1} {LH1} (by norm_num) I0 L0 H0 (resEqT_spec chunk{k})")
         if k == 0:
@@ -156,9 +170,13 @@ namespace TernaryGoldbach.Prelim.SieveTab
 """)
     K = len(chunks) - 1
     assert chunks[-1][2][0] == END
-    M.append(f"""/-- **`θ` on `[10⁶, 2·10⁸)`**: `θ(t) ≤ t + 0.1√t` and `t − θ(t) ≤ 2√t`. -/
-theorem sieve_table2 {{t : ℝ}} (h1 : 1000000 ≤ t) (h2 : t < 200000000) : RtT {AN} {AD} {BN} {BD} t :=
+    M.append(f"""/-- **`θ` on `[10⁶, 10⁹)`**: `θ(t) ≤ t + 0.1√t` and `t − θ(t) ≤ 2√t`. -/
+theorem sieve_table3 {{t : ℝ}} (h1 : 1000000 ≤ t) (h2 : t < 1000000000) : RtT {AN} {AD} {BN} {BD} t :=
   (stg{K}).1 t h1 (by exact_mod_cast h2)
+
+/-- `θ(t) ≤ t + 0.1√t` and `t − θ(t) ≤ 2√t` on `[10⁶, 2·10⁸)`. -/
+theorem sieve_table2 {{t : ℝ}} (h1 : 1000000 ≤ t) (h2 : t < 200000000) : RtT {AN} {AD} {BN} {BD} t :=
+  sieve_table3 h1 (by linarith)
 
 /-- `θ(t) ≤ t + 3√t` and `t − θ(t) ≤ 5√t` on `[10⁶, 5·10⁷)`. -/
 theorem sieve_table {{t : ℝ}} (h1 : 1000000 ≤ t) (h2 : t < 50000000) : RtT 5 1 3 1 t := by

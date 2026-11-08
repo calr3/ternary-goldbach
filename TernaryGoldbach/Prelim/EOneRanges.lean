@@ -148,17 +148,17 @@ theorem E_bound_A_half {Y A0 : ℝ} (hY : 1 ≤ Y) (hA00 : 0 ≤ A0) (hM2 : 1 �
     (by norm_num) hY (by positivity) hw
   exact hE.trans (add_le_add le_rfl (Zsm_div_le_half hY))
 
-/-! ### `ψ` below `2·10⁸` -/
+/-! ### `ψ` below `10⁹` -/
 
 variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **`|ψ(n) − n| ≤ 2√n` for `12 ≤ n < 2·10⁸`.** -/
-theorem psi_le_two {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 200000000) : |psiN n - n| ≤ 2 * √(n : ℝ) := by
+/-- **`|ψ(n) − n| ≤ 2√n` for `12 ≤ n < 10⁹`.** -/
+theorem psi_le_two {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 1000000000) : |psiN n - n| ≤ 2 * √(n : ℝ) := by
   have hs := Real.sqrt_nonneg (n : ℝ)
   rcases lt_or_ge n 1000000 with h | h
   · have := psi_two_sided h1 (by omega)
     rw [cB_small h, one_mul] at this
     unfold psiN; rw [abs_le] at this ⊢; constructor <;> linarith [this.1, this.2]
-  · have hR := SieveTab.sieve_table2 (t := (n : ℝ)) (by exact_mod_cast h) (by exact_mod_cast h2)
+  · have hR := SieveTab.sieve_table3 (t := (n : ℝ)) (by exact_mod_cast h) (by exact_mod_cast h2)
     unfold SieveTab.RtT at hR
     rw [Nat.floor_natCast] at hR
     have e : SmallTab.thS n = thetaN n := rfl

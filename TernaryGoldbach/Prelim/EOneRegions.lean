@@ -4,9 +4,12 @@ import TernaryGoldbach.Prelim.MoebiusCDE
 /-!
 # `E(u) = E₁Λ(u) + γ` on the ranges of `u ≥ 10⁶`
 
-* `[10⁶, 9.9·10⁶]`: `|E(u)| ≤ 11.82/√u + 10⁻¹³` (`|ψ(n) − n| ≤ 2√n` below `2·10⁸`);
+* `[10⁶, 7043²]`: `|E(u)| ≤ 11.82/√u + 10⁻¹³` (`|ψ(n) − n| ≤ 2√n` below `10⁹`);
+* `[4.96·10⁷, 10⁹)`: `13.6/√u + 0.00225 + 10⁻¹³` (`2√n` below `10⁹`, `cB ≤ 35.5` above);
 * `[2·10⁸, 1.58·10⁹]`: `112.7/√u + 10⁻¹³` (`cB ≤ 35.5`);
-* `[1.58·10⁹, 4.9·10¹³]`: `222.6/√u + 10⁻¹³` (`cB ≤ 72`).
+* `[39749², 4.9·10¹³]`: `222.6/√u + 10⁻¹³` (`cB ≤ 72`);
+* `u ≥ 4.9·10¹³`: `2.51/log³u + 1.234·10⁻⁶ + 97/√u + 10⁻¹²`;
+* `log u ≥ 20001`: `4100/√u + 33/log³u + 4.1/log²u`.
 -/
 
 open Finset
@@ -37,9 +40,9 @@ theorem E_sqrt_of {u C U : ℝ} (hu : 1e6 ≤ u) (hC : 0 ≤ C) (hU : u * 20.15 
   · have := exp_window_le
     nlinarith
 
-theorem E_R1 {u : ℝ} (h1 : 1e6 ≤ u) (h2 : u ≤ 9.9e6) : |Eg u| ≤ 11.82 / √u + 1e-13 := by
-  have := E_sqrt_of (C := 2) (U := 199485000) h1 (by norm_num) (by linarith)
-    fun n hn1 hn2 => psi_le_two hn1 (by exact_mod_cast (show (n : ℝ) < 200000000 by linarith))
+theorem E_R1 {u : ℝ} (h1 : 1e6 ≤ u) (h2 : u ≤ 49603849) : |Eg u| ≤ 11.82 / √u + 1e-13 := by
+  have := E_sqrt_of (C := 2) (U := 999517558) h1 (by norm_num) (by linarith)
+    fun n hn1 hn2 => psi_le_two hn1 (by exact_mod_cast (show (n : ℝ) < 1000000000 by linarith))
   norm_num at this ⊢; linarith
 
 theorem E_R3 {u : ℝ} (h1 : 2e8 ≤ u) (h2 : u ≤ 1.58e9) : |Eg u| ≤ 112.7 / √u + 1e-13 := by
@@ -55,7 +58,7 @@ theorem E_R3 {u : ℝ} (h1 : 2e8 ≤ u) (h2 : u ≤ 1.58e9) : |Eg u| ≤ 112.7 /
   have : (3.01 * 35.5 + 5.8) / √u ≤ 112.7 / √u := div_le_div_of_nonneg_right (by norm_num) hs.le
   linarith
 
-theorem E_R4 {u : ℝ} (h1 : 1.58e9 ≤ u) (h2 : u ≤ 4.9e13) : |Eg u| ≤ 222.6 / √u + 1e-13 := by
+theorem E_R4 {u : ℝ} (h1 : 1579983001 ≤ u) (h2 : u ≤ 4.9e13) : |Eg u| ≤ 222.6 / √u + 1e-13 := by
   have := E_sqrt_of (C := 72) (U := 1e15) (by norm_num at h1 ⊢; linarith) (by norm_num)
     (by norm_num at h2 ⊢; linarith)
     fun n hn1 hn2 => by
@@ -167,7 +170,7 @@ theorem E1_diff_two {M B : ℕ} (hM : 1 ≤ M) (hMB : M < B) {t : ℝ} (ht : (M 
     have e3 : 4 * C₁ / √(M : ℝ) = C₁ / √(M : ℝ) + 2 * C₁ / √(M : ℝ) + C₁ / √(M : ℝ) := by ring
     linarith
 
-theorem E_R2 {u : ℝ} (h1 : 9.9e6 ≤ u) (h2 : u < 2e8) : |Eg u| ≤ 13.6 / √u + 0.00503 + 1e-13 := by
+theorem E_R2 {u : ℝ} (h1 : 4.96e7 ≤ u) (h2 : u < 1e9) : |Eg u| ≤ 13.6 / √u + 0.00225 + 1e-13 := by
   have hu0 : 0 < u := by norm_num at h1; linarith
   have hek := exp_neg_window_ge
   have hek1 : Real.exp (-0.003) ≤ 1 := Real.exp_le_one_iff.2 (by norm_num)
@@ -180,17 +183,17 @@ theorem E_R2 {u : ℝ} (h1 : 9.9e6 ≤ u) (h2 : u < 2e8) : |Eg u| ≤ 13.6 / √
     have : (1 : ℝ) ≤ M₂ := by norm_num at h1; linarith
     exact_mod_cast this
   have hM₂0 : (0 : ℝ) < M₂ := by linarith
-  set A0 := 3 / (M₂ : ℝ) + 4 * 2 / √(M₂ : ℝ) + 2 * 35.5 / √((200000000 : ℕ) : ℝ) with hA0
+  set A0 := 3 / (M₂ : ℝ) + 4 * 2 / √(M₂ : ℝ) + 2 * 35.5 / √((1000000000 : ℕ) : ℝ) with hA0
   have hE := E_bound_A (Y := u) (A0 := A0) (by norm_num at h1; linarith) (by positivity) hM2
     fun m hm1 hm2 t ht1 ht2 => by
       have hm0 : (0 : ℝ) < m := lt_of_lt_of_le hM₂0 (by exact_mod_cast hm1)
       have hm1' : 1 ≤ m := by exact_mod_cast (show (1 : ℝ) ≤ m by
         have : (M₂ : ℝ) ≤ m := by exact_mod_cast hm1
         linarith)
-      have hmB : m < 200000000 := by
-        have : (m : ℝ) < 200000000 := by linarith
+      have hmB : m < 1000000000 := by
+        have : (m : ℝ) < 1000000000 := by linarith
         exact_mod_cast this
-      have h := E1_diff_two (B := 200000000) hm1' hmB ht1 (C₁ := 2) (C₂ := 35.5) (by norm_num)
+      have h := E1_diff_two (B := 1000000000) hm1' hmB ht1 (C₁ := 2) (C₂ := 35.5) (by norm_num)
         (by norm_num) fun n hn1 hn2 => by
           have hn12 : 12 ≤ n := by
             have : (12 : ℝ) ≤ m := by
@@ -225,15 +228,15 @@ theorem E_R2 {u : ℝ} (h1 : 9.9e6 ≤ u) (h2 : u < 2e8) : |Eg u| ≤ 13.6 / √
     rw [Real.sqrt_mul (by norm_num)] at h3
     have : 0.9984 ≤ √(0.9969 : ℝ) := by rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
     nlinarith [Real.sqrt_nonneg u]
-  have hs10 : 3146 ≤ √u := by rw [Real.le_sqrt (by norm_num) hu0.le]; norm_num at h1 ⊢; linarith
-  have hB : √((200000000 : ℕ) : ℝ) ≥ 14142.1 := by
+  have hs10 : 7042 ≤ √u := by rw [Real.le_sqrt (by norm_num) hu0.le]; norm_num at h1 ⊢; linarith
+  have hB : √((1000000000 : ℕ) : ℝ) ≥ 31622 := by
     rw [ge_iff_le, Real.le_sqrt (by norm_num) (by positivity)]; norm_num
   have k1 : 4 * 2 / √(M₂ : ℝ) ≤ 8.02 / √u := by
     rw [div_le_div_iff₀ (by linarith) hsu]; nlinarith
   have k2 : 3 / (M₂ : ℝ) + 1 / M₂ ≤ 0.002 / √u := by
     rw [← add_div, div_le_div_iff₀ hM₂0 hsu]; nlinarith
-  have k3 : 2 * 35.5 / √((200000000 : ℕ) : ℝ) ≤ 0.00503 := by
-    rw [div_le_iff₀ (Real.sqrt_pos.2 (by norm_num))]; nlinarith
+  have k3 : 2 * 35.5 / √((1000000000 : ℕ) : ℝ) ≤ 0.00225 := by
+    rw [div_le_iff₀ (Real.sqrt_pos.2 (by norm_num))]; norm_num at hB ⊢; linarith
   have k4 : 1.8e5 * u ^ (-(3 / 2) : ℝ) ≤ 0.02 / √u := by
     have e : u ^ (-(3 / 2) : ℝ) = 1 / (u * √u) := by
       rw [Real.rpow_neg hu0.le, show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add hu0,
