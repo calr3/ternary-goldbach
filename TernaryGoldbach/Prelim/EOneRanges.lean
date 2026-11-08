@@ -76,4 +76,99 @@ theorem Zsm_div_le_half {Y : ℝ} (hY : 1 ≤ Y) :
   have hM1u : M1 ≤ 1.0001 * 0.6488 := by rw [hM1d]; nlinarith
   nlinarith
 
+/-- The window variation from a bound `A₀` for `E₁Λ(t) − E₁Λ(m)`, `m ∈ [M₂, Y]` integer, `t` up to
+`Y e^{a+0.003}`. -/
+theorem hwin_of_A0 {Y a A0 : ℝ} (hY : 1 ≤ Y) (ha : 0 ≤ a) (hM2 : 1 ≤ ⌊Y * Real.exp (-0.003)⌋₊)
+    (hA0 : ∀ m : ℕ, ⌊Y * Real.exp (-0.003)⌋₊ ≤ m → (m : ℝ) ≤ Y → ∀ t : ℝ, (m : ℝ) ≤ t →
+      t ≤ Y * Real.exp (a + 0.003) → |E₁Λ t - E₁Λ m| ≤ A0) :
+    ∀ v : ℝ, Real.exp (-0.003) ≤ v → v ≤ Real.exp (a + 0.003) →
+      |E₁Λ (Y * v) - E₁Λ Y| ≤ A0 + 1 / ⌊Y * Real.exp (-0.003)⌋₊ := by
+  have hY0 : 0 < Y := by linarith
+  set M₂ := ⌊Y * Real.exp (-0.003)⌋₊ with hM₂
+  have hM₂0 : (0 : ℝ) < M₂ := by exact_mod_cast hM2
+  have hek1 : Real.exp (-0.003) ≤ 1 := Real.exp_le_one_iff.2 (by norm_num)
+  have hea : 1 ≤ Real.exp (a + 0.003) := Real.one_le_exp (by linarith)
+  intro v hv1 hv2
+  have hv0 : 0 < v := lt_of_lt_of_le (Real.exp_pos _) hv1
+  have hYv0 : 0 < Y * v := by positivity
+  rcases le_or_gt Y (Y * v) with hge | hlt
+  · set M₀ := ⌊Y⌋₊ with hM₀
+    have hM₀1 : 1 ≤ M₀ := Nat.le_floor (by exact_mod_cast hY)
+    have hM₀le : (M₀ : ℝ) ≤ Y := Nat.floor_le hY0.le
+    have hM₂M₀ : M₂ ≤ M₀ := Nat.floor_mono (by nlinarith)
+    have h1 := hA0 M₀ hM₂M₀ hM₀le (Y * v) (hM₀le.trans hge) (by nlinarith)
+    have h2 := abs_E1_sub_floor_le (t := Y) hY
+    rw [← hM₀] at h2
+    have hM₂M₀' : (M₂ : ℝ) ≤ M₀ := by exact_mod_cast hM₂M₀
+    have k1 : 1 / (M₀ : ℝ) ≤ 1 / M₂ := div_le_div_of_nonneg_left (by norm_num) hM₂0 hM₂M₀'
+    calc |E₁Λ (Y * v) - E₁Λ Y| ≤ |E₁Λ (Y * v) - E₁Λ M₀| + |E₁Λ Y - E₁Λ M₀| := by
+          have := abs_sub_le (E₁Λ (Y * v)) (E₁Λ M₀) (E₁Λ Y)
+          rwa [abs_sub_comm (E₁Λ M₀) (E₁Λ Y)] at this
+      _ ≤ A0 + 1 / M₂ := by linarith
+  · set M₁ := ⌊Y * v⌋₊ with hM₁
+    have hM₂M₁ : M₂ ≤ M₁ := Nat.floor_mono (by nlinarith)
+    have hM₁1 : 1 ≤ M₁ := hM2.trans hM₂M₁
+    have hM₁le : (M₁ : ℝ) ≤ Y := (Nat.floor_le hYv0.le).trans hlt.le
+    have h1 := hA0 M₁ hM₂M₁ hM₁le Y hM₁le (le_mul_of_one_le_right hY0.le hea)
+    have hYv1 : 1 ≤ Y * v := by
+      have : (1 : ℝ) ≤ M₁ := by exact_mod_cast hM₁1
+      have := Nat.floor_le hYv0.le (a := Y * v)
+      linarith
+    have h2 := abs_E1_sub_floor_le hYv1
+    rw [← hM₁] at h2
+    have hM₂M₁' : (M₂ : ℝ) ≤ M₁ := by exact_mod_cast hM₂M₁
+    have k1 : 1 / (M₁ : ℝ) ≤ 1 / M₂ := div_le_div_of_nonneg_left (by norm_num) hM₂0 hM₂M₁'
+    calc |E₁Λ (Y * v) - E₁Λ Y| ≤ |E₁Λ (Y * v) - E₁Λ M₁| + |E₁Λ Y - E₁Λ M₁| := by
+          have := abs_sub_le (E₁Λ (Y * v)) (E₁Λ M₁) (E₁Λ Y)
+          rwa [abs_sub_comm (E₁Λ M₁) (E₁Λ Y)] at this
+      _ ≤ 1 / M₂ + A0 := by linarith
+      _ = A0 + 1 / M₂ := by ring
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **The bound with the window `a = 3`.** -/
+theorem E_bound_A {Y A0 : ℝ} (hY : 1 ≤ Y) (hA00 : 0 ≤ A0) (hM2 : 1 ≤ ⌊Y * Real.exp (-0.003)⌋₊)
+    (hA0 : ∀ m : ℕ, ⌊Y * Real.exp (-0.003)⌋₊ ≤ m → (m : ℝ) ≤ Y → ∀ t : ℝ, (m : ℝ) ≤ t →
+      t ≤ Y * Real.exp (3 + 0.003) → |E₁Λ t - E₁Λ m| ≤ A0) :
+    |E₁Λ Y + Real.eulerMascheroniConstant| ≤ A0 + 1 / ⌊Y * Real.exp (-0.003)⌋₊ +
+      (5.53 / √Y + 1.8e5 * Y ^ (-(3 / 2) : ℝ) + 1e-13) := by
+  have hw := hwin_of_A0 hY (by norm_num) hM2 hA0
+  have hE := E_bound_win (a := 3) (δ := 1e-4) (κ := 0.003) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hY (by positivity) hw
+  exact hE.trans (add_le_add le_rfl (Zsm_div_le hY))
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **The bound with the window `a = 1/2`.** -/
+theorem E_bound_A_half {Y A0 : ℝ} (hY : 1 ≤ Y) (hA00 : 0 ≤ A0) (hM2 : 1 ≤ ⌊Y * Real.exp (-0.003)⌋₊)
+    (hA0 : ∀ m : ℕ, ⌊Y * Real.exp (-0.003)⌋₊ ≤ m → (m : ℝ) ≤ Y → ∀ t : ℝ, (m : ℝ) ≤ t →
+      t ≤ Y * Real.exp (0.5 + 0.003) → |E₁Λ t - E₁Λ m| ≤ A0) :
+    |E₁Λ Y + Real.eulerMascheroniConstant| ≤ A0 + 1 / ⌊Y * Real.exp (-0.003)⌋₊ +
+      (68 / √Y + 5.3e6 * Y ^ (-(3 / 2) : ℝ) + 1e-13) := by
+  have hw := hwin_of_A0 hY (by norm_num) hM2 hA0
+  have hE := E_bound_win (a := 0.5) (δ := 1e-4) (κ := 0.003) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hY (by positivity) hw
+  exact hE.trans (add_le_add le_rfl (Zsm_div_le_half hY))
+
+/-! ### `ψ` below `2·10⁸` -/
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **`|ψ(n) − n| ≤ 2√n` for `12 ≤ n < 2·10⁸`.** -/
+theorem psi_le_two {n : ℕ} (h1 : 12 ≤ n) (h2 : n < 200000000) : |psiN n - n| ≤ 2 * √(n : ℝ) := by
+  have hs := Real.sqrt_nonneg (n : ℝ)
+  rcases lt_or_ge n 1000000 with h | h
+  · have := psi_two_sided h1 (by omega)
+    rw [cB_small h, one_mul] at this
+    unfold psiN; rw [abs_le] at this ⊢; constructor <;> linarith [this.1, this.2]
+  · have hR := SieveTab.sieve_table2 (t := (n : ℝ)) (by exact_mod_cast h) (by exact_mod_cast h2)
+    unfold SieveTab.RtT at hR
+    rw [Nat.floor_natCast] at hR
+    have e : SmallTab.thS n = thetaN n := rfl
+    rw [e] at hR
+    norm_num at hR
+    have hnp := sum_vonMangoldt_nonprime_lt (y := (n : ℝ)) (by positivity)
+    rw [Nat.floor_natCast] at hnp
+    have hnp0 : 0 ≤ ∑ m ∈ Finset.Icc 1 n, (if m.Prime then 0 else (Λ m : ℝ)) :=
+      Finset.sum_nonneg fun m _ => by split_ifs <;> simp [ArithmeticFunction.vonMangoldt_nonneg]
+    rw [psiN_eq, abs_le]
+    constructor <;> nlinarith [hR.1, hR.2]
+
 end TernaryGoldbach.Prelim
