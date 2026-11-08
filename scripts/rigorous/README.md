@@ -34,7 +34,7 @@ Lean proof uses, or check [H]'s own constants.
 | `mertens_lower` | (2.13) and its base value | kernel to `10⁴` (`SmallMertensLower.lean`), summation by parts above | `n ≤ 10⁶` | 1 s |
 | `logsq` | (2.19): `∑_{n/2<p≤n} (log p)² ≤ ½ n log n` | used for `n ≥ 2·10⁶` only, from the tables | `117 ≤ n ≤ 10⁶` | 2 s |
 | `mertens_product` | [RS62, Thm 15] at primes | kernel to `10⁵` (`SmallMertensProd.lean`), `F_mid` above | primes `≤ 2·10⁸` | 70 s |
-| `K` | `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54`, an elementary route to the `q = 1` Möbius bound | not used: `MoebiusBound.lean` derives that bound from `ramare_moebius` | prime powers `≤ 10⁹` | 2 min |
+| `K` | `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54`, an elementary route to the `q = 1` Möbius bound | not used: `MoebiusBound.lean` derives that bound from `moebius_profile` | prime powers `≤ 10⁹` | 2 min |
 | `liouville` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99` | kernel (`SmallLiouville.lean`) | `k ≤ 10⁵` | < 1 s |
 | `C_grid` | the grid inequality behind (2.22) with `2.8` | kernel on 17 intervals (`SmallCGrid.lean`) | 7720 grid points × 3000 terms | 25 s |
 | `lemma7` | [MV73, Lemma 7]: `G(r) ≥ log r + 1.07` | kernel for `r < 21400` (`SmallG.lean`), (12.12) above | `r ≤ 3·10⁷` | 20 s |
