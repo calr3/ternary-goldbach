@@ -803,18 +803,30 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
       `0.13–0.54` for `10⁵ ≤ x ≤ 10¹⁰`, against the `0.073` the `g₂` tail needs. The weak link is
       `R(y) = ∫_y^∞ (ψ(u) − u)/u² du = (ψ(y) − y)/y − E(y)`: integrating pointwise `ψ` bounds costs
       `2c/√y`, and `E1_var`'s Gaussian windows cost `1443/√y + 16/log³y + 8.5·10⁻⁶`.
-    * An explicit formula for `R` fixes this: `R(y) = ∑_ρ y^{ρ−1}/(ρ(1 − ρ)) + O(1/y)` converges
-      absolutely (the test function `1/max(u, y)` has Mellin transform `y^{s−1}/(s(1 − s))`), so RH
-      to `10⁸` gives `|R(y)| ≤ 0.047/√y + 6·10⁻⁸` (`∑ 1/|ρ|² = 0.0462`; zeros above `10⁸` at most
-      `6·10⁻⁸`). The contour shift is the one in `WeilFormula.lean` (rectangles at good heights)
-      with this kernel. Then `|m(x)| log x ≤ 0.020` at `10¹⁷`, `0.034` at `10⁸`, `0.14` at `10⁶`.
-      Adding a finite table of `E(y)` for `y < 10⁶` gives `0.062` at `10⁶` and `0.043` at `10⁷`,
-      and a finite check of `|m(x)| log x` on `[11815, 10⁶]` (float max `0.0295`) covers the rest.
-      Above `10¹⁷` the plateau `ε_pl = 4.92·10⁻⁷` adds at most `0.01` (up to `log x = 20000`); the
-      `6·10⁻⁸` term needs the zero-free region for `log x ≳ 10⁴`.
-    * So a uniform `|m(x)| ≤ 0.065/log x` for `x ≥ 11815` looks reachable. The consumers then need
-      their numerics redone: `G2Tail.lean` (needs `≤ 0.073`; exact `m` to `10⁶` adds slack) and
-      `LiouvilleBound.lean` (the model's Liouville constant stays `0.7831` up to `0.07/log x`).
+    * The fix is to keep the cancellation over the zeros. Proved (`Prelim/MertensZeros.lean`,
+      `MertensLimit.lean`, `EOneBound.lean`):
+      * `abs_integral_psi_gsm_le`: the Gaussian-smoothed explicit formula integrated termwise
+        against `dy/y²` over `[Y₁, Y₂]`; each zero carries `|M(ρ)|/|ρ − 1| ≈ 1/|ρ|²`. The bound is
+        `(Y₁^{−1/2} + Y₂^{−1/2}) LQW + 2 TailB/H + (2/3) Y₁^{−3/2} V/(2π)`. The rectangles
+        `goodSeqD` do not depend on `y`, which makes dominated convergence possible.
+      * `E1_tendsto`: `E₁Λ(x) → −γ` (partial summation, `ζ₁'(1) = γ`, an Abelian lemma).
+      * `E_bound_win`: `|E₁Λ(Y) + γ| ≤ A + (Z(Y) + tails)/M(1)` when `E₁Λ` varies by at most `A`
+        on the window `[Ye^{−κ}, Ye^{a+κ}]`; `E1_diff_sqrt` gives `A = 4/M + 3C/√M` from
+        `|ψ(n) − n| ≤ C√n`.
+      With `a = 3`, `δ = 10⁻⁴`: `Z(Y)/M(1) ≈ 7/√Y + 2.5·10⁵/Y^{3/2}`, so
+      `|E(Y)| ≲ (3C + 7)/√Y`. The left line costs `Y^{−3/2}/δ`, which is why `δ` is not tiny.
+    * Float model of the resulting bound for `m` (`scripts/cde_moebius_model.py` with these
+      constants; `C ≈ 2` on `[10⁶, 5·10⁷)` from a tightened sieve, the `cW8` envelope above, a
+      finite table of `E(y)` for `y < 10⁶`): `|m(x)| log x ≤ 0.062–0.067` for `10⁶ ≤ x ≤ 10¹⁰`,
+      `≤ 0.05` beyond. Above `10¹⁷`, `ε_pl` adds up to `0.025` (`2.5 ε_pl` per unit of
+      `log(x/10¹⁷)`, capped at `log x = 20000`). Below `10⁶`, a finite check of `m` (float max of
+      `|m(k)| log(k+1)` is `0.0295`).
+    * Still to do: the numerical constants (`LQW`, `TailB`, `V`); the sieve with tighter bounds;
+      the finite tables (`E(y)` below `10⁶` with bounds for `γ`, `m(x)` on `[11815, 10⁶]`,
+      `|M(t)| ≤ 0.5671√t` up to `2 160 535`); the Abel summation against `M` with the CDE
+      hypothesis; the case analysis in `x`; and the consumers. `G2Tail.lean` only needs
+      `∫ m(t)² dt/t`. With exact `m` up to `10⁶` and `0.07/log x` beyond, the model gives
+      `τ ≈ 3.2·10⁻⁴ ≤ 5.7·10⁻⁴`. `LiouvilleBound.lean` is insensitive up to `0.07/log x`.
 * Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`
   (`MVLemma7.lean`), `Prelim/SmallLogSq.lean`, and [H]'s form of Prop 11.2.3 (`Prop1123.lean`).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.
