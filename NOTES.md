@@ -788,6 +788,33 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
     `|M(x)| ≤ x/4345` and `M(x)` computations to `10¹²–10¹⁶`. RH up to a height `T` cannot replace
     them: without the zeros' positions `|ψ(x) − x|` is only `≈ log²(T/2π)/(2π) · √x` (`≈ 44√x` at
     `T = 10⁸`), and the explicit formula for `M` needs `1/ζ′(ρ)`.
+  * **Replacing `ramare_moebius` by Cohen–Dress–El Marraki** (`|M(x)| ≤ x/4345` for
+    `x ≥ 2 160 535`, Funct. Approx. 37 (2007); Helfgott's suggestion). Float model:
+    `scripts/cde_moebius_model.py`. With `E(y) = ∑_{n≤y} Λ(n)/n − log y + γ`, `mlog_identity` (with
+    `c = −γ`) gives `m(x)(log x − γ) = −∑_{d≤x} μ(d)/d · E(x/d)`. Split at `d = x/Y`:
+    * `d > x/Y`: Abel summation against `M`. The jumps of `E(x/t)/t` cost
+      `∑_{k≤Y} |M(x/k)| Λ(k)/x`, the smooth part `∫₁^Y |M(x/u)|/(x/u) · |1 − E(u)| du/u`, so about
+      `2 log Y/4345` once `x/Y ≥ 2 160 535`. Below that, `|M(t)| ≤ 0.5671√t` on `[100, 2 160 535]`
+      (a finite check, max at `t = 199`).
+    * `d ≤ x/Y`: `∑ |E(x/d)|/d ≈ ∫_Y^x |E(y)| dy/y`. This needs `|E(y)|` small, and integrable in
+      `d log y`, for all `y ≥ Y`.
+    * With the `E` bounds the development has (`E1_var` from `10¹²`, anchored there below,
+      pointwise `ψ` bounds otherwise) the model gives `|m(x)| log x ≤ 0.09` for large `x` and
+      `0.13–0.54` for `10⁵ ≤ x ≤ 10¹⁰`, against the `0.073` the `g₂` tail needs. The weak link is
+      `R(y) = ∫_y^∞ (ψ(u) − u)/u² du = (ψ(y) − y)/y − E(y)`: integrating pointwise `ψ` bounds costs
+      `2c/√y`, and `E1_var`'s Gaussian windows cost `1443/√y + 16/log³y + 8.5·10⁻⁶`.
+    * An explicit formula for `R` fixes this: `R(y) = ∑_ρ y^{ρ−1}/(ρ(1 − ρ)) + O(1/y)` converges
+      absolutely (the test function `1/max(u, y)` has Mellin transform `y^{s−1}/(s(1 − s))`), so RH
+      to `10⁸` gives `|R(y)| ≤ 0.047/√y + 6·10⁻⁸` (`∑ 1/|ρ|² = 0.0462`; zeros above `10⁸` at most
+      `6·10⁻⁸`). The contour shift is the one in `WeilFormula.lean` (rectangles at good heights)
+      with this kernel. Then `|m(x)| log x ≤ 0.020` at `10¹⁷`, `0.034` at `10⁸`, `0.14` at `10⁶`.
+      Adding a finite table of `E(y)` for `y < 10⁶` gives `0.062` at `10⁶` and `0.043` at `10⁷`,
+      and a finite check of `|m(x)| log x` on `[11815, 10⁶]` (float max `0.0295`) covers the rest.
+      Above `10¹⁷` the plateau `ε_pl = 4.92·10⁻⁷` adds at most `0.01` (up to `log x = 20000`); the
+      `6·10⁻⁸` term needs the zero-free region for `log x ≳ 10⁴`.
+    * So a uniform `|m(x)| ≤ 0.065/log x` for `x ≥ 11815` looks reachable. The consumers then need
+      their numerics redone: `G2Tail.lean` (needs `≤ 0.073`; exact `m` to `10⁶` adds slack) and
+      `LiouvilleBound.lean` (the model's Liouville constant stays `0.7831` up to `0.07/log x`).
 * Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`
   (`MVLemma7.lean`), `Prelim/SmallLogSq.lean`, and [H]'s form of Prop 11.2.3 (`Prop1123.lean`).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.
