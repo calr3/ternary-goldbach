@@ -362,4 +362,200 @@ theorem sum_Jx_div_sqrt_le {x : ℝ} (hx : 0 < x) {D : ℕ} (hD : 101 ≤ D) (N 
     refine mul_nonneg (by positivity) (sum_nonneg fun k _ => ?_)
     exact div_nonneg ArithmeticFunction.vonMangoldt_nonneg (Real.sqrt_nonneg _)
 
+/-! ### The concrete bound for the part `n > D` -/
+
+/-- **Cohen–Dress–El Marraki**: `|M(x)| ≤ x/4345` for `x ≥ 2 160 535`. -/
+def CDEMertens : Prop :=
+  ∀ x : ℝ, 2160535 ≤ x → |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ)| ≤ x / 4345
+
+/-- The weight `β(n)`: `1/4345` from `2 160 535` on, `0.5671/√n` below. -/
+noncomputable def betaM (n : ℕ) : ℝ := if 2160535 ≤ n then 1 / 4345 else 0.5671 / √(n : ℝ)
+
+theorem betaM_nonneg (n : ℕ) : 0 ≤ betaM n := by unfold betaM; split_ifs <;> positivity
+
+theorem betaM_le (n : ℕ) : betaM n ≤ 1 / 4345 + 0.5671 / √(n : ℝ) := by
+  unfold betaM; split_ifs
+  · have : 0 ≤ 0.5671 / √(n : ℝ) := by positivity
+    linarith
+  · have : (0 : ℝ) ≤ 1 / 4345 := by norm_num
+    linarith
+
+theorem Mt_le_betaM (hCDE : CDEMertens)
+    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5671 * √(n : ℝ)) {n : ℕ} (hn : 100 ≤ n) :
+    |Mt n| ≤ betaM n * n := by
+  unfold betaM
+  split_ifs with h
+  · have := hCDE n (by exact_mod_cast h)
+    rw [Nat.floor_natCast] at this
+    unfold Mt; linarith [show (n : ℝ) / 4345 = 1 / 4345 * n by ring]
+  · have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+    have h1 := hsmall n hn (by omega)
+    have e : 0.5671 / √(n : ℝ) * n = 0.5671 * √(n : ℝ) := by
+      have hs := Real.mul_self_sqrt hn0.le
+      have hs0 : 0 < √(n : ℝ) := Real.sqrt_pos.2 hn0
+      field_simp; nlinarith [hs]
+    rw [e]; exact h1
+
+variable [Fact TernaryGoldbach.PlattGRH] in
+/-- **The part `n > D`, concretely**: with `|E(u)| ≤ F` on `[1, x/D]`, `101 ≤ D < ⌊x⌋`,
+`|∑_{D<n≤x} μ(n) E(x/n)/n| ≤ (β(⌊x⌋) + β(D))F
+  + (log(x/(D+1)) − γ + F + (1 + F)(log x − log D))/4345 + 0.5671(2.0884/√(D+1) + 2(1 + F)/√D)`. -/
+theorem tail_concrete (hCDE : CDEMertens)
+    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5671 * √(n : ℝ))
+    {x : ℝ} (hx : 1 ≤ x) {D : ℕ} (hD : 101 ≤ D) (hDN : D < ⌊x⌋₊) {F : ℝ}
+    (hF : ∀ u : ℝ, 1 ≤ u → u ≤ x / D → |Eg u| ≤ F) :
+    |∑ n ∈ Ioc D ⌊x⌋₊, (μ n : ℝ) * (Eg (x / n) / n)| ≤
+      (betaM ⌊x⌋₊ + betaM D) * F +
+        (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
+          (1 + F) * (Real.log x - Real.log D)) / 4345 +
+        0.5671 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) := by
+  set N := ⌊x⌋₊ with hN
+  have hx0 : 0 < x := by linarith
+  have hD0 : (0 : ℝ) < D := by exact_mod_cast (by omega : 0 < D)
+  have hNx : (N : ℝ) ≤ x := Nat.floor_le hx0.le
+  have hDx : (D : ℝ) < x := lt_of_lt_of_le (by exact_mod_cast hDN) hNx
+  have hF0 : 0 ≤ F := le_trans (abs_nonneg _) (hF 1 le_rfl (by rw [le_div_iff₀ hD0]; linarith))
+  -- `|E(x/n)| ≤ F` for `D < n ≤ N`
+  have hFn : ∀ n, D < n → n ≤ N → |Eg (x / n)| ≤ F := by
+    intro n h1 h2
+    have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+    refine hF _ ?_ ?_
+    · rw [le_div_iff₀ hn0, one_mul]; exact le_trans (by exact_mod_cast h2) hNx
+    · exact div_le_div_of_nonneg_left hx0.le hD0 (by exact_mod_cast h1.le)
+  have hT := tail_bound hx (by omega) hDN betaM betaM_nonneg
+    (fun n h1 _ => Mt_le_betaM hCDE hsmall (by omega)) hFn
+  suffices hS : ∑ n ∈ Ioo D N, betaM n * (Jx x n + Real.log (1 + 1 / n) + F / (n + 1)) ≤
+      (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
+          (1 + F) * (Real.log x - Real.log D)) / 4345 +
+        0.5671 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) by
+    have e : (betaM N + betaM D) * F = betaM N * F + betaM D * F := by ring
+    linarith
+  -- split `β ≤ 1/4345 + 0.5671/√n`
+  set X : ℕ → ℝ := fun n => Jx x n + Real.log (1 + 1 / n) + F / (n + 1) with hX
+  have hX0 : ∀ n, 1 ≤ n → 0 ≤ X n := by
+    intro n hn
+    have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+    have := Jx_nonneg x n
+    have hq : (0 : ℝ) ≤ 1 / n := by positivity
+    have : 0 ≤ Real.log (1 + 1 / n) := Real.log_nonneg (by linarith)
+    have : 0 ≤ F / (n + 1) := by positivity
+    simp only [hX]; linarith
+  have hsplit : ∑ n ∈ Ioo D N, betaM n * X n ≤
+      1 / 4345 * ∑ n ∈ Ioo D N, X n + 0.5671 * ∑ n ∈ Ioo D N, X n / √(n : ℝ) := by
+    rw [mul_sum, mul_sum, ← sum_add_distrib]
+    refine sum_le_sum fun n hn => ?_
+    have hn1 : 1 ≤ n := by have := (mem_Ioo.1 hn).1; omega
+    have := mul_le_mul_of_nonneg_right (betaM_le n) (hX0 n hn1)
+    calc betaM n * X n ≤ (1 / 4345 + 0.5671 / √(n : ℝ)) * X n := this
+      _ = 1 / 4345 * X n + 0.5671 * (X n / √(n : ℝ)) := by ring
+  refine hsplit.trans ?_
+  -- `∑ X ≤ log(x/(D+1)) − γ + F + (1 + F)(log x − log D)`
+  have hinv : ∑ n ∈ Ioo D N, (1 : ℝ) / n ≤ Real.log x - Real.log D := by
+    have hsub : Ioo D N ⊆ Ioc D N := Ioo_subset_Ioc_self
+    refine (sum_le_sum_of_subset_of_nonneg hsub fun n _ _ => by positivity).trans ?_
+    refine (sum_inv_le_log (by omega) hDN.le).trans ?_
+    have := Real.log_le_log (by exact_mod_cast (by omega : 0 < N)) hNx
+    linarith
+  have hJsum : ∑ n ∈ Ioo D N, Jx x n ≤ Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F := by
+    rcases Nat.lt_or_ge (D + 1) N with h | h
+    · have hIoo : Ioo D N = Ico (D + 1) N := by ext n; simp only [mem_Ioo, mem_Ico]; omega
+      rw [hIoo, sum_Jx hx0 (by omega) h.le]
+      set K := ⌊x / ((D + 1 : ℕ) : ℝ)⌋₊ with hK
+      have hsub : Ioc ⌊x / N⌋₊ K ⊆ Ioc 0 K := Ioc_subset_Ioc (Nat.zero_le _) le_rfl
+      refine (sum_le_sum_of_subset_of_nonneg hsub fun k _ _ =>
+        div_nonneg ArithmeticFunction.vonMangoldt_nonneg (Nat.cast_nonneg _)).trans ?_
+      have hD1 : (0 : ℝ) < ((D + 1 : ℕ) : ℝ) := by positivity
+      have hK1 : 1 ≤ K := by
+        rw [hK]; refine Nat.le_floor ?_
+        rw [Nat.cast_one, le_div_iff₀ hD1, one_mul]
+        have : ((D + 1 : ℕ) : ℝ) ≤ N := by exact_mod_cast h.le
+        linarith
+      have hK0 : (0 : ℝ) < K := by exact_mod_cast hK1
+      have hKx : (K : ℝ) ≤ x / ((D + 1 : ℕ) : ℝ) := Nat.floor_le (by positivity)
+      have e := sum_mangoldt_div_eq (K : ℝ)
+      rw [Nat.floor_natCast] at e
+      rw [e]
+      have hEK := hF K (by exact_mod_cast hK1) (hKx.trans (div_le_div_of_nonneg_left hx0.le hD0
+        (by push_cast; linarith)))
+      have hE : E₁Λ K ≤ F - Real.eulerMascheroniConstant := by
+        unfold Eg at hEK; linarith [(abs_le.1 hEK).2]
+      have hl : Real.log K ≤ Real.log (x / (D + 1)) := by
+        refine Real.log_le_log hK0 (hKx.trans (le_of_eq ?_)); push_cast; ring
+      linarith
+    · rw [show Ioo D N = ∅ by ext n; simp only [mem_Ioo, Finset.notMem_empty, iff_false]; omega,
+        sum_empty]
+      have h1 := Real.eulerMascheroniConstant_lt_two_thirds
+      have hl : 0 ≤ Real.log (x / (D + 1)) := by
+        refine Real.log_nonneg ?_
+        rw [le_div_iff₀ (by positivity), one_mul]
+        have : ((D : ℝ) + 1) ≤ N := by exact_mod_cast hDN
+        linarith
+      -- `F ≥ |E(1)| = γ`
+      have hγ := hF 1 le_rfl (by rw [le_div_iff₀ hD0]; linarith)
+      have hE1 : Eg 1 = Real.eulerMascheroniConstant := by simp [Eg, E₁Λ]
+      rw [hE1, abs_of_pos (by linarith [Real.one_half_lt_eulerMascheroniConstant])] at hγ
+      linarith
+  have hS1 : ∑ n ∈ Ioo D N, X n ≤ Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
+      (1 + F) * (Real.log x - Real.log D) := by
+    have hl : ∀ n ∈ Ioo D N, Real.log (1 + 1 / n) + F / (n + 1) ≤ (1 + F) * (1 / n) := by
+      intro n hn
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (by have := (mem_Ioo.1 hn).1; omega : 0 < n)
+      have h1 : Real.log (1 + 1 / n) ≤ 1 / n := by
+        have := Real.log_le_sub_one_of_pos (show 0 < 1 + 1 / (n : ℝ) by positivity); linarith
+      have h2 : F / (n + 1) ≤ F * (1 / n) := by
+        rw [mul_one_div]; exact div_le_div_of_nonneg_left hF0 hn0 (by linarith)
+      linarith
+    have : ∑ n ∈ Ioo D N, X n ≤ ∑ n ∈ Ioo D N, Jx x n + (1 + F) * ∑ n ∈ Ioo D N, (1 : ℝ) / n := by
+      rw [mul_sum, ← sum_add_distrib]
+      refine sum_le_sum fun n hn => ?_
+      have := hl n hn
+      simp only [hX]; linarith
+    have := mul_le_mul_of_nonneg_left hinv (by linarith : (0 : ℝ) ≤ 1 + F)
+    linarith
+  -- `∑ X/√n ≤ 2.0884/√(D+1) + 2(1 + F)/√D`
+  have hS2 : ∑ n ∈ Ioo D N, X n / √(n : ℝ) ≤ 2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ) := by
+    have hsplit2 : ∑ n ∈ Ioo D N, X n / √(n : ℝ) ≤ ∑ n ∈ Ioo D N, Jx x n / √(n : ℝ) +
+        (1 + F) * ∑ n ∈ Ioo D N, (1 : ℝ) / (n * √(n : ℝ)) := by
+      rw [mul_sum, ← sum_add_distrib]
+      refine sum_le_sum fun n hn => ?_
+      have hn0 : (0 : ℝ) < n := by exact_mod_cast (by have := (mem_Ioo.1 hn).1; omega : 0 < n)
+      have hs0 : 0 < √(n : ℝ) := Real.sqrt_pos.2 hn0
+      have h1 : Real.log (1 + 1 / n) ≤ 1 / n := by
+        have := Real.log_le_sub_one_of_pos (show 0 < 1 + 1 / (n : ℝ) by positivity); linarith
+      have h2 : F / (n + 1) ≤ F * (1 / n) := by
+        rw [mul_one_div]; exact div_le_div_of_nonneg_left hF0 hn0 (by linarith)
+      have e : (1 + F) * (1 / (n * √(n : ℝ))) = (1 + F) * (1 / n) / √(n : ℝ) := by field_simp
+      rw [e, ← add_div]
+      refine div_le_div_of_nonneg_right ?_ hs0.le
+      simp only [hX]; linarith
+    have hJ := sum_Jx_div_sqrt_le hx0 hD N le_rfl
+    have hL := sum_Lambda_div_sqrt_le ⌊x / ((D + 1 : ℕ) : ℝ)⌋₊
+    have hKx : ((⌊x / ((D + 1 : ℕ) : ℝ)⌋₊ : ℕ) : ℝ) ≤ x / ((D : ℝ) + 1) := by
+      have := Nat.floor_le (show 0 ≤ x / ((D + 1 : ℕ) : ℝ) by positivity)
+      push_cast at this ⊢; exact this
+    have hsK : √(((⌊x / ((D + 1 : ℕ) : ℝ)⌋₊ : ℕ) : ℝ)) ≤ √x / √((D : ℝ) + 1) := by
+      rw [← Real.sqrt_div' x (by positivity)]; exact Real.sqrt_le_sqrt hKx
+    have hsx : 0 < √x := Real.sqrt_pos.2 hx0
+    have hJ2 : ∑ n ∈ Ioo D N, Jx x n / √(n : ℝ) ≤ 2.0884 / √((D : ℝ) + 1) := by
+      refine hJ.trans ?_
+      have h3 : 1.005 / √x * (2.078 * (√x / √((D : ℝ) + 1))) = 2.088390 / √((D : ℝ) + 1) := by
+        field_simp; ring
+      have h4 : 1.005 / √x * ∑ k ∈ Ioc 0 ⌊x / ((D + 1 : ℕ) : ℝ)⌋₊, (Λ k : ℝ) / √(k : ℝ) ≤
+          1.005 / √x * (2.078 * (√x / √((D : ℝ) + 1))) :=
+        mul_le_mul_of_nonneg_left (hL.trans (mul_le_mul_of_nonneg_left hsK (by norm_num)))
+          (by positivity)
+      have h5 : 2.088390 / √((D : ℝ) + 1) ≤ 2.0884 / √((D : ℝ) + 1) :=
+        div_le_div_of_nonneg_right (by norm_num) (Real.sqrt_nonneg _)
+      linarith
+    have hP := sum_inv_pow32_le (by omega : 1 ≤ D) N
+    have := mul_le_mul_of_nonneg_left hP (by linarith : (0 : ℝ) ≤ 1 + F)
+    have e : (1 + F) * (2 / √(D : ℝ)) = 2 * (1 + F) / √(D : ℝ) := by ring
+    linarith
+  have h1 := mul_le_mul_of_nonneg_left hS1 (by norm_num : (0 : ℝ) ≤ 1 / 4345)
+  have h2 := mul_le_mul_of_nonneg_left hS2 (by norm_num : (0 : ℝ) ≤ 0.5671)
+  have e : 1 / 4345 * (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
+      (1 + F) * (Real.log x - Real.log D)) = (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
+      (1 + F) * (Real.log x - Real.log D)) / 4345 := by ring
+  linarith
+
 end TernaryGoldbach.Prelim
