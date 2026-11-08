@@ -151,4 +151,113 @@ theorem sum_inv_piece {x u v : ℝ} (hx : 0 < x) (hu : 1 ≤ u) (huv : u ≤ v) 
       rw [← Real.log_mul (by positivity) (by positivity)]; congr 1; field_simp
     linarith
 
+/-- `1/n ≤ 2 log((n + 1)/n)`. -/
+theorem inv_le_two_log (n : ℕ) (hn : 1 ≤ n) :
+    (1 : ℝ) / n ≤ 2 * (Real.log ((n + 1 : ℕ) : ℝ) - Real.log n) := by
+  have hn0 : (0 : ℝ) < n := by exact_mod_cast hn
+  rw [← Real.log_div (by positivity) hn0.ne']
+  have h := Real.one_sub_inv_le_log_of_pos (show 0 < ((n + 1 : ℕ) : ℝ) / n by positivity)
+  have e : 1 - (((n + 1 : ℕ) : ℝ) / n)⁻¹ = 1 / ((n : ℝ) + 1) := by push_cast; field_simp; ring
+  rw [e] at h
+  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have : (1 : ℝ) / n ≤ 2 * (1 / ((n : ℝ) + 1)) := by
+    rw [mul_one_div, div_le_div_iff₀ hn0 (by positivity)]; linarith
+  linarith
+
+/-- **The `1/log²` piece**: `∑_{a < n ≤ b} 1/(n log²(x/n)) ≤ 2/log(x/(b+1))` if `x/(b+1) > 1`. -/
+theorem sum_log2_piece {x : ℝ} (hx : 0 < x) {a b : ℕ} (hab : a ≤ b) (hb : (b + 1 : ℝ) < x) :
+    ∑ n ∈ Ioc a b, (1 : ℝ) / (n * Real.log (x / n) ^ 2) ≤ 2 / Real.log (x / (b + 1)) := by
+  obtain ⟨k, rfl⟩ : ∃ k, b = a + k := ⟨b - a, by omega⟩
+  induction k with
+  | zero =>
+    simp only [add_zero, Ioc_self, sum_empty]
+    have : 0 < Real.log (x / (a + 1)) := Real.log_pos (by rw [lt_div_iff₀ (by positivity)]; simpa using hb)
+    positivity
+  | succ k ih =>
+    have hb' : ((a + k : ℕ) : ℝ) + 1 < x := by push_cast at hb ⊢; linarith
+    have ih' := ih (by omega) (by exact_mod_cast hb')
+    rw [show a + (k + 1) = (a + k) + 1 by ring, sum_Ioc_succ_top (by omega)]
+    set m := a + k + 1 with hm
+    have hm1 : 1 ≤ m := by omega
+    have hm0 : (0 : ℝ) < m := by exact_mod_cast hm1
+    set A := Real.log x
+    have hl : ∀ t : ℝ, 0 < t → Real.log (x / t) = A - Real.log t := fun t ht => Real.log_div hx.ne' ht.ne'
+    have hmc : (m : ℝ) = a + k + 1 := by rw [hm]; push_cast; ring
+    have hmx : (m : ℝ) + 1 < x := by push_cast at hb; linarith
+    have hpos1 : 0 < A - Real.log ((m : ℝ) + 1) := by
+      rw [← hl _ (by positivity)]; exact Real.log_pos (by rw [lt_div_iff₀ (by positivity)]; linarith)
+    have hlm : Real.log m ≤ Real.log ((m : ℝ) + 1) := Real.log_le_log hm0 (by linarith)
+    have hpos0 : 0 < A - Real.log m := by linarith
+    rw [hl _ hm0]
+    rw [show ((a + k : ℕ) : ℝ) + 1 = (m : ℝ) by push_cast [hm]; ring] at ih'
+    rw [show ((m : ℕ) : ℝ) + 1 = (m : ℝ) + 1 from rfl, hl _ (by positivity)]
+    rw [hl _ hm0] at ih'
+    -- the new term
+    have hi := inv_le_two_log m hm1
+    push_cast at hi
+    set d := Real.log ((m : ℝ) + 1) - Real.log m with hd
+    have hd0 : 0 ≤ d := by linarith
+    have key : (1 : ℝ) / (m * (A - Real.log m) ^ 2) ≤
+        2 / (A - Real.log ((m : ℝ) + 1)) - 2 / (A - Real.log m) := by
+      rw [div_sub_div _ _ hpos1.ne' hpos0.ne', div_le_div_iff₀ (by positivity) (by positivity)]
+      have h1 : 1 / (m : ℝ) ≤ 2 * d := hi
+      have h2 : (1 : ℝ) ≤ 2 * d * m := by rw [div_le_iff₀ hm0] at h1; linarith
+      have e : 2 * (A - Real.log m) - (A - Real.log ((m : ℝ) + 1)) * 2 = 2 * d := by rw [hd]; ring
+      rw [e]
+      have h3 : (A - Real.log ((m : ℝ) + 1)) * (A - Real.log m) ≤ (A - Real.log m) ^ 2 := by nlinarith
+      nlinarith [mul_pos hpos1 hpos0]
+    linarith
+
+/-- **The `1/log³` piece**: `∑_{a < n ≤ b} 1/(n log³(x/n)) ≤ 1/log²(x/(b+1))` if `x/(b+1) > 1`. -/
+theorem sum_log3_piece {x : ℝ} (hx : 0 < x) {a b : ℕ} (hab : a ≤ b) (hb : (b + 1 : ℝ) < x) :
+    ∑ n ∈ Ioc a b, (1 : ℝ) / (n * Real.log (x / n) ^ 3) ≤ 1 / Real.log (x / (b + 1)) ^ 2 := by
+  obtain ⟨k, rfl⟩ : ∃ k, b = a + k := ⟨b - a, by omega⟩
+  induction k with
+  | zero =>
+    simp only [add_zero, Ioc_self, sum_empty]
+    positivity
+  | succ k ih =>
+    have hb' : ((a + k : ℕ) : ℝ) + 1 < x := by push_cast at hb ⊢; linarith
+    have ih' := ih (by omega) (by exact_mod_cast hb')
+    rw [show a + (k + 1) = (a + k) + 1 by ring, sum_Ioc_succ_top (by omega)]
+    set m := a + k + 1 with hm
+    have hm1 : 1 ≤ m := by omega
+    have hm0 : (0 : ℝ) < m := by exact_mod_cast hm1
+    set A := Real.log x
+    have hl : ∀ t : ℝ, 0 < t → Real.log (x / t) = A - Real.log t := fun t ht => Real.log_div hx.ne' ht.ne'
+    have hmc : (m : ℝ) = a + k + 1 := by rw [hm]; push_cast; ring
+    have hmx : (m : ℝ) + 1 < x := by push_cast at hb; linarith
+    have hpos1 : 0 < A - Real.log ((m : ℝ) + 1) := by
+      rw [← hl _ (by positivity)]; exact Real.log_pos (by rw [lt_div_iff₀ (by positivity)]; linarith)
+    have hlm : Real.log m ≤ Real.log ((m : ℝ) + 1) := Real.log_le_log hm0 (by linarith)
+    have hpos0 : 0 < A - Real.log m := by linarith
+    rw [hl _ hm0]
+    rw [show ((a + k : ℕ) : ℝ) + 1 = (m : ℝ) by push_cast [hm]; ring] at ih'
+    rw [show ((m : ℕ) : ℝ) + 1 = (m : ℝ) + 1 from rfl, hl _ (by positivity)]
+    rw [hl _ hm0] at ih'
+    have hi := inv_le_two_log m hm1
+    push_cast at hi
+    set d := Real.log ((m : ℝ) + 1) - Real.log m with hd
+    have hd0 : 0 ≤ d := by linarith
+    set p := A - Real.log m
+    set q := A - Real.log ((m : ℝ) + 1)
+    have hpq : p - q = d := by simp only [p, q, hd]; ring
+    have key : (1 : ℝ) / (m * p ^ 3) ≤ 1 / q ^ 2 - 1 / p ^ 2 := by
+      rw [div_sub_div _ _ (by positivity) (by positivity), div_le_div_iff₀ (by positivity) (by positivity)]
+      have h1 : 1 / (m : ℝ) ≤ 2 * d := hi
+      have h2 : (1 : ℝ) ≤ 2 * d * m := by rw [div_le_iff₀ hm0] at h1; linarith
+      have hqp : q ≤ p := by linarith
+      have e : 1 * p ^ 2 - q ^ 2 * 1 = (p - q) * (p + q) := by ring
+      rw [e, hpq]
+      -- `q² p² ≤ m p³ d (p + q)` from `1 ≤ 2dm` and `2 q² ≤ p(p + q)`
+      have h4 : 2 * q ^ 2 ≤ p * (p + q) := by nlinarith
+      have h6 : (1 / 2 : ℝ) * (p ^ 3 * (p + q)) ≤ d * m * (p ^ 3 * (p + q)) :=
+        mul_le_mul_of_nonneg_right (by linarith) (by positivity)
+      have h7 : q ^ 2 * p ^ 2 ≤ 1 / 2 * (p ^ 3 * (p + q)) := by
+        have := mul_le_mul_of_nonneg_left h4 (sq_nonneg p)
+        nlinarith
+      have e2 : d * (p + q) * (m * p ^ 3) = d * m * (p ^ 3 * (p + q)) := by ring
+      rw [e2]; linarith
+    linarith
+
 end TernaryGoldbach.Prelim
