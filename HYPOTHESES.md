@@ -121,15 +121,15 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallW.lean` | [MV73, Lemma 8], `6 ≤ R < 1000` | seconds |
 | `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` (not used by the main theorems: they need (2.19) only for `y ≥ 2·10⁶`) | 78 s |
 | `Prelim/SmallPsiData1–6.lean` | `\|ψ(t) − t\| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)`, by trial division (`SmallPsiTable`) | about 3 min per file |
-| `Prelim/PsiSieveData1–282.lean` | `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)`: 77962 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` below `5·10⁷`, `≤ 14142` below `2·10⁸` and `≤ 31622` above (`PsiSieve.cnt_spec`, `cnt2_spec`, `cnt3_spec`) | SIEVETIME |
+| `Prelim/PsiSieveData1–282.lean` | `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)`: 77962 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` below `5·10⁷`, `≤ 14142` below `2·10⁸` and `≤ 31622` above (`PsiSieve.cnt_spec`, `cnt2_spec`, `cnt3_spec`) | about 1.9 h in all (8–53 s per file; the files above `2·10⁸` build in four parallel chains) |
 | `Prelim/SmallLiouville.lean` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `k ≤ 10⁵` | 4.7 min |
 | `Prelim/SmallMuPhi.lean` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | about 10 min |
 | `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |
 | `Prelim/SmallCGrid.lean` | `y ∑_{u≤3000} \|μ(u)\|/u² β(y, u) ≤ 2.8` on `[2.8, 80)` | 21 s |
 | `Prelim/SmallMoebius.lean` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `k < 11815` | 51 s |
-| `Prelim/SmallMuData1–11.lean` | `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 534]`, `\|m(n)\| log(n+1) ≤ 0.03` on `[11815, 2 160 534]` (`μ` by trial division by the primes `≤ 1470`) | MUTIME |
-| `Prelim/SmallEData1–10.lean` | `E₁Λ(u)` on `[1, 10⁶)` in 912 chunks with rational bounds (`10⁻¹²`), and `γ ∈ [0.5772116, 0.5772196]` | ETIME |
-| `Prelim/MoebiusCases.lean` | the table groups `GOK` against `SmallE.ETab`, and the sums `gT1`, `gT2` in `ℚ` | CASETIME |
+| `Prelim/SmallMuData1–11.lean` | `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 534]`, `\|m(n)\| log(n+1) ≤ 0.03` on `[11815, 2 160 534]` (`μ` by trial division by the primes `≤ 1470`) | about 81 min in all (up to 9.3 min per file) |
+| `Prelim/SmallEData1–10.lean` | `E₁Λ(u)` on `[1, 10⁶)` in 912 chunks with rational bounds (`10⁻¹²`), and `γ ∈ [0.5772116, 0.5772196]` | about 40 min in all |
+| `Prelim/MoebiusCases.lean` | the table groups `GOK` against `SmallE.ETab`, and the sums `gT1`, `gT2` in `ℚ` | 67 s |
 | `Prelim/SmallMertensProd.lean` | [RS62, Thm 15] for primes `5 ≤ x ≤ 10⁵`, `log θ(x)` to `10⁻²⁵` (tightest at `x = 23`, margin `2.4·10⁻⁷`); `∏_{p≤10⁵} p/(p−1) ≤ 20.5116` | 5.5 min |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |

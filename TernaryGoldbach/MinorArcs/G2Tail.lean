@@ -457,7 +457,7 @@ noncomputable def cpr (j : ℕ) : ℝ :=
 theorem mprof_eq_cpr {j : ℕ} (hj : 1 ≤ j) : Prelim.mprof j = cpr j := by
   have hj0 : (0 : ℝ) < j := by exact_mod_cast hj
   have hN : j < N200 ↔ Real.log j < 200 := by
-    rw [N200, Nat.lt_ceil, ← Real.lt_log_iff_exp_lt hj0]
+    rw [N200, Nat.lt_ceil, Real.log_lt_iff_lt_exp hj0]
   unfold Prelim.mprof cpr
   simp only [hN]
   norm_cast
@@ -485,7 +485,14 @@ theorem Bt_step {j : ℕ} (hj : 2 ≤ j) : Bt j - Bt (j + 1) = cpr j ^ 2 * (il j
   have hN := N200_big
   unfold Bt cpr
   simp only
-  split_ifs <;> first | omega | (push_cast; ring)
+  split_ifs <;> first
+    | omega
+    | ring1
+    | (rw [show j + 1 = 2160535 by omega]; ring1)
+    | (rw [show j + 1 = 10000000 by omega]; ring1)
+    | (rw [show j + 1 = 49603849 by omega]; ring1)
+    | (rw [show j + 1 = 10000000000 by omega]; ring1)
+    | (rw [show j + 1 = N200 by omega]; ring1)
 
 theorem il_anti {a b : ℕ} (ha : 2 ≤ a) (hab : a ≤ b) : il b ≤ il a := by
   unfold il
@@ -566,8 +573,9 @@ theorem sum_tail_le (M : ℕ) :
         refine sum_le_sum fun j hj => ?_
         have hj1 : 11815 ≤ j := by have := (mem_Icc.1 hj).1; rw [hK] at this; exact this
         have h := tail_term_le hj1
-        rw [mprof_eq_cpr (by omega), Bt_step (by omega)]
-        unfold il; exact h
+        rw [mprof_eq_cpr (by omega)] at h
+        rw [Bt_step (by omega)]
+        unfold il; push_cast; exact h
     _ = 1.00001 * (Bt KK - Bt (max KK (M + 1))) := by rw [← mul_sum, htel]
     _ ≤ 1.00001 * Bt 11815 := by
         have := Bt_nonneg (j := max KK (M + 1)) (by rw [hK]; omega)

@@ -18,7 +18,7 @@ namespace TernaryGoldbach.Prelim
 open TernaryGoldbach.PNTMertens TernaryGoldbach.Explicit
 
 /-- `∑_{d ≤ k} log d/d² ≤ 2` (telescoping against `(log d + 2)/d`). -/
-theorem sum_log_div_sq_le (k : ℕ) :
+theorem sum_log_div_sq_window (k : ℕ) :
     ∑ m ∈ Finset.range k, Real.log ((m : ℝ) + 1) / ((m : ℝ) + 1) ^ 2 ≤ 2 := by
   set G : ℕ → ℝ := fun m => (Real.log ((m : ℝ) + 1) + 2) / ((m : ℝ) + 1) with hG
   have hstep : ∀ m : ℕ, Real.log ((m : ℝ) + 1) / ((m : ℝ) + 1) ^ 2 ≤ G m - G (m + 1) := by
@@ -103,7 +103,7 @@ theorem wsq_window_sum_le (J : ℕ) :
   rw [← Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum,
     ← Finset.mul_sum, ← Finset.mul_sum] at hsum
   have hA := sum_inv_sq_le_two k
-  have hB := sum_log_div_sq_le k
+  have hB := sum_log_div_sq_window k
   have hS : ∑ m ∈ Finset.range k, Real.log (BPz2 ((((m + 1 : ℕ) : ℝ) + 1 / 2) * 6) / 0.355) /
       Real.log (10 / 3.36) * Wsq (6 * ((m + 1 : ℕ) : ℝ)) ≤ 1 / (36 * 1.0906) * (30.17 * 2 + 10 * 2 + 25.17 * 2) := by
     refine hsum.trans ?_
