@@ -364,10 +364,6 @@ theorem sum_Jx_div_sqrt_le {x : ℝ} (hx : 0 < x) {D : ℕ} (hD : 101 ≤ D) (N 
 
 /-! ### The concrete bound for the part `n > D` -/
 
-/-- **Cohen–Dress–El Marraki**: `|M(x)| ≤ x/4345` for `x ≥ 2 160 535`. -/
-def CDEMertens : Prop :=
-  ∀ x : ℝ, 2160535 ≤ x → |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ)| ≤ x / 4345
-
 /-- The weight `β(n)`: `1/4345` from `2 160 535` on, `0.5672/√n` below. -/
 noncomputable def betaM (n : ℕ) : ℝ := if 2160535 ≤ n then 1 / 4345 else 0.5672 / √(n : ℝ)
 

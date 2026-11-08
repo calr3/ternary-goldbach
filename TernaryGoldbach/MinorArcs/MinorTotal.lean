@@ -318,7 +318,7 @@ theorem I0_ge {x : ℝ} (hx : 4.9e26 ≤ x) :
 
 set_option maxHeartbeats 2000000 in
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius] in
+  [Fact TernaryGoldbach.CDEMertens] in
 /-- **(14.49), repaired**: for `x ≥ 4.9·10²⁶`,
 `∫_{(0,1] \ 𝔐_{8,r₀}} |S_{η_*}(α, x)| |S_{η₊}(α, x)|² dα ≤ 1.0376 x²/κ`. -/
 theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :

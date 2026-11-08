@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2b
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # [H, (6.59)], our version: `S_{I,2}` at the first choice of parameters

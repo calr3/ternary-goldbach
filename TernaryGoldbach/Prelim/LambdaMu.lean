@@ -1892,8 +1892,10 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 2e6 ≤ y) :
 
 /-! ### Sums of `μ` -/
 
-/- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is the published
-result `ramare_moebius` (a hypothesis, `Prelim/RamareMoebius.lean`), stated for the same range. -/
+/- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is replaced by
+`|∑_{n ≤ x} μ(n)/n| log x ≤ mprof(x)` (`mprof ≤ 0.14`) for `x ≥ 11815`, `moebius_profile` in
+`Prelim/MoebiusProfile.lean`, proved from the hypothesis `cde_mertens` (`|M(x)| ≤ x/4345` for
+`x ≥ 2 160 535`) and `PlattGRH`. -/
 
 /- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

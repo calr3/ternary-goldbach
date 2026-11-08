@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.EtaStar
 import TernaryGoldbach.MinorArcs.PointwiseBound
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # Theorem 3.1.1 at the scales `w y` of (11.9) — towards [H, Prop. 11.2.3]
@@ -20,7 +20,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- An approximation at scale `y` is one at scale `wy` with `δ` replaced by `wδ`, as long as
 `q ≤ Q'` and `|δ/y| ≤ 1/(q Q')` for the new `Q'`. -/
 theorem Approx2.rescale {α y δ Q Q' w : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α y δ a q Q)
@@ -30,7 +30,7 @@ theorem Approx2.rescale {α y δ Q Q' w : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 
   have e : w * δ / (w * y) = δ / y := mul_div_mul_left δ y hw.ne'
   exact ⟨hq1, hcop, ⟨k, by rw [e]; exact hk⟩, by rwa [e], hqQ'⟩
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- `Q_z = (3/4) z^{2/3}` is monotone in `z`. -/
 theorem Q_mono {z z' : ℝ} (hz : 0 ≤ z) (h : z ≤ z') :
     3 / 4 * z ^ (2 / 3 : ℝ) ≤ 3 / 4 * z' ^ (2 / 3 : ℝ) := by

@@ -13,25 +13,25 @@ axioms. They take 3 published numerical results as explicit hypotheses, stated i
 
 * `PlattGRH`: Platt's GRH verification (at `q = 1`, RH up to `10⁸`);
 * `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
-* `RamareMoebius`: Ramaré's `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)]). This
-  is checked against a later published bound (see `HYPOTHESES.md`).
+* `CDEMertens`: `|M(x)| ≤ x/4345` for `x ≥ 2 160 535`, `M(x) = ∑_{n≤x} μ(n)` (Cohen, Dress and
+  El Marraki [CDE07]; [H, (2.21)] takes Ramaré's bound for `∑ μ(n)/n`, whose proof uses this).
 
 ```lean
 theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hGRH : PlattGRH)
-    (hBG : BinaryGoldbachInput) (hμ : RamareMoebius) : Statement
+    (hBG : BinaryGoldbachInput) (hμ : CDEMertens) : Statement
 theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH)
-    (hμ : RamareMoebius) : TernaryGoldbachFrom (10 ^ 27)
+    (hμ : CDEMertens) : TernaryGoldbachFrom (10 ^ 27)
 ```
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
-`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.ramare_moebius`. Each theorem takes only the instances its proof uses (the
+`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.cde_mertens`. Each theorem takes only the instances its proof uses (the
 `unusedSectionVars` linter checks this), so its statement shows what it depends on:
 
 | Stage of [H, §14.4] | Lean | Hypotheses |
 |---|---|---|
 | major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
-| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH`, `RamareMoebius` |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH`, `CDEMertens` |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
@@ -39,6 +39,22 @@ Inside the development, the hypotheses are `Fact` instances, restated as the the
 The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s citations of
 [RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
 which `PlattGRH` gives at `q = 1` (`Explicit.rh_upto_1e8`).
+
+[H, (2.21)] (`|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`, Ramaré) is replaced by
+`|m(x)| log x ≤ mprof(x)`, `m(x) = ∑_{n≤x} μ(n)/n`, with `mprof = 0.03` on `[11815, 2 160 535)`,
+`0.14` up to `10⁷`, `0.1` up to `7043²`, `0.08` up to `10¹⁰`, `0.065` up to `e^{200}` and `0.09` beyond
+(`Prelim.moebius_profile`). Below `2 160 535` it is a kernel walk over `μ` (`Prelim/SmallMuMain.lean`).
+Above, it follows from `CDEMertens`, `PlattGRH` and the identity
+`m(x)(log x − γ) = −∑_{n≤x} μ(n)/n · E(x/n)`, `E(u) = ∑_{n≤u} Λ(n)/n − log u + γ`. The identity is
+split at `n = x/Y`:
+* the part `n ≤ x/Y` uses a kernel table of `E` on `[1, 10⁶)` (`Prelim/SmallEMain.lean`) and bounds
+  for `E` on `[10⁶, ∞)` from a smoothed explicit formula with RH up to `10⁸` (`Prelim/EOneRegions.lean`);
+* the part `n > x/Y` is a summation by parts against `M(n)`: `|M(n)| ≤ 0.5672√n` on
+  `[100, 2 160 535)` (kernel) and `CDEMertens` beyond (`Prelim/MoebiusCDE.lean`, `MoebiusCases.lean`).
+
+The uses of (2.21) take the weaker constants: [H, (2.22)] (`Prelim/LiouvilleBound.lean`, still with
+`2.8`), and the tail of `∫ |g₂|/y` behind (5.31) (`MinorArcs/G2Tail.lean`, `0.0082`, still giving
+`T₂ ≤ 0.37273`).
 
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
@@ -70,8 +86,10 @@ against `Challenge.lean`, which states them with Mathlib-only definitions. Compa
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:
 * the tables `|ψ(t) − t| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)` (trial division,
-  `Prelim/SmallPsiTable*.lean`) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)` (a bit sieve,
+  `Prelim/SmallPsiTable*.lean`) and `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)` (a bit sieve,
   `Prelim/PsiSieve*.lean`);
+* `|M(n)| ≤ 0.5672√n` and `|m(n)| log(n + 1) ≤ 0.03` up to `2 160 534` (`Prelim/SmallMu*.lean`), and
+  the table of `E₁Λ(u) = ∑_{n≤u} Λ(n)/n − log u` on `[1, 10⁶)` (`Prelim/SmallE*.lean`);
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallPsi700.lean`, `SmallMertens.lean`,
   `SmallProdAp.lean`, `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLiouville.lean`,
   `SmallW.lean`, `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean`
@@ -120,9 +138,9 @@ With `c₀ = 32`, `c₊ = 2` and our (2.14), (2.17), Theorem 3.1.1 has `2.526 x/
 integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
 drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
 `g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
-above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
+above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0082`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
-`m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
+`m(n)` for `n < 11815` and `|m(x)| log x ≤ mprof(x)` beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
 also proved (`MinorArcs/G2Bound.lean`), but the main theorems do not use it.
 
 ## How the proof is organized
@@ -165,8 +183,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   `120 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
   [RS62], [RS75] and [RR96]. We prove them instead, from this and from bounds `|ψ(x) − x| ≤ c√x` for
   moderate `x`:
-  * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on
-    `[10⁶, 5·10⁷)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
+  * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on
+    `[10⁶, 10⁹)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
   * `c = 31`–`200` on `[10⁶, 10¹⁷]` (`c ≤ 72` up to `10¹⁵`; `Prelim/PsiTwoSided.lean`), from the Weil
     explicit formula with RH up to `10⁸` and a compactly supported test function, with a zero-free
     region `|γ| ≥ 2.39` near the real axis;
@@ -282,6 +300,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   Math. Comp. 29 (1975), 243–269.
 * [RR96] O. Ramaré, R. Rumely, *Primes in arithmetic progressions*, Math. Comp. 65 (1996), 397–425.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
+* [CDE07] H. Cohen, F. Dress, M. El Marraki, *Explicit estimates for summatory functions linked to
+  the Möbius μ-function*, Funct. Approx. Comment. Math. 37 (2007), 51–63.
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.
 * O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius

@@ -2,7 +2,7 @@
 
 `ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
 `Classical.choice`, `Quot.sound`) and takes 3 hypotheses, all published results. They are defined in
-`TernaryGoldbach/Statement.lean` (`PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
+`TernaryGoldbach/Statement.lean` (`PlattGRH`, `BinaryGoldbachInput`, `CDEMertens`).
 Inside the development they are `Fact` instances, and the theorems in the first column below restate
 them for use in the proofs. None is a computation of our own.
 
@@ -11,14 +11,16 @@ arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README
 
 ## Published results (3 hypotheses)
 
-Each row has been checked against the paper, except Ramaré's Acta Arith. 157 paper, for which the
-later papers and the float check below stand in.
+The first two rows have been checked against the papers. The third has not been checked against
+Cohen–Dress–El Marraki's paper: it is the bound as Ramaré cites it (Acta Arith. 157 (2013)), and the
+float check below stands in. Helfgott has said on the Lean Zulip that the chain of papers behind this
+bound needs re-examination, and that Chirre–Helfgott with an RH check would give a stronger bound.
 
 | Theorem (hypothesis) | Statement | Source | Check |
 |---|---|---|---|
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range: the ladder rungs are up to `(111616 + 2047)·2⁴⁵ ≈ 3.9992·10¹⁸` apart |
-| `Prelim.ramare_moebius` | `\|∑_{n≤x} μ(n)/n\| ≤ 0.03/log x` for real `x ≥ 11815` | Ramaré, Acta Arith. 157 (2013) 365–379, Cor. 1.4: for `x ≥ 11815` ([H, (2.21)]) | implied for `X ≥ 463 421` by Ramaré, Math. Comp. 84 (2015), Thm 1.2 (`≤ (0.0144 log X − 0.1)/(log X)²`), which Ramaré and Zuniga-Alterman re-derive in arXiv:2408.05969 (that paper also proves `≤ (0.010032 log X − 0.0568)/(log X)²` for `X ≥ 617 990`, Cor. 1.2). A float check (`scripts/moebius_ramare_check.py`) gives `max \|m(k)\| log(k+1) = 0.029496` over `11815 ≤ k < 10⁸`, at `k = 11820` |
+| `Prelim.cde_mertens` | `\|∑_{n≤x} μ(n)\| ≤ x/4345` for real `x ≥ 2 160 535` | H. Cohen, F. Dress, M. El Marraki, Funct. Approx. Comment. Math. 37 (2007), 51–63, as cited by Ramaré, Acta Arith. 157 (2013) 365–379 | a float check (`scripts/cde_mertens_check.py`) gives `max 4345 \|M(n)\|/n = 0.9995` over `2 160 535 ≤ n ≤ 10⁸`, at `n = 2 160 535` (`M = −497`) |
 
 The hypotheses are stated as in the papers or weaker. Where they are used:
 * `platt_verification`: [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5] (including `q = 1`), hence (14.7),
@@ -29,7 +31,9 @@ The hypotheses are stated as in the papers or weaker. Where they are used:
   prime in `[n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from a prime ladder of Proth primes up
   to `10²⁷` that the kernel checks (`Ladder/`). [H, §1.6] takes the ladder from Helfgott–Platt
   (arXiv:1305.3062);
-* `ramare_moebius`: the Liouville bound behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`,
+* `cde_mertens`: with `PlattGRH`, `|∑_{n≤x} μ(n)/n| log x ≤ mprof(x)` for `x ≥ 11815`
+  (`Prelim.moebius_profile`: `mprof ≤ 0.14`, `0.065` on `[10¹⁰, e^{200})`), in place of [H, (2.21)].
+  This gives the Liouville bound behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`,
   `MoebiusBound.lean`) and the tail of `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
 The bounds for `ψ` and `θ` that [H] quotes from [RS62], [RS75] and [RR96] are not hypotheses: they are
@@ -90,18 +94,19 @@ These inputs are theorems:
 | Result | File | Method |
 |---|---|---|
 | Ramaré's (12.12) ([Ram95, Lemma 3.4]), with `c_E ∈ [1.33258227, 1.33258229]` | `Prelim/Ramare.lean` | `g_d = h_d ∗ [odd]/n`; `∑ \|h_d(a)\| a^{1/3} ≤ 11 f₁(d)` by Euler products; `c_E = γ + log 2 + 2X/ζ(2) + ∑_p log p/(p³ − p)` via Mathlib's `L(Λ, s) = −ζ'(s)/ζ(s)` and a kernel walk (`RamareWalk.lean`) |
-| (5.31) `T2_le` | `MinorArcs/T2Bound.lean`, `T2Small.lean`, `G2Tail.lean` | `g₂(n)` for `n ≤ 10⁴` by the kernel; `T₂ = α_n + β_n/S` exactly for `S < 700`; `T₂(S) = ¼ ∫₁^S g₂/y + O*(S⁻¹ ∫₁^S \|g₂\|)` above; `∫_{10⁴}^S \|g₂\|/y ≤ 0.0045` by Cauchy–Schwarz with weights `H_d(a) λ(da)`, which reduces it to `∫ m(⌊t⌋)²/t` (`m(k)` for `k < 11815` from the kernel, `ramare_moebius` beyond) and an Euler product `∏_{p>2} p²/(p²−1) ≤ π²/8` |
-| Lemma 5.1.2: `\|g₂(x)\| ≤ 0.0236/(log x)² + 528 (1 + log x)²/x` (not used by `ternary_goldbach`) | `MinorArcs/G2Bound.lean` and `G2*.lean` | one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`; `ramare_moebius` for `x/u ≥ 11815` (Rankin weight `u^{1/9}`), [H, (2.24)] below; Euler products |
+| (5.31) `T2_le` | `MinorArcs/T2Bound.lean`, `T2Small.lean`, `G2Tail.lean` | `g₂(n)` for `n ≤ 10⁴` by the kernel; `T₂ = α_n + β_n/S` exactly for `S < 700`; `T₂(S) = ¼ ∫₁^S g₂/y + O*(S⁻¹ ∫₁^S \|g₂\|)` above; `∫_{10⁴}^S \|g₂\|/y ≤ 0.0082` by Cauchy–Schwarz with weights `H_d(a) λ(da)`, which reduces it to `∫ m(⌊t⌋)²/t` (`m(k)` for `k < 11815` from the kernel, `moebius_profile` beyond: `∑_{j≥11815} m(j)² log(1 + 1/j) ≤ 5.0423·10⁻⁴`) and an Euler product `∏_{p>2} p²/(p²−1) ≤ π²/8` |
+| Lemma 5.1.2: `\|g₂(x)\| ≤ 0.513/(log x)² + 528 (1 + log x)²/x` (not used by `ternary_goldbach`) | `MinorArcs/G2Bound.lean` and `G2*.lean` | one convolution `f·1_{(·,d)=1} = H_d ∗ (μ/id)`; `\|m(y)\| ≤ 0.14/log y` (`abs_m_le_014`) for `x/u ≥ 11815` (Rankin weight `u^{1/9}`), [H, (2.24)] below; Euler products |
 | (5.36) corrected, (5.37) | `MinorArcs/H2Bound.lean` | `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel for `n ≤ 15` |
 | Prop 12.2.4 with `c₊ = 2` (for [H]'s `1.36`) | `MinorArcs/LSQuot1–9.lean`, `LSQuotRed.lean`, `LSQuot8g.lean` | `q ≥ 2.2·10¹⁰`: [H]'s argument, (12.12), `regionS` and `λ(q)⁷ ≤ (103/120)⁹ q²`. `q < 2.2·10¹⁰`: with `R ∈ [n, n+1)` it suffices that `Φ(q, n) ≤ 0`; removing a prime `p ≥ 17` from `q` keeps `Φ ≤ 0` (`G_{q'}(n) = G_{q'p}(n) + G_{q'p}(n/p)/(p−1)`, `(q/φ(q)) G_q(x) ≥ G(x) ≥ log x`), which reduces `n ≥ 4` to the 64 divisors of `30030` (kernel walks over `r < 2600`, Ramaré beyond); `n ≤ 3` by an exchange argument with `log sq ≥ log(10⁵/(n+1))` |
 | (9.94) | `MajorArcs/EtaPlusSqLog.lean`, `EtaONum.lean` | Parseval in `log t`; the four integrals by Taylor bounds and exact polynomial integration |
 | (B.6), (B.11) with `32` for [H]'s `31.521` | `MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`, `Eta2DDBound.lean` | `t ≥ 2`: three integrations by parts, `eta2DD t = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)`, and a kernel bisection of `‖F(z, w)‖ + 6120w³ ≤ 32` over `\|z\| = 1`, `w ≤ 2/25` (Lipschitz in `z` and `w`); `t ≤ 2`: Taylor polynomials of degree `< 50` with rational coefficients, kernel bisection of `[0, 12.6]` in `x = 2πt`. About 4 minutes of `decide +kernel`. |
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `\|ψ(n) − n\| ≤ c(n)√n` (`cPsi`: the tables below `5·10⁷`, `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴` |
-| [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `ramare_moebius` for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
+| [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `\|m(x)\| ≤ 0.14/log x` (`abs_m_le_014`) for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
+| `\|m(x)\| log x ≤ mprof(x)` for `x ≥ 11815` (in place of [H, (2.21)]), `m(x) = ∑_{n≤x} μ(n)/n` | `Prelim/MoebiusProfile.lean`, `MoebiusCases.lean`, `MoebiusCase.lean`, `MoebiusAnalytic.lean`, `MoebiusPieces.lean`, `MoebiusHead.lean`, `MoebiusCDE.lean`, `EOne*.lean`, `MertensZeros.lean`, `MertensLimit.lean`, `SmallMu*.lean`, `SmallE*.lean` | `0.03` on `[11815, 2 160 535)` by a kernel walk. Above: `m(x)(log x − γ) = −∑_{n≤x} μ(n)/n · E(x/n)`, `E = E₁Λ + γ`, split at `n = x/Y`. For `n ≤ x/Y`: a kernel table of `E` on `[1, 10⁶)`, grouped, and `\|E(u)\|` for `u ≥ 10⁶` from the Gaussian-smoothed explicit formula with RH to `10⁸` (windows `[u, u e^a]`, `a = 3` and `1/2`; summation by parts with `\|ψ(n) − n\| ≤ 2√n` below `10⁹` and `psi_two_sided`, `theta_explicit` above), `E₁Λ → −γ` from Mertens. For `n > x/Y`: summation by parts against `M(n)`, `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 535)` (kernel) and `cde_mertens` beyond. 16 ranges of `x`, generated by `scripts/gen_moebius_cases.py` |
 | [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: above `10¹²`, the Gaussian-smoothed explicit formula integrated against `dy/y²` (`MertensWindow.lean`), with `theta_explicit` only at the ends of the range; on `[10⁵, 10¹²)`, `\|E₂Λ(x)\|` from the variation of `∑ Λ(n)/(n log n) − log log n` (`E2_var`, `E2_le_bin`: summation by parts against `ψ(n) − n`), the θ tables, `psi_two_sided` and a sharper prime-power tail (`F_mid`, 7 bins); kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
-| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `10⁸` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 5·10⁷)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
+| the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `10⁸` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 10⁹)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
 
 The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
@@ -116,12 +121,15 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallW.lean` | [MV73, Lemma 8], `6 ≤ R < 1000` | seconds |
 | `Prelim/SmallLogSq.lean` | `∑_{n/2<p≤n} (log p)² ≤ ½ n log n`, `117 ≤ n < 40000` (not used by the main theorems: they need (2.19) only for `y ≥ 2·10⁶`) | 78 s |
 | `Prelim/SmallPsiData1–6.lean` | `\|ψ(t) − t\| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)`, by trial division (`SmallPsiTable`) | about 3 min per file |
-| `Prelim/PsiSieveData1–13.lean` | `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)`: 3343 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` (`PsiSieve.cnt_spec`) | 2.5 min in all, 7.5 GB resident (6.9 GB of it the Mathlib import) |
+| `Prelim/PsiSieveData1–282.lean` | `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)`: 77962 windows of up to `2¹⁵` integers, each sieved by one bit mask per prime `≤ 7100` below `5·10⁷`, `≤ 14142` below `2·10⁸` and `≤ 31622` above (`PsiSieve.cnt_spec`, `cnt2_spec`, `cnt3_spec`) | SIEVETIME |
 | `Prelim/SmallLiouville.lean` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99`, `k ≤ 10⁵` | 4.7 min |
 | `Prelim/SmallMuPhi.lean` | `6.798779 ≤ ∑_{q≤150000 odd} μ²(q)/φ(q) ≤ 6.79878` | about 10 min |
 | `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |
 | `Prelim/SmallCGrid.lean` | `y ∑_{u≤3000} \|μ(u)\|/u² β(y, u) ≤ 2.8` on `[2.8, 80)` | 21 s |
 | `Prelim/SmallMoebius.lean` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `k < 11815` | 51 s |
+| `Prelim/SmallMuData1–11.lean` | `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 534]`, `\|m(n)\| log(n+1) ≤ 0.03` on `[11815, 2 160 534]` (`μ` by trial division by the primes `≤ 1470`) | MUTIME |
+| `Prelim/SmallEData1–10.lean` | `E₁Λ(u)` on `[1, 10⁶)` in 912 chunks with rational bounds (`10⁻¹²`), and `γ ∈ [0.5772116, 0.5772196]` | ETIME |
+| `Prelim/MoebiusCases.lean` | the table groups `GOK` against `SmallE.ETab`, and the sums `gT1`, `gT2` in `ℚ` | CASETIME |
 | `Prelim/SmallMertensProd.lean` | [RS62, Thm 15] for primes `5 ≤ x ≤ 10⁵`, `log θ(x)` to `10⁻²⁵` (tightest at `x = 23`, margin `2.4·10⁻⁷`); `∏_{p≤10⁵} p/(p−1) ≤ 20.5116` | 5.5 min |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
@@ -137,12 +145,10 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 What could replace the remaining hypotheses:
 
-* **`ramare_moebius`** is a citation, and the citation can change: Helfgott expects Ramaré's bound to
-  be superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
-  arithmetic functions"). Proving it in Lean is not realistic: every known proof rests on large
-  computations of `M(x)`:
-  * `|M(x)| ≤ x/4345` for `x ≥ 2 160 535` (Cohen–Dress–El Marraki);
-  * `|M(x)| ≤ 0.571√x` up to `10¹²` (Dress), or `|M(x)| ≤ √x` up to `10¹⁶` (Hurst);
-  * Ramaré's own Pari/GP check up to `1.8·10⁹`.
+* **`cde_mertens`** is a citation of a large computation of `M(x)`. Helfgott expects it to be
+  superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
+  arithmetic functions"), which with an RH check up to `10⁸` or lower would give a stronger bound.
+  The rest of the derivation of [H, (2.21)]-type bounds from it is proved here
+  (`Prelim/MoebiusProfile.lean`).
 * The other published results are large computations (binary Goldbach, and RH and GRH to the heights
   used), far beyond the kernel without `native_decide`.

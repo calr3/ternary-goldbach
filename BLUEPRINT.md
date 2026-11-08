@@ -55,7 +55,7 @@ differences from [H]; `NOTES.md` has the details.
      │   │    §5.1: Lemma 5.1.1, (5.7)–(5.8), (5.34) ✅ MinorArcs/TypeIIS1.lean; f(X) ≤ 1.27X ✅
      │   │    Prelim/SqfreeCount.lean, SmallFsq.lean; (5.31) T₂(S) ≤ 0.37273 (S ≥ 16) ✅
      │   │    MinorArcs/T2Bound.lean (kernel g₂(n), n ≤ 10⁴: SmallG2, T2Small; mean-square tail
-     │   │    ∫_{10⁴}^S |g₂|/y ≤ 0.0045: G2Tail, from (2.21)); (5.36) corrected and (5.37) ✅
+     │   │    ∫_{10⁴}^S |g₂|/y ≤ 0.0082: G2Tail, from (2.21)); (5.36) corrected and (5.37) ✅
      │   │    MinorArcs/H2Bound.lean]
      │   └─ Ch 6  totals and parameter choices (§6.3)
      │       [(3.11) decomposition ✅ MinorArcs/Decomposition.lean; (5.2)–(5.5) Type II reduction ✅
@@ -77,7 +77,8 @@ differences from [H]; `NOTES.md` has the details.
         Prelim/MertensProduct.lean)
  Preliminaries: §2.5 explicit bounds on sums of μ and Λ ✅ Prelim/LambdaMu.lean and the files it
  imports: (2.12)–(2.15), (2.17), (2.19), (5.5) from Prelim/PsiTwoSided.lean, the kernel tables and
- Prelim/ThetaExplicit.lean; (2.20) MoebiusCoprime; (2.21) the hypothesis `ramare_moebius`;
+ Prelim/ThetaExplicit.lean; (2.20) MoebiusCoprime; (2.21) as `|m(x)| log x ≤ mprof(x)` ✅ MoebiusProfile
+ (from the hypothesis `cde_mertens`, |M(x)| ≤ x/4345);
  (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog; (2.24) for x < 11815
  SmallMoebius
 ```
@@ -129,7 +130,7 @@ differences from [H]; `NOTES.md` has the details.
  │   └─ psi_mid8 on [10⁶, 10¹⁷] (Explicit/PsiRanges1e8.lean ⇐ PsiRange ⇐ PsiWeil ⇐ the Weil explicit
  │      formula with a compactly supported test function: Weil*.lean; low zeros |γ| ≥ 2.39:
  │      ZetaLowZeroFree.lean; RH up to 10⁸: rh_upto_1e8 from PlattGRH at q = 1)
- ├─ the bit-sieve table on [10⁶, 5·10⁷) (Prelim/PsiSieve*.lean, kernel)
+ ├─ the bit-sieve table on [10⁶, 10⁹) (Prelim/PsiSieve*.lean, kernel)
  ├─ theta_explicit (Prelim/ThetaExplicit.lean: |θ(n) − n| < n/log³n + ε_pl(n) n, n ≥ 10¹²)
  │   ├─ psi_two_sided below 10¹⁷
  │   └─ above 10¹⁷: the Gaussian-smoothed explicit formula with RH up to 10⁸ (Explicit/PsiExplicit,

@@ -100,4 +100,41 @@ theorem moebius_profile (hCDE : CDEMertens) {x : ℝ} (hx : 11815 ≤ x) :
     · exact c15 hCDE (le_of_log_ge hx0 a5 (by have := exp_200_ge; norm_num at this ⊢; linarith)) b
     · exact c16 hCDE (le_of_log_ge hx0 b.le le_rfl)
 
+omit [Fact TernaryGoldbach.PlattGRH] in
+/-- **Published result** (hypothesis): `|∑_{n ≤ x} μ(n)| ≤ x/4345` for `x ≥ 2 160 535`.
+H. Cohen, F. Dress, M. El Marraki, *Explicit estimates for summatory functions linked to the Möbius
+μ-function*, Funct. Approx. Comment. Math. 37 (2007), 51–63, as cited in O. Ramaré, Acta Arith. 157
+(2013). -/
+theorem cde_mertens [h : Fact TernaryGoldbach.CDEMertens] {x : ℝ} (hx : 2160535 ≤ x) :
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ)| ≤ x / 4345 :=
+  h.out x hx
+
+variable [Fact TernaryGoldbach.CDEMertens]
+
+/-- `|m(x)| log x ≤ mprof(x)` for `x ≥ 11815`, from the `Fact` instances. -/
+theorem moebius_log_le {x : ℝ} (hx : 11815 ≤ x) :
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| * Real.log x ≤ mprof x :=
+  moebius_profile (fun _ hy => cde_mertens hy) hx
+
+/-- **`|m(x)| ≤ 0.14/log x`** for `x ≥ 11815`. -/
+theorem abs_m_le_014 {x : ℝ} (hx : 11815 ≤ x) :
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.14 / Real.log x := by
+  have hl : 0 < Real.log x := Real.log_pos (by linarith)
+  rw [le_div_iff₀ hl]
+  exact (moebius_log_le hx).trans (mprof_le x)
+
+/-- `|m(x)| ≤ 0.09/log x` for `x ≥ 10¹⁰`. -/
+theorem abs_m_le_009 {x : ℝ} (hx : 1e10 ≤ x) :
+    |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ 0.09 / Real.log x := by
+  have hl : 0 < Real.log x := Real.log_pos (by norm_num at hx; linarith)
+  rw [le_div_iff₀ hl]
+  refine (moebius_log_le (by norm_num at hx ⊢; linarith)).trans ?_
+  unfold mprof
+  have h1 : ¬ x < 2160535 := by norm_num at hx ⊢; linarith
+  have h2 : ¬ x < 10000000 := by norm_num at hx ⊢; linarith
+  have h3 : ¬ x < 49603849 := by norm_num at hx ⊢; linarith
+  have h4 : ¬ x < 10000000000 := by norm_num at hx ⊢; linarith
+  rw [if_neg h1, if_neg h2, if_neg h3, if_neg h4]
+  split_ifs <;> norm_num
+
 end TernaryGoldbach.Prelim

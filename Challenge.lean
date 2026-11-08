@@ -60,22 +60,23 @@ def PlattGRH : Prop :=
 a sum of two primes. -/
 def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
-/-- O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4, as cited in [H, (2.21)]:
-`|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. -/
-def RamareMoebius : Prop :=
-  ∀ x : ℝ, 11815 ≤ x →
-    |∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.moebius n : ℝ) / n| ≤ 0.03 / Real.log x
+/-- H. Cohen, F. Dress, M. El Marraki, *Explicit estimates for summatory functions linked to the
+Möbius μ-function*, Funct. Approx. Comment. Math. 37 (2007), 51–63, as cited in O. Ramaré,
+Acta Arith. 157 (2013): `|∑_{n ≤ x} μ(n)| ≤ x/4345` for `x ≥ 2 160 535`. -/
+def CDEMertens : Prop :=
+  ∀ x : ℝ, 2160535 ≤ x →
+    |∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.moebius n : ℝ)| ≤ x / 4345
 
 /-! ## Main theorems -/
 
 /-- Every odd `n ≥ 10²⁷` is a sum of three primes, given two of the hypotheses. -/
-theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : RamareMoebius) :
+theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : CDEMertens) :
     TernaryGoldbachFrom (10 ^ 27) := by
   sorry
 
 /-- The ternary Goldbach conjecture, given the three hypotheses. -/
 theorem ternary_goldbach_of_hypotheses (hGRH : PlattGRH) (hBG : BinaryGoldbachInput)
-    (hμ : RamareMoebius) : Statement := by
+    (hμ : CDEMertens) : Statement := by
   sorry
 
 end TernaryGoldbach

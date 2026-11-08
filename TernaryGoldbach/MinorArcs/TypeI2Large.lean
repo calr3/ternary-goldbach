@@ -213,7 +213,7 @@ theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0
   have t3 : 35 * c₀ * c₂ / (3 * π ^ 2) * s ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * q := by gcongr
   linarith
 
-variable [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.CDEMertens] in
 /-- **[H, (6.12) + (6.14)]**, our version, for `|δ| ≥ 1/2c₂`, `qV ≤ Q` and `0 < ε ≤ 1`:
 `|S_{I,2}|` is at most the first two lines of `typeI2_le_small` ((6.12)) plus
 `1.0064 (2√(c₀c₊)/π)(1 + (1+ε)(1+V/Q)/e) UV`

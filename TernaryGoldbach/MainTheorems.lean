@@ -12,8 +12,8 @@ leanprover/comparator against `Challenge.lean` (`comparator/config.json`).
 namespace TernaryGoldbach
 
 /-- **Helfgott's theorem for large `n`**: every odd `n ≥ 10²⁷` is a sum of three primes, given
-Platt's GRH verification and Ramaré's bound for `∑ μ(n)/n`. -/
-theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : RamareMoebius) :
+Platt's GRH verification and the Cohen–Dress–El Marraki bound `|M(x)| ≤ x/4345`. -/
+theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : CDEMertens) :
     TernaryGoldbachFrom (10 ^ 27) :=
   haveI := Fact.mk hGRH; haveI := Fact.mk hμ
   Helfgott.ternaryGoldbachFrom
@@ -21,7 +21,7 @@ theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : RamareMoeb
 /-- **The ternary Goldbach conjecture** (Helfgott, 2013): every odd integer greater than `5` is a
 sum of three primes, given the three published numerical results of `Statement.lean`. -/
 theorem ternary_goldbach_of_hypotheses (hGRH : PlattGRH) (hBG : BinaryGoldbachInput)
-    (hμ : RamareMoebius) : Statement :=
+    (hμ : CDEMertens) : Statement :=
   haveI := Fact.mk hGRH; haveI := Fact.mk hBG; haveI := Fact.mk hμ
   ternary_goldbach
 

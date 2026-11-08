@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.T2Small
 import TernaryGoldbach.MinorArcs.G2Tail
 
-variable [Fact TernaryGoldbach.RamareMoebius]
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # [H, (5.31)]: `T₂(S) ≤ 0.37273` for `S ≥ 16`
@@ -9,8 +9,8 @@ variable [Fact TernaryGoldbach.RamareMoebius]
 * `16 ≤ S < 10⁴`: the kernel walk over `g₂(n)`, `n ≤ 10⁴` (`SmallG2.lean`, `T2Small.lean`): exactly
   `T₂ = α_n + β_n/S` for `S < 700`, and `T₂(S) ≤ ¼ ∫₁^S g₂/y + S⁻¹ ∫₁^S |g₂|` (`abs_T2_sub_le`) above;
 * `S ≥ 10⁴`: the same inequality, `¼ ∫₁^{10⁴} g₂/y ≤ 0.3605763`, `∫₁^{10⁴} |g₂| ≤ 9.22` (kernel), and
-  `∫_{10⁴}^S |g₂|/y ≤ 0.0045` (`G2Tail.lean`), so
-  `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0045 ≤ 0.3672`.
+  `∫_{10⁴}^S |g₂|/y ≤ 0.0082` (`G2Tail.lean`), so
+  `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0082 ≤ 0.3718`.
 -/
 
 open Real Finset MeasureTheory

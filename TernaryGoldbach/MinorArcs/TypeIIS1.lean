@@ -13,9 +13,9 @@ import TernaryGoldbach.MinorArcs.T2Bound
 * `S1_bound`: **[H, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
-`T2_le` ([H, (5.31)]) is proved in `T2Bound.lean`, from our computations and [H, Lemma 5.1.2]
-(proved in `G2Bound.lean` from Ramaré's bound on `∑ μ(n)/n`). (5.37) and the corrected (5.36) are
-proved in `H2Bound.lean`.
+`T2_le` ([H, (5.31)]) is proved in `T2Bound.lean`, from kernel computations of `g₂` up to `10⁴` and
+the tail `∫_{10⁴}^S |g₂|/y ≤ 0.0082` (`G2Tail.lean`). (5.37) and the corrected (5.36) are proved in
+`H2Bound.lean`.
 -/
 
 open Real Finset MeasureTheory
@@ -339,12 +339,12 @@ theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
   rw [S1_eq_triples hx hW (by linarith), sum_innerS_eq (div_pos hx hW) hU,
     quads_eq_triples (div_pos hx hW) (by linarith)]
 
-variable [Fact TernaryGoldbach.RamareMoebius] in
-/-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, our
-computations, and [H, Lemma 5.1.2] for `g₂` beyond `10⁸`, `G2Bound.lean`). -/
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+/-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, kernel
+computations up to `10⁴`, and the tail of `∫ |g₂|/y`, `G2Tail.lean`). -/
 theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := T2_le' hS
 
-variable [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
   unfold H2
   split_ifs with h
@@ -394,7 +394,7 @@ theorem innerS_sub {B U : ℝ} (s : ℕ) :
   · ring
   · ring
 
-variable [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- **[H, (5.34)]**: for `x, W > 0` and `U ≥ 1`,
 `S₁(U, W) ≤ (x/W) H₂(x/(WU)) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`. -/
 theorem S1_bound {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :

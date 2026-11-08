@@ -6,7 +6,7 @@ trusted statement:
 * `Challenge.lean` (repository root) states the main theorems with `sorry`. Its definitions use
   only Mathlib and are copied from `TernaryGoldbach/Statement.lean`. These are the ternary
   Goldbach statement and the three numerical hypotheses (`PlattGRH`, `BinaryGoldbachInput`,
-  `RamareMoebius`).
+  `CDEMertens`).
 * `Solution.lean` imports `TernaryGoldbach.MainTheorems`, which proves them.
 * `config.json` lists the two theorems and permits only `propext`, `Quot.sound` and
   `Classical.choice`.

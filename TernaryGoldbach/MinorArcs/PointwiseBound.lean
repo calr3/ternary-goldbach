@@ -2,7 +2,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.SecondFinal
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.RamareMoebius]
+  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # The pointwise minor-arc bound [H, Theorem 3.1.1] — blueprint statement
@@ -32,7 +32,7 @@ noncomputable def R (x t : ℝ) : ℝ :=
 noncomputable def L (t : ℝ) (q : ℕ) : ℝ :=
   q / Nat.totient q * (13 / 4 * Real.log t + 7.82) + 13.66 * Real.log t + 37.55
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- `T = x^{1/3}`: `T³ = x`, `x^{2/3} = T²`, `x^{5/6} = T²√T`, and `T ≥ 6·10⁶` for `x ≥ 2.16·10²⁰`. -/
 theorem cube_root_facts {x : ℝ} (hx : 2.16e20 ≤ x) :
     6e6 ≤ x ^ (1 / 3 : ℝ) ∧ (x ^ (1 / 3 : ℝ)) ^ 3 = x ∧ x ^ (2 / 3 : ℝ) = (x ^ (1 / 3 : ℝ)) ^ 2 ∧

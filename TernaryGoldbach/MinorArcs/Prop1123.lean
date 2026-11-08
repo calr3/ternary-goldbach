@@ -98,7 +98,7 @@ theorem integrable_phi : Integrable phi := by
 
 theorem phi_nonneg (t : ℝ) : 0 ≤ phi t := by unfold phi; positivity
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- **[H, Prop. 11.2.3], corrected** (first case, `q` small).  Let `y = x/κ` and
 `2α = a/q + δ/y` with `(a, q) = 1`, `|δ/y| ≤ 1/(q Q_y)`, `Q_y = (3/4)y^{2/3}`; let
 `r = max(1, |δ|/8) q`.  Let `0 < w₀ ≤ 1 ≤ w₁` with `w₀ y ≥ 2.16·10²⁰`, `q ≤ (w₀y)^{1/3}/6`,

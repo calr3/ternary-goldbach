@@ -101,7 +101,7 @@ theorem one_le_div_gcd (q v : ℕ) (hq : 1 ≤ q) : 1 ≤ q / Nat.gcd q v :=
   (Nat.le_div_iff_mul_le (Nat.gcd_pos_of_pos_left v hq)).2
     (by rw [one_mul]; exact Nat.le_of_dvd hq (Nat.gcd_dvd_left q v))
 
-variable [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- [H, (6.6)], per `v`: (4.30) for `x/v`, `q_v = q/(q,v)`. Here `M₀ = min(Q/2V, U)`. -/
 theorem bound_4_30_v_le {x δ Q U V : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x)
     (hδQ : |δ| * q * Q ≤ x) (hU : 0 < U) (hQ : 0 < Q) (hv : 1 ≤ v) (hvV : (v : ℝ) ≤ V) :
@@ -288,7 +288,7 @@ theorem coefQ_nonneg (x : ℝ) (q : ℕ) (U V : ℝ) {c : ℝ} (hc : 0 ≤ c) : 
   have : (0 : ℝ) < c₀ := by norm_num [c₀]
   positivity
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
 /-- **[H, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
 `|S_{I,2}| ≤ (x/2q) min(1, c₀/(πδ)²) μ log(Vq)`
 `+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.511V² + Vq log q) + 0.511 (2U + q) V²)`

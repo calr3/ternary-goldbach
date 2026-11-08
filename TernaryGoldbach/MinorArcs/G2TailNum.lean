@@ -48,7 +48,7 @@ structure SV where
   dl : List ℕ
 
 def cP : ℕ := 814940993196246650988643
-def tailV : ℕ := 100001 * 10 ^ 15
+def tailV : ℕ := 50423 * 10 ^ 16
 
 def lam2 (v : ℕ) : ℕ := 2 ^ (Nat.log2 v / 2)
 
@@ -353,7 +353,7 @@ theorem outerC_eq (tv : Tr (ℕ × ℕ)) (dl : List ℕ) (n : ℕ) :
 
 /-! ### The computation -/
 
-def Macc : ℕ := 39974717715721261117728802693483729514802697639698853009160571
+def Macc : ℕ := 76543490188064834013184551386427677464246145966465219367994725
 
 set_option maxHeartbeats 0 in
 theorem tail_ok : (sV.Phi, outerC sV.tv sV.dl.reverse 5000) = (cP, Macc) := by
