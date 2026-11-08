@@ -243,6 +243,49 @@ end TernaryGoldbach.Explicit
 namespace TernaryGoldbach.Prelim
 open TernaryGoldbach.Explicit
 
+/-- `(Ψ(y) − M y)/y²` is integrable on `(Y₁, Y₂]` (RH up to `H`). -/
+theorem integrableOn_psi_gsm_sub {a b δ H Y1 Y2 : ℝ} (hH : 0 < H) (hRH : RHBelow H) (hδ : 0 < δ)
+    (hab : b ≤ a) (hb : b ≤ 0) (hY1 : 1 ≤ Y1) :
+    IntegrableOn (fun y => (∑' n : ℕ, Λ n * gsm a b δ (n / y) -
+        Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) * y) / y ^ 2) (Ioc Y1 Y2) := by
+  have hY10 : 0 < Y1 := by linarith
+  set M := Real.exp (δ ^ 2 / 2) * (Real.exp a - Real.exp b) with hM
+  set Ψ : ℝ → ℝ := fun y => ∑' n : ℕ, Λ n * gsm a b δ (n / y) with hΨ
+  set μ := volume.restrict (Ioc Y1 Y2) with hμ
+  have hcont_rpow : ∀ q : ℝ, ContinuousOn (fun y : ℝ => y ^ q) (Icc Y1 Y2) := fun q y hy =>
+    (Real.continuousAt_rpow_const _ _ (Or.inl (by linarith [hy.1]))).continuousWithinAt
+  have hΨmeas : AEStronglyMeasurable (fun y => Ψ y / y ^ 2) μ := by
+    refine aestronglyMeasurable_of_tendsto_ae atTop
+      (f := fun N y => ∑ n ∈ Finset.range N, Gy a b δ n y) (fun N => ?_) ?_
+    · exact (integrable_finsetSum _ fun n _ => integrableOn_Gy hY10 n).aestronglyMeasurable
+    · refine (ae_restrict_iff' measurableSet_Ioc).2 (Eventually.of_forall fun y hy => ?_)
+      have hy0 : 0 < y := lt_trans hY10 hy.1
+      have hs := (summable_gsm (a := a) (b := b) hδ hab hy0).div_const (y ^ 2)
+      have := hs.hasSum.tendsto_sum_nat
+      simp only [hΨ, ← tsum_div_const]
+      simpa [Gy] using this
+  have hFmeas : AEStronglyMeasurable (fun y => (Ψ y - M * y) / y ^ 2) μ := by
+    have h2 : AEStronglyMeasurable (fun y : ℝ => M * y / y ^ 2) μ :=
+      (Measurable.aestronglyMeasurable (by fun_prop))
+    refine (hΨmeas.sub h2).congr (Eventually.of_forall fun y => ?_)
+    simp only [Pi.sub_apply]; ring
+  set eb : ℝ → ℝ := fun y => (√y * LineB2H a b δ H + y * TailBH a δ H +
+    y ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π)) * y ^ (-2 : ℝ) with heb
+  have heb_int : Integrable eb μ := by
+    refine (ContinuousOn.integrableOn_Icc ?_).mono_set Ioc_subset_Icc_self
+    exact ContinuousOn.mul (ContinuousOn.add (by fun_prop)
+      ((hcont_rpow _).mul continuousOn_const |>.div_const _)) (hcont_rpow _)
+  refine Integrable.mono' heb_int hFmeas ((ae_restrict_iff' measurableSet_Ioc).2
+    (Eventually.of_forall fun y hy => ?_))
+  have hy1 : 1 ≤ y := by linarith [hy.1]
+  have hy0 : 0 < y := by linarith
+  have h := tsum_gsm_leH hH hRH hδ hab hb hy1
+  rw [Real.norm_eq_abs, abs_div, abs_of_pos (by positivity : (0 : ℝ) < y ^ 2)]
+  have e : (y ^ 2)⁻¹ = y ^ (-2 : ℝ) := by
+    rw [Real.rpow_neg hy0.le, Real.rpow_two]
+  rw [div_eq_mul_inv, e]
+  exact mul_le_mul_of_nonneg_right h (by positivity)
+
 /-- **The integrated explicit formula**: with RH up to `H ≥ 2.39`, for `1 ≤ Y₁ ≤ Y₂`,
 `|∫_{Y₁}^{Y₂} (Ψ(y) − M y)/y² dy| ≤ (Y₁^{−1/2} + Y₂^{−1/2}) LQW + 2 TailB/H + (2/3) Y₁^{−3/2} V/(2π)`,
 `Ψ(y) = Σ Λ(n) gsm(n/y)`, `M = e^{δ²/2}(e^a − e^b)`. -/
