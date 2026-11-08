@@ -119,15 +119,13 @@ theorem zeta_ne_zero_of_zetaF {s : ℂ} (hs : s ≠ 1) (h : zetaF s ≠ 0) : rie
 
 /-- **The explicit formula for `ζ`**: for an admissible smoothing `φ` (`M = mellin φ`), along heights
 `T_k ∈ [k+1, k+2]`, `Σ_{ρ} m_ρ M(ρ) x^ρ → M(1) x − Σ Λ(n) φ(n/x) − (1/2π) ∫ hZeta(−1/2 + iy) dy`. -/
-theorem explicit_formula_zeta {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
-    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
-      Tendsto (fun k => ∑ u ∈ zerosRectD zetaF (T k), (multRectD zetaF (T k) u : ℂ) *
-          (mellin φ u * (x : ℂ) ^ u)) atTop
+theorem explicit_formula_zeta_seq {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+      Tendsto (fun k => ∑ u ∈ zerosRectD zetaF (goodSeqD ldatum_zeta k),
+          (multRectD zetaF (goodSeqD ldatum_zeta k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u)) atTop
         (𝓝 (mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x -
           (1 / (2 * π) : ℂ) * ∫ y : ℝ, hZeta φ x (((-1 / 2 : ℝ) : ℂ) + y * I))) := by
-  obtain ⟨T, hT, hlim⟩ := explicit_formulaD ldatum_zeta hφ hx
+  have hlim := explicit_formulaD_seq ldatum_zeta hφ hx
   obtain ⟨T', hT', hlim1⟩ := explicit_formulaD ldatum_sub_one hφ hx
-  refine ⟨T, hT, ?_⟩
   -- the main term from `s − 1`
   have hconst : ∀ k, ∑ u ∈ zerosRectD (fun s : ℂ => s - 1) (T' k),
       (multRectD (fun s : ℂ => s - 1) (T' k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u) = mellin φ 1 * x := by
@@ -170,5 +168,14 @@ theorem explicit_formula_zeta {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothin
   have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
   field_simp
   ring
+
+/-- `explicit_formula_zeta_seq` with the heights left existential. -/
+theorem explicit_formula_zeta {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
+      Tendsto (fun k => ∑ u ∈ zerosRectD zetaF (T k), (multRectD zetaF (T k) u : ℂ) *
+          (mellin φ u * (x : ℂ) ^ u)) atTop
+        (𝓝 (mellin φ 1 * x - SsumG (1 : DirichletCharacter ℂ 1) φ x -
+          (1 / (2 * π) : ℂ) * ∫ y : ℝ, hZeta φ x (((-1 / 2 : ℝ) : ℂ) + y * I))) :=
+  ⟨goodSeqD ldatum_zeta, goodSeqD_mem ldatum_zeta, explicit_formula_zeta_seq hφ hx⟩
 
 end TernaryGoldbach.Explicit
