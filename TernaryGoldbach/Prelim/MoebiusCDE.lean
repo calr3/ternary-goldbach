@@ -368,20 +368,20 @@ theorem sum_Jx_div_sqrt_le {x : ℝ} (hx : 0 < x) {D : ℕ} (hD : 101 ≤ D) (N 
 def CDEMertens : Prop :=
   ∀ x : ℝ, 2160535 ≤ x → |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ)| ≤ x / 4345
 
-/-- The weight `β(n)`: `1/4345` from `2 160 535` on, `0.5671/√n` below. -/
-noncomputable def betaM (n : ℕ) : ℝ := if 2160535 ≤ n then 1 / 4345 else 0.5671 / √(n : ℝ)
+/-- The weight `β(n)`: `1/4345` from `2 160 535` on, `0.5672/√n` below. -/
+noncomputable def betaM (n : ℕ) : ℝ := if 2160535 ≤ n then 1 / 4345 else 0.5672 / √(n : ℝ)
 
 theorem betaM_nonneg (n : ℕ) : 0 ≤ betaM n := by unfold betaM; split_ifs <;> positivity
 
-theorem betaM_le (n : ℕ) : betaM n ≤ 1 / 4345 + 0.5671 / √(n : ℝ) := by
+theorem betaM_le (n : ℕ) : betaM n ≤ 1 / 4345 + 0.5672 / √(n : ℝ) := by
   unfold betaM; split_ifs
-  · have : 0 ≤ 0.5671 / √(n : ℝ) := by positivity
+  · have : 0 ≤ 0.5672 / √(n : ℝ) := by positivity
     linarith
   · have : (0 : ℝ) ≤ 1 / 4345 := by norm_num
     linarith
 
 theorem Mt_le_betaM (hCDE : CDEMertens)
-    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5671 * √(n : ℝ)) {n : ℕ} (hn : 100 ≤ n) :
+    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5672 * √(n : ℝ)) {n : ℕ} (hn : 100 ≤ n) :
     |Mt n| ≤ betaM n * n := by
   unfold betaM
   split_ifs with h
@@ -390,7 +390,7 @@ theorem Mt_le_betaM (hCDE : CDEMertens)
     unfold Mt; linarith [show (n : ℝ) / 4345 = 1 / 4345 * n by ring]
   · have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
     have h1 := hsmall n hn (by omega)
-    have e : 0.5671 / √(n : ℝ) * n = 0.5671 * √(n : ℝ) := by
+    have e : 0.5672 / √(n : ℝ) * n = 0.5672 * √(n : ℝ) := by
       have hs := Real.mul_self_sqrt hn0.le
       have hs0 : 0 < √(n : ℝ) := Real.sqrt_pos.2 hn0
       field_simp; nlinarith [hs]
@@ -399,16 +399,16 @@ theorem Mt_le_betaM (hCDE : CDEMertens)
 variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **The part `n > D`, concretely**: with `|E(u)| ≤ F` on `[1, x/D]`, `101 ≤ D < ⌊x⌋`,
 `|∑_{D<n≤x} μ(n) E(x/n)/n| ≤ (β(⌊x⌋) + β(D))F
-  + (log(x/(D+1)) − γ + F + (1 + F)(log x − log D))/4345 + 0.5671(2.0884/√(D+1) + 2(1 + F)/√D)`. -/
+  + (log(x/(D+1)) − γ + F + (1 + F)(log x − log D))/4345 + 0.5672(2.0884/√(D+1) + 2(1 + F)/√D)`. -/
 theorem tail_concrete (hCDE : CDEMertens)
-    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5671 * √(n : ℝ))
+    (hsmall : ∀ n : ℕ, 100 ≤ n → n < 2160535 → |Mt n| ≤ 0.5672 * √(n : ℝ))
     {x : ℝ} (hx : 1 ≤ x) {D : ℕ} (hD : 101 ≤ D) (hDN : D < ⌊x⌋₊) {F : ℝ}
     (hF : ∀ u : ℝ, 1 ≤ u → u ≤ x / D → |Eg u| ≤ F) :
     |∑ n ∈ Ioc D ⌊x⌋₊, (μ n : ℝ) * (Eg (x / n) / n)| ≤
       (betaM ⌊x⌋₊ + betaM D) * F +
         (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
           (1 + F) * (Real.log x - Real.log D)) / 4345 +
-        0.5671 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) := by
+        0.5672 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) := by
   set N := ⌊x⌋₊ with hN
   have hx0 : 0 < x := by linarith
   have hD0 : (0 : ℝ) < D := by exact_mod_cast (by omega : 0 < D)
@@ -427,10 +427,10 @@ theorem tail_concrete (hCDE : CDEMertens)
   suffices hS : ∑ n ∈ Ioo D N, betaM n * (Jx x n + Real.log (1 + 1 / n) + F / (n + 1)) ≤
       (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
           (1 + F) * (Real.log x - Real.log D)) / 4345 +
-        0.5671 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) by
+        0.5672 * (2.0884 / √((D : ℝ) + 1) + 2 * (1 + F) / √(D : ℝ)) by
     have e : (betaM N + betaM D) * F = betaM N * F + betaM D * F := by ring
     linarith
-  -- split `β ≤ 1/4345 + 0.5671/√n`
+  -- split `β ≤ 1/4345 + 0.5672/√n`
   set X : ℕ → ℝ := fun n => Jx x n + Real.log (1 + 1 / n) + F / (n + 1) with hX
   have hX0 : ∀ n, 1 ≤ n → 0 ≤ X n := by
     intro n hn
@@ -441,13 +441,13 @@ theorem tail_concrete (hCDE : CDEMertens)
     have : 0 ≤ F / (n + 1) := by positivity
     simp only [hX]; linarith
   have hsplit : ∑ n ∈ Ioo D N, betaM n * X n ≤
-      1 / 4345 * ∑ n ∈ Ioo D N, X n + 0.5671 * ∑ n ∈ Ioo D N, X n / √(n : ℝ) := by
+      1 / 4345 * ∑ n ∈ Ioo D N, X n + 0.5672 * ∑ n ∈ Ioo D N, X n / √(n : ℝ) := by
     rw [mul_sum, mul_sum, ← sum_add_distrib]
     refine sum_le_sum fun n hn => ?_
     have hn1 : 1 ≤ n := by have := (mem_Ioo.1 hn).1; omega
     have := mul_le_mul_of_nonneg_right (betaM_le n) (hX0 n hn1)
-    calc betaM n * X n ≤ (1 / 4345 + 0.5671 / √(n : ℝ)) * X n := this
-      _ = 1 / 4345 * X n + 0.5671 * (X n / √(n : ℝ)) := by ring
+    calc betaM n * X n ≤ (1 / 4345 + 0.5672 / √(n : ℝ)) * X n := this
+      _ = 1 / 4345 * X n + 0.5672 * (X n / √(n : ℝ)) := by ring
   refine hsplit.trans ?_
   -- `∑ X ≤ log(x/(D+1)) − γ + F + (1 + F)(log x − log D)`
   have hinv : ∑ n ∈ Ioo D N, (1 : ℝ) / n ≤ Real.log x - Real.log D := by
@@ -552,7 +552,7 @@ theorem tail_concrete (hCDE : CDEMertens)
     have e : (1 + F) * (2 / √(D : ℝ)) = 2 * (1 + F) / √(D : ℝ) := by ring
     linarith
   have h1 := mul_le_mul_of_nonneg_left hS1 (by norm_num : (0 : ℝ) ≤ 1 / 4345)
-  have h2 := mul_le_mul_of_nonneg_left hS2 (by norm_num : (0 : ℝ) ≤ 0.5671)
+  have h2 := mul_le_mul_of_nonneg_left hS2 (by norm_num : (0 : ℝ) ≤ 0.5672)
   have e : 1 / 4345 * (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
       (1 + F) * (Real.log x - Real.log D)) = (Real.log (x / (D + 1)) - Real.eulerMascheroniConstant + F +
       (1 + F) * (Real.log x - Real.log D)) / 4345 := by ring
