@@ -145,10 +145,13 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 What could replace the remaining hypotheses:
 
-* **`cde_mertens`** is a citation of a large computation of `M(x)`. Helfgott expects it to be
-  superseded by his work with Chirre (arXiv:2511.14736, "Optimal bounds for sums of bounded
-  arithmetic functions"), which with an RH check up to `10⁸` or lower would give a stronger bound.
-  The rest of the derivation of [H, (2.21)]-type bounds from it is proved here
-  (`Prelim/MoebiusProfile.lean`).
+* **`cde_mertens`** is a citation of a large computation of `M(x)`, whose coefficients are not all
+  published. Helfgott has given a proof of Ramaré's `|m(x)| ≤ 0.03/log x` (`x ≥ 11815`) that avoids it:
+  Schoenfeld's 1969 identity for `∑ μ(n) log n`, run as an induction, from Schoenfeld's 1976 bound for
+  `ψ`, `|ψ(x) − x| ≤ 0.8√x` up to `10¹⁰` and `|M(u)| ≤ 0.571√u` up to `10⁹`. He reports a Lean
+  formalization of it with the single premise RH up to `1894438.5122`, which follows from `PlattGRH`
+  (`Explicit.riemannHypothesisUpTo_of_platt`). Once it is available, the hypothesis can be dropped
+  (NOTES, "Open directions"). Chirre–Helfgott (arXiv:2511.14736) is a second route, from residues of
+  `1/ζ` at low zeros.
 * The other published results are large computations (binary Goldbach, and RH and GRH to the heights
   used), far beyond the kernel without `native_decide`.

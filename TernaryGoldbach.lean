@@ -537,6 +537,7 @@ import TernaryGoldbach.Explicit.LogNumerics
 import TernaryGoldbach.Explicit.GaussSmooth
 import TernaryGoldbach.Explicit.PsiSandwich
 import TernaryGoldbach.Explicit.ZetaZeroSums
+import TernaryGoldbach.Explicit.IEANTNBridge
 import TernaryGoldbach.Explicit.PsiExplicit
 import TernaryGoldbach.Explicit.PsiAsymp
 import TernaryGoldbach.Explicit.PsiRange1

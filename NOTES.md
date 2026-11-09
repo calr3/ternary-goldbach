@@ -807,9 +807,30 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   inputs (RH to a lower height, as in [RS75]).
 
 * `cde_mertens` (`|M(x)| ≤ x/4345` for `x ≥ 2 160 535`) is a citation of a computation of `M(x)`.
-  Helfgott proposes to prove a stronger bound with Chirre–Helfgott (arXiv:2511.14736) from an RH
-  check up to `10⁸` or lower. RH up to a height `T` alone does not give `M(x)` bounds of this kind:
-  the explicit formula for `M` needs `1/ζ′(ρ)`.
+  The Cohen–Dress–El Marraki proof uses a weight `1 − ∑ c_r ⌊t/r⌋` with `r` up to about `5·10¹³`
+  whose coefficients are not all published (Daval, arXiv:2006.01295), so it cannot be reproduced.
+  Two routes remove the hypothesis:
+  * **Schoenfeld's induction** (Helfgott's note `mobius003.tex`, Lean Zulip, "Formalization of
+    Ternary Goldbach", 8 Nov 2026). It proves Ramaré's `|m(x)| ≤ 0.03/log x` for `x ≥ 11815`
+    directly. Write `N(x) = ∑_{n≤x} μ(n) log n`. Schoenfeld's identity (1969, (19)) is
+    `N(x) + 1 = M(x) − ∑_{2≤k≤y} (Λ(k) − 1) M(x/k) − ∑_{j≤x/y} μ(j) ρ(x/j) + ρ(y) M(x/y)`, with
+    `ρ(v) = ψ(v) − ⌊v⌋`. It is run as an induction on `D`: `|N(u)| ≤ ν u` on `208` cells covering
+    `[10⁹, e^{160}]`, with an analytic step beyond. El Marraki's inequality
+    `|m(x)| ≤ |M(x)|/x + x⁻¹∫₁^x |M(t)|/t dt + log x/x` then gives `m`. Inputs:
+    * (S) Schoenfeld's `|ψ(x) − x| < 0.0077629 x/log x` for `x > 10¹⁰`;
+    * (P) `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`;
+    * (M) `|M(u)| ≤ 0.571√u` on `[33, 10⁹]` (μ up to `10⁹`);
+    * `Λ(k)` for `k ≤ 2²⁰`, `m(n)` for `n ≤ 6·10⁵`, `μ²(n)` for `n ≤ 10⁴`.
+    Helfgott reports a formalization of the resulting statement with the single premise
+    `RiemannHypothesisUpTo 1894438.5122` (IEANTN's form). `Explicit/IEANTNBridge.lean` derives that
+    premise from `PlattGRH`, so with it `RamareMoebius` becomes a theorem and the main theorems take
+    two hypotheses. Against what is here: (S) is not implied by `theta_explicit` for
+    `15778 < log x < 20000` (`ε_pl = 4.92·10⁻⁷ > 0.0077629/log x` there); (P) is checked here only
+    up to `10⁹`, with `2√x`; (M) is checked here only up to `2 160 534`.
+  * **Chirre–Helfgott** (arXiv:2511.14736): `|M(x)| ≤ 3x/(π·10¹⁰) + 11.39√x` from residues of
+    `1/ζ` at the zeros up to height `10¹⁰ + 1`. Helfgott: residues up to height about `5000` already
+    beat `x/4345`, together with `|M(x)| ≤ √x` up to `10¹⁰` (integer arithmetic). The zeros up to
+    height `10⁴` are certified in Lean (`Garald1/zeta-zero-locations`, IEANTN #212).
 * Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`
   (`MVLemma7.lean`), `Prelim/SmallLogSq.lean`, and [H]'s form of Prop 11.2.3 (`Prop1123.lean`).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.
