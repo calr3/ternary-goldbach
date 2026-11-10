@@ -24,7 +24,8 @@ theorem Mz_start : Mz 2160534 = -498 := by
   simp only [Prod.mk.injEq] at hs
   rw [hs.1, hs.2.1] at h
   have : (Mz 2160534 : ℝ) = ∑ n ∈ Icc 1 2160534, (μ n : ℝ) := by unfold Mz; push_cast; rfl
-  rw [this, h]; norm_num
+  have h' : ((Mz 2160534 : ℤ) : ℝ) = ((-498 : ℤ) : ℝ) := by rw [this, h]; norm_num
+  exact_mod_cast h'
 
 theorem stg0 : Mz 2559778 = 358 ∧ ∀ u, 2160534 < u → u ≤ 2559778 → 10 ^ 6 * (Mz u * Mz u) ≤ 326041 * (u : ℤ) := by
   obtain ⟨h1, -, h3⟩ := walkM_spec ws0 2160534 (-498) 2559778 (358) Mz_start (resEqM_spec chunk0)

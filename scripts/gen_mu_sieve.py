@@ -111,7 +111,8 @@ namespace TernaryGoldbach.Prelim.MuSieve
   simp only [Prod.mk.injEq] at hs
   rw [hs.1, hs.2.1] at h
   have : (Mz {a0} : ℝ) = ∑ n ∈ Icc 1 {a0}, (μ n : ℝ) := by unfold Mz; push_cast; rfl
-  rw [this, h]; norm_num
+  have h' : ((Mz {a0} : ℤ) : ℝ) = (({M0} : ℤ) : ℝ) := by rw [this, h]; norm_num
+  exact_mod_cast h'
 """)
     for k, ((a, Ma), ws, (b, Mb)) in enumerate(chunks):
         stmt = f"Mz {b} = {Mb} ∧ ∀ u, {a0} < u → u ≤ {b} → 10 ^ 6 * (Mz u * Mz u) ≤ 326041 * (u : ℤ)"
