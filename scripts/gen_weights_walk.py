@@ -78,7 +78,7 @@ namespace TernaryGoldbach.Prelim.Wts
         if st[0] in set(CK): tab.append((st[0], st[3], st[4], st[5], st[6], k))
     M.append("/-- `(m, Glo, Ghi, Hlo, Hhi)` at the checkpoints. -/\ndef GHtab : List (ℕ × ℕ × ℕ × ℕ × ℕ) := [" +
              ", ".join(f"({m}, {a}, {b}, {c}, {d})" for m, a, b, c, d, k in tab) + "]\n")
-    M.append("theorem GHtab_spec : ∀ e ∈ GHtab, (e.2.1 : ℝ) / S ≤ Gw e.1 ∧ Gw e.1 ≤ (e.2.2.1 : ℝ) / S ∧\n    (e.2.2.2.1 : ℝ) / S ≤ Hw e.1 ∧ Hw e.1 ≤ (e.2.2.2.2 : ℝ) / S := by\n  intro e he\n  simp only [GHtab, List.mem_cons, List.not_mem_nil, or_false] at he")
+    M.append("theorem GHtab_spec : ∀ e ∈ GHtab, (e.2.1 : ℝ) / SmallE.S ≤ Gw e.1 ∧ Gw e.1 ≤ (e.2.2.1 : ℝ) / SmallE.S ∧\n    (e.2.2.2.1 : ℝ) / SmallE.S ≤ Hw e.1 ∧ Hw e.1 ≤ (e.2.2.2.2 : ℝ) / SmallE.S := by\n  intro e he\n  simp only [GHtab, List.mem_cons, List.not_mem_nil, or_false] at he")
     M.append("  rcases he with " + " | ".join("rfl" for _ in tab))
     for (m, a, b, c, d, k) in tab:
         M.append(f"  · exact ⟨stW{k}.1, stW{k}.2.1, stW{k}.2.2.1, stW{k}.2.2.2.1⟩")

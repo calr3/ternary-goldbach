@@ -36,7 +36,7 @@ theorem Q1_abel : ∀ N : ℕ, 1 ≤ N →
     have hN0 : (0 : ℝ) < N := by exact_mod_cast hN
     have hH : Hn (N + 1) = Hn N + 1 / ((N : ℝ) + 1) := by
       unfold Hn; rw [Finset.sum_Icc_succ_top (by omega)]; push_cast; ring
-    have hR : Rn (N + 1) = Rn N + sq (N + 1) - kap := by
+    have hR : Rn (N + 1) = Rn N + musq (N + 1) - kap := by
       unfold Rn; rw [Qs_nat_succ]; push_cast; ring
     rw [Q1_nat_succ, ih, hH, hR, Finset.sum_Ico_succ_top hN]
     push_cast

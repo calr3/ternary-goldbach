@@ -174,27 +174,27 @@ theorem Q_sub_le {x : ℝ} (hx : 1 ≤ x) : |Qs x - kap * x| ≤ 3 * √x := by
       _ ≤ 3 * √x := by linarith
 
 /-- `μ²` as a real 0/1 function. -/
-noncomputable def sq (n : ℕ) : ℝ := if Squarefree n then 1 else 0
+noncomputable def musq (n : ℕ) : ℝ := if Squarefree n then 1 else 0
 
-theorem sq_nonneg (n : ℕ) : 0 ≤ sq n := by unfold sq; split_ifs <;> norm_num
-theorem sq_le_one (n : ℕ) : sq n ≤ 1 := by unfold sq; split_ifs <;> norm_num
+theorem musq_nonneg (n : ℕ) : 0 ≤ musq n := by unfold musq; split_ifs <;> norm_num
+theorem musq_le_one (n : ℕ) : musq n ≤ 1 := by unfold musq; split_ifs <;> norm_num
 
-theorem Qs_nat_succ (n : ℕ) : Qs ((n + 1 : ℕ) : ℝ) = Qs (n : ℝ) + sq (n + 1) := by
-  unfold Qs sq; rw [Nat.floor_natCast, Nat.floor_natCast, Finset.sum_Icc_succ_top (by omega)]
+theorem Qs_nat_succ (n : ℕ) : Qs ((n + 1 : ℕ) : ℝ) = Qs (n : ℝ) + musq (n + 1) := by
+  unfold Qs musq; rw [Nat.floor_natCast, Nat.floor_natCast, Finset.sum_Icc_succ_top (by omega)]
 
 theorem Qs_upper {t : ℝ} (ht : 1 ≤ t) : Qs t ≤ kap * t + 3 * √t := by
   have := Q_sub_le ht; rw [abs_le] at this; linarith [this.2]
 
 /-- **`∑_{j ≤ J} μ²(j)/√j ≤ 2κ√J + 4.5 + 1.5 log J`** for `J ≥ 1`. -/
 theorem sum_sq_div_sqrt (J : ℕ) (hJ : 1 ≤ J) :
-    ∑ j ∈ Icc 1 J, sq j / √(j : ℝ) ≤ 2 * kap * √(J : ℝ) + 4.5 + 1.5 * Real.log J := by
-  -- Abel: `∑_{j ≤ J} sq j / √j = Q(J)/√J + ∑_{j < J} Q(j) (1/√j − 1/√(j+1))`
-  have habel : ∀ J : ℕ, 1 ≤ J → ∑ j ∈ Icc 1 J, sq j / √(j : ℝ) =
+    ∑ j ∈ Icc 1 J, musq j / √(j : ℝ) ≤ 2 * kap * √(J : ℝ) + 4.5 + 1.5 * Real.log J := by
+  -- Abel: `∑_{j ≤ J} musq j / √j = Q(J)/√J + ∑_{j < J} Q(j) (1/√j − 1/√(j+1))`
+  have habel : ∀ J : ℕ, 1 ≤ J → ∑ j ∈ Icc 1 J, musq j / √(j : ℝ) =
       Qs (J : ℝ) / √(J : ℝ) + ∑ j ∈ Ico 1 J, Qs (j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) := by
     intro J hJ
     induction J, hJ using Nat.le_induction with
     | base =>
-      simp [Qs, sq, Finset.filter_singleton, squarefree_one]
+      simp [Qs, musq, Finset.filter_singleton, squarefree_one]
     | succ J hJ ih =>
       rw [Finset.sum_Icc_succ_top (by omega), ih, Finset.sum_Ico_succ_top hJ, Qs_nat_succ]
       push_cast

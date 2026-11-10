@@ -16,7 +16,7 @@ namespace TernaryGoldbach.Prelim.Sqf
 open TernaryGoldbach.Prelim.SmallE (S S_pos cdiv cdiv_ge lgLo lgHi log_succ_bounds div_le')
 
 /-- `Q₁(t) = ∑_{n ≤ t} μ²(n)/n`. -/
-noncomputable def Q1 (t : ℝ) : ℝ := ∑ n ∈ Icc 1 ⌊t⌋₊, sq n / n
+noncomputable def Q1 (t : ℝ) : ℝ := ∑ n ∈ Icc 1 ⌊t⌋₊, musq n / n
 
 /-- Trial division by `d² `, `2 ≤ d ≤ 100`. -/
 def sqB (m : ℕ) : Bool := (List.range' 2 99).all (fun d => m < d * d || m % (d * d) != 0)
@@ -85,7 +85,7 @@ def walkQ : ℕ → ℕ → ℕ → ℕ → ℤ → ℤ → Option (ℕ × ℕ �
 def GoodQ (n : ℕ) : Prop :=
   ∀ t : ℝ, (n : ℝ) ≤ t → t < n + 1 → 0.578 ≤ Q1 t - kap * Real.log t ∧ Q1 t - kap * Real.log t ≤ 1.166
 
-theorem Q1_nat_succ (n : ℕ) : Q1 ((n + 1 : ℕ) : ℝ) = Q1 n + sq (n + 1) / ((n + 1 : ℕ) : ℝ) := by
+theorem Q1_nat_succ (n : ℕ) : Q1 ((n + 1 : ℕ) : ℝ) = Q1 n + musq (n + 1) / ((n + 1 : ℕ) : ℝ) := by
   unfold Q1; rw [Nat.floor_natCast, Nat.floor_natCast, Finset.sum_Icc_succ_top (by omega)]
 
 theorem Q1_const {n : ℕ} {t : ℝ} (h1 : (n : ℝ) ≤ t) (h2 : t < n + 1) : Q1 t = Q1 n := by
@@ -148,8 +148,8 @@ theorem invQ_step {n qlo qhi : ℕ} {glo ghi : ℤ} (hn : 2 ≤ n) (hn2 : n + 1 
   obtain ⟨q1, q2, g1, g2⟩ := hI
   obtain ⟨l1, l2⟩ := log_succ_bounds hn
   have hS := S_pos
-  have hsq : sq (n + 1) = if sqB (n + 1) then 1 else 0 := by
-    unfold sq
+  have hsq : musq (n + 1) = if sqB (n + 1) then 1 else 0 := by
+    unfold musq
     by_cases h : sqB (n + 1)
     · rw [if_pos h, if_pos ((sqB_iff (by omega) hn2).1 h)]
     · rw [if_neg h, if_neg (fun h' => h ((sqB_iff (by omega) hn2).2 h'))]
@@ -219,8 +219,8 @@ theorem resEqQ_spec {r : Option (ℕ × ℕ × ℕ × ℤ × ℤ)} {a b c : ℕ}
     obtain ⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩ := h
     rw [h1, h2, h3, h4, h5]
 
-theorem sq_eq {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10000) : sq n = if sqB n then 1 else 0 := by
-  unfold sq
+theorem musq_eq {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 10000) : musq n = if sqB n then 1 else 0 := by
+  unfold musq
   by_cases h : sqB n
   · rw [if_pos h, if_pos ((sqB_iff h1 h2).1 h)]
   · rw [if_neg h, if_neg (fun h' => h ((sqB_iff h1 h2).2 h'))]
@@ -282,51 +282,51 @@ theorem logc10 : (2302585092890 : ℝ) / S ≤ Real.log (10 : ℕ) ∧ Real.log 
   exact ⟨h1, by linarith⟩
 
 theorem Q1_one : Q1 ((1 : ℕ) : ℝ) = 1 := by
-  unfold Q1; rw [Nat.floor_natCast]; simp [sq, squarefree_one]
+  unfold Q1; rw [Nat.floor_natCast]; simp [musq, squarefree_one]
 
 theorem Q1_2 : Q1 ((2 : ℕ) : ℝ) = 3 / 2 := by
   have h := Q1_nat_succ 1
-  rw [sq_eq (by norm_num) (by norm_num), Q1_one] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_one] at h
   rw [h]; simp only [show sqB 2 = true by decide]; norm_num
 
 theorem Q1_3 : Q1 ((3 : ℕ) : ℝ) = 11 / 6 := by
   have h := Q1_nat_succ 2
-  rw [sq_eq (by norm_num) (by norm_num), Q1_2] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_2] at h
   rw [h]; simp only [show sqB 3 = true by decide]; norm_num
 
 theorem Q1_4 : Q1 ((4 : ℕ) : ℝ) = 11 / 6 := by
   have h := Q1_nat_succ 3
-  rw [sq_eq (by norm_num) (by norm_num), Q1_3] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_3] at h
   rw [h]; simp only [show sqB 4 = false by decide]; norm_num
 
 theorem Q1_5 : Q1 ((5 : ℕ) : ℝ) = 61 / 30 := by
   have h := Q1_nat_succ 4
-  rw [sq_eq (by norm_num) (by norm_num), Q1_4] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_4] at h
   rw [h]; simp only [show sqB 5 = true by decide]; norm_num
 
 theorem Q1_6 : Q1 ((6 : ℕ) : ℝ) = 11 / 5 := by
   have h := Q1_nat_succ 5
-  rw [sq_eq (by norm_num) (by norm_num), Q1_5] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_5] at h
   rw [h]; simp only [show sqB 6 = true by decide]; norm_num
 
 theorem Q1_7 : Q1 ((7 : ℕ) : ℝ) = 82 / 35 := by
   have h := Q1_nat_succ 6
-  rw [sq_eq (by norm_num) (by norm_num), Q1_6] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_6] at h
   rw [h]; simp only [show sqB 7 = true by decide]; norm_num
 
 theorem Q1_8 : Q1 ((8 : ℕ) : ℝ) = 82 / 35 := by
   have h := Q1_nat_succ 7
-  rw [sq_eq (by norm_num) (by norm_num), Q1_7] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_7] at h
   rw [h]; simp only [show sqB 8 = false by decide]; norm_num
 
 theorem Q1_9 : Q1 ((9 : ℕ) : ℝ) = 82 / 35 := by
   have h := Q1_nat_succ 8
-  rw [sq_eq (by norm_num) (by norm_num), Q1_8] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_8] at h
   rw [h]; simp only [show sqB 9 = false by decide]; norm_num
 
 theorem Q1_10 : Q1 ((10 : ℕ) : ℝ) = 171 / 70 := by
   have h := Q1_nat_succ 9
-  rw [sq_eq (by norm_num) (by norm_num), Q1_9] at h
+  rw [musq_eq (by norm_num) (by norm_num), Q1_9] at h
   rw [h]; simp only [show sqB 10 = true by decide]; norm_num
 
 theorem invQ_1 : InvQ 1 1000000000000 1000000000000 0 0 := by
