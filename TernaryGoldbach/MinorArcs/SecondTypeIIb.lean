@@ -16,7 +16,7 @@ namespace TernaryGoldbach.MinorArcs
 theorem log_e_le_one_sqrt {T : ℝ} (hT : 6e6 ≤ T) : (2449 : ℝ) ≤ √T := sqrt_ge_2449 hT
 
 set_option maxHeartbeats 4000000 in
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **Case (a2)**: `x/16U < q ≤ Q₀`. -/
 theorem typeII_a2 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hq16 : T ^ 3 / U2 T < 16 * (q : ℝ)) :
@@ -735,7 +735,7 @@ theorem b_M3_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
           0.02158 * √(2 * L - 7.1106)) * (T ^ 2 * √T))) := by gcongr
     _ = _ := by ring
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **Case (b) of the second choice**: `q ≤ T/6`, `|δ| > 8`, `|δ|q > 8T/6`:
 `|S_{II}| ≤ (√(12 F₀ X₀ᵇ B₀ᵇ) + SECᵇ(L)) T^{5/2}`. -/
 theorem typeII_b {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)

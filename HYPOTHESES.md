@@ -1,26 +1,22 @@
 # Hypotheses and literature dependencies
 
 `ternary_goldbach_of_hypotheses` depends only on the three standard Lean axioms (`propext`,
-`Classical.choice`, `Quot.sound`) and takes 3 hypotheses, all published results. They are defined in
-`TernaryGoldbach/Statement.lean` (`PlattGRH`, `BinaryGoldbachInput`, `CDEMertens`).
+`Classical.choice`, `Quot.sound`) and takes 2 hypotheses, both published results. They are defined in
+`TernaryGoldbach/Statement.lean` (`PlattGRH`, `BinaryGoldbachInput`).
 Inside the development they are `Fact` instances, and the theorems in the first column below restate
 them for use in the proofs. None is a computation of our own.
 
 Sources: [H] = Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2. Papers are cited by
 arXiv number where there is one. [RS62], [MV73] and [Ram95] are as in the README.
 
-## Published results (3 hypotheses)
+## Published results (2 hypotheses)
 
-The first two rows have been checked against the papers. The third has not been checked against
-Cohen–Dress–El Marraki's paper: it is the bound as Ramaré cites it (Acta Arith. 157 (2013)), and the
-float check below stands in. Helfgott has said on the Lean Zulip that the chain of papers behind this
-bound needs re-examination, and that Chirre–Helfgott with an RH check would give a stronger bound.
+Both have been checked against the papers.
 
 | Theorem (hypothesis) | Statement | Source | Check |
 |---|---|---|---|
 | `MajorArcs.platt_verification` | primitive `χ` of conductor `q`: GRH up to `10⁸/q` for odd `q ≤ 3·10⁵`, and up to `max(10⁸/q, 200 + 7.5·10⁷/q)` for even `q ≤ 4·10⁵` (`platt_odd`, `platt_even` are its two halves) | Platt, arXiv:1305.3087 | Thm 7.1 and abstract: all primitive `χ`, `q ≤ 4·10⁵`; odd `q` to `max(10⁸/q, 3.75·10⁷/q + 200)`; Thm 3.2 counts zeros with `\|ℑs\| ≤ t₀`, `ℜs ∈ (0,1)`; see Finding 2 |
 | `Helfgott.binary_goldbach_input` | every even `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes | [OeSHP14], Math. Comp. 83 (2014) | abstract: "confirmed to be true for all even numbers not larger than `4·10¹⁸`"; Table 1 and §1.3: "the entire interval up to `3·10¹⁷` was double-checked". `SmallCases.lean` uses the whole range: the ladder rungs are up to `(111616 + 2047)·2⁴⁵ ≈ 3.9992·10¹⁸` apart |
-| `Prelim.cde_mertens` | `\|∑_{n≤x} μ(n)\| ≤ x/4345` for real `x ≥ 2 160 535` | H. Cohen, F. Dress, M. El Marraki, Funct. Approx. Comment. Math. 37 (2007), 51–63, as cited by Ramaré, Acta Arith. 157 (2013) 365–379 | a float check (`scripts/cde_mertens_check.py`) gives `max 4345 \|M(n)\|/n = 0.9995` over `2 160 535 ≤ n ≤ 10⁸`, at `n = 2 160 535` (`M = −497`) |
 
 The hypotheses are stated as in the papers or weaker. Where they are used:
 * `platt_verification`: [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5] (including `q = 1`), hence (14.7),
@@ -31,10 +27,6 @@ The hypotheses are stated as in the papers or weaker. Where they are used:
   prime in `[n − 4·10¹⁸, n − 4]` for `4·10¹⁸ + 3 < n ≤ 10²⁷` from a prime ladder of Proth primes up
   to `10²⁷` that the kernel checks (`Ladder/`). [H, §1.6] takes the ladder from Helfgott–Platt
   (arXiv:1305.3062);
-* `cde_mertens`: with `PlattGRH`, `|∑_{n≤x} μ(n)/n| log x ≤ mprof(x)` for `x ≥ 11815`
-  (`Prelim.moebius_profile`: `mprof ≤ 0.14`, `0.065` on `[10¹⁰, e^{200})`), in place of [H, (2.21)].
-  This gives the Liouville bound behind [H, (2.22)] (`Prelim/LiouvilleBound.lean`,
-  `MoebiusBound.lean`) and the tail of `∫ |g₂|/y` in (5.31) (`MinorArcs/G2Tail.lean`).
 
 The bounds for `ψ` and `θ` that [H] quotes from [RS62], [RS75] and [RR96] are not hypotheses: they are
 proved from RH up to `10⁸` (from `PlattGRH`) and kernel-checked tables (see "Proved in Lean" below).
@@ -103,7 +95,7 @@ These inputs are theorems:
 | [H, (2.13)] | `Prelim/LambdaMu.lean`, `SmallMertensLower.lean` | summation by parts from `10⁴` with `\|ψ(n) − n\| ≤ c(n)√n` (`cPsi`: the tables below `5·10⁷`, `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴` |
 | [H, (2.22)] with constant `2.8` | `Prelim/LiouvilleBound.lean`, `SmallCGrid.lean` | Ramaré's Liouville route: `\|m(x)\| ≤ 0.14/log x` (`abs_m_le_014`) for `x ≥ 11815`, [H, (2.24)] and a kernel check below; Ramaré's `ρ(U, y)` optimisation on a kernel-checked grid of 17 intervals |
 | [H, (2.24)] for `x < 11815` | `Prelim/SmallMoebius.lean` | kernel walk; `μ` by trial division |
-| `\|m(x)\| log x ≤ mprof(x)` for `x ≥ 11815` (in place of [H, (2.21)]), `m(x) = ∑_{n≤x} μ(n)/n` | `Prelim/MoebiusProfile.lean`, `MoebiusCases.lean`, `MoebiusCase.lean`, `MoebiusAnalytic.lean`, `MoebiusPieces.lean`, `MoebiusHead.lean`, `MoebiusCDE.lean`, `EOne*.lean`, `MertensZeros.lean`, `MertensLimit.lean`, `SmallMu*.lean`, `SmallE*.lean` | `0.03` on `[11815, 2 160 535)` by a kernel walk. Above: `m(x)(log x − γ) = −∑_{n≤x} μ(n)/n · E(x/n)`, `E = E₁Λ + γ`, split at `n = x/Y`. For `n ≤ x/Y`: a kernel table of `E` on `[1, 10⁶)`, grouped, and `\|E(u)\|` for `u ≥ 10⁶` from the Gaussian-smoothed explicit formula with RH to `10⁸` (windows `[u, u e^a]`, `a = 3` and `1/2`; summation by parts with `\|ψ(n) − n\| ≤ 2√n` below `10⁹` and `psi_two_sided`, `theta_explicit` above), `E₁Λ → −γ` from Mertens. For `n > x/Y`: summation by parts against `M(n)`, `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 535)` (kernel) and `cde_mertens` beyond. 16 ranges of `x`, generated by `scripts/gen_moebius_cases.py` |
+| `\|m(x)\| log x ≤ mprof(x)` for `x ≥ 11815` (in place of [H, (2.21)]), `m(x) = ∑_{n≤x} μ(n)/n` | `Prelim/MoebiusProfile.lean`, `MoebiusSch.lean`, `MoebiusSchData.lean`, `ElMarraki.lean`, `Schoenfeld69.lean`, `SchoenfeldInd.lean`, `SchoenfeldStep.lean`, `SchoenfeldJ.lean`, `SchoenfeldCell.lean`, `SchoenfeldGen.lean`, `SchoenfeldCells*.lean`, `SchoenfeldTail*.lean`, `SqfreeQ*.lean`, `SqfreeWalk.lean`, `Weights*.lean`, `MuSieve*.lean`, `SmallMu*.lean` | Helfgott's note [Hm] (README): Schoenfeld's identity for `N(x) = ∑_{n≤x} μ(n) log n` [Sch69], run as an induction. `\|M(u)\| ≤ 0.571√u` for `100 ≤ u ≤ 10⁸` (kernel); 213 cells from `10⁸` to `T ≈ e^{160.54}`, each a check over `ℚ` (`chkCell`, proved sound once); beyond `T`, one analytic step with `y = x^{0.18}` and `\|ρ(v)\| ≤ 0.00985 v/log v` for `v ≥ 10¹²` (from `theta_explicit`), giving `\|N(x)\| ≤ 0.033x`. Then El Marraki's inequality [EM96]. `mprof` is `0.03` below `10⁸ + 1` (kernel walk to `2 160 535`), at most `0.092` on the cells and `0.075` beyond `T`. The inputs: `ψ` bounds from RH up to `10⁸` (`PlattGRH`) and `theta_explicit`, squarefree counts (`\|Q(x) − κx\| ≤ 3√x`, `Q₁(t) − κ log t ∈ [0.578, 1.166]`), `∑ \|Λ(k) − 1\|/k` and `/√k` up to `10⁶` (kernel), and `∑_{n≤x} Λ(n)/n ≤ log x` |
 | [RS62, Thm 15] (`∏_{p≤x} p/(p−1) < e^γ log θ(x) + 2.50637/log θ(x)`, [H, (C.19)]) | `Prelim/MertensProduct.lean`, `SmallMertensProd.lean` | Mertens' theorem with explicit error: above `10¹²`, the Gaussian-smoothed explicit formula integrated against `dy/y²` (`MertensWindow.lean`), with `theta_explicit` only at the ends of the range; on `[10⁵, 10¹²)`, `\|E₂Λ(x)\|` from the variation of `∑ Λ(n)/(n log n) − log log n` (`E2_var`, `E2_le_bin`: summation by parts against `ψ(n) − n`), the θ tables, `psi_two_sided` and a sharper prime-power tail (`F_mid`, 7 bins); kernel for primes `≤ 10⁵` |
 | [MV73, Lemmas 7, 8] | `Prelim/MVLemma7.lean`, `MVLemma8.lean` | (12.12) for `r ≥ 21400`, Abel summation for `R ≥ 1000`; kernel below |
 | the `ψ`, `θ` bounds of [H, §2] | `Prelim/LambdaMu.lean`, `ThetaExplicit.lean` | `psi_two_sided` up to `10¹⁷` (`Prelim/PsiTwoSided.lean`: the Weil explicit formula with RH to `10⁸` on `[10⁶, 10¹⁷]`, the trial-division table below `10⁶`), the sieve table on `[10⁶, 10⁹)`, our explicit prime number theorem beyond `10¹²`; kernel for small `n`. (2.14) and (2.17) hold with `1.0064` and `1.022` ([H]: `1.0004`, `1.0008`), (2.19) for `y ≥ 2·10⁶` |
@@ -128,8 +120,11 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallCGrid.lean` | `y ∑_{u≤3000} \|μ(u)\|/u² β(y, u) ≤ 2.8` on `[2.8, 80)` | 21 s |
 | `Prelim/SmallMoebius.lean` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `k < 11815` | 51 s |
 | `Prelim/SmallMuData1–11.lean` | `\|M(n)\| ≤ 0.5672√n` on `[100, 2 160 534]`, `\|m(n)\| log(n+1) ≤ 0.03` on `[11815, 2 160 534]` (`μ` by trial division by the primes `≤ 1470`) | about 81 min in all (up to 9.3 min per file) |
-| `Prelim/SmallEData1–10.lean` | `E₁Λ(u)` on `[1, 10⁶)` in 912 chunks with rational bounds (`10⁻¹²`), and `γ ∈ [0.5772116, 0.5772196]` | about 40 min in all |
-| `Prelim/MoebiusCases.lean` | the table groups `GOK` against `SmallE.ETab`, and the sums `gT1`, `gT2` in `ℚ` | 67 s |
+| `Prelim/MuSieveData1–31.lean` | `10⁶ M(n)² ≤ 326041 n` (so `\|M(n)\| ≤ 0.571√n`) on `(2 160 534, 10⁸ + 1092]`: a packed `μ` sieve in windows of up to `4096` (`scripts/gen_mu_sieve.py`) | about 5–7 min per file, 3 h in all |
+| `Prelim/SqfreeWalk.lean` | `Q₁(t) − κ log t ∈ [0.578, 1.166]` for `t < 10⁴` | 37 s |
+| `Prelim/WeightsData1–10.lean`, `WeightsMain.lean` | `∑_{k≤t} \|Λ(k) − 1\|/k` and `∑_{k≤t} \|Λ(k) − 1\|/√k` at `2^s` and `⌊10^{s/16}⌋` up to `10⁶` (`scripts/gen_weights_walk.py`) | about 4–5 min per file |
+| `Prelim/SchoenfeldCells1–11.lean` | the 213 cells of Schoenfeld's induction from `10⁸` to `T ≈ e^{160.54}` (`chkCell`, `scripts/gen_schoenfeld_cells.py`) | about 3 min in all |
+| `Prelim/MoebiusSchData.lean` | `\|m(x)\| log x ≤ mprof(x)` on the cells (`mChk`, `scripts/gen_m_profile.py`) | 6 s |
 | `Prelim/SmallMertensProd.lean` | [RS62, Thm 15] for primes `5 ≤ x ≤ 10⁵`, `log θ(x)` to `10⁻²⁵` (tightest at `x = 23`, margin `2.4·10⁻⁷`); `∏_{p≤10⁵} p/(p−1) ≤ 20.5116` | 5.5 min |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
@@ -145,13 +140,5 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 
 What could replace the remaining hypotheses:
 
-* **`cde_mertens`** is a citation of a large computation of `M(x)`, whose coefficients are not all
-  published. Helfgott has given a proof of Ramaré's `|m(x)| ≤ 0.03/log x` (`x ≥ 11815`) that avoids it:
-  Schoenfeld's 1969 identity for `∑ μ(n) log n`, run as an induction, from Schoenfeld's 1976 bound for
-  `ψ`, `|ψ(x) − x| ≤ 0.8√x` up to `10¹⁰` and `|M(u)| ≤ 0.571√u` up to `10⁹`. He reports a Lean
-  formalization of it with the single premise RH up to `1894438.5122`, which follows from `PlattGRH`
-  (`Explicit.riemannHypothesisUpTo_of_platt`). Once it is available, the hypothesis can be dropped
-  (NOTES, "Open directions"). Chirre–Helfgott (arXiv:2511.14736) is a second route, from residues of
-  `1/ζ` at low zeros.
-* The other published results are large computations (binary Goldbach, and RH and GRH to the heights
+* The published results are large computations (binary Goldbach, and RH and GRH to the heights
   used), far beyond the kernel without `native_decide`.

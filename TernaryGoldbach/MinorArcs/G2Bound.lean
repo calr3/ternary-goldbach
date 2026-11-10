@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.G2Numerics
 import TernaryGoldbach.Prelim.LiouvilleBound
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens]
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-!
 # [H, Lemma 5.1.2] for `v = 2` from a bound on `∑ μ(n)/n`
@@ -12,7 +12,7 @@ Proof (a version of [H]'s, with cruder constants):
 * `g₂(x) = ∑_{d ≤ x} μ(d) f(d)² S_d(x/d)²` ([H, (5.20)], `g2_eq_sum_moebius`);
 * `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` with `H_d ≥ 0` multiplicative (`Sd_eq`);
 * `|m(x/u)| ≤ 0.14 u^{1/9}/log x + √(2u/x)` (`abs_m_le`): `|m(y)| ≤ 0.14/log y`
-  for `y ≥ 11815` (`abs_m_le_014`, `Prelim/MoebiusProfile.lean`, from `CDEMertens`) with Rankin's
+  for `y ≥ 11815` (`abs_m_le_014`, `Prelim/MoebiusProfile.lean`) with Rankin's
   `log x/log(x/u) ≤ u^{1/9}` for `x/u ≥ 11815`, and the kernel-checked `|m(y)| ≤ √(2/y)`
   (`Prelim/SmallMoebius.lean`) for `y < 11815`;
 * the Euler products of `G2Euler.lean`, evaluated in `G2Numerics.lean`.
@@ -24,7 +24,7 @@ open scoped ArithmeticFunction.Moebius ArithmeticFunction.sigma
 
 namespace TernaryGoldbach.MinorArcs
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem log_11815_ge9 : 9 ≤ Real.log 11815 := by
   rw [Real.le_log_iff_exp_le (by norm_num)]
   have h1 := Real.exp_one_lt_d9
@@ -117,13 +117,13 @@ theorem abs_Sd_le {x : ℝ} (hx : 1 < x) {d : ℕ} (hd1 : 1 ≤ d) :
   rw [sum_add_distrib, ← mul_sum, ← mul_sum]
   rfl
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem rho_prod_nonneg (s : ℝ) (hs0 : 0 ≤ s) (hs1 : s < 1) (d : ℕ) :
     0 ≤ ∏ p ∈ d.primeFactors, rho s p :=
   prod_nonneg fun p hp => by
     linarith [one_le_rho hs0 hs1 (Nat.prime_of_mem_primeFactors hp).two_le]
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem PS9_le {d : ℕ} (hd : Odd d) (A : ℕ) :
     PS (1 / 9) d A ≤ 2.9733 * ∏ p ∈ d.primeFactors, rho (1 / 9) p := by
   have h := sum_Hd_rpow_le hd (s := 1 / 9) (by norm_num) (by norm_num) A
@@ -139,7 +139,7 @@ theorem PS9_le {d : ℕ} (hd : Odd d) (A : ℕ) :
     _ ≤ 2.9733 * ∏ p ∈ d.primeFactors, rho (1 / 9) p :=
         mul_le_mul_of_nonneg_right (by norm_num) hr0
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem PSh_le {d : ℕ} (hd : Odd d) (A : ℕ) :
     PS (1 / 2) d A ≤ 11.4874 * ∏ p ∈ d.primeFactors, rho (1 / 2) p := by
   have h := sum_Hd_rpow_le hd (s := 1 / 2) (by norm_num) (by norm_num) A

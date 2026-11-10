@@ -1,7 +1,7 @@
 import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.MoebiusProfile
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens]
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-!
 # `|∑_{n≤x} μ(n)/n| ≤ 0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
@@ -16,7 +16,7 @@ open scoped ArithmeticFunction.Moebius
 
 namespace TernaryGoldbach.Prelim
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem sqrt2_bounds : (1.414213 : ℝ) ≤ √2 ∧ √2 ≤ 1.414214 := by
   refine ⟨Real.le_sqrt_of_sq_le (by norm_num), ?_⟩
   calc √2 ≤ √(1.414214 ^ 2) := Real.sqrt_le_sqrt (by norm_num)

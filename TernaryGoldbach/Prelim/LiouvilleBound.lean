@@ -236,7 +236,7 @@ theorem log_le_sqrt_mid {z : ℝ} (hz : 1e5 ≤ z) : Real.log z ≤ 0.04 * √z 
   norm_num at h5
   nlinarith [mul_le_mul_of_nonneg_right hs5 (by linarith : (0 : ℝ) ≤ s)]
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- The term bound for `z/u² ≥ 11815` (`|m(y)| ≤ 0.14/log y`, `abs_m_le_014`). -/
 theorem term_big_le {z : ℝ} (hz : 0 < z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     (hge : 11815 ≤ z / (u * u : ℕ)) :
@@ -261,7 +261,7 @@ theorem term_big_le {z : ℝ} (hz : 0 < z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     _ ≤ 0.14 * ((1 + 2 / 9 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
     _ = _ := by ring
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10⁵`: `|m(y)| ≤ 0.14/log y` for `z/u² ≥ 11815`, the kernel-checked
 `√(2/y)` below. -/
 theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 := by
@@ -355,7 +355,7 @@ theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 :
         rw [div_le_iff₀ hsz]; exact hlz
     _ ≤ 0.99 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`|ℓ(z)| ≤ 0.99/log z`** for `z > 1`. -/
 theorem abs_ls_mul_log_le {z : ℝ} (hz : 1 < z) : |ls z| * Real.log z ≤ 0.99 := by
   rcases lt_or_ge z 1e5 with h | h
@@ -426,7 +426,7 @@ theorem Q_ge_one {q : ℕ} (hq : 1 ≤ q) : 1 ≤ (q : ℝ) / Nat.totient q := b
   rw [le_div_iff₀ (by exact_mod_cast h0), one_mul]
   exact_mod_cast Nat.totient_le q
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`** for `q < x` (Lemma 2.5 and `abs_ls_mul_log_le`). -/
 theorem abs_lqs_mul_log_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     |lqs q x| * Real.log (x / q) ≤ 0.99 * ((q : ℝ) / Nat.totient q) := by
@@ -617,7 +617,7 @@ theorem yS_large {y : ℝ} (hy : 80 ≤ y) (N : ℕ) :
     _ ≤ 5 / 3 * 1.32 + 5 / 3 / 274 := by linarith
     _ ≤ 2.8 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (2.22)] with constant `2.8`** (Ramaré's Liouville route, hal-02572851):
 `|∑_{n ≤ x, (n,q)=1} μ(n)/n| ≤ 2.8 (q/φ(q))/log(x/q)` for `1 ≤ q < x`. -/
 theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
@@ -675,7 +675,7 @@ theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     _ ≤ Q * 2.8 := mul_le_mul_of_nonneg_left hyS (by linarith)
     _ = 2.8 * Q := by ring
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (2.22)] with constant `2.8`** (for [H]'s `4/5`, from [Ramb]), in the summatory form. -/
 theorem abs_sum_moebius_div_coprime_le_log {x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqx : (q : ℝ) < x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤

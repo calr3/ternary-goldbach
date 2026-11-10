@@ -1,7 +1,6 @@
 import TernaryGoldbach.MinorArcs.TypeIITotal
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # Type II total, general form [H, §6.2.3]
@@ -168,7 +167,7 @@ theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V :
 
 
 set_option maxHeartbeats 2000000 in
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- Integrating `Ggen` over `[A, x/U]` (`V ≤ A` enters only through `κ₁ = kap1 x U V`). -/
 theorem integral_Ggen_le' {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
     {A : ℝ} (hV : 0 < A) (hVU : A ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
@@ -282,7 +281,7 @@ theorem integral_Ggen_le' {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   nlinarith [K3, K4, K5, K6, K7]
 
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- `integral_Ggen_le'` with `A = V`. -/
 theorem integral_Ggen_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 ≤ q) (hU : 1 ≤ U)
     (hV : 0 < (V : ℝ)) (hVU : (V : ℝ) ≤ x / U) {c m : ℝ} (hc1 : 1 ≤ c) (hm : 0 < m)
@@ -381,7 +380,7 @@ theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
 
 
 set_option maxHeartbeats 2000000 in
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- The bound on `S₂` from (5.56)(ii) used for [H, (6.32)]: with `ε₁ = x/2UQ`,
 `c' = |δ|q(1+ε₁)/4`, `L = log(W/c')`, for `|δ| ≥ 8`, `x ≤ Q²`, `W ∈ [V, x/U]`, `c'e ≤ V`:
 `S₂ ≤ ((2/|δ|) x/(φL) + (q/φ) W/L) Σ(log p)²`. -/
@@ -484,7 +483,7 @@ theorem S2_le_640' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
   exact le_of_mul_le_mul_left key (by positivity)
 
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- `S2_le_640'` with `A = V`. -/
 theorem S2_le_640 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (h2α : 2 * α = a / q + δ / x + k) (hδQ : |δ / x| ≤ 1 / (q * Q)) (hδ8 : 8 ≤ |δ|) (hx : 0 < x)

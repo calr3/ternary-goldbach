@@ -694,7 +694,7 @@ theorem approx2_abs {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (hx : 0 < x) (h : Appr
   obtain ⟨-, -, ⟨k, hk⟩, hδ, -⟩ := h
   exact ⟨k, by rw [show 2 * α - a / q - k = δ / x by rw [hk]; ring]; exact hδ⟩
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **Case (a1) of the second choice**: `T/6 < q`, `16q ≤ x/U`:
 `|S_{II}| ≤ (√(12 F₀ X₀ B₀) + SEC(L)) T^{5/2}`. -/
 theorem typeII_a1 {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)

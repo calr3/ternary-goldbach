@@ -220,7 +220,7 @@ theorem typeI1_c0_term_le {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) 
         nlinarith
 
 set_option maxHeartbeats 1600000 in
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (6.56)], our version**: for `q ≤ x^{1/3}/6`, at the parameters of (6.49),
 `|S_{I,1}| ≤ 3.8 · 2x/(δ₀φ(q)) + (log t + 2.96) · 2x/t + 0.014 x^{5/6}`, `t = δ₀q` (with the
 elementary (2.23); [H]'s `1.00303` would give `1.63`). -/

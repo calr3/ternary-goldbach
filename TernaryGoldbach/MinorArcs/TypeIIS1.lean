@@ -339,12 +339,12 @@ theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
   rw [S1_eq_triples hx hW (by linarith), sum_innerS_eq (div_pos hx hW) hU,
     quads_eq_triples (div_pos hx hW) (by linarith)]
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, kernel
 computations up to `10⁴`, and the tail of `∫ |g₂|/y`, `G2Tail.lean`). -/
 theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := T2_le' hS
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem H2_ge {S : ℝ} : 4 / π ^ 2 * T2 S ≤ H2 S := by
   unfold H2
   split_ifs with h
@@ -394,7 +394,7 @@ theorem innerS_sub {B U : ℝ} (s : ℕ) :
   · ring
   · ring
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, (5.34)]**: for `x, W > 0` and `U ≥ 1`,
 `S₁(U, W) ≤ (x/W) H₂(x/(WU)) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`. -/
 theorem S1_bound {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :

@@ -1,7 +1,7 @@
 import TernaryGoldbach.MinorArcs.T2Small
 import TernaryGoldbach.MinorArcs.G2Tail
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens]
+variable [Fact TernaryGoldbach.PlattGRH]
 
 /-!
 # [H, (5.31)]: `T₂(S) ≤ 0.37273` for `S ≥ 16`

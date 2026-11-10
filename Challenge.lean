@@ -42,8 +42,8 @@ def TernaryGoldbachFrom (C : ℕ) : Prop :=
 
 /-! ## Hypotheses
 
-The proof rests on three published numerical results, stated here as `Prop`s and passed to the
-theorems that need them as `Fact` instances. Each is a large computation, and none
+The proof rests on two published numerical results, stated here as `Prop`s and passed to the
+theorems that need them as `Fact` instances. Each is a large computation, and neither
 is formalized. -/
 
 /-- D. Platt [Plab, Thm 7.1], [H, §9.6]: for every primitive character `χ` of conductor `q`, GRH
@@ -60,23 +60,16 @@ def PlattGRH : Prop :=
 a sum of two primes. -/
 def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
-/-- H. Cohen, F. Dress, M. El Marraki, *Explicit estimates for summatory functions linked to the
-Möbius μ-function*, Funct. Approx. Comment. Math. 37 (2007), 51–63, as cited in O. Ramaré,
-Acta Arith. 157 (2013): `|∑_{n ≤ x} μ(n)| ≤ x/4345` for `x ≥ 2 160 535`. -/
-def CDEMertens : Prop :=
-  ∀ x : ℝ, 2160535 ≤ x →
-    |∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.moebius n : ℝ)| ≤ x / 4345
-
 /-! ## Main theorems -/
 
-/-- Every odd `n ≥ 10²⁷` is a sum of three primes, given two of the hypotheses. -/
-theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) (hμ : CDEMertens) :
+/-- Every odd `n ≥ 10²⁷` is a sum of three primes, given `PlattGRH`. -/
+theorem ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) :
     TernaryGoldbachFrom (10 ^ 27) := by
   sorry
 
-/-- The ternary Goldbach conjecture, given the three hypotheses. -/
-theorem ternary_goldbach_of_hypotheses (hGRH : PlattGRH) (hBG : BinaryGoldbachInput)
-    (hμ : CDEMertens) : Statement := by
+/-- The ternary Goldbach conjecture, given the two hypotheses. -/
+theorem ternary_goldbach_of_hypotheses (hGRH : PlattGRH) (hBG : BinaryGoldbachInput) :
+    Statement := by
   sorry
 
 end TernaryGoldbach

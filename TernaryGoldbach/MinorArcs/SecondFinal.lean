@@ -5,7 +5,6 @@ import TernaryGoldbach.MinorArcs.SecondChoice
 import TernaryGoldbach.MinorArcs.Assembly
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # [H, §6.3.2]: Theorem 3.1.1 for `q > x^{1/3}/6`
@@ -26,7 +25,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 /-- `√T ≥ (log T)²/16` (from `T = e^L`, `e^{L/4} ≥ 1 + L/4`). -/
 theorem sqrt_ge_log_sq {T : ℝ} (hT : 1 ≤ T) : Real.log T ^ 2 / 16 ≤ √T := by
   have hT0 : 0 < T := by linarith

@@ -8,30 +8,29 @@ follows H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 [H].
 ## Status
 
 The proof is complete: there is no `sorry`, and the main theorems use only Lean's standard three
-axioms. They take 3 published numerical results as explicit hypotheses, stated in
+axioms. They take 2 published numerical results as explicit hypotheses, stated in
 `TernaryGoldbach/Statement.lean`:
 
 * `PlattGRH`: Platt's GRH verification (at `q = 1`, RH up to `10⁸`);
-* `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`;
-* `CDEMertens`: `|M(x)| ≤ x/4345` for `x ≥ 2 160 535`, `M(x) = ∑_{n≤x} μ(n)` (Cohen, Dress and
-  El Marraki [CDE07]; [H, (2.21)] takes Ramaré's bound for `∑ μ(n)/n`, whose proof uses this).
+* `BinaryGoldbachInput`: binary Goldbach up to `4·10¹⁸`.
 
 ```lean
 theorem TernaryGoldbach.ternary_goldbach_of_hypotheses (hGRH : PlattGRH)
-    (hBG : BinaryGoldbachInput) (hμ : CDEMertens) : Statement
-theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH)
-    (hμ : CDEMertens) : TernaryGoldbachFrom (10 ^ 27)
+    (hBG : BinaryGoldbachInput) : Statement
+theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) :
+    TernaryGoldbachFrom (10 ^ 27)
 ```
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
-`MajorArcs.platt_verification`, `Helfgott.binary_goldbach_input` and `Prelim.cde_mertens`. Each theorem takes only the instances its proof uses (the
-`unusedSectionVars` linter checks this), so its statement shows what it depends on:
+`MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`. Each theorem takes only the
+instances its proof uses (the `unusedSectionVars` linter checks this), so its statement shows what
+it depends on:
 
 | Stage of [H, §14.4] | Lean | Hypotheses |
 |---|---|---|
 | major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
-| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH`, `CDEMertens` |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH` |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
@@ -41,16 +40,25 @@ The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s 
 which `PlattGRH` gives at `q = 1` (`Explicit.rh_upto_1e8`).
 
 [H, (2.21)] (`|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`, Ramaré) is replaced by
-`|m(x)| log x ≤ mprof(x)`, `m(x) = ∑_{n≤x} μ(n)/n`, with `mprof = 0.03` on `[11815, 2 160 535)`,
-`0.14` up to `10⁷`, `0.1` up to `7043²`, `0.08` up to `10¹⁰`, `0.065` up to `e^{200}` and `0.09` beyond
-(`Prelim.moebius_profile`). Below `2 160 535` it is a kernel walk over `μ` (`Prelim/SmallMuMain.lean`).
-Above, it follows from `CDEMertens`, `PlattGRH` and the identity
-`m(x)(log x − γ) = −∑_{n≤x} μ(n)/n · E(x/n)`, `E(u) = ∑_{n≤u} Λ(n)/n − log u + γ`. The identity is
-split at `n = x/Y`:
-* the part `n ≤ x/Y` uses a kernel table of `E` on `[1, 10⁶)` (`Prelim/SmallEMain.lean`) and bounds
-  for `E` on `[10⁶, ∞)` from a smoothed explicit formula with RH up to `10⁸` (`Prelim/EOneRegions.lean`);
-* the part `n > x/Y` is a summation by parts against `M(n)`: `|M(n)| ≤ 0.5672√n` on
-  `[100, 2 160 535)` (kernel) and `CDEMertens` beyond (`Prelim/MoebiusCDE.lean`, `MoebiusCases.lean`).
+`|m(x)| log x ≤ mprof(x)`, `m(x) = ∑_{n≤x} μ(n)/n` (`Prelim.moebius_log_le`). `mprof` is `0.03` below
+`10⁸ + 1`; `0.092`, `0.09`, `0.08`, `0.035` with steps at `9.0·10⁹`, `1.5·10¹⁵`, `7.5·10²³` and
+`T ≈ e^{160.54}`; and `0.075` beyond `T`. The proof follows Helfgott's note [Hm], which runs
+Schoenfeld's identity [Sch69] as an induction:
+* below `2 160 535`, a kernel walk over `μ` (`Prelim/SmallMuMain.lean`);
+* `|M(u)| ≤ 0.571√u` for `100 ≤ u ≤ 10⁸`, `M(u) = ∑_{n≤u} μ(n)` (the walk, then a packed `μ` sieve,
+  `Prelim/MuSieve*.lean`), with El Marraki's inequality
+  `|m(x)| ≤ |M(x)|/x + (log x + ∫₁ˣ |M(t)|/t² dt)/x` (`Prelim/ElMarraki.lean`) up to `10⁸`;
+* Schoenfeld's identity
+  `N(x) + 1 = M(x) − ∑_{2≤k≤y} (Λ(k) − 1) M(x/k) − ∑_{j≤x/y} μ(j) ρ(x/j) + ρ(y) M(x/y)`, with
+  `N(x) = ∑_{n≤x} μ(n) log n` and `ρ(v) = ψ(v) − ⌊v⌋` (`Prelim/Schoenfeld69.lean`), and `M` recovered
+  from `N` by summation by parts (`Prelim/SchoenfeldInd.lean`). It runs as an induction over 213
+  kernel-checked cells from `10⁸` to `T` (`Prelim/SchoenfeldGen.lean`, `SchoenfeldCells*.lean`) and
+  one analytic step beyond `T` with `y = x^{0.18}`, which gives `|N(x)| ≤ 0.033x`
+  (`Prelim/SchoenfeldTail.lean`). The inputs are the `ψ` bounds from `PlattGRH` and
+  `theta_explicit`, counts of squarefree numbers (`Prelim/SqfreeQ*.lean`), and a kernel table of
+  `∑ |Λ(k) − 1|/k` and `∑ |Λ(k) − 1|/√k` up to `10⁶` (`Prelim/Weights*.lean`);
+* El Marraki's inequality with these bounds for `M` on the cells and beyond
+  (`Prelim/MoebiusSch*.lean`).
 
 The uses of (2.21) take the weaker constants: [H, (2.22)] (`Prelim/LiouvilleBound.lean`, still with
 `2.8`), and the tail of `∫ |g₂|/y` behind (5.31) (`MinorArcs/G2Tail.lean`, `0.0082`, still giving
@@ -89,7 +97,10 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
   `Prelim/SmallPsiTable*.lean`) and `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)` (a bit sieve,
   `Prelim/PsiSieve*.lean`);
 * `|M(n)| ≤ 0.5672√n` and `|m(n)| log(n + 1) ≤ 0.03` up to `2 160 534` (`Prelim/SmallMu*.lean`), and
-  the table of `E₁Λ(u) = ∑_{n≤u} Λ(n)/n − log u` on `[1, 10⁶)` (`Prelim/SmallE*.lean`);
+  `|M(n)| ≤ 0.571√n` up to `10⁸` (a packed `μ` sieve, `Prelim/MuSieve*.lean`);
+* the table of `∑_{k≤t} |Λ(k) − 1|/k` and `∑_{k≤t} |Λ(k) − 1|/√k` up to `10⁶`
+  (`Prelim/Weights*.lean`), the 213 cells of Schoenfeld's induction (`Prelim/SchoenfeldCells*.lean`)
+  and the bound for `|m(x)| log x` on them (`Prelim/MoebiusSchData.lean`);
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallPsi700.lean`, `SmallMertens.lean`,
   `SmallProdAp.lean`, `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLiouville.lean`,
   `SmallW.lean`, `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean`
@@ -300,8 +311,12 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   Math. Comp. 29 (1975), 243–269.
 * [RR96] O. Ramaré, R. Rumely, *Primes in arithmetic progressions*, Math. Comp. 65 (1996), 397–425.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
-* [CDE07] H. Cohen, F. Dress, M. El Marraki, *Explicit estimates for summatory functions linked to
-  the Möbius μ-function*, Funct. Approx. Comment. Math. 37 (2007), 51–63.
+* [Hm] H. A. Helfgott, *A proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`*, note
+  (8 November 2026), shared on the Lean Zulip.
+* [Sch69] L. Schoenfeld, *An improved estimate for the summatory function of the Möbius function*,
+  Acta Arith. 15 (1969), 221–233.
+* [EM96] M. El Marraki, *Majorations de la fonction sommatoire de la fonction μ(n)/n*,
+  Prépublication 96-8, Université Bordeaux 1 (1996).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.
 * O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius

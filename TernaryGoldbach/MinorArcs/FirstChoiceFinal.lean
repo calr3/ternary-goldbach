@@ -2,7 +2,6 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.Assembly
 
 variable [Fact TernaryGoldbach.PlattGRH]
-  [Fact TernaryGoldbach.CDEMertens]
 
 /-!
 # [H, §6.3.1, (6.63) and §6.4]: Theorem 3.1.1 for `q ≤ x^{1/3}/6`
@@ -18,7 +17,7 @@ namespace TernaryGoldbach.MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2 S)
 
-omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+omit [Fact TernaryGoldbach.PlattGRH] in
 theorem Cxt_nonneg {T t : ℝ} (ht2 : 2 ≤ t) (htT : t ≤ T / 3) : 0 ≤ Cxt T t := by
   have ht0 : 0 < t := by linarith
   have hL := two_le_logL ht0 htT

@@ -72,7 +72,6 @@ noncomputable def G637 (x U V : ℝ) (q : ℕ) (β W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 2000000 in
-variable [Fact TernaryGoldbach.CDEMertens] in
 /-- The pointwise bound behind [H, (6.20)–(6.37)] in the range `W ≥ V ≥ 2eq`. -/
 theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
@@ -321,7 +320,6 @@ theorem integral_G637_le {x : ℝ} (hx : 0 < x) {U V : ℕ} {q : ℕ} (hq : 1 �
   nlinarith [K3, K4, K5, K6, K7]
 
 set_option maxHeartbeats 2000000 in
-variable [Fact TernaryGoldbach.CDEMertens] in
 /-- **Type II total, our version of [H, (6.37)]** (`q ≤ V/2e`, any `δ`): with `φ = φ(q)`,
 `Λ₀ = log(x/UV)`, `Φ = log 2q · (log log(x/2Uq) - log log(V/2q))`, `κ₁ = 2/π² + 1.27ζ(3/2)³√(x/V)/U`,
 `|S_{II}| ≤ x/√(2φ) · √((Λ₀ + Φ)(0.60428 Λ₀ + 8 · 1.27ζ(3/2)³ √(x/V)/U))`

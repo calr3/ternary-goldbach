@@ -4,7 +4,7 @@ Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015
 This is the book version, and it supersedes the three papers. References `[H, …]` are to it.
 
 This is a chapter-level map from [H] to the Lean files. There is no `sorry`. `ternary_goldbach`
-uses only Lean's three standard axioms and takes three published results as hypotheses (`Fact`
+uses only Lean's three standard axioms and takes two published results as hypotheses (`Fact`
 instances), listed and checked against their sources in `HYPOTHESES.md`. [H, (5.36)] is used in
 corrected form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The README lists the other
 differences from [H]; `NOTES.md` has the details.
@@ -78,7 +78,8 @@ differences from [H]; `NOTES.md` has the details.
  Preliminaries: §2.5 explicit bounds on sums of μ and Λ ✅ Prelim/LambdaMu.lean and the files it
  imports: (2.12)–(2.15), (2.17), (2.19), (5.5) from Prelim/PsiTwoSided.lean, the kernel tables and
  Prelim/ThetaExplicit.lean; (2.20) MoebiusCoprime; (2.21) as `|m(x)| log x ≤ mprof(x)` ✅ MoebiusProfile
- (from the hypothesis `cde_mertens`, |M(x)| ≤ x/4345);
+ (Schoenfeld's induction after Helfgott's note: Schoenfeld69, SchoenfeldCells*, SchoenfeldTail,
+ MoebiusSch; |M(u)| ≤ 0.571√u to 10⁸ by MuSieve);
  (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog; (2.24) for x < 11815
  SmallMoebius
 ```

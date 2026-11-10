@@ -397,7 +397,7 @@ theorem log_11815_ge9' : 9 ≤ Real.log 11815 := by
   calc Real.exp 1 ^ 9 ≤ (2.7182818286 : ℝ) ^ 9 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 9
     _ ≤ 11815 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `m(j)² log(1 + 1/j) ≤ 1.00001 c(j) (1/log j − 1/log(j+1))` for `j ≥ 11815`, `c(j) = mprof(j)²`
 (`|m(j)| log j ≤ mprof(j)`, `MoebiusProfile.lean`; `log(j+1)/log j ≤ 1.00001`). -/
 theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
@@ -446,53 +446,91 @@ theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
 /-- `1/log j`. -/
 noncomputable def il (j : ℕ) : ℝ := 1 / Real.log j
 
-/-- The first `j` with `log j ≥ 200`. -/
-noncomputable def N200 : ℕ := ⌈Real.exp 200⌉₊
+/-- The steps of `mprof` (`MoebiusProfile.lean`). -/
+def B1 : ℕ := 100000001
+def B2 : ℕ := 9001713129
+def B3 : ℕ := 1525381771989686
+def B4 : ℕ := 747499893696668303884288
 
 /-- `mprof(j)` with the conditions on `j` stated in `ℕ`. -/
 noncomputable def cpr (j : ℕ) : ℝ :=
-  if j < 2160535 then 0.03 else if j < 10000000 then 0.14 else if j < 49603849 then 0.1
-  else if j < 10000000000 then 0.08 else if j < N200 then 0.065 else 0.09
+  if j < B1 then 0.03 else if j < B2 then 0.092 else if j < B3 then 0.09
+  else if j < B4 then 0.08 else if j < Prelim.Tcells then 0.035 else 0.075
 
-theorem mprof_eq_cpr {j : ℕ} (hj : 1 ≤ j) : Prelim.mprof j = cpr j := by
-  have hj0 : (0 : ℝ) < j := by exact_mod_cast hj
-  have hN : j < N200 ↔ Real.log j < 200 := by
-    rw [N200, Nat.lt_ceil, Real.log_lt_iff_lt_exp hj0]
-  unfold Prelim.mprof cpr
-  simp only [hN]
+theorem mprof_eq_cpr (j : ℕ) : Prelim.mprof j = cpr j := by
+  unfold Prelim.mprof cpr B1 B2 B3 B4
+  have h5 : (j : ℝ) < (Prelim.Tcells : ℝ) ↔ j < Prelim.Tcells := Nat.cast_lt
+  simp only [h5]
   norm_cast
 
 /-- `B(j) = ∑ over the steps from `j` on of `c (1/log a − 1/log b)``: the telescoping bound. -/
 noncomputable def Bt (j : ℕ) : ℝ :=
-  let T6 := 0.0081 * il N200
-  let T5 := 0.004225 * (il 10000000000 - il N200) + T6
-  let T4 := 0.0064 * (il 49603849 - il 10000000000) + T5
-  let T3 := 0.01 * (il 10000000 - il 49603849) + T4
-  let T2 := 0.0196 * (il 2160535 - il 10000000) + T3
-  if j < 2160535 then 0.0009 * (il j - il 2160535) + T2
-  else if j < 10000000 then 0.0196 * (il j - il 10000000) + T3
-  else if j < 49603849 then 0.01 * (il j - il 49603849) + T4
-  else if j < 10000000000 then 0.0064 * (il j - il 10000000000) + T5
-  else if j < N200 then 0.004225 * (il j - il N200) + T6
-  else 0.0081 * il j
+  let T6 := 0.005625 * il Prelim.Tcells
+  let T5 := 0.001225 * (il B4 - il Prelim.Tcells) + T6
+  let T4 := 0.0064 * (il B3 - il B4) + T5
+  let T3 := 0.0081 * (il B2 - il B3) + T4
+  let T2 := 0.008464 * (il B1 - il B2) + T3
+  if j < B1 then 0.0009 * (il j - il B1) + T2
+  else if j < B2 then 0.008464 * (il j - il B2) + T3
+  else if j < B3 then 0.0081 * (il j - il B3) + T4
+  else if j < B4 then 0.0064 * (il j - il B4) + T5
+  else if j < Prelim.Tcells then 0.001225 * (il j - il Prelim.Tcells) + T6
+  else 0.005625 * il j
 
-theorem N200_big : 10000000000 < N200 := by
-  have h := Prelim.exp_200_ge
-  have : ((10000000000 : ℕ) : ℝ) < Real.exp 200 := by norm_num at h ⊢; linarith
-  exact Nat.lt_ceil.2 this
+theorem B4_lt_T : B4 < Prelim.Tcells := by decide
 
 theorem Bt_step {j : ℕ} (hj : 2 ≤ j) : Bt j - Bt (j + 1) = cpr j ^ 2 * (il j - il (j + 1)) := by
-  have hN := N200_big
   unfold Bt cpr
-  simp only
-  split_ifs <;> first
-    | omega
-    | ring1
-    | (rw [show j + 1 = 2160535 by omega]; ring1)
-    | (rw [show j + 1 = 10000000 by omega]; ring1)
-    | (rw [show j + 1 = 49603849 by omega]; ring1)
-    | (rw [show j + 1 = 10000000000 by omega]; ring1)
-    | (rw [show j + 1 = N200 by omega]; ring1)
+  simp only [B1, B2, B3, B4, Prelim.Tcells]
+  rcases lt_or_ge (j + 1) 100000001 with h1 | h1
+  · simp only [show j < 100000001 by omega, h1, if_true]; ring
+  rcases lt_or_ge (j + 1) 9001713129 with h2 | h2
+  · rcases eq_or_lt_of_le h1 with e | e
+    · simp only [show j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show j + 1 < 9001713129 by omega, if_true, if_false]; rw [← e]; ring
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show j < 9001713129 by omega, h2, if_true, if_false]; ring
+  rcases lt_or_ge (j + 1) 1525381771989686 with h3 | h3
+  · rcases eq_or_lt_of_le h2 with e | e
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show j + 1 < 1525381771989686 by omega, if_true, if_false]; rw [← e]; ring
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show j < 1525381771989686 by omega, h3, if_true, if_false]; ring
+  rcases lt_or_ge (j + 1) 747499893696668303884288 with h4 | h4
+  · rcases eq_or_lt_of_le h3 with e | e
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+        show j + 1 < 747499893696668303884288 by omega, if_true, if_false]; rw [← e]; ring
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+        show j < 747499893696668303884288 by omega, h4, if_true, if_false]; ring
+  rcases lt_or_ge (j + 1) 5273264915796702340408371151172679619749656857014800716447501879607296 with h5 | h5
+  · rcases eq_or_lt_of_le h4 with e | e
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+        show j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
+        show j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, if_true, if_false]; rw [← e]; ring
+    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+        show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
+        show j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, h5, if_true, if_false]; ring
+  rcases eq_or_lt_of_le h5 with e | e
+  · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+      show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+      show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+      show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
+      show j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, show ¬ (j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296) by omega, if_true, if_false]; rw [← e]; ring
+  · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
+      show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
+      show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
+      show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
+      show ¬ j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, show ¬ (j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296) by omega, if_true, if_false]; ring
 
 theorem il_anti {a b : ℕ} (ha : 2 ≤ a) (hab : a ≤ b) : il b ≤ il a := by
   unfold il
@@ -505,52 +543,47 @@ theorem il_nonneg (j : ℕ) : 0 ≤ il j := by
   unfold il; exact div_nonneg zero_le_one (Real.log_natCast_nonneg j)
 
 theorem Bt_nonneg {j : ℕ} (hj : 2 ≤ j) : 0 ≤ Bt j := by
-  have hN := N200_big
-  have i1 := il_anti (a := 2160535) (b := 10000000) (by norm_num) (by norm_num)
-  have i2 := il_anti (a := 10000000) (b := 49603849) (by norm_num) (by norm_num)
-  have i3 := il_anti (a := 49603849) (b := 10000000000) (by norm_num) (by norm_num)
-  have i4 := il_anti (a := 10000000000) (b := N200) (by norm_num) hN.le
-  have i5 := il_nonneg N200
+  have hT := B4_lt_T
+  have i1 := il_anti (a := B1) (b := B2) (by norm_num [B1]) (by norm_num [B1, B2])
+  have i2 := il_anti (a := B2) (b := B3) (by norm_num [B2]) (by norm_num [B2, B3])
+  have i3 := il_anti (a := B3) (b := B4) (by norm_num [B3]) (by norm_num [B3, B4])
+  have i4 := il_anti (a := B4) (b := Prelim.Tcells) (by norm_num [B4]) hT.le
+  have i5 := il_nonneg Prelim.Tcells
   have i6 := il_nonneg j
   unfold Bt
   simp only
   split_ifs with h1 h2 h3 h4 h5
-  · have := il_anti hj (show j ≤ 2160535 by omega); linarith
-  · have := il_anti hj (show j ≤ 10000000 by omega); linarith
-  · have := il_anti hj (show j ≤ 49603849 by omega); linarith
-  · have := il_anti hj (show j ≤ 10000000000 by omega); linarith
-  · have := il_anti hj (show j ≤ N200 by omega); linarith
+  · have := il_anti hj (show j ≤ B1 by omega); linarith
+  · have := il_anti hj (show j ≤ B2 by omega); linarith
+  · have := il_anti hj (show j ≤ B3 by omega); linarith
+  · have := il_anti hj (show j ≤ B4 by omega); linarith
+  · have := il_anti hj (show j ≤ Prelim.Tcells by omega); linarith
   · linarith
-
-theorem log_N200_ge : 200 ≤ Real.log N200 := by
-  rw [Real.le_log_iff_exp_le (by have := N200_big; positivity)]
-  exact Nat.le_ceil _
 
 /-- `B(11815) ≤ 5.0423·10⁻⁴ / 1.00001`. -/
 theorem Bt_K_le : 1.00001 * Bt 11815 ≤ (tailV : ℝ) / 10 ^ 24 := by
-  have hN := N200_big
-  have l1 := Prelim.log_ge_cert (L := 11815) (cN := 93770) (by norm_num) (by decide +kernel)
-  have l2 := Prelim.log_ge_cert (L := 2160535) (cN := 145857) (by norm_num) (by decide +kernel)
-  have u3 := Prelim.log_le_cert (L := 10000000) (cN := 161182) (by norm_num) (by decide +kernel)
-  have u4 := Prelim.log_le_cert (L := 49603849) (cN := 177197) (by norm_num) (by decide +kernel)
-  have u5 := Prelim.log_le_cert (L := 10000000000) (cN := 230260) (by norm_num) (by decide +kernel)
-  have l6 := log_N200_ge
-  have hl3 : 0 < Real.log ((10000000 : ℕ) : ℝ) := Real.log_pos (by norm_num)
-  have hl4 : 0 < Real.log ((49603849 : ℕ) : ℝ) := Real.log_pos (by norm_num)
-  have hl5 : 0 < Real.log ((10000000000 : ℕ) : ℝ) := Real.log_pos (by norm_num)
-  norm_num at l1 l2 u3 u4 u5
-  have k1 : il 11815 ≤ 1 / 9.377 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l1 ⊢; linarith)
-  have k2 : il 2160535 ≤ 1 / 14.5857 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l2 ⊢; linarith)
-  have k3 : 1 / 16.1182 ≤ il 10000000 := one_div_le_one_div_of_le hl3 (by norm_num at u3 ⊢; linarith)
-  have k4 : 1 / 17.7197 ≤ il 49603849 := one_div_le_one_div_of_le hl4 (by norm_num at u4 ⊢; linarith)
-  have k5 : 1 / 23.026 ≤ il 10000000000 := one_div_le_one_div_of_le hl5 (by norm_num at u5 ⊢; linarith)
-  have k6 : il N200 ≤ 1 / 200 := one_div_le_one_div_of_le (by norm_num) l6
+  have l0 := Prelim.Sch.logLo_spec (q := 9377 / 1000) (L := 11815) (by decide +kernel)
+  have l1 := Prelim.Sch.logLo_spec (q := 1842 / 100) (L := B1) (by decide +kernel)
+  have u2 := Prelim.Sch.logUp_spec (q := 229207 / 10000) (L := B2) (by decide +kernel)
+  have u3 := Prelim.Sch.logUp_spec (q := 349611 / 10000) (L := B3) (by decide +kernel)
+  have u4 := Prelim.Sch.logUp_spec (q := 549711 / 10000) (L := B4) (by decide +kernel)
+  have l5 := Prelim.Sch.logLo_spec (q := 16054 / 100) (L := Prelim.Tcells) (by decide +kernel)
+  push_cast at l0 l1 u2 u3 u4 l5
+  have hl2 : 0 < Real.log (B2 : ℝ) := Real.log_pos (by norm_num [B2])
+  have hl3 : 0 < Real.log (B3 : ℝ) := Real.log_pos (by norm_num [B3])
+  have hl4 : 0 < Real.log (B4 : ℝ) := Real.log_pos (by norm_num [B4])
+  have k0 : il 11815 ≤ 1 / 9.377 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l0 ⊢; linarith)
+  have k1 : il B1 ≤ 1 / 18.42 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l1 ⊢; linarith)
+  have k2 : 1 / 22.9207 ≤ il B2 := one_div_le_one_div_of_le hl2 (by norm_num at u2 ⊢; linarith)
+  have k3 : 1 / 34.9611 ≤ il B3 := one_div_le_one_div_of_le hl3 (by norm_num at u3 ⊢; linarith)
+  have k4 : 1 / 54.9711 ≤ il B4 := one_div_le_one_div_of_le hl4 (by norm_num at u4 ⊢; linarith)
+  have k5 : il Prelim.Tcells ≤ 1 / 160.54 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l5 ⊢; linarith)
   unfold Bt
-  simp only [show (11815 : ℕ) < 2160535 by norm_num, if_true]
-  norm_num [tailV] at k1 k2 k3 k4 k5 k6 ⊢
+  simp only [show (11815 : ℕ) < B1 by norm_num [B1], if_true]
+  norm_num [tailV] at k0 k1 k2 k3 k4 k5 ⊢
   linarith
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 theorem sum_tail_le (M : ℕ) :
     ∑ j ∈ Icc KK M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (tailV : ℝ) / 10 ^ 24 := by
   have hK : KK = 11815 := rfl
@@ -573,7 +606,7 @@ theorem sum_tail_le (M : ℕ) :
         refine sum_le_sum fun j hj => ?_
         have hj1 : 11815 ≤ j := by have := (mem_Icc.1 hj).1; rw [hK] at this; exact this
         have h := tail_term_le hj1
-        rw [mprof_eq_cpr (by omega)] at h
+        rw [mprof_eq_cpr] at h
         rw [Bt_step (by omega)]
         unfold il; push_cast; exact h
     _ = 1.00001 * (Bt KK - Bt (max KK (M + 1))) := by rw [← mul_sum, htel]
@@ -592,7 +625,7 @@ theorem sum_tU : ∑ j ∈ Icc 1 (KK - 1), tU j = cP := by
   have h2 : sV.Phi = cP := (Prod.mk.inj tail_ok).1
   rw [← h2, h]
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`∑_{j=k}^M m(j)² log(1 + 1/j) ≤ V(k)/10²⁴`** for `1 ≤ k ≤ 10⁴`. -/
 theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
     ∑ j ∈ Icc k M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (Vt k : ℝ) / 10 ^ 24 := by
@@ -636,7 +669,7 @@ theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
   rw [add_sub_right_comm, add_div]
   linarith
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`∫_X^S m(⌊y/u⌋)²/y dy ≤ V(⌊X/u⌋)/10²⁴`** (`⌊X/u⌋` replaced by `1` when it is `0`). -/
 theorem integral_mm_le {u : ℕ} (hu : 1 ≤ u) {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, mm ⌊y / u⌋₊ ^ 2 / y ≤
@@ -793,7 +826,7 @@ theorem intervalIntegrable_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b)
 noncomputable def Lam (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * lamR (d * a)
 noncomputable def Xi (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * wR (d * a)
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`∫_X^S |g₂|/y ≤ ∑_d f(d)² Λ_d Ξ_d`**. -/
 theorem tail_le_sum {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ ∑ d ∈ Icc 1 ⌊S⌋₊, fo d ^ 2 * Lam ⌊S⌋₊ d * Xi ⌊S⌋₊ d := by
@@ -1175,7 +1208,7 @@ theorem tv_one : sV.tv.get (1, 0) 1 = (549755813888, 1483286220167) := by
   rw [hV]
   decide +kernel
 
-variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.CDEMertens] in
+variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **`∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0082`** for `S ≥ 10⁴`. -/
 theorem tail_integral_le {S : ℝ} (hS : 10000 ≤ S) : ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ 0.0082 := by
   refine (tail_le_sum hS).trans ((sum_terms_le hS).trans ?_)
