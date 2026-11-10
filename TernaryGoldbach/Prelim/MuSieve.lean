@@ -784,4 +784,116 @@ theorem winPN_spec {n W t : ℕ} (hw : WinOK n W t) :
     exact ⟨fun ⟨h1, h2⟩ => ⟨h1, by have := (hbits i h1).2; rw [this] at h2; simpa using h2⟩,
       fun ⟨h1, h2⟩ => ⟨h1, by rw [(hbits i h1).2]; simpa using h2⟩⟩
 
+/-! ### The chain of windows -/
+
+/-- `M(k) = ∑_{n ≤ k} μ(n)` in `ℤ`. -/
+def Mz (k : ℕ) : ℤ := ∑ i ∈ Icc 1 k, (μ i : ℤ)
+
+theorem mu_cases_z (m : ℕ) : (μ m : ℤ) = 1 ∨ (μ m : ℤ) = -1 ∨ (μ m : ℤ) = 0 := by
+  have h := ArithmeticFunction.abs_moebius_le_one (n := m)
+  rcases abs_le.1 h with ⟨h1, h2⟩
+  have : (μ m : ℤ) = -1 ∨ (μ m : ℤ) = 0 ∨ (μ m : ℤ) = 1 := by omega
+  tauto
+
+theorem Mz_sub (n k : ℕ) : Mz (n + k) - Mz n = ∑ i ∈ range k, (μ (n + 1 + i) : ℤ) := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [sum_range_succ, ← ih, show n + (k + 1) = n + k + 1 by ring, Mz, Mz,
+      sum_Icc_succ_top (by omega), show n + k + 1 = n + 1 + k by ring]
+    unfold Mz; ring
+
+theorem sum_mu_split (n k : ℕ) : ∑ i ∈ range k, (μ (n + 1 + i) : ℤ) =
+    ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = 1)).card -
+      ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = -1)).card := by
+  rw [Finset.card_filter, Finset.card_filter]
+  push_cast
+  rw [← sum_sub_distrib]
+  refine sum_congr rfl fun i _ => ?_
+  rcases mu_cases_z (n + 1 + i) with h | h | h <;> simp [h]
+
+/-- **One window**: `M(n + W) = M(n) + P − N`, and `M(n) − N ≤ M(u) ≤ M(n) + P` on `(n, n + W]`. -/
+theorem window_M {n W t : ℕ} (hw : WinOK n W t) :
+    Mz (n + W) = Mz n + (winPN n W t).1 - (winPN n W t).2 ∧
+      ∀ u, n < u → u ≤ n + W → Mz n - (winPN n W t).2 ≤ Mz u ∧ Mz u ≤ Mz n + (winPN n W t).1 := by
+  obtain ⟨h1, h2⟩ := winPN_spec hw
+  refine ⟨?_, fun u hu1 hu2 => ?_⟩
+  · have := Mz_sub n W
+    rw [sum_mu_split, ← h1, ← h2] at this
+    linarith
+  · obtain ⟨k, rfl⟩ : ∃ k, u = n + k := ⟨u - n, by omega⟩
+    have := Mz_sub n k
+    rw [sum_mu_split] at this
+    have c1 : ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = 1)).card ≤ (winPN n W t).1 := by
+      rw [h1]; exact Finset.card_le_card (Finset.filter_subset_filter _ (Finset.range_mono (by omega)))
+    have c2 : ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = -1)).card ≤ (winPN n W t).2 := by
+      rw [h2]; exact Finset.card_le_card (Finset.filter_subset_filter _ (Finset.range_mono (by omega)))
+    have c1' : (((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = 1)).card : ℤ) ≤ (winPN n W t).1 := by
+      exact_mod_cast c1
+    have c2' : (((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = -1)).card : ℤ) ≤ (winPN n W t).2 := by
+      exact_mod_cast c2
+    constructor <;> linarith [Nat.cast_nonneg (α := ℤ) ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = 1)).card,
+      Nat.cast_nonneg (α := ℤ) ((range k).filter (fun i => (μ (n + 1 + i) : ℤ) = -1)).card]
+
+/-- The check `10⁶ x² ≤ 326041 n`, that is `|x| ≤ 0.571 √n`. -/
+def chkB (x : ℤ) (n : ℕ) : Bool := decide (10 ^ 6 * (x * x) ≤ 326041 * (n : ℤ))
+
+/-- The chain: windows `(W, t)` from `n` with `M(n) = M`. -/
+noncomputable def walkM : List (ℕ × ℕ) → ℕ → ℤ → Option (ℕ × ℤ)
+  | [], n, M => some (n, M)
+  | (W, t) :: ws, n, M =>
+    if WinOK n W t then
+      let pn := winPN n W t
+      if chkB (M + pn.1) n && chkB (M - pn.2) n then walkM ws (n + W) (M + pn.1 - pn.2) else none
+    else none
+
+theorem chkB_of_between {a x b : ℤ} {n u : ℕ} (hnu : n ≤ u) (ha : chkB a n = true) (hb : chkB b n = true)
+    (h1 : a ≤ x) (h2 : x ≤ b) : 10 ^ 6 * (x * x) ≤ 326041 * (u : ℤ) := by
+  unfold chkB at ha hb
+  simp only [decide_eq_true_eq] at ha hb
+  have hnu' : (n : ℤ) ≤ u := by exact_mod_cast hnu
+  have : x * x ≤ max (a * a) (b * b) := by
+    rcases le_total 0 x with hx | hx
+    · exact le_max_of_le_right (by nlinarith)
+    · exact le_max_of_le_left (by nlinarith)
+  rcases le_total (a * a) (b * b) with h | h
+  · rw [max_eq_right h] at this; nlinarith
+  · rw [max_eq_left h] at this; nlinarith
+
+/-- **The chain**: `M(n') = M'` and `|M(u)| ≤ 0.571 √u` on `(n, n']`. -/
+theorem walkM_spec : ∀ (ws : List (ℕ × ℕ)) (n : ℕ) (M : ℤ) (n' : ℕ) (M' : ℤ),
+    Mz n = M → walkM ws n M = some (n', M') →
+    Mz n' = M' ∧ n ≤ n' ∧ ∀ u, n < u → u ≤ n' → 10 ^ 6 * (Mz u * Mz u) ≤ 326041 * (u : ℤ) := by
+  intro ws
+  induction ws with
+  | nil =>
+    intro n M n' M' hM h
+    simp only [walkM, Option.some.injEq, Prod.mk.injEq] at h
+    obtain ⟨rfl, rfl⟩ := h
+    exact ⟨hM, le_rfl, fun u h1 h2 => by omega⟩
+  | cons w ws ih =>
+    obtain ⟨W, t⟩ := w
+    intro n M n' M' hM h
+    simp only [walkM] at h
+    split_ifs at h with hw hc
+    simp only [Bool.and_eq_true] at hc
+    obtain ⟨hM1, hrange⟩ := window_M hw
+    obtain ⟨r1, r2, r3⟩ := ih (n + W) _ n' M' (by rw [hM1, hM]) h
+    refine ⟨r1, by omega, fun u hu1 hu2 => ?_⟩
+    rcases le_or_gt u (n + W) with hu | hu
+    · obtain ⟨b1, b2⟩ := hrange u hu1 hu
+      rw [hM] at b1 b2
+      exact chkB_of_between hu1.le hc.2 hc.1 b1 b2
+    · exact r3 u hu hu2
+
+def resEqM : Option (ℕ × ℤ) → ℕ → ℤ → Bool
+  | some (a, b), a', b' => a == a' && b == b'
+  | none, _, _ => false
+
+theorem resEqM_spec {r : Option (ℕ × ℤ)} {a : ℕ} {b : ℤ} (h : resEqM r a b = true) : r = some (a, b) := by
+  match r, h with
+  | some (a0, b0), h =>
+    simp only [resEqM, Bool.and_eq_true, beq_iff_eq] at h
+    rw [h.1, h.2]
+
 end TernaryGoldbach.Prelim.MuSieve
