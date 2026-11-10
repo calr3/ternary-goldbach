@@ -173,4 +173,87 @@ theorem Q_sub_le {x : ℝ} (hx : 1 ≤ x) : |Qs x - kap * x| ≤ 3 * √x := by
       _ ≤ z + 2 * √x := add_le_add hsum (hxT.trans hxz)
       _ ≤ 3 * √x := by linarith
 
+/-- `μ²` as a real 0/1 function. -/
+noncomputable def sq (n : ℕ) : ℝ := if Squarefree n then 1 else 0
+
+theorem sq_nonneg (n : ℕ) : 0 ≤ sq n := by unfold sq; split_ifs <;> norm_num
+theorem sq_le_one (n : ℕ) : sq n ≤ 1 := by unfold sq; split_ifs <;> norm_num
+
+theorem Qs_nat_succ (n : ℕ) : Qs ((n + 1 : ℕ) : ℝ) = Qs (n : ℝ) + sq (n + 1) := by
+  unfold Qs sq; rw [Nat.floor_natCast, Nat.floor_natCast, Finset.sum_Icc_succ_top (by omega)]
+
+theorem Qs_upper {t : ℝ} (ht : 1 ≤ t) : Qs t ≤ kap * t + 3 * √t := by
+  have := Q_sub_le ht; rw [abs_le] at this; linarith [this.2]
+
+/-- **`∑_{j ≤ J} μ²(j)/√j ≤ 2κ√J + 4.5 + 1.5 log J`** for `J ≥ 1`. -/
+theorem sum_sq_div_sqrt (J : ℕ) (hJ : 1 ≤ J) :
+    ∑ j ∈ Icc 1 J, sq j / √(j : ℝ) ≤ 2 * kap * √(J : ℝ) + 4.5 + 1.5 * Real.log J := by
+  -- Abel: `∑_{j ≤ J} sq j / √j = Q(J)/√J + ∑_{j < J} Q(j) (1/√j − 1/√(j+1))`
+  have habel : ∀ J : ℕ, 1 ≤ J → ∑ j ∈ Icc 1 J, sq j / √(j : ℝ) =
+      Qs (J : ℝ) / √(J : ℝ) + ∑ j ∈ Ico 1 J, Qs (j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) := by
+    intro J hJ
+    induction J, hJ using Nat.le_induction with
+    | base =>
+      simp [Qs, sq, Finset.filter_singleton, squarefree_one]
+    | succ J hJ ih =>
+      rw [Finset.sum_Icc_succ_top (by omega), ih, Finset.sum_Ico_succ_top hJ, Qs_nat_succ]
+      push_cast
+      ring
+  rw [habel J hJ]
+  have hJr : (1 : ℝ) ≤ J := by exact_mod_cast hJ
+  have hsJ : 0 < √(J : ℝ) := Real.sqrt_pos.2 (by linarith)
+  -- each term: `Q(j)(1/√j − 1/√(j+1)) ≤ κ j(...) + 3√j(...)`, and the pieces telescope
+  have hterm : ∀ j ∈ Ico 1 J, Qs (j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) ≤
+      kap * (√((j : ℝ) + 1) - √(j : ℝ)) + 1.5 * (Real.log ((j : ℝ) + 1) - Real.log j) := by
+    intro j hj
+    have hj1 : (1 : ℝ) ≤ j := by exact_mod_cast (mem_Ico.1 hj).1
+    have hj0 : 0 < (j : ℝ) := by linarith
+    have s0 : 0 < √(j : ℝ) := Real.sqrt_pos.2 hj0
+    have s1 : 0 < √((j : ℝ) + 1) := Real.sqrt_pos.2 (by linarith)
+    have hss : √(j : ℝ) ≤ √((j : ℝ) + 1) := Real.sqrt_le_sqrt (by linarith)
+    have hd : 0 ≤ 1 / √(j : ℝ) - 1 / √((j : ℝ) + 1) :=
+      sub_nonneg.2 (one_div_le_one_div_of_le s0 hss)
+    have hQ := Qs_upper hj1
+    have e0 := Real.sq_sqrt hj0.le
+    have e1 := Real.sq_sqrt (show (0 : ℝ) ≤ j + 1 by linarith)
+    -- `j (1/√j − 1/√(j+1)) ≤ √(j+1) − √j`
+    have k1 : (j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) ≤ √((j : ℝ) + 1) - √(j : ℝ) := by
+      rw [div_sub_div _ _ s0.ne' s1.ne', mul_div_assoc', div_le_iff₀ (by positivity)]
+      nlinarith [mul_pos s0 s1]
+    -- `√j (1/√j − 1/√(j+1)) = 1 − √j/√(j+1) ≤ log(j+1) − log j` scaled by `1/2`
+    have k2 : √(j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) ≤ (Real.log ((j : ℝ) + 1) - Real.log j) / 2 := by
+      have hl : Real.log ((j : ℝ) + 1) - Real.log j = 2 * Real.log (√((j : ℝ) + 1) / √(j : ℝ)) := by
+        rw [Real.log_div s1.ne' s0.ne', Real.log_sqrt (by linarith), Real.log_sqrt hj0.le]; ring
+      rw [hl]
+      have := Real.one_sub_inv_le_log_of_pos (show 0 < √((j : ℝ) + 1) / √(j : ℝ) by positivity)
+      rw [inv_div] at this
+      have e : √(j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) = 1 - √(j : ℝ) / √((j : ℝ) + 1) := by
+        field_simp
+      rw [e]; linarith
+    calc Qs (j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1))
+        ≤ (kap * j + 3 * √(j : ℝ)) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1)) :=
+          mul_le_mul_of_nonneg_right hQ hd
+      _ = kap * ((j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1))) +
+          3 * (√(j : ℝ) * (1 / √(j : ℝ) - 1 / √((j : ℝ) + 1))) := by ring
+      _ ≤ _ := by nlinarith [kap_pos]
+  have htel1 : ∀ J : ℕ, 1 ≤ J → ∑ j ∈ Ico 1 J, (√((j : ℝ) + 1) - √(j : ℝ)) = √(J : ℝ) - 1 := by
+    intro J hJ
+    induction J, hJ using Nat.le_induction with
+    | base => simp
+    | succ J hJ ih => rw [Finset.sum_Ico_succ_top hJ, ih]; push_cast; ring
+  have htel2 : ∀ J : ℕ, 1 ≤ J → ∑ j ∈ Ico 1 J, (Real.log ((j : ℝ) + 1) - Real.log j) = Real.log J := by
+    intro J hJ
+    induction J, hJ using Nat.le_induction with
+    | base => simp
+    | succ J hJ ih => rw [Finset.sum_Ico_succ_top hJ, ih]; push_cast; ring
+  have hsum := sum_le_sum hterm
+  rw [sum_add_distrib, ← mul_sum, ← mul_sum, htel1 J hJ, htel2 J hJ] at hsum
+  have hQJ : Qs (J : ℝ) / √(J : ℝ) ≤ kap * √(J : ℝ) + 3 := by
+    rw [div_le_iff₀ hsJ]
+    have := Qs_upper hJr
+    have e := Real.mul_self_sqrt (show (0 : ℝ) ≤ J by linarith)
+    have : (kap * √(J : ℝ) + 3) * √(J : ℝ) = kap * J + 3 * √(J : ℝ) := by rw [add_mul, mul_assoc, e]
+    linarith
+  nlinarith [kap_pos]
+
 end TernaryGoldbach.Prelim.Sqf
