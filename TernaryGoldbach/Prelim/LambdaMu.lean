@@ -21,8 +21,10 @@ import TernaryGoldbach.Prelim.PsiSieveMain
     Weil explicit formula with RH to `10⁸` (from `PlattGRH`) and a kernel-checked table below `10⁶`),
   * the kernel sieve table `thetaN_sieve` (`Prelim/PsiSieveMain.lean`: `n − 5√n ≤ θ(n) ≤ n + 3√n` on
     `[10⁶, 5·10⁷)`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
-  (2.14) and (2.17) are proved with the constants `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`; [H] has
-  `1.0004` and `1.0008`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
+  (2.14) and (2.17) are proved here with the constants `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`);
+  [H]'s `1.0004` and `1.0008` are in `Prelim/PsiHelfgott.lean` (Helfgott's proof, from the
+  kernel-checked PsiCert and Rosser–Schoenfeld 1975), which the minor arcs use. (2.19) holds for
+  `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
   each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.
   (2.16) and (2.18) are not formalized (unused). Lemma C.2.2 (`div_totient_lt`) is proved in
@@ -1357,9 +1359,10 @@ theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
     nlinarith
 
 variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **[H, (2.17)]**: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for `y ≥ 2.5·10⁷` ([H]: `1.0008`; the minor
-arcs use it at `y ≥ 2.7·10⁷`). -/
-theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
+/-- [H, (2.17)] with the weaker constant `1.022`: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for
+`y ≥ 2.5·10⁷`, from `psi_two_sided` alone. [H]'s `1.0008` is `sum_vonMangoldt_mul_lt_a17`
+(`Prelim/PsiHelfgott.lean`, Helfgott's proof from PsiCert and RS75). -/
+theorem sum_vonMangoldt_mul_lt_1022 {y : ℝ} (hy : 2.5e7 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
   set N := ⌊y⌋₊
   have hNy : (N : ℝ) ≤ y := Nat.floor_le (by linarith)
@@ -1370,9 +1373,10 @@ theorem sum_vonMangoldt_mul_lt_a17 {y : ℝ} (hy : 2.5e7 ≤ y) :
   exact (psi_mul_a17 hN).trans_le hmono
 
 variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **[H, (2.14)]**: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷` ([H]: `1.0004`; the minor arcs
-use it at `V ≥ 2.7·10⁷`). From `psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). -/
-theorem sum_vonMangoldt_le_a14 {y : ℝ} (hy : 2.5e7 ≤ y) :
+/-- [H, (2.14)] with the weaker constant `1.0064`: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷`, from
+`psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). [H]'s `1.0004` is `sum_vonMangoldt_le_a14`
+(`Prelim/PsiHelfgott.lean`). -/
+theorem sum_vonMangoldt_le_10064 {y : ℝ} (hy : 2.5e7 ≤ y) :
     ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0064 * y := by
   have hN : 25000000 ≤ ⌊y⌋₊ := Nat.le_floor (by norm_num; linarith)
   have h := (psi_bounds ⌊y⌋₊).2 hN
@@ -1892,10 +1896,9 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 2e6 ≤ y) :
 
 /-! ### Sums of `μ` -/
 
-/- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is replaced by
-`|∑_{n ≤ x} μ(n)/n| log x ≤ mprof(x)` (`mprof ≤ 0.14`) for `x ≥ 11815`, `moebius_profile` in
-`Prelim/MoebiusProfile.lean`, proved from the hypothesis `cde_mertens` (`|M(x)| ≤ x/4345` for
-`x ≥ 2 160 535`) and `PlattGRH`. -/
+/- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is
+`ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for the same range and proved from `PlattGRH`
+by Helfgott's formalization of `mobius003.tex` (RSBounds, `vendor/rsbounds/`). -/
 
 /- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

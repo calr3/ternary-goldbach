@@ -571,33 +571,20 @@ theorem tendsto_HkD_exp {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : L
   simpa using this
 
 
-/-- The good heights `T_k ∈ [k+1, k+2]` (`good_heightD`) used by `explicit_formulaD`; they depend
-only on `f`, not on the smoothing or on `x`. -/
-noncomputable def goodSeqD {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : LDatum f B D CR) (k : ℕ) : ℝ :=
-  Classical.choose (good_heightD hd (k + 1))
-
-theorem goodSeqD_mem {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : LDatum f B D CR) (k : ℕ) :
-    goodSeqD hd k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2) := by
-  have h := (Classical.choose_spec (good_heightD hd (k + 1))).1
-  have e : ((k + 1 : ℕ) : ℝ) = (k : ℝ) + 1 := by push_cast; ring
-  show Classical.choose (good_heightD hd (k + 1)) ∈ _
-  exact ⟨by linarith [h.1], by linarith [h.2]⟩
-
 set_option maxHeartbeats 1000000 in
 /-- **The contour identity** for an `LDatum` `f` and an admissible smoothing `φ` (`M = mellin φ`):
 along heights `T_k ∈ [k+1, k+2]`,
 `Σ_{ρ ∈ (−1/2, 3/2) × (−T_k, T_k)} m_ρ M(ρ) x^ρ → (1/2π) (∫ h(3/2 + iy) dy − ∫ h(−1/2 + iy) dy)`,
 `h(s) = (f'/f)(s) M(s) x^s`. -/
-theorem explicit_formulaD_seq {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : LDatum f B D CR) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
-      Tendsto (fun k => ∑ u ∈ zerosRectD f (goodSeqD hd k), (multRectD f (goodSeqD hd k) u : ℂ) *
-          (mellin φ u * (x : ℂ) ^ u))
+theorem explicit_formulaD {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : LDatum f B D CR) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
+    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
+      Tendsto (fun k => ∑ u ∈ zerosRectD f (T k), (multRectD f (T k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u))
         atTop (𝓝 ((1 / (2 * π) : ℂ) * ((∫ y : ℝ, hIntD f φ x (((3 / 2 : ℝ) : ℂ) + y * I)) -
           ∫ y : ℝ, hIntD f φ x (((-1 / 2 : ℝ) : ℂ) + y * I)))) := by
-  set T := goodSeqD hd with hTdef
-  have hT : ∀ k, T k ∈ Icc ((k + 1 : ℕ) : ℝ) ((k + 1 : ℕ) + 1) := fun k =>
-    (Classical.choose_spec (good_heightD hd (k + 1))).1
-  have hgood := fun k => (Classical.choose_spec (good_heightD hd (k + 1))).2
-  have hT' : ∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2) := goodSeqD_mem hd
+  choose T hT hgood using fun k : ℕ => good_heightD hd (k + 1)
+  have hT' : ∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2) := fun k => by
+    have := hT k; push_cast at this; constructor <;> linarith [this.1, this.2]
+  refine ⟨T, hT', ?_⟩
   have hTpos : ∀ k, 0 < T k := fun k => by linarith [(hT' k).1, (Nat.cast_nonneg k : (0:ℝ) ≤ k)]
   set Rinf := ∫ y : ℝ, hIntD f φ x (((3 / 2 : ℝ) : ℂ) + y * I) with hRinf
   set Linf := ∫ y : ℝ, hIntD f φ x (((-1 / 2 : ℝ) : ℂ) + y * I) with hLinf
@@ -685,14 +672,6 @@ theorem explicit_formulaD_seq {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (
   have hπ : (π : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
   field_simp
   ring
-
-/-- `explicit_formulaD_seq` with the heights left existential. -/
-theorem explicit_formulaD {f : ℂ → ℂ} {B : ℝ → ℝ} {D CR : ℝ} (hd : LDatum f B D CR) {φ : ℝ → ℂ} {K c : ℝ} (hφ : GoodSmoothing φ K c) {x : ℝ} (hx : 0 < x) :
-    ∃ T : ℕ → ℝ, (∀ k : ℕ, T k ∈ Icc ((k : ℝ) + 1) ((k : ℝ) + 2)) ∧
-      Tendsto (fun k => ∑ u ∈ zerosRectD f (T k), (multRectD f (T k) u : ℂ) * (mellin φ u * (x : ℂ) ^ u))
-        atTop (𝓝 ((1 / (2 * π) : ℂ) * ((∫ y : ℝ, hIntD f φ x (((3 / 2 : ℝ) : ℂ) + y * I)) -
-          ∫ y : ℝ, hIntD f φ x (((-1 / 2 : ℝ) : ℂ) + y * I)))) :=
-  ⟨goodSeqD hd, goodSeqD_mem hd, explicit_formulaD_seq hd hφ hx⟩
 
 /-- `L(s, χ)` (`χ` primitive, `χ ≠ 1`) is an `LDatum` with `B = B_T`, `D = D_N`, `C_R = C₃`. -/
 theorem ldatum_L {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive) (hχ1 : χ ≠ 1) :

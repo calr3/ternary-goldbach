@@ -1,4 +1,5 @@
 import TernaryGoldbach.MinorArcs.TypeI2Total
+import TernaryGoldbach.Prelim.PsiHelfgott
 import TernaryGoldbach.MinorArcs.GcdSums
 
 /-!
@@ -101,7 +102,7 @@ theorem one_le_div_gcd (q v : ℕ) (hq : 1 ≤ q) : 1 ≤ q / Nat.gcd q v :=
   (Nat.le_div_iff_mul_le (Nat.gcd_pos_of_pos_left v hq)).2
     (by rw [one_mul]; exact Nat.le_of_dvd hq (Nat.gcd_dvd_left q v))
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- [H, (6.6)], per `v`: (4.30) for `x/v`, `q_v = q/(q,v)`. Here `M₀ = min(Q/2V, U)`. -/
 theorem bound_4_30_v_le {x δ Q U V : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0 < x)
     (hδQ : |δ| * q * Q ≤ x) (hU : 0 < U) (hQ : 0 < Q) (hv : 1 ≤ v) (hvV : (v : ℝ) ≤ V) :
@@ -288,7 +289,7 @@ theorem coefQ_nonneg (x : ℝ) (q : ℕ) (U V : ℝ) {c : ℝ} (hc : 0 ≤ c) : 
   have : (0 : ℝ) < c₀ := by norm_num [c₀]
   positivity
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
 `|S_{I,2}| ≤ (x/2q) min(1, c₀/(πδ)²) μ log(Vq)`
 `+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.511V² + Vq log q) + 0.511 (2U + q) V²)`
@@ -378,7 +379,7 @@ theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 �
     linarith
   have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.511 * V ^ 2 := by
     have := Prelim.sum_vonMangoldt_mul_lt_a17 (y := V) (by norm_num; linarith)
-    rw [← hN] at this; linarith
+    rw [← hN] at this; linarith [sq_nonneg V]
   have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.511 * V ^ 2 + V * q * Real.log q := by
     refine (sum_vonMangoldt_mul_gcd_le hq (N := N)).trans ?_
     have : (N : ℝ) * q * Real.log q ≤ V * q * Real.log q := by
@@ -387,7 +388,7 @@ theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 �
     linarith
   have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0064 * V := by
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
-    rwa [← hN] at this
+    rw [← hN] at this; linarith
   have hKU : 0 ≤ K * U ^ 2 / q := by positivity
   have hK2 : 0 ≤ K * (2 * U + q) := by positivity
   have b1 := mul_le_mul_of_nonneg_left s1 hA0

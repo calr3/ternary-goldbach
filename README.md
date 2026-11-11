@@ -21,16 +21,22 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) :
     TernaryGoldbachFrom (10 ^ 27)
 ```
 
+Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
+**proved**, from `PlattGRH`: `Prelim.ramareMoebius_of_plattGRH`. The proof is Helfgott's
+formalization of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds,
+vendored unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below). So are [H, (2.14)] and
+(2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
+
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
-`MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`. Each theorem takes only the
-instances its proof uses (the `unusedSectionVars` linter checks this), so its statement shows what
-it depends on:
+`MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`; `RamareMoebius` is also passed
+as a `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. Each theorem takes only the instances its proof uses (the
+`unusedSectionVars` linter checks this), so its statement shows what it depends on:
 
 | Stage of [H, §14.4] | Lean | Hypotheses |
 |---|---|---|
 | major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
-| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH` |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH` (and `RamareMoebius`, proved from it) |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
@@ -39,34 +45,32 @@ The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s 
 [RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
 which `PlattGRH` gives at `q = 1` (`Explicit.rh_upto_1e8`).
 
-[H, (2.21)] (`|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`, Ramaré) is replaced by
-`|m(x)| log x ≤ mprof(x)`, `m(x) = ∑_{n≤x} μ(n)/n` (`Prelim.moebius_log_le`). `mprof` is `0.03` below
-`10⁸ + 1`; `0.092`, `0.09`, `0.08`, `0.035` with steps at `9.0·10⁹`, `1.5·10¹⁵`, `7.5·10²³` and
-`T ≈ e^{160.54}`; and `0.075` beyond `T`. The proof follows Helfgott's note [Hm], which runs
-Schoenfeld's identity [Sch69] as an induction:
-* below `2 160 535`, a kernel walk over `μ` (`Prelim/SmallMuMain.lean`);
-* `|M(u)| ≤ 0.571√u` for `100 ≤ u ≤ 10⁸`, `M(u) = ∑_{n≤u} μ(n)` (the walk, then a packed `μ` sieve,
-  `Prelim/MuSieve*.lean`), with El Marraki's inequality
-  `|m(x)| ≤ |M(x)|/x + (log x + ∫₁ˣ |M(t)|/t² dt)/x` (`Prelim/ElMarraki.lean`) up to `10⁸`;
-* Schoenfeld's identity
-  `N(x) + 1 = M(x) − ∑_{2≤k≤y} (Λ(k) − 1) M(x/k) − ∑_{j≤x/y} μ(j) ρ(x/j) + ρ(y) M(x/y)`, with
-  `N(x) = ∑_{n≤x} μ(n) log n` and `ρ(v) = ψ(v) − ⌊v⌋` (`Prelim/Schoenfeld69.lean`), and `M` recovered
-  from `N` by summation by parts (`Prelim/SchoenfeldInd.lean`). It runs as an induction over 213
-  kernel-checked cells from `10⁸` to `T` (`Prelim/SchoenfeldGen.lean`, `SchoenfeldCells*.lean`) and
-  one analytic step beyond `T` with `y = x^{0.18}`, which gives `|N(x)| ≤ 0.033x`
-  (`Prelim/SchoenfeldTail.lean`). The inputs are the `ψ` bounds from `PlattGRH` and
-  `theta_explicit`, counts of squarefree numbers (`Prelim/SqfreeQ*.lean`), and a kernel table of
-  `∑ |Λ(k) − 1|/k` and `∑ |Λ(k) − 1|/√k` up to `10⁶` (`Prelim/Weights*.lean`);
-* El Marraki's inequality with these bounds for `M` on the cells and beyond
-  (`Prelim/MoebiusSch*.lean`).
-
-The uses of (2.21) take the weaker constants: [H, (2.22)] (`Prelim/LiouvilleBound.lean`, still with
-`2.8`), and the tail of `∫ |g₂|/y` behind (5.31) (`MinorArcs/G2Tail.lean`, `0.0082`, still giving
-`T₂ ≤ 0.37273`).
-
 Ramaré's asymptotic for `∑_{r≤R, (r,d)=1} μ²(r)/φ(r)` ([H, (12.12)], [Ram95, Lemma 3.4]) is proved,
 including the value of `c_E` (`Prelim/Ramare.lean`). One step of [Ram95]'s proof, (3.9), is false;
 our proof avoids it (`HYPOTHESES.md`, Finding 5).
+
+### Helfgott's RSBounds
+
+`vendor/rsbounds/` holds the part of H. A. Helfgott's RSBounds development (Garald1/RSBounds, with
+Claude; MIT, with Apache 2.0 file headers) that this proof uses: 2429 modules, copied unchanged from commit `0393b52`.
+`vendor/rsbounds/source-provenance.json` records the source path, Git blob and SHA-256 of every
+file; `python3 vendor/rsbounds/check_source_provenance.py` checks them. RSBounds was itself built
+against this repository at `192ca57`, whose modules it imports. It provides:
+* `RSBounds.Moebius003.ramareMoebius_of_finiteRH`: [H, (2.21)], Ramaré's `0.03/log x` for
+  `x ≥ 11815`, from RH up to `1894438.5122` (the formalization of `mobius003.tex`). Its inputs are
+  Schoenfeld's (5.6b*) (1976), PsiCert, and kernel-checked bounds for sums of `μ` (`MoebiusCert`)
+  and of `Λ`;
+* PsiCert (`PsiFinite.psi_abs_sub_le_four_fifths_sqrt`): `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`,
+  a kernel-checked sieve campaign;
+* Rosser–Schoenfeld (1975), `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to
+  `1894438.5122`, with the first 29 zeros located by kernel-checked certificates (`vendor/rsbounds/rh100/`,
+  from `teal-sea/zeta-lab`);
+* `RSBounds.HelfgottPsiBoundsFinal`: [H, (2.14)] and (2.17) with `1.0004` and `1.0008`.
+
+RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
+(`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses. Our own proof of
+a weaker (2.21) by Schoenfeld's induction (`|m(x)| log x ≤ 0.092` at worst) is kept on the branch
+`schoenfeld-induction`; it is not used.
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
@@ -94,13 +98,8 @@ against `Challenge.lean`, which states them with Mathlib-only definitions. Compa
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:
 * the tables `|ψ(t) − t| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)` (trial division,
-  `Prelim/SmallPsiTable*.lean`) and `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on `[10⁶, 10⁹)` (a bit sieve,
+  `Prelim/SmallPsiTable*.lean`) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on `[10⁶, 5·10⁷)` (a bit sieve,
   `Prelim/PsiSieve*.lean`);
-* `|M(n)| ≤ 0.5672√n` and `|m(n)| log(n + 1) ≤ 0.03` up to `2 160 534` (`Prelim/SmallMu*.lean`), and
-  `|M(n)| ≤ 0.571√n` up to `10⁸` (a packed `μ` sieve, `Prelim/MuSieve*.lean`);
-* the table of `∑_{k≤t} |Λ(k) − 1|/k` and `∑_{k≤t} |Λ(k) − 1|/√k` up to `10⁶`
-  (`Prelim/Weights*.lean`), the 213 cells of Schoenfeld's induction (`Prelim/SchoenfeldCells*.lean`)
-  and the bound for `|m(x)| log x` on them (`Prelim/MoebiusSchData.lean`);
 * the small-range checks in `Prelim/SmallPsi.lean`, `SmallPsi700.lean`, `SmallMertens.lean`,
   `SmallProdAp.lean`, `SmallFsq.lean`, `SmallG.lean`, `SmallNonprime.lean`, `SmallLiouville.lean`,
   `SmallW.lean`, `SmallMuPhi.lean`, `SmallMertensLower.lean`, `SmallCGrid.lean`, `SmallMoebius.lean`
@@ -114,7 +113,10 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
 * the Riemann sums of the Weil-window bound (`Explicit/WeilNumC.lean`) and the constants of the
   `ψ` ranges (`Explicit/PsiRanges1e8.lean`);
 * the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`);
-* the prime ladder up to `10²⁷`: `2.5·10⁸` Proth primes (`Ladder/`, below).
+* the prime ladder up to `10²⁷`: `2.5·10⁸` Proth primes (`Ladder/`, below);
+* in `vendor/rsbounds/`, Helfgott's checks: PsiCert (`RSBounds/PsiFinite/`, about 1000 modules),
+  the Möbius certificates (`MoebiusCert/`), and the zero certificates up to height 100 (`rh100/`).
+  None uses `native_decide`.
 
 **The prime ladder.** Rung `i` (`1 ≤ i ≤ 254638308`) is `c = (111616 i − t)·2⁴⁵ + 1` with
 `0 ≤ t < 2048`, and its certificate is `3^((c−1)/2) ≡ −1 (mod c)`: every prime factor of `c` is then
@@ -142,16 +144,17 @@ kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/2
 Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
 `Eta2DDBound.lean`; about 4 minutes in all).
 
-With `c₀ = 32`, `c₊ = 2` and our (2.14), (2.17), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
+With `c₀ = 32`, `c₊ = 2` and (2.14), (2.17) with `1.0064`, `1.022` (the constants the Type I
+statements still carry; see below), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
 `2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00717` (against `1.037`).
 
 (9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
 integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
 drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
 `g₂(n)`, `n ≤ 10⁴`, computed by the kernel (`T₂` itself for `S < 700`, `T₂(S) ≈ ¼ ∫₁^S g₂(y)/y dy`
-above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0082`: by
+above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
-`m(n)` for `n < 11815` and `|m(x)| log x ≤ mprof(x)` beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
+`m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
 also proved (`MinorArcs/G2Bound.lean`), but the main theorems do not use it.
 
 ## How the proof is organized
@@ -194,8 +197,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   `120 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
   [RS62], [RS75] and [RR96]. We prove them instead, from this and from bounds `|ψ(x) − x| ≤ c√x` for
   moderate `x`:
-  * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 2√t ≤ θ(t) ≤ t + 0.1√t` on
-    `[10⁶, 10⁹)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
+  * `c = 1` on `[12, 10⁶)` (kernel, trial division) and `t − 5√t ≤ θ(t) ≤ t + 3√t` on
+    `[10⁶, 5·10⁷)` (kernel bit sieve, `Prelim/PsiSieve*.lean`);
   * `c = 31`–`200` on `[10⁶, 10¹⁷]` (`c ≤ 72` up to `10¹⁵`; `Prelim/PsiTwoSided.lean`), from the Weil
     explicit formula with RH up to `10⁸` and a compactly supported test function, with a zero-free
     region `|γ| ≥ 2.39` near the real axis;
@@ -203,8 +206,12 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
-  With these, (2.14) and (2.17) hold with `1.0064` and `1.022` instead of [H]'s `1.0004` and `1.0008`
-  (for `y ≥ 2.5·10⁷`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
+  With these alone, (2.14) and (2.17) hold with `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`;
+  `Prelim/LambdaMu.lean`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
+  [H]'s `1.0004` and `1.0008` are proved by Helfgott (`Prelim/PsiHelfgott.lean`, from RSBounds:
+  the kernel-checked PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]` and Rosser–Schoenfeld's (1975)
+  `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to `1894438.5122`), and the minor arcs use
+  them.
 
 [`BLUEPRINT.md`](BLUEPRINT.md) maps [H] chapter by chapter to the Lean files.
 
@@ -217,7 +224,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
-| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | `1.0064`, `1.022` (`y ≥ 2.5·10⁷`) |
+| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds); the Type I statements still carry `1.0064`, `1.022` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -292,6 +299,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
 | `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
+| `vendor/rsbounds/` | Helfgott's RSBounds (Garald1/RSBounds), vendored unchanged: (2.21), (2.14), (2.17), PsiCert, Rosser–Schoenfeld (1975) |
 | `scripts/` | generators of the numeric Lean files (`gen_*.py`); independent float and interval-arithmetic checks of numerical claims of [H] and of quantities in the proof (`scripts/rigorous/`); models behind the errata |
 | `HYPOTHESES.md` | the hypotheses, checked against their sources; errors found in the sources |
 | `BLUEPRINT.md`, `NOTES.md` | map from [H] to Lean; working notes |
@@ -311,16 +319,16 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   Math. Comp. 29 (1975), 243–269.
 * [RR96] O. Ramaré, R. Rumely, *Primes in arithmetic progressions*, Math. Comp. 65 (1996), 397–425.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
-* [Hm] H. A. Helfgott, *A proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`*, note
-  (8 November 2026), shared on the Lean Zulip.
-* [Sch69] L. Schoenfeld, *An improved estimate for the summatory function of the Möbius function*,
-  Acta Arith. 15 (1969), 221–233.
-* [EM96] M. El Marraki, *Majorations de la fonction sommatoire de la fonction μ(n)/n*,
-  Prépublication 96-8, Université Bordeaux 1 (1996).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.
 * O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius
   bound).
+* [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
+  for `x ≥ 11815` along Ramaré's recursive idea, shared on the Lean Zulip; formalized in
+  Garald1/RSBounds (`RSBounds/Moebius003/`).
+* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `0393b52`), vendored in
+  `vendor/rsbounds/` (MIT, with Apache 2.0 file headers; it contains code from PrimeNumberTheoremAnd, IEANTN and
+  teal-sea/zeta-lab, whose licenses are in `vendor/rsbounds/licenses/` and `vendor/rsbounds/rh100/`).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).
 
 Toolchain: Lean `v4.35.0`, Mathlib `v4.35.0`.

@@ -90,7 +90,8 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
     ring
   exact MajorArcs.major_total hN hx hNx
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Minor arcs** [H, (14.49)]:
 `∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
 (true for `x = xOf N` when `N ≥ 10²⁷`, [H, (14.15)]).

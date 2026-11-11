@@ -207,7 +207,7 @@ theorem bridge_numeric_third {T : ℝ} (hT : 6e6 ≤ T) :
   linarith
 
 set_option maxHeartbeats 1600000 in
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **The bridge case** (case (c) of `second_case_split`): `|S| ≤ 1.434 T^{5/2} (log T)^{3/2}`. -/
 theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ' a' q' (3 / 4 * T ^ 2)) (hq : (q' : ℝ) ≤ T / 6)

@@ -63,4 +63,18 @@ def PlattGRH : Prop :=
 a sum of two primes. -/
 def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
+/-! ## Proved inputs
+
+`RamareMoebius` is not a hypothesis: `Prelim.ramareMoebius_of_plattGRH` (`Prelim/RamareMoebius.lean`)
+proves it from `PlattGRH`, by Helfgott's formalization of `mobius003.tex` (vendored from
+Garald1/RSBounds). Inside the development it is still passed as a `Fact` instance, which
+`Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. -/
+
+/-- O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4, as cited in [H, (2.21)]:
+`|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`. Proved from `PlattGRH`
+(`Prelim.ramareMoebius_of_plattGRH`). -/
+def RamareMoebius : Prop :=
+  ∀ x : ℝ, 11815 ≤ x →
+    |∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (ArithmeticFunction.moebius n : ℝ) / n| ≤ 0.03 / Real.log x
+
 end TernaryGoldbach

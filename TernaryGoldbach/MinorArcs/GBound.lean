@@ -2,6 +2,7 @@ import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.MinorArcs.EtaStarBound
 
 variable [Fact TernaryGoldbach.PlattGRH]
+  [Fact TernaryGoldbach.RamareMoebius]
 
 /-!
 # Theorem 3.1.1 as a function of `r = max(1, |δ|/8) q` [H, (11.11)–(11.13)]
@@ -34,7 +35,7 @@ noncomputable def gx (x r : ℝ) : ℝ :=
   ((R x (2 * r) * Real.log (2 * r) + 0.8764) * √(Fr r) + 2.526) / √(2 * r) + Lg (2 * r) / r +
     3.8 * x ^ (-1 / 6 : ℝ)
 
-omit [Fact TernaryGoldbach.PlattGRH] in
+omit [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- `R_{x,t} ≥ 0` for `1 ≤ t ≤ x^{1/3}/3` (both logarithms in (11.13) are positive). -/
 theorem R_nonneg {x t : ℝ} (ht1 : 1 ≤ t) (ht : t ≤ x ^ (1 / 3 : ℝ) / 3) : 0 ≤ R x t := by
   unfold R

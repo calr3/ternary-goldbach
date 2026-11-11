@@ -1,4 +1,4 @@
-"""Float check of Ramaré's |m(x)| <= 0.03/log x on [11815, 1e8) (the published range of [H, (2.21)])."""
+"""Float check of Ramaré's |m(x)| <= 0.03/log x on [11815, 1e8) (the published range of ramare_moebius)."""
 import numpy as np, math
 N = 10**8
 mu = np.ones(N+1, dtype=np.int8)

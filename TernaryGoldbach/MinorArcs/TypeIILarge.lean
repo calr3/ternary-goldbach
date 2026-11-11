@@ -103,6 +103,7 @@ noncomputable def G53 (x U V : ℝ) (M r W : ℝ) : ℝ :=
     1.4262 * x * √(kap1 x U V * (1 / 2 + 1 / U)) * (1 / (W * √W))
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- The pointwise bound behind [H, (6.20)]. -/
 theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (2000000 : ℝ) ≤ V) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r) {W : ℝ}
@@ -374,6 +375,7 @@ theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (
   nlinarith
 
 set_option maxHeartbeats 2000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Type II total, split form** (generalising `typeII_gen`, the case `A = V`): an `S₂`-bound
 of the shape of (5.53)/(5.57) (see `G53`) on `[V, A]`, and the `typeII_gen` hypothesis on `[A, x/U]`.
 With `Λ_A = log(x/UA)`, `Φ_A = log c (log log(x/Uc) - log log(A/c))`, the main term is
@@ -482,6 +484,7 @@ theorem typeII_split_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V
     simp only [c4]; ring
   linarith [hbal, e2, h53, IG4, h]
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Type II total, all of `[V, x/U]` in the (5.53)/(5.57) regime** (used for [H, (6.39)]). -/
 theorem typeII_top {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ} (hU : 1 ≤ U)
     (hV : (2000000 : ℝ) ≤ V) (hVU : (V : ℝ) ≤ x / U) {M r : ℝ} (hM : 0 ≤ M) (hr : 0 ≤ r)
@@ -561,6 +564,7 @@ theorem S2_le_54 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsC
   ring
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Our version of [H, (6.38)]** (`V ≤ 2θq ≤ x/U`, `θ ≥ e`, any `δ`): (5.53) with `ρ = 1/2`
 on `[V, 2θq]`, (5.54) on `[2θq, x/U]`. -/
 theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
@@ -594,6 +598,7 @@ theorem typeII_638 {α x Q θ : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
   rw [Real.sqrt_one, one_mul] at h
   exact h
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Our version of [H, (6.39)]** (`q ≤ Q`, any `δ`): (5.53) with `ρ = 1` on all of `[V, x/U]`. -/
 theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
     (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hqQ : (q : ℝ) ≤ Q) (hx : 0 < x) {U V : ℕ}
@@ -614,6 +619,7 @@ theorem typeII_639 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
   exact h
 
 set_option maxHeartbeats 1000000 in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Our version of [H, (6.41)]** (`|δ| ≥ 8`, `V ≤ θ|δ|q ≤ x/U`, `θ ≥ e(1+ε₁)/4`): (5.57) on
 `[V, θ|δq|]`, (5.56) (via `S2_le_640'`) on `[θ|δq|, x/U]`. With `c' = |δ|q(1+ε₁)/4`,
 `ε₁ = x/2UQ`. -/

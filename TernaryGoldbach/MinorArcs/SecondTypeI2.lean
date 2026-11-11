@@ -516,7 +516,7 @@ theorem typeI2_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     refine (key.2 hδ.le 0.01 (by norm_num) (by norm_num)).trans ?_
     nlinarith [mul_nonneg (sq_nonneg (Real.log T)) (sq_nonneg T), mul_nonneg hL0 (sq_nonneg T)]
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Type I at the second parameters**: `|S_{I,1}| + |S_{I,2}| ≤ (0.0717 L² + 3199.9 L + 8471.0) T²`. -/
 theorem typeI_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hc : SecondCase T δ q) :

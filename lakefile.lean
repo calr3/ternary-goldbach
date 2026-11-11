@@ -9,6 +9,46 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "v
 -- `unusedSectionVars` linter (on by default) reports a hypothesis a theorem takes but does not use.
 @[default_target] lean_lib TernaryGoldbach
 
+-- Helfgott's RSBounds development (Garald1/RSBounds), vendored unchanged under `vendor/rsbounds/`
+-- (`source-provenance.json` records the commit and the SHA-256 of every file). It proves
+-- [H, (2.21)] (`RamareMoebius`, from `mobius003.tex`) and [H, (2.14)], (2.17) with [H]'s constants.
+-- Only the modules that `TernaryGoldbach` imports, and their dependencies, are built. The options of
+-- the `rh100` libraries are those of RSBounds' own lakefile.
+lean_lib RSBounds where
+  srcDir := "vendor/rsbounds"
+  globs := #[]
+
+lean_lib MoebiusCert where
+  srcDir := "vendor/rsbounds"
+  globs := #[]
+
+lean_lib Zeta23 where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+  leanOptions := #[⟨`relaxedAutoImplicit, false⟩, ⟨`pp.unicode.fun, true⟩]
+
+lean_lib ZetaLean where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+
+lean_lib RHHeight where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
+
+lean_lib RHHeight100 where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
+
+lean_lib HardyFirstZero where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+
+lean_lib HardyTenZeros where
+  srcDir := "vendor/rsbounds/rh100"
+  globs := #[]
+
 -- The search for the prime-ladder hints (`LadderHints.lean`) runs during elaboration; compiling it
 -- to native code makes it fast. The hints are only a guide: the kernel checks every rung.
 lean_lib LadderHints where

@@ -8,3 +8,10 @@ Canonical repository: https://github.com/calr3/ternary-goldbach
 TernaryGoldbach/Prelim/PNTMertens.lean is derived from the PrimeNumberTheoremAnd
 project (https://github.com/AlexKontorovich/PrimeNumberTheoremAnd), licensed under
 the Apache License 2.0.
+
+vendor/rsbounds/ is copied unchanged from RSBounds (https://github.com/Garald1/RSBounds,
+commit 0393b52234b29baf18fbfd02a60a2fca341a5c64), by Harald Andrés Helfgott (with Claude).
+The repository is under the MIT License (vendor/rsbounds/LICENSE); many of its files carry
+Apache 2.0 headers, which are retained. It contains code from
+PrimeNumberTheoremAnd, IEANTN and teal-sea/zeta-lab under their own licenses
+(vendor/rsbounds/licenses/, vendor/rsbounds/rh100/, vendor/rsbounds/THIRD_PARTY_NOTICES.md).

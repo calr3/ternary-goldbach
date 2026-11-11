@@ -69,7 +69,7 @@ theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) 
   have p2c : ∑ v ∈ S, (Λ v : ℝ) ≤ 1.0064 * V := by
     refine (sum_le_sum_of_subset_of_nonneg hSsub fun v _ _ => hΛ v).trans ?_
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
-    rwa [← hN] at this
+    rw [← hN] at this; linarith
   -- `∑_{v ∈ S} Λ(v)/v ≤ log⁺(6UV|δ|q/√2x)`.
   have p2d : ∑ v ∈ S, (Λ v : ℝ) * (1 / v) ≤ logPlus (6 * U * V * |δ| * q / (√2 * x)) := by
     by_cases hMN : M ≤ N
@@ -213,6 +213,7 @@ theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0
   have t3 : 35 * c₀ * c₂ / (3 * π ^ 2) * s ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * q := by gcongr
   linarith
 
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.12) + (6.14)]**, our version, for `|δ| ≥ 1/2c₂`, `qV ≤ Q` and `0 < ε ≤ 1`:
 `|S_{I,2}|` is at most the first two lines of `typeI2_le_small` ((6.12)) plus
 `1.0064 (2√(c₀c₊)/π)(1 + (1+ε)(1+V/Q)/e) UV`
@@ -320,7 +321,7 @@ theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     linarith
   have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.511 * V ^ 2 := by
     have := Prelim.sum_vonMangoldt_mul_lt_a17 (y := V) (by norm_num; linarith)
-    rw [← hN] at this; linarith
+    rw [← hN] at this; linarith [sq_nonneg V]
   have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.511 * V ^ 2 + V * q * Real.log q := by
     refine (sum_vonMangoldt_mul_gcd_le hq (N := N)).trans ?_
     have : (N : ℝ) * q * Real.log q ≤ V * q * Real.log q := by
@@ -329,7 +330,7 @@ theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     linarith
   have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0064 * V := by
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
-    rwa [← hN] at this
+    rw [← hN] at this; linarith
   have s5 := sum_min_floor_le (δ := δ) hq hx hδ0 hU0 hV (x := x)
   have hKU : 0 ≤ K * U ^ 2 / q := by positivity
   have hK2 : 0 ≤ K * (2 * U + q) := by positivity

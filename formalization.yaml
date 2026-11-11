@@ -37,24 +37,25 @@ sources:
     location: "Math. Comp. 83 (2014), Table 1 and §1.3"
     relationship: "background"
     note: "Assumed (up to 4·10¹⁸) as the hypothesis `TernaryGoldbach.BinaryGoldbachInput`."
-  - title: "A proof of |∑_{n≤x} μ(n)/n| ≤ 0.03/log x for x ≥ 11815"
-    authors: ["H. A. Helfgott"]
-    type: "note"
-    location: "note, 8 November 2026, shared on the Lean Zulip"
-    relationship: "formalizes"
-    note: >-
-      Schoenfeld's 1969 induction for N(x) = ∑ μ(n) log n, with El Marraki's inequality. Followed
-      with the inputs of this repository (RH up to 10⁸ and kernel computations), so the cells and
-      constants differ: the proof gives |∑_{n≤x} μ(n)/n| log x ≤ 0.092 for x ≥ 11815 (smaller for
-      larger x), in place of [H, (2.21)].
-    author_endorsement: "participated"
-  - title: "An improved estimate for the summatory function of the Möbius function"
-    authors: ["L. Schoenfeld"]
+  - title: "From explicit estimates for primes to explicit estimates for the Moebius function"
+    authors: ["O. Ramaré"]
+    id: "doi:10.4064/aa157-4-4"
     type: "article"
-    location: "Acta Arith. 15 (1969), 221–233, (19)–(24)"
-    relationship: "formalizes"
-    note: "The identity (19) and the passage from N to M, (21)."
-    author_endorsement: "n/a"
+    location: "Acta Arith. 157 (2013), Cor. 1.4; as cited in [H, (2.21)]"
+    relationship: "background"
+    note: >-
+      Stated as `TernaryGoldbach.RamareMoebius` and proved from Platt's GRH verification by
+      Helfgott's formalization (RSBounds, vendored in vendor/rsbounds/).
+  - title: "RSBounds"
+    type: "formalization"
+    authors: ["H. A. Helfgott"]
+    id: "https://github.com/Garald1/RSBounds"
+    location: "vendor/rsbounds/ (commit 0393b52, unchanged; source-provenance.json)"
+    relationship: "uses"
+    license: "MIT"
+    note: >-
+      Proves Ramaré's (2.21) (the formalization of Helfgott's mobius003.tex), [H, (2.14)] and (2.17)
+      with [H]'s constants, PsiCert and Rosser–Schoenfeld (1975), from RH up to 1894438.5122.
   - title: "PrimeNumberTheoremAnd"
     type: "formalization"
     id: "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd"
@@ -74,8 +75,8 @@ status:
   scope: >-
     The complete proof of the ternary Goldbach conjecture following [H], relative to two
     published numerical results passed as hypotheses. For odd n ≥ 10²⁷ (circle method), one
-    hypothesis is used: Platt's GRH verification (which also gives RH up to 10⁸). The small cases
-    5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸ and a prime ladder
+    hypothesis is used: Platt's GRH verification (which also gives RH up to 10⁸, from which
+    Ramaré's Möbius bound is proved). The small cases 5 < n < 10²⁷ use binary Goldbach up to 4·10¹⁸ and a prime ladder
     of 2.5·10⁸ Proth primes up to 10²⁷, which the Lean kernel checks.
   sorry_count: 0
   sorry_in_definitions: 0
@@ -121,9 +122,9 @@ fidelity:
     Some constants and intermediate statements differ from [H]. For example, Prop. 12.2.4 is
     proved with c₊ = 2 instead of a finite check, and the ψ and θ bounds that [H, §2.5] quotes
     from Rosser–Schoenfeld and Ramaré–Rumely are proved (from RH up to 10⁸, which Platt's GRH
-    verification gives at q = 1, and kernel-checked tables), with weaker constants in (2.14) and
-    (2.17). [H, (2.21)] is proved by Schoenfeld's induction (Helfgott's note) with the weaker
-    constant 0.092. The small cases use a kernel-checked prime ladder up to 10²⁷ instead of the
+    verification gives at q = 1, and kernel-checked tables); (2.14) and (2.17) with [H]'s
+    constants are Helfgott's proofs (RSBounds), and the Type I statements still carry the weaker
+    1.0064 and 1.022. The small cases use a kernel-checked prime ladder up to 10²⁷ instead of the
     Helfgott–Platt ladder. Several errors in [H] are corrected (e.g. (5.32),
     (6.77), and the two scales of major arcs in the proof of Thm 13.2.1); one step of Ramaré's 1995
     proof ((3.9) of [Ram95]) is false, and the formal proof avoids it. README.md, NOTES.md and

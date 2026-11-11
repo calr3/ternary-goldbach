@@ -236,15 +236,15 @@ theorem log_le_sqrt_mid {z : ℝ} (hz : 1e5 ≤ z) : Real.log z ≤ 0.04 * √z 
   norm_num at h5
   nlinarith [mul_le_mul_of_nonneg_right hs5 (by linarith : (0 : ℝ) ≤ s)]
 
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- The term bound for `z/u² ≥ 11815` (`|m(y)| ≤ 0.14/log y`, `abs_m_le_014`). -/
+variable [Fact TernaryGoldbach.RamareMoebius] in
+/-- The term bound for `z/u² ≥ 11815` (Ramaré). -/
 theorem term_big_le {z : ℝ} (hz : 0 < z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     (hge : 11815 ≤ z / (u * u : ℕ)) :
     |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ) ≤
-      0.14 / Real.log z * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
+      0.03 / Real.log z * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
   have hu1 : (1 : ℝ) ≤ u := by exact_mod_cast (mem_Icc.1 hu).1
   have hpos : (0 : ℝ) < (u * u : ℕ) := by push_cast; positivity
-  have hm := abs_m_le_014 hge
+  have hm := ramare_moebius hge
   set w := Real.log (z / (u * u : ℕ)) with hw
   have hw9 : 9 ≤ w := log_11815_ge_nine.trans (Real.log_le_log (by norm_num) hge)
   have hlu : 0 ≤ Real.log u := Real.log_nonneg hu1
@@ -256,13 +256,13 @@ theorem term_big_le {z : ℝ} (hz : 0 < z) {u N : ℕ} (hu : u ∈ Icc 1 N)
     rw [div_le_div_iff₀ (by linarith) hLpos, hL]
     nlinarith [mul_nonneg hlu (by linarith : (0 : ℝ) ≤ w - 9)]
   calc |∑ n ∈ Icc 1 ⌊z / (u * u : ℕ)⌋₊, (μ n : ℝ) / n| / (u * u : ℕ)
-      ≤ 0.14 / w / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
-    _ = 0.14 * (1 / w) * (1 / (u * u : ℕ)) := by ring
-    _ ≤ 0.14 * ((1 + 2 / 9 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
+      ≤ 0.03 / w / (u * u : ℕ) := div_le_div_of_nonneg_right hm hpos.le
+    _ = 0.03 * (1 / w) * (1 / (u * u : ℕ)) := by ring
+    _ ≤ 0.03 * ((1 + 2 / 9 * Real.log u) / Real.log z) * (1 / (u * u : ℕ)) := by gcongr
     _ = _ := by ring
 
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10⁵`: `|m(y)| ≤ 0.14/log y` for `z/u² ≥ 11815`, the kernel-checked
+variable [Fact TernaryGoldbach.RamareMoebius] in
+/-- `|ℓ(z)| log z ≤ 0.99` for `z ≥ 10⁵`: Ramaré's bound for `z/u² ≥ 11815`, the kernel-checked
 `√(2/y)` below. -/
 theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 := by
   have hz0 : 0 < z := by linarith
@@ -278,19 +278,19 @@ theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 :
   rw [← sum_filter_add_sum_filter_not _ (fun u : ℕ => 11815 ≤ z / (u * u : ℕ))] at h0
   -- first part
   have hA : ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 11815 ≤ z / (u * u : ℕ)), t u ≤
-      0.14 / L * (1.64495 + 2 / 9 * 1.0117) := by
+      0.03 / L * (1.64495 + 2 / 9 * 1.0117) := by
     calc _ ≤ ∑ u ∈ (Icc 1 N).filter (fun u : ℕ => 11815 ≤ z / (u * u : ℕ)),
-          0.14 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) :=
+          0.03 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) :=
           sum_le_sum fun u hu => term_big_le hz0 (mem_filter.1 hu).1 (mem_filter.1 hu).2
-      _ ≤ ∑ u ∈ Icc 1 N, 0.14 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
+      _ ≤ ∑ u ∈ Icc 1 N, 0.03 / L * ((1 + 2 / 9 * Real.log u) * (1 / (u * u : ℕ))) := by
           refine sum_le_sum_of_subset_of_nonneg (filter_subset _ _) fun u hu _ => ?_
           have : 0 ≤ Real.log u := Real.log_nonneg (by exact_mod_cast (mem_Icc.1 hu).1)
           positivity
-      _ = 0.14 / L * (∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
+      _ = 0.03 / L * (∑ u ∈ Icc 1 N, (1 : ℝ) / (u * u : ℕ) +
             2 / 9 * ∑ u ∈ Icc 1 N, Real.log u / (u * u : ℕ)) := by
           rw [mul_sum, ← sum_add_distrib, mul_sum]
           exact sum_congr rfl fun u _ => by ring
-      _ ≤ 0.14 / L * (1.64495 + 2 / 9 * 1.0117) := by
+      _ ≤ 0.03 / L * (1.64495 + 2 / 9 * 1.0117) := by
           have := sum_inv_sq_le_pi N
           have := sum_log_div_sq_le N
           gcongr
@@ -340,22 +340,22 @@ theorem abs_ls_large {z : ℝ} (hz : 1e5 ≤ z) : |ls z| * Real.log z ≤ 0.99 :
           have h4 := log_le_of_le_two_pow (y := 47260) (k := 16) (by norm_num) (by norm_num)
           norm_num at h4
           linarith
-  have hsum : |ls z| ≤ 0.14 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6 := by
+  have hsum : |ls z| ≤ 0.03 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6 := by
     refine h0.trans ?_
     exact add_le_add hA hB
   have hsz : 0 < √z := Real.sqrt_pos.2 hz0
   have hlz := log_le_sqrt_mid hz
   obtain ⟨-, hs2⟩ := sqrt2_bounds
-  calc |ls z| * L ≤ (0.14 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6) * L :=
+  calc |ls z| * L ≤ (0.03 / L * (1.64495 + 2 / 9 * 1.0117) + √2 / √z * 5.6) * L :=
         mul_le_mul_of_nonneg_right hsum hLpos.le
-    _ = 0.14 * (1.64495 + 2 / 9 * 1.0117) + √2 * 5.6 * (L / √z) := by
+    _ = 0.03 * (1.64495 + 2 / 9 * 1.0117) + √2 * 5.6 * (L / √z) := by
         field_simp
-    _ ≤ 0.14 * (1.64495 + 2 / 9 * 1.0117) + 1.414214 * 5.6 * 0.04 := by
+    _ ≤ 0.03 * (1.64495 + 2 / 9 * 1.0117) + 1.414214 * 5.6 * 0.04 := by
         gcongr
         rw [div_le_iff₀ hsz]; exact hlz
     _ ≤ 0.99 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`|ℓ(z)| ≤ 0.99/log z`** for `z > 1`. -/
 theorem abs_ls_mul_log_le {z : ℝ} (hz : 1 < z) : |ls z| * Real.log z ≤ 0.99 := by
   rcases lt_or_ge z 1e5 with h | h
@@ -426,7 +426,7 @@ theorem Q_ge_one {q : ℕ} (hq : 1 ≤ q) : 1 ≤ (q : ℝ) / Nat.totient q := b
   rw [le_div_iff₀ (by exact_mod_cast h0), one_mul]
   exact_mod_cast Nat.totient_le q
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`** for `q < x` (Lemma 2.5 and `abs_ls_mul_log_le`). -/
 theorem abs_lqs_mul_log_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     |lqs q x| * Real.log (x / q) ≤ 0.99 * ((q : ℝ) / Nat.totient q) := by
@@ -617,7 +617,7 @@ theorem yS_large {y : ℝ} (hy : 80 ≤ y) (N : ℕ) :
     _ ≤ 5 / 3 * 1.32 + 5 / 3 / 274 := by linarith
     _ ≤ 2.8 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (2.22)] with constant `2.8`** (Ramaré's Liouville route, hal-02572851):
 `|∑_{n ≤ x, (n,q)=1} μ(n)/n| ≤ 2.8 (q/φ(q))/log(x/q)` for `1 ≤ q < x`. -/
 theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
@@ -675,7 +675,7 @@ theorem abs_mqs_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) < x) :
     _ ≤ Q * 2.8 := mul_le_mul_of_nonneg_left hyS (by linarith)
     _ = 2.8 * Q := by ring
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (2.22)] with constant `2.8`** (for [H]'s `4/5`, from [Ramb]), in the summatory form. -/
 theorem abs_sum_moebius_div_coprime_le_log {x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hqx : (q : ℝ) < x) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤

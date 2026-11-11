@@ -1,11 +1,11 @@
 import TernaryGoldbach.MinorArcs.G2TailNum
 import TernaryGoldbach.MinorArcs.T2Small
 import TernaryGoldbach.MinorArcs.G2Euler
-import TernaryGoldbach.Prelim.MoebiusProfile
+import TernaryGoldbach.Prelim.RamareMoebius
 import Mathlib.NumberTheory.ZetaValues
 
 /-!
-# `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0082`
+# `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`
 
 For `y ≥ 1`, `N = ⌊y⌋`: `|g₂(y)| ≤ ∑_d f(d)² S_d(N/d)²` (`abs_g2_le_sum`) and
 `S_d(M) = ∑_{a ≤ M} H_d(a) m(M/a)` (`Sd_eq`), `m(K) = ∑_{n ≤ K} μ(n)/n`. By Cauchy–Schwarz with
@@ -14,9 +14,8 @@ weights `H_d(a) λ(da)` (`λ > 0` arbitrary),
 and `∫_X^S m(⌊y/u⌋)²/y dy ≤ ∫_{X/u}^∞ m(⌊t⌋)²/t dt =: V(X/u)` (Minkowski in the form of a weighted
 Cauchy–Schwarz). With `λ(u) ≈ √V(X/u)` this gives
 `∫_X^S |g₂|/y ≤ ∑_d f(d)² (∑_a H_d(a) λ(da)) (∑_a H_d(a) V(X/(da))/λ(da))`.
-`V(k)` for `k ≤ X = 10⁴` is computed by the kernel from `m(j)`, `j < 11815`, plus
-`|m(x)| log x ≤ mprof(x)` beyond (`MoebiusProfile.lean`; `∑_{j ≥ 11815} m(j)² log(1 + 1/j) ≤ 5.0423·10⁻⁴`,
-`sum_tail_le`); the sum over `d ≤ X`, `a ≤ X/d` is evaluated by the kernel
+`V(k)` for `k ≤ X = 10⁴` is computed by the kernel from `m(j)`, `j < 11815`, plus Ramaré's
+`|m(x)| ≤ 0.03/log x` beyond; the sum over `d ≤ X`, `a ≤ X/d` is evaluated by the kernel
 (`G2TailNum.lean`), the rest by `∑_a H_d(a) ≤ 2 (π²/8) σ(d)/d` (an Euler product and `ζ(2) = π²/6`).
 -/
 
@@ -315,7 +314,7 @@ theorem integral_phi_le {A B : ℝ} (hA : 0 ≤ A) (hAB : A ≤ B) :
     integral_phi_nat, integral_phi_nat, ← Finset.sum_range_add_sum_Ico _ hle, add_sub_cancel_left]
   rfl
 
-/-! ### `V(k)`: the table and the tail -/
+/-! ### `V(k)`: the table and Ramaré's tail -/
 
 open TernaryGoldbach.Prelim.SmallMoeb (Pt Qt sum_approx)
 
@@ -397,23 +396,19 @@ theorem log_11815_ge9' : 9 ≤ Real.log 11815 := by
   calc Real.exp 1 ^ 9 ≤ (2.7182818286 : ℝ) ^ 9 := pow_le_pow_left₀ (Real.exp_pos 1).le h1.le 9
     _ ≤ 11815 := by norm_num
 
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- `m(j)² log(1 + 1/j) ≤ 1.00001 c(j) (1/log j − 1/log(j+1))` for `j ≥ 11815`, `c(j) = mprof(j)²`
-(`|m(j)| log j ≤ mprof(j)`, `MoebiusProfile.lean`; `log(j+1)/log j ≤ 1.00001`). -/
+variable [Fact TernaryGoldbach.RamareMoebius] in
+/-- `log(j+1)/log j ≤ 1.00001` for `j ≥ 11815`. -/
 theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
-    mm j ^ 2 * Real.log (1 + 1 / j) ≤
-      1.00001 * (Prelim.mprof j ^ 2 * (1 / Real.log j - 1 / Real.log (j + 1))) := by
+    mm j ^ 2 * Real.log (1 + 1 / j) ≤ 0.0009 * 1.00001 * (1 / Real.log j - 1 / Real.log (j + 1)) := by
   have hj' : (11815 : ℝ) ≤ j := by exact_mod_cast hj
   have hj0 : (0 : ℝ) < j := by linarith
   have hl9 : 9 ≤ Real.log j := le_trans log_11815_ge9' (Real.log_le_log (by norm_num) hj')
-  have hR := Prelim.moebius_log_le hj'
+  have hR := TernaryGoldbach.Prelim.ramare_moebius hj'
   rw [Nat.floor_natCast, ← mm_eq] at hR
-  set c := Prelim.mprof j with hc
-  have hc0 : 0 ≤ c := Prelim.mprof_nonneg _
-  have hl0 : 0 < Real.log j := by linarith
-  have hm2 : mm j ^ 2 ≤ c ^ 2 / Real.log j ^ 2 := by
-    rw [← sq_abs, le_div_iff₀ (by positivity), ← mul_pow]
-    exact pow_le_pow_left₀ (by positivity) hR 2
+  have hm2 : mm j ^ 2 ≤ 0.0009 / Real.log j ^ 2 := by
+    rw [← sq_abs]
+    calc |mm j| ^ 2 ≤ (0.03 / Real.log j) ^ 2 := pow_le_pow_left₀ (abs_nonneg _) hR 2
+      _ = 0.0009 / Real.log j ^ 2 := by ring
   have hL : Real.log (1 + 1 / j) = Real.log (j + 1) - Real.log j := by
     rw [← Real.log_div (by positivity) hj0.ne']; congr 1; field_simp
   have hj1 : (0 : ℝ) ≤ 1 / j := by positivity
@@ -421,199 +416,76 @@ theorem tail_term_le {j : ℕ} (hj : 11815 ≤ j) :
   have hL1 : Real.log (1 + 1 / j) ≤ 1 / j := by
     have := Real.log_le_sub_one_of_pos (show (0 : ℝ) < 1 + 1 / j by positivity); linarith
   have hlj1 : Real.log j ≤ Real.log (j + 1) := Real.log_le_log hj0 (by linarith)
+  have hl0 : 0 < Real.log j := by linarith
   have hl1 : 0 < Real.log (j + 1) := by linarith
+  -- `(1/log j − 1/log(j+1)) = log(1+1/j)/(log j log(j+1))`
   have e : 1 / Real.log j - 1 / Real.log (j + 1) =
       Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1)) := by
     rw [hL]; field_simp
   rw [e]
+  -- `log(j+1) ≤ 1.00001 log j`
   have hrat : Real.log (j + 1) ≤ 1.00001 * Real.log j := by
     have : Real.log (j + 1) ≤ Real.log j + 1 / j := by linarith [hL, hL1]
     have h2 : 1 / (j : ℝ) ≤ 0.00001 * 9 := by
       rw [div_le_iff₀ hj0]; nlinarith
     nlinarith
   have hll : Real.log j * Real.log (j + 1) ≤ 1.00001 * Real.log j ^ 2 := by nlinarith
-  calc mm j ^ 2 * Real.log (1 + 1 / j) ≤ c ^ 2 / Real.log j ^ 2 * Real.log (1 + 1 / j) :=
+  calc mm j ^ 2 * Real.log (1 + 1 / j) ≤ 0.0009 / Real.log j ^ 2 * Real.log (1 + 1 / j) :=
         mul_le_mul_of_nonneg_right hm2 hL0
-    _ = c ^ 2 * Real.log (1 + 1 / j) / Real.log j ^ 2 := by ring
-    _ ≤ 1.00001 * c ^ 2 * Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1)) := by
+    _ = 0.0009 * Real.log (1 + 1 / j) / Real.log j ^ 2 := by ring
+    _ ≤ 0.0009 * 1.00001 * Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1)) := by
         rw [div_le_div_iff₀ (by positivity) (by positivity)]
-        have : 0 ≤ c ^ 2 * Real.log (1 + 1 / j) := by positivity
         nlinarith
-    _ = 1.00001 * (c ^ 2 * (Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1)))) := by ring
+    _ = 0.0009 * 1.00001 * (Real.log (1 + 1 / j) / (Real.log j * Real.log (j + 1))) := by ring
 
-/-! ### The tail `∑_{j ≥ K} m(j)² log(1 + 1/j)` -/
-
-/-- `1/log j`. -/
-noncomputable def il (j : ℕ) : ℝ := 1 / Real.log j
-
-/-- The steps of `mprof` (`MoebiusProfile.lean`). -/
-def B1 : ℕ := 100000001
-def B2 : ℕ := 9001713129
-def B3 : ℕ := 1525381771989686
-def B4 : ℕ := 747499893696668303884288
-
-/-- `mprof(j)` with the conditions on `j` stated in `ℕ`. -/
-noncomputable def cpr (j : ℕ) : ℝ :=
-  if j < B1 then 0.03 else if j < B2 then 0.092 else if j < B3 then 0.09
-  else if j < B4 then 0.08 else if j < Prelim.Tcells then 0.035 else 0.075
-
-theorem mprof_eq_cpr (j : ℕ) : Prelim.mprof j = cpr j := by
-  unfold Prelim.mprof cpr B1 B2 B3 B4
-  have h5 : (j : ℝ) < (Prelim.Tcells : ℝ) ↔ j < Prelim.Tcells := Nat.cast_lt
-  simp only [h5]
-  norm_cast
-
-/-- `B(j) = ∑ over the steps from `j` on of `c (1/log a − 1/log b)``: the telescoping bound. -/
-noncomputable def Bt (j : ℕ) : ℝ :=
-  let T6 := 0.005625 * il Prelim.Tcells
-  let T5 := 0.001225 * (il B4 - il Prelim.Tcells) + T6
-  let T4 := 0.0064 * (il B3 - il B4) + T5
-  let T3 := 0.0081 * (il B2 - il B3) + T4
-  let T2 := 0.008464 * (il B1 - il B2) + T3
-  if j < B1 then 0.0009 * (il j - il B1) + T2
-  else if j < B2 then 0.008464 * (il j - il B2) + T3
-  else if j < B3 then 0.0081 * (il j - il B3) + T4
-  else if j < B4 then 0.0064 * (il j - il B4) + T5
-  else if j < Prelim.Tcells then 0.001225 * (il j - il Prelim.Tcells) + T6
-  else 0.005625 * il j
-
-theorem B4_lt_T : B4 < Prelim.Tcells := by decide
-
-theorem Bt_step {j : ℕ} (hj : 2 ≤ j) : Bt j - Bt (j + 1) = cpr j ^ 2 * (il j - il (j + 1)) := by
-  unfold Bt cpr
-  simp only [B1, B2, B3, B4, Prelim.Tcells]
-  rcases lt_or_ge (j + 1) 100000001 with h1 | h1
-  · simp only [show j < 100000001 by omega, h1, if_true]; ring
-  rcases lt_or_ge (j + 1) 9001713129 with h2 | h2
-  · rcases eq_or_lt_of_le h1 with e | e
-    · simp only [show j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show j + 1 < 9001713129 by omega, if_true, if_false]; rw [← e]; ring
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show j < 9001713129 by omega, h2, if_true, if_false]; ring
-  rcases lt_or_ge (j + 1) 1525381771989686 with h3 | h3
-  · rcases eq_or_lt_of_le h2 with e | e
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show j + 1 < 1525381771989686 by omega, if_true, if_false]; rw [← e]; ring
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show j < 1525381771989686 by omega, h3, if_true, if_false]; ring
-  rcases lt_or_ge (j + 1) 747499893696668303884288 with h4 | h4
-  · rcases eq_or_lt_of_le h3 with e | e
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-        show j + 1 < 747499893696668303884288 by omega, if_true, if_false]; rw [← e]; ring
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-        show j < 747499893696668303884288 by omega, h4, if_true, if_false]; ring
-  rcases lt_or_ge (j + 1) 5273264915796702340408371151172679619749656857014800716447501879607296 with h5 | h5
-  · rcases eq_or_lt_of_le h4 with e | e
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-        show j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
-        show j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, if_true, if_false]; rw [← e]; ring
-    · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-        show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-        show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-        show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
-        show j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, h5, if_true, if_false]; ring
-  rcases eq_or_lt_of_le h5 with e | e
-  · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-      show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-      show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-      show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
-      show j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, show ¬ (j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296) by omega, if_true, if_false]; rw [← e]; ring
-  · simp only [show ¬ j < 100000001 by omega, show ¬ (j + 1 < 100000001) by omega,
-      show ¬ j < 9001713129 by omega, show ¬ (j + 1 < 9001713129) by omega,
-      show ¬ j < 1525381771989686 by omega, show ¬ (j + 1 < 1525381771989686) by omega,
-      show ¬ j < 747499893696668303884288 by omega, show ¬ (j + 1 < 747499893696668303884288) by omega,
-      show ¬ j < 5273264915796702340408371151172679619749656857014800716447501879607296 by omega, show ¬ (j + 1 < 5273264915796702340408371151172679619749656857014800716447501879607296) by omega, if_true, if_false]; ring
-
-theorem il_anti {a b : ℕ} (ha : 2 ≤ a) (hab : a ≤ b) : il b ≤ il a := by
-  unfold il
-  have ha' : (2 : ℝ) ≤ a := by exact_mod_cast ha
-  have hb' : (a : ℝ) ≤ b := by exact_mod_cast hab
-  have hla : 0 < Real.log a := Real.log_pos (by linarith)
-  exact one_div_le_one_div_of_le hla (Real.log_le_log (by linarith) hb')
-
-theorem il_nonneg (j : ℕ) : 0 ≤ il j := by
-  unfold il; exact div_nonneg zero_le_one (Real.log_natCast_nonneg j)
-
-theorem Bt_nonneg {j : ℕ} (hj : 2 ≤ j) : 0 ≤ Bt j := by
-  have hT := B4_lt_T
-  have i1 := il_anti (a := B1) (b := B2) (by norm_num [B1]) (by norm_num [B1, B2])
-  have i2 := il_anti (a := B2) (b := B3) (by norm_num [B2]) (by norm_num [B2, B3])
-  have i3 := il_anti (a := B3) (b := B4) (by norm_num [B3]) (by norm_num [B3, B4])
-  have i4 := il_anti (a := B4) (b := Prelim.Tcells) (by norm_num [B4]) hT.le
-  have i5 := il_nonneg Prelim.Tcells
-  have i6 := il_nonneg j
-  unfold Bt
-  simp only
-  split_ifs with h1 h2 h3 h4 h5
-  · have := il_anti hj (show j ≤ B1 by omega); linarith
-  · have := il_anti hj (show j ≤ B2 by omega); linarith
-  · have := il_anti hj (show j ≤ B3 by omega); linarith
-  · have := il_anti hj (show j ≤ B4 by omega); linarith
-  · have := il_anti hj (show j ≤ Prelim.Tcells by omega); linarith
-  · linarith
-
-/-- `B(11815) ≤ 5.0423·10⁻⁴ / 1.00001`. -/
-theorem Bt_K_le : 1.00001 * Bt 11815 ≤ (tailV : ℝ) / 10 ^ 24 := by
-  have l0 := Prelim.Sch.logLo_spec (q := 9377 / 1000) (L := 11815) (by decide +kernel)
-  have l1 := Prelim.Sch.logLo_spec (q := 1842 / 100) (L := B1) (by decide +kernel)
-  have u2 := Prelim.Sch.logUp_spec (q := 229207 / 10000) (L := B2) (by decide +kernel)
-  have u3 := Prelim.Sch.logUp_spec (q := 349611 / 10000) (L := B3) (by decide +kernel)
-  have u4 := Prelim.Sch.logUp_spec (q := 549711 / 10000) (L := B4) (by decide +kernel)
-  have l5 := Prelim.Sch.logLo_spec (q := 16054 / 100) (L := Prelim.Tcells) (by decide +kernel)
-  push_cast at l0 l1 u2 u3 u4 l5
-  have hl2 : 0 < Real.log (B2 : ℝ) := Real.log_pos (by norm_num [B2])
-  have hl3 : 0 < Real.log (B3 : ℝ) := Real.log_pos (by norm_num [B3])
-  have hl4 : 0 < Real.log (B4 : ℝ) := Real.log_pos (by norm_num [B4])
-  have k0 : il 11815 ≤ 1 / 9.377 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l0 ⊢; linarith)
-  have k1 : il B1 ≤ 1 / 18.42 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l1 ⊢; linarith)
-  have k2 : 1 / 22.9207 ≤ il B2 := one_div_le_one_div_of_le hl2 (by norm_num at u2 ⊢; linarith)
-  have k3 : 1 / 34.9611 ≤ il B3 := one_div_le_one_div_of_le hl3 (by norm_num at u3 ⊢; linarith)
-  have k4 : 1 / 54.9711 ≤ il B4 := one_div_le_one_div_of_le hl4 (by norm_num at u4 ⊢; linarith)
-  have k5 : il Prelim.Tcells ≤ 1 / 160.54 := one_div_le_one_div_of_le (by norm_num) (by norm_num at l5 ⊢; linarith)
-  unfold Bt
-  simp only [show (11815 : ℕ) < B1 by norm_num [B1], if_true]
-  norm_num [tailV] at k0 k1 k2 k3 k4 k5 ⊢
-  linarith
-
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 theorem sum_tail_le (M : ℕ) :
     ∑ j ∈ Icc KK M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (tailV : ℝ) / 10 ^ 24 := by
   have hK : KK = 11815 := rfl
-  have htel : ∀ N : ℕ, ∑ j ∈ Icc KK N, (Bt j - Bt (j + 1)) = Bt KK - Bt (max KK (N + 1)) := by
-    intro N
-    induction N with
-    | zero => rw [hK]; simp
-    | succ N ih =>
-      by_cases h : KK ≤ N + 1
-      · rw [show Icc KK (N + 1) = insert (N + 1) (Icc KK N) by
-          ext x; simp only [mem_insert, mem_Icc]; omega, sum_insert (by simp), ih]
-        rw [show max KK (N + 1 + 1) = N + 1 + 1 by omega]
-        rcases Nat.lt_or_ge N KK with h' | h'
-        · rw [show max KK (N + 1) = N + 1 by omega]; ring
-        · rw [show max KK (N + 1) = N + 1 by omega]; ring
-      · rw [show Icc KK (N + 1) = ∅ by ext x; simp; omega, sum_empty,
-          show max KK (N + 1 + 1) = KK by omega]; ring
+  have hsum : ∀ M : ℕ, ∑ j ∈ Icc KK M, (1 / Real.log j - 1 / Real.log (j + 1)) ≤ 1 / Real.log KK := by
+    intro M
+    induction M with
+    | zero => simp [hK]; exact Real.log_nonneg (by norm_num)
+    | succ M ih =>
+      by_cases h : KK ≤ M + 1
+      · rw [show Icc KK (M + 1) = insert (M + 1) (Icc KK M) by
+          ext x; simp only [mem_insert, mem_Icc]; omega, sum_insert (by simp)]
+        by_cases h' : KK ≤ M
+        · -- telescoping: the partial sum is `1/log KK − 1/log(M+1)`
+          have htel : ∀ N : ℕ, KK ≤ N → ∑ j ∈ Icc KK N, (1 / Real.log j - 1 / Real.log (j + 1)) =
+              1 / Real.log KK - 1 / Real.log (N + 1) := by
+            intro N hN
+            induction N, hN using Nat.le_induction with
+            | base => simp
+            | succ N hN ihN =>
+              rw [show Icc KK (N + 1) = insert (N + 1) (Icc KK N) by
+                ext x; simp only [mem_insert, mem_Icc]; omega, sum_insert (by simp), ihN]
+              push_cast; ring
+          rw [htel M h']
+          have : 0 ≤ 1 / Real.log ((M + 1 : ℕ) + 1 : ℝ) := by
+            have : (1 : ℝ) < ((M + 1 : ℕ) : ℝ) + 1 := by push_cast; linarith [(Nat.cast_nonneg M : (0:ℝ) ≤ M)]
+            exact (one_div_pos.2 (Real.log_pos this)).le
+          push_cast at this ⊢
+          linarith
+        · have : M + 1 = KK := by omega
+          rw [show Icc KK M = ∅ by ext x; simp; omega, sum_empty, add_zero, this]
+          have : 0 ≤ 1 / Real.log ((KK : ℝ) + 1) := by
+            rw [hK]; exact (one_div_pos.2 (Real.log_pos (by norm_num))).le
+          push_cast at this ⊢
+          linarith
+      · rw [show Icc KK (M + 1) = ∅ by ext x; simp; omega, sum_empty]
+        rw [hK]; exact (one_div_pos.2 (Real.log_pos (by norm_num))).le
   calc ∑ j ∈ Icc KK M, mm j ^ 2 * Real.log (1 + 1 / j)
-      ≤ ∑ j ∈ Icc KK M, 1.00001 * (Bt j - Bt (j + 1)) := by
-        refine sum_le_sum fun j hj => ?_
-        have hj1 : 11815 ≤ j := by have := (mem_Icc.1 hj).1; rw [hK] at this; exact this
-        have h := tail_term_le hj1
-        rw [mprof_eq_cpr] at h
-        rw [Bt_step (by omega)]
-        unfold il; push_cast; exact h
-    _ = 1.00001 * (Bt KK - Bt (max KK (M + 1))) := by rw [← mul_sum, htel]
-    _ ≤ 1.00001 * Bt 11815 := by
-        have := Bt_nonneg (j := max KK (M + 1)) (by rw [hK]; omega)
-        rw [hK] at *; nlinarith
-    _ ≤ (tailV : ℝ) / 10 ^ 24 := Bt_K_le
+      ≤ ∑ j ∈ Icc KK M, 0.0009 * 1.00001 * (1 / Real.log j - 1 / Real.log (j + 1)) :=
+        sum_le_sum fun j hj => tail_term_le (by have := (mem_Icc.1 hj).1; rw [hK] at this; exact this)
+    _ = 0.0009 * 1.00001 * ∑ j ∈ Icc KK M, (1 / Real.log j - 1 / Real.log (j + 1)) := by
+        rw [mul_sum]
+    _ ≤ 0.0009 * 1.00001 * (1 / Real.log KK) := mul_le_mul_of_nonneg_left (hsum M) (by norm_num)
+    _ ≤ 0.0009 * 1.00001 * (1 / 9) := by
+        refine mul_le_mul_of_nonneg_left ?_ (by norm_num)
+        rw [hK]; push_cast
+        exact one_div_le_one_div_of_le (by norm_num) log_11815_ge9'
+    _ = (tailV : ℝ) / 10 ^ 24 := by norm_num [tailV]
 
 theorem F_nonneg (j : ℕ) : 0 ≤ mm j ^ 2 * Real.log (1 + 1 / j) := by
   have : (0 : ℝ) ≤ 1 / j := by positivity
@@ -625,7 +497,7 @@ theorem sum_tU : ∑ j ∈ Icc 1 (KK - 1), tU j = cP := by
   have h2 : sV.Phi = cP := (Prod.mk.inj tail_ok).1
   rw [← h2, h]
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∑_{j=k}^M m(j)² log(1 + 1/j) ≤ V(k)/10²⁴`** for `1 ≤ k ≤ 10⁴`. -/
 theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
     ∑ j ∈ Icc k M, mm j ^ 2 * Real.log (1 + 1 / j) ≤ (Vt k : ℝ) / 10 ^ 24 := by
@@ -669,7 +541,7 @@ theorem sum_mm_le_Vt {k M : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ XX) :
   rw [add_sub_right_comm, add_div]
   linarith
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∫_X^S m(⌊y/u⌋)²/y dy ≤ V(⌊X/u⌋)/10²⁴`** (`⌊X/u⌋` replaced by `1` when it is `0`). -/
 theorem integral_mm_le {u : ℕ} (hu : 1 ≤ u) {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, mm ⌊y / u⌋₊ ^ 2 / y ≤
@@ -826,7 +698,7 @@ theorem intervalIntegrable_abs_g2_div {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b)
 noncomputable def Lam (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * lamR (d * a)
 noncomputable def Xi (NS d : ℕ) : ℝ := ∑ a ∈ Icc 1 (NS / d), Hd d a * wR (d * a)
 
-variable [Fact TernaryGoldbach.PlattGRH] in
+variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **`∫_X^S |g₂|/y ≤ ∑_d f(d)² Λ_d Ξ_d`**. -/
 theorem tail_le_sum {S : ℝ} (hS : 10000 ≤ S) :
     ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ ∑ d ∈ Icc 1 ⌊S⌋₊, fo d ^ 2 * Lam ⌊S⌋₊ d * Xi ⌊S⌋₊ d := by
@@ -1202,15 +1074,15 @@ theorem sum_terms_le {S : ℝ} (hS : 10000 ≤ S) :
           unfold l1w1; positivity
       _ = l1w1 * (4 * 1.2338 ^ 2) / 10000 := by norm_num [XX]; ring
 
-theorem tv_one : sV.tv.get (1, 0) 1 = (549755813888, 1483286220167) := by
+theorem tv_one : sV.tv.get (1, 0) 1 = (549755813888, 1482550931899) := by
   rw [sV_spec.2.2.2.2.1 1 le_rfl (by decide)]
   have hV : Vt 1 = cP + tailV := by simp [Vt]
   rw [hV]
   decide +kernel
 
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **`∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0082`** for `S ≥ 10⁴`. -/
-theorem tail_integral_le {S : ℝ} (hS : 10000 ≤ S) : ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ 0.0082 := by
+variable [Fact TernaryGoldbach.RamareMoebius] in
+/-- **`∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`** for `S ≥ 10⁴`. -/
+theorem tail_integral_le {S : ℝ} (hS : 10000 ≤ S) : ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ 0.0045 := by
   refine (tail_le_sum hS).trans ((sum_terms_le hS).trans ?_)
   unfold l1w1
   rw [tv_one, Macc]
