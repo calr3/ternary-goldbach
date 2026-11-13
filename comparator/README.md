@@ -43,8 +43,13 @@ unprivileged user namespaces or a setuid-root `bwrap`.
 
 ## Status
 
-On 2026-11-06, at commit `83ac1e1`, `lake comparator --config comparator/config.json` accepted both
-theorems:
+**The current statements have not been through Comparator yet.** `Challenge.lean` and
+`config.json` state the two-hypothesis theorems (`PlattGRH`, `BinaryGoldbachInput`), and no run
+has been recorded for them.
+
+The only recorded run is of an earlier version. On 2026-11-06, at commit `83ac1e1`, the main
+theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`), and
+`lake comparator --config comparator/config.json` accepted both theorems:
 
 ```
 Running Lean default kernel on solution

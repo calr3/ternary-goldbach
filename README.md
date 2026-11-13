@@ -75,6 +75,12 @@ a weaker (2.21) by Schoenfeld's induction (`|m(x)| log x ≤ 0.092` at worst) is
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
+Everything is on `main`. The one other branch, `schoenfeld-induction`, keeps our own proof of a
+weaker (2.21), which `main` no longer uses. Its history is also part of `main`'s.
+
+The commit that brought in RSBounds and removed `RamareMoebius` as a hypothesis (`509443e`) was
+written without a Lean toolchain. A full `lake build` of it has not been recorded yet.
+
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
 
@@ -92,8 +98,12 @@ echo 'import TernaryGoldbach
 ```
 
 The theorems can also be checked with [Comparator](https://github.com/leanprover/comparator)
-against `Challenge.lean`, which states them with Mathlib-only definitions. Comparator accepts both
-(see [`comparator/README.md`](comparator/README.md)).
+against `Challenge.lean`, which states them with Mathlib-only definitions (see
+[`comparator/README.md`](comparator/README.md)). **The current version has not been through
+Comparator yet.** The only recorded run is from 2026-11-06, at commit `83ac1e1`, when the main
+theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
+Comparator accepted both theorems then. The two-hypothesis statements have not been checked with
+it.
 
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:
