@@ -17,7 +17,7 @@ RH up to that height follows from `PlattGRH` at `q = 1` (`Explicit.rh_upto_1e8`;
 `RSBounds.Moebius003.finiteRH_of_plattGRH`).
 
 The uses are the uniform Möbius bound of `MoebiusBound.lean` (for [H, (2.22)]), the Liouville bound
-of `LiouvilleBound.lean`, and [H, Lemma 5.1.2] (`MinorArcs/G2Bound.lean`). They take
+of `LiouvilleBound.lean`, and the tail of `∫ |g₂|/y` in [H, (5.31)] (`MinorArcs/G2Tail.lean`). They take
 `[Fact RamareMoebius]`; the instance below provides it from `[Fact PlattGRH]`.
 -/
 

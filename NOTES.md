@@ -310,10 +310,8 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   (`Prelim/PsiHelfgott.lean`, `sum_vonMangoldt_le_a14`, `sum_vonMangoldt_mul_lt_a17`, from RSBounds:
   PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`, kernel-checked, and RS75's `0.00020211 x` above
   `e²³`); the proofs in `TypeI2Large`, `TypeI2Sum` apply them. The statements there, and
-  `FirstChoiceTypeI2*`, carry the weaker `1.0064` and `1.022` (as `0.511 V²`). `Prelim/LambdaMu.lean`
-  also proves `ψ(y) ≤ 1.0064y` and `∑ Λ(n)n < 1.022y²/2` for `y ≥ 2.5·10⁷` from `|ψ(y) − y| ≤ 31.5√y`
-  alone (`psi_mul_of`, partial summation with five ranges of `c`; `sum_vonMangoldt_le_10064`,
-  `sum_vonMangoldt_mul_lt_1022`, unused); [H]'s constants are not reachable this way below about `10⁹`.
+  `FirstChoiceTypeI2*`, carry the weaker `1.0064` and `1.022` (as `0.511 V²`). From
+  `|ψ(y) − y| ≤ 31.5√y` alone, [H]'s constants are not reachable below about `10⁹`.
 * (2.13): summation by parts from `X = 10⁴` with `|ψ(n) − n| ≤ cPsi(n)√n` (the tables below `5·10⁷`,
   `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴`
   (`SmallMertensLower.lean`); `log(3/√2) ≥ 0.74`.
@@ -401,9 +399,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
 ## [MV73, Lemmas 7, 8] and the large sieves (`Prelim/`)
 
 * **Lemma 7** `G(r) ≥ log r + 1.07` (`r ≥ 6`): (12.12) for `r ≥ 21400`; below, a DFS over subsets of
-  primes gives a lower bound (`SmallG.lean`, 23 s). `MVLemma7.lean` also proves the asymptotic
-  `|G(N) − log N − κ| ≤ (2 + 3/e + γ) P N^{−1/3}` (`GS_asymp`, Rankin with `σ = 2/3`,
-  `P = ∑|h(d)|d^{−2/3} ≤ 9.32`); the main theorems do not use it.
+  primes gives a lower bound (`SmallG.lean`, 23 s).
 * **Lemma 8**: Abel summation against Lemma 7 for `R ≥ 1000`, comparing `∑ f(r) log(r/(r−1))` with
   `Φ(t) = log(t/(R+t))`; a weighted DFS lower bound for `6 ≤ R < 1000` (`SmallW.lean`); exact
   rationals for `R < 6`.
@@ -470,8 +466,8 @@ are kept as exact expressions in `c₊`.
     `d > 10⁴` and `a > 10⁴/d` uses `∏_{p>2} p²/(p²−1) ≤ π²/8`; the slack there matters (with `1.27` the
     double sum would be `0.0158`).
   * `T₂(S) ≤ 0.3605763 + 0.000922 + (5/4)·0.0045 ≤ 0.3672` for `S ≥ 10⁴`.
-  * The pointwise route (Lemma 5.1.2, `G2Bound.lean`, proved but unused) cannot reach `10⁴`: even with
-    exact `m(k)` it gives about `36/x`; the mean-square route gains `m(k)²` on average.
+  * A pointwise bound (as in Lemma 5.1.2) cannot reach `10⁴`: even with exact `m(k)` it gives about
+    `36/x`; the mean-square route gains `m(k)²` on average.
 * (5.36) corrected and (5.37) (`H2Bound.lean`): `T₂ = α_n + β_n/S` on `[n, n+1)`, kernel tables for
   `n ≤ 15`, the integral by FTC.
 * §6.2: `typeII_637` ((6.37), `q ≤ V/2e`) and `typeII_640` ((6.40), `|δ| ≥ 8`). Main terms exactly
@@ -523,8 +519,8 @@ and Thm 3.1.1 at scale `wy` gives `max(g_{wy}(min(1,w)n), h(wy))`. The first cas
 `ghatY(y, n) = 1.398·max(g_y(n), h(y)) + 17(670/n)³/3` (`LinftyLevels.norm_S_etaStar_le_ghat`). A
 cleaner repair would follow the `r_w ≥ wr` analysis above.
 
-`Prop1123.lean` has Prop 11.2.3 in corrected form with any integrable majorant `G(w) ≥
-g_{wy}(min(1,w) r)`, and the trivial bound `17z` from Chebyshev's `ψ ≤ (log 4 + 4)x`.
+`Prop1123.lean` has the trivial bound `17z` from Chebyshev's `ψ ≤ (log 4 + 4)x` and the other pieces
+that `Prop1123b.lean` assembles into Prop 11.2.3′.
 
 ## Ch. 12: the large sieve for primes
 
@@ -782,6 +778,4 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   route gives about `1.78` at best (`scripts/liouville_222_model.py`): the small-`z` peak of
   `|ℓ(z)| log z` (`0.7831` as `z → 11⁻`) caps it. [H]'s `4/5` comes from a different argument of
   Ramaré's [Ramb], not formalized. Downstream only `2.8` is needed (the `7.82` slot of Thm 3.1.1).
-* Proved but not used by the main theorems: [H, Lemma 5.1.2] (`G2Bound.lean`), `GS_asymp`
-  (`MVLemma7.lean`), `Prelim/SmallLogSq.lean`, and [H]'s form of Prop 11.2.3 (`Prop1123.lean`).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.

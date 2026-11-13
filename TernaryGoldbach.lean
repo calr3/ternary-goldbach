@@ -25,7 +25,6 @@ import TernaryGoldbach.Prelim.PsiSieveMain
 import TernaryGoldbach.Prelim.Ramare
 import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallNonprime
-import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
 import TernaryGoldbach.Prelim.SmallMertensProd
 import TernaryGoldbach.Prelim.SmallMoebius
@@ -101,7 +100,6 @@ import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2b
 import TernaryGoldbach.MinorArcs.FirstChoiceTypeI2c
 import TernaryGoldbach.MinorArcs.FirstChoiceFinal
-import TernaryGoldbach.MinorArcs.LargeSieve
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.MinorArcs.Eta2Fourier
@@ -121,8 +119,6 @@ import TernaryGoldbach.MinorArcs.T2Defs
 import TernaryGoldbach.MinorArcs.H2Bound
 import TernaryGoldbach.MinorArcs.G2Moebius
 import TernaryGoldbach.MinorArcs.G2Euler
-import TernaryGoldbach.MinorArcs.G2Numerics
-import TernaryGoldbach.MinorArcs.G2Bound
 import TernaryGoldbach.MinorArcs.T2Kernel
 import TernaryGoldbach.MinorArcs.T2Basic
 import TernaryGoldbach.MinorArcs.SmallG2

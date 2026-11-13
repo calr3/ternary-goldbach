@@ -159,7 +159,7 @@ drops a factor 2 (`HYPOTHESES.md`, Finding 3). (5.31) `T2_le` is proved from
 above; `MinorArcs/T2Small.lean`), and a mean-square bound `∫_{10⁴}^S |g₂(y)|/y dy ≤ 0.0045`: by
 Cauchy–Schwarz it reduces to integrals of `m(⌊t⌋)²/t`, `m(x) = ∑_{n≤x} μ(n)/n`, which come from
 `m(n)` for `n < 11815` and Ramaré's bound beyond (`MinorArcs/G2Tail.lean`). [H, Lemma 5.1.2] is
-also proved (`MinorArcs/G2Bound.lean`), but the main theorems do not use it.
+not needed.
 
 ## How the proof is organized
 
@@ -237,7 +237,6 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` |
 | Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker (Jensen windows) |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
-| Lemma 5.1.2 | `\|g₂(x)\|`, `x ≥ 10¹⁰` | `0.038128/(log x)² + 0.2046/√x` | `0.0236/(log x)² + 528 (1 + log x)²/x` (all `x > 1`; not needed) |
 
 The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 

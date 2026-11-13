@@ -67,8 +67,8 @@ differences from [H]; `NOTES.md` has the details.
      ├─ Prop 11.2.3  (adapting Thm 3.1.1 from η₂ to η_*; [H]'s proof ignores δ_w = wδ, see NOTES)
      │   [(11.9) ✅ MinorArcs/EtaStar.lean; Thm 3.1.1 at scale wy ✅ MinorArcs/EtaStarBound.lean;
      │    (11.11) ✅ GBound.lean; Lemma 11.2.4 (one scale) ✅ GMono.lean;
-     │    Prop 11.2.3 with a majorant G ✅ Prop1123.lean; the variant used, Prop 11.2.3′ (fresh
-     │    Dirichlet approximation per scale) ✅ Prop1123b.lean]
+     │    Prop 11.2.3′ (fresh Dirichlet approximation per scale, in place of [H]'s form)
+     │    ✅ Prop1123.lean, Prop1123b.lean]
      ├─ Ch 12  large sieve for primes: Props 12.1.1, 12.1.2, 12.2.4; Cors 12.2.5, 12.2.6
      │   [Prop 12.1.2 ✅ MinorArcs/LargeSieveProof.lean (δ₀ ≥ 2; Bombieri's identity, arcs, Plancherel);
      │    Prop 12.2.4 ✅ with c₊ = 2: MinorArcs/LSQuot1–9.lean, LSQuotRed.lean, LSQuot8g.lean

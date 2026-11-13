@@ -17,7 +17,7 @@ scale `y` (with `δ = δ_w/w`) and `min_mul_max_le`. Then Theorem 3.1.1 at scale
   (`r_le_cube_root`), so `gx_antitoneOn` applies;
 * if `q_w > (wy)^{1/3}/6`: the second-case bound `0.276 z^{5/6} (log z)^{3/2} + 1234 z^{2/3} log z`.
 
-Unlike `prop_11_2_3`, there is no condition linking `w₁` to an approximation.
+Unlike [H]'s Prop 11.2.3, there is no condition linking `w₁` to an approximation.
 
 * `norm_S_etaStar_le_of_pointwise`: the integration step, for any pointwise majorant on `[w₀, w₁]`
   and the trivial bound `17z` elsewhere;

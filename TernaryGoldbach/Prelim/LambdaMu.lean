@@ -5,7 +5,6 @@ import TernaryGoldbach.Prelim.SmallPsi
 import TernaryGoldbach.Prelim.SmallPsi700
 import TernaryGoldbach.Prelim.SmallMertens
 import TernaryGoldbach.Prelim.SmallNonprime
-import TernaryGoldbach.Prelim.SmallLogSq
 import TernaryGoldbach.Prelim.SmallMertensLower
 import TernaryGoldbach.Prelim.PsiSieveMain
 
@@ -21,10 +20,9 @@ import TernaryGoldbach.Prelim.PsiSieveMain
     Weil explicit formula with RH to `10⁸` (from `PlattGRH`) and a kernel-checked table below `10⁶`),
   * `thetaN_sieve` (`n − 5√n ≤ θ(n) ≤ n + 3√n` on `[10⁶, 5·10⁷)`, from the kernel sieve table of
     `Prelim/PsiSieveMain.lean`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
-  (2.14) and (2.17) are proved here with the constants `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`);
-  [H]'s `1.0004` and `1.0008` are in `Prelim/PsiHelfgott.lean` (Helfgott's proof, from the
-  kernel-checked PsiCert and Rosser–Schoenfeld 1975), which the minor arcs use. (2.19) holds for
-  `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
+  (2.14) and (2.17), with [H]'s `1.0004` and `1.0008` for `y ≥ 2.5·10⁷`, are in
+  `Prelim/PsiHelfgott.lean` (Helfgott's proof, from the kernel-checked PsiCert and Rosser–Schoenfeld
+  1975). (2.19) holds for `y ≥ 2·10⁶`, the range the minor arcs use.
 * The bounds on sums of `μ` — (2.21), (2.22), (2.24) — are discussed at the end of the file (`sorry`-free),
   each with its source; (2.23) is proved (with a weaker constant) in `Prelim/MoebiusLog.lean`.
   (2.16) and (2.18) are not formalized (unused). Lemma C.2.2 (`div_totient_lt`) is proved in
@@ -70,9 +68,6 @@ theorem psiN_eq (n : ℕ) :
 
 theorem thetaN_nonneg (n : ℕ) : 0 ≤ thetaN n :=
   sum_nonneg fun p _ => Real.log_natCast_nonneg p
-
-theorem psiN_nonneg (n : ℕ) : 0 ≤ psiN n :=
-  sum_nonneg fun _ _ => ArithmeticFunction.vonMangoldt_nonneg
 
 theorem thetaN_le_psiN (n : ℕ) : thetaN n ≤ psiN n := by
   rw [psiN_eq]
@@ -786,15 +781,6 @@ theorem Ioo_succ_insert {a b : ℕ} (h : a < b) : Ioo a (b + 1) = insert b (Ioo 
 theorem Ioo_self_succ (a : ℕ) : Ioo a (a + 1) = ∅ := by
   ext x; simp only [mem_Ioo, Finset.notMem_empty, iff_false]; omega
 
-theorem sum_Ioo_id (N : ℕ) : ∑ n ∈ Ioo 0 N, (n : ℝ) = N * (N - 1) / 2 := by
-  induction N with
-  | zero => simp
-  | succ N ih =>
-    rcases Nat.eq_zero_or_pos N with h | h
-    · subst h; rw [Ioo_self_succ]; simp
-    rw [Ioo_succ_insert h, sum_insert (by simp), ih]
-    push_cast; ring
-
 /-- `∑_{a < n < b} 1/(n+1) ≥ log(b+1) − log(a+2)`. -/
 theorem sum_inv_succ_ge {a b : ℕ} (hab : a < b) :
     Real.log (b + 1) - Real.log (a + 2) ≤ ∑ n ∈ Ioo a b, (1 : ℝ) / (n + 1) := by
@@ -1182,77 +1168,6 @@ theorem log_sub_le_sum_vonMangoldt_div {x : ℝ} (hx : 1 ≤ x) :
 /- [H, (2.16)] (`∑_{n≤y} Λ(n) n < 1.03884 y²/2` for `y > 663`) is not formalized: the main theorems do
 not need it. (It follows from (2.17) and a finite check.) -/
 
-/-- `∑_{0<n<N} √n ≤ (2/3) N √N`. -/
-theorem sum_sqrt_Ioo_le (N : ℕ) : ∑ n ∈ Ioo 0 N, √(n : ℝ) ≤ 2 / 3 * N * √(N : ℝ) := by
-  induction N with
-  | zero => simp
-  | succ N ih =>
-    rcases Nat.eq_zero_or_pos N with h | h
-    · subst h; rw [Ioo_self_succ]; norm_num
-    rw [Ioo_succ_insert h, sum_insert (by simp)]
-    have hN1 : (((N + 1 : ℕ)) : ℝ) = (N : ℝ) + 1 := by push_cast; ring
-    have ha0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
-    have ha2 : √(N : ℝ) ^ 2 = N := Real.sq_sqrt (Nat.cast_nonneg N)
-    have hb2 : √(((N + 1 : ℕ) : ℝ)) ^ 2 = (N : ℝ) + 1 := by
-      rw [Real.sq_sqrt (Nat.cast_nonneg _)]; push_cast; ring
-    have hab : √(N : ℝ) ≤ √(((N + 1 : ℕ) : ℝ)) := Real.sqrt_le_sqrt (by push_cast; linarith)
-    generalize √(N : ℝ) = a at *
-    generalize √(((N + 1 : ℕ) : ℝ)) = b at *
-    have hD : (a + b) * (2 * a ^ 2 * (b - a) + 2 * b - 3 * a) = (b - a) * (2 * b + a) := by
-      linear_combination (2 * a ^ 2) * hb2 - (2 * a ^ 2) * ha2
-    have hD0 : 0 ≤ 2 * a ^ 2 * (b - a) + 2 * b - 3 * a := by
-      have h1 : 0 ≤ (b - a) * (2 * b + a) := mul_nonneg (by linarith) (by linarith)
-      by_contra hneg
-      push Not at hneg
-      have hb0 : 0 < b := by
-        rcases lt_or_eq_of_le (ha0.trans hab) with hb | hb
-        · exact hb
-        · exfalso; rw [← hb] at hb2; norm_num at hb2; linarith [Nat.cast_nonneg (α := ℝ) N]
-      nlinarith
-    have e : 2 / 3 * (((N + 1 : ℕ) : ℝ)) * b - (a + 2 / 3 * (N : ℝ) * a) =
-        (2 * a ^ 2 * (b - a) + 2 * b - 3 * a) / 3 := by
-      rw [hN1, ← ha2]; ring
-    linarith
-
-/-- Partial summation for (2.17): `∑_{n ≤ N} Λ(n) n = N ψ(N) − ∑_{0<n<N} ψ(n)`, given an upper
-bound for `ψ(N)` and a lower bound for `ψ(n)`, `n < N`. -/
-theorem psi_mul_of {N : ℕ} (hN : 1 ≤ N) {δ ε A B : ℝ} (hA : 0 ≤ A)
-    (hup : psiN N ≤ (1 + δ) * N + B * √(N : ℝ))
-    (hlo : ∀ n, n < N → (1 - ε) * n - A * √(n : ℝ) - 11 ≤ psiN n) :
-    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n ≤
-      ((1 + δ) * N + B * √(N : ℝ)) * N -
-        ((1 - ε) * ((N : ℝ) * (N - 1) / 2) - A * (2 / 3 * N * √(N : ℝ)) - 11 * N) := by
-  have hab := abel_Ioc (fun n => (n : ℝ)) 0 N (by omega)
-  have hpsi0 : psiN 0 = 0 := by simp [psiN]
-  rw [show Icc 1 N = Ioc 0 N from rfl, hab, hpsi0]
-  simp only [zero_mul, sub_zero]
-  have e : ∑ n ∈ Ioo 0 N, psiN n * ((n : ℝ) - ((n + 1 : ℕ) : ℝ)) = -∑ n ∈ Ioo 0 N, psiN n := by
-    rw [← sum_neg_distrib]; refine sum_congr rfl fun n _ => ?_; push_cast; ring
-  rw [e]
-  have hlow : ∑ n ∈ Ioo 0 N, ((1 - ε) * (n : ℝ) - A * √(n : ℝ) - 11) ≤ ∑ n ∈ Ioo 0 N, psiN n :=
-    sum_le_sum fun n hn => hlo n (mem_Ioo.1 hn).2
-  rw [sum_sub_distrib, sum_sub_distrib, ← mul_sum, ← mul_sum, sum_Ioo_id, sum_const,
-    nsmul_eq_mul] at hlow
-  have hcard : ((Ioo 0 N).card : ℝ) ≤ N := by
-    rw [Nat.card_Ioo]; exact_mod_cast (by omega : N - 0 - 1 ≤ N)
-  have h1 := mul_le_mul_of_nonneg_left (sum_sqrt_Ioo_le N) hA
-  have hup' : psiN N * N ≤ ((1 + δ) * N + B * √(N : ℝ)) * N :=
-    mul_le_mul_of_nonneg_right hup (Nat.cast_nonneg N)
-  linarith
-
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- `ψ(n) ≥ n − A √n − 11` for `n ≤ 10¹⁷`, if `cB ≤ A` (`psi_two_sided`; trivially for `n < 12`). -/
-theorem psi_lower_of_cB {A : ℝ} (hA : 0 ≤ A) {n : ℕ} (hn : n ≤ 10 ^ 17)
-    (hc : 12 ≤ n → cB n ≤ A) : (n : ℝ) - A * √(n : ℝ) - 11 ≤ psiN n := by
-  have hs := Real.sqrt_nonneg (n : ℝ)
-  rcases lt_or_ge n 12 with h | h
-  · have : (n : ℝ) ≤ 11 := by exact_mod_cast (by omega : n ≤ 11)
-    have := psiN_nonneg n
-    nlinarith [mul_nonneg hA hs]
-  · have hB := (abs_le.1 (psi_two_sided h hn)).1
-    have := mul_le_mul_of_nonneg_right (hc h) hs
-    unfold psiN; linarith
-
 variable [Fact TernaryGoldbach.PlattGRH] in
 /-- `ψ(n) ≤ n + B √n` for `12 ≤ n ≤ 10¹⁷`, if `cB(n) ≤ B`. -/
 theorem psi_upper_of_cB {B : ℝ} {n : ℕ} (h12 : 12 ≤ n) (hn : n ≤ 10 ^ 17) (hc : cB n ≤ B) :
@@ -1260,128 +1175,6 @@ theorem psi_upper_of_cB {B : ℝ} {n : ℕ} (h12 : 12 ≤ n) (hn : n ≤ 10 ^ 17
   have hB := (abs_le.1 (psi_two_sided h12 hn)).2
   have := mul_le_mul_of_nonneg_right hc (Real.sqrt_nonneg (n : ℝ))
   unfold psiN; linarith
-
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- `ψ(n) ≥ (1 − 1/12000) n − 72 √n − 11` for all `n`. -/
-theorem psi_lower_big (n : ℕ) : (1 - 1 / 12000) * (n : ℝ) - 72 * √(n : ℝ) - 11 ≤ psiN n := by
-  have hn0 : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-  have hs := Real.sqrt_nonneg (n : ℝ)
-  rcases le_or_gt n (10 ^ 15) with h | h
-  · have := psi_lower_of_cB (A := 72) (by norm_num) (by omega) (fun _ => cB_le_72 h); linarith
-  rcases le_or_gt n (10 ^ 17) with h' | h'
-  · -- `c ≤ 200`, and `128 √n ≤ n/12000` for `n > 10¹⁵`
-    have := psi_lower_of_cB (A := 200) (by norm_num) h' (fun _ => cB_le_200 n)
-    have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0
-    have hs15 : (31622776 : ℝ) ≤ √(n : ℝ) := Real.le_sqrt_of_sq_le (by
-      have : (10 ^ 15 : ℝ) < n := by exact_mod_cast h
-      norm_num at this ⊢; linarith)
-    nlinarith
-  · have h := h'
-    have h1 := (abs_lt.1 (thetaN_large (n := n) (by omega))).1
-    have h2 := thetaN_le_psiN n
-    have hx : (10 : ℝ) ^ 10 ≤ n := by exact_mod_cast (show 10 ^ 10 ≤ n by omega)
-    have h3 := div_log_cube_le hn0 (by norm_num) (log_ge_23 hx)
-    have : (n : ℝ) / 23 ^ 3 + 4.92e-7 * n ≤ n / 12000 := by
-      rw [div_add' _ _ _ (by norm_num), div_le_div_iff₀ (by norm_num) (by norm_num)]; nlinarith
-    have he := mul_le_mul_of_nonneg_right (epl_le n) hn0
-    linarith
-
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **[H, (2.17)]**, for integers `N ≥ 2.5·10⁷`: `∑_{n ≤ N} Λ(n) n < 1.022 N²/2`.
-By partial summation (`psi_mul_of`) from `psi_two_sided` (`c ≤ 31.5, 33` to `10⁸`, `≤ 35.5` to
-`3.2·10¹⁰`, `≤ 72` to `10¹⁷`) and, above, `psi_bounds` and `psi_lower_big`. -/
-theorem psi_mul_a17 {N : ℕ} (hN : 25000000 ≤ N) :
-    ∑ n ∈ Icc 1 N, (Λ n : ℝ) * n < 1.022 * (N : ℝ) ^ 2 / 2 := by
-  have hN0 : (0 : ℝ) < N := by exact_mod_cast (by omega : 0 < N)
-  have hs2 : √(N : ℝ) ^ 2 = N := Real.sq_sqrt hN0.le
-  have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
-  have hs5 : (5000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
-    have : (25000000 : ℝ) ≤ N := by exact_mod_cast hN
-    linarith)
-  -- `c₁ s + 11.5 < c₂ s²` gives the bound
-  have fin : ∀ c₁ c₂ : ℝ, c₁ * √(N : ℝ) + 11.5 < c₂ * √(N : ℝ) ^ 2 →
-      c₁ * ((N : ℝ) * √(N : ℝ)) + 11.5 * N < c₂ * (N : ℝ) ^ 2 := by
-    intro c₁ c₂ h
-    have := mul_lt_mul_of_pos_right h hN0
-    rw [hs2] at this; nlinarith
-  rcases le_or_gt N (10 ^ 8) with h8 | h8
-  · have hup : psiN N ≤ (1 + 0) * N + 31.5 * √(N : ℝ) := by
-      have := psi_upper_of_cB (by omega) (by omega) (cB_le_315 (by omega) h8); linarith
-    have h := psi_mul_of (by omega) (ε := 0) (A := 33) (by norm_num) hup (fun n hn => by
-      have := psi_lower_of_cB (A := 33) (by norm_num) (n := n) (by omega)
-        (fun _ => cB_le_33 (by omega))
-      linarith)
-    have key := fin 53.5 0.011 (by nlinarith)
-    nlinarith
-  rcases le_or_gt N 32000000000 with h10 | h10
-  · have hs4 : (10000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
-      have : (100000000 : ℝ) < N := by exact_mod_cast h8
-      linarith)
-    have hup : psiN N ≤ (1 + 0) * N + 35.5 * √(N : ℝ) := by
-      have := psi_upper_of_cB (by omega) (by omega) (cB_le_355 h10); linarith
-    have h := psi_mul_of (by omega) (ε := 0) (A := 35.5) (by norm_num) hup (fun n hn => by
-      have := psi_lower_of_cB (A := 35.5) (by norm_num) (n := n) (by omega)
-        (fun _ => cB_le_355 (by omega))
-      linarith)
-    have key := fin 59.17 0.011 (by nlinarith)
-    nlinarith
-  rcases le_or_gt N (10 ^ 15) with h15 | h15
-  · have hs4 : (178885 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
-      have : (32000000000 : ℝ) < N := by exact_mod_cast h10
-      linarith)
-    have hup : psiN N ≤ (1 + 0) * N + 72 * √(N : ℝ) := by
-      have := psi_upper_of_cB (by omega) (by omega) (cB_le_72 h15); linarith
-    have h := psi_mul_of (by omega) (ε := 0) (A := 72) (by norm_num) hup (fun n hn => by
-      have := psi_lower_of_cB (A := 72) (by norm_num) (n := n) (by omega)
-        (fun _ => cB_le_72 (by omega))
-      linarith)
-    have key := fin 120 0.011 (by nlinarith)
-    nlinarith
-  rcases le_or_gt N (10 ^ 17) with h17 | h17
-  · have hs4 : (31622776 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
-      have : (10 ^ 15 : ℝ) < N := by exact_mod_cast h15
-      norm_num at this ⊢; linarith)
-    have hup : psiN N ≤ (1 + 0) * N + 200 * √(N : ℝ) := by
-      have := psi_upper_of_cB (by omega) h17 (cB_le_200 N); linarith
-    have h := psi_mul_of (by omega) (ε := 0) (A := 200) (by norm_num) hup (fun n hn => by
-      have := psi_lower_of_cB (A := 200) (by norm_num) (n := n) (by omega) (fun _ => cB_le_200 n)
-      linarith)
-    have key := fin 334 0.011 (by nlinarith)
-    nlinarith
-  · have hs4 : (300000000 : ℝ) ≤ √(N : ℝ) := Real.le_sqrt_of_sq_le (by
-      have : (100000000000000000 : ℝ) < N := by exact_mod_cast h17
-      linarith)
-    have hup : psiN N ≤ (1 + 0.0064) * N + 0 * √(N : ℝ) := by
-      have := (psi_bounds N).2 (by omega); linarith
-    have h := psi_mul_of (by omega) (ε := 1 / 12000) (A := 72) (by norm_num) hup
-      (fun n _ => psi_lower_big n)
-    have key := fin 48 0.004 (by nlinarith)
-    nlinarith
-
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- [H, (2.17)] with the weaker constant `1.022`: `∑_{n ≤ y} Λ(n) n < 1.022 y²/2` for
-`y ≥ 2.5·10⁷`, from `psi_two_sided` alone. [H]'s `1.0008` is `sum_vonMangoldt_mul_lt_a17`
-(`Prelim/PsiHelfgott.lean`, Helfgott's proof from PsiCert and RS75). -/
-theorem sum_vonMangoldt_mul_lt_1022 {y : ℝ} (hy : 2.5e7 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) * n < 1.022 * y ^ 2 / 2 := by
-  set N := ⌊y⌋₊
-  have hNy : (N : ℝ) ≤ y := Nat.floor_le (by linarith)
-  have hN : 25000000 ≤ N := Nat.le_floor (by norm_num; linarith)
-  have hmono : 1.022 * (N : ℝ) ^ 2 / 2 ≤ 1.022 * y ^ 2 / 2 := by
-    have : (N : ℝ) ^ 2 ≤ y ^ 2 := pow_le_pow_left₀ (Nat.cast_nonneg _) hNy 2
-    linarith
-  exact (psi_mul_a17 hN).trans_le hmono
-
-variable [Fact TernaryGoldbach.PlattGRH] in
-/-- [H, (2.14)] with the weaker constant `1.0064`: `ψ(y) ≤ 1.0064 y` for `y ≥ 2.5·10⁷`, from
-`psi_bounds` (`|ψ(y) − y| ≤ 31.5 √y` near `2.5·10⁷`). [H]'s `1.0004` is `sum_vonMangoldt_le_a14`
-(`Prelim/PsiHelfgott.lean`). -/
-theorem sum_vonMangoldt_le_10064 {y : ℝ} (hy : 2.5e7 ≤ y) :
-    ∑ n ∈ Icc 1 ⌊y⌋₊, (Λ n : ℝ) ≤ 1.0064 * y := by
-  have hN : 25000000 ≤ ⌊y⌋₊ := Nat.le_floor (by norm_num; linarith)
-  have h := (psi_bounds ⌊y⌋₊).2 hN
-  have hy' : (⌊y⌋₊ : ℝ) ≤ y := Nat.floor_le (by linarith)
-  unfold psiN at h; linarith
 
 /- [H, (2.18)] (`∑_{n≤y} Λ(n)/√n < 2·1.0004 √y` for `y ≥ 1`) is not formalized either: the main
 theorems do not need it. (It follows from (2.14) by summation by parts and finite checks.) -/

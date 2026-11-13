@@ -13,8 +13,8 @@ import TernaryGoldbach.MinorArcs.T2Bound
 * `S1_bound`: **[H, (5.34)]** `S₁ ≤ (x/W) H₂(x/WU) + 1.27 ζ(3/2)³ x^{3/2}/(W^{3/2} U)`, from
   Lemma 5.1.1 (`lemma_5_1_1`) applied for each `s` with `y = S/s`, `z = x/(Ws)`.
 
-`T2_le` ([H, (5.31)]) is proved in `T2Bound.lean`, from our computations and [H, Lemma 5.1.2]
-(proved in `G2Bound.lean` from Ramaré's bound on `∑ μ(n)/n`). (5.37) and the corrected (5.36) are
+`T2_le` ([H, (5.31)]) is proved in `T2Bound.lean`, from our computations and a mean-square bound
+for `g₂` from Ramaré's bound on `∑ μ(n)/n` (`G2Tail.lean`). (5.37) and the corrected (5.36) are
 proved in `H2Bound.lean`.
 -/
 
@@ -341,7 +341,7 @@ theorem S1_eq {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 1 ≤ U) :
 
 variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (5.31)]**: `T₂(S) ≤ 0.37273` for `S ≥ 16` (`T2Bound.lean`: `T₂ ≈ ¼ ∫₁^S g₂(y)/y dy`, our
-computations, and [H, Lemma 5.1.2] for `g₂` beyond `10⁸`, `G2Bound.lean`). -/
+computations, and the mean-square bound for `g₂` beyond `10⁴`, `G2Tail.lean`). -/
 theorem T2_le {S : ℝ} (hS : 16 ≤ S) : T2 S ≤ 0.37273 := T2_le' hS
 
 variable [Fact TernaryGoldbach.RamareMoebius] in
