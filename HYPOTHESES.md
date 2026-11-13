@@ -142,7 +142,7 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 What could replace the remaining hypotheses:
 
 * `RamareMoebius` was a hypothesis until Helfgott's formalization of `mobius003.tex` proved it
-  (above). Our own proof of a weaker form, by Schoenfeld's induction, is on the branch
-  `schoenfeld-induction`.
+  (above). Our own proof of a weaker form, by Schoenfeld's induction, is at commit
+  `23b2d68` in `main`'s history; the next commit replaced it with RSBounds.
 * The other published results are large computations (binary Goldbach, and RH and GRH to the heights
   used), far beyond the kernel without `native_decide`.

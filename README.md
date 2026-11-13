@@ -69,14 +69,13 @@ against this repository at `192ca57`, whose modules it imports. It provides:
 
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 (`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses. Our own proof of
-a weaker (2.21) by Schoenfeld's induction (`|m(x)| log x ≤ 0.092` at worst) is kept on the branch
-`schoenfeld-induction`; it is not used.
+a weaker (2.21) by Schoenfeld's induction (`|m(x)| log x ≤ 0.092` at worst) is at commit
+`23b2d68` in `main`'s history; it is not used.
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
-Everything is on `main`. The one other branch, `schoenfeld-induction`, keeps our own proof of a
-weaker (2.21), which `main` no longer uses. Its history is also part of `main`'s.
+Everything is on `main`; there are no other branches.
 
 The commit that brought in RSBounds and removed `RamareMoebius` as a hypothesis (`509443e`) was
 written without a Lean toolchain. A full `lake build` of it has not been recorded yet.

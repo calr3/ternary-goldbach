@@ -364,7 +364,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   recursive idea with inputs Schoenfeld's (5.6b*), PsiCert and kernel-checked `M` bounds
   (`MoebiusCert`). `MoebiusBound.lean` derives the weaker `0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
   from it. Our earlier route (Schoenfeld's induction with only `PlattGRH`'s `ψ` bounds, which gave
-  `|m(x)| log x ≤ 0.092` at worst) is on the branch `schoenfeld-induction`.
+  `|m(x)| log x ≤ 0.092` at worst) is at commit `23b2d68` in `main`'s history.
 * **(2.22) with `2.8`** (for [H]'s `4/5`, [Ramb]): Ramaré's Liouville route (Ram14 = hal-02572851;
   `Liouville.lean`, `LiouvilleBound.lean`).
   1. `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ`, and the `1/n`-weighted partial sums: Lemmas 2.3,
