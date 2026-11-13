@@ -16,8 +16,9 @@ under `vendor/rsbounds/`):
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1` (`Explicit.rh_upto_1e8`;
 `RSBounds.Moebius003.finiteRH_of_plattGRH`).
 
-`Prelim/LambdaMu.lean` keeps our own proofs with the weaker constants `1.0064`, `1.022`
-(`sum_vonMangoldt_le_10064`, `sum_vonMangoldt_mul_lt_1022`), from `psi_two_sided` alone.
+`Prelim/LambdaMu.lean` also proves the weaker constants `1.0064`, `1.022`
+(`sum_vonMangoldt_le_10064`, `sum_vonMangoldt_mul_lt_1022`), from `psi_two_sided` alone;
+they are not used.
 -/
 
 open Finset

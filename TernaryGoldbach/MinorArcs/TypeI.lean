@@ -4,15 +4,15 @@ import TernaryGoldbach.MinorArcs.TrigSums
 /-!
 # Type I sums [H, Ch. 4] — blueprint statements
 
-Statements of the results of [H, Ch. 4] (H. A. Helfgott, *The ternary Goldbach problem*,
-arXiv:1501.05438v2) that the minor-arc argument uses.  They are proved in
-`TypeIProof.lean`, `TypeILogProof.lean` and `TypeI2Rest.lean`.  They were transcribed from
-the typeset PDF; equation numbers are the book's.
+The bounds in the results of [H, Ch. 4] (H. A. Helfgott, *The ternary Goldbach problem*,
+arXiv:1501.05438v2) that the minor-arc argument uses.  The lemmas of §4.2 are stated and proved
+in `TypeIProof.lean`, `TypeILogProof.lean` and `TypeI2Rest.lean`.  The statements follow the
+typeset PDF; equation numbers are the book's.
 
 * §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality and **proved** in
   `MinorArcs/TrigSums.lean`.
 * §4.2, Type I estimates: Lemmas 4.2.2–4.2.4, which [H, §6.2] applies with `η = η₂`,
-  `c₀ = 31.521`, `|η₂'|₁ = 8 log 2`, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
+  `c₀ = 31.521` (we use `c₀ = 32`, `InnerSums.lean`), `|η₂'|₁ = 8 log 2`, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
   smoothing hypotheses ("η continuous, piecewise `C²`, compactly supported, `|η|₁ = 1`,
   `c₀ ≥ |η̂''|_∞`") become separate facts about `η₂` (`eta2_*` below).  Lemma 4.2.1 is only the
   template for these proofs and isn't stated.

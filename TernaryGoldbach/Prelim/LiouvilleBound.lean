@@ -6,6 +6,9 @@ import TernaryGoldbach.Prelim.SmallMoebius
 
 /-!
 # `|ℓ(z)| ≤ 0.99/log z`, `|ℓ_q(x)| ≤ 0.99 (q/φ(q))/log(x/q)`
+
+From these, [H, (2.22)] with constant `2.8` (`abs_sum_moebius_div_coprime_le_log`). Also [H, (2.24)]
+for `0 < x < 11815` (`abs_sum_moebius_div_le_sqrt`, kernel-checked in `Prelim/SmallMoebius.lean`).
 -/
 
 open Finset ArithmeticFunction

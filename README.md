@@ -21,12 +21,6 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) :
     TernaryGoldbachFrom (10 ^ 27)
 ```
 
-Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
-**proved**, from `PlattGRH`: `Prelim.ramareMoebius_of_plattGRH`. The proof is Helfgott's
-formalization of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds,
-vendored unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below). So are [H, (2.14)] and
-(2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
-
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
 `MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`; `RamareMoebius` is also passed
@@ -40,6 +34,12 @@ as a `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact Plat
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
+
+Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
+**proved**, from `PlattGRH`: `Prelim.ramareMoebius_of_plattGRH`. The proof is Helfgott's
+formalization of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds,
+vendored unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below). So are [H, (2.14)] and
+(2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
 
 The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s citations of
 [RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
@@ -68,17 +68,12 @@ against this repository at `192ca57`, whose modules it imports. It provides:
 * `RSBounds.HelfgottPsiBoundsFinal`: [H, (2.14)] and (2.17) with `1.0004` and `1.0008`.
 
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
-(`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses. Our own proof of
-a weaker (2.21) by Schoenfeld's induction (`|m(x)| log x ≤ 0.092` at worst) is at commit
-`23b2d68` in `main`'s history; it is not used.
+(`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses.
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
-Everything is on `main`; there are no other branches.
-
-The commit that brought in RSBounds and removed `RamareMoebius` as a hypothesis (`509443e`) was
-written without a Lean toolchain. A full `lake build` of it has not been recorded yet.
+No full `lake build` of the current version has been recorded.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
@@ -154,7 +149,7 @@ Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `E
 `Eta2DDBound.lean`; about 4 minutes in all).
 
 With `c₀ = 32`, `c₊ = 2` and (2.14), (2.17) with `1.0064`, `1.022` (the constants the Type I
-statements still carry; see below), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
+statements carry; their proofs use [H]'s; see below), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
 `2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00717` (against `1.037`).
 
 (9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
@@ -233,7 +228,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
-| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds); the Type I statements still carry `1.0064`, `1.022` |
+| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds); the Type I statements carry `1.0064`, `1.022` |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -299,7 +294,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 
 | Path | Content |
 |---|---|
-| `Statement.lean` | the statement |
+| `Statement.lean` | the statement and the hypotheses |
+| `MainTheorems.lean` | the main theorems, with explicit hypotheses |
 | `CircleMethod.lean` | the finite circle method and the circle identity for absolutely summable series |
 | `Helfgott/` | Helfgott's smoothings and major arcs (`Defs`), sup norms and decay, the non-prime terms, the top-level inputs (`Inputs`), the small cases (`SmallCases`) and the assembly (`Main`) |
 | `Ladder/` | the prime ladder up to `10²⁷`: the kernel check (`Check`), its correctness and Proth's criterion (`Spec`), the generated chunk files (`Data/`), `ladder_prime` (`Main`) |
@@ -310,6 +306,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
 | `vendor/rsbounds/` | Helfgott's RSBounds (Garald1/RSBounds), vendored unchanged: (2.21), (2.14), (2.17), PsiCert, Rosser–Schoenfeld (1975) |
 | `scripts/` | generators of the numeric Lean files (`gen_*.py`); independent float and interval-arithmetic checks of numerical claims of [H] and of quantities in the proof (`scripts/rigorous/`); models behind the errata |
+| `Challenge.lean`, `Solution.lean`, `comparator/` | the Comparator check of the main theorems |
 | `HYPOTHESES.md` | the hypotheses, checked against their sources; errors found in the sources |
 | `BLUEPRINT.md`, `NOTES.md` | map from [H] to Lean; working notes |
 
@@ -330,8 +327,8 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.
-* O. Ramaré, Acta Arith. 165 (2014) (Liouville route to (2.22)); hal-02572851 (the `q = 1` Möbius
-  bound).
+* O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4 (the `q = 1` Möbius bound, [H, (2.21)]); Acta Arith.
+  165 (2014) and hal-02572851 (Liouville route to (2.22)).
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
   for `x ≥ 11815` along Ramaré's recursive idea, shared on the Lean Zulip; formalized in
   Garald1/RSBounds (`RSBounds/Moebius003/`).

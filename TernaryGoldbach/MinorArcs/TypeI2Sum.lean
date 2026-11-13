@@ -297,7 +297,9 @@ variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 with `μ = min(1, (4/5)(2q/φ(2q))/log(M₀/2q²))` (`muBound`), `M₀ = min(Q/2V, U)`,
 `c₊ = 1 + 8 log 2/(x/UV)` and `C_Q = coefQ`.  Compared with [H], the term `U²V log V`
 is replaced by `U²V log q`, and `√(c₀c₊)/π · Q log(U/(q/2))` becomes
-`√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). -/
+`√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). The proof uses [H, (2.14),
+(2.17)] (`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`: `1.0004`, `1.0008`);
+the statement carries the weaker `1.0064` and `1.022` (as `0.511 V²`). -/
 theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q) (hx : 0 < x)
     (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V) (hUV : U * V ≤ x)
     (hδ : |δ| ≤ 1 / (2 * c₂)) :

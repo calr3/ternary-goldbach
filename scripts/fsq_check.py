@@ -12,8 +12,6 @@ So it suffices to check square-free m <= 50, which is done here in interval arit
 (sum_{sq-free} 1/n^2 = zeta(2)/zeta(4) = 15/pi^2).  The maximum is f(2)/2 = 15/pi^2 - 1/4 = 1.269817...
 
 Usage: python3 scripts/fsq_check.py   (instant; needs mpmath)
-
-NOTE: `fsq_le` is now proved in Lean (Prelim/SmallFsq.lean); this script is kept for reference.
 """
 from mpmath import iv
 

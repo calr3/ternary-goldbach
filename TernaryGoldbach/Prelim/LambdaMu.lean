@@ -19,8 +19,8 @@ import TernaryGoldbach.Prelim.PsiSieveMain
     `|θ(n) − n| < n/log³ n + ε_pl(n) n` for `n ≥ 10¹²`),
   * `psi_two_sided` (`Prelim/PsiTwoSided.lean`: `|ψ(n) − n| ≤ c(n)√n` for `12 ≤ n ≤ 10¹⁷`, from the
     Weil explicit formula with RH to `10⁸` (from `PlattGRH`) and a kernel-checked table below `10⁶`),
-  * the kernel sieve table `thetaN_sieve` (`Prelim/PsiSieveMain.lean`: `n − 5√n ≤ θ(n) ≤ n + 3√n` on
-    `[10⁶, 5·10⁷)`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
+  * `thetaN_sieve` (`n − 5√n ≤ θ(n) ≤ n + 3√n` on `[10⁶, 5·10⁷)`, from the kernel sieve table of
+    `Prelim/PsiSieveMain.lean`), and kernel-checked computations for small `n` (`Prelim/SmallPsi*.lean`).
   (2.14) and (2.17) are proved here with the constants `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`);
   [H]'s `1.0004` and `1.0008` are in `Prelim/PsiHelfgott.lean` (Helfgott's proof, from the
   kernel-checked PsiCert and Rosser–Schoenfeld 1975), which the minor arcs use. (2.19) holds for

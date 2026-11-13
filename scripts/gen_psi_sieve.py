@@ -1,5 +1,5 @@
-# Data for Prelim/PsiSieve*.lean: the sieve window chain `outerT` on [10^6, 5·10^7),
-# simulated exactly. Targets: theta(t) <= t + 3 sqrt t, t - theta(t) <= 5 sqrt t.
+# Generates Prelim/PsiSieveData1–13.lean and PsiSieveMain.lean (run from the repo root): the sieve window
+# chain `outerT` on [10^6, 5·10^7), simulated exactly. Targets: theta(t) <= t + 3 sqrt t, t - theta(t) <= 5 sqrt t.
 import math, sys, time
 sys.path.insert(0, 'scripts')
 import numpy as np

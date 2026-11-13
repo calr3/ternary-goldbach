@@ -16,7 +16,7 @@ interval for log 5.
 
 Usage: python3 scripts/mv_lemma8_check.py   (needs numpy, mpmath, sympy; ~10 s, ~1 GB RAM)
 
-NOTE: `prod_ap_le` is now proved in Lean (Prelim/SmallProdAp.lean, data from scripts/gen_prod_ap.py).
+Lean proves `prod_ap_le` with the kernel (Prelim/SmallProdAp.lean, data from scripts/gen_prod_ap.py).
 """
 import math
 from fractions import Fraction

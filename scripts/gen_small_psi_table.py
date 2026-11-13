@@ -1,4 +1,5 @@
-# Data for Prelim/SmallPsiTable*.lean. Simulates `outer` exactly.
+# Generates Prelim/SmallPsiData1–6.lean and SmallPsiTableMain.lean with the argument `emit` (run from the
+# repo root). Simulates `outer` exactly.
 import math, sys
 sys.path.insert(0, 'scripts')
 from fractions import Fraction as Q

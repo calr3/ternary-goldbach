@@ -3,9 +3,10 @@
 Source: H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), 327 pp.
 This is the book version, and it supersedes the three papers. References `[H, …]` are to it.
 
-This is a chapter-level map from [H] to the Lean files. There is no `sorry`. `ternary_goldbach`
-uses only Lean's three standard axioms and takes two published results as hypotheses (`Fact`
-instances), listed and checked against their sources in `HYPOTHESES.md`. [H, (5.36)] is used in
+This is a chapter-level map from [H] to the Lean files. There is no `sorry`.
+`ternary_goldbach_of_hypotheses` (`MainTheorems.lean`) uses only Lean's three standard axioms and
+takes two published results as hypotheses (`PlattGRH`, `BinaryGoldbachInput`; inside the development
+`Fact` instances), listed and checked against their sources in `HYPOTHESES.md`. [H, (5.36)] is used in
 corrected form (`+0.0231`), because [H, (5.32)] is false for `v = 2`. The README lists the other
 differences from [H]; `NOTES.md` has the details.
 
@@ -20,7 +21,7 @@ differences from [H]; `NOTES.md` has the details.
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input` (`MinorArcs/MinorTotal.lean`) | ✅ with `1.0376`, via repair 3 of Thm 13.2.1 |
 | (14.51) non-prime terms | `nonprime_input` | ✅ with `6.7·10⁶` for `7.3306` |
 | final inequality | `final_inequality_crude` (`Helfgott/Numerics.lean`) | ✅ margin `0.0114 x²/κ` |
-| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`) | ✅ binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`) and a prime in `[n − 4·10¹⁸, n − 4]` from a prime ladder up to `10²⁷` (`Ladder.ladder_prime`, `Ladder/`), checked by the kernel, in place of [HP13]'s |
+| `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`) | ✅ binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`, the hypothesis `BinaryGoldbachInput`) and a prime in `[n − 4·10¹⁸, n − 4]` from a prime ladder up to `10²⁷` (`Ladder.ladder_prime`, `Ladder/`), checked by the kernel, in place of [HP13]'s |
 
 ## Minor arcs: (14.49) ⟸ Thm 13.2.1
 
@@ -113,7 +114,8 @@ differences from [H]; `NOTES.md` has the details.
      │   └─ Ch 9  explicit formulas: §9.1 general explicit formula; Props 9.2.2, 9.3.2,
      │            Cor 9.3.3, Props 9.4.2, 9.5.1   ✅ Explicit/ (zeros counted by Jensen's formula
      │            in windows; Landau's partial fractions; residues on rectangles)
-     │       └─ §9.6  verification of zeros (Platt: GRH for q ≤ 300000, height ~10⁸/q)  ← hypothesis
+     │       └─ §9.6  verification of zeros (Platt: GRH to height 10⁸/q for odd q ≤ 3·10⁵,
+     │                max(10⁸/q, 200 + 7.5·10⁷/q) for even q ≤ 4·10⁵)  ← hypothesis `PlattGRH`
      ├─ Ch 11  the smoothing functions η◦, η_* (§11.1 η◦(t)η◦(ρ−t))  ✅ (CMain: polarization bound
      │         for η◦∗η◦ and the moments of η_*; constant 8.82)
      └─ Appendix A  norms of η₊ (A.3–A.5: |η₊|_∞ ≤ 1.079955, …)

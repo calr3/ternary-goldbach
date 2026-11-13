@@ -123,7 +123,7 @@ fidelity:
     proved with c₊ = 2 instead of a finite check, and the ψ and θ bounds that [H, §2.5] quotes
     from Rosser–Schoenfeld and Ramaré–Rumely are proved (from RH up to 10⁸, which Platt's GRH
     verification gives at q = 1, and kernel-checked tables); (2.14) and (2.17) with [H]'s
-    constants are Helfgott's proofs (RSBounds), and the Type I statements still carry the weaker
+    constants are Helfgott's proofs (RSBounds), and the Type I statements carry the weaker
     1.0064 and 1.022. The small cases use a kernel-checked prime ladder up to 10²⁷ instead of the
     Helfgott–Platt ladder. Several errors in [H] are corrected (e.g. (5.32),
     (6.77), and the two scales of major arcs in the proof of Thm 13.2.1); one step of Ramaré's 1995
@@ -134,8 +134,8 @@ review:
   status: "agent-reviewed"
   reviewers: []
   notes: >-
-    The proof is kernel-checked. The hypothesis statements were checked against their sources
-    (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
+    No full `lake build` of the current version has been recorded. The hypothesis statements
+    were checked against their sources (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
     leanprover/comparator. The current two-hypothesis statements have not been through
     Comparator yet. The only recorded run is from 2026-11-06, at commit 83ac1e1, when the main
     theorems took four hypotheses; `lake comparator` accepted both theorems then

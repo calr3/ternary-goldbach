@@ -17,9 +17,9 @@ cases themselves are in `SmallCases.lean`.  All hypotheses are listed and checke
 [H]    H. A. Helfgott, *The ternary Goldbach problem*, arXiv:1501.05438v2 (2015), the book
        version, which supersedes arXiv:1205.5252, 1305.2897 and 1312.7748.  **This is the
        reference the blueprint follows**; equation numbers are the book's.
-[HP]   H. A. Helfgott, D. Platt, *Numerical verification of the ternary Goldbach conjecture
+[HP13] H. A. Helfgott, D. Platt, *Numerical verification of the ternary Goldbach conjecture
        up to 8.875 · 10³⁰*, Experiment. Math. 22 (2013).
-[OeSHP] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even
+[OeSHP14] T. Oliveira e Silva, S. Herzog, S. Pardi, *Empirical verification of the even
        Goldbach conjecture and computation of prime gaps up to 4 · 10¹⁸*, Math. Comp. 83 (2014).
 -/
 
@@ -150,10 +150,10 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
 
 /-! ## Computational inputs (for the small cases) -/
 
-/-- **Numerical hypothesis: binary Goldbach up to `4 · 10¹⁸`** [OeSHP]. An exhaustive computer
+/-- **Numerical hypothesis: binary Goldbach up to `4 · 10¹⁸`** [OeSHP14]. An exhaustive computer
 search (Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014)) shows that every even
 `4 ≤ n ≤ 4·10¹⁸` is a sum of two primes; the range up to `3·10¹⁷` was double-checked
-([OeSHP, Table 1 and §1.3]). `SmallCases.lean` uses the whole range. -/
+([OeSHP14, Table 1 and §1.3]). `SmallCases.lean` uses the whole range. -/
 theorem binary_goldbach_input [h : Fact BinaryGoldbachInput] :
     BinaryGoldbachUpTo (4 * 10 ^ 18) :=
   h.out

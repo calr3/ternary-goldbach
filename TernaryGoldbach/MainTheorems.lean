@@ -7,9 +7,10 @@ import TernaryGoldbach.Prelim.RamareMoebius
 Inside the development, the two numerical hypotheses of `Statement.lean` are `Fact` instances
 (section variables). Here they become ordinary hypotheses. Ramaré's bound `RamareMoebius`, also
 passed as a `Fact` inside the development, is proved from `PlattGRH`
-(`Prelim.ramareMoebius_of_plattGRH`). These theorems use only Lean's standard axioms (`propext`,
-`Classical.choice`, `Quot.sound`). They are the theorems checked by leanprover/comparator against
-`Challenge.lean` (`comparator/config.json`).
+(`Prelim.ramareMoebius_of_plattGRH`). These are the two theorems that `comparator/config.json`
+names for leanprover/comparator to check against `Challenge.lean`, permitting only Lean's standard
+axioms (`propext`, `Classical.choice`, `Quot.sound`). The current statements have not been through
+Comparator (see `README.md`).
 -/
 
 namespace TernaryGoldbach

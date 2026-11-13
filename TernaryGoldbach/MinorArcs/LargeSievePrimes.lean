@@ -7,7 +7,8 @@ import TernaryGoldbach.CircleMethod
 For `aₙ` supported on primes `> √x`, `S(α) = Σ aₙ e(αn)`:
 
 * **Prop 12.1.2** (`prop_12_1_2`, proved in `LargeSieveProof.lean`).
-* **Prop 12.2.4** (`prop_12_2_4`, proved in `LSQuot1.lean`–`LSQuot6.lean`): the quotient bound
+* **Prop 12.2.4** (`prop_12_2_4`, `LSQuot6.lean`, proved in `LSQuot1.lean`–`LSQuot9.lean`, `LSQuot8g.lean`
+  and `LSQuotRed.lean`): the quotient bound
   `G_q(Q₀/sq)/G_q(Q/sq) ≤ (log Q₀ + 2)/(log Q + c_E)`.
 * **Cor 12.2.5, (12.42)** (`cor_12_2_5`, `LargeSieveProof.lean`): proved from the two.
 

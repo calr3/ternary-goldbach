@@ -1,8 +1,8 @@
-"""What [H, (2.22)] with constant 2.8 needs from a Moebius bound: float model of Ramare's Liouville
-route (Prelim/LiouvilleBound.lean).
+"""The constant in [H, (2.22)] that Ramare's Liouville route (Prelim/LiouvilleBound.lean) gives from a Moebius
+bound: a float model.
 |l(z)| log z <= c_l for z >= 1e5 from l(z) = sum_{u^2<=z} m(z/u^2)/u^2 with |m(y)| <= sqrt(2/y) (y < 11815,
 kernel) and |m(y)| <= B(y) beyond; then y * sum_u |mu(u)|/u^2 min(5/3, c_l/(y - 2 log u)) <= c22. For y >= 80 the Lean proof gives
-(20/9) c_l + 0.006, so keeping 2.8 needs c_l <= 1.25, i.e. K <= about 0.65 in K/(log x - 0.7521).
+(20/9) c_l + 0.006. With Ramare's B(y) = 0.03/log y: c_l = 0.7831 and c22 about 1.78.
 
 Usage: python3 scripts/liouville_222_model.py"""
 import math
@@ -38,8 +38,7 @@ def c22(cl):
             s += b / (u * u)
         best = max(best, y * s)
     return best
-for name, B in [("Ramare 0.03/log y", lambda y: 0.03 / np.log(y)),
-                ("own 0.55/(log y - 0.7521)", lambda y: 0.55 / (np.log(y) - 0.7521))]:
+for name, B in [("Ramare 0.03/log y", lambda y: 0.03 / np.log(y))]:
     cl = max(0.7831, c_liou(B, zs))     # 0.7831 = kernel max for z <= 1e5
     print(f"{name}: Liouville constant c_l = {cl:.4f}; (2.22) constant ~ {c22(cl):.3f}")
 print("Lean: c_l = 0.99, (2.22) constant 2.8")

@@ -59,7 +59,7 @@ def PlattGRH : Prop :=
     (Even q → q ≤ 400000 → ∀ ρ : ℂ, χ.LFunction ρ = 0 → 0 < ρ.re → ρ.re < 1 →
       |ρ.im| ≤ max (1e8 / q : ℝ) (200 + 7.5e7 / q) → ρ.re = 1 / 2)
 
-/-- [OeSHP] Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014): every even `4 ≤ n ≤ 4·10¹⁸` is
+/-- [OeSHP14] Oliveira e Silva, Herzog, Pardi, Math. Comp. 83 (2014): every even `4 ≤ n ≤ 4·10¹⁸` is
 a sum of two primes. -/
 def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
@@ -67,7 +67,7 @@ def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 
 `RamareMoebius` is not a hypothesis: `Prelim.ramareMoebius_of_plattGRH` (`Prelim/RamareMoebius.lean`)
 proves it from `PlattGRH`, by Helfgott's formalization of `mobius003.tex` (vendored from
-Garald1/RSBounds). Inside the development it is still passed as a `Fact` instance, which
+Garald1/RSBounds). Inside the development it is passed as a `Fact` instance, which
 `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. -/
 
 /-- O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4, as cited in [H, (2.21)]:

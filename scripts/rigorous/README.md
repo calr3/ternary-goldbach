@@ -43,7 +43,7 @@ Lean proof uses, or check [H]'s own constants.
 | `eta2_fourier_rig.py` | [H, (B.6)] with `31.521` | (B.6) with `32` (`Eta2DDBound.lean`) | Lipschitz stepping, 137334 points | 3 s |
 | `eta_circ_rig.py` | the four integrals behind [H, (9.94)] | exact polynomial integration (`EtaONum.lean`) | `[0, 2]` | < 1 s |
 | `t2_rig.c` | (5.31): `T₂(S) ≤ 0.37273` | kernel to `10⁴` (`SmallG2.lean`), mean-square tail above | `g₂(n)` for `n ≤ 10⁸`; `T₂` on `[16, 10⁵)` | 8 min |
-| `p1224_rig.c` | the finite part of [H, Prop 12.2.4] with `c₊ = 1.36` | Prop 12.2.4 with `c₊ = 2`, no finite check over `q` | every `q < 2.2·10¹⁰`, every `n < λ(q)`: 87 972 745 explicit checks for 2 102 258 values of `q` | about 40 min on 22 threads |
+| `p1224_rig.c` | the finite part of [H, Prop 12.2.4] with `c₊ = 1.36` | Prop 12.2.4 with `c₊ = 2`, no finite check over `q` | every `q < 2.2·10¹⁰`, every `n < λ(q)`: 87 972 745 explicit checks for 2 102 258 values of `q` | about 30 min on 22 threads |
 | `ramare_check.c` | (12.12) and `c_E` | proved (`Prelim/Ramare.lean`) | `c_E`; `d ≤ 2000` and three primorials, `X ≤ 2·10⁶` | 2 min |
 | `g2_rig.c` | `g₂(n)` and `max \|g₂(n)\| n` (exploration) | — | `n ≤ N` | seconds |
 

@@ -8,8 +8,9 @@ import TernaryGoldbach.Ladder.Data
 `S = 111616`. The primes are Proth primes `(S·i − t)·2⁴⁵ + 1` with `0 ≤ t < 2048`, certified by
 `3^((c−1)/2) ≡ −1 (mod c)`; the Lean kernel checks all of them (`Ladder/Check.lean`,
 `Ladder/Data/`). Consecutive windows give primes less than `(S + 2047)·2⁴⁵ < 4·10¹⁸ − 4` apart, and
-rung `254638308` lies above `10²⁷`. This is the prime ladder of [H, §1.6] (there [HP13], up to
-`8.875·10³⁰`) for the range `n ≤ 10²⁷` that the small cases need.
+`254638308 = ⌊(10²⁷ − 5)/(S·2⁴⁵)⌋` is the last rung that odd `n ≤ 10²⁷` need
+(`ternaryGoldbachUpTo_1e27` uses rung `⌊(n − 5)/(S·2⁴⁵)⌋`). This is the prime ladder of [H, §1.6]
+(there [HP13], up to `8.875·10³⁰`) for the range `n ≤ 10²⁷` that the small cases need.
 -/
 
 namespace TernaryGoldbach.Ladder

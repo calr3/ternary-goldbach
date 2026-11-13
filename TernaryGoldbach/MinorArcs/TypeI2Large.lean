@@ -13,7 +13,9 @@ open scoped ArithmeticFunction.vonMangoldt
 namespace TernaryGoldbach.MinorArcs
 
 /-- [H, p. 106]: `∑_{v ≤ V} Λ(v) min(⌊x/v/|δ|q_v⌋ + 1, 2U)`
-`≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0064 V`. -/
+`≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0064 V`, from `ψ(y) < 1.03883 y`
+(`Prelim.sum_vonMangoldt_lt`) and [H, (2.14)] `ψ(V) ≤ 1.0004 V` (`Prelim.sum_vonMangoldt_le_a14`),
+stated with the weaker `1.0064`. -/
 theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)
     (hU : 0 < U) (hV : 2.5e7 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (Λ v : ℝ) *
@@ -220,7 +222,9 @@ variable [Fact TernaryGoldbach.RamareMoebius] in
 `+ 1.0064 (3c₊/2)(2 + ((1+ε)/ε) log⁺(2UV|δ|q/x)) xV/Q + 1.0064 (35c₀c₂/3π²) Q`
 `+ (2√(c₀c₊)/π)(1+ε)√(3+2ε) ((x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0064 V)`.
 Compared with [H]: the `U/e` term carries a factor `1 + V/Q` (since (4.32) has
-`log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). -/
+`log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). The proof uses [H, (2.14), (2.17)]
+(`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`: `1.0004`, `1.0008`); the
+statement carries the weaker `1.0064` and `1.022` (as `0.511 V²`). -/
 theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q)
     (hx : 0 < x) (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V)
     (hUV : U * V ≤ x) (hδ : 1 / (2 * c₂) ≤ |δ|) (hε : 0 < ε) (hε1 : ε ≤ 1) :

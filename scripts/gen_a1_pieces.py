@@ -2,6 +2,7 @@
 
 Every inequality handed to `norm_num` is first checked here in exact rational arithmetic.
 """
+import os
 from fractions import Fraction as F
 from mpmath import mp, mpf, log, sqrt, e as E
 mp.dps = 50
@@ -121,5 +122,5 @@ for (a, b, name) in names:
     lines.append(f"  rcases le_or_gt L {b} with h{name} | h{name}\n  · exact {name} (by linarith) h{name}")
 lines.append("  exact a1_piece_asym (by linarith)")
 final += "\n".join(lines) + "\n\nend TernaryGoldbach.MinorArcs\n"
-open('/home/charlie/calr3gh/ternary-goldbach/TernaryGoldbach/MinorArcs/SecondTypeIIaPieces.lean', 'w').write(header + "".join(out) + final)
+open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'TernaryGoldbach/MinorArcs/SecondTypeIIaPieces.lean'), 'w').write(header + "".join(out) + final)
 print("ok", len(names))

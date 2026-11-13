@@ -306,14 +306,14 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   `ψ − θ ≤ θ(√n) + θ(n^{1/3}) + θ(n^{1/4}) + n^{1/5} log n` (`nonprime_mid`); above via
   `ψ − θ ≤ ψ(√y) + y^{1/3} log y`.
 * (2.14), (2.17): the minor arcs use them at `V = ⌊9T/2⌋` for every level `wy ≥ 2.16·10²⁰`, so `V`
-  goes down to `2.7·10⁷`. There `|ψ(y) − y| ≤ 31.5√y` gives only `ψ(y) ≤ 1.0064y` and
-  `∑ Λ(n)n < 1.022y²/2` (`psi_mul_of`, partial summation with five ranges of `c`), stated for
-  `y ≥ 2.5·10⁷` (`sum_vonMangoldt_le_10064`, `sum_vonMangoldt_mul_lt_1022`). [H]'s `1.0004`, `1.0008`
-  are not reachable this way below about `10⁹`. Helfgott proves them (`Prelim/PsiHelfgott.lean`, from
-  RSBounds: PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`, kernel-checked, and RS75's
-  `0.00020211 x` above `e²³`), and `TypeI2Large`, `TypeI2Sum` use his bounds. Their statements, and
-  `FirstChoiceTypeI2*`, still carry `1.0064` and `1.022`: propagating `1.0004`, `1.0008` through the
-  Type I numerics is open (it needs a build to regenerate the constants).
+  goes down to `2.7·10⁷`. [H]'s constants `1.0004`, `1.0008` for `y ≥ 2.5·10⁷` are Helfgott's proofs
+  (`Prelim/PsiHelfgott.lean`, `sum_vonMangoldt_le_a14`, `sum_vonMangoldt_mul_lt_a17`, from RSBounds:
+  PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`, kernel-checked, and RS75's `0.00020211 x` above
+  `e²³`); the proofs in `TypeI2Large`, `TypeI2Sum` apply them. The statements there, and
+  `FirstChoiceTypeI2*`, carry the weaker `1.0064` and `1.022` (as `0.511 V²`). `Prelim/LambdaMu.lean`
+  also proves `ψ(y) ≤ 1.0064y` and `∑ Λ(n)n < 1.022y²/2` for `y ≥ 2.5·10⁷` from `|ψ(y) − y| ≤ 31.5√y`
+  alone (`psi_mul_of`, partial summation with five ranges of `c`; `sum_vonMangoldt_le_10064`,
+  `sum_vonMangoldt_mul_lt_1022`, unused); [H]'s constants are not reachable this way below about `10⁹`.
 * (2.13): summation by parts from `X = 10⁴` with `|ψ(n) − n| ≤ cPsi(n)√n` (the tables below `5·10⁷`,
   `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴`
   (`SmallMertensLower.lean`); `log(3/√2) ≥ 0.74`.
@@ -363,8 +363,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   `mobius003.tex` (RSBounds, `vendor/rsbounds/RSBounds/Moebius003/`), which follows Ramaré's
   recursive idea with inputs Schoenfeld's (5.6b*), PsiCert and kernel-checked `M` bounds
   (`MoebiusCert`). `MoebiusBound.lean` derives the weaker `0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
-  from it. Our earlier route (Schoenfeld's induction with only `PlattGRH`'s `ψ` bounds, which gave
-  `|m(x)| log x ≤ 0.092` at worst) is at commit `23b2d68` in `main`'s history.
+  from it.
 * **(2.22) with `2.8`** (for [H]'s `4/5`, [Ramb]): Ramaré's Liouville route (Ram14 = hal-02572851;
   `Liouville.lean`, `LiouvilleBound.lean`).
   1. `λ = sq ∗ μ`, `μ = μ_sq ∗ λ`, `λχ_q = d_q ∗ λ`, and the `1/n`-weighted partial sums: Lemmas 2.3,
@@ -394,7 +393,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
 * `∑ |h_d(a)| a^{1/3} ≤ 11 f₁(d)` (`sum_wD_le`): a generated table `⌈10⁴ p^{1/3}⌉` for odd `p ≤ 1000`, a
   kernel product `≤ 7.2863`, and the tail `∏_{p>1000} ≤ 1.494`. Error `0.64·11 = 7.04` (for [H]'s
   `7.284`).
-* `c_E ∈ [1.3325822734, 1.3325822894]` (`cR_bounds`): `∑ Λ(n)/n² = (∑ log n/n²)/ζ(2)` from
+* `c_E ∈ [1.3325822, 1.3325823]` (`cR_bounds`): `∑ Λ(n)/n² = (∑ log n/n²)/ζ(2)` from
   `LSeries_vonMangoldt_eq_deriv_riemannZeta_div`; `∑ log n/n² = 2X + log 2·ζ(2)`, the tail of `X`
   bracketed by convexity; a kernel walk (`RamareWalk.lean`: 10 fields at `D = 10³⁰`, 24 chunks to
   `n = 20001`, 125 s). Generators: `scripts/ramare/gen_bound.py`, `gen_walk_num.py`.
@@ -417,7 +416,8 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   3. In place of Preissmann's Lemme 6 (not available to us):
      `∑_{k≠l,m} δ_k/(a_k² b_k²) ≤ (1/D²)[(π²/3)(1/δ_l+1/δ_m) − (δ_l+δ_m)/D² + (2/D)(F_l+F_m)]`, with
      `F_l = ∑_{between} δ_k/|a_k| ≤ (1 − ½log 2) + log(D/δ_l)` (each step from `artanh t ≥ t`). Hence
-     `κ = 1.3356`, `C(½) ≤ K + √(K² + π⁴/45) = 9.028` (`K = κπ²/3`), `C₁ = √(π²/3 + 2C(½)) = 4.620 < 3π/2`.
+     `K = π²/3 + (1 − ½log 2)² + 2/e ≤ 4.4527` in place of Preissmann's `π²/3` (`lemma6`, `Kc_le`),
+     `C(½) ≤ K + √(K² + π⁴/45) ≤ 9.2` (`U ≤ 9.2V`), `C₁ = √(π²/3 + 2C(½)) ≤ 4.66 < 3π/2`.
   4. Periodization to the circle (Cesàro kernel → `π csc πx`).
   5. Duality: `N + δ⁻¹`, resp. weights `(N + (3/2)δ_r⁻¹)⁻¹`. For `N − 1 + δ⁻¹`, apply the bound to
      `n ↦ kn` at the points `(α_r + j)/k` and let `k → ∞`.
@@ -550,7 +550,7 @@ g_{wy}(min(1,w) r)`, and the trivial bound `17z` from Chebyshev's `ψ ≤ (log 4
     Ramaré for `n ≥ 2600`; below, a kernel walk per `A` (trial-division `φ`, `⌈10¹²/φ(r)⌉`
     accumulators, 82 blocks). Margin `≥ 0.33`; 90 s.
   * **`n ≤ 3`** (`LSQuot9`): `G_q(n)` depends only on `2 ∣ q`, `3 ∣ q`; the primes `≥ 5` (at most 8) are
-    bounded by exchange; 72 rational checks, worst `−0.051`.
+    bounded by exchange; 108 rational checks (`smallOK`), worst `−0.051`.
   * Downstream: `cL n = log 2(n+1) + 2` in Cor 12.2.5 and Thm 13.2.1; `NumericsAsymp` has
     `cL 150000 ≤ 14.61155`.
 
@@ -588,7 +588,7 @@ beyond Platt's range, where only `g(q) ≥ g(300000)` is available.
 
 **Numerics** (`numerics_M`): `Mexpr x r₂ ≤ 1.037`, where `Mexpr` bounds `Z₁/(x · x/κ)` with
 `r₂ = min((2√(x/784))^{0.6}/2 − 1, √(x/784)/20000)`. Cells `y ∈ [Y_k, Y_{k+1}]` for
-`x ∈ [4.9·10²⁶, 4.9·10¹⁰¹]` with blocks of ratio `1.25` in the level (`NumericsCells.lean`, generated by
+`x ∈ [4.9·10²⁶, 4.9·10¹⁰¹]` with block ratios from `1.4` (bottom) to `6` (top) in the level (`NumericsCells.lean`, generated by
 `scripts/gen_cells.py`; worst cell `1.00717`, at the bottom), and `NumericsAsymp.lean` beyond. Then
 `S_{η₊} = S₁ + S₂` (`S₁`: primes `> √x`) with `|a + b|² ≤ (1+t)|a|² + (1+1/t)|b|²`, `I₀ ≥ 8.6294x`, and
 (14.28) with `8·10⁻¹¹` give `(1.0005·1.037 + 2001·22.75·8·10⁻¹¹) ≤ 1.0376` (`t = 5·10⁻⁴`).
@@ -652,8 +652,8 @@ For odd `n ≤ 4·10¹⁸ + 3`, `n = 3 + (n − 3)` and binary Goldbach. For `4�
 
 The ladder (`Ladder/`):
 * Rung `i`, `1 ≤ i ≤ 254638308 = ⌊(10²⁷ − 5)/(S·2⁴⁵)⌋`, is `c = (S·i − t)·2⁴⁵ + 1`, `0 ≤ t < 2048`, with
-  `c ≡ 2 (mod 3)` and `3^((c−1)/2) ≡ −1 (mod c)`. `S` is the largest grid step with
-  `(S + 2047)·2⁴⁵ + 4 ≤ 4·10¹⁸` (up to a few units), so the rungs are as sparse as binary Goldbach
+  `c ≡ 2 (mod 3)` and `3^((c−1)/2) ≡ −1 (mod c)`. `S = 109·2¹⁰` is `23` below the largest
+  step with `(S + 2047)·2⁴⁵ + 4 ≤ 4·10¹⁸` (`111639`), so the rungs are as sparse as binary Goldbach
   allows. `S·i < 2⁴⁵` keeps `c < (2⁴⁵ + 1)²`, which Proth's criterion needs. The largest offset is
   about `1100` (expected gap `62` between rungs that pass base `3`).
 * Proth's criterion is Mathlib's `Nat.pow_pow_add_primeFactors_one_lt` (prime factors `≠ 2` of
@@ -697,10 +697,11 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   `add_right_inj` + `tsum_congr` + `ring`.
 * Build what every step reuses once per declaration (the sieve patterns `pats`): the kernel caches it
   within a declaration, not across declarations.
-* The Mathlib import alone is about 7 GB resident. Files with large kernel checks import each other in
-  a chain so that lake builds them one at a time.
-* Assembly over many data files: a chain of small lemmas (`stage_k`); one big theorem timed out
-  because `linarith` scanned hundreds of large hypotheses.
+* The Mathlib import alone is about 7 GB resident. `PsiSieveData1–13.lean` import each other in a
+  chain so that lake builds them one at a time.
+* Assembly over many data files is a chain of small lemmas (`stage0`, `stage1`, … in
+  `SmallPsiTableMain.lean`, `stg*` in `PsiSieveMain.lean`): in one big theorem `linarith` scans
+  hundreds of large hypotheses and times out.
 * `Nat.powMod` is not accelerated by the kernel (about 12 ms for a 90-bit modulus, by unfolding).
   `Nat.pow` is, for exponents below `2²⁴`. Straight-line GMP operations cost about `1 µs` each in the
   kernel; a `cond` costs about `9 µs` more than `Bool.rec`, and `match`-compiled loops cost about
@@ -767,10 +768,9 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 
 * Lean/Mathlib v4.35.0. Fetch the prebuilt Mathlib with `lake exe cache get`.
 * Compile single files with `timeout 1500 lake env lean -M 9000 File.lean` (`-M 20000` for the kernel
-  data files). Build heavy modules sequentially; a full `lake build` takes well over an hour, most of
-  it in `SmallPsiData*.lean` (about 3 min per file). The 128 ladder files take about 5 hours
-  of one core (1.7 GB each, about 40 minutes in waves of 16 on 24 threads).
-* Clone/push via SSH (`git@github.com:calr3/ternary-goldbach.git`).
+  data files). Build heavy modules sequentially. No full `lake build` of the current version has been
+  recorded. The heaviest parts are the 128 ladder files, about 5 hours of one core (1.7 GB each,
+  about 40 minutes in waves of 16 on 24 threads), and `SmallPsiData*.lean` (about 3 min per file).
 
 ## Open directions
 
