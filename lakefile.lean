@@ -16,38 +16,38 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "v
 -- the `rh100` libraries are those of RSBounds' own lakefile.
 lean_lib RSBounds where
   srcDir := "vendor/rsbounds"
-  globs := #[]
+  globs := #[.submodules `RSBounds]
 
 lean_lib MoebiusCert where
   srcDir := "vendor/rsbounds"
-  globs := #[]
+  globs := #[.submodules `MoebiusCert]
 
 lean_lib Zeta23 where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `Zeta23]
   leanOptions := #[⟨`relaxedAutoImplicit, false⟩, ⟨`pp.unicode.fun, true⟩]
 
 lean_lib ZetaLean where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `ZetaLean]
 
 lean_lib RHHeight where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `RHHeight]
   leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
 
 lean_lib RHHeight100 where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `RHHeight100]
   leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
 
 lean_lib HardyFirstZero where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `HardyFirstZero]
 
 lean_lib HardyTenZeros where
   srcDir := "vendor/rsbounds/rh100"
-  globs := #[]
+  globs := #[.submodules `HardyTenZeros]
 
 -- The search for the prime-ladder hints (`LadderHints.lean`) runs during elaboration; compiling it
 -- to native code makes it fast. The hints are only a guide: the kernel checks every rung.
