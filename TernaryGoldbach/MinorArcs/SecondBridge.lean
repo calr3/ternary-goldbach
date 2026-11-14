@@ -285,14 +285,14 @@ theorem bridge_le {α T δ' : ℝ} {a' : ℤ} {q' : ℕ} (hT : 6e6 ≤ T)
     calc N * T ^ 3 = N * √(3.0001 * Fb) * (T ^ 2 * √T) * (√T / √(3.0001 * Fb)) := by
           rw [hT3]; field_simp
       _ ≤ _ := by gcongr
-  have t2 : 2.526 * T ^ 3 / √t ≤ 4.38 * (T ^ 2 * √T) := by
+  have t2 : 2.511 * T ^ 3 / √t ≤ 4.38 * (T ^ 2 * √T) := by
     have h1 : √(T / 3.0001) ≤ √t := Real.sqrt_le_sqrt htlow
     have h2 : √(T / 3.0001) = √T / √3.0001 := Real.sqrt_div' _ (by norm_num)
     have h3 : √3.0001 ≤ 1.73209 := by
       rw [Real.sqrt_le_left (by norm_num)]; norm_num
     rw [h2] at h1
     rw [div_le_iff₀ (lt_of_lt_of_le (by positivity) h1)]
-    calc 2.526 * T ^ 3 = 2.526 * √3.0001 * (T ^ 2 * √T) * (√T / √3.0001) := by
+    calc 2.511 * T ^ 3 = 2.511 * √3.0001 * (T ^ 2 * √T) * (√T / √3.0001) := by
           rw [hT3]; field_simp
       _ ≤ 4.38 * (T ^ 2 * √T) * (√T / √3.0001) := by gcongr; nlinarith
       _ ≤ _ := by gcongr

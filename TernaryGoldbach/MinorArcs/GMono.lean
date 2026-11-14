@@ -250,7 +250,7 @@ theorem exp_nine_le : rexp 9 ≤ 8200 := by
 /-- `g_x(r)` split into the three pieces, in the variable `s = log r`. -/
 theorem gx_eq {x r : ℝ} (hx : 0 < x) (hr : 0 < r) :
     gx x r = QA (Real.log (9 * x ^ (1 / 3 : ℝ) / 4.008)) (Real.log r) *
-        rexp (-(1 / 2) * Real.log r) / √2 + 2.526 / √(2 * r) +
+        rexp (-(1 / 2) * Real.log r) / √2 + 2.511 / √(2 * r) +
       QC (Real.log r) * rexp (-1 * Real.log r) + 3.8 * x ^ (-1 / 6 : ℝ) := by
   have e1 : rexp (-(1 / 2) * Real.log r) = (√r)⁻¹ := by
     rw [Real.sqrt_eq_rpow, Real.rpow_def_of_pos hr, ← Real.exp_neg]; ring_nf
@@ -291,7 +291,7 @@ theorem gx_antitoneOn {x : ℝ} (hx : 2.16e20 ≤ x) : AntitoneOn (gx x) (Icc 67
   have h1 := hA ha hb hab
   have h2 := hC ha hb hab
   simp only at h1 h2
-  have h3 : 2.526 / √(2 * b) ≤ 2.526 / √(2 * a) :=
+  have h3 : 2.511 / √(2 * b) ≤ 2.511 / √(2 * a) :=
     div_le_div_of_nonneg_left (by norm_num) (by positivity) (Real.sqrt_le_sqrt (by linarith))
   have h4 := div_le_div_of_nonneg_right h1 (Real.sqrt_nonneg 2)
   linarith

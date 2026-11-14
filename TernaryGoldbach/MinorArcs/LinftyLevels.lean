@@ -124,24 +124,24 @@ theorem gx_scale_le_of_le_one {y n w : ℝ} (hy : 0 < y) (hw : 0 < w) (hw1 : w �
   have hF : Fr (w * n) ≤ Fr n :=
     Fr_monotoneOn (show w * n ∈ Ici (670 : ℝ) from hn) (show n ∈ Ici (670 : ℝ) from hn670) (by nlinarith)
   have hF0 := Fr_pos hn
-  have hnum : (R (w * y) (2 * (w * n)) * Real.log (2 * (w * n)) + 0.8764) * √(Fr (w * n)) + 2.526 ≤
-      (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526 := by
+  have hnum : (R (w * y) (2 * (w * n)) * Real.log (2 * (w * n)) + 0.8764) * √(Fr (w * n)) + 2.511 ≤
+      (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 := by
     have h1 : R (w * y) (2 * (w * n)) * Real.log (2 * (w * n)) ≤ R y (2 * n) * Real.log (2 * n) :=
       mul_le_mul hR hl hl0 (hR0.trans hR)
     have h2 := Real.sqrt_le_sqrt hF
     have := mul_le_mul (add_le_add_right h1 0.8764) h2 (Real.sqrt_nonneg _) (by
       have := mul_nonneg (hR0.trans hR) (hl0.trans hl); linarith)
     linarith
-  have hnum0 : 0 ≤ (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526 := by
+  have hnum0 : 0 ≤ (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 := by
     have := mul_nonneg (hR0.trans hR) (hl0.trans hl); positivity
   have hsq : √(2 * (w * n)) = √w * √(2 * n) := by
     rw [show 2 * (w * n) = w * (2 * n) by ring, Real.sqrt_mul hw.le]
   have hsw : w ≤ √w := by
     rw [Real.le_sqrt hw.le hw.le]; nlinarith
-  have hA : ((R (w * y) (2 * (w * n)) * Real.log (2 * (w * n)) + 0.8764) * √(Fr (w * n)) + 2.526) /
-      √(2 * (w * n)) ≤ ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526) / √(2 * n) / w := by
+  have hA : ((R (w * y) (2 * (w * n)) * Real.log (2 * (w * n)) + 0.8764) * √(Fr (w * n)) + 2.511) /
+      √(2 * (w * n)) ≤ ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511) / √(2 * n) / w := by
     rw [div_div, hsq]
-    calc _ ≤ ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526) / (√w * √(2 * n)) :=
+    calc _ ≤ ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511) / (√w * √(2 * n)) :=
           div_le_div_of_nonneg_right hnum (by positivity)
       _ ≤ _ := by
           apply div_le_div_of_nonneg_left hnum0 (by positivity)
@@ -160,7 +160,7 @@ theorem gx_scale_le_of_le_one {y n w : ℝ} (hy : 0 < y) (hw : 0 < w) (hw1 : w �
           rw [Real.mul_rpow hw.le hy.le]; ring
       _ ≤ 3.8 * y ^ (-1 / 6 : ℝ) * w⁻¹ := this
       _ = 3.8 * y ^ (-1 / 6 : ℝ) / w := by ring
-  have e : gx y n / w = ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526) / √(2 * n) / w +
+  have e : gx y n / w = ((R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511) / √(2 * n) / w +
       Lg (2 * n) / n / w + 3.8 * y ^ (-1 / 6 : ℝ) / w := by unfold gx; ring
   rw [e]
   unfold gx
@@ -187,8 +187,8 @@ theorem gx_scale_le_of_one_le {y n w : ℝ} (hy : 0 < y) (hw : 1 ≤ w)
   have hC : (w * y) ^ (-1 / 6 : ℝ) ≤ y ^ (-1 / 6 : ℝ) :=
     Real.rpow_le_rpow_of_nonpos hy (by nlinarith) (by norm_num)
   unfold gx
-  have := div_le_div_of_nonneg_right (show (R (w * y) (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526 ≤
-    (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.526 by linarith) (Real.sqrt_nonneg (2 * n))
+  have := div_le_div_of_nonneg_right (show (R (w * y) (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 ≤
+    (R y (2 * n) * Real.log (2 * n) + 0.8764) * √(Fr n) + 2.511 by linarith) (Real.sqrt_nonneg (2 * n))
   have := mul_le_mul_of_nonneg_left hC (show (0:ℝ) ≤ 3.8 by norm_num)
   linarith
 

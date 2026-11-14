@@ -176,7 +176,7 @@ noncomputable def cPlus (x U V : ℝ) : ℝ := 1 + eta2'L1 / (x / (U * V))
 /-- The coefficient of `UV` in (6.13): `2√(c₀c₊)/π + 3c₊/(2ec₂)`. -/
 noncomputable def coefUV (c : ℝ) : ℝ := 2 * √(c₀ * c) / π + 3 * c / (2 * c₂ * rexp 1)
 
-/-- Our coefficient of `Q` in (6.13) (before the factor `1.0064`):
+/-- Our coefficient of `Q` in (6.13) (before the factor `1.0004`):
 `√(c₀c₊)/π (log⁺(2U/q) + 1/e) + (2|η₂'|₁/π) max(1, log(c₀e³q²V/4π|η₂'|₁x))`
 `+ 2√(3c₀c₊)/π + 3c₊/2c₂ + 55c₀c₂/6π²`. -/
 noncomputable def coefQ (x : ℝ) (q : ℕ) (U V c : ℝ) : ℝ :=
@@ -292,22 +292,21 @@ theorem coefQ_nonneg (x : ℝ) (q : ℕ) (U V : ℝ) {c : ℝ} (hc : 0 ≤ c) : 
 variable [Fact TernaryGoldbach.PlattGRH] [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.12) + (6.13)]**, our version, for `|δ| ≤ 1/2c₂` and `qV ≤ Q`:
 `|S_{I,2}| ≤ (x/2q) min(1, c₀/(πδ)²) μ log(Vq)`
-`+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.511V² + Vq log q) + 0.511 (2U + q) V²)`
-`+ 1.0064 (2√(c₀c₊)/π + 3c₊/2ec₂) UV + 1.0064 C_Q Q`,
+`+ (c₀(1/8 - 1/2π²)/x) ((U²/q)(0.5004V² + Vq log q) + 0.5004 (2U + q) V²)`
+`+ 1.0004 (2√(c₀c₊)/π + 3c₊/2ec₂) UV + 1.0004 C_Q Q`,
 with `μ = min(1, (4/5)(2q/φ(2q))/log(M₀/2q²))` (`muBound`), `M₀ = min(Q/2V, U)`,
 `c₊ = 1 + 8 log 2/(x/UV)` and `C_Q = coefQ`.  Compared with [H], the term `U²V log V`
 is replaced by `U²V log q`, and `√(c₀c₊)/π · Q log(U/(q/2))` becomes
-`√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). The proof uses [H, (2.14),
-(2.17)] (`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`: `1.0004`, `1.0008`);
-the statement carries the weaker `1.0064` and `1.022` (as `0.511 V²`). -/
+`√(c₀c₊)/π · Q (log⁺(2U/q) + 1/e)` (no assumption `Q ≤ 2UV/e`). [H, (2.14), (2.17)] enter as
+`1.0004 V` and `0.5004 V²` (`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`). -/
 theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q) (hx : 0 < x)
     (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V) (hUV : U * V ≤ x)
     (hδ : |δ| ≤ 1 / (2 * c₂)) :
     ‖typeI2 α x U V‖ ≤
       x / (2 * q) * minInv c₀ (π * δ) * muBound (min (Q / (2 * V)) U) q * Real.log (V * q) +
         c₀ * (1 / 8 - 1 / (2 * π ^ 2)) / x *
-          (U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) + (2 * U + q) * (0.511 * V ^ 2)) +
-        1.0064 * coefUV (cPlus x U V) * (U * V) + 1.0064 * coefQ x q U V (cPlus x U V) * Q := by
+          (U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) + (2 * U + q) * (0.5004 * V ^ 2)) +
+        1.0004 * coefUV (cPlus x U V) * (U * V) + 1.0004 * coefQ x q U V (cPlus x U V) * Q := by
   have hsum := (typeI2_le_sum h hx hqV hQV hU (by linarith) hUV).1 hδ
   refine hsum.trans ?_
   obtain ⟨hq, -, -, hδQ', -⟩ := h
@@ -379,16 +378,16 @@ theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 �
     have : Real.log N ≤ Real.log V :=
       Real.log_le_log (by exact_mod_cast hN1) hNV
     linarith
-  have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.511 * V ^ 2 := by
+  have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.5004 * V ^ 2 := by
     have := Prelim.sum_vonMangoldt_mul_lt_a17 (y := V) (by norm_num; linarith)
     rw [← hN] at this; linarith [sq_nonneg V]
-  have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.511 * V ^ 2 + V * q * Real.log q := by
+  have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.5004 * V ^ 2 + V * q * Real.log q := by
     refine (sum_vonMangoldt_mul_gcd_le hq (N := N)).trans ?_
     have : (N : ℝ) * q * Real.log q ≤ V * q * Real.log q := by
       have := Real.log_nonneg (show (1 : ℝ) ≤ q by exact_mod_cast hq)
       gcongr
     linarith
-  have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0064 * V := by
+  have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0004 * V := by
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
     rw [← hN] at this; linarith
   have hKU : 0 ≤ K * U ^ 2 / q := by positivity
@@ -399,11 +398,11 @@ theorem typeI2_le_small {α x δ Q U V : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 �
   have b4 := mul_le_mul_of_nonneg_left s4 hC0
   have hQq : coefQ x q U V c * q * V ≤ coefQ x q U V c * Q := by
     rw [mul_assoc]; exact mul_le_mul_of_nonneg_left hqV (coefQ_nonneg x q U V hc0)
-  have hlast : C * (1.0064 * V) ≤ 1.0064 * coefUV c * (U * V) + 1.0064 * coefQ x q U V c * Q := by
+  have hlast : C * (1.0004 * V) ≤ 1.0004 * coefUV c * (U * V) + 1.0004 * coefQ x q U V c * Q := by
     simp only [hC]; nlinarith
-  have hfin : K * U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) +
-      K * (2 * U + q) * (0.511 * V ^ 2) = K * (U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) +
-        (2 * U + q) * (0.511 * V ^ 2)) := by ring
+  have hfin : K * U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) +
+      K * (2 * U + q) * (0.5004 * V ^ 2) = K * (U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) +
+        (2 * U + q) * (0.5004 * V ^ 2)) := by ring
   linarith
 
 end TernaryGoldbach.MinorArcs

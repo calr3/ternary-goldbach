@@ -19,7 +19,7 @@ theorem two_sqrt_c0_mul_le {c : ℝ} (hc : 0 ≤ c) : 2 * √(c₀ * c) / π ≤
 
 set_option maxHeartbeats 1600000 in
 /-- The rest of `S_{I,2}` for `|δ| ≥ 1/2c₂` ([H, (6.14)], `ε = 0.07`) at the parameters:
-`≤ 2.5257 x/√t + (13.767 log t + 19.997) · 2x/t + 0.555 x^{5/6}`. -/
+`≤ 2.5106 x/√t + (13.767 log t + 19.997) · 2x/t + 0.555 x^{5/6}`. -/
 theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
     (hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3)
     (hδ : 1 / (2 * c₂) ≤ |δ|) :
@@ -27,14 +27,14 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
     let U := (U1 T t : ℝ)
     let V := (V1 T : ℝ)
     let c := cPlus (T ^ 3) U V
-    1.0064 * (2 * √(c₀ * c) / π * (1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1)) * (U * V) +
-        1.0064 * (3 / 2 * c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
+    1.0004 * (2 * √(c₀ * c) / π * (1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1)) * (U * V) +
+        1.0004 * (3 / 2 * c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
           (T ^ 3 * V / (3 / 4 * T ^ 2)) +
-        1.0064 * (35 * c₀ * c₂ / (3 * π ^ 2)) * (3 / 4 * T ^ 2) +
+        1.0004 * (35 * c₀ * c₂ / (3 * π ^ 2)) * (3 / 4 * T ^ 2) +
         2 * √(c₀ * c) / π * (1 + 0.07) * √(3 + 2 * 0.07) *
           (T ^ 3 / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * T ^ 3))) +
-            1.0064 * V) ≤
-      2.5257 * (T ^ 3 / √t) + (13.767 * Real.log t + 19.997) * (2 * T ^ 3 / t) +
+            1.0004 * V) ≤
+      2.5106 * (T ^ 3 / √t) + (13.767 * Real.log t + 19.997) * (2 * T ^ 3 / t) +
         0.555 * (T ^ 2 * √T) := by
   intro t U V c
   have hT0 : 0 < T := by linarith
@@ -61,19 +61,19 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
   -- B5.
   have hVQ : V / (3 / 4 * T ^ 2) ≤ 1e-6 := by
     rw [div_le_iff₀ (by positivity)]; nlinarith
-  have hB5 : 1.0064 * (2 * √(c₀ * c) / π * (1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1)) *
-      (U * V) ≤ 2.5257 * (T ^ 3 / √t) + 1.7507 * (2 * T ^ 3 / t) := by
+  have hB5 : 1.0004 * (2 * √(c₀ * c) / π * (1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1)) *
+      (U * V) ≤ 2.5106 * (T ^ 3 / √t) + 1.7507 * (2 * T ^ 3 / t) := by
     have hf : 1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1 ≤ 1.393634 := by
       have : (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1 ≤ 1.07 * (1 + 1e-6) / 2.7182818283 := by
         gcongr; norm_num
       have : (1.07 * (1 + 1e-6) / 2.7182818283 : ℝ) ≤ 0.393634 := by norm_num
       linarith
     have hf0 : 0 ≤ 1 + (1 + 0.07) * (1 + V / (3 / 4 * T ^ 2)) / rexp 1 := by positivity
-    calc _ ≤ 1.0064 * (3.6014 * (1 + 1.3863 / √t) * 1.393634) * (T ^ 3 / (2 * √t)) := by
+    calc _ ≤ 1.0004 * (3.6014 * (1 + 1.3863 / √t) * 1.393634) * (T ^ 3 / (2 * √t)) := by
           gcongr
           exact hA.trans (by gcongr)
-      _ = 1.0064 * 3.6014 * 1.393634 / 2 * (T ^ 3 / √t) +
-          1.0064 * 3.6014 * 1.393634 * 1.3863 / 4 * (2 * T ^ 3 / (√t * √t)) := by field_simp; ring
+      _ = 1.0004 * 3.6014 * 1.393634 / 2 * (T ^ 3 / √t) +
+          1.0004 * 3.6014 * 1.393634 * 1.3863 / 4 * (2 * T ^ 3 / (√t * √t)) := by field_simp; ring
       _ ≤ _ := by
           rw [hss]
           have : 0 ≤ T ^ 3 / √t := by positivity
@@ -81,7 +81,7 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
           gcongr <;> norm_num
   -- B6.
   have hlog := log_le_sqrt_sharp hT
-  have hB6 : 1.0064 * (3 / 2 * c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
+  have hB6 : 1.0004 * (3 / 2 * c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
       (T ^ 3 * V / (3 / 4 * T ^ 2)) ≤ 0.5469 * (T ^ 2 * √T) := by
     have hd := delta0_ge δ
     have hδq : |δ| * q ≤ 4 * t := by
@@ -158,9 +158,9 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
         nlinarith
     have hxVQ : T ^ 3 * V / (3 / 4 * T ^ 2) ≤ 6 * T ^ 2 := by
       rw [div_le_iff₀ (by positivity)]; nlinarith [pow_pos hT0 3]
-    calc _ = 1.0064 * 1.5 * (c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
+    calc _ = 1.0004 * 1.5 * (c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3))) *
           (T ^ 3 * V / (3 / 4 * T ^ 2)) := by ring
-      _ ≤ 1.0064 * 1.5 * (16.985 + 0.053436 * √T) * (6 * T ^ 2) := by
+      _ ≤ 1.0004 * 1.5 * (16.985 + 0.053436 * √T) * (6 * T ^ 2) := by
           have : 0 ≤ T ^ 3 * V / (3 / 4 * T ^ 2) := by positivity
           have : 0 ≤ c * (2 + (1 + 0.07) / 0.07 * logPlus (2 * U * V * |δ| * q / T ^ 3)) := by
             have := logPlus_nonneg (2 * U * V * |δ| * q / T ^ 3)
@@ -171,7 +171,7 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
           have : 2449 * T ^ 2 ≤ T ^ 2 * √T := by nlinarith [pow_pos hT0 2]
           nlinarith [pow_pos hT0 2]
   -- B7.
-  have hB7 : 1.0064 * (35 * c₀ * c₂ / (3 * π ^ 2)) * (3 / 4 * T ^ 2) ≤ 0.0078 * (T ^ 2 * √T) := by
+  have hB7 : 1.0004 * (35 * c₀ * c₂ / (3 * π ^ 2)) * (3 / 4 * T ^ 2) ≤ 0.0078 * (T ^ 2 * √T) := by
     have e : 35 * c₀ * c₂ / (3 * π ^ 2) = 7 * (5 * c₀ * c₂ / (3 * π ^ 2)) := by ring
     rw [e, c₂_identity]
     obtain ⟨hc0a, hc0b⟩ := sqrt_c₀_bounds
@@ -179,7 +179,7 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
     have : 2 * √c₀ / π ≤ 3.6014 := by
       rw [div_le_iff₀ (by linarith)]; nlinarith
     have : 0 ≤ 2 * √c₀ / π := by positivity
-    calc 1.0064 * (7 * (2 * √c₀ / π)) * (3 / 4 * T ^ 2) ≤ 1.0064 * (7 * 3.6014) * (3 / 4 * T ^ 2) := by
+    calc 1.0004 * (7 * (2 * √c₀ / π)) * (3 / 4 * T ^ 2) ≤ 1.0004 * (7 * 3.6014) * (3 / 4 * T ^ 2) := by
           gcongr
       _ ≤ 0.0078 * (T ^ 2 * √T) := by
           have : 2449 * T ^ 2 ≤ T ^ 2 * √T := by nlinarith [pow_pos hT0 2]
@@ -187,7 +187,7 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
   -- B8.
   have hB8 : 2 * √(c₀ * c) / π * (1 + 0.07) * √(3 + 2 * 0.07) *
       (T ^ 3 / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * T ^ 3))) +
-        1.0064 * V) ≤ (13.767 * Real.log t + 18.246) * (2 * T ^ 3 / t) + 0.0001 * (T ^ 2 * √T) := by
+        1.0004 * V) ≤ (13.767 * Real.log t + 18.246) * (2 * T ^ 3 / t) + 0.0001 * (T ^ 2 * √T) := by
     have hD : 2 * √(c₀ * c) / π * (1 + 0.07) * √(3 + 2 * 0.07) ≤ 6.8285 * (1 + 1.3863 / √t) := by
       have h1 : √(3 + 2 * 0.07 : ℝ) ≤ 1.77201 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
       calc _ ≤ 3.6014 * (1 + 1.3863 / √t) * (1 + 0.07) * 1.77201 := by
@@ -206,21 +206,21 @@ theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 
       have : 1.3863 / √t = 1.3863 * (1 / √t) := by ring
       nlinarith
     calc _ ≤ 6.8285 * (1 + 1.3863 / √t) * ((2.016 * Real.log t + 0.3108) * (2 * T ^ 3 / t) +
-          1.0064 * (9 * T / 2)) := by gcongr
+          1.0004 * (9 * T / 2)) := by gcongr
       _ = 6.8285 * (2.016 * Real.log t + 0.3108 + 1.3863 * 2.016 * (Real.log t / √t) +
             1.3863 * 0.3108 * (1 / √t)) * (2 * T ^ 3 / t) +
-          6.8285 * (1 + 1.3863 / √t) * (1.0064 * (9 * T / 2)) := by
+          6.8285 * (1 + 1.3863 / √t) * (1.0004 * (9 * T / 2)) := by
           field_simp; ring
       _ ≤ 6.8285 * (2.016 * Real.log t + 0.3108 + 1.3863 * 2.016 * 0.7358 +
             1.3863 * 0.3108 * 0.7072) * (2 * T ^ 3 / t) +
-          6.8285 * 1.9804 * (1.0064 * (9 * T / 2)) := by
+          6.8285 * 1.9804 * (1.0004 * (9 * T / 2)) := by
           have : 0 ≤ 2 * T ^ 3 / t := by positivity
           gcongr
       _ ≤ _ := by
           have h0 : 0 ≤ 2 * T ^ 3 / t := by positivity
           have h1 : 6.8285 * (2.016 * Real.log t + 0.3108 + 1.3863 * 2.016 * 0.7358 +
               1.3863 * 0.3108 * 0.7072) ≤ 13.767 * Real.log t + 18.246 := by nlinarith
-          have h2 : 6.8285 * 1.9804 * (1.0064 * (9 * T / 2)) ≤ 0.0001 * (T ^ 2 * √T) := by
+          have h2 : 6.8285 * 1.9804 * (1.0004 * (9 * T / 2)) ≤ 0.0001 * (T ^ 2 * √T) := by
             have : 2449 * T ≤ T * √T := by nlinarith
             have : 6e6 * (T * √T) ≤ T ^ 2 * √T := by
               have : 0 ≤ T * √T := by positivity

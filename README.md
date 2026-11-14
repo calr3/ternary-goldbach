@@ -155,9 +155,8 @@ kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/2
 Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
 `Eta2DDBound.lean`; about 4 minutes in all).
 
-With `c₀ = 32`, `c₊ = 2` and (2.14), (2.17) with `1.0064`, `1.022` (the constants the Type I
-statements carry; their proofs use [H]'s; see below), Theorem 3.1.1 has `2.526 x/√t` for [H]'s
-`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00717` (against `1.037`).
+With `c₀ = 32` (for [H]'s `31.521`) and `c₊ = 2`, Theorem 3.1.1 has `2.511 x/√t` for [H]'s
+`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00666` (against `1.037`).
 
 (9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
 integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
@@ -217,9 +216,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     zero-free region `β ≤ 1 − 1/(11 log|γ|)` for `|γ| ≥ 10⁸`. The zero-free region is proved with
     partial fractions for `ξ'/ξ` and Stechkin's lemma.
 
-  With these alone, (2.14) and (2.17) hold with `1.0064` and `1.022` (for `y ≥ 2.5·10⁷`;
-  `Prelim/LambdaMu.lean`), and (2.19) for `y ≥ 2·10⁶`; these are the ranges the minor arcs use.
-  [H]'s `1.0004` and `1.0008` are proved by Helfgott (`Prelim/PsiHelfgott.lean`, from RSBounds:
+  From these, (2.19) holds for `y ≥ 2·10⁶`, the range the minor arcs use (`Prelim/LambdaMu.lean`).
+  (2.14) and (2.17) with [H]'s `1.0004` and `1.0008` (for `y ≥ 2.5·10⁷`) are proved by Helfgott (`Prelim/PsiHelfgott.lean`, from RSBounds:
   the kernel-checked PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]` and Rosser–Schoenfeld's (1975)
   `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to `1894438.5122`), and the minor arcs use
   them.
@@ -234,8 +232,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 |---|---|---|---|
 | Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
-| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.526 x/√t`, `3.8 x^{5/6}` |
-| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds); the Type I statements carry `1.0064`, `1.022` |
+| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
+| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds) |
 | (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
@@ -256,7 +254,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
   * Repaired as follows: the scale-`x/κ` arcs are used above the base level, the Dirichlet
     approximation is redone at each scale, the levels are extended to `≈ x^{0.3}`, and the base gap
     is bounded with Cor 7.1.3.
-  * Numerically the repaired bound is at most `1.00717 · x²/κ` before the split `S_{η₊} = S₁ + S₂`
+  * Numerically the repaired bound is at most `1.00666 · x²/κ` before the split `S_{η₊} = S₁ + S₂`
     (worst generated cell, against `1.037`); we state (14.49) with `1.0376`.
 * The proof of Prop 11.2.3 does not rescale `δ` to `wδ`. This erratum is Helfgott's own: he found
   it around 2016 and reported it to the publisher. A float check suggests the statement still holds,

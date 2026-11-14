@@ -13,15 +13,14 @@ open scoped ArithmeticFunction.vonMangoldt
 namespace TernaryGoldbach.MinorArcs
 
 /-- [H, p. 106]: `∑_{v ≤ V} Λ(v) min(⌊x/v/|δ|q_v⌋ + 1, 2U)`
-`≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0064 V`, from `ψ(y) < 1.03883 y`
-(`Prelim.sum_vonMangoldt_lt`) and [H, (2.14)] `ψ(V) ≤ 1.0004 V` (`Prelim.sum_vonMangoldt_le_a14`),
-stated with the weaker `1.0064`. -/
+`≤ (x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0004 V`, from `ψ(y) < 1.03883 y`
+(`Prelim.sum_vonMangoldt_lt`) and [H, (2.14)] `ψ(V) ≤ 1.0004 V` (`Prelim.sum_vonMangoldt_le_a14`). -/
 theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) (hδ : 0 < |δ|)
     (hU : 0 < U) (hV : 2.5e7 ≤ V) :
     ∑ v ∈ Icc 1 ⌊V⌋₊, (Λ v : ℝ) *
         min ((⌊x / v / (|δ| * ((q / Nat.gcd q v : ℕ) : ℝ))⌋₊ : ℝ) + 1) (2 * U) ≤
       x / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x))) +
-        1.0064 * V := by
+        1.0004 * V := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   have hV0 : 0 < V := by linarith
   set N := ⌊V⌋₊ with hN
@@ -68,7 +67,7 @@ theorem sum_min_floor_le {x δ U V : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) 
           mul_le_mul_of_nonneg_left h1 (hΛ v)
       _ = _ := by ring
   have p2b := sum_vonMangoldt_gcd_div_subset_le hq hSsub
-  have p2c : ∑ v ∈ S, (Λ v : ℝ) ≤ 1.0064 * V := by
+  have p2c : ∑ v ∈ S, (Λ v : ℝ) ≤ 1.0004 * V := by
     refine (sum_le_sum_of_subset_of_nonneg hSsub fun v _ _ => hΛ v).trans ?_
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
     rw [← hN] at this; linarith
@@ -218,27 +217,26 @@ theorem bound_4_32_v_le {x δ Q U V ε : ℝ} {q v : ℕ} (hq : 1 ≤ q) (hx : 0
 variable [Fact TernaryGoldbach.RamareMoebius] in
 /-- **[H, (6.12) + (6.14)]**, our version, for `|δ| ≥ 1/2c₂`, `qV ≤ Q` and `0 < ε ≤ 1`:
 `|S_{I,2}|` is at most the first two lines of `typeI2_le_small` ((6.12)) plus
-`1.0064 (2√(c₀c₊)/π)(1 + (1+ε)(1+V/Q)/e) UV`
-`+ 1.0064 (3c₊/2)(2 + ((1+ε)/ε) log⁺(2UV|δ|q/x)) xV/Q + 1.0064 (35c₀c₂/3π²) Q`
-`+ (2√(c₀c₊)/π)(1+ε)√(3+2ε) ((x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0064 V)`.
+`1.0004 (2√(c₀c₊)/π)(1 + (1+ε)(1+V/Q)/e) UV`
+`+ 1.0004 (3c₊/2)(2 + ((1+ε)/ε) log⁺(2UV|δ|q/x)) xV/Q + 1.0004 (35c₀c₂/3π²) Q`
+`+ (2√(c₀c₊)/π)(1+ε)√(3+2ε) ((x/|δ|q)(1.03883 + log q + log⁺(6UV|δ|q/√2x)) + 1.0004 V)`.
 Compared with [H]: the `U/e` term carries a factor `1 + V/Q` (since (4.32) has
-`log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). The proof uses [H, (2.14), (2.17)]
-(`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`: `1.0004`, `1.0008`); the
-statement carries the weaker `1.0064` and `1.022` (as `0.511 V²`). -/
+`log⁺(2D/y)` rather than `log⁺(2D/(⌊y⌋+1))`). [H, (2.14), (2.17)] enter as `1.0004 V` and
+`0.5004 V²` (`Prelim.sum_vonMangoldt_le_a14`, `Prelim.sum_vonMangoldt_mul_lt_a17`). -/
 theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q)
     (hx : 0 < x) (hqV : q * V ≤ Q) (hQV : 16 * V ≤ Q) (hU : 1 ≤ U) (hV : 2.5e7 ≤ V)
     (hUV : U * V ≤ x) (hδ : 1 / (2 * c₂) ≤ |δ|) (hε : 0 < ε) (hε1 : ε ≤ 1) :
     ‖typeI2 α x U V‖ ≤
       x / (2 * q) * minInv c₀ (π * δ) * muBound (min (Q / (2 * V)) U) q * Real.log (V * q) +
         c₀ * (1 / 8 - 1 / (2 * π ^ 2)) / x *
-          (U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) + (2 * U + q) * (0.511 * V ^ 2)) +
-        1.0064 * (2 * √(c₀ * cPlus x U V) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
-        1.0064 * (3 / 2 * cPlus x U V * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) *
+          (U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) + (2 * U + q) * (0.5004 * V ^ 2)) +
+        1.0004 * (2 * √(c₀ * cPlus x U V) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
+        1.0004 * (3 / 2 * cPlus x U V * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) *
           (x * V / Q) +
-        1.0064 * (35 * c₀ * c₂ / (3 * π ^ 2)) * Q +
+        1.0004 * (35 * c₀ * c₂ / (3 * π ^ 2)) * Q +
         2 * √(c₀ * cPlus x U V) / π * (1 + ε) * √(3 + 2 * ε) *
           (x / (|δ| * q) * (1.03883 + Real.log q + logPlus (6 * U * V * |δ| * q / (√2 * x))) +
-            1.0064 * V) := by
+            1.0004 * V) := by
   have hsum := (typeI2_le_sum h hx hqV hQV hU (by linarith) hUV).2 hδ ε hε hε1
   refine hsum.trans ?_
   obtain ⟨hq, -, -, hδQ', -⟩ := h
@@ -323,16 +321,16 @@ theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     have : Real.log N ≤ Real.log V :=
       Real.log_le_log (by exact_mod_cast hN1) hNV
     linarith
-  have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.511 * V ^ 2 := by
+  have s3 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v ≤ 0.5004 * V ^ 2 := by
     have := Prelim.sum_vonMangoldt_mul_lt_a17 (y := V) (by norm_num; linarith)
     rw [← hN] at this; linarith [sq_nonneg V]
-  have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.511 * V ^ 2 + V * q * Real.log q := by
+  have s2 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) * v * Nat.gcd q v ≤ 0.5004 * V ^ 2 + V * q * Real.log q := by
     refine (sum_vonMangoldt_mul_gcd_le hq (N := N)).trans ?_
     have : (N : ℝ) * q * Real.log q ≤ V * q * Real.log q := by
       have := Real.log_nonneg (show (1 : ℝ) ≤ q by exact_mod_cast hq)
       gcongr
     linarith
-  have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0064 * V := by
+  have s4 : ∑ v ∈ Icc 1 N, (Λ v : ℝ) ≤ 1.0004 * V := by
     have := Prelim.sum_vonMangoldt_le_a14 (y := V) (by linarith)
     rw [← hN] at this; linarith
   have s5 := sum_min_floor_le (δ := δ) hq hx hδ0 hU0 hV (x := x)
@@ -345,21 +343,21 @@ theorem typeI2_le_large {α x δ Q U V ε : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   have b5 := mul_le_mul_of_nonneg_left s5 hD0
   have hqQ : 35 * c₀ * c₂ / (3 * π ^ 2) * q * V ≤ 35 * c₀ * c₂ / (3 * π ^ 2) * Q := by
     rw [mul_assoc]; exact mul_le_mul_of_nonneg_left hqV (by positivity)
-  have hlast : C * (1.0064 * V) ≤
-      1.0064 * (2 * √(c₀ * c) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
-      1.0064 * (3 / 2 * c * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) * (x * V / Q) +
-      1.0064 * (35 * c₀ * c₂ / (3 * π ^ 2)) * Q := by
-    have e2 : C * (1.0064 * V) =
-        1.0064 * (2 * √(c₀ * c) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
-        1.0064 * (3 / 2 * c * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) *
-          (x * V / Q) + 1.0064 * (35 * c₀ * c₂ / (3 * π ^ 2) * q * V) := by
+  have hlast : C * (1.0004 * V) ≤
+      1.0004 * (2 * √(c₀ * c) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
+      1.0004 * (3 / 2 * c * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) * (x * V / Q) +
+      1.0004 * (35 * c₀ * c₂ / (3 * π ^ 2)) * Q := by
+    have e2 : C * (1.0004 * V) =
+        1.0004 * (2 * √(c₀ * c) / π * (1 + (1 + ε) * (1 + V / Q) / rexp 1)) * (U * V) +
+        1.0004 * (3 / 2 * c * (2 + (1 + ε) / ε * logPlus (2 * U * V * |δ| * q / x))) *
+          (x * V / Q) + 1.0004 * (35 * c₀ * c₂ / (3 * π ^ 2) * q * V) := by
       simp only [hC]; ring
     rw [e2]
-    have := mul_le_mul_of_nonneg_left hqQ (by norm_num : (0 : ℝ) ≤ 1.0064)
+    have := mul_le_mul_of_nonneg_left hqQ (by norm_num : (0 : ℝ) ≤ 1.0004)
     linarith
-  have hfin : K * U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) +
-      K * (2 * U + q) * (0.511 * V ^ 2) = K * (U ^ 2 / q * (0.511 * V ^ 2 + V * q * Real.log q) +
-        (2 * U + q) * (0.511 * V ^ 2)) := by ring
+  have hfin : K * U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) +
+      K * (2 * U + q) * (0.5004 * V ^ 2) = K * (U ^ 2 / q * (0.5004 * V ^ 2 + V * q * Real.log q) +
+        (2 * U + q) * (0.5004 * V ^ 2)) := by ring
   linarith
 
 end TernaryGoldbach.MinorArcs

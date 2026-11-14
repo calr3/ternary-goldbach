@@ -8,7 +8,7 @@ variable [Fact TernaryGoldbach.PlattGRH]
 # [H, §6.3.1, (6.63) and §6.4]: Theorem 3.1.1 for `q ≤ x^{1/3}/6`
 
 With `T = x^{1/3}`, `t = δ₀q`:
-`|S_{η₂}(α, x)| ≤ ((0.27125 C_{x,t} + 0.41415) log t + 0.8764) x/√(δ₀φ(q)) + 2.526 x/√t`
+`|S_{η₂}(α, x)| ≤ ((0.27125 C_{x,t} + 0.41415) log t + 0.8764) x/√(δ₀φ(q)) + 2.511 x/√t`
 `+ 2x/(δ₀φ(q)) (13/4 log t + 7.82) + 2x/t (13.66 log t + 37.55) + 3.8 x^{5/6}`.
 -/
 
@@ -36,7 +36,7 @@ theorem theorem_3_1_1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     ‖S eta2 (T ^ 3) α‖ ≤
       ((0.27125 * Cxt T (delta0 δ * q) + 0.41415) * Real.log (delta0 δ * q) + 0.8764) /
           √(delta0 δ * Nat.totient q) * T ^ 3 +
-        2.526 * T ^ 3 / √(delta0 δ * q) +
+        2.511 * T ^ 3 / √(delta0 δ * q) +
         2 * T ^ 3 / (delta0 δ * q) * ((q : ℝ) / Nat.totient q *
           (13 / 4 * Real.log (delta0 δ * q) + 7.82) + 13.66 * Real.log (delta0 δ * q) + 37.55) +
         3.8 * (T ^ 2 * √T) := by
@@ -94,7 +94,7 @@ theorem theorem_3_1_1_first {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   have hX : 0 ≤ 2 * T ^ 3 / t := by positivity
   have hS : 0 ≤ T ^ 3 / √t := by positivity
   have hK : 0 ≤ T ^ 2 * √T := by positivity
-  have hS' : 2.526 * T ^ 3 / √t = 2.526 * (T ^ 3 / √t) := by ring
+  have hS' : 2.511 * T ^ 3 / √t = 2.511 * (T ^ 3 / √t) := by ring
   rw [hS']
   -- `(3.25 log t + 1.22)(2x/(δ₀φ) - 2x/t) ≥ 0` (`7.82 = 3.8 + 2.8 + 1.22`).
   have hspill : (13 / 4 * Real.log t + 1.22) * (2 * T ^ 3 / t) ≤

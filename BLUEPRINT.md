@@ -28,7 +28,7 @@ differences from [H]; `NOTES.md` has the details.
 ```
 (14.49)  [§14.3: numerics]  ✅ MinorArcs/MinorTotal.lean `minor_total` (≤ 1.0376 x²/κ)
  │   [S_{η₊} = S₁ + S₂ (S₁: primes > √x); numerics `numerics_M`: generated cells
- │    (NumericsCells, scripts/gen_cells.py, worst Mexpr 1.00717 ≤ 1.037) and NumericsAsymp;
+ │    (NumericsCells, scripts/gen_cells.py, worst Mexpr 1.00666 ≤ 1.037) and NumericsAsymp;
  │    (14.7) from MajorArcs/L2Major.lean; (14.28) with 8·10⁻¹¹ (MinorArcs/EBound.lean)]
  └─ Thm 13.2.1  (minor-arc total: ℓ² over arcs × ℓ∞ bounds)
      │   ⚠ [H]'s proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ² input and
@@ -39,7 +39,7 @@ differences from [H]; `NOTES.md` has the details.
      │    base gap via Cor 7.1.3 ✅ MinorArcs/BaseGap2.lean]
      ├─ Prop 13.1.2  (combining ℓ² and ℓ∞ bounds) ✅ MinorArcs/Prop1312.lean (discrete form)
      ├─ Thm 3.1.1  (pointwise: |S_{η₂}(α,x)| for 2α = a/q + δ/x, x ≥ 2.16·10²⁰)   ← Part I
-     │   ✅ MinorArcs/PointwiseBound.lean `theorem_3_1_1`: first case 0.8764, 2.526 x/√t, 3.8 x^{5/6};
+     │   ✅ MinorArcs/PointwiseBound.lean `theorem_3_1_1`: first case 0.8764, 2.511 x/√t, 3.8 x^{5/6};
      │      second case [H]'s 0.276, 1234
      │   ├─ Ch 3.3  Vaughan's identity ✅ MinorArcs/Vaughan.lean
      │   ├─ Ch 4  Type I sums: trigonometric sums (§4.1), Type I estimates (§4.2)
