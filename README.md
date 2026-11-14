@@ -99,6 +99,13 @@ theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `Ram
 Comparator accepted both theorems then. The two-hypothesis statements have not been checked with
 it.
 
+CI (`.github/workflows/ci.yml`) does not run the full build, which takes many hours. On every push
+and pull request it runs `scripts/ci_checks.py` (no Lean needed): imports resolve against
+`lakefile.lean`; nothing the main theorems import contains `sorry`, `admit`, `native_decide` or an
+`axiom`; `TernaryGoldbach.lean` imports every file; `Challenge.lean` matches `Statement.lean` and
+`MainTheorems.lean`; the vendored sources match their provenance record; the file paths in the docs
+exist. It also builds `Statement.lean` and `Challenge.lean` against Mathlib's prebuilt files.
+
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:
 * the tables `|ψ(t) − t| ≤ √t`, `t − 2.3662√t ≤ θ(t) ≤ t` on `[12, 10⁶)` (trial division,

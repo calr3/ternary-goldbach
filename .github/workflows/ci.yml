@@ -1,0 +1,40 @@
+# Cheap checks on every push and pull request. A full `lake build` takes many hours (see NOTES.md,
+# "Environment"), so it is not run here.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Repository checks (no Lean)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # Imports resolve against lakefile.lean; no sorry/admit/native_decide/axiom in what the main
+      # theorems import; every file is built by the default target; Challenge.lean matches the
+      # code; vendored sources unchanged; file paths in the docs exist.
+      - run: python3 scripts/ci_checks.py
+
+  statements:
+    name: Statements build (Statement.lean, Challenge.lean)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
+            | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch Mathlib's prebuilt files
+        run: lake exe cache get
+      - name: Build the statements
+        run: lake build TernaryGoldbach.Statement Challenge
