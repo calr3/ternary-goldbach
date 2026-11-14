@@ -516,7 +516,13 @@ and Thm 3.1.1 at scale `wy` gives `max(g_{wy}(min(1,w)n), h(wy))`. The first cas
 `g_{wy}(min(1,w)n) ≤ max(1, 1/w) g_y(n)`, `h(wy) ≤ max(1, 1/w) h(y)`, costing
 `∫_{w₀}^∞ max(1, 1/w) φ ≤ 1.398` (`PhiIntegrals.lean`); with `w₀ = 670/n`,
 `ghatY(y, n) = 1.398·max(g_y(n), h(y)) + 17(670/n)³/3` (`LinftyLevels.norm_S_etaStar_le_ghat`). A
-cleaner repair would follow the `r_w ≥ wr` analysis above.
+cleaner repair would follow the `r_w ≥ wr` analysis above, with one approximation at scale `y`
+(so `r ≥ n`). A bound valid for every `α` must cover both cases: for `|δ| > 8`, `∫ g_{wy}(wn) φ`
+is about `1.09–1.10 g_y(n)`, but for `|δ| ≤ 8` there is no gain for `w > 1`, and `∫ g_{wy}(n) φ` is
+about `1.25 g_y(n)` (`∫φ = √(π/2) = 1.2533`). So that repair gives about `1.25 g_y(n)` for our
+`1.398 g_y(n)`: `ĝ` about 10.5% smaller, at every `y ∈ [10²⁵, 10¹⁰⁰]` and `n ∈ [1.5·10⁵, 10⁸]`
+checked. The cutoff `w₁ = ((4/3)y^{1/3}/(8n))^{3/2}` is `≥ 215` there, but tends to `1` as
+`n → y^{1/3}/6`, so the top levels would keep the present bound.
 
 `Prop1123.lean` has the trivial bound `17z` from Chebyshev's `ψ ≤ (log 4 + 4)x` and the other pieces
 that `Prop1123b.lean` assembles into Prop 11.2.3′.
@@ -781,4 +787,5 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
   route gives about `1.78` at best (`scripts/liouville_222_model.py`): the small-`z` peak of
   `|ℓ(z)| log z` (`0.7831` as `z → 11⁻`) caps it. [H]'s `4/5` comes from a different argument of
   Ramaré's [Ramb], not formalized. Downstream only `2.8` is needed (the `7.82` slot of Thm 3.1.1).
-* A cleaner Prop 11.2.3 (with `r_w ≥ wr`) would remove the factor `1.398` in the ℓ∞ bound.
+* A cleaner Prop 11.2.3 (with `r_w ≥ wr`; see "Ch. 11: Prop 11.2.3 erratum") would lower the factor
+  `1.398` in the ℓ∞ bound to about `1.25`, but not remove it.
