@@ -155,7 +155,7 @@ def cell(k, Y, Ylit, Y2, Y2lit, rho):
     tau = up((a * L1 - b) * (1 - clt / (L1 / 2 - Fr('1.3064'))), 7)
     assert Fr('8.6294') <= cl0 * sD and tau >= 0
     total = G0 * (cl0 * sD - Fr('8.6294')) + sD * sum(Gs[i] * ells[i] for i in range(kk)) + Gt * tau
-    assert total <= Fr('1.037'), (k, float(total))
+    assert total <= Fr('1.007'), (k, float(total))
     print(f"-- cell {k}: total {float(total):.5f}", file=sys.stderr)
     plist = "[" + ", ".join(str(p) for p in pts) + "]"
     glist = "[" + ", ".join(lit(g) for g in Gs) + "]"
@@ -164,7 +164,7 @@ def cell(k, Y, Ylit, Y2, Y2lit, rho):
     L.append(f"theorem cell{k} {{x : ℝ}} (hx1 : ({lit(X)} : ℝ) ≤ x) (hx2 : x ≤ ({lit(X2)} : ℝ)) :")
     L.append("    ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧")
     L.append("      2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧")
-    L.append("      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by")
+    L.append("      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by")
     L.append(f"  have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1")
     L.append(f"  have hL₀x : ({lit(L0)} : ℝ) ≤ Real.log x := (by norm_num : ({lit(L0)} : ℝ) ≤ ({nA} : ℕ) + {lit(fA)}).trans")
     L.append(f"    ({LEAN_LOG_LB.format(z=lit(X), nf=nf(nA,fA))}.trans (Real.log_le_log (by norm_num) hx1))")

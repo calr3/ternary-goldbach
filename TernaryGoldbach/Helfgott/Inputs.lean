@@ -93,7 +93,7 @@ theorem major_arcs_input (N : ℕ) (hN : Odd N) (hN27 : 10 ^ 27 ≤ N) :
 variable [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius] in
 /-- **Minor arcs** [H, (14.49)]:
-`∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0376 x²/κ` for `x ≥ 4.9 · 10²⁶`
+`∫_{(ℝ/ℤ) \ 𝔐_{8,r₀}} |S_{η_*}(α,x)| |S_{η₊}(α,x)|² dα ≤ 1.0072 x²/κ` for `x ≥ 4.9 · 10²⁶`
 (true for `x = xOf N` when `N ≥ 10²⁷`, [H, (14.15)]).
 
 *Proved* (`MinorArcs/MinorTotal.lean: minor_total`) by "repair 3" of [H, Thm 13.2.1] (NOTES, "Ch. 13:
@@ -105,11 +105,11 @@ with [H, Cor 7.1.3]. It uses Theorem 3.1.1, Prop 12.2.4 (with `c₊ = 2`), the P
 (`MinorArcs/EBound.lean`), all proved. The numerics (`numerics_M`) are proved: generated cells for
 `x ≤ 4.9·10¹⁰¹` (`scripts/gen_cells.py`) and an analytic argument beyond.
 
-(Our constant `1.0376` is weaker than [H]'s `1.00948`. [H]'s Theorem 3.1.1 has `0.5` where its
-proof gives `0.8102`; with the corrected [H, (5.36)] our Theorem 3.1.1 has `0.8764`.) -/
+(Our constant `1.0072` is below [H]'s `1.00948`, although our Theorem 3.1.1 has `0.8764` where
+[H]'s has `0.5`: [H]'s proof gives `0.8102`, and the corrected [H, (5.36)] gives `0.8764`.) -/
 theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     ∫ α in Set.Ioc (0:ℝ) 1 \ majorArcs 8 r₀ (xOf N),
-        ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0376 * xOf N ^ 2 / κ := by
+        ‖S etaStar (xOf N) α‖ * ‖S etaPlus (xOf N) α‖ ^ 2 ≤ 1.0072 * xOf N ^ 2 / κ := by
   have hx := xOf_ge N hN27
   exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
 

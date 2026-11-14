@@ -21,9 +21,9 @@ theorem xOf_denom_bounds : 0 < 2 + 9 / (196 * √(2 * Real.pi)) ∧
 
 /-- The final inequality with the cruder constant that comes from the easy sup-norm bounds
 (`Helfgott/SupNorms.lean`) and elementary Chebyshev bounds (`Helfgott/Chebyshev.lean`): for `N ≥ 10²⁷`,
-`6.7 · 10⁶ · N^{3/2} log N < (1.049 - 1.0376) x²/κ`. -/
+`6.7 · 10⁶ · N^{3/2} log N < (1.049 - 1.0072) x²/κ`. -/
 theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
-    6.7e6 * (N * √N) * Real.log N < (1.049 - 1.0376) * xOf N ^ 2 / κ := by
+    6.7e6 * (N * √N) * Real.log N < (1.049 - 1.0072) * xOf N ^ 2 / κ := by
   obtain ⟨hc0, hc1⟩ := xOf_denom_bounds
   set c := 2 + 9 / (196 * √(2 * Real.pi)) with hc
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN
@@ -83,14 +83,14 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
       by ring]
     calc 4.288e8 * (v ^ 64 * v ^ 32 * Real.log v) ≤ 4.288e8 * (v ^ 97 / 2.7) := by gcongr
       _ ≤ 1.589e8 * v ^ 97 := by rw [mul_div_assoc']; rw [div_le_iff₀ (by norm_num)]; nlinarith
-  have rhs : 0.0114 * v ^ 128 / (4.0804 * 49) ≤ (1.049 - 1.0376) * (v ^ 128 / c ^ 2) / κ := by
+  have rhs : 0.0418 * v ^ 128 / (4.0804 * 49) ≤ (1.049 - 1.0072) * (v ^ 128 / c ^ 2) / κ := by
     rw [κ]
     have : v ^ 128 / 4.0804 ≤ v ^ 128 / c ^ 2 :=
       div_le_div_of_nonneg_left (by positivity) hc2' hc2
-    calc 0.0114 * v ^ 128 / (4.0804 * 49) = (1.049 - 1.0376) * (v ^ 128 / 4.0804) / 49 := by
+    calc 0.0418 * v ^ 128 / (4.0804 * 49) = (1.049 - 1.0072) * (v ^ 128 / 4.0804) / 49 := by
           ring
       _ ≤ _ := by gcongr
-  have key : 1.589e8 * v ^ 97 < 0.0114 * v ^ 128 / (4.0804 * 49) := by
+  have key : 1.589e8 * v ^ 97 < 0.0418 * v ^ 128 / (4.0804 * 49) := by
     have h97 : 0 < v ^ 97 := by positivity
     have h31 : (2.64 : ℝ) ^ 31 ≤ v ^ 31 := pow_le_pow_left₀ (by norm_num) hvbig 31
     rw [show v ^ 128 = v ^ 31 * v ^ 97 by ring, lt_div_iff₀ (by norm_num)]

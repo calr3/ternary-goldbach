@@ -270,7 +270,7 @@ open TernaryGoldbach.Helfgott (κ)
 
 /-- **A cell of the numerics.** For `x ∈ [X, X']` (`y = x/κ ≥ Y`), with block points
 `150001 = p 0 < … < p k = r₂` and certified bounds `G i ≥ ĝ(Y, p i)`, `ℓ i ≥ log(p(i+1)/p i)`,
-`G0 ≥ ĝ(Y, 150000)`, `Gt ≥ ĝ(Y, r₂)`, the final rational inequality gives `Mexpr x r₂ ≤ 1.037`. -/
+`G0 ≥ ĝ(Y, 150000)`, `Gt ≥ ĝ(Y, r₂)`, the final rational inequality gives `Mexpr x r₂ ≤ 1.007`. -/
 theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ → ℕ) (G ℓ : ℕ → ℝ)
     (hx : 4.9e26 ≤ x) (hY : 1e25 ≤ Y) (hYx : Y ≤ x / κ)
     (hL₀ : 60 ≤ L₀) (hL₀x : L₀ ≤ Real.log x) (hL₁x : Real.log x ≤ L₁)
@@ -283,8 +283,8 @@ theorem cell_bound {x Y L₀ L₁ cl0 clt G0 Gt : ℝ} {r₂ k : ℕ} (p : ℕ �
     (hsD' : (0.640208000017 * L₀ - 0.021095) / (L₀ / 2 - 1.3066) ≤ sD')
     (hτ' : (0.640208000017 * L₁ - 0.021095) * (1 - clt / (L₁ / 2 - 1.3064)) ≤ τ')
     (hb : 8.6294 ≤ cl0 * sD') (hτ0 : 0 ≤ τ')
-    (hfin : G0 * (cl0 * sD' - 8.6294) + sD' * ∑ i ∈ Finset.range k, G i * ℓ i + Gt * τ' ≤ 1.037) :
-    Mexpr x r₂ ≤ 1.037 := by
+    (hfin : G0 * (cl0 * sD' - 8.6294) + sD' * ∑ i ∈ Finset.range k, G i * ℓ i + Gt * τ' ≤ 1.007) :
+    Mexpr x r₂ ≤ 1.007 := by
   obtain ⟨h14a, h14b⟩ := log14_bounds
   have hcE : cE = 1.33258 := rfl
   have hL1 : 60 ≤ L₁ := (hL₀.trans hL₀x).trans hL₁x

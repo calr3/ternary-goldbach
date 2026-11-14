@@ -55,7 +55,7 @@ proved from RH up to `10⁸` (from `PlattGRH`) and kernel-checked tables (see "P
      * the first-case constant of Thm 3.1.1 becomes `0.8764`;
      * `B₀ᵃ`, `B₀ᵇ` gain `+0.0231`.
 
-     The minor-arc total (14.49) is proved with `1.0376` all the same (repair 3 of Thm 13.2.1 has room).
+     The minor-arc total (14.49) is proved with `1.0072` all the same (repair 3 of Thm 13.2.1 has room).
 2. **[H] is inconsistent about Platt's range.** [H, §1.6] says odd conductors up to `2·10⁵`; [H, §9.6]
    says `3·10⁵`. Platt's paper covers all `q ≤ 4·10⁵`, so `platt_odd` is covered either way.
 3. **[H]'s derivation of (9.94) drops a factor 2.**

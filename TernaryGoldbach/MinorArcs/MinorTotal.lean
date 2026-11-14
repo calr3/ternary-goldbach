@@ -84,7 +84,7 @@ noncomputable def Mexpr (x : ℝ) (r₂ : ℕ) : ℝ :=
 def NumericsGoal (x : ℝ) : Prop :=
   ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
     2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-    2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037
+    2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007
 
 /-! ## The split `S_{η₊} = S₁ + S₂` -/
 
@@ -320,10 +320,10 @@ set_option maxHeartbeats 2000000 in
 variable [Fact TernaryGoldbach.PlattGRH]
   [Fact TernaryGoldbach.RamareMoebius] in
 /-- **(14.49), repaired**: for `x ≥ 4.9·10²⁶`,
-`∫_{(0,1] \ 𝔐_{8,r₀}} |S_{η_*}(α, x)| |S_{η₊}(α, x)|² dα ≤ 1.0376 x²/κ`. -/
+`∫_{(0,1] \ 𝔐_{8,r₀}} |S_{η_*}(α, x)| |S_{η₊}(α, x)|² dα ≤ 1.0072 x²/κ`. -/
 theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     ∫ α in Ioc (0:ℝ) 1 \ majorArcs 8 r₀ x, ‖S etaStar x α‖ * ‖S etaPlus x α‖ ^ 2 ≤
-      1.0376 * x ^ 2 / κ := by
+      1.0072 * x ^ 2 / κ := by
   have hκ : (κ : ℝ) = 49 := rfl
   have hr₀ : (r₀ : ℝ) = ((150000 : ℕ) : ℝ) := by norm_num [Helfgott.r₀]
   have hx0 : 0 < x := by linarith
@@ -339,7 +339,7 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     (TernaryGoldbach.continuous_expTsum (Helfgott.summable_etaStar hx0)).norm
   have c1 := continuous_norm_sq_expTsum (summable_a₁ hx0)
   have c2 := continuous_norm_sq_expTsum (summable_a₂ hx0)
-  set t : ℝ := 5e-4
+  set t : ℝ := 1e-4
   have ht : 0 < t := by norm_num
   -- step 1: the split
   have hstep1 : ∫ α in A, ‖S etaStar x α‖ * ‖S etaPlus x α‖ ^ 2 ≤
@@ -514,13 +514,13 @@ theorem minor_total {x : ℝ} (hx : 4.9e26 ≤ x) (hnum : NumericsGoal x) :
     rw [this]
     exact add_le_add hbase hsum
   -- conclude
-  have hxy : 1.0376 * x ^ 2 / κ = 1.0376 * (x * y) := by rw [hy_def]; ring
+  have hxy : 1.0072 * x ^ 2 / κ = 1.0072 * (x * y) := by rw [hy_def]; ring
   rw [hxy]
-  have hM' : y * x * Mexpr x r₂ ≤ y * x * 1.037 := mul_le_mul_of_nonneg_left hM (by positivity)
-  have hfin : (1 + t) * (y * x * 1.037) + (1 + 1 / t) * (22.75 * y * (8e-11 * x)) ≤
-      1.0376 * (x * y) := by
+  have hM' : y * x * Mexpr x r₂ ≤ y * x * 1.007 := mul_le_mul_of_nonneg_left hM (by positivity)
+  have hfin : (1 + t) * (y * x * 1.007) + (1 + 1 / t) * (22.75 * y * (8e-11 * x)) ≤
+      1.0072 * (x * y) := by
     simp only [t]; nlinarith [mul_pos hx0 hy0]
-  have h1 : (1 + t) * (∫ α in A, ‖expTsum (a₁ x) α‖ ^ 2 * v α) ≤ (1 + t) * (y * x * 1.037) :=
+  have h1 : (1 + t) * (∫ α in A, ‖expTsum (a₁ x) α‖ ^ 2 * v α) ≤ (1 + t) * (y * x * 1.007) :=
     mul_le_mul_of_nonneg_left (hZ1.trans hM') (by norm_num)
   have h2 : (1 + 1 / t) * (∫ α in A, v α * ‖expTsum (a₂ x) α‖ ^ 2) ≤
       (1 + 1 / t) * (22.75 * y * (8e-11 * x)) :=

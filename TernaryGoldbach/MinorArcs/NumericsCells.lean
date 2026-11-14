@@ -340,7 +340,7 @@ theorem c0_gt : ghatY (1e25 : ℝ) ((10431623 : ℕ) : ℝ) ≤ 0.0119421 := by
 theorem cell0 {x : ℝ} (hx1 : (490000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (1470000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (61.456446 : ℝ) ≤ Real.log x := (by norm_num : (61.456446 : ℝ) ≤ (61 : ℕ) + 0.456446).trans
     ((le_log_num (z := 490000000000000000000000000) 61 0.456446 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -675,7 +675,7 @@ theorem c1_gt : ghatY (3e25 : ℝ) ((14504017 : ℕ) : ℝ) ≤ 0.0101609 := by
 theorem cell1 {x : ℝ} (hx1 : (1470000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (4900000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (62.555058 : ℝ) ≤ Real.log x := (by norm_num : (62.555058 : ℝ) ≤ (62 : ℕ) + 0.555058).trans
     ((le_log_num (z := 1470000000000000000000000000) 62 0.555058 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -1023,7 +1023,7 @@ theorem c2_gt : ghatY (1e26 : ℝ) ((20813828 : ℕ) : ℝ) ≤ 0.0085185 := by
 theorem cell2 {x : ℝ} (hx1 : (4900000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (49000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (63.759031 : ℝ) ≤ Real.log x := (by norm_num : (63.759031 : ℝ) ≤ (63 : ℕ) + 0.759031).trans
     ((le_log_num (z := 4900000000000000000000000000) 63 0.759031 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -1330,7 +1330,7 @@ theorem c3_gt : ghatY (1e27 : ℝ) ((41529048 : ℕ) : ℝ) ≤ 0.00608843 := by
 theorem cell3 {x : ℝ} (hx1 : (49000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (490000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (66.061616 : ℝ) ≤ Real.log x := (by norm_num : (66.061616 : ℝ) ≤ (66 : ℕ) + 0.061616).trans
     ((le_log_num (z := 49000000000000000000000000000) 66 0.061616 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -1653,7 +1653,7 @@ theorem c4_gt : ghatY (1e28 : ℝ) ((82861348 : ℕ) : ℝ) ≤ 0.00444539 := by
 theorem cell4 {x : ℝ} (hx1 : (490000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (49000000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (68.364201 : ℝ) ≤ Real.log x := (by norm_num : (68.364201 : ℝ) ≤ (68 : ℕ) + 0.364201).trans
     ((le_log_num (z := 490000000000000000000000000000) 68 0.364201 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -1957,7 +1957,7 @@ theorem c5_gt : ghatY (1e30 : ℝ) ((329876975 : ℕ) : ℝ) ≤ 0.00239526 := b
 theorem cell5 {x : ℝ} (hx1 : (49000000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (490000000000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (72.969372 : ℝ) ≤ Real.log x := (by norm_num : (72.969372 : ℝ) ≤ (72 : ℕ) + 0.969372).trans
     ((le_log_num (z := 49000000000000000000000000000000) 72 0.969372 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -2280,7 +2280,7 @@ theorem c6_gt : ghatY (1e34 : ℝ) ((5228197760 : ℕ) : ℝ) ≤ 0.000688206 :=
 theorem cell6 {x : ℝ} (hx1 : (490000000000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (49000000000000000000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (82.179712 : ℝ) ≤ Real.log x := (by norm_num : (82.179712 : ℝ) ≤ (82 : ℕ) + 0.179712).trans
     ((le_log_num (z := 490000000000000000000000000000000000) 82 0.179712 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -2650,7 +2650,7 @@ theorem c7_gt : ghatY (1e42 : ℝ) ((1313263902199 : ℕ) : ℝ) ≤ 0.000054762
 theorem cell7 {x : ℝ} (hx1 : (49000000000000000000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (490000000000000000000000000000000000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (100.600393 : ℝ) ≤ Real.log x := (by norm_num : (100.600393 : ℝ) ≤ (100 : ℕ) + 0.600393).trans
     ((le_log_num (z := 49000000000000000000000000000000000000000000) 100 0.600393 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))
@@ -3114,7 +3114,7 @@ theorem c8_gt : ghatY (1e58 : ℝ) ((82861350433499550 : ℕ) : ℝ) ≤ 0.00000
 theorem cell8 {x : ℝ} (hx1 : (490000000000000000000000000000000000000000000000000000000000 : ℝ) ≤ x) (hx2 : x ≤ (490000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 : ℝ)) :
     ∃ r₂ : ℕ, 150000 < r₂ ∧ (20000 * (r₂ : ℝ)) ^ 2 ≤ x / 784 ∧
       2 * (r₂ : ℝ) ≤ (2 * √(x / 784)) ^ (0.6 : ℝ) ∧ (r₂ : ℝ) ≤ (x / κ) ^ (1 / 3 : ℝ) / 6 ∧
-      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.037 := by
+      2.16e20 * r₂ ≤ 670 * (x / κ) ∧ cL (r₂ - 1) ≤ Dx x ∧ Mexpr x r₂ ≤ 1.007 := by
   have hx : 4.9e26 ≤ x := le_trans (by norm_num) hx1
   have hL₀x : (137.441754 : ℝ) ≤ Real.log x := (by norm_num : (137.441754 : ℝ) ≤ (137 : ℕ) + 0.441754).trans
     ((le_log_num (z := 490000000000000000000000000000000000000000000000000000000000) 137 0.441754 (by norm_num) (by norm_num) (by unfold taylor6; norm_num)).trans (Real.log_le_log (by norm_num) hx1))

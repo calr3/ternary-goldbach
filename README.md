@@ -156,7 +156,7 @@ Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `E
 `Eta2DDBound.lean`; about 4 minutes in all).
 
 With `c₀ = 32` (for [H]'s `31.521`) and `c₊ = 2`, Theorem 3.1.1 has `2.511 x/√t` for [H]'s
-`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00666` (against `1.037`).
+`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00666` (against `1.007`).
 
 (9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
 integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
@@ -187,14 +187,14 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     * [H, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5];
     * the `ℓ²` norm over the major arcs, [H, (14.7)] (`8.6296x … 8.79x`);
     * the singular series and the Chapter 10–11 main term;
-  * **minor arcs**, [H, (14.49)] with constant `1.0376` (`MinorArcs/MinorTotal.lean`). This needs:
+  * **minor arcs**, [H, (14.49)] with constant `1.0072` (`MinorArcs/MinorTotal.lean`). This needs:
     * Vaughan's identity and the Type I and Type II sums of [H, Chs. 3–6], which give Theorem 3.1.1
       with constants `0.8764` and `3.8x^{5/6}`;
     * the large sieve for primes (Props 12.1.2 and 12.2.4 proved; 12.2.4 with `c₊ = 2`);
     * Ch. 11 and a repaired Theorem 13.2.1;
     * [H, (14.28)] in a weaker form;
   * **non-prime terms**, [H, (14.51)], with cruder constants;
-  * **final inequality**: `(1.049 − 1.0376) x²/κ = 0.0114 x²/κ > 0` beats the error terms
+  * **final inequality**: `(1.049 − 1.0072) x²/κ = 0.0418 x²/κ > 0` beats the error terms
     (`Helfgott/Numerics.lean`).
 * **Inputs from [H, §2]** (`Prelim/`):
   * bounds on `ψ`, `θ`, and sums of `Λ` and `μ`;
@@ -234,7 +234,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
 | Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
 | (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds) |
-| (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0376 x²/κ` |
+| (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0072 x²/κ` |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
 | (14.51) | non-prime terms | `7.3306` | `6.7·10⁶` |
@@ -243,7 +243,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 | Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker (Jensen windows) |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
 
-The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
+The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 
 **Errors in [H] and how the proof handles them** (details in `NOTES.md`):
 
@@ -255,7 +255,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
     approximation is redone at each scale, the levels are extended to `≈ x^{0.3}`, and the base gap
     is bounded with Cor 7.1.3.
   * Numerically the repaired bound is at most `1.00666 · x²/κ` before the split `S_{η₊} = S₁ + S₂`
-    (worst generated cell, against `1.037`); we state (14.49) with `1.0376`.
+    (worst generated cell, against `1.007`); we state (14.49) with `1.0072`.
 * The proof of Prop 11.2.3 does not rescale `δ` to `wδ`. This erratum is Helfgott's own: he found
   it around 2016 and reported it to the publisher. A float check suggests the statement still holds,
   with about 11% to spare (`scripts/prop_11_2_3_check.py`), but we do not use it. We use a variant,
@@ -275,7 +275,7 @@ The final margin is `0.0114 x²/κ`, against [H]'s `0.04877 x²/κ`.
     (`MinorArcs/H2Bound.lean`).
   * This adds `0.0924` to the Type II factor and raises the first-case constant of Thm 3.1.1 to
     `0.8764`.
-  * (14.49) holds with `1.0376` all the same, because repair 3 (above) has room.
+  * (14.49) holds with `1.0072` all the same, because repair 3 (above) has room.
 * The proof of Prop 12.2.4 applies Lemma 12.2.3, whose bound has `log Q + 1.312` in the denominator,
   where (12.23) needs `log Q + c_E`. Our proof bounds the quotient against `log Q + c_E` directly
   (`HYPOTHESES.md`, Finding 4).

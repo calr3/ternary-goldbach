@@ -603,7 +603,7 @@ theorem asymp_goal {x : ℝ} (hx : 4.9e101 ≤ x) : NumericsGoal x := by
   unfold Mexpr
   rw [← hy_def]
   have : 0.0510358 * (14.61155 * sD' - 8.6294) +
-      sD' * (0.165166588766518519 + (8.4e-4 + 1.398 * 1e-10)) + 2.2e-4 ≤ 1.037 := by norm_num
+      sD' * (0.165166588766518519 + (8.4e-4 + 1.398 * 1e-10)) + 2.2e-4 ≤ 1.007 := by norm_num
   linarith
 
 end TernaryGoldbach.MinorArcs
