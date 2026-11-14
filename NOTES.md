@@ -764,8 +764,8 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 
 * Lean/Mathlib v4.35.0. Fetch the prebuilt Mathlib with `lake exe cache get`.
 * Compile single files with `timeout 1500 lake env lean -M 9000 File.lean` (`-M 20000` for the kernel
-  data files). Build heavy modules sequentially. A full `lake build` succeeded on 2026-11-13 at
-  commit `2301f04` (4 cores, 15 GB). The heaviest parts are the 128 ladder files (about 4 min and
+  data files). Build heavy modules sequentially. A full `lake build` succeeded on 2026-11-14 at
+  commit `721c4e6` (4 cores, 15 GB). The heaviest parts are the 128 ladder files (about 4 min and
   1.7 GB each), RSBounds' PsiCert campaign (`vendor/rsbounds/RSBounds/PsiFinite/Campaign/T1/`, 957
   files of 50–100 s), and `SmallPsiData*.lean` (about 3 min per file). With 4 parallel jobs on
   15 GB, `MinorArcs/G2TailNum.lean` ran out of memory; built alone (`lake build
