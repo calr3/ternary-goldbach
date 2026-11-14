@@ -73,7 +73,7 @@ RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
-A full `lake build` (with `Challenge` and `Solution`) succeeded on 2026-11-14 at commit `721c4e6`.
+A full `lake build` (with `Challenge` and `Solution`) succeeded on 2026-11-14 at commit `acb9dc7`.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).

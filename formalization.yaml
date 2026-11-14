@@ -133,7 +133,7 @@ review:
   status: "agent-reviewed"
   reviewers: []
   notes: >-
-    A full `lake build` succeeded on 2026-11-14 at commit 721c4e6. The hypothesis statements
+    A full `lake build` succeeded on 2026-11-14 at commit acb9dc7. The hypothesis statements
     were checked against their sources (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
     leanprover/comparator. The current two-hypothesis statements have not been through
     Comparator yet. The only recorded run is from 2026-11-06, at commit 83ac1e1, when the main
