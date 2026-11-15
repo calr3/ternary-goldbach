@@ -97,7 +97,8 @@ against `Challenge.lean`, which states them with Mathlib-only definitions (see
 Comparator yet.** The only recorded run is from 2026-11-06, at commit `83ac1e1`, when the main
 theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
 Comparator accepted both theorems then. The two-hypothesis statements have not been checked with
-it.
+it: an attempt on a 4-core machine ran its kernel replay for 11.5 hours without finishing, so it
+needs a long uninterrupted run.
 
 CI (`.github/workflows/ci.yml`) does not run the full build, which takes many hours. On every push
 and pull request it runs `scripts/ci_checks.py` (no Lean needed): imports resolve against
