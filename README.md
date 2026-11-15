@@ -227,22 +227,42 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
 
 ## Differences from [H]
 
-**Constants.** Ours are weaker where our proofs or corrections require it:
+**Constants.** Where our constants differ from [H]'s, the tables below say why. Only one difference
+comes from an error in [H]: the first-case constant of Thm 3.1.1. The others come from choices in
+our proof, not from a problem found in [H]. Where the final inequality has room, we took a cruder or
+different route, or proved [H]'s constant on a narrower range that still covers the proof's use.
 
-| [H] | Statement | [H]'s constant | ours |
-|---|---|---|---|
-| Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` (proved; true value `31.52065`) |
-| Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` (proved, no computational hypothesis) |
-| Thm 3.1.1 | minor-arc pointwise bound (first case) | `0.5`, `2.5 x/√t`, `3.36 x^{5/6}` | `0.8764`, `2.511 x/√t`, `3.8 x^{5/6}` |
-| (2.14), (2.17) | `ψ(y) ≤ c y`, `∑_{n≤y} Λ(n) n < c y²/2` | `1.0004`, `1.0008` | [H]'s, `y ≥ 2.5·10⁷` (Helfgott's proof, RSBounds) |
-| (14.49) | minor-arc total | `1.00948 x²/κ` | `1.0072 x²/κ` |
-| (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` |
-| (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` |
-| (14.51) | non-prime terms | `7.3306` | `6.7·10⁶` |
-| (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` |
-| (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` |
-| Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker (Jensen windows) |
-| Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` (the proof uses `δ₀ = 8`) |
+Because of errors in [H] (see "Errors in [H]" below):
+
+| [H] | Statement | [H]'s constant | ours | why |
+|---|---|---|---|---|
+| Thm 3.1.1 | minor-arc pointwise bound, first case: constant term | `0.5` | `0.8764` | (6.77) has an arithmetic slip, and [H]'s own argument gives `0.8102`; (5.32) is false for `v = 2`, and the corrected (5.36) adds `0.0924` to the Type II factor |
+
+Because of the route we took:
+
+| [H] | Statement | [H]'s constant | ours | why |
+|---|---|---|---|---|
+| Thm 3.1.1 | first case: the other terms | `2.5 x/√t`, `3.36 x^{5/6}` | `2.511 x/√t`, `3.8 x^{5/6}` | `2.511` follows from `c₀ = 32` and `c₊ = 2` (next two rows); `3.8 x^{5/6}` collects cruder lower-order terms |
+| Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` | rounded up, as Helfgott suggested, for a simpler kernel check. [H]'s value is right: the maximum is `31.52065` |
+| Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` | [H]'s `1.36` needs a finite check over 88 million pairs `(q, n)`; `c₊ = 2` allows a structural argument instead. [H]'s check passes in our interval-arithmetic run (`scripts/rigorous/p1224_rig.c`), outside Lean |
+| Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker | we count zeros by Jensen's formula in windows, not by `N(T)` |
+| Cor 7.1.3, Thm 7.1.4, Prop 7.1.5 | error terms from GRH, e.g. Cor 7.1.3 | `2.485·10⁻¹⁹ + (381500/√q + 76)/√y` | `10⁻¹⁷ + 4.7·10⁶/(√q √y)`, `y ≥ 10²⁵` | they come from the weaker explicit formulas; each is stated for the range the proof uses (`NOTES.md`) |
+| (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` | our own assembly of the main term and the error terms |
+| (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` | [H]'s value needs the sharp sup norms of Appendix A; we use the cruder `\|h_H\| ≤ 3.15` |
+| (14.51) | non-prime terms | `7.3306` | `6.7·10⁶` | cruder bounds |
+| (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | [H]'s `4/5` comes from an argument of Ramaré's [Ramb] that is not formalized. We use Ramaré's Liouville route, which gives at best about `1.78` (`NOTES.md`); the proof needs only `2.8` |
+| (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | [H] takes it from [Ramb]; we prove an elementary bound |
+| Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` | our proof needs `2Q ≤ √x`, so that primes above `√x` are coprime to every modulus `q ≤ 2Q`. [H] applies it only with `δ₀ = 8` |
+
+[H]'s constants on a narrower range:
+
+| [H] | Statement | [H]'s range | ours | why |
+|---|---|---|---|---|
+| (2.14), (2.17) | `ψ(y) ≤ 1.0004 y`, `∑_{n≤y} Λ(n) n < 1.0008 y²/2` | (2.14): `y ≥ 2·10⁶` | `y ≥ 2.5·10⁷` | Helfgott's proof (RSBounds); the minor arcs use them only for `y ≥ 2.7·10⁷` |
+| (2.19) | `∑_{y/2<p≤y} (log p)² ≤ ½ y log y` | `y ≥ 117` | `y ≥ 2·10⁶` | the range the minor arcs use. Our interval-arithmetic check (`scripts/rigorous/`), outside Lean, confirms it for integers `117 ≤ n ≤ 10⁶` |
+
+Stronger than [H]'s: the minor-arc total (14.49) is `1.0072 x²/κ`, against [H]'s `1.00948 x²/κ`.
+It comes from the repaired Thm 13.2.1 (repair 3, below).
 
 The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 
