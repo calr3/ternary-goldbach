@@ -23,13 +23,13 @@ noncomputable def Q2 (T : ℝ) : ℝ := T ^ 2 / 349
 section
 variable {T : ℝ}
 
-theorem U2_ge (hT : 0 < T) : 1225 * T - 1 ≤ (U2 T : ℝ) := by
+theorem U2_ge (_hT : 0 < T) : 1225 * T - 1 ≤ (U2 T : ℝ) := by
   unfold U2; have := Nat.lt_floor_add_one (1225 * T); linarith
 
 theorem U2_le (hT : 0 < T) : (U2 T : ℝ) ≤ 1225 * T := by
   unfold U2; exact Nat.floor_le (by positivity)
 
-theorem V2_ge (hT : 0 < T) : T / 3 - 1 ≤ (V2 T : ℝ) := by
+theorem V2_ge (_hT : 0 < T) : T / 3 - 1 ≤ (V2 T : ℝ) := by
   unfold V2; have := Nat.lt_floor_add_one (T / 3); linarith
 
 theorem V2_le (hT : 0 < T) : (V2 T : ℝ) ≤ T / 3 := by

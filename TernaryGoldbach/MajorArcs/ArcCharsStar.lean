@@ -93,9 +93,9 @@ theorem coprime_split_star {y : ℝ} (hy : 1e25 ≤ y) {q : ℕ} (hq1 : 1 ≤ q)
 
 theorem summable_sub_coprimePart_star {y : ℝ} (hy : 0 < y) (q : ℕ) :
     Summable fun n => ‖(cU y - coprimePart q (cU y)) n‖ :=
-  ((summable_cU hy).add ((summable_cU hy).of_nonneg_of_le (fun n => norm_nonneg _)
-    (norm_coprimePart_le q (cU y)))).of_nonneg_of_le (fun n => norm_nonneg _)
-    fun n => norm_sub_le _ _
+  ((summable_cU hy).add ((summable_cU hy).of_nonneg_of_le (fun _n => norm_nonneg _)
+    (norm_coprimePart_le q (cU y)))).of_nonneg_of_le (fun _n => norm_nonneg _)
+    fun _n => norm_sub_le _ _
 
 theorem norm_S_star_sub_coprime_le {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hq : q ≤ 300000)
     (α : ℝ) : ‖S etaStar x α - expTsum (coprimePart q (cU (x / κ))) α‖ ≤ 1e-12 * (x / κ) := by
@@ -145,7 +145,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
           (1.49e-6 * (x / κ)) ^ 2) ∧
       ‖expTsum (coprimePart q (cU (x / κ))) β -
         𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ)‖ ≤ 1.49e-6 * (x / κ) := by
-  haveI : NeZero q := ⟨by omega⟩
+  have : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
   set y := x / κ with hy_def
   have hy : 1e25 ≤ y := by
@@ -181,7 +181,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
       ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 1.49e-6 * y := by
     intro ψ hψ
     set c' := ψ⁻¹.conductor with hc'
-    haveI : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
+    have : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
     have hc'0 : 1 ≤ c' := Nat.pos_of_ne_zero (NeZero.ne c')
     have hc'q : c' ∣ q := DirichletCharacter.conductor_dvd_level _
     have hc'le : c' ≤ q := Nat.le_of_dvd (by omega) hc'q
@@ -208,7 +208,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
       have : (c' : ℝ) ≤ qt q := hcr.trans (by exact_mod_cast hqq)
       nlinarith
     have hT := cor_7_1_3' (y := y) hy (le_trans hc'le hq3) χ hχ hδ
-    rw [if_neg hc'1, sub_zero, hδy] at hT
+    rw [ite_eq_right hc'1, sub_zero, hδy] at hT
     have hT' : ‖Schar χ (cU y) β‖ ≤ (1e-17 + 4.7e6 / √(c' : ℝ) / √y) * y := hT
     have hc'3r : (c' : ℝ) ≤ 300000 := hcr.trans (by exact_mod_cast hq3)
     calc ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖
@@ -225,7 +225,7 @@ theorem arc_chars_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (
       rw [div_le_iff₀ hqt0]; push_cast; nlinarith
     have h1 := cor_7_1_3' (y := y) hy (q := 1) (by norm_num) (1 : DirichletCharacter ℂ 1)
       DirichletCharacter.isPrimitive_one_level_one hδ1
-    rw [if_pos rfl, hδy, Schar_level_one] at h1
+    rw [ite_eq_left rfl, hδy, Schar_level_one] at h1
     have h2 : expTsum a β = expTsum (cU y) β - expTsum (cU y - a) β := by
       rw [expTsum_sub hc ha]; ring
     have h3 := (norm_expTsum_le_tsum hca β).trans hDa

@@ -176,10 +176,10 @@ theorem lemma8_tiny_num (n : ℕ) (hn2 : 2 ≤ n) (hn : n ≤ 5) :
   have l5 := log_lt_chk (u := 1609437913) (L := 5) (by norm_num) (by decide +kernel)
   have l6 := log_lt_chk (u := 1791759470) (L := 6) (by norm_num) (by decide +kernel)
   interval_cases n
-  · norm_num [sum_Icc_succ_top, g1, g2] at l3 ⊢; (try constructor) <;> linarith
-  · norm_num [sum_Icc_succ_top, g1, g2, g3] at l4 ⊢; (try constructor) <;> linarith
-  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4] at l5 ⊢; (try constructor) <;> linarith
-  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4, g5] at l6 ⊢; (try constructor) <;> linarith
+  · norm_num [sum_Icc_succ_top, g1, g2] at l3 ⊢; linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3] at l4 ⊢; linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4] at l5 ⊢; linarith
+  · norm_num [sum_Icc_succ_top, g1, g2, g3, g4, g5] at l6 ⊢; linarith
 
 /-- Lemma 8 for `2 ≤ R < 6`. -/
 theorem lemma8_tiny {R : ℝ} (hR2 : 2 ≤ R) (hR : R < 6) : Real.log R + 0.25068 < WR R := by
@@ -235,7 +235,7 @@ theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) 
   obtain ⟨g1, g2, g3, g4, g5⟩ := gS_small
   have hG : ∀ r, 1 ≤ r → r ≤ 5 → L r - L (r - 1) = gS r := by
     intro r h1 h5
-    simp only [hL, if_pos h5, if_pos (by omega : r - 1 ≤ 5)]
+    simp only [hL, ite_eq_left h5, ite_eq_left (by omega : r - 1 ≤ 5)]
     obtain ⟨k, rfl⟩ : ∃ k, r = k + 1 := ⟨r - 1, by omega⟩
     simp only [GS, Nat.add_sub_cancel]; rw [sum_Icc_succ_top (by omega)]; ring
   have hfirst : ∑ r ∈ Icc 1 6, f r * (L r - L (r - 1)) =
@@ -246,7 +246,7 @@ theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) 
     have e4 : L 4 - L 3 = 0 := by have := hG 4 (by norm_num) (by norm_num); simpa [g4] using this
     have e5 : L 5 - L 4 = 1 / 4 := by have := hG 5 (by norm_num) (by norm_num); simpa [g5] using this
     have e6 : L 6 - L 5 = Real.log 6 + 1.07 - 11 / 4 := by
-      simp only [hL, show ¬ (6 : ℕ) ≤ 5 by norm_num, if_false, le_refl, if_true, GS_five]; push_cast; ring
+      simp only [hL, show ¬ (6 : ℕ) ≤ 5 by norm_num, ite_false, le_refl, ite_true, GS_five]; push_cast; ring
     rw [sum_Icc_succ_top (by norm_num : 1 ≤ 6), sum_Icc_succ_top (by norm_num : 1 ≤ 5),
       sum_Icc_succ_top (by norm_num : 1 ≤ 4), sum_Icc_succ_top (by norm_num : 1 ≤ 3),
       sum_Icc_succ_top (by norm_num : 1 ≤ 2), Icc_self, sum_singleton]
@@ -261,7 +261,7 @@ theorem lemma8_large (h7 : ∀ r : ℕ, 6 ≤ r → Real.log r + 1.07 ≤ GS r) 
     have hr7 := (mem_Icc.1 hr).1
     have hrc : (7 : ℝ) ≤ r := by exact_mod_cast hr7
     have hr1 : ((r - 1 : ℕ) : ℝ) = r - 1 := by rw [Nat.cast_sub (by omega)]; simp
-    simp only [hL, if_neg (show ¬ r ≤ 5 by omega), if_neg (show ¬ r - 1 ≤ 5 by omega), hr1]
+    simp only [hL, ite_eq_right (show ¬ r ≤ 5 by omega), ite_eq_right (show ¬ r - 1 ≤ 5 by omega), hr1]
     simp only [hΦ, hf, hr1]
     set a : ℝ := r - 1
     have ha : 0 < a := by simp only [a]; linarith

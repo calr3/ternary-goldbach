@@ -63,7 +63,7 @@ theorem U1_ge (hT : 6e6 ≤ T) (ht : 0 < t) (htT : t ≤ T / 3) :
 theorem U1_le (ht : 0 < t) : (U1 T t : ℝ) ≤ T ^ 2 / (9 * √t) := by
   unfold U1; exact Nat.floor_le (by positivity)
 
-theorem V1_ge (hT : 0 < T) : 9 * T / 2 - 1 ≤ (V1 T : ℝ) := by
+theorem V1_ge (_hT : 0 < T) : 9 * T / 2 - 1 ≤ (V1 T : ℝ) := by
   unfold V1; have := Nat.lt_floor_add_one (9 * T / 2); linarith
 
 theorem V1_le (hT : 0 < T) : (V1 T : ℝ) ≤ 9 * T / 2 := by

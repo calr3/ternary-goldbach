@@ -43,7 +43,7 @@ theorem moebius_zero_of_sqf {v : ℕ} (h : sqf v = false) : μ v = 0 := by
     have : sqf v = true := by
       unfold sqf; rw [List.all_eq_true]; intro d hd; simpa using hall d hd
     rw [h] at this; exact Bool.false_ne_true this
-  push_neg at hn
+  push Not at hn
   obtain ⟨d, hd, hmod⟩ := hn
   rw [List.mem_range'_1] at hd
   apply ArithmeticFunction.moebius_eq_zero_of_not_squarefree
@@ -108,7 +108,7 @@ theorem bup_spec {A Lh v : ℕ} (hv : 1 ≤ v) (hL : 10 ^ 30 * Real.log v ≤ Lh
       linarith
     have hb : betaf ((A : ℝ) / 1000) v ≤ 990 * 10 ^ 30 / ((A : ℝ) * 10 ^ 30 - 2000 * Lh) := by
       unfold betaf
-      rw [if_pos hlog]
+      rw [ite_eq_left hlog]
       refine (min_le_right _ _).trans ?_
       rw [div_le_div_iff₀ (by linarith) hden]
       have hLh : (Lh : ℝ) ≥ 10 ^ 30 * Real.log v := hL
@@ -140,7 +140,7 @@ theorem tm_spec {A Lh v : ℕ} (hv : 1 ≤ v) (hL : 10 ^ 30 * Real.log v ≤ Lh)
   unfold tm
   cases hs : sqf v
   · rw [moebius_zero_of_sqf hs]; simp
-  · simp only [if_true]
+  · simp only [ite_true]
     have hμ : |(μ v : ℝ)| ≤ 1 := by exact_mod_cast ArithmeticFunction.abs_moebius_le_one
     have hb0 := betaf_nonneg' ((A : ℝ) / 1000) v
     have hvv : (0 : ℝ) ≤ ((v * v : ℕ) : ℝ) := Nat.cast_nonneg _

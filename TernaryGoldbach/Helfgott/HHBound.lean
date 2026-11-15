@@ -213,7 +213,7 @@ theorem hasDerivAt_hP (u : ℝ) : HasDerivAt hP (hP' u) u := by
 theorem continuous_hP' : Continuous hP' := by unfold hP'; fun_prop
 
 theorem hBase_eq_hP {u : ℝ} (h0 : 0 ≤ u) (h2 : u ≤ 2) : hBase u = hP u := by
-  unfold hBase hP; rw [if_pos ⟨h0, h2⟩]
+  unfold hBase hP; rw [ite_eq_left ⟨h0, h2⟩]
 
 theorem hP_one : hP 1 = Real.exp (1 / 2) := by unfold hP; norm_num
 

@@ -72,7 +72,7 @@ theorem mellin_hHc_mul {g : ℝ → ℂ} (hg : AEStronglyMeasurable g (volume.re
         (Eventually.of_forall fun p hp => ?_)
       have ht : 0 < p.1 := hp.1
       simp only [Function.uncurry, hF, norm_mul, Complex.norm_exp_ofReal_mul_I, one_mul,
-        Real.norm_eq_abs, mul_one]
+        mul_one]
       have hsr : (s - 1).re = s.re - 1 := by simp
       rw [Complex.norm_cpow_eq_rpow_re_of_pos ht, hsr]
       have hF0 := norm_fourier_gC_le p.2
@@ -203,7 +203,7 @@ theorem hg0_le (t : ℝ) (ht : 0 < t) : ‖hHc t * g0 t‖ ≤ 3.15 * (t ^ (2:�
   rw [one_mul] at h2
   exact mul_le_mul (norm_hHc_le ht) h2 (norm_nonneg _) (by norm_num)
 
-theorem continuousOn_hg0 : ContinuousOn (fun t => hHc t * g0 t) (Ioi 0) := fun t ht =>
+theorem continuousOn_hg0 : ContinuousOn (fun t => hHc t * g0 t) (Ioi 0) := fun _t ht =>
   ((continuousAt_hHc ht).mul continuous_g0.continuousAt).continuousWithinAt
 
 theorem phi1_eq {t : ℝ} (ht : 0 < t) : phi1 t = hHc t * (hHc t * g0 t) := by
@@ -316,7 +316,7 @@ theorem continuousAt_phi1 {y : ℝ} (hy : 0 < y) : ContinuousAt phi1 y := by
   exact ContinuousAt.congr ((continuousAt_hHc hy).mul ((continuousAt_hHc hy).mul
     continuous_g0.continuousAt)) hev.symm
 
-theorem continuousOn_phi1 : ContinuousOn phi1 (Ioi 0) := fun y hy =>
+theorem continuousOn_phi1 : ContinuousOn phi1 (Ioi 0) := fun _y hy =>
   (continuousAt_phi1 hy).continuousWithinAt
 
 theorem continuousAt_phi2 {y : ℝ} (hy : 0 < y) : ContinuousAt phi2 y :=

@@ -33,14 +33,14 @@ theorem hk_anti (x : ι → ℝ) (n m : ι) : hk x m n = -hk x n m := by
   unfold hk
   by_cases h : n = m
   · subst h; simp
-  · rw [if_neg (Ne.symm h), if_neg h]
+  · rw [ite_eq_right (Ne.symm h), ite_eq_right h]
     rw [show x m - x n = -(x n - x m) by ring, div_neg]
 
 omit [Fintype ι] in
 /-- Partial fractions for distinct `n, l, m`. -/
 theorem hk_partial {x : ι → ℝ} (hx : Function.Injective x) {n l m : ι} (hnl : n ≠ l) (hnm : n ≠ m)
     (hlm : l ≠ m) : hk x n l * hk x n m = hk x l m * hk x n l + hk x m l * hk x n m := by
-  simp only [hk, if_neg hnl, if_neg hnm, if_neg hlm, if_neg (Ne.symm hlm)]
+  simp only [hk, ite_eq_right hnl, ite_eq_right hnm, ite_eq_right hlm, ite_eq_right (Ne.symm hlm)]
   have h1 : x n - x l ≠ 0 := sub_ne_zero.2 (hx.ne hnl)
   have h2 : x n - x m ≠ 0 := sub_ne_zero.2 (hx.ne hnm)
   have h3 : x l - x m ≠ 0 := sub_ne_zero.2 (hx.ne hlm)
@@ -62,13 +62,13 @@ theorem key_sum {x : ι → ℝ} (hx : Function.Injective x) (c : ι → ℝ) {l
     intro n
     by_cases hnl : n = l
     · subst hnl
-      simp only [hk_self, if_true, if_neg hlm, hk_anti x n m]; ring
+      simp only [hk_self, ite_true, ite_eq_right hlm, hk_anti x n m]; ring
     · by_cases hnm : n = m
       · subst hnm
-        simp only [hk_self, if_neg hnl, if_true, hk_anti x l n]; ring
-      · rw [hk_partial hx hnl hnm hlm, if_neg hnl, if_neg hnm]; ring
+        simp only [hk_self, ite_eq_right hnl, ite_true, hk_anti x l n]; ring
+      · rw [hk_partial hx hnl hnm hlm, ite_eq_right hnl, ite_eq_right hnm]; ring
   rw [sum_congr rfl fun n _ => hpt n, sum_add_distrib, sum_add_distrib, sum_ite_eq', sum_ite_eq',
-    if_pos (mem_univ _), if_pos (mem_univ _)]
+    ite_eq_left (mem_univ _), ite_eq_left (mem_univ _)]
   have hs : ∑ n, c n ^ 2 * (hk x l m * hk x n l + hk x m l * hk x n m) =
       hk x l m * sig x c l + hk x m l * sig x c m := by
     simp only [sig, mul_sum]
@@ -115,12 +115,12 @@ theorem eigen_identity {x : ι → ℝ} (hx : Function.Injective x) (c : ι → 
     intro l m
     by_cases hlm : l = m
     · subst hlm
-      rw [if_pos rfl, hk_self]
+      rw [ite_eq_left rfl, hk_self]
       simp only [mul_zero, zero_mul, Complex.ofReal_zero, add_zero, zero_pow two_ne_zero]
       rw [← Complex.normSq_eq_conj_mul_self, Complex.normSq_eq_norm_sq]
       push_cast [mul_sum, sum_mul]
       refine sum_congr rfl fun n _ => by ring
-    · rw [if_neg hlm, key_sum hx c hlm]; push_cast; ring
+    · rw [ite_eq_right hlm, key_sum hx c hlm]; push_cast; ring
   -- The `σ`-part vanishes.
   have h4 : ∑ l, ∑ m, ((c l * c m * hk x l m * (sig x c l - sig x c m) : ℝ) : ℂ) *
       (starRingEnd ℂ (z l) * z m) = 0 := by
@@ -156,7 +156,7 @@ theorem eigen_identity {x : ι → ℝ} (hx : Function.Injective x) (c : ι → 
     rw [hre]; ring
   rw [h1, h2]
   simp_rw [h3]
-  simp only [sum_add_distrib, sum_ite_eq, mem_univ, if_true]
+  simp only [sum_add_distrib, sum_ite_eq, mem_univ, ite_true]
   rw [h4, add_zero]
   simp only [Complex.add_re, Complex.re_sum, Complex.ofReal_re, Complex.re_ofReal_mul]
 

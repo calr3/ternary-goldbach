@@ -59,8 +59,8 @@ theorem sum_odd_conv (f g : ArithmeticFunction ℝ) (w : ℕ → ℂ) (M : ℕ)
     · push_cast
       rw [sum_mul]
       refine sum_congr rfl fun p hp => ?_
-      rw [(Nat.mem_divisorsAntidiagonal.1 hp).1, if_pos ho]
-    · exact (sum_eq_zero fun p hp => by rw [(Nat.mem_divisorsAntidiagonal.1 hp).1, if_neg ho]).symm
+      rw [(Nat.mem_divisorsAntidiagonal.1 hp).1, ite_eq_left ho]
+    · exact (sum_eq_zero fun p hp => by rw [(Nat.mem_divisorsAntidiagonal.1 hp).1, ite_eq_right ho]).symm
   · intro p hp
     simp only [mem_filter, mem_product, mem_Icc] at hp
     exact mem_Icc.2 ⟨Nat.one_le_iff_ne_zero.2 (by have := hp.1.1.1; have := hp.1.2.1; positivity),
@@ -139,7 +139,7 @@ theorem odd_part_a (α x : ℝ) {V M : ℕ} (hVM : V ≤ M) :
       S0inf α x V := by
   rw [S0inf, sum_Icc_mono_of_zero hVM]
   · refine sum_congr rfl fun n hn => ?_
-    rw [trunc_apply, if_pos (mem_Icc.1 hn).2]
+    rw [trunc_apply, ite_eq_left (mem_Icc.1 hn).2]
   · intro n hn; simp [trunc_apply, not_le.2 hn]
 
 /-- (b): the `μ_{≤U} * log` term is `S_{I,1}` (`typeILog`). -/
@@ -153,7 +153,7 @@ theorem odd_part_b (α : ℝ) {x : ℝ} (hx : 0 < x) {U M : ℕ} (hUM : U ≤ M)
     split_ifs with hao
     · rw [mul_sum, sum_Icc_mono_of_zero hNM]
       · refine sum_congr rfl fun b _ => ?_
-        rw [trunc_apply, if_pos (mem_Icc.1 ha).2, wt_mul, ArithmeticFunction.log_apply]
+        rw [trunc_apply, ite_eq_left (mem_Icc.1 ha).2, wt_mul, ArithmeticFunction.log_apply]
         split_ifs <;> (try simp only [ArithmeticFunction.intCoe_apply, Complex.ofReal_intCast]) <;> ring
       · intro b hb
         have : ⌊x⌋₊ < a * b := lt_of_lt_of_le hb (Nat.le_mul_of_pos_left b ha1)
@@ -180,7 +180,7 @@ theorem odd_part_c (α : ℝ) {x : ℝ} (hx : 0 < x) {U V M : ℕ} (hUM : U ≤ 
           (((trunc Λ V) a : ℝ) : ℂ) * ∑ b ∈ Icc 1 M, if Odd b then
             (((trunc μ U * ArithmeticFunction.zeta) b : ℝ) : ℂ) * wt α x (a * b) else 0 by
         rw [mul_sum]; refine sum_congr rfl fun b _ => ?_; split_ifs <;> ring,
-        sum_odd_conv _ _ (fun n => wt α x (a * n)) M hwa, trunc_apply, if_pos (mem_Icc.1 ha).2]
+        sum_odd_conv _ _ (fun n => wt α x (a * n)) M hwa, trunc_apply, ite_eq_left (mem_Icc.1 ha).2]
       congr 1
       rw [sum_Icc_mono_of_zero hUM]
       · refine sum_congr rfl fun u hu => ?_
@@ -188,7 +188,7 @@ theorem odd_part_c (α : ℝ) {x : ℝ} (hx : 0 < x) {U V M : ℕ} (hUM : U ≤ 
         split_ifs with huo
         · rw [mul_sum, sum_Icc_mono_of_zero hNM]
           · refine sum_congr rfl fun n hn => ?_
-            rw [trunc_apply, if_pos (mem_Icc.1 hu).2, zeta_apply_pos (mem_Icc.1 hn).1, wt_mul3]
+            rw [trunc_apply, ite_eq_left (mem_Icc.1 hu).2, zeta_apply_pos (mem_Icc.1 hn).1, wt_mul3]
             split_ifs <;> (try simp only [ArithmeticFunction.intCoe_apply, Complex.ofReal_intCast, Complex.ofReal_one]) <;> ring
           · intro n hn
             have : ⌊x⌋₊ < a * (u * n) := lt_of_lt_of_le hn
@@ -222,9 +222,9 @@ theorem odd_part_d (α : ℝ) {x : ℝ} (hx : 0 < x) {U V M : ℕ} (hNM : ⌊x�
       · refine sum_congr rfl fun n _ => ?_
         rw [hdiv, sub_apply', trunc_apply, wt_mul]
         by_cases hno : Odd n <;> by_cases hnV : V < n
-        · simp only [hno, hnV, and_self, if_true, if_neg (not_le.2 hnV), sub_zero]
+        · simp only [hno, hnV, and_self, ite_true, ite_eq_right (not_le.2 hnV), sub_zero]
           push_cast; ring
-        · simp only [hno, hnV, and_false, if_true, if_false, if_pos (not_lt.1 hnV), sub_self]
+        · simp only [hno, hnV, and_false, ite_true, ite_false, ite_eq_left (not_lt.1 hnV), sub_self]
           simp
         · simp [hno]
         · simp [hno]

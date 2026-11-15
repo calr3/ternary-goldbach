@@ -45,7 +45,7 @@ theorem two_log_le_sub_inv {z : ℝ} (hz : 1 ≤ z) : 2 * Real.log z ≤ z - 1 /
       have : 1 + 1 / u ^ 2 - 2 / u = (1 - 1 / u) ^ 2 := by field_simp; ring
       rw [this]; positivity)
   have := hmono (Set.mem_Ici.2 le_rfl) (Set.mem_Ici.2 hz) hz
-  simp only [div_one, Real.log_one, mul_zero, sub_zero, sub_self] at this
+  simp only [div_one, Real.log_one, mul_zero, sub_self] at this
   linarith
 
 /-- `T(z) = (z² - 2/7)/(A(z² - 2/7) + 3/2) + (z²/2 - 2/7)/(A(z²/2 - 2/7) + 3/2)`. -/

@@ -28,19 +28,19 @@ theorem Gq_small {q n : ℕ} (hn1 : 1 ≤ n) (hn3 : n ≤ 3) :
   have g2 : gf 2 = 1 := by rw [gf_prime Nat.prime_two]; norm_num
   have g3 : gf 3 = 1 / 2 := by rw [gf_prime Nat.prime_three]; norm_num
   interval_cases n
-  · rw [show Icc 1 1 = {1} by rfl, filter_singleton, if_pos (Nat.coprime_one_left q)]
+  · rw [show Icc 1 1 = {1} by rfl, filter_singleton, ite_eq_left (Nat.coprime_one_left q)]
     simp [Gsm, gf_one']
-  · rw [show Icc 1 2 = {1, 2} by rfl, filter_insert, filter_singleton, if_pos (Nat.coprime_one_left q)]
+  · rw [show Icc 1 2 = {1, 2} by rfl, filter_insert, filter_singleton, ite_eq_left (Nat.coprime_one_left q)]
     by_cases h2 : 2 ∣ q
-    · rw [if_neg (fun h => (c2.1 h) h2)]; simp [Gsm, gf_one', h2]
-    · rw [if_pos (c2.2 h2)]; simp [Gsm, gf_one', g2, h2]
+    · rw [ite_eq_right (fun h => (c2.1 h) h2)]; simp [Gsm, gf_one', h2]
+    · rw [ite_eq_left (c2.2 h2)]; simp [Gsm, gf_one', g2, h2]
   · rw [show Icc 1 3 = {1, 2, 3} by rfl, filter_insert, filter_insert, filter_singleton,
-      if_pos (Nat.coprime_one_left q)]
+      ite_eq_left (Nat.coprime_one_left q)]
     by_cases h2 : 2 ∣ q <;> by_cases h3 : 3 ∣ q
-    · rw [if_neg (fun h => (c2.1 h) h2), if_neg (fun h => (c3.1 h) h3)]; simp [Gsm, gf_one', h2, h3]
-    · rw [if_neg (fun h => (c2.1 h) h2), if_pos (c3.2 h3)]; simp [Gsm, gf_one', g3, h2, h3]
-    · rw [if_pos (c2.2 h2), if_neg (fun h => (c3.1 h) h3)]; simp [Gsm, gf_one', g2, h2, h3]
-    · rw [if_pos (c2.2 h2), if_pos (c3.2 h3)]
+    · rw [ite_eq_right (fun h => (c2.1 h) h2), ite_eq_right (fun h => (c3.1 h) h3)]; simp [Gsm, gf_one', h2, h3]
+    · rw [ite_eq_right (fun h => (c2.1 h) h2), ite_eq_left (c3.2 h3)]; simp [Gsm, gf_one', g3, h2, h3]
+    · rw [ite_eq_left (c2.2 h2), ite_eq_right (fun h => (c3.1 h) h3)]; simp [Gsm, gf_one', g2, h2, h3]
+    · rw [ite_eq_left (c2.2 h2), ite_eq_left (c3.2 h3)]
       simp [Gsm, gf_one', g2, g3, h2, h3]; norm_num
 
 /-! ### The primes of `q` below `5` -/
@@ -70,11 +70,11 @@ theorem prod_low {q : ℕ} (hq : q ≠ 0) (f : ℕ → ℝ) :
   rw [← inter_eq_right.2 (low_subset hq), ← prod_ite_mem, prod_insert (by decide), prod_singleton]
   congr 1
   · by_cases h : 2 ∣ q
-    · rw [if_pos ((mem_low hq).2 (Or.inl ⟨rfl, h⟩)), if_pos h]
-    · rw [if_neg (fun hm => by rcases (mem_low hq).1 hm with ⟨-, h'⟩ | ⟨h3, -⟩ <;> omega), if_neg h]
+    · rw [ite_eq_left ((mem_low hq).2 (Or.inl ⟨rfl, h⟩)), ite_eq_left h]
+    · rw [ite_eq_right (fun hm => by rcases (mem_low hq).1 hm with ⟨-, h'⟩ | ⟨h3, -⟩ <;> omega), ite_eq_right h]
   · by_cases h : 3 ∣ q
-    · rw [if_pos ((mem_low hq).2 (Or.inr ⟨rfl, h⟩)), if_pos h]
-    · rw [if_neg (fun hm => by rcases (mem_low hq).1 hm with ⟨h2, -⟩ | ⟨-, h'⟩ <;> omega), if_neg h]
+    · rw [ite_eq_left ((mem_low hq).2 (Or.inr ⟨rfl, h⟩)), ite_eq_left h]
+    · rw [ite_eq_right (fun hm => by rcases (mem_low hq).1 hm with ⟨h2, -⟩ | ⟨-, h'⟩ <;> omega), ite_eq_right h]
 
 theorem sum_low {q : ℕ} (hq : q ≠ 0) (f : ℕ → ℝ) :
     ∑ p ∈ q.primeFactors.filter (· < 5), f p =
@@ -82,11 +82,11 @@ theorem sum_low {q : ℕ} (hq : q ≠ 0) (f : ℕ → ℝ) :
   rw [← inter_eq_right.2 (low_subset hq), ← sum_ite_mem, sum_insert (by decide), sum_singleton]
   congr 1
   · by_cases h : 2 ∣ q
-    · rw [if_pos ((mem_low hq).2 (Or.inl ⟨rfl, h⟩)), if_pos h]
-    · rw [if_neg (fun hm => by rcases (mem_low hq).1 hm with ⟨-, h'⟩ | ⟨h3, -⟩ <;> omega), if_neg h]
+    · rw [ite_eq_left ((mem_low hq).2 (Or.inl ⟨rfl, h⟩)), ite_eq_left h]
+    · rw [ite_eq_right (fun hm => by rcases (mem_low hq).1 hm with ⟨-, h'⟩ | ⟨h3, -⟩ <;> omega), ite_eq_right h]
   · by_cases h : 3 ∣ q
-    · rw [if_pos ((mem_low hq).2 (Or.inr ⟨rfl, h⟩)), if_pos h]
-    · rw [if_neg (fun hm => by rcases (mem_low hq).1 hm with ⟨h2, -⟩ | ⟨-, h'⟩ <;> omega), if_neg h]
+    · rw [ite_eq_left ((mem_low hq).2 (Or.inr ⟨rfl, h⟩)), ite_eq_left h]
+    · rw [ite_eq_right (fun hm => by rcases (mem_low hq).1 hm with ⟨h2, -⟩ | ⟨-, h'⟩ <;> omega), ite_eq_right h]
 
 /-! ### The primes `≥ 5`: shifted exchange -/
 
@@ -251,7 +251,7 @@ theorem list_cast_sum (l : List ℕ) (g : ℕ → ℚ) :
   | nil => simp
   | cons a t ih => simp [ih]
 
-theorem take_sub (k : ℕ) : ∀ p ∈ primes5.take k, p ∈ primes5 := fun p hp => List.mem_of_mem_take hp
+theorem take_sub (k : ℕ) : ∀ p ∈ primes5.take k, p ∈ primes5 := fun _p hp => List.mem_of_mem_take hp
 
 theorem Lq5_le (k : ℕ) : (Lq5 k : ℝ) ≤ Real.log ((primes5.take k).prod : ℕ) := by
   rw [Lq5, list_cast_sum]
@@ -449,7 +449,7 @@ theorem Phi2_small {q n : ℕ} (hq1 : 1 ≤ q) (hq : q < 22000000000) (hn1 : 1 �
       K23 * (Mq k : ℝ) * Gs + 0.1768 * (Z23 * (Nq k : ℝ)) / (n3Q n : ℝ) - (lnQ n : ℝ) - 1.3325822 -
         0.6586 * S23 - 0.3414 * max (ellQ n : ℝ) (L23 + Lq5 k) - 0.6674177 := by
     simp only [smallQ, K23, Z23, S23, L23, Gs]
-    by_cases h2 : 2 ∣ q <;> by_cases h3 : 3 ∣ q <;> simp [h2, h3] <;> push_cast <;> ring
+    by_cases h2 : 2 ∣ q <;> by_cases h3 : 3 ∣ q <;> simp [h2, h3] <;> ring
   rw [hfin] at hS'
   have hmax : 0.3414 * max (ellQ n : ℝ) (L23 + Lq5 k) ≤ 0.3414 * L := by linarith
   linarith

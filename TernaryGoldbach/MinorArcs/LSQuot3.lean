@@ -63,7 +63,7 @@ theorem log_prod_primeSetRq_le {R : ℝ} (hR : 0 ≤ R) {q : ℕ} (hq : 1 ≤ q)
   linarith
 
 /-- `X (L + 1.33258) ≤ (l + 1.36)(L − l + 1.064)` for `X ≤ 0.4 l + 0.86`, `l ≥ 11.5`, `l ≤ 0.6 L`. -/
-theorem poly_regionS {X l L : ℝ} (hX : X ≤ 0.4 * l + 0.86) (hX0 : 0 ≤ X) (hl : 11.5 ≤ l)
+theorem poly_regionS {X l L : ℝ} (hX : X ≤ 0.4 * l + 0.86) (_hX0 : 0 ≤ X) (hl : 11.5 ≤ l)
     (hρ : l ≤ 0.6 * L) : X * (L + 1.33258) ≤ (l + 1.36) * (L - l + 1.064) := by
   have hLc : 0 ≤ L + 1.33258 := by linarith
   have h06 : 0 ≤ 0.6 * l + 0.5 := by linarith

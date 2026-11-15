@@ -46,7 +46,7 @@ theorem typeI2_eq_sum (α : ℝ) {x : ℝ} (hx : 0 < x) (U V : ℝ) :
           have : (1 : ℝ) ≤ u := by exact_mod_cast hu1
           nlinarith
         rw [Helfgott.eta2_eq_zero (fun h => by
-          have := h.2; rw [div_lt_one hx] at this; push_cast at hvn; linarith)]
+          have := h.2; rw [div_lt_one hx] at this; linarith)]
         simp
     · rfl
   · rfl

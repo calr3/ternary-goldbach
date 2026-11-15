@@ -37,10 +37,10 @@ theorem hasDerivAt_hBase {t : ℝ} (ht : 0 < t) : HasDerivAt hBase (hBd t) t := 
   rcases lt_trichotomy t 2 with h | h | h
   · have : hBase =ᶠ[nhds t] hP := by
       filter_upwards [Ioo_mem_nhds ht h] with s hs using hBase_eq_hP hs.1.le hs.2.le
-    rw [hBd, if_pos h.le]
+    rw [hBd, ite_eq_left h.le]
     exact (hasDerivAt_hP t).congr_of_eventuallyEq this
   · subst h
-    rw [hBd, if_pos le_rfl, hP'_two]
+    rw [hBd, ite_eq_left le_rfl, hP'_two]
     have hl : HasDerivWithinAt hBase 0 (Iic 2) 2 := by
       have := (hasDerivAt_hP 2).hasDerivWithinAt (s := Iic 2)
       rw [hP'_two] at this
@@ -56,7 +56,7 @@ theorem hasDerivAt_hBase {t : ℝ} (ht : 0 < t) : HasDerivAt hBase (hBd t) t := 
     rwa [Iic_union_Ici, hasDerivWithinAt_univ] at this
   · have : hBase =ᶠ[nhds t] fun _ => 0 := by
       filter_upwards [Ioi_mem_nhds h] with s hs using hBase_of_two_le hs.le
-    rw [hBd, if_neg (not_le.2 h)]
+    rw [hBd, ite_eq_right (not_le.2 h)]
     exact (hasDerivAt_const t (0:ℝ)).congr_of_eventuallyEq this
 
 /-- `g(u) = h(eᵘ)`. -/
@@ -89,8 +89,8 @@ theorem hBase_div_eq {t : ℝ} (ht : 0 < t) :
 
 theorem hBd_eq {t : ℝ} (ht : 0 < t) : hBd t = (Icc (0 : ℝ) 2).indicator hP' t := by
   by_cases h2 : t ≤ 2
-  · rw [indicator_of_mem (show t ∈ Icc (0:ℝ) 2 from ⟨ht.le, h2⟩), hBd, if_pos h2]
-  · rw [indicator_of_notMem (fun hm => h2 hm.2), hBd, if_neg h2]
+  · rw [indicator_of_mem (show t ∈ Icc (0:ℝ) 2 from ⟨ht.le, h2⟩), hBd, ite_eq_left h2]
+  · rw [indicator_of_notMem (fun hm => h2 hm.2), hBd, ite_eq_right h2]
 
 theorem hBase_sq_div_eq {t : ℝ} (ht : 0 < t) :
     hBase t ^ 2 / t =
@@ -490,7 +490,7 @@ theorem hH_of_neg {H t : ℝ} (ht : t < 0) : hH H t = 0 := by
   have hy0 : (0 : ℝ) < y := hy
   have : t / y < 0 := div_neg_of_neg_of_pos ht hy0
   have h0 : hBase (t / y) = 0 := by
-    unfold hBase; rw [if_neg]; intro h; linarith [h.1]
+    unfold hBase; rw [ite_eq_right]; intro h; linarith [h.1]
   rw [h0]; ring
 
 theorem etaPlus_of_nonpos {t : ℝ} (ht : t ≤ 0) : etaPlus t = 0 := by
@@ -510,7 +510,7 @@ theorem etaO_eq {t : ℝ} (ht : 0 < t) : etaO t = hBase t * t * Real.exp (-t ^ 2
     rw [show -(t - 1) ^ 2 / 2 = (t - 1 / 2) + (-t ^ 2 / 2) by ring, Real.exp_add]; ring
   · rw [etaO, indicator_of_notMem (fun hm => h2 hm.2), hBase_of_two_le (le_of_not_ge h2)]; ring
 
-theorem cube_mul_exp_neg_sq_le {s : ℝ} (hs : 0 ≤ s) : s ^ 3 * Real.exp (-s ^ 2) ≤ 1 / 2 := by
+theorem cube_mul_exp_neg_sq_le {s : ℝ} (_hs : 0 ≤ s) : s ^ 3 * Real.exp (-s ^ 2) ≤ 1 / 2 := by
   have h := Real.sum_le_exp_of_nonneg (sq_nonneg s) 4
   simp only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_one,
     Nat.cast_ofNat, Nat.succ_eq_add_one, Nat.reduceAdd, Nat.reduceMul, pow_zero, pow_one,

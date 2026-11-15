@@ -60,7 +60,7 @@ theorem sum_moebius_sq_dvd {l : ℕ} (hl : l ≠ 0) :
   rw [h]
   by_cases hb1 : b = 1
   · subst hb1; simp at hba; subst hba; simp [ha]
-  · rw [if_neg hb1, if_neg]
+  · rw [ite_eq_right hb1, ite_eq_right]
     intro hsq
     exact hb1 (Nat.isUnit_iff.1 (hsq b (hba ▸ dvd_mul_of_dvd_left (by rw [sq]) a)))
 
@@ -93,7 +93,7 @@ theorem sum_Ioc_dvd_sub {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) {D : ℕ} (hD
 /-- No multiples of `D` in `(⌊a⌋, ⌊b⌋]` when `b < D`. -/
 theorem sum_Ioc_dvd_eq_zero {a b : ℝ} {D : ℕ} (hD : b < D) :
     (∑ l ∈ Ioc ⌊a⌋₊ ⌊b⌋₊, if D ∣ l then (1 : ℝ) else 0) = 0 := by
-  refine sum_eq_zero fun l hl => if_neg ?_
+  refine sum_eq_zero fun l hl => ite_eq_right ?_
   rintro ⟨k, rfl⟩
   rw [mem_Ioc] at hl
   have hk : k ≠ 0 := by rintro rfl; simp at hl
@@ -112,7 +112,7 @@ theorem sum_Ioc_dvd_eq_zero {a b : ℝ} {D : ℕ} (hD : b < D) :
 theorem tsum_coprime_moebius_div_sq {P : ℕ} (hP : P ≠ 0) :
     ∑' m : ℕ, (if Nat.Coprime m P then (μ m : ℝ) / (m : ℝ) ^ 2 else 0) =
       6 / Real.pi ^ 2 / ∏ p ∈ P.primeFactors, (1 - 1 / (p : ℝ) ^ 2) := by
-  haveI : NeZero P := ⟨hP⟩
+  have : NeZero P := ⟨hP⟩
   set χ : DirichletCharacter ℂ P := 1
   have hs : 1 < (2 : ℂ).re := by norm_num
   have h1 := DirichletCharacter.LSeries.mul_mu_eq_one χ hs
@@ -128,11 +128,11 @@ theorem tsum_coprime_moebius_div_sq {P : ℕ} (hP : P ≠ 0) :
     rw [LSeries.term_of_ne_zero hn]
     by_cases hc : Nat.Coprime n P
     · have hu : IsUnit (n : ZMod P) := (ZMod.isUnit_iff_coprime n P).2 hc
-      rw [if_pos hc, Pi.mul_apply, MulChar.one_apply hu]
+      rw [ite_eq_left hc, Pi.mul_apply, MulChar.one_apply hu]
       push_cast
       simp
     · have hu : ¬ IsUnit (n : ZMod P) := mt (ZMod.isUnit_iff_coprime n P).1 hc
-      rw [if_neg hc, Pi.mul_apply, MulChar.map_nonunit _ hu]; simp
+      rw [ite_eq_right hc, Pi.mul_apply, MulChar.map_nonunit _ hu]; simp
   have h3 : LSeries (↗χ * ↗μ) 2 =
       ((∑' m : ℕ, (if Nat.Coprime m P then (μ m : ℝ) / (m : ℝ) ^ 2 else 0) : ℝ) : ℂ) := by
     rw [LSeries, Complex.ofReal_tsum]; exact tsum_congr hterm
@@ -247,7 +247,7 @@ theorem summable_fsq_term (X : ℝ) :
       nlinarith [sq_nonneg X, sq_nonneg (m : ℝ)]
     · positivity
 
-theorem sum_moebius_divisors_real (g : ℕ) (hg : 1 ≤ g) :
+theorem sum_moebius_divisors_real (g : ℕ) (_hg : 1 ≤ g) :
     ∑ d ∈ g.divisors, (μ d : ℝ) = if g = 1 then 1 else 0 := by
   have h := congrArg (fun f : ArithmeticFunction ℝ => f g)
     (ArithmeticFunction.coe_moebius_mul_coe_zeta (R := ℝ))
@@ -315,12 +315,12 @@ theorem cntSq_approx {P : ℕ} (hP : Squarefree P) {a b : ℝ} (ha : 0 ≤ a) (h
         have : e * (m * m) ∣ l ↔ e ∣ l ∧ m * m ∣ l :=
           ⟨fun h => ⟨(dvd_mul_right _ _).trans h, (dvd_mul_left _ _).trans h⟩,
             fun h => hce.mul_dvd_of_dvd_of_dvd h.1 h.2⟩
-        simp only [hm, if_true, this]
+        simp only [this]
         by_cases h1 : e ∣ l <;> by_cases h2 : m * m ∣ l <;> simp [h1, h2]
       · simp [hm]
     rw [sum_congr rfl hfac, ← sum_mul, ← coprime_indicator hl0 hP0]
     by_cases hc : Nat.Coprime l P
-    · rw [if_pos hc, one_mul]
+    · rw [ite_eq_left hc, one_mul]
       have hset : (range (N + 1)).filter (fun m => m * m ∣ l) =
           l.divisors.filter (fun m => m * m ∣ l) := by
         ext m
@@ -335,7 +335,7 @@ theorem cntSq_approx {P : ℕ} (hP : Squarefree P) {a b : ℝ} (ha : 0 ≤ a) (h
           ∑ m ∈ l.divisors.filter (fun m => m * m ∣ l), (μ m : ℝ) from
         sum_congr rfl fun m hm => by
           have hmd : m ∣ l := Nat.dvd_of_mem_divisors (mem_filter.1 hm).1
-          simp only [hw, if_pos (Nat.Coprime.coprime_dvd_left hmd hc)],
+          simp only [hw, ite_eq_left (Nat.Coprime.coprime_dvd_left hmd hc)],
         sum_moebius_sq_dvd hl0]
       exact if_congr ⟨fun h => h.1, fun h => ⟨h, hc⟩⟩ rfl rfl
     · simp [hc]
@@ -410,7 +410,7 @@ theorem cntSq_approx {P : ℕ} (hP : Squarefree P) {a b : ℝ} (ha : 0 ≤ a) (h
   have hX2 : X ^ 2 = b / e := Real.sq_sqrt (div_nonneg hb0 he0.le)
   rw [Real.norm_eq_abs, ← mul_sub, abs_mul]
   by_cases hm : Squarefree m ∧ m ≠ 0
-  · rw [if_pos hm]
+  · rw [ite_eq_left hm]
     have hm1 : (1 : ℝ) ≤ m := by exact_mod_cast Nat.one_le_iff_ne_zero.2 hm.2
     have hD : ((e * (m * m) : ℕ) : ℝ) = e * (m : ℝ) ^ 2 := by push_cast; ring
     refine (mul_le_of_le_one_left (abs_nonneg _) (hw1 m)).trans ?_
@@ -431,7 +431,7 @@ theorem cntSq_approx {P : ℕ} (hP : Squarefree P) {a b : ℝ} (ha : 0 ≤ a) (h
       have h0 : 0 ≤ (m : ℝ) ^ 2 := by positivity
       have h1 : (e : ℝ) * (m : ℝ) ^ 2 * (b / e) = b * m ^ 2 := by field_simp
       nlinarith [h1, mul_le_mul_of_nonneg_right hb2 h0]
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     have : w m = 0 := by
       simp only [hw]; split_ifs
       · rcases not_and_or.1 hm with h | h

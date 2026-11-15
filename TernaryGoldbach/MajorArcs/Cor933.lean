@@ -43,7 +43,7 @@ theorem integrable_phiPos : Integrable phiPos := by
   exact phiPos_le_phi t
 
 theorem eta2_eq_zero_of_nonpos {t : ℝ} (ht : t ≤ 0) : eta2 t = 0 := by
-  unfold TernaryGoldbach.Helfgott.eta2; rw [if_neg (not_lt.2 ht)]
+  unfold TernaryGoldbach.Helfgott.eta2; rw [ite_eq_right (not_lt.2 ht)]
 
 /-- `η_*(u) = ∫_{r>0} η₂(r) η(u/r) dr/r` for all `u` (with `η` cut off at `0`). -/
 theorem etaU_eq (u : ℝ) : etaU u = ∫ r in Ioi 0, eta2 r * phiPos (u / r) / r := by
@@ -56,14 +56,14 @@ theorem etaU_eq (u : ℝ) : etaU u = ∫ r in Ioi 0, eta2 r * phiPos (u / r) / r
       simp
     rw [h1, setIntegral_congr_fun measurableSet_Ioi (g := fun _ => (0:ℝ)) fun r (hr : 0 < r) => by
       unfold phiPos
-      rw [if_neg (not_lt.2 (div_nonpos_of_nonpos_of_nonneg hu hr.le))]; simp]
+      rw [ite_eq_right (not_lt.2 (div_nonpos_of_nonpos_of_nonneg hu hr.le))]; simp]
     simp
   · have hκ : (0:ℝ) < κ := by rw [TernaryGoldbach.Helfgott.κ]; norm_num
     have h1 : etaU u = etaStar (u / κ) := by
       rw [etaStar_eq_etaU (by positivity), mul_div_cancel₀ _ hκ.ne']
     rw [h1, etaStar, mul_div_cancel₀ _ hκ.ne', mellinConv]
     refine setIntegral_congr_fun measurableSet_Ioi fun r (hr : 0 < r) => ?_
-    unfold phiPos; rw [if_pos (by positivity)]
+    unfold phiPos; rw [ite_eq_left (by positivity)]
 
 /-- `η̂_*(s) = ∫_{r>0} η₂(r) η̂(rs) dr`. -/
 theorem fourier_etaU (s : ℝ) :
@@ -113,7 +113,7 @@ theorem fourier_etaU (s : ℝ) :
   have e2 : ∫ u, e (-(u * s)) * (phiPos (u / r) : ℂ) = (r : ℂ) * 𝓕 (fun u => (phiPos u : ℂ)) (r * s) := by
     have h := TernaryGoldbach.fourier_comp_affine (fun u => (phiPos u : ℂ)) (inv_pos.2 hr) 0 s
     rw [TernaryGoldbach.fourier_eq_integral_e] at h
-    simp only [add_zero, zero_mul, zero_div, TernaryGoldbach.e_zero, one_mul, inv_inv] at h
+    simp only [add_zero, zero_mul, zero_div, TernaryGoldbach.e_zero, one_mul] at h
     rw [show s / r⁻¹ = r * s by field_simp, Complex.ofReal_inv, inv_inv] at h
     rw [← h]; congr 1; ext u; rw [div_eq_inv_mul]
   have hr' : (r : ℂ) ≠ 0 := by exact_mod_cast hr.ne'
@@ -201,7 +201,7 @@ theorem expδ_mono {T0 δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) : expδ T0 (δ *
   by_cases hδ : δ = 0
   · simp [hδ]
   · have hδr : δ * r ≠ 0 := mul_ne_zero hδ hr.ne'
-    rw [if_neg hδr, if_neg hδ, Real.exp_le_exp]
+    rw [ite_eq_right hδr, ite_eq_right hδ, Real.exp_le_exp]
     have h1 : (π * (δ * r)) ^ 2 ≤ (π * δ) ^ 2 := by
       have : (π * (δ * r)) ^ 2 = (π * δ) ^ 2 * r ^ 2 := by ring
       rw [this]
@@ -465,7 +465,7 @@ theorem integral_eta2_ErNew_le (q : ℕ) [NeZero q] (T0 δ : ℝ) {x : ℝ} (hx 
     simp only [c0, c1, c2, c3]; unfold err933New; ring
   linarith
 
-theorem integral_eta2_ErN_le {q : ℕ} [NeZero q] {T0 : ℝ} (hT0 : 50 ≤ T0) (δ : ℝ) {x : ℝ}
+theorem integral_eta2_ErN_le {q : ℕ} [NeZero q] {T0 : ℝ} (_hT0 : 50 ≤ T0) (δ : ℝ) {x : ℝ}
     (hx : 0 < x) : ∫ r in Ioi 0, eta2 r * ErN q T0 δ x r ≤ err933N q T0 δ x := by
   unfold ErN err933N
   split_ifs with h
@@ -574,16 +574,16 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
           continuousOn_const).mul continuousOn_const)
     refine h1.sub ?_
     by_cases hn : n = 0
-    · simp only [hn, if_true]; exact hGc
-    · simp only [hn, if_false]; exact continuousOn_const
+    · simp only [hn, ite_true]; exact hGc
+    · simp only [hn, ite_false]; exact continuousOn_const
   have h_bound : ∀ n, ∀ᵐ r ∂μ, ‖F n r‖ ≤ bnd n r := by
     intro n
     refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun r (hr : 0 < r) => ?_)
     by_cases hn : n = 0
     · subst hn
-      simp only [hF, hbnd, hterm0, if_true, zero_sub, norm_neg, Nat.cast_zero,
+      simp only [hF, hbnd, hterm0, ite_true, zero_sub, norm_neg, Nat.cast_zero,
         ArithmeticFunction.map_zero, zero_mul, mul_zero, zero_add, le_refl]
-    · simp only [hF, hbnd, hn, if_false, sub_zero, add_zero]
+    · simp only [hF, hbnd, hn, ite_false, sub_zero, add_zero]
       exact hnorm_term n r hr
   have bound_summable : ∀ᵐ r ∂μ, Summable fun n => bnd n r :=
     Eventually.of_forall fun r => (hsg.mul_left (w r)).add (hasSum_ite_eq 0 ‖G r‖).summable
@@ -615,9 +615,9 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
     intro n
     by_cases hn : n = 0
     · subst hn
-      simp only [hF, hterm0, zero_sub, if_true, integral_neg, Nat.cast_zero,
+      simp only [hF, hterm0, zero_sub, ite_true, integral_neg, Nat.cast_zero,
         ArithmeticFunction.map_zero, zero_mul, Complex.ofReal_zero, zero_sub]
-    · simp only [hF, hn, if_false, sub_zero]
+    · simp only [hF, hn, ite_false, sub_zero]
       have e1 : ∀ r, term n r = ((w r * (Λ n * phi (n / (r * x))) : ℝ) : ℂ) *
           (χ (n : ZMod q) * e (n * (δ / x))) := fun r => by simp only [hterm]; push_cast; ring
       simp only [e1]
@@ -627,7 +627,7 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
         refine setIntegral_congr_fun measurableSet_Ioi fun r (hr : 0 < r) => ?_
         have hn0 : (0 : ℝ) < n := by exact_mod_cast Nat.pos_of_ne_zero hn
         have : phiPos (n / x / r) = phi (n / (r * x)) := by
-          unfold phiPos; rw [if_pos (by positivity)]; congr 1; field_simp
+          unfold phiPos; rw [ite_eq_left (by positivity)]; congr 1; field_simp
         simp only [hw, this]; ring
       rw [e2]; push_cast; ring
   have hc : HasSum (fun n : ℕ => ((Λ n * etaU (n / x) : ℝ) : ℂ) * χ (n : ZMod q) * e (n * (δ / x)))
@@ -640,14 +640,14 @@ theorem cor_9_3_3 {x : ℝ} (hx : 4 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ :
   -- the main term
   have hIG : ∫ r, G r ∂μ = if q = 1 then 𝓕 (fun u => (etaU u : ℂ)) (-δ) * x else 0 := by
     by_cases h1 : q = 1
-    · rw [if_pos h1, fourier_etaU, ← integral_mul_const]
+    · rw [ite_eq_left h1, fourier_etaU, ← integral_mul_const]
       refine setIntegral_congr_fun measurableSet_Ioi fun r (hr : 0 < r) => ?_
-      simp only [hGdef, hM, hw, if_pos h1]
+      simp only [hGdef, hM, hw, ite_eq_left h1]
       have hr' : (r : ℂ) ≠ 0 := by exact_mod_cast hr.ne'
       rw [show -(δ * r) = r * -δ by ring]
       push_cast; field_simp
-    · rw [if_neg h1]
-      simp only [hGdef, hM, if_neg h1, mul_zero, integral_zero]
+    · rw [ite_eq_right h1]
+      simp only [hGdef, hM, ite_eq_right h1, mul_zero, integral_zero]
   -- the bound
   have hB : Integrable (fun r => x * (eta2 r * ErN q T0 δ x r)) μ :=
     (integrableOn_eta2_mul (continuousOn_ErN q T0 δ x)).const_mul x

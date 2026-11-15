@@ -81,7 +81,7 @@ theorem intervalIntegral_norm_le_sqrt {g : ℝ → ℂ} (hg : Continuous g)
 /-- **Window sums**: if each window `[(k − J)h, (k − J + 1)h]` carries total weight `≤ Z`, then
 `Σ m_u |f(ℑu)| ≤ Z ((1/h)∫_{−Jh}^{Jh}|f| + ∫_{−Jh}^{Jh}|f'|)`. -/
 theorem sum_window_le {S : Finset ℂ} (m : ℂ → ℝ) (hm : ∀ u ∈ S, 0 ≤ m u) {h T0 Z : ℝ} (hh : 0 < h)
-    (J : ℕ) (hJ : T0 < J * h) (hS : ∀ u ∈ S, |u.im| ≤ T0) (hZ0 : 0 ≤ Z)
+    (J : ℕ) (hJ : T0 < J * h) (hS : ∀ u ∈ S, |u.im| ≤ T0) (_hZ0 : 0 ≤ Z)
     (hZ : ∀ k : ℕ, ∑ u ∈ S.filter (fun u => (⌊u.im / h⌋ + J).toNat = k), m u ≤ Z)
     {f f' : ℝ → ℂ} (hf : ∀ t, HasDerivAt f (f' t) t) (hf' : Continuous f') :
     ∑ u ∈ S, m u * ‖f u.im‖ ≤

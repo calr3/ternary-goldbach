@@ -83,11 +83,11 @@ theorem weight_sum_r (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
     rw [Nat.mul_div_cancel_left _ hc0, TernaryGoldbach.wq, Nat.mul_div_cancel_left _ hc0,
       moebius_sq_real]
     by_cases hcop : Nat.Coprime k c
-    · rw [if_pos hcop, Nat.totient_mul (Nat.coprime_comm.1 hcop)]
+    · rw [ite_eq_left hcop, Nat.totient_mul (Nat.coprime_comm.1 hcop)]
       by_cases hs : Squarefree k
-      · rw [if_pos ⟨hs, hcop⟩, if_pos hs]; push_cast; field_simp
-      · rw [if_neg (fun h => hs h.1), if_neg hs]; simp
-    · rw [if_neg hcop, if_neg (fun h => hcop h.2), zero_div]
+      · rw [ite_eq_left ⟨hs, hcop⟩, ite_eq_left hs]; push_cast; field_simp
+      · rw [ite_eq_right (fun h => hs h.1), ite_eq_right hs]; simp
+    · rw [ite_eq_right hcop, ite_eq_right (fun h => hcop h.2), zero_div]
 
 /-- `r ≤ ⌊X/d⌋₊ ↔ d r ≤ X` for `r ≥ 1`, `d ≥ 1`. -/
 theorem le_floor_div_iff {r d : ℕ} (hr : 1 ≤ r) (hd : 1 ≤ d) (X : ℝ) :
@@ -137,8 +137,8 @@ theorem weight_sum (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
   rcases Nat.even_or_odd c with hce | hco
   · -- even conductor
     have hqt : ∀ r, qt (c * r) = c * r := fun r => by
-      unfold qt; rw [if_pos (hce.mul_right r)]
-    rw [kap, if_pos hce, one_mul, show qt c = c by unfold qt; rw [if_pos hce]]
+      unfold qt; rw [ite_eq_left (hce.mul_right r)]
+    rw [kap, ite_eq_left hce, one_mul, show qt c = c by unfold qt; rw [ite_eq_left hce]]
     refine sum_congr ?_ fun _ _ => rfl
     ext r
     simp only [mem_filter, mem_Icc, hqt]
@@ -151,7 +151,7 @@ theorem weight_sum (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
       exact_mod_cast Nat.le_mul_of_pos_left r hc
   · -- odd conductor: odd and even `r` contribute equally
     have hc2 : ¬ Even c := Nat.not_even_iff_odd.2 hco
-    rw [kap, if_neg hc2, show qt c = 2 * c by unfold qt; rw [if_neg hc2]]
+    rw [kap, ite_eq_right hc2, show qt c = 2 * c by unfold qt; rw [ite_eq_right hc2]]
     set A := (Icc 1 ⌊X⌋₊).filter (fun r => (qt (c * r) : ℝ) ≤ X ∧ Nat.Coprime r c)
     set B := (Icc 1 ⌊X / ((2 * c : ℕ) : ℝ)⌋₊).filter (fun r => Nat.Coprime r (2 * c))
     rw [← sum_filter_add_sum_filter_not A (fun r => Odd r), two_mul]
@@ -163,12 +163,12 @@ theorem weight_sum (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
       constructor
       · rintro ⟨⟨⟨hr1, -⟩, hrX, hcop⟩, hodd⟩
         have hq : qt (c * r) = 2 * c * r := by
-          unfold qt; rw [if_neg (Nat.not_even_iff_odd.2 (hco.mul hodd))]; ring
+          unfold qt; rw [ite_eq_right (Nat.not_even_iff_odd.2 (hco.mul hodd))]; ring
         rw [hq] at hrX
         exact ⟨⟨hr1, (le_floor_div_iff hr1 (by omega) X).2 hrX⟩, hodd, hcop⟩
       · rintro ⟨⟨hr1, hrX⟩, hodd, hcop⟩
         have hq : qt (c * r) = 2 * c * r := by
-          unfold qt; rw [if_neg (Nat.not_even_iff_odd.2 (hco.mul hodd))]; ring
+          unfold qt; rw [ite_eq_right (Nat.not_even_iff_odd.2 (hco.mul hodd))]; ring
         have h := (le_floor_div_iff hr1 (by omega) X).1 hrX
         refine ⟨⟨⟨hr1, Nat.le_floor (le_trans ?_ h)⟩, by rw [hq]; exact h, hcop⟩, hodd⟩
         exact_mod_cast Nat.le_mul_of_pos_left r (by omega)
@@ -193,7 +193,7 @@ theorem weight_sum (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
         rw [Nat.mul_div_cancel_left _ (by norm_num)]
         have hk1 : 1 ≤ k := by omega
         have hq : qt (c * (2 * k)) = 2 * c * k := by
-          unfold qt; rw [if_pos ((even_two_mul k).mul_left c)]; ring
+          unfold qt; rw [ite_eq_left ((even_two_mul k).mul_left c)]; ring
         rw [hq] at hrX
         exact ⟨⟨hk1, (le_floor_div_iff hk1 (by omega) X).2 hrX⟩,
           Nat.Coprime.coprime_mul_left hcop⟩
@@ -201,7 +201,7 @@ theorem weight_sum (c : ℕ) (hc : 1 ≤ c) (X : ℝ) :
         simp only [A, mem_filter, mem_Icc, Nat.not_odd_iff_even] at hr' ⊢
         obtain ⟨⟨hr1, hrX⟩, hcop⟩ := hr'
         have hq : qt (c * (2 * r')) = 2 * c * r' := by
-          unfold qt; rw [if_pos ((even_two_mul r').mul_left c)]; ring
+          unfold qt; rw [ite_eq_left ((even_two_mul r').mul_left c)]; ring
         have h := (le_floor_div_iff hr1 (by omega) X).1 hrX
         refine ⟨⟨⟨by omega, Nat.le_floor (le_trans ?_ h)⟩, by rw [hq]; exact h, ?_⟩, even_two_mul r'⟩
         · push_cast; nlinarith [show (1:ℝ) ≤ c by exact_mod_cast hc, show (0:ℝ) ≤ r' by positivity]

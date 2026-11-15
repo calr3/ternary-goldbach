@@ -80,7 +80,7 @@ theorem f1p_le_one_add {p : ℕ} (hp : 2 ≤ p) : f1p p ≤ 1 + (p : ℝ) ^ (-(2
 theorem ghat_of_gt {p : ℕ} (hp : 31 < p) :
     gHatQ p = (p : ℝ) / (p - 1) * (1 + (p : ℝ) ^ (-(2 / 3 : ℝ))) := by
   unfold gHatQ
-  repeat rw [if_neg (by omega)]
+  repeat rw [ite_eq_right (by omega)]
 
 theorem gp_le_ghat {p : ℕ} (hp : p.Prime) : gp p ≤ gHatQ p := by
   have hp2 := hp.two_le
@@ -211,7 +211,7 @@ theorem shat_anti {a b : ℕ} (ha : a.Prime) (hb : b.Prime) (hab : b ≤ a) : sh
   · exact le_rfl
   · omega
   · have : (3 : ℝ) ≤ a := by exact_mod_cast (by have := ha.two_le; omega : 3 ≤ a)
-    exact log_div_anti (le_refl 3) this |>.trans (by push_cast; exact le_rfl)
+    exact log_div_anti (le_refl 3) this |>.trans (by exact le_rfl)
   · have hb3 : (3 : ℝ) ≤ b := by exact_mod_cast (by have := hb.two_le; omega : 3 ≤ b)
     exact log_div_anti hb3 (by exact_mod_cast hab)
 

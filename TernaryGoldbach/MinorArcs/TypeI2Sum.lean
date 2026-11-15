@@ -46,7 +46,7 @@ theorem muBound_anti {M₀ M : ℝ} {q' q : ℕ} (hM0 : 0 < M₀) (hM : M₀ ≤
   unfold muBound
   by_cases h : 2 * (q : ℝ) ^ 2 < M₀
   · have h' : 2 * (q' : ℝ) ^ 2 < M := by nlinarith
-    rw [if_pos h, if_pos h']
+    rw [ite_eq_left h, ite_eq_left h']
     refine min_le_min le_rfl ?_
     have hlog : 0 < Real.log (M₀ / (2 * q ^ 2)) :=
       Real.log_pos (by rw [one_lt_div (by positivity)]; exact h)
@@ -54,7 +54,7 @@ theorem muBound_anti {M₀ M : ℝ} {q' q : ℕ} (hM0 : 0 < M₀) (hM : M₀ ≤
     push_cast at hrat
     refine div_le_div₀ (by positivity) (by linarith) hlog (Real.log_le_log (by positivity) ?_)
     exact div_le_div₀ (by linarith) hM (by positivity) (by nlinarith)
-  · rw [if_neg h]; split_ifs
+  · rw [ite_eq_right h]; split_ifs
     · exact min_le_left _ _
     · exact le_rfl
 

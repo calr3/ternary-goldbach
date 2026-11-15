@@ -80,12 +80,12 @@ theorem PhiG_phi2_le (u : ℝ) : ‖PhiG phi2 u‖ ≤ 9.93 * Real.exp (-(1 * |u
     _ ≤ 9.93 * Real.exp (-(1 * |u|)) := by nlinarith [Real.exp_pos (-(1 * |u|))]
 
 theorem plancherelData_phi1 : PlancherelData phi1 9.93 1 where
-  cont := continuous_PhiG_of fun y hy => continuousAt_phi1 hy
+  cont := continuous_PhiG_of fun _y hy => continuousAt_phi1 hy
   c_pos := one_pos
   bound := PhiG_phi1_le
 
 theorem plancherelData_phi2 : PlancherelData phi2 9.93 1 where
-  cont := continuous_PhiG_of fun y hy => continuousAt_phi2 hy
+  cont := continuous_PhiG_of fun _y hy => continuousAt_phi2 hy
   c_pos := one_pos
   bound := PhiG_phi2_le
 

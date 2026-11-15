@@ -66,9 +66,6 @@ theorem psiN_eq (n : ℕ) :
   · rw [ArithmeticFunction.vonMangoldt_apply_prime h]; ring
   · ring
 
-theorem thetaN_nonneg (n : ℕ) : 0 ≤ thetaN n :=
-  sum_nonneg fun p _ => Real.log_natCast_nonneg p
-
 theorem thetaN_le_psiN (n : ℕ) : thetaN n ≤ psiN n := by
   rw [psiN_eq]
   have : 0 ≤ ∑ m ∈ Icc 1 n, (if m.Prime then 0 else (Λ m : ℝ)) :=
@@ -617,16 +614,16 @@ theorem nonprime_sum_le4 (N : ℕ) (hN : 1 ≤ N) :
     · interval_cases L
       · simp; split_ifs <;> linarith
       · simp; split_ifs <;> linarith
-      · rw [if_neg (fun h => by have := hge 3 h; omega), if_neg (fun h => by have := hge 4 h; omega),
-          if_neg (fun h => by have := hge 5 h; omega)]
+      · rw [ite_eq_right (fun h => by have := hge 3 h; omega), ite_eq_right (fun h => by have := hge 4 h; omega),
+          ite_eq_right (fun h => by have := hge 5 h; omega)]
         norm_num
-      · rw [if_pos (hle 3 le_rfl), if_neg (fun h => by have := hge 4 h; omega),
-          if_neg (fun h => by have := hge 5 h; omega)]
+      · rw [ite_eq_left (hle 3 le_rfl), ite_eq_right (fun h => by have := hge 4 h; omega),
+          ite_eq_right (fun h => by have := hge 5 h; omega)]
         norm_num; linarith
-      · rw [if_pos (hle 3 (by norm_num)), if_pos (hle 4 le_rfl),
-          if_neg (fun h => by have := hge 5 h; omega)]
+      · rw [ite_eq_left (hle 3 (by norm_num)), ite_eq_left (hle 4 le_rfl),
+          ite_eq_right (fun h => by have := hge 5 h; omega)]
         norm_num; linarith
-    · rw [if_pos (hle 3 (by omega)), if_pos (hle 4 (by omega)), if_pos (hle 5 hL),
+    · rw [ite_eq_left (hle 3 (by omega)), ite_eq_left (hle 4 (by omega)), ite_eq_left (hle 5 hL),
         Nat.cast_sub (by omega)]
       push_cast
       nlinarith
@@ -900,7 +897,7 @@ theorem psi_lower3 {n : ℕ} (hn : 12 ≤ n) :
     (n : ℝ) - cPsi n * √(n : ℝ) -
         (if 10 ^ 17 < n then n / Real.log n ^ 3 + epl n * n else 0) ≤ psiN n := by
   rcases le_or_gt n (10 ^ 17) with h | h
-  · rw [if_neg (by omega)]
+  · rw [ite_eq_right (by omega)]
     have hB := (abs_le.1 (psi_two_sided hn h)).1
     have hc : cB n ≤ cPsi n := by
       unfold cPsi; split_ifs with h1 h2 h3
@@ -910,11 +907,11 @@ theorem psi_lower3 {n : ℕ} (hn : 12 ≤ n) :
       · exact cB_le_200 n
     have := mul_le_mul_of_nonneg_right hc (Real.sqrt_nonneg (n : ℝ))
     unfold psiN; linarith
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have h1 := (abs_lt.1 (thetaN_large (n := n) (by omega))).1
     have h2 := thetaN_le_psiN n
     have : cPsi n = 0 := by
-      unfold cPsi; rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+      unfold cPsi; rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
     rw [this, zero_mul]; linarith
 
 variable [Fact TernaryGoldbach.PlattGRH] in
@@ -937,7 +934,7 @@ theorem abel_term_ge3 {n : ℕ} (hn : 12 ≤ n) :
     rw [mul_assoc]; congr 1
     rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
   by_cases hbig : 10 ^ 17 < n
-  · rw [if_pos hbig] at h ⊢
+  · rw [ite_eq_left hbig] at h ⊢
     have e3 : (n : ℝ) / Real.log n ^ 3 * (1 / (n * (n + 1))) = 1 / ((n + 1) * Real.log n ^ 3) := by
       field_simp
     have e4 : epl n * n * (1 / (n * (n + 1))) = epl n / ((n : ℝ) + 1) := by field_simp
@@ -946,7 +943,7 @@ theorem abel_term_ge3 {n : ℕ} (hn : 12 ≤ n) :
           (1 / ((n + 1) * Real.log n ^ 3) + epl n / ((n : ℝ) + 1)) := by
       rw [sub_mul, sub_mul, add_mul, e1, e2, e3, e4]
     linarith
-  · rw [if_neg hbig] at h ⊢
+  · rw [ite_eq_right hbig] at h ⊢
     have : ((n : ℝ) - cPsi n * √(n : ℝ) - 0) * (1 / (n * (n + 1))) =
         1 / ((n : ℝ) + 1) - cPsi n * (1 / (√(n : ℝ) * (n + 1))) - 0 := by
       rw [sub_zero, sub_zero, sub_mul, e1, e2]
@@ -1330,7 +1327,7 @@ theorem log_2e6_le : Real.log 2000000 ≤ 14.51 := by
   rw [e] at h; refine le_trans ?_ h
   norm_num [Finset.sum_range_succ, Nat.factorial]
 
-theorem sqrt_ge_of_sq {x a : ℝ} (ha : 0 ≤ a) (h : a ^ 2 ≤ x) : a ≤ √x := Real.le_sqrt_of_sq_le h
+theorem sqrt_ge_of_sq {x a : ℝ} (_ha : 0 ≤ a) (h : a ^ 2 ≤ x) : a ≤ √x := Real.le_sqrt_of_sq_le h
 
 set_option maxHeartbeats 1600000 in
 /-- **Abel summation for (2.19)** on `(N/2, N]`, `N ≥ 2·10⁶`. From `θ(N) ≤ N + A√N`,
@@ -1361,7 +1358,6 @@ theorem logsq_abel {N : ℕ} (h1 : 2000000 ≤ N) {A B m lam nu r0 l0 : ℝ}
       ∑ n ∈ Ioc a N, (if n.Prime then Real.log (n : ℝ) else 0) * Real.log n := by
     rw [sum_filter]; refine sum_congr rfl fun n _ => ?_; split_ifs <;> ring
   rw [hS, abel_theta (fun n => Real.log n) a N haN]
-  beta_reduce
   -- logarithms and square roots
   set L := Real.log N with hL
   have hL0 : 0 ≤ L := Real.log_nonneg (by linarith)

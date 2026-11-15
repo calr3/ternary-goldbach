@@ -127,7 +127,7 @@ theorem re_term_vM (σ τ : ℝ) (n : ℕ) :
       if n = 0 then 0 else Λ n * Real.exp (-σ * Real.log n) * Real.cos (τ * Real.log n) := by
   rcases eq_or_ne n 0 with rfl | hn
   · simp
-  rw [LSeries.term_of_ne_zero hn, if_neg hn, div_eq_mul_inv, ← Complex.cpow_neg,
+  rw [LSeries.term_of_ne_zero hn, ite_eq_right hn, div_eq_mul_inv, ← Complex.cpow_neg,
     Complex.cpow_def_of_ne_zero (by exact_mod_cast hn), ← Complex.natCast_log, Complex.re_ofReal_mul]
   have e : (Real.log n : ℂ) * -((σ : ℂ) + τ * I) = ((-σ * Real.log n : ℝ) : ℂ) + ((-τ * Real.log n : ℝ) : ℂ) * I := by
     push_cast; ring

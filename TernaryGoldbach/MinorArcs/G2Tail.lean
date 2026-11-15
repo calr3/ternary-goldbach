@@ -52,7 +52,7 @@ theorem hasSum_fodd : HasSum fodd (π ^ 2 / 8) := by
     rw [← hinj.tsum_eq hsupp]
     have : ∀ k : ℕ, e (2 * k) = 1 / 4 * g k := by
       intro k
-      simp only [e, g, even_two_mul, if_true]
+      simp only [e, g, even_two_mul, ite_true]
       push_cast
       rcases Nat.eq_zero_or_pos k with rfl | hk
       · simp
@@ -64,8 +64,8 @@ theorem hasSum_fodd : HasSum fodd (π ^ 2 / 8) := by
     funext n
     simp only [fodd, e, g]
     rcases Nat.even_or_odd n with h | h
-    · rw [if_neg (Nat.not_odd_iff_even.2 h), if_pos h, sub_self]
-    · rw [if_pos h, if_neg (Nat.not_even_iff_odd.2 h), sub_zero]
+    · rw [ite_eq_right (Nat.not_odd_iff_even.2 h), ite_eq_left h, sub_self]
+    · rw [ite_eq_left h, ite_eq_right (Nat.not_even_iff_odd.2 h), sub_zero]
   rw [hfo]
   have := hg.sub (hte ▸ hse.hasSum)
   convert this using 1
@@ -80,27 +80,27 @@ theorem tsum_fodd_le : ∑' n, fodd n ≤ 1.2338 := by
 theorem fodd_mul {m n : ℕ} : fodd (m * n) = fodd m * fodd n := by
   unfold fodd
   by_cases hm : Odd m <;> by_cases hn : Odd n
-  · rw [if_pos (hm.mul hn), if_pos hm, if_pos hn]; push_cast; ring
-  · rw [if_neg (fun h => hn (Nat.odd_mul.1 h).2), if_neg hn]; simp
-  · rw [if_neg (fun h => hm (Nat.odd_mul.1 h).1), if_neg hm]; simp
-  · rw [if_neg (fun h => hm (Nat.odd_mul.1 h).1), if_neg hm]; simp
+  · rw [ite_eq_left (hm.mul hn), ite_eq_left hm, ite_eq_left hn]; push_cast; ring
+  · rw [ite_eq_right (fun h => hn (Nat.odd_mul.1 h).2), ite_eq_right hn]; simp
+  · rw [ite_eq_right (fun h => hm (Nat.odd_mul.1 h).1), ite_eq_right hm]; simp
+  · rw [ite_eq_right (fun h => hm (Nat.odd_mul.1 h).1), ite_eq_right hm]; simp
 
 theorem tsum_fodd_pow {p : ℕ} (hp : p.Prime) :
     ∑' e : ℕ, fodd (p ^ e) = if p = 2 then 1 else ell 0 p := by
   by_cases h2 : p = 2
   · subst h2
-    rw [if_pos rfl, tsum_eq_single 0]
+    rw [ite_eq_left rfl, tsum_eq_single 0]
     · simp [fodd]
     · intro e he
       have : ¬ Odd (2 ^ e) := by
         rw [Nat.not_odd_iff_even]; exact (Nat.even_pow.2 ⟨even_two, he⟩)
       simp [fodd, this]
-  · rw [if_neg h2]
+  · rw [ite_eq_right h2]
     have hodd : Odd p := hp.odd_of_ne_two h2
     have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
     have e1 : ∀ e : ℕ, fodd (p ^ e) = (((p : ℝ) ^ 2)⁻¹) ^ e := by
       intro e
-      simp only [fodd, if_pos (hodd.pow), Nat.cast_pow]
+      simp only [fodd, ite_eq_left (hodd.pow), Nat.cast_pow]
       rw [one_div, inv_pow]; congr 1; ring
     simp_rw [e1]
     have hr : ((p : ℝ) ^ 2)⁻¹ < 1 := inv_lt_one_of_one_lt₀ (by nlinarith)
@@ -127,7 +127,7 @@ theorem prod_ell0_le (M : ℕ) : ∏ p ∈ (Nat.primesBelow M).filter (· ≠ 2)
         have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
         have e1 : ∀ e : ℕ, fodd (p ^ e) = (((p : ℝ) ^ 2)⁻¹) ^ e := by
           intro e
-          simp only [fodd, if_pos (hodd.pow), Nat.cast_pow]
+          simp only [fodd, ite_eq_left (hodd.pow), Nat.cast_pow]
           rw [one_div, inv_pow]; congr 1; ring
         simp_rw [e1]
         exact summable_geometric_of_lt_one (by positivity) (inv_lt_one_of_one_lt₀ (by nlinarith))) M
@@ -471,7 +471,6 @@ theorem sum_tail_le (M : ℕ) :
           rw [show Icc KK M = ∅ by ext x; simp; omega, sum_empty, add_zero, this]
           have : 0 ≤ 1 / Real.log ((KK : ℝ) + 1) := by
             rw [hK]; exact (one_div_pos.2 (Real.log_pos (by norm_num))).le
-          push_cast at this ⊢
           linarith
       · rw [show Icc KK (M + 1) = ∅ by ext x; simp; omega, sum_empty]
         rw [hK]; exact (one_div_pos.2 (Real.log_pos (by norm_num))).le
@@ -561,9 +560,9 @@ theorem integral_mm_le {u : ℕ} (hu : 1 ≤ u) {S : ℝ} (hS : 10000 ≤ S) :
     rw [show (10000 : ℝ) = ((10000 : ℕ) : ℝ) by norm_num, Nat.floor_div_natCast, Nat.floor_natCast]; rfl
   rw [hfl]
   by_cases hux : u ≤ XX
-  · rw [if_pos hux]
+  · rw [ite_eq_left hux]
     exact sum_mm_le_Vt (Nat.div_pos hux hu) (Nat.div_le_self _ _)
-  · rw [if_neg hux, Nat.div_eq_of_lt (by omega)]
+  · rw [ite_eq_right hux, Nat.div_eq_of_lt (by omega)]
     calc ∑ j ∈ Icc 0 ⌊S / (u : ℝ)⌋₊, mm j ^ 2 * Real.log (1 + 1 / j)
         = ∑ j ∈ Icc 1 ⌊S / (u : ℝ)⌋₊, mm j ^ 2 * Real.log (1 + 1 / j) := by
           rw [show Icc 0 ⌊S / (u : ℝ)⌋₊ = insert 0 (Icc 1 ⌊S / (u : ℝ)⌋₊) by
@@ -615,7 +614,7 @@ theorem V_div_lam_le {u : ℕ} (hu : 1 ≤ u) : (Vt (kk u) : ℝ) / 10 ^ 24 / la
     ((Vt (kk u) : ℝ) / lam2 (Vt (kk u))) / 10 ^ 12 by field_simp]
   exact div_le_div_of_nonneg_right this (by norm_num)
 
-theorem mm_floor_div {y : ℝ} (hy : 0 ≤ y) (d a : ℕ) :
+theorem mm_floor_div {y : ℝ} (_hy : 0 ≤ y) (d a : ℕ) :
     mm (⌊y⌋₊ / d / a) = mm ⌊y / ((d * a : ℕ) : ℝ)⌋₊ := by
   rw [Nat.div_div_eq_div_mul, Nat.floor_div_natCast]
 
@@ -743,11 +742,11 @@ theorem tail_le_sum {S : ℝ} (hS : 10000 ≤ S) :
   have h1 : ∫ y in (10000 : ℝ)..S, |g2 y| / y ≤ ∫ y in (10000 : ℝ)..S, ∑ d ∈ Icc 1 NS, Rd d y :=
     intervalIntegral.integral_mono_on hS (intervalIntegrable_abs_g2_div (by norm_num) hS) hR hpt
   refine h1.trans ?_
-  rw [intervalIntegral.integral_finset_sum hRd]
+  rw [intervalIntegral.integral_finsetSum hRd]
   refine sum_le_sum fun d hd => ?_
   have hd1 := (mem_Icc.1 hd).1
   simp only [Rd]
-  rw [intervalIntegral.integral_const_mul, intervalIntegral.integral_finset_sum (hT d hd)]
+  rw [intervalIntegral.integral_const_mul, intervalIntegral.integral_finsetSum (hT d hd)]
   have hL0 : 0 ≤ Lam NS d := sum_nonneg fun a ha =>
     (mul_pos (Hd_pos (mem_Icc.1 ha).1) (lamR_pos (Nat.mul_pos hd1 (mem_Icc.1 ha).1))).le
   refine mul_le_mul_of_nonneg_left ?_ (mul_nonneg (sq_nonneg _) hL0)
@@ -771,11 +770,11 @@ theorem tail_le_sum {S : ℝ} (hS : 10000 ≤ S) :
 theorem fo_eq_zero_of {d : ℕ} (h : ¬ (d % 2 = 1 ∧ (oddPrimes d).prod = d)) : fo d = 0 := by
   unfold fo
   by_cases ho : Odd d
-  · rw [if_pos ho]
+  · rw [ite_eq_left ho]
     have hsq : ¬ Squarefree d := fun hs =>
       h ⟨Nat.odd_iff.1 ho, (squarefree_iff_prod_oddPrimes ho).1 hs⟩
     rw [ArithmeticFunction.moebius_eq_zero_of_not_squarefree hsq]; simp
-  · rw [if_neg ho]
+  · rw [ite_eq_right ho]
 
 /-- `σ(d) = ∏ (p + 1)` over the odd primes of `d`. -/
 noncomputable def sgd (d : ℕ) : ℕ := ((oddPrimes d).map (· + 1)).prod
@@ -786,7 +785,7 @@ theorem fo_sq_eq {d : ℕ} (hd : d % 2 = 1) (hsq : (oddPrimes d).prod = d) :
   have hnd := nodup_oddPrimes hodd.pos
   have hpr : ∀ p ∈ oddPrimes d, p.Prime := fun p hp => ((mem_oddPrimes hodd.pos).1 hp).1
   unfold fo
-  rw [if_pos hodd]
+  rw [ite_eq_left hodd]
   conv_lhs => rw [← hsq]
   rw [moebius_prod_primes _ hnd hpr, sigma_prod_primes _ hnd hpr]
   push_cast
@@ -814,19 +813,19 @@ theorem sum_Hd_le' {d : ℕ} (hd : d % 2 = 1) (hsq : (oddPrimes d).prod = d) (A 
     ∑ a ∈ Icc 1 A, Hd d a ≤ 2 * 1.2338 * ((sgd d : ℝ) / d) := by
   rw [← prod_ratio_eq hd hsq]; exact sum_Hd_le (Nat.odd_iff.2 hd) A
 
-theorem lamR_of_le {u : ℕ} (hu : 1 ≤ u) (h : u ≤ XX) :
+theorem lamR_of_le {u : ℕ} (_hu : 1 ≤ u) (h : u ≤ XX) :
     lamR u = ((sV.tv.get (1, 0) (XX / u)).1 : ℝ) / 10 ^ 12 := by
-  unfold lamR kk; rw [if_pos h]
+  unfold lamR kk; rw [ite_eq_left h]
 
 theorem lamR_of_gt {u : ℕ} (h : XX < u) : lamR u = ((sV.tv.get (1, 0) 1).1 : ℝ) / 10 ^ 12 := by
-  unfold lamR kk; rw [if_neg (by omega)]
+  unfold lamR kk; rw [ite_eq_right (by omega)]
 
-theorem wR_of_le {u : ℕ} (hu : 1 ≤ u) (h : u ≤ XX) :
+theorem wR_of_le {u : ℕ} (_hu : 1 ≤ u) (h : u ≤ XX) :
     wR u = ((sV.tv.get (1, 0) (XX / u)).2 : ℝ) / 10 ^ 12 := by
-  unfold wR kk; rw [if_pos h]
+  unfold wR kk; rw [ite_eq_left h]
 
 theorem wR_of_gt {u : ℕ} (h : XX < u) : wR u = ((sV.tv.get (1, 0) 1).2 : ℝ) / 10 ^ 12 := by
-  unfold wR kk; rw [if_neg (by omega)]
+  unfold wR kk; rw [ite_eq_right (by omega)]
 
 theorem sum_Icc_eq_range (n : ℕ) (f : ℕ → ℝ) : ∑ a ∈ Icc 1 n, f a = ∑ i ∈ range n, f (1 + i) := by
   induction n with
@@ -956,7 +955,7 @@ theorem term_le_termC {d NS : ℕ} (hd1 : 1 ≤ d) (hdX : d ≤ XX) (hNS : XX �
     mul_nonneg (Hd_pos (mem_Icc.1 ha).1).le (wR_nonneg _)
   have hterm : (termC sV.tv sV.dl.reverse d : ℝ) =
       (cdiv ((r.2.1 + (sV.tv.get (1, 0) 1).1 * tH) * (r.2.2 + (sV.tv.get (1, 0) 1).2 * tH)) (sg * sg) : ℕ) := by
-    unfold termC; rw [if_pos hsq]; rfl
+    unfold termC; rw [ite_eq_left hsq]; rfl
   rw [hterm, fo_sq_eq hd hsq]
   refine le_trans ?_ (div_le_div_of_nonneg_right (cdiv_ge _ _ (Nat.mul_pos hsg0 hsg0)) (by norm_num))
   push_cast
@@ -1045,7 +1044,7 @@ theorem sum_terms_le {S : ℝ} (hS : 10000 ≤ S) :
         if d % 2 = 1 then (termC sV.tv sV.dl.reverse d : ℝ) / 10 ^ 64 else 0 := by
       intro d hd
       by_cases h : d % 2 = 1 ∧ (oddPrimes d).prod = d
-      · rw [if_pos h.1]; exact term_le_termC (mem_Icc.1 hd).1 (mem_Icc.1 hd).2 hNS h.1 h.2
+      · rw [ite_eq_left h.1]; exact term_le_termC (mem_Icc.1 hd).1 (mem_Icc.1 hd).2 hNS h.1 h.2
       · rw [fo_eq_zero_of h]
         split_ifs
         · simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, zero_mul]; positivity

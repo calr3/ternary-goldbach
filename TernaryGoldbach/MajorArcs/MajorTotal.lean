@@ -81,11 +81,11 @@ theorem gaussSum_one_eq {q : ℕ} [NeZero q] :
   have hcq := mem_range.1 hc
   by_cases h : q.Coprime c
   · have hu : IsUnit (c : ZMod q) := (ZMod.isUnit_iff_coprime c q).2 (Nat.Coprime.symm h)
-    rw [if_pos h, MulChar.one_apply hu, one_mul, TernaryGoldbach.stdAddChar_natCast_eq_e]
+    rw [ite_eq_left h, MulChar.one_apply hu, one_mul, TernaryGoldbach.stdAddChar_natCast_eq_e]
     congr 1; push_cast; ring
   · have hu : ¬IsUnit (c : ZMod q) := fun hu =>
       h (Nat.Coprime.symm ((ZMod.isUnit_iff_coprime c q).1 hu))
-    rw [if_neg h, MulChar.map_nonunit _ hu, zero_mul]
+    rw [ite_eq_right h, MulChar.map_nonunit _ hu, zero_mul]
 
 theorem sum_units_expTsum {q : ℕ} [NeZero q] {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖)
     (hcop : ∀ n, a n ≠ 0 → Nat.Coprime n q) (β : ℝ) :
@@ -96,8 +96,8 @@ theorem sum_units_expTsum {q : ℕ} [NeZero q] {a : ℕ → ℂ} (ha : Summable 
   rw [← h, sum_filter]
   refine sum_congr rfl fun b _ => ?_
   by_cases hb : IsUnit b
-  · rw [if_pos hb, MulChar.one_apply hb, one_mul]
-  · rw [if_neg hb, MulChar.map_nonunit _ hb, zero_mul]
+  · rw [ite_eq_left hb, MulChar.one_apply hb, one_mul]
+  · rw [ite_eq_right hb, MulChar.map_nonunit _ hb, zero_mul]
 
 theorem moebius_sq_real (q : ℕ) : ((μ q : ℂ)) * (starRingEnd ℂ) (μ q : ℂ) =
     ((if Squarefree q then (1 : ℝ) else 0 : ℝ) : ℂ) := by
@@ -164,7 +164,7 @@ theorem norm_moebius_div_sq_le (q : ℕ) :
 
 /-- A generic residual bound: `Σ_b ‖S(α_b) − m A‖² ≤ 3(φ D² + E² + φ|m|² F²)` from the three pieces. -/
 theorem sum_residual_le {q : ℕ} {T S' : ℝ → ℂ} {m A : ℂ} {β D E F : ℝ}
-    (hD : ∀ α, ‖T α - S' α‖ ≤ D) (hD0 : 0 ≤ D)
+    (hD : ∀ α, ‖T α - S' α‖ ≤ D) (_hD0 : 0 ≤ D)
     (hE : ∑ b ∈ Bset q, ‖S' ((b : ℝ) / q + β) - m * S' β‖ ^ 2 ≤ E ^ 2)
     (hF : ‖S' β - A‖ ≤ F) :
     ∑ b ∈ Bset q, ‖T ((b : ℝ) / q + β) - m * A‖ ^ 2 ≤
@@ -235,7 +235,7 @@ theorem resid_plus {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient * (𝓕 etaPC (-(β * x)) * x)‖ ^ 2 ≤
       7.83e-13 * x ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
-  haveI : NeZero q := ⟨by omega⟩
+  have : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
   set a := coprimePart q (cP x)
   have ha : Summable fun n => ‖a n‖ :=
@@ -266,7 +266,7 @@ theorem resid_star {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀
     ‖S etaStar x ((b : ℝ) / q + β) - (μ q : ℂ) / q.totient *
         (𝓕 (fun u => (etaU u : ℂ)) (-(β * (x / κ))) * ((x / κ : ℝ) : ℂ))‖ ^ 2 ≤ 1.34e-11 * (x / κ) ^ 2 := by
   obtain ⟨hq1, hqt', hq3⟩ := mem_Qset_bounds hq
-  haveI : NeZero q := ⟨by omega⟩
+  have : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
   set y := x / κ with hy
   have hy0 : 0 < y := by rw [hy]; exact div_pos hx0 kappa_pos
@@ -360,7 +360,6 @@ noncomputable def etaUC (u : ℝ) : ℂ := (etaU u : ℂ)
 theorem fourier_etaSC (ξ : ℝ) : 𝓕 etaSC ξ = (κ⁻¹ : ℂ) * 𝓕 etaUC (ξ / κ) := by
   have h := TernaryGoldbach.fourier_comp_affine etaUC kappa_pos 0 ξ
   simp only [add_zero, zero_mul, zero_div, TernaryGoldbach.e_zero, one_mul] at h
-  push_cast at h
   rw [← h]; rfl
 
 /-- `η̂(−βy) y = η̂_*(−βx) x` (`y = x/κ`). -/
@@ -548,12 +547,12 @@ theorem integral_indicator_comp_mul {f : ℝ → ℝ} {c w : ℝ} (hc : 0 < c) :
   rw [abs_inv, abs_neg, abs_of_pos hc, smul_eq_mul] at h
   rw [← h]
   congr 1; ext β
-  simp only [indicator, mem_setOf_eq]
+  simp only [indicator, mem_ofPred_eq]
   have e : |-c * β| = |β| * c := by rw [abs_mul, abs_neg, abs_of_pos hc, mul_comm]
-  rw [e, show -(β * c) = -c * β by ring]
+  simp only [e, show -(β * c) = -c * β by ring]
   by_cases h1 : w ≤ |β|
-  · rw [if_pos h1, if_pos (by nlinarith)]
-  · rw [if_neg h1, if_neg (fun h2 => h1 (by nlinarith [abs_nonneg β]))]
+  · rw [ite_eq_left h1, ite_eq_left (by nlinarith)]
+  · rw [ite_eq_right h1, ite_eq_right (fun h2 => h1 (by nlinarith [abs_nonneg β]))]
 
 set_option maxHeartbeats 2000000 in
 /-- **The main term of one modulus**: `‖∫_{−w}^{w} (η̂₊(−βx)x)² η̂_*(−βx)x e(−Nβ) dβ − x² C(N/x)‖ ≤
@@ -577,7 +576,7 @@ theorem main_comparison {x : ℝ} (hx : 0 < x) {w : ℝ} (hw : 0 ≤ w) (hwx : 4
   have iO2 : Integrable fun β => ‖O β‖ ^ 2 := by
     have h := (integrable_norm_sq_fourier integrable_etaOC memLp_etaOC).comp_mul_left' (neg_ne_zero.2 hx.ne')
     refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
-    simp only [Function.comp, hO, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
+    simp only [hO, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
     ring_nf
   have iPm : Integrable fun β => ‖P β - O β‖ ^ 2 := by
     have hc : Continuous fun ξ => ‖𝓕 etaPC ξ - 𝓕 etaOC ξ‖ ^ 2 :=
@@ -594,7 +593,7 @@ theorem main_comparison {x : ℝ} (hx : 0 < x) {w : ℝ} (hw : 0 ≤ w) (hwx : 4
         norm_nonneg (𝓕 etaOC ξ), sq_nonneg (‖𝓕 etaPC ξ‖ - ‖𝓕 etaOC ξ‖)]
     have h := hi.comp_mul_left' (neg_ne_zero.2 hx.ne')
     refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
-    simp only [Function.comp, hO, hP, ← sub_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    simp only [hO, hP, ← sub_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos hx]
     ring_nf
   have iPp : Integrable fun β => ‖P β + O β‖ ^ 2 := by
@@ -602,7 +601,7 @@ theorem main_comparison {x : ℝ} (hx : 0 < x) {w : ℝ} (hw : 0 ≤ w) (hwx : 4
       have h := (integrable_norm_sq_fourier integrable_etaPC memLp_etaPC).comp_mul_left'
         (neg_ne_zero.2 hx.ne')
       refine (h.const_mul (x ^ 2)).congr (Filter.Eventually.of_forall fun β => ?_)
-      simp only [Function.comp, hP, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
+      simp only [hP, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hx]
       ring_nf
     have i2 : Integrable fun β => 2 * ‖P β‖ ^ 2 + 2 * ‖O β‖ ^ 2 := (iP2.const_mul 2).add (iO2.const_mul 2)
     refine i2.mono' ((hPc.add hOc).norm.pow 2).aestronglyMeasurable
@@ -829,7 +828,7 @@ theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q �
   have hfc := continuous_fI N hx0
   have hsw : ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, fI N x y =
       ∫ β in -w..w, ∑ b ∈ Bset q, fI N x ((b : ℝ) / q + β) := by
-    rw [intervalIntegral.integral_finset_sum (f := fun (b : ℕ) (β : ℝ) => fI N x ((b : ℝ) / q + β))
+    rw [intervalIntegral.integral_finsetSum (f := fun (b : ℕ) (β : ℝ) => fI N x ((b : ℝ) / q + β))
       (fun b _ => (hfc.comp (continuous_const.add continuous_id)).intervalIntegrable _ _)]
     exact sum_congr rfl fun b _ => setIntegral_arc_eq_C (g := fI N x) hw0
   set Mn : ℝ → ℂ := fun β => (𝓕 etaPC (-(β * x)) * x) ^ 2 * (𝓕 etaSC (-(β * x)) * x) * e (-(N * β))
@@ -880,7 +879,7 @@ theorem per_modulus (N : ℕ) {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q �
     intervalIntegral.integral_const_mul] at hInt
   have hB1 : ∫ β in -w..w, ∑ b ∈ Bset q, ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2 =
       ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, ‖S etaPlus x y‖ ^ 2 := by
-    rw [intervalIntegral.integral_finset_sum
+    rw [intervalIntegral.integral_finsetSum
       (f := fun (b : ℕ) (β : ℝ) => ‖S etaPlus x ((b : ℝ) / q + β)‖ ^ 2) (fun b _ =>
       ((continuous_norm_sq_S hx0).comp (continuous_const.add continuous_id)).intervalIntegrable _ _)]
     exact sum_congr rfl fun b _ => (setIntegral_arc_eq (g := fun y => ‖S etaPlus x y‖ ^ 2) hw0).symm

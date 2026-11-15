@@ -112,7 +112,7 @@ theorem Gq_mul_le {q P : ℕ} {R t : ℝ} (hR : 0 ≤ R) (ht : 0 ≤ t)
   have ha := (mem_product.1 hab).1
   have hb := (mem_product.1 hab).2
   simp only [A, B, mem_filter, mem_Icc] at ha hb
-  simp only [C, mem_filter, mem_Icc]
+  simp only [mem_filter, mem_Icc]
   refine ⟨⟨Nat.one_le_iff_ne_zero.2 (Nat.mul_ne_zero (by omega) (by omega)), ?_⟩, ?_⟩
   · apply Nat.le_floor
     push_cast

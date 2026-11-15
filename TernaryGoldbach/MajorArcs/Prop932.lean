@@ -96,9 +96,9 @@ theorem prop_9_3_2 {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ 
         (if q = 1 then 𝓕 (fun u => (phiPos u : ℂ)) (-δ) * x else 0)‖ ≤ err932N q T0 δ x * x := by
   unfold err932N
   by_cases hq : q = 1
-  · rw [if_pos hq, if_pos hq]
+  · rw [ite_eq_left hq, ite_eq_left hq]
     exact prop_9_3_2_one hx δ hq χ hχ hT0 hG
-  · rw [if_neg hq, if_neg hq, sub_zero]
+  · rw [ite_eq_right hq, ite_eq_right hq, sub_zero]
     exact prop_9_3_2_ne hx δ hq χ hχ hT0 hG
 
 end TernaryGoldbach.MajorArcs

@@ -43,7 +43,7 @@ theorem gCop_prime_pow (q : ℕ) {p k : ℕ} (hp : p.Prime) (hk : 0 < k) :
     · simp
     · simp only [muCop_apply, ArithmeticFunction.moebius_apply_prime_pow hp (by omega : i + 1 ≠ 0)]
       simp [show i ≠ 0 by omega]
-  rw [sum_congr rfl hterm, sum_ite_eq' (range k) 0, if_pos (mem_range.2 hk)]
+  rw [sum_congr rfl hterm, sum_ite_eq' (range k) 0, ite_eq_left (mem_range.2 hk)]
   simp [muCop_apply, add_comm]
 
 theorem gCop_zero_or_one (q n : ℕ) : gCop q n = 0 ∨ gCop q n = 1 := by
@@ -63,7 +63,7 @@ theorem gCop_of_coprime {q n : ℕ} (hn : n.Coprime q) : gCop q n = if n = 1 the
   have h : gCop q n = (μ * (ζ : ArithmeticFunction ℤ)) n := by
     rw [gCop, ArithmeticFunction.coe_mul_zeta_apply, ArithmeticFunction.coe_mul_zeta_apply]
     refine sum_congr rfl fun d hd => ?_
-    rw [muCop_apply, if_pos (Nat.Coprime.coprime_dvd_left (Nat.dvd_of_mem_divisors hd) hn)]
+    rw [muCop_apply, ite_eq_left (Nat.Coprime.coprime_dvd_left (Nat.dvd_of_mem_divisors hd) hn)]
   rw [h, ArithmeticFunction.moebius_mul_coe_zeta, ArithmeticFunction.one_apply]
 
 /-- **[H, (2.20)]** (Granville–Ramaré [GR96, Lemma 10.2]):
@@ -111,12 +111,12 @@ theorem abs_sum_moebius_div_coprime_le_one (x : ℝ) {q : ℕ} (_hq : 1 ≤ q) :
     by_cases hc : n.Coprime q
     · by_cases hn1 : n = 1
       · subst hn1; rw [hfr1]; simp [(isMultiplicative_gCop q).map_one]
-      · rw [gCop_of_coprime hc, if_neg hn1, muCop_apply, if_pos hc]
+      · rw [gCop_of_coprime hc, ite_eq_right hn1, muCop_apply, ite_eq_left hc]
         have hμ : |(μ n : ℝ)| ≤ 1 := by exact_mod_cast ArithmeticFunction.abs_moebius_le_one
         push_cast
         rw [zero_add, abs_mul, abs_of_nonneg h0]
         nlinarith [abs_nonneg (μ n : ℝ)]
-    · rw [muCop_apply, if_neg hc]
+    · rw [muCop_apply, ite_eq_right hc]
       rcases gCop_zero_or_one q n with h | h <;> simp [h]
   have hbound : |(N : ℝ) * ∑ n ∈ Icc 1 N, (if Nat.Coprime n q then (μ n : ℝ) / n else 0)| ≤ N := by
     rw [hS]

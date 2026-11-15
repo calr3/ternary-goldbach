@@ -17,13 +17,13 @@ open TernaryGoldbach.Prelim (SqP)
 /-- Splitting `a = p^k b`, `p ∤ b`. -/
 theorem hasSum_split {p : ℕ} (hp : p.Prime) {F : ℕ → ℝ} (hF0 : F 0 = 0) {s : ℝ} (hF : HasSum F s) :
     HasSum (fun kb : ℕ × ℕ => if Nat.Coprime p kb.2 then F (p ^ kb.1 * kb.2) else 0) s := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   set g : ℕ × ℕ → ℝ := fun kb => if Nat.Coprime p kb.2 then F (p ^ kb.1 * kb.2) else 0 with hg
   have hsupp : ∀ kb : ℕ × ℕ, g kb ≠ 0 → Nat.Coprime p kb.2 ∧ F (p ^ kb.1 * kb.2) ≠ 0 := by
     intro kb h
     by_cases hc : Nat.Coprime p kb.2
-    · simp only [hg, if_pos hc] at h; exact ⟨hc, h⟩
-    · simp only [hg, if_neg hc, ne_eq, not_true_eq_false] at h
+    · simp only [hg, ite_eq_left hc] at h; exact ⟨hc, h⟩
+    · simp only [hg, ite_eq_right hc, ne_eq, not_true_eq_false] at h
   have hval : ∀ {k b : ℕ}, Nat.Coprime p b → b ≠ 0 → padicValNat p (p ^ k * b) = k := by
     intro k b hc hb
     rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) hb, padicValNat.prime_pow,
@@ -43,16 +43,16 @@ theorem hasSum_split {p : ℕ} (hp : p.Prime) {F : ℕ → ℝ} (hF0 : F 0 = 0) 
     have ha0 : a ≠ 0 := by rintro rfl; exact ha hF0
     refine ⟨⟨(a.factorization p, ordCompl[p] a), ?_⟩, ?_⟩
     · show g _ ≠ 0
-      simp only [hg, if_pos (Nat.coprime_ordCompl hp ha0), Nat.ordProj_mul_ordCompl_eq_self]
+      simp only [hg, ite_eq_left (Nat.coprime_ordCompl hp ha0), Nat.ordProj_mul_ordCompl_eq_self]
       exact ha
     · exact Nat.ordProj_mul_ordCompl_eq_self a p
   · rintro ⟨⟨k, b⟩, hx⟩
     obtain ⟨hb, -⟩ := hsupp _ hx
-    simp only [hg, if_pos hb]
+    simp only [hg, ite_eq_left hb]
 
 /-- `h_d(a) = 0` when `v_p(a) ≥ 3`. -/
 theorem hD_eq_zero_of_val {d p a : ℕ} (hp : p.Prime) (h : 3 ≤ padicValNat p a) : hD d a = 0 := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   rcases Nat.eq_zero_or_pos a with ha | ha
   · subst ha; simp
   have hsplit := Nat.ordProj_mul_ordCompl_eq_self a p
@@ -84,8 +84,8 @@ theorem fiber {d p k : ℕ} (hd : 1 ≤ d) (c : ℝ) :
   convert h using 1
   funext b
   by_cases hb : Nat.Coprime p b
-  · rw [if_pos hb, if_pos hb, (isMult_hD d).map_mul_of_coprime (Nat.Coprime.pow_left _ hb)]; ring
-  · rw [if_neg hb, if_neg hb, mul_zero]
+  · rw [ite_eq_left hb, ite_eq_left hb, (isMult_hD d).map_mul_of_coprime (Nat.Coprime.pow_left _ hb)]; ring
+  · rw [ite_eq_right hb, ite_eq_right hb, mul_zero]
 
 theorem tsum_hD_eq {d : ℕ} (hd : 1 ≤ d) {p : ℕ} (hp : p.Prime) :
     ∑' a, hD d a = S0 d p * Bp d p := by
@@ -100,19 +100,19 @@ theorem tsum_hD_eq {d : ℕ} (hd : 1 ≤ d) {p : ℕ} (hp : p.Prime) :
 
 theorem tsum_hD_val {d : ℕ} (hd : 1 ≤ d) {p : ℕ} (hp : p.Prime) :
     ∑' a, hD d a * (padicValNat p a : ℝ) = S1 d p * Bp d p := by
-  haveI := Fact.mk hp
+  have := Fact.mk hp
   have h := hasSum_split hp (by simp) (summable_hD_val hd p hp).hasSum
   have hfib := h.prod_fiberwise (g := fun (k : ℕ) => hD d (p ^ k) * (k : ℝ) * Bp d p) fun (k : ℕ) => by
     have := fiber (p := p) (k := k) hd (k : ℝ)
     convert this using 1
     funext b
     by_cases hb : Nat.Coprime p b
-    · rw [if_pos hb, if_pos hb]
+    · rw [ite_eq_left hb, ite_eq_left hb]
       rcases Nat.eq_zero_or_pos b with h0 | h0
       · subst h0; simp
       · rw [padicValNat.mul (pow_ne_zero _ hp.ne_zero) h0.ne', padicValNat.prime_pow,
           padicValNat.eq_zero_of_not_dvd ((Nat.Prime.coprime_iff_not_dvd hp).1 hb), add_zero]
-    · rw [if_neg hb, if_neg hb]
+    · rw [ite_eq_right hb, ite_eq_right hb]
   have hloc := (hasSum_local (d := d) hp (fun e => (e : ℝ))).mul_right (Bp d p)
   rw [hfib.unique (by convert hloc using 1; funext k; ring), S1]
   push_cast; ring
@@ -154,7 +154,7 @@ theorem hasSum_Gaq_a (d a : ℕ) : HasSum (fun q => Gaq d a q) (hD d a * Real.lo
   rcases Nat.eq_zero_or_pos a with ha | ha
   · subst ha
     have : (fun q => Gaq d 0 q) = fun _ => 0 := by funext q; simp [Gaq]
-    rw [this]; simpa using hasSum_zero
+    rw [this]; simp
   have h : HasSum (fun q => Gaq d a q) (∑ q ∈ a.primeFactors, Gaq d a q) :=
     hasSum_sum_of_ne_finset_zero fun q hq => by
       unfold Gaq
@@ -165,13 +165,13 @@ theorem hasSum_Gaq_a (d a : ℕ) : HasSum (fun q => Gaq d a q) (hD d a * Real.lo
   convert h using 1
   rw [log_eq_sum ha.ne', mul_sum]
   refine sum_congr rfl fun q hq => ?_
-  rw [Gaq, if_pos (Nat.prime_of_mem_primeFactors hq)]; ring
+  rw [Gaq, ite_eq_left (Nat.prime_of_mem_primeFactors hq)]; ring
 
 theorem abs_Gaq_hasSum (d a : ℕ) : HasSum (fun q => |Gaq d a q|) (|hD d a| * Real.log a) := by
   rcases Nat.eq_zero_or_pos a with ha | ha
   · subst ha
     have : (fun q => |Gaq d 0 q|) = fun _ => 0 := by funext q; simp [Gaq]
-    rw [this]; simpa using hasSum_zero
+    rw [this]; simp
   have e : (fun q => |Gaq d a q|) = fun q =>
       if q.Prime then |hD d a| * (padicValNat q a : ℝ) * Real.log q else 0 := by
     funext q; unfold Gaq
@@ -190,7 +190,7 @@ theorem abs_Gaq_hasSum (d a : ℕ) : HasSum (fun q => |Gaq d a q|) (|hD d a| * R
         · rfl
     convert hs using 1
     rw [log_eq_sum ha.ne']
-    exact sum_congr rfl fun q hq => by rw [if_pos (Nat.prime_of_mem_primeFactors hq)]
+    exact sum_congr rfl fun q hq => by rw [ite_eq_left (Nat.prime_of_mem_primeFactors hq)]
   convert h'.mul_left |hD d a| using 1
   funext q; split_ifs <;> ring
 
@@ -212,13 +212,13 @@ theorem r_eq {d q : ℕ} (hq : q.Prime) :
   have hq1 : (1 : ℝ) < q := by exact_mod_cast hq.one_lt
   rw [S1_eq hq, S0_eq hq]
   by_cases h2 : q = 2
-  · subst h2; by_cases hd : 2 ∣ d <;> simp [hd] <;> norm_num <;> ring
+  · subst h2; by_cases hd : 2 ∣ d <;> simp [hd] <;> norm_num; ring
   · have hq0 : (q : ℝ) ≠ 0 := by linarith
     have hq10 : (q : ℝ) - 1 ≠ 0 := by linarith
     have hq11 : 1 - 1 / (q : ℝ) ≠ 0 := by
       have : 1 / (q : ℝ) < 1 := (div_lt_one (by linarith)).2 hq1
       exact (by linarith : (0 : ℝ) < 1 - 1 / (q : ℝ)).ne'
-    by_cases hd : q ∣ d <;> simp only [h2, hd, if_true, if_false]
+    by_cases hd : q ∣ d <;> simp only [h2, hd, ite_true, ite_false]
     · field_simp; ring
     · field_simp; ring
 
@@ -263,14 +263,14 @@ theorem tsum_hD_log {d : ℕ} (hd : 1 ≤ d) :
       by_cases hq : q.Prime
       · have := (summable_hD_val hd q hq).mul_right (Real.log q)
         simpa [Gaq, hq] using this
-      · simpa [Gaq, hq] using summable_zero)
+      · simp [Gaq, hq])
   rw [show (fun a => hD d a * Real.log a) = fun a => ∑' q, Gaq d a q from
     funext fun a => (hasSum_Gaq_a d a).tsum_eq.symm, ← hcomm]
   have hq : ∀ q, ∑' a, Gaq d a q = if q.Prime then
       Real.log q * (S1 d q / S0 d q) * (2 * ((Nat.totient d : ℝ) / d)) else 0 := by
     intro q
     by_cases hqp : q.Prime
-    · simp only [Gaq, if_pos hqp]
+    · simp only [Gaq, ite_eq_left hqp]
       rw [tsum_mul_right, tsum_hD_val' hd hqp]; ring
     · simp [Gaq, hqp]
   simp_rw [hq]
@@ -282,7 +282,7 @@ theorem tsum_hD_log {d : ℕ} (hd : 1 ≤ d) :
         (if q ∣ d then -(Real.log q / q) else 0)) else 0) := by
     intro q
     by_cases hqp : q.Prime
-    · simp only [if_pos hqp]; rw [r_eq hqp]; ring
+    · simp only [ite_eq_left hqp]; rw [r_eq hqp]; ring
     · simp [hqp]
   simp_rw [hsplit]
   have hfin : HasSum (fun q : ℕ => (if q.Prime then (if q = 2 then (if q ∣ d then Real.log 2 / 2 else Real.log 2) else
@@ -305,7 +305,7 @@ theorem tsum_hD_log {d : ℕ} (hd : 1 ≤ d) :
     by_cases h2d : 2 ∣ d
     · have h2m : 2 ∈ d.primeFactors := Nat.mem_primeFactors.2 ⟨Nat.prime_two, h2d, by omega⟩
       rw [insert_eq_of_mem h2m, ← add_sum_erase _ _ h2m, ← add_sum_erase _ _ h2m]
-      rw [if_pos Nat.prime_two, if_pos rfl, if_pos h2d]
+      rw [ite_eq_left Nat.prime_two, ite_eq_left rfl, ite_eq_left h2d]
       have : ∑ q ∈ d.primeFactors.erase 2, (if q.Prime then (if q = 2 then (if q ∣ d then Real.log 2 / 2 else Real.log 2) else
           (if q ∣ d then -(Real.log q / q) else 0)) else 0) =
           -∑ q ∈ d.primeFactors.erase 2, Real.log q / q := by
@@ -313,19 +313,19 @@ theorem tsum_hD_log {d : ℕ} (hd : 1 ≤ d) :
         refine sum_congr rfl fun q hq => ?_
         have hq2 := ne_of_mem_erase hq
         have hqm := mem_of_mem_erase hq
-        rw [if_pos (Nat.prime_of_mem_primeFactors hqm), if_neg hq2,
-          if_pos (Nat.dvd_of_mem_primeFactors hqm)]
+        rw [ite_eq_left (Nat.prime_of_mem_primeFactors hqm), ite_eq_right hq2,
+          ite_eq_left (Nat.dvd_of_mem_primeFactors hqm)]
       rw [this]; push_cast; ring
     · have h2m : 2 ∉ d.primeFactors := fun h => h2d (Nat.dvd_of_mem_primeFactors h)
-      rw [sum_insert h2m, if_pos Nat.prime_two, if_pos rfl, if_neg h2d]
+      rw [sum_insert h2m, ite_eq_left Nat.prime_two, ite_eq_left rfl, ite_eq_right h2d]
       have : ∑ q ∈ d.primeFactors, (if q.Prime then (if q = 2 then (if q ∣ d then Real.log 2 / 2 else Real.log 2) else
           (if q ∣ d then -(Real.log q / q) else 0)) else 0) =
           -∑ q ∈ d.primeFactors, Real.log q / q := by
         rw [← sum_neg_distrib]
         refine sum_congr rfl fun q hq => ?_
         have hq2 : q ≠ 2 := fun h => h2m (h ▸ hq)
-        rw [if_pos (Nat.prime_of_mem_primeFactors hq), if_neg hq2,
-          if_pos (Nat.dvd_of_mem_primeFactors hq)]
+        rw [ite_eq_left (Nat.prime_of_mem_primeFactors hq), ite_eq_right hq2,
+          ite_eq_left (Nat.dvd_of_mem_primeFactors hq)]
       rw [this]; ring
   rw [hfs, sumP]; ring
 

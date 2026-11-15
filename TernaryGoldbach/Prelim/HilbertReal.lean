@@ -157,7 +157,7 @@ theorem between_set (S : Finset ℝ) {l m : ℝ} (hl : l ∈ S) (hm : m ∈ S) (
   have hpos_mono : ∀ n n', n < n' → n' ≤ N → pos n < pos n' := by
     intro n n' hnn' hn'
     simp only [pos]
-    rw [dif_pos (show n < N by omega)]
+    rw [dite_eq_left (show n < N by omega)]
     split_ifs with h
     · exact e.strictMono (by simp only [Fin.mk_lt_mk]; omega)
     · exact hem _
@@ -173,7 +173,7 @@ theorem between_set (S : Finset ℝ) {l m : ℝ} (hl : l ∈ S) (hm : m ∈ S) (
     · exact div_pos (hgap n h) hδl
     · exact one_pos
   have ha0 : 1 ≤ a 0 := by
-    simp only [a, if_pos (Nat.zero_le N), prev]
+    simp only [a, ite_eq_left (Nat.zero_le N), prev]
     rw [le_div_iff₀ hδl, one_mul]
     have h := hsep l hl (pos 0) (hposS 0) (ne_of_gt (hpos_l 0))
     rwa [abs_sub_comm, abs_of_pos (by linarith [hpos_l 0])] at h
@@ -185,17 +185,17 @@ theorem between_set (S : Finset ℝ) {l m : ℝ} (hl : l ∈ S) (hm : m ∈ S) (
       simp [a, prev]
     | succ n ih =>
       rw [Shan.lam_succ, ih (by omega)]
-      simp only [a, if_pos hn, prev, if_neg (Nat.succ_ne_zero n), show n + 1 - 1 = n by omega]
+      simp only [a, ite_eq_left hn, prev, ite_eq_right (Nat.succ_ne_zero n), show n + 1 - 1 = n by omega]
       field_simp; ring
   have hw : ∀ n, n < N → δ (pos n) / δ l ≤ min (a n) (a (n + 1)) := by
     intro n hn
     rw [div_le_iff₀ hδl, min_mul_of_nonneg _ _ hδl.le]
     refine le_min ?_ ?_
-    · simp only [a, if_pos hn.le]
+    · simp only [a, ite_eq_left hn.le]
       rw [div_mul_cancel₀ _ hδl.ne']
       have h := hsep (pos n) (hposS n) (prev n) (hprevS n) (ne_of_lt (by linarith [hgap n hn.le]))
       rwa [abs_of_pos (hgap n hn.le)] at h
-    · simp only [a, if_pos (show n + 1 ≤ N by omega), prev, if_neg (Nat.succ_ne_zero n),
+    · simp only [a, ite_eq_left (show n + 1 ≤ N by omega), prev, ite_eq_right (Nat.succ_ne_zero n),
         show n + 1 - 1 = n by omega]
       rw [div_mul_cancel₀ _ hδl.ne']
       have hlt := hpos_mono n (n + 1) (by omega) (by omega)
@@ -206,7 +206,7 @@ theorem between_set (S : Finset ℝ) {l m : ℝ} (hl : l ∈ S) (hm : m ∈ S) (
       ← Fin.sum_univ_eq_sum_range (fun n => δ (pos n) / δ l / Shan.lam a n) N]
     refine sum_congr rfl fun i _ => ?_
     rw [hlam i i.2.le]
-    have hp : pos i = e i := by simp only [pos, dif_pos i.2]
+    have hp : pos i = e i := by simp only [pos, dite_eq_left i.2]
     rw [hp]
     have : e i - l ≠ 0 := by linarith [hel i]
     field_simp
@@ -428,7 +428,7 @@ theorem qq_symm (a b : ℝ) : qq a b = qq b a := by
   unfold qq
   by_cases h : a = b
   · subst h; rfl
-  · rw [if_neg h, if_neg (Ne.symm h), show (b - a) ^ 2 = (a - b) ^ 2 by ring]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h), show (b - a) ^ 2 = (a - b) ^ 2 by ring]
 
 theorem qq_nonneg (a b : ℝ) : 0 ≤ qq a b := by unfold qq; split_ifs <;> positivity
 
@@ -481,7 +481,7 @@ theorem Uform_le (S : Finset ℝ) (δ t : ℝ → ℝ) (hδ : ∀ y ∈ S, 0 < �
       rw [hmm, add_zero]
       refine le_trans (le_of_eq (sum_congr rfl fun n hn => ?_)) h4
       have hne : n ≠ m := (mem_erase.1 hn).1
-      simp only [qq, if_neg (Ne.symm hne)]
+      simp only [qq, ite_eq_right (Ne.symm hne)]
       rw [show (n - m) ^ 4 = (m - n) ^ 2 * (m - n) ^ 2 by ring]
       field_simp
     · have h6 := lemma6 S hm hl hml δ hδ hsep
@@ -494,12 +494,12 @@ theorem Uform_le (S : Finset ℝ) (δ t : ℝ → ℝ) (hδ : ∀ y ∈ S, 0 < �
         refine sum_congr rfl fun n hn => ?_
         have hn1 : n ≠ l := (mem_erase.1 hn).1
         have hn2 : n ≠ m := (mem_erase.1 (mem_erase.1 hn).2).1
-        simp only [qq, if_neg (Ne.symm hn2), if_neg (Ne.symm hn1)]
+        simp only [qq, ite_eq_right (Ne.symm hn2), ite_eq_right (Ne.symm hn1)]
         rw [show (n - m) ^ 2 = (m - n) ^ 2 by ring, show (n - l) ^ 2 = (l - n) ^ 2 by ring]
         field_simp
       rw [hT]
       refine h6.trans (le_of_eq ?_)
-      simp only [qq, if_neg hml]; ring
+      simp only [qq, ite_eq_right hml]; ring
   have hcoef : ∀ m ∈ S, ∀ l ∈ S, 0 ≤ δ m * √(δ m) * (δ l * √(δ l)) * t m * t l := by
     intro m hm l hl
     have := hδ m hm; have := hδ l hl; have := ht m hm; have := ht l hl
@@ -543,7 +543,7 @@ theorem Uform_le (S : Finset ℝ) (δ t : ℝ → ℝ) (hδ : ∀ y ∈ S, 0 < �
           have hA : ∑ m ∈ S, ∑ l ∈ S, (if m = l then Real.pi ^ 4 / 45 * t m ^ 2 else 0) =
               Real.pi ^ 4 / 45 * V := by
             rw [hV, mul_sum]
-            exact sum_congr rfl fun m hm => by rw [sum_ite_eq, if_pos hm]
+            exact sum_congr rfl fun m hm => by rw [sum_ite_eq, ite_eq_left hm]
           simp only [sum_add_distrib, ← mul_sum]
           rw [hA, hU1, hU2]; ring
   -- solve the quadratic inequality
@@ -615,9 +615,9 @@ theorem hform_le_of_eig (S : Finset ℝ) (c : ℝ → ℝ) (hc : ∀ x ∈ S, 0 
     · have : n = m := Subtype.ext hnm
       subst this
       simp [r, hk_self]
-    · rw [if_neg hnm]
+    · rw [ite_eq_right hnm]
       have hnm' : n ≠ m := fun h => hnm (by rw [h])
-      simp only [r, x, hk, if_neg hnm']
+      simp only [r, x, hk, ite_eq_right hnm']
       have hsub : ((n : ℝ) - m : ℂ) ≠ 0 := by
         rw [sub_ne_zero]; exact_mod_cast hnm
       simp only [star_div₀, Complex.star_def, Complex.conj_ofReal]
@@ -672,7 +672,7 @@ theorem hilbert_weighted (S : Finset ℝ) (δ : ℝ → ℝ) (hδ : ∀ y ∈ S,
               rw [hz, add_zero]
               refine sum_congr rfl fun k hk => ?_
               have hne : k ≠ l := (mem_erase.1 hk).1
-              simp only [qq, if_neg hne]; field_simp
+              simp only [qq, ite_eq_right hne]; field_simp
             rw [e1, mul_sum]
             conv_rhs => rw [← Finset.sum_coe_sort S]
             refine sum_congr rfl fun n _ => ?_
@@ -680,7 +680,7 @@ theorem hilbert_weighted (S : Finset ℝ) (δ : ℝ → ℝ) (hδ : ∀ y ∈ S,
               unfold hk qq
               by_cases h : n = l
               · subst h; simp
-              · rw [if_neg h, if_neg (fun h' => h (Subtype.ext h'))]; field_simp
+              · rw [ite_eq_right h, ite_eq_right (fun h' => h (Subtype.ext h'))]; field_simp
             rw [hkq, hsq, hsq]; ring
           rw [this]
           have h2 : δ l * ∑ k ∈ S.erase l, δ k / (k - l) ^ 2 ≤ Real.pi ^ 2 / 3 := by
@@ -708,7 +708,7 @@ theorem hilbert_weighted (S : Finset ℝ) (δ : ℝ → ℝ) (hδ : ∀ y ∈ S,
         unfold hk qq
         by_cases h : l = m
         · subst h; simp
-        · rw [if_neg h, if_neg (fun h' => h (Subtype.ext h'))]; field_simp
+        · rw [ite_eq_right h, ite_eq_right (fun h' => h (Subtype.ext h'))]; field_simp
       rw [hkq, hsq, hsq]
       have hpos : 0 ≤ √(δ l) * √(δ m) * qq l m * (δ l + δ m) := by
         have := hδ l l.2; have := hδ m m.2; have := qq_nonneg l m; positivity
@@ -754,7 +754,7 @@ theorem sum_hk_sq (S : Finset ℝ) (l : S) (f : ℝ → ℝ) :
     rw [hz, add_zero]
     refine sum_congr rfl fun k hk => ?_
     have hne : k ≠ l := (mem_erase.1 hk).1
-    simp only [qq, if_neg hne]; field_simp
+    simp only [qq, ite_eq_right hne]; field_simp
   rw [e1]
   conv_rhs => rw [← Finset.sum_coe_sort S]
   refine sum_congr rfl fun n _ => ?_
@@ -762,7 +762,7 @@ theorem sum_hk_sq (S : Finset ℝ) (l : S) (f : ℝ → ℝ) :
   unfold hk qq
   by_cases h : n = l
   · subst h; simp
-  · rw [if_neg h, if_neg (fun h' => h (Subtype.ext h'))]; field_simp
+  · rw [ite_eq_right h, ite_eq_right (fun h' => h (Subtype.ext h'))]; field_simp
 
 /-- **The Hilbert inequality on ℝ for `δ`-spaced points** (Montgomery–Vaughan):
 `|∑_{n≠m} w̄_n w_m/(n − m)| ≤ (π/δ) ∑ |w_n|²`. -/

@@ -23,13 +23,13 @@ theorem sum_indicator_Ioc_translates {β : ℝ} (hβ : β ∈ Ioc (-1 : ℝ) 2) 
   rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
   simp only [indicator, mem_Ioc, Pi.one_apply, Int.cast_neg, Int.cast_one, Int.cast_zero]
   rcases le_or_gt β 0 with hb0 | hb0
-  · rw [if_neg (by intro h; linarith [h.1]), if_neg (by intro h; linarith [h.1]),
-      if_pos ⟨by linarith, by linarith⟩]; norm_num
+  · rw [ite_eq_right (by intro h; linarith [h.1]), ite_eq_right (by intro h; linarith [h.1]),
+      ite_eq_left ⟨by linarith, by linarith⟩]; norm_num
   rcases le_or_gt β 1 with hb1 | hb1
-  · rw [if_neg (by intro h; linarith [h.1]), if_pos ⟨by linarith, by linarith⟩,
-      if_neg (by intro h; linarith [h.2])]; norm_num
-  · rw [if_pos ⟨by linarith, by linarith⟩, if_neg (by intro h; linarith [h.2]),
-      if_neg (by intro h; linarith [h.2])]; norm_num
+  · rw [ite_eq_right (by intro h; linarith [h.1]), ite_eq_left ⟨by linarith, by linarith⟩,
+      ite_eq_right (by intro h; linarith [h.2])]; norm_num
+  · rw [ite_eq_left ⟨by linarith, by linarith⟩, ite_eq_right (by intro h; linarith [h.2]),
+      ite_eq_right (by intro h; linarith [h.2])]; norm_num
 
 /-- **Periodization**: `∫_J g = Σ_{k ∈ {−1,0,1}} ∫_{(0,1]} 1_J(α − k) g(α) dα` for `J ⊆ (−1, 2]`. -/
 theorem setIntegral_eq_sum_periodize {g : ℝ → ℝ} (hg : Continuous g) (hper : Function.Periodic g 1)
@@ -58,7 +58,7 @@ theorem setIntegral_eq_sum_periodize {g : ℝ → ℝ} (hg : Continuous g) (hper
     · exact (measurable_const.indicator measurableSet_Ioc).comp (measurable_add_const _)
         |>.aestronglyMeasurable
     · simp only [indicator]; split_ifs <;> simp
-  rw [← integral_finset_sum _ fun k _ => hint k, ← integral_indicator hJ]
+  rw [← integral_finsetSum _ fun k _ => hint k, ← integral_indicator hJ]
   refine integral_congr_ae (Filter.Eventually.of_forall fun β => ?_)
   simp only
   rw [← Finset.sum_mul]

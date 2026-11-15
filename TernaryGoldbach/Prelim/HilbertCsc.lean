@@ -221,10 +221,10 @@ theorem tendsto_fejer {x : ℝ} (hx : ∀ n : ℤ, x ≠ n) :
   have htsum : ∀ P, 1 ≤ P → fejer P x = 1 / x + ∑' n, F P n := by
     intro P hP
     rw [fejer_eq hx hP, tsum_eq_sum (s := range P) fun n hn => by
-      simp only [hF, if_neg (fun h => hn (mem_range.2 h))]]
+      simp only [hF, ite_eq_right (fun h => hn (mem_range.2 h))]]
     congr 1
     refine sum_congr rfl fun n hn => ?_
-    simp only [hF, if_pos (mem_range.1 hn)]
+    simp only [hF, ite_eq_left (mem_range.1 hn)]
   have hlim : Tendsto (fun P => ∑' n, F P n) atTop
       (𝓝 (∑' n : ℕ, (-1 : ℂ) ^ (n + 1) * (cj x (n + 1) : ℂ))) := by
     refine tendsto_tsum_of_dominated_convergence (bound := fun n => |cj x (n + 1)|)
@@ -238,7 +238,7 @@ theorem tendsto_fejer {x : ℝ} (hx : ∀ n : ℤ, x ≠ n) :
       rw [sub_zero, one_mul] at h1
       refine h1.congr' ?_
       filter_upwards [eventually_gt_atTop n] with P hP
-      simp only [hF, if_pos hP]
+      simp only [hF, ite_eq_left hP]
     · filter_upwards [eventually_ge_atTop 1] with P hP n
       simp only [hF]
       split_ifs with h
@@ -290,7 +290,7 @@ theorem offP_eq (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ) (P : ℕ) :
   refine sum_congr rfl fun r' _ => ?_
   by_cases hrr : r = r'
   · subst hrr
-    rw [if_pos rfl, mul_zero]
+    rw [ite_eq_left rfl, mul_zero]
     -- antisymmetry in `(k, l)`
     set g : ℕ → ℕ → ℂ := fun k l => if (r, k) = (r, l) then 0 else
       starRingEnd ℂ ((-1 : ℂ) ^ k * z r) * ((-1 : ℂ) ^ l * z r) /
@@ -300,7 +300,7 @@ theorem offP_eq (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ) (P : ℕ) :
       simp only [hg, Prod.mk.injEq, true_and]
       by_cases hkl : k = l
       · subst hkl; simp
-      · rw [if_neg hkl, if_neg (Ne.symm hkl)]
+      · rw [ite_eq_right hkl, ite_eq_right (Ne.symm hkl)]
         have : ((α r + l - (α r + k) : ℝ) : ℂ) = -((α r + k - (α r + l) : ℝ) : ℂ) := by
           push_cast; ring
         rw [this, div_neg]; congr 1
@@ -312,10 +312,10 @@ theorem offP_eq (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ) (P : ℕ) :
     have h0 : ∑ k ∈ range P, ∑ l ∈ range P, g k l = 0 := by
       have := hS; linear_combination (1 / 2 : ℂ) * this
     simpa [hg] using h0
-  · rw [if_neg hrr, fejer]
+  · rw [ite_eq_right hrr, fejer]
     have hne : ∀ k l : ℕ, (r, k) ≠ (r', l) := fun k l h => hrr (Prod.mk.inj h).1
     rw [sum_comm]
-    simp only [if_neg (hne _ _)]
+    simp only [ite_eq_right (hne _ _)]
     by_cases hP : P = 0
     · subst hP; simp
     have hP0 : (P : ℂ) ≠ 0 := by exact_mod_cast hP
@@ -338,8 +338,8 @@ theorem cscForm_le (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ)
       starRingEnd ℂ (z r) * z r' * fejer P (α r - α r')) atTop (𝓝 (cscForm s α z)) := by
     refine tendsto_finsetSum _ fun r hr => tendsto_finsetSum _ fun r' hr' => ?_
     by_cases h : r = r'
-    · simp only [if_pos h]; exact tendsto_const_nhds
-    · simp only [if_neg h]
+    · simp only [ite_eq_left h]; exact tendsto_const_nhds
+    · simp only [ite_eq_right h]
       exact (tendsto_fejer (hdist r hr r' hr' h)).const_mul _
   refine le_of_tendsto (hlim.norm) ?_
   filter_upwards [eventually_ge_atTop 1] with P hP1
@@ -371,7 +371,7 @@ theorem offP_eq_hform (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ)
     simp only [w]
     rw [sum_eq_single p]
     · simp
-    · intro q hq hqp; rw [if_neg]; exact fun h => hqp (hinj hq hp h)
+    · intro q hq hqp; rw [ite_eq_right]; exact fun h => hqp (hinj hq hp h)
     · intro h; exact absurd hp h
   refine ⟨hinj, hw, ?_⟩
   simp only [hform, offP]
@@ -381,7 +381,7 @@ theorem offP_eq_hform (s : Finset ι) (α : ι → ℝ) (z : ι → ℂ)
   refine sum_congr rfl fun q hq => ?_
   by_cases hpq : p = q
   · subst hpq; simp
-  · rw [if_neg hpq, if_neg (fun h => hpq (hinj hp hq h)), hw p hp, hw q hq]
+  · rw [ite_eq_right hpq, ite_eq_right (fun h => hpq (hinj hp hq h)), hw p hp, hw q hq]
 
 end Periodize
 
@@ -401,7 +401,7 @@ theorem image_data (s : Finset ι) (α δ : ι → ℝ) (P : ℕ)
   intro p hp
   rw [sum_eq_single p]
   · simp
-  · intro q hq hqp; rw [if_neg]; exact fun h => hqp (hinj hq hp h)
+  · intro q hq hqp; rw [ite_eq_right]; exact fun h => hqp (hinj hq hp h)
   · intro h; exact absurd hp h
 
 /-- **Weighted Hilbert inequality on the circle**:
@@ -416,7 +416,7 @@ theorem csc_weighted (s : Finset ι) (α δ : ι → ℝ) (hδ : ∀ r ∈ s, 0 
   · push Not at htwo
     have : cscForm s α z = 0 := by
       refine sum_eq_zero fun r hr => sum_eq_zero fun r' hr' => ?_
-      rw [if_pos (htwo r hr r' hr')]
+      rw [ite_eq_left (htwo r hr r' hr')]
     rw [this, norm_zero]
     exact mul_nonneg (by norm_num) (sum_nonneg fun r hr => div_nonneg (sq_nonneg _) (hδ r hr).le)
   obtain ⟨a, ha, b, hb, hab⟩ := htwo
@@ -475,7 +475,7 @@ theorem csc_weighted (s : Finset ι) (α δ : ι → ℝ) (hδ : ∀ r ∈ s, 0 
     have hp : (r, k) ∈ s ×ˢ range P := mem_product.2 ⟨hr, hk⟩
     rw [show (∑ p ∈ s ×ˢ range P, if pt p = pt (r, k) then (-1 : ℂ) ^ p.2 * z p.1 else 0) =
       (-1 : ℂ) ^ k * z r from hw (r, k) hp, hδ'pt (r, k) hp]
-    simp [norm_mul, norm_pow]
+    simp [norm_pow]
   rw [sum_congr rfl this, sum_const, card_range, nsmul_eq_mul, mul_comm]
 
 /-- **The Hilbert inequality on the circle for `δ`-spaced points**:
@@ -525,7 +525,7 @@ theorem csc_uniform (s : Finset ι) (α : ι → ℝ) {δ : ℝ} (hδ : 0 < δ) 
     have hp : (r, k) ∈ s ×ˢ range P := mem_product.2 ⟨hr, hk⟩
     rw [show (∑ p ∈ s ×ˢ range P, if pt p = pt (r, k) then (-1 : ℂ) ^ p.2 * z p.1 else 0) =
       (-1 : ℂ) ^ k * z r from hw (r, k) hp]
-    simp [norm_mul, norm_pow]
+    simp [norm_pow]
   rw [sum_congr rfl this, sum_const, card_range, nsmul_eq_mul, mul_comm]
 
 end Circle

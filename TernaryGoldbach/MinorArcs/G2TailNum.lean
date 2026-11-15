@@ -117,19 +117,19 @@ theorem rad_eq {k : ℕ} (hk : 0 < k) :
   rw [List.map_id'] at h
   rw [← h, toFinset_oddPrimes hk]
   by_cases he : k % 2 = 0
-  · rw [if_pos he]
+  · rw [ite_eq_left he]
     have h2 : 2 ∈ k.primeFactors := Nat.mem_primeFactors.2 ⟨Nat.prime_two, Nat.dvd_of_mod_eq_zero he, by omega⟩
     rw [← prod_filter_mul_prod_filter_not k.primeFactors (· ≠ 2)]
     congr 1
     rw [show k.primeFactors.filter (fun p => ¬ p ≠ 2) = {2} by
       ext p; simp only [mem_filter, not_not, mem_singleton]
       exact ⟨fun h => h.2, fun h => ⟨h ▸ h2, h⟩⟩, prod_singleton]
-  · rw [if_neg he, mul_one, filter_true_of_mem]
+  · rw [ite_eq_right he, mul_one, filter_true_of_mem]
     intro p hp h2
     subst h2
     exact he (Nat.mod_eq_zero_of_dvd (Nat.dvd_of_mem_primeFactors hp))
 
-theorem squarefree_iff_rad {k : ℕ} (hk : 0 < k) : Squarefree k ↔ ∏ p ∈ k.primeFactors, p = k := by
+theorem squarefree_iff_rad {k : ℕ} (_hk : 0 < k) : Squarefree k ↔ ∏ p ∈ k.primeFactors, p = k := by
   constructor
   · exact Nat.prod_primeFactors_of_squarefree
   · intro h
@@ -144,7 +144,7 @@ theorem card_primeFactors_eq {k : ℕ} (hk : 0 < k) :
   have hnd := nodup_oddPrimes hk
   rw [← List.toFinset_card_of_nodup hnd, toFinset_oddPrimes hk]
   by_cases he : k % 2 = 0
-  · rw [if_pos he]
+  · rw [ite_eq_left he]
     have h2 : 2 ∈ k.primeFactors := Nat.mem_primeFactors.2 ⟨Nat.prime_two, Nat.dvd_of_mod_eq_zero he, by omega⟩
     have e : k.primeFactors = insert 2 (k.primeFactors.filter (· ≠ 2)) := by
       ext p; simp only [mem_insert, mem_filter]
@@ -157,7 +157,7 @@ theorem card_primeFactors_eq {k : ℕ} (hk : 0 < k) :
         · exact hp
     conv_lhs => rw [e]
     rw [card_insert_of_notMem (by simp)]
-  · rw [if_neg he, add_zero, filter_true_of_mem]
+  · rw [ite_eq_right he, add_zero, filter_true_of_mem]
     intro p hp h2
     subst h2
     exact he (Nat.mod_eq_zero_of_dvd (Nat.dvd_of_mem_primeFactors hp))
@@ -176,16 +176,16 @@ theorem muden_spec {k : ℕ} (hk : 0 < k) :
         List.toFinset_card_of_nodup hsq.nodup_primeFactorsList]
     have hmu : (μ k : ℝ) = (-1) ^ k.primeFactors.card := by
       rw [ArithmeticFunction.moebius_apply_of_squarefree hsq, hc]; push_cast; rfl
-    rw [if_pos hr, hmu, card_primeFactors_eq hk]
+    rw [ite_eq_left hr, hmu, card_primeFactors_eq hk]
     rcases Nat.even_or_odd ((oddPrimes k).length + if k % 2 = 0 then 1 else 0) with h | h
     · have h0 : ((oddPrimes k).length + if k % 2 = 0 then 1 else 0) % 2 = 0 := Nat.even_iff.1 h
-      rw [if_pos h0]
+      rw [ite_eq_left h0]
       exact ⟨fun _ => h.neg_one_pow, fun h' => absurd h' (by norm_num), fun h' => absurd rfl h'⟩
     · have h1 : ¬ ((oddPrimes k).length + if k % 2 = 0 then 1 else 0) % 2 = 0 := by
         have := Nat.odd_iff.1 h; omega
-      rw [if_neg h1]
+      rw [ite_eq_right h1]
       exact ⟨fun h' => absurd h' (by norm_num), fun _ => h.neg_one_pow, fun _ h' => absurd rfl h'⟩
-  · rw [if_neg hr]
+  · rw [ite_eq_right hr]
     refine ⟨fun h => by omega, fun h => by omega, fun _ _ => ?_⟩
     rw [ArithmeticFunction.moebius_eq_zero_of_not_squarefree (fun h => hr ((squarefree_iff_rad hk).1 h))]
     simp
@@ -222,16 +222,16 @@ theorem stepV_spec {k : ℕ} {s : SV} (h : VInv k s) : VInv (k + 1) (stepV (k + 
   have hP' : (if (muden (k + 1)).1 = 1 then s.P + 10 ^ 12 / (k + 1) else s.P) = Pt (k + 1) := by
     rw [Pt_succ, hP]
     by_cases h1 : (muden (k + 1)).1 = 1
-    · rw [if_pos h1, if_pos (m1 h1)]; rfl
-    · rw [if_neg h1, if_neg]; · simp
+    · rw [ite_eq_left h1, ite_eq_left (m1 h1)]; rfl
+    · rw [ite_eq_right h1, ite_eq_right]; · simp
       by_cases h2 : (muden (k + 1)).1 = 2
       · rw [m2 h2]; norm_num
       · rw [m0 h1 h2]; norm_num
   have hQ' : (if (muden (k + 1)).1 = 2 then s.Q + 10 ^ 12 / (k + 1) else s.Q) = Qt (k + 1) := by
     rw [Qt_succ, hQ]
     by_cases h2 : (muden (k + 1)).1 = 2
-    · rw [if_pos h2, if_pos (m2 h2)]; rfl
-    · rw [if_neg h2, if_neg]; · simp
+    · rw [ite_eq_left h2, ite_eq_left (m2 h2)]; rfl
+    · rw [ite_eq_right h2, ite_eq_right]; · simp
       by_cases h1 : (muden (k + 1)).1 = 1
       · rw [m1 h1]; norm_num
       · rw [m0 h1 h2]; norm_num
@@ -249,21 +249,21 @@ theorem stepV_spec {k : ℕ} {s : SV} (h : VInv k s) : VInv (k + 1) (stepV (k + 
         have : k + 1 ≤ 10000 := hk
         calc 2 * (k + 1) + 1 ≤ 2 * 10000 + 1 := by omega
           _ < 2 ^ 16 := by norm_num
-      rw [if_pos hk, Tr.get_set _ _ _ _ _ _ hfuel]
+      rw [ite_eq_left hk, Tr.get_set _ _ _ _ _ _ hfuel]
       by_cases hj : j = k + 1
-      · rw [if_pos hj, hj]
-      · rw [if_neg hj]; exact htv j hj1 (by rw [min_eq_left hk']; omega)
+      · rw [ite_eq_left hj, hj]
+      · rw [ite_eq_right hj]; exact htv j hj1 (by rw [min_eq_left hk']; omega)
     · have hk' : XX ≤ k := Nat.le_of_lt_succ (not_le.1 hk)
       rw [min_eq_right (hk'.trans (Nat.le_succ k))] at hj2
-      rw [if_neg hk]; exact htv j hj1 (by rw [min_eq_right hk']; exact hj2)
+      rw [ite_eq_right hk]; exact htv j hj1 (by rw [min_eq_right hk']; exact hj2)
   · by_cases hk : k + 1 ≤ XX
     · show (if k + 1 ≤ XX then (muden (k + 1)).2 :: s.dl else s.dl) = _
-      rw [if_pos hk, hdl, min_eq_left hk, min_eq_left (Nat.le_of_succ_le hk),
+      rw [ite_eq_left hk, hdl, min_eq_left hk, min_eq_left (Nat.le_of_succ_le hk),
         List.range_succ, List.map_append, List.reverse_append]
       rfl
     · have hk' : XX ≤ k := Nat.le_of_lt_succ (not_le.1 hk)
       show (if k + 1 ≤ XX then (muden (k + 1)).2 :: s.dl else s.dl) = _
-      rw [if_neg hk, hdl, min_eq_right hk', min_eq_right (hk'.trans (Nat.le_succ k))]
+      rw [ite_eq_right hk, hdl, min_eq_right hk', min_eq_right (hk'.trans (Nat.le_succ k))]
 
 theorem walkV_spec : ∀ (f k : ℕ) (s : SV), VInv k s → VInv (k + f) (walkV f (k + 1) s) := by
   intro f

@@ -98,7 +98,7 @@ theorem hasDerivAt_F₂ {t : ℝ} (ht : 0 < t) :
 theorem hasDerivAt_F₃ {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun t => -(Real.log x - Real.log t) ^ 2 / 2) ((Real.log x - Real.log t) / t) t := by
   have h := (((hasDerivAt_const t (Real.log x)).sub (Real.hasDerivAt_log ht.ne')).pow 2).neg.div_const 2
-  convert h using 1 <;> first | (funext s; simp; done) | (simp; field_simp; ring) | (simp only [Pi.sub_apply, Pi.neg_apply, Pi.pow_apply]; field_simp; ring) | rfl
+  convert h using 1 <;> first | (funext s; simp; done) | (simp; field_simp) | (simp only [Pi.sub_apply]; field_simp; ring) | rfl
 
 theorem hasDerivAt_f₂ {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun t => t * (Real.log x - Real.log t)) (Real.log x - Real.log t - 1) t := by
@@ -111,7 +111,7 @@ theorem hasDerivAt_f₃ {t : ℝ} (ht : 0 < t) :
       ((-1 - (Real.log x - Real.log t)) / t ^ 2) t := by
   have h := (((hasDerivAt_const t (Real.log x)).sub (Real.hasDerivAt_log ht.ne')).div
     (hasDerivAt_id' t) ht.ne')
-  convert h using 1 <;> first | (funext s; simp; done) | (simp; field_simp; ring) | (simp only [Pi.sub_apply, Pi.neg_apply, Pi.pow_apply]; field_simp; ring) | rfl
+  convert h using 1 <;> first | (funext s; simp; done) | (simp; field_simp) | (simp only [Pi.sub_apply]; field_simp; ring) | rfl
 
 theorem antitoneOn_f₁ : AntitoneOn (fun t => Real.log x - Real.log t) (Set.Ioi 0) :=
   fun s hs t _ hst => by simp only; linarith [Real.log_le_log hs hst]

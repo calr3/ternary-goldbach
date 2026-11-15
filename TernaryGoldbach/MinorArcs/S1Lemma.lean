@@ -222,10 +222,10 @@ theorem lemma_5_1_1_term {y z : ℝ} (hy : 0 < y) (hz : 0 < z) {r₁ r₂ : ℕ}
     split_ifs <;> positivity
   by_cases hg : Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂)
   swap
-  · rw [if_neg hg, abs_zero]; exact hE0
-  rw [if_pos hg]
+  · rw [ite_eq_right hg, abs_zero]; exact hE0
+  rw [ite_eq_left hg]
   obtain ⟨hcop, hodd⟩ := hg
-  rw [if_pos (Nat.odd_mul.1 hodd).1, if_pos (Nat.odd_mul.1 hodd).2]
+  rw [ite_eq_left (Nat.odd_mul.1 hodd).1, ite_eq_left (Nat.odd_mul.1 hodd).2]
   simp only [mem_Icc] at hr₁ hr₂
   have hr₁y : (r₁ : ℝ) ≤ y := (Nat.cast_le.2 hr₁.2).trans (Nat.floor_le hy.le)
   have hr₂y : (r₂ : ℝ) ≤ y := (Nat.cast_le.2 hr₂.2).trans (Nat.floor_le hy.le)
@@ -282,7 +282,8 @@ theorem lemma_5_1_1_term {y z : ℝ} (hy : 0 < y) (hz : 0 < z) {r₁ r₂ : ℕ}
   rw [abs_mul]
   have hμ1 : |(μ r₁ : ℝ) * μ r₂| ≤ 1 := by
     rw [abs_mul]
-    exact mul_le_one₀ (abs_moebius_le_one_real _) (abs_nonneg _) (abs_moebius_le_one_real _)
+    exact (mul_le_mul (abs_moebius_le_one_real _) (abs_moebius_le_one_real _) (abs_nonneg _)
+      zero_le_one).trans_eq (one_mul 1)
   refine (mul_le_of_le_one_left (abs_nonneg _) hμ1).trans (hcnt.trans ?_)
   -- The error sum.
   set g : ℕ → ℝ := fun e => √(bL z r₁ r₂ / e)

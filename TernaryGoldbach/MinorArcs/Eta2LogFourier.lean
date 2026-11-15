@@ -92,7 +92,7 @@ theorem hasDerivAt_lg1 {u : ℝ} (hu : 0 < u) : HasDerivAt lg1 (lg1' u) u := by
   have h2 := ((hasDerivAt_id u).const_mul 4).log (by simp; positivity)
   convert h1.mul h2 using 1
   · ext v; simp [lg1, mul_assoc]
-  · simp only [lg1', id]; field_simp; try ring
+  · simp only [lg1', id]; field_simp
 
 theorem hasDerivAt_lg1' {u : ℝ} (hu : 0 < u) : HasDerivAt lg1' (lg1'' u) u := by
   have h1 := ((hasDerivAt_id u).const_mul 4).log (by simp; positivity)
@@ -243,7 +243,7 @@ theorem norm_fourier_logeta2_le_decay (t : ℝ) :
   set I1 := ∫ u in (1 / 4 : ℝ)..(1 / 2), (lg1'' u : ℂ) * e (-(u * t))
   set I2 := ∫ u in (1 / 2 : ℝ)..1, (lg2'' u : ℂ) * e (-(u * t))
   -- Boundary values.
-  have v1 : lg1 (1 / 4) = 0 := by simp [lg1, show (4 : ℝ) * (1 / 4) = 1 by norm_num]
+  have v1 : lg1 (1 / 4) = 0 := by simp [lg1]
   have v2 : lg1 (1 / 2) = lg2 (1 / 2) := by
     simp only [lg1, lg2]; rw [show (4 : ℝ) * (1 / 2) = 2 by norm_num, log_half]; ring
   have v3 : lg2 1 = 0 := by simp [lg2]
@@ -313,7 +313,7 @@ theorem norm_fourier_logeta2_le (t : ℝ) :
     have hl := Real.hasDerivAt_log h0.ne'
     have := ((hasDerivAt_id u).mul (((hl.pow 2).sub (hl.const_mul 2)).add_const 2)).const_mul (-4)
     convert this using 1
-    · ext y; simp only [G2, Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.pow_apply, id]
+    · ext y; simp only [G2, Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, id]
     · rw [lg2]; simp only [id, Pi.sub_apply, Pi.pow_apply]; field_simp; ring
   have hc1 : ContinuousOn lg1 (Set.uIcc (1 / 4 : ℝ) (1 / 2)) := fun u hu =>
     (hasDerivAt_lg1 (hp1 u hu)).continuousAt.continuousWithinAt

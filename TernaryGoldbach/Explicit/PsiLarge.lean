@@ -118,7 +118,7 @@ theorem mid_sum_le {a b δ x H₁ Γ T : ℝ} (hb : b ≤ 0) (hx : 1 < x) (hH₁
     _ = _ := by ring
 
 /-- **The explicit-formula bound with the zero-free region**, under RH up to `H ∈ [10⁸, 3·10¹²]`. -/
-theorem SsumG_gsm_err_zfH {a b δ x Γ H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH2 : H ≤ 3e12)
+theorem SsumG_gsm_err_zfH {a b δ x Γ H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (_hH2 : H ≤ 3e12)
     (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
     ‖SsumG (1 : DirichletCharacter ℂ 1) (fun u => (gsm a b δ u : ℂ)) x - Mg a b δ 1 * x‖ ≤
       √x * LineBH a δ H + x * MidBH a δ H Γ x + x * TailBG a δ Γ +
@@ -203,7 +203,7 @@ theorem SsumG_gsm_err_zfH {a b δ x Γ H : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤
 /-- **The explicit-formula bound with the zero-free region**, under RH up to `H`, with the zeros
 in `(H, Γ]` in three ranges `(H, H₂]`, `(H₂, 3·10¹²]`, `(3·10¹², Γ]`. -/
 theorem SsumG_gsm_err_zf3H {a b δ x Γ H H₂ : ℝ} (hRH : RHBelow H) (hH1 : 1e8 ≤ H) (hH₂ : H ≤ H₂)
-    (hH₂' : H₂ ≤ 3e12) (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
+    (_hH₂' : H₂ ≤ 3e12) (hδ : 0 < δ) (hab : b ≤ a) (hb : b ≤ 0) (hx : 1 < x) (hΓ : 3e12 ≤ Γ) :
     ‖SsumG (1 : DirichletCharacter ℂ 1) (fun u => (gsm a b δ u : ℂ)) x - Mg a b δ 1 * x‖ ≤
       √x * LineBH a δ H + x * (MidB0 a δ H H₂ x + MidBH a δ H₂ Γ x) + x * TailBG a δ Γ +
         x ^ (-(1 / 2) : ℝ) * Vg a b δ / (2 * π) := by

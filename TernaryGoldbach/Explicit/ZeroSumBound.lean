@@ -95,7 +95,7 @@ noncomputable def EA (T0 δ : ℝ) : ℝ :=
 theorem EB_nonneg {T0 : ℝ} (h : 0 ≤ T0) : 0 ≤ EB T0 := by unfold EB; positivity
 theorem EA_nonneg (T0 δ : ℝ) : 0 ≤ EA T0 δ := by unfold EA; split_ifs <;> positivity
 
-theorem le_mul_exp_sub {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) : b ≤ a * Real.exp ((b - a) / a) := by
+theorem le_mul_exp_sub {a b : ℝ} (ha : 0 < a) (_hab : a ≤ b) : b ≤ a * Real.exp ((b - a) / a) := by
   have := Real.add_one_le_exp ((b - a) / a)
   have e : a * ((b - a) / a + 1) = b := by field_simp; ring
   nlinarith
@@ -150,7 +150,7 @@ theorem norm_G_tail (s : ℂ) (δ : ℝ) (hs0 : -1 ≤ s.re) (hs1 : s.re ≤ 1) 
       convert this using 3; push_cast; ring
     have h2 : -0.1065 * u ^ 2 ≤ -0.1065 * u0 ^ 2 + -2.13 * (u - u0) := by nlinarith
     have hEAeq : EA T0 δ = 0.588 * u0 ^ 2 * Real.exp (-0.1065 * u0 ^ 2) := by
-      unfold EA; rw [if_neg hδ]
+      unfold EA; rw [ite_eq_right hδ]
     have h3 : 0.588 * u ^ 2 * Real.exp (-0.1065 * u ^ 2) ≤
         EA T0 δ * Real.exp (-1.93 * ((τ - T0) / P)) := by
       rw [hEAeq, ← hdiff]
@@ -167,7 +167,7 @@ theorem norm_G_tail (s : ℂ) (δ : ℝ) (hs0 : -1 ≤ s.re) (hs1 : s.re ≤ 1) 
 
 /-- **Geometric window sums**: `Σ m_u E ρ^{k(u)} ≤ E(Z₀/(1 − ρ) + c/(1 − ρ)²)` if window `k` has total
 weight `≤ Z₀ + c(k + 1)`. -/
-theorem sum_geom_windows {S : Finset ℂ} (m : ℂ → ℝ) (hm : ∀ u ∈ S, 0 ≤ m u) (idx : ℂ → ℕ)
+theorem sum_geom_windows {S : Finset ℂ} (m : ℂ → ℝ) (_hm : ∀ u ∈ S, 0 ≤ m u) (idx : ℂ → ℕ)
     {Z0 c E ρ : ℝ} (hZ0 : 0 ≤ Z0) (hc : 0 ≤ c) (hE : 0 ≤ E) (hρ0 : 0 ≤ ρ) (hρ1 : ρ < 1)
     (hZ : ∀ k : ℕ, ∑ u ∈ S.filter (fun u => idx u = k), m u ≤ Z0 + c * (k + 1)) :
     ∑ u ∈ S, m u * (E * ρ ^ idx u) ≤ E * (Z0 / (1 - ρ) + c / (1 - ρ) ^ 2) := by
@@ -288,7 +288,7 @@ theorem mem_line_window {u : ℂ} {h T0 : ℝ} (hh : 0 < h) {J : ℕ} (hJ : T0 <
 /-- `J = ⌊T₀/3.48⌋ + 1` line windows of height `3.48` on each side. -/
 noncomputable def Jl (T0 : ℝ) : ℕ := ⌊T0 / 3.48⌋₊ + 1
 
-theorem lt_Jl {T0 : ℝ} (h : 0 ≤ T0) : T0 < Jl T0 * 3.48 := by
+theorem lt_Jl {T0 : ℝ} (_h : 0 ≤ T0) : T0 < Jl T0 * 3.48 := by
   unfold Jl; push_cast
   have := Nat.lt_floor_add_one (T0 / 3.48)
   rw [div_lt_iff₀ (by norm_num)] at this; linarith

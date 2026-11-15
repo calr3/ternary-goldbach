@@ -106,7 +106,7 @@ theorem hasDerivAt_Pr_r (s : ℂ) (δ θ : ℝ) {r : ℝ} (hr : 0 < r) :
       (-(2 * (r : ℂ)) * cexp (2 * θ * I) / 2 + 2 * π * I * δ * cexp (θ * I)) r := by
     have h1 := ((hy.pow 2).neg.mul_const (cexp (2 * θ * I))).div_const 2
     have h2 := (hy.const_mul (2 * π * I * δ)).mul_const (cexp (θ * I))
-    exact (h1.add h2).congr_deriv (by simp <;> ring)
+    exact (h1.add h2).congr_deriv (by simp)
   refine ((hc.mul_const (cexp (θ * I * (s + 2)))).mul hE.cexp).congr_deriv ?_
   have hr0 : (r : ℂ) ≠ 0 := by exact_mod_cast hr.ne'
   have e1 : (r : ℂ) ^ (s + 2 - 1) = (r : ℂ) ^ (s + 1) := by ring_nf
@@ -503,7 +503,7 @@ theorem norm_Gr_le_closed (s : ℂ) (δ : ℝ) {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ
   refine h1.trans (mul_le_mul_of_nonneg_left ?_ (Real.exp_pos _).le)
   have h2 := integral_rpow_exp_quad_le (p := s.re + 1) (c := Real.cos (2 * θ))
     (b := 2 * π * |δ| * Real.sin θ) (by linarith) (by linarith) hc
-  convert h2 using 3 <;> ring
+  convert h2 using 3
 
 /-! ## The two regimes of [H, Cor 8.0.2] (`k = 2`) -/
 

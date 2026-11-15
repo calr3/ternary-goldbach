@@ -44,13 +44,13 @@ theorem rpow_sq_third (p : ℕ) :
   norm_num
 
 /-- The `t = p^{1/3}` forms. -/
-theorem Wp_t {p : ℕ} (hp : p.Prime) :
+theorem Wp_t {p : ℕ} (_hp : p.Prime) :
     Wp p = if p = 2 then 1 + (p : ℝ) ^ ((1 : ℝ) / 3) else
       1 + ((p : ℝ) ^ ((1 : ℝ) / 3) + ((p : ℝ) ^ ((1 : ℝ) / 3)) ^ 2) / ((p : ℝ) * ((p : ℝ) - 1)) := by
   unfold Wp
   by_cases h : p = 2
-  · rw [if_pos h, if_pos h, h]; norm_num
-  · rw [if_neg h, if_neg h, rpow_two_thirds _ (Nat.cast_nonneg _)]
+  · rw [ite_eq_left h, ite_eq_left h, h]; norm_num
+  · rw [ite_eq_right h, ite_eq_right h, rpow_two_thirds _ (Nat.cast_nonneg _)]
 
 theorem f1pP_t {p : ℕ} (hp : p.Prime) :
     f1pP p = (1 + 1 / ((p : ℝ) ^ ((1 : ℝ) / 3)) ^ 2) /
@@ -75,25 +75,25 @@ theorem Wd_le {d p : ℕ} (hp : p.Prime) :
     have ht126 : t ≤ 1.26 := by
       rw [ht]; exact rpow_third_le_of (by norm_num) (by norm_num) (by norm_num)
     by_cases hd : 2 ∣ d
-    · simp only [hd, if_true, zero_add, zero_mul, abs_zero, add_zero]
+    · simp only [hd, ite_true, zero_mul, abs_zero, add_zero]
       norm_num
       have hden : 0 < 1 + (t + t ^ 2) / 2 := by positivity
       rw [mul_div_assoc', le_div_iff₀ hden, one_mul]
       have hinv : 0.6 ≤ (t ^ 2)⁻¹ := by
         rw [← one_div, le_div_iff₀ (by positivity)]; nlinarith
       nlinarith
-    · simp only [hd, if_false, if_true, mul_one]
+    · simp only [hd, ite_false, ite_true, mul_one]
       norm_num
   · have hp3 : (3 : ℝ) ≤ p := by
       have := hp.two_le; exact_mod_cast (by omega : 3 ≤ p)
     have hden : 0 < (p : ℝ) * ((p : ℝ) - 1) := by nlinarith
     by_cases hd : p ∣ d
-    · simp only [hd, if_true, h2, if_false, zero_add, zero_mul, abs_zero, add_zero]
+    · simp only [hd, ite_true, h2, ite_false, zero_add, zero_mul, abs_zero, add_zero]
       have hL : 0 < 1 + (t + t ^ 2) / ((p : ℝ) * ((p : ℝ) - 1)) := by positivity
       rw [mul_div_assoc', mul_div_cancel_left₀ _ hL.ne', abs_div, abs_neg, abs_one,
         abs_of_pos hp0, ← ht3]
       rw [show 1 + 1 / t ^ 3 * t = 1 + 1 / t ^ 2 by field_simp]
-    · simp only [hd, if_false, h2, mul_one]
+    · simp only [hd, ite_false, h2, mul_one]
       have hden1 : 0 < (p : ℝ) - 1 := by linarith
       have e1 : 1 / ((p : ℝ) - 1) + -1 / (p : ℝ) = 1 / ((p : ℝ) * ((p : ℝ) - 1)) := by
         field_simp; ring
@@ -151,7 +151,7 @@ theorem lk_mem : ∀ (l : List (ℕ × ℕ)), (l.map Prod.fst).Nodup → ∀ pc 
         intro e
         have := (List.nodup_cons.1 hnd).1
         exact this (by rw [e]; exact List.mem_map.2 ⟨pc, h, rfl⟩)
-      simp only [lk, if_neg ha]
+      simp only [lk, ite_eq_right ha]
       exact lk_mem l (List.nodup_cons.1 hnd).2 pc h
 
 /-- The rational bound for `W'(p)`. -/
@@ -164,7 +164,7 @@ theorem qQ_prod : ((2 :: CR.map Prod.fst).map qQ).prod ≤ 72863 / 10000 := by d
 theorem Wp_le_qQ {p : ℕ} (hp : p ∈ 2 :: CR.map Prod.fst) : Wp p ≤ (qQ p : ℝ) := by
   rcases List.mem_cons.1 hp with h | h
   · subst h
-    simp only [Wp, qQ, if_true]
+    simp only [Wp, qQ, ite_true]
     have : (2 : ℝ) ^ ((1 : ℝ) / 3) ≤ 1.26 := rpow_third_le_of (by norm_num) (by norm_num) (by norm_num)
     push_cast; linarith
   · obtain ⟨pc, hpc, rfl⟩ := List.mem_map.1 h
@@ -172,7 +172,7 @@ theorem Wp_le_qQ {p : ℕ} (hp : p ∈ 2 :: CR.map Prod.fst) : Wp p ≤ (qQ p : 
     simp only [Bool.and_eq_true, decide_eq_true_eq] at hok
     obtain ⟨hcube, hp3⟩ := hok
     have hlk : lk CR pc.1 = pc.2 := lk_mem CR (by decide +kernel) pc hpc
-    simp only [qQ, show pc.1 ≠ 2 by omega, if_false, hlk, Wp]
+    simp only [qQ, show pc.1 ≠ 2 by omega, ite_false, hlk, Wp]
     have hp0 : (0 : ℝ) < pc.1 := by positivity
     have hp3' : (3 : ℝ) ≤ pc.1 := by exact_mod_cast hp3
     set c : ℝ := (pc.2 : ℝ) / 10 ^ 4 with hc
@@ -214,7 +214,7 @@ theorem prod_head : ∏ p ∈ Nat.primesBelow 1001, Wp p ≤ 7.2863 := by
 theorem Wp_le_tail {p : ℕ} (hp : p.Prime) (h : 1000 < p) :
     Wp p ≤ 1 + 1.102 * (p : ℝ) ^ (-(4 / 3 : ℝ)) := by
   have hp0 : (0 : ℝ) < p := by positivity
-  rw [Wp_t hp, if_neg (by omega)]
+  rw [Wp_t hp, ite_eq_right (by omega)]
   set t := (p : ℝ) ^ ((1 : ℝ) / 3) with ht
   have ht3 : t ^ 3 = p := rpow_third_cube _ hp0.le
   have ht10 : 10 ≤ t := cube_root_1000 h.le

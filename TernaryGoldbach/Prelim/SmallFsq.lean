@@ -65,8 +65,8 @@ theorem sqCheck_of_squarefree {m : ℕ} (h : Squarefree m) (hm : m ≠ 0) : sqCh
 theorem sqInd_le_cq (m : ℕ) : sqInd m ≤ ((cq m : ℚ) : ℝ) := by
   unfold sqInd cq
   by_cases h : Squarefree m ∧ m ≠ 0
-  · rw [if_pos h, if_pos (sqCheck_of_squarefree h.1 h.2)]; norm_num
-  · rw [if_neg h]; split_ifs <;> norm_num
+  · rw [ite_eq_left h, ite_eq_left (sqCheck_of_squarefree h.1 h.2)]; norm_num
+  · rw [ite_eq_right h]; split_ifs <;> norm_num
 
 /-- `∑_{k ≥ 0} 1/(k + M)² ≤ 1/(M − 1)` for `M ≥ 2`. -/
 theorem tsum_inv_sq_tail {M : ℕ} (hM : 2 ≤ M) :

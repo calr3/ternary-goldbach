@@ -139,7 +139,7 @@ theorem EA_mono {T0 δ r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) (hT : 10 * π * |δ
   have hδr : δ * r ≠ 0 := mul_ne_zero hδ hr.ne'
   have hδ0 : 0 < |δ| := abs_pos.2 hδ
   unfold EA
-  rw [if_neg hδr, if_neg hδ]
+  rw [ite_eq_right hδr, ite_eq_right hδ]
   have hP : 0 < π * |δ| := by positivity
   have hu : 10 ≤ T0 / (π * |δ|) := by rw [le_div_iff₀ hP]; linarith
   have huu : T0 / (π * |δ|) ≤ T0 / (π * |δ * r|) := by

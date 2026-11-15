@@ -81,7 +81,7 @@ theorem continuousAt_fP (δ : ℝ) {y : ℝ} (hy : 0 < y) : ContinuousAt (fP δ)
   refine ContinuousAt.congr ?_ hev.symm
   exact (continuousAt_hHc hy).mul (by fun_prop)
 
-theorem continuousOn_fP (δ : ℝ) : ContinuousOn (fP δ) (Ioi 0) := fun y hy =>
+theorem continuousOn_fP (δ : ℝ) : ContinuousOn (fP δ) (Ioi 0) := fun _y hy =>
   (continuousAt_fP δ hy).continuousWithinAt
 
 theorem fP_isBigO_top (δ : ℝ) : fP δ =O[atTop] fun t => Real.exp (-1 * t) := by

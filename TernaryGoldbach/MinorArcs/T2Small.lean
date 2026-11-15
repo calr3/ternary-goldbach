@@ -50,7 +50,7 @@ theorem abs_Fq_sub (r : ℕ) : |(Fq r : ℝ) - D * fo r| ≤ 1 := by
   unfold Fq fo
   by_cases ho : r % 2 = 1
   · have hodd : Odd r := Nat.odd_iff.2 ho
-    rw [if_pos ho, if_pos hodd]
+    rw [ite_eq_left ho, ite_eq_left hodd]
     have hs : 0 < σ 1 r := ArithmeticFunction.sigma_pos 1 r (by omega)
     have hs' : (0 : ℝ) < σ 1 r := by exact_mod_cast hs
     rw [Int.cast_mul, Int.cast_natCast]
@@ -67,7 +67,7 @@ theorem abs_Fq_sub (r : ℕ) : |(Fq r : ℝ) - D * fo r| ≤ 1 := by
           refine mul_le_mul (abs_moebius_le' r) ?_ (abs_nonneg _) zero_le_one
           rw [abs_le]; constructor <;> linarith
       _ = 1 := by ring
-  · rw [if_neg ho, if_neg (by rw [Nat.odd_iff]; exact ho)]; simp
+  · rw [ite_eq_right ho, ite_eq_right (by rw [Nat.odd_iff]; exact ho)]; simp
 
 theorem abs_Fq_le (r : ℕ) : |(Fq r : ℝ)| ≤ D := by
   unfold Fq
@@ -457,7 +457,7 @@ theorem T2_eq_ac {n : ℕ} (hn : 1 ≤ n) {S : ℝ} (h1 : (n : ℝ) ≤ S) (h2 :
     have hs1 : (1 : ℝ) ≤ s := by exact_mod_cast (mem_Icc.1 hs).1
     have hs0 : (0 : ℝ) < s := by linarith
     by_cases ho : s % 2 = 1
-    · rw [if_pos (Nat.odd_iff.2 ho), if_pos ho, if_pos ho, if_pos ho, if_pos ho]
+    · rw [ite_eq_left (Nat.odd_iff.2 ho), ite_eq_left ho, ite_eq_left ho, ite_eq_left ho, ite_eq_left ho]
       have hz : 0 < S / s := by positivity
       simp_rw [mul_div_assoc]
       rw [integral_g2_mul hz, ← intervalIntegral.integral_interval_sub_left (a := (0 : ℝ))
@@ -470,7 +470,7 @@ theorem T2_eq_ac {n : ℕ} (hn : 1 ≤ n) {S : ℝ} (h1 : (n : ℝ) ≤ S) (h2 :
       rw [f1, f2]
       field_simp
       ring
-    · rw [if_neg (by rw [Nat.odd_iff]; exact ho), if_neg ho, if_neg ho, if_neg ho, if_neg ho]
+    · rw [ite_eq_right (by rw [Nat.odd_iff]; exact ho), ite_eq_right ho, ite_eq_right ho, ite_eq_right ho, ite_eq_right ho]
       ring
   unfold T2
   rw [hfl, sum_congr rfl hterm, ← mul_sum]
@@ -608,10 +608,10 @@ theorem creal_succ {k : ℕ} (hk : 1 ≤ k) :
   by_cases hsk : s ∣ k
   · have hq : 1 ≤ k / s := Nat.div_pos (Nat.le_of_dvd (by omega) hsk) (by omega)
     rw [div_succ_eq (s := s) hk] at hq
-    simp only [hsk, if_true] at hq ⊢
+    simp only [hsk, ite_true] at hq ⊢
     set q := (k - 1) / s
     by_cases ho : s % 2 = 1
-    · simp only [ho, true_and, if_true]
+    · simp only [ho, true_and, ite_true]
       unfold dg Gcn
       rw [Nat.add_sub_cancel, sum_range_succ]
       push_cast; ring
@@ -642,21 +642,21 @@ theorem areal_succ {k : ℕ} (hk : 1 ≤ k) :
     have hks : ((k / s : ℕ) : ℝ) = k / s := by
       rw [Nat.cast_div hsk (by positivity)]
     have e := div_succ_eq (s := s) hk
-    simp only [hsk, if_true] at e
+    simp only [hsk, ite_true] at e
     by_cases ho : s % 2 = 1
-    · simp only [ho, hsk, true_and, if_true]
+    · simp only [ho, hsk, true_and, ite_true]
       unfold dg
       rw [show k / s - 1 = (k - 1) / s by omega, hks]
       field_simp
       ring
     · simp [ho]
   · have e := div_succ_eq (s := s) hk
-    simp only [hsk, if_false, add_zero] at e
+    simp only [hsk, ite_false, add_zero] at e
     simp [hsk, e]
 
 /-! ### Errors, and `T₂ ≤ 0.37273` on `[16, 700)` -/
 
-theorem abs_dg_sub_le {t : ℕ} (ht : 1 ≤ t) : |(D : ℝ) ^ 2 * dg t - dG t| ≤ 4 * D * (t : ℝ) ^ 3 := by
+theorem abs_dg_sub_le {t : ℕ} (_ht : 1 ≤ t) : |(D : ℝ) ^ 2 * dg t - dG t| ≤ 4 * D * (t : ℝ) ^ 3 := by
   have h1 := abs_Gtil_sub_le t
   have h2 := abs_Gtil_sub_le (t - 1)
   have hD : (0 : ℝ) ≤ D := by positivity

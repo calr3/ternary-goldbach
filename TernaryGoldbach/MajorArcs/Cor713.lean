@@ -68,7 +68,7 @@ theorem log_3e5_le : Real.log 300000 ≤ 12.62 := by
 theorem mul_exp_anti {c t₀ t : ℝ} (hc : 0 < c) (ht₀ : 1 ≤ c * t₀) (ht : t₀ ≤ t) :
     t * Real.exp (-(c * t)) ≤ t₀ * Real.exp (-(c * t₀)) := by
   have ht₀0 : 0 < t₀ := by
-    by_contra h; push_neg at h; nlinarith
+    by_contra h; push Not at h; nlinarith
   have h1 : Real.exp (-(c * t)) = Real.exp (-(c * t₀)) * Real.exp (-(c * (t - t₀))) := by
     rw [← Real.exp_add]; ring_nf
   have h2 : 1 + c * (t - t₀) ≤ Real.exp (c * (t - t₀)) := by

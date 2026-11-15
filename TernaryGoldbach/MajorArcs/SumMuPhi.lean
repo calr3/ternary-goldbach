@@ -63,7 +63,7 @@ theorem mPhi_two_mul (q : ℕ) : mPhi (2 * q) = if Odd q then mPhi q else 0 := b
       have h4 : 2 * 2 ∣ 2 * (k + k) := ⟨k, by ring⟩
       have := hs 2 h4
       norm_num at this
-    unfold mPhi; rw [if_neg hns, zero_div]
+    unfold mPhi; rw [ite_eq_right hns, zero_div]
 
 /-- **The moduli of `𝔐_{8,r₀}`**: `Σ_{q ∈ Qset r₀} μ²(q)/φ(q) = 2 Σ_{q ≤ r₀ odd} μ²(q)/φ(q)`. -/
 theorem sum_Qset_mPhi :
@@ -78,12 +78,12 @@ theorem sum_Qset_mPhi :
     unfold qt
     constructor
     · rintro ⟨⟨⟨h1, -⟩, h2⟩, ho⟩
-      rw [if_neg (Nat.not_even_iff_odd.2 ho)] at h2
+      rw [ite_eq_right (Nat.not_even_iff_odd.2 ho)] at h2
       have : q ≤ 150000 := by exact_mod_cast (by push_cast at h2; linarith : (q : ℝ) ≤ 150000)
       exact ⟨⟨h1, this⟩, ho⟩
     · rintro ⟨⟨h1, h2⟩, ho⟩
       refine ⟨⟨⟨h1, by omega⟩, ?_⟩, ho⟩
-      rw [if_neg (Nat.not_even_iff_odd.2 ho)]
+      rw [ite_eq_right (Nat.not_even_iff_odd.2 ho)]
       have : (q : ℝ) ≤ 150000 := by exact_mod_cast h2
       push_cast; linarith
   have h2 : ((Icc 1 300000).filter fun q => (qt q : ℝ) ≤ 2 * 150000).filter (fun q => ¬Odd q) =
@@ -97,7 +97,7 @@ theorem sum_Qset_mPhi :
       exact ⟨k, ⟨by omega, by omega⟩, by ring⟩
     · rintro ⟨k, ⟨hk1, hk2⟩, rfl⟩
       refine ⟨⟨⟨by omega, by omega⟩, ?_⟩, ⟨k, by ring⟩⟩
-      rw [if_pos ⟨k, by ring⟩]
+      rw [ite_eq_left ⟨k, by ring⟩]
       have : (k : ℝ) ≤ 150000 := by exact_mod_cast hk2
       push_cast; linarith
   rw [h1, h2, sum_image (fun a _ b _ h => by omega)]

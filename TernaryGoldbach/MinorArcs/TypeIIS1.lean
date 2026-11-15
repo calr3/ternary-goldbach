@@ -99,7 +99,7 @@ theorem S1_eq_triples {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 0 < U) :
     · rintro ⟨_, h1, h2⟩; exact ⟨⟨h1, by omega⟩, h2⟩
   rw [hDsum, sq, sum_mul_sum]
   by_cases hc : m ∈ Ioc ⌊max U (B / 2)⌋₊ ⌊B⌋₊ ∧ Odd m
-  · rw [if_pos hc.1, if_pos hc.2]
+  · rw [ite_eq_left hc.1, ite_eq_left hc.2]
     have hmB : B / 2 < m := by
       have := (Nat.floor_lt (le_max_of_le_left hU.le)).1 (mem_Ioc.1 hc.1).1
       exact lt_of_le_of_lt (le_max_right _ _) this
@@ -119,7 +119,7 @@ theorem S1_eq_triples {x U W : ℝ} (hx : 0 < x) (hW : 0 < W) (hU : 0 < U) :
         · rfl
         · rfl]
     symm
-    refine sum_eq_zero fun d₁ _ => sum_eq_zero fun d₂ _ => if_neg ?_
+    refine sum_eq_zero fun d₁ _ => sum_eq_zero fun d₂ _ => ite_eq_right ?_
     rintro ⟨ho, hmB, hd₁, -, hU₁, -⟩
     apply hc
     refine ⟨?_, ho⟩
@@ -155,9 +155,9 @@ theorem sum_innerS_eq {B U : ℝ} (hB : 0 < B) (hU : 1 ≤ U) :
   have hs0 : (0 : ℝ) < s := by exact_mod_cast hs1
   by_cases ho : Odd s
   swap
-  · rw [if_neg ho]; symm
-    exact sum_eq_zero fun _ _ => sum_eq_zero fun _ _ => sum_eq_zero fun _ _ => if_neg (by tauto)
-  rw [if_pos ho, innerS]
+  · rw [ite_eq_right ho]; symm
+    exact sum_eq_zero fun _ _ => sum_eq_zero fun _ _ => sum_eq_zero fun _ _ => ite_eq_right (by tauto)
+  rw [ite_eq_left ho, innerS]
   have hJ : Icc 1 ⌊B / U / s⌋₊ ⊆ I := by
     refine Icc_subset_Icc le_rfl (Nat.floor_le_floor ?_)
     rw [div_div, div_le_iff₀ (by positivity)]
@@ -169,11 +169,11 @@ theorem sum_innerS_eq {B U : ℝ} (hB : 0 < B) (hU : 1 ≤ U) :
   have h1 := (mem_Icc.1 hr₁).1
   by_cases hJ₁ : r₁ ∈ Icc 1 ⌊B / U / s⌋₊
   swap
-  · rw [if_neg hJ₁]; symm
-    refine sum_eq_zero fun r₂ hr₂ => sum_eq_zero fun l hl => if_neg ?_
+  · rw [ite_eq_right hJ₁]; symm
+    refine sum_eq_zero fun r₂ hr₂ => sum_eq_zero fun l hl => ite_eq_right ?_
     rintro ⟨-, -, -, -, -, -, -, -, hU₂, -, hB'⟩
     exact hJ₁ (mem_rrange hU0 hs1 h1 hU₂ hB')
-  rw [if_pos hJ₁, sum_eq_sum_ite_of_subset hJ]
+  rw [ite_eq_left hJ₁, sum_eq_sum_ite_of_subset hJ]
   refine sum_congr rfl fun r₂ hr₂ => ?_
   have h2 := (mem_Icc.1 hr₂).1
   have hL : Ioc ⌊aL (B / U / s) (B / s) r₁ r₂⌋₊ ⌊bL (B / s) r₁ r₂⌋₊ ⊆ I := by
@@ -189,30 +189,30 @@ theorem sum_innerS_eq {B U : ℝ} (hB : 0 < B) (hU : 1 ≤ U) :
     linarith [hl'.2.2.2]
   by_cases hJ₂ : r₂ ∈ Icc 1 ⌊B / U / s⌋₊
   swap
-  · rw [if_neg hJ₂]; symm
-    refine sum_eq_zero fun l hl => if_neg ?_
+  · rw [ite_eq_right hJ₂]; symm
+    refine sum_eq_zero fun l hl => ite_eq_right ?_
     rintro ⟨-, -, -, -, -, -, -, hU₁, -, -, hB'⟩
     refine hJ₂ (mem_rrange hU0 hs1 h2 hU₁ ?_)
     calc (s * r₂ * r₁ * l : ℝ) = s * r₁ * r₂ * l := by ring
       _ ≤ B := hB'
-  rw [if_pos hJ₂, cntSq, sum_eq_sum_ite_of_subset hL]
+  rw [ite_eq_left hJ₂, cntSq, sum_eq_sum_ite_of_subset hL]
   by_cases hg : Nat.Coprime r₁ r₂ ∧ Odd (r₁ * r₂)
   swap
-  · rw [if_neg hg]; symm
-    exact sum_eq_zero fun l _ => if_neg (by tauto)
-  rw [if_pos hg, mul_sum]
+  · rw [ite_eq_right hg]; symm
+    exact sum_eq_zero fun l _ => ite_eq_right (by tauto)
+  rw [ite_eq_left hg, mul_sum]
   refine sum_congr rfl fun l hl => ?_
   have hmem := mem_lrange (l := l) hB hU0 hs1 h1 h2
   by_cases hs : Squarefree r₁ ∧ Squarefree r₂
   · by_cases hl' : l ∈ Ioc ⌊aL (B / U / s) (B / s) r₁ r₂⌋₊ ⌊bL (B / s) r₁ r₂⌋₊
     · have := hmem.1 hl'
-      rw [if_pos hl']
+      rw [ite_eq_left hl']
       by_cases hc : Squarefree l ∧ Nat.Coprime l (2 * (r₁ * r₂))
-      · rw [if_pos hc, mul_one, if_pos]
+      · rw [ite_eq_left hc, mul_one, ite_eq_left]
         exact ⟨ho, hg.1, hg.2, hs.1, hs.2, hc.1, hc.2, this.1, this.2.1, this.2.2.1, this.2.2.2⟩
-      · rw [if_neg hc, mul_zero, if_neg]
+      · rw [ite_eq_right hc, mul_zero, ite_eq_right]
         rintro ⟨-, -, -, -, -, h5, h6, -⟩; exact hc ⟨h5, h6⟩
-    · rw [if_neg hl', mul_zero, if_neg]
+    · rw [ite_eq_right hl', mul_zero, ite_eq_right]
       rintro ⟨-, -, -, -, -, -, -, h7, h8, h9, h10⟩; exact hl' (hmem.2 ⟨h7, h8, h9, h10⟩)
   · have : (μ r₁ : ℝ) * μ r₂ = 0 := by
       rcases not_and_or.1 hs with h | h <;>
@@ -221,7 +221,7 @@ theorem sum_innerS_eq {B U : ℝ} (hB : 0 < B) (hU : 1 ≤ U) :
     split_ifs <;> simp_all
 
 /-- The change of variables `(s, r₁, r₂, l) ↦ (s r₁ r₂ l, r₁ l, r₂ l)` between (5.7) and (5.8). -/
-theorem quads_eq_triples {B U : ℝ} (hB : 0 < B) (hU : 0 < U) :
+theorem quads_eq_triples {B U : ℝ} (hB : 0 < B) (_hU : 0 < U) :
     ∑ q ∈ (Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊ ×ˢ Icc 1 ⌊B⌋₊).filter
       (fun q : ℕ × ℕ × ℕ × ℕ => Odd q.1 ∧ Nat.Coprime q.2.1 q.2.2.1 ∧ Odd (q.2.1 * q.2.2.1) ∧
         Squarefree q.2.1 ∧ Squarefree q.2.2.1 ∧ Squarefree q.2.2.2 ∧

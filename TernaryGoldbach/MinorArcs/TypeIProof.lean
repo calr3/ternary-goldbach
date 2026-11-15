@@ -412,7 +412,7 @@ theorem block_R3 {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) (hq : 1 �
     have hnR : (n : ℝ) ≤ y + q := by
       have := (Int.cast_le.2 hn.2).trans (Int.floor_le (min (R + (j + 1) * q) D))
       have := min_le_left (R + (j + 1) * q) D
-      simp only [y] at *; push_cast at *; linarith
+      simp only [y] at *; linarith
     have hn1 : (0 : ℤ) < n := by exact_mod_cast (show (0 : ℝ) < n by linarith)
     have hcast : ((n.toNat : ℕ) : ℤ) = n := Int.toNat_of_nonneg hn1.le
     have hmR : ((n.toNat : ℕ) : ℝ) = n := by exact_mod_cast hcast
@@ -524,7 +524,7 @@ theorem sum_odd_Icc (K : ℕ) :
     refine ⟨by push_cast; exact h1, ?_⟩
     rw [sum_Icc_succ_top (by omega), h1]
     have : Odd (2 * (K + 1) + 1) := ⟨K + 1, rfl⟩
-    simp only [this, if_true]; push_cast; ring
+    simp only [this, ite_true]; push_cast; ring
 
 /-- `∑_{m ≤ N, m odd} m ≤ ((N + 1)/2)²`. -/
 theorem sum_odd_le (N : ℕ) :
@@ -549,27 +549,27 @@ theorem norm_eta2hat_le_minInv (δ : ℝ) : ‖eta2hat (-(δ / 2))‖ ≤ minInv
     congr 1; ring
 
 /-- `[m odd] μ(qm)/m = μ(q) [(m, 2q) = 1] μ(m)/m` for `q` odd. -/
-theorem moebius_odd_term {q : ℕ} (hq : Odd q) (m : ℕ) :
+theorem moebius_odd_term {q : ℕ} (_hq : Odd q) (m : ℕ) :
     (if Odd m then ((μ (q * m) : ℤ) : ℝ) / m else 0) =
       (μ q : ℝ) * (if Nat.Coprime m (2 * q) then (μ m : ℝ) / m * 1 else 0) := by
   by_cases hm : Odd m
-  · rw [if_pos hm]
+  · rw [ite_eq_left hm]
     by_cases hc : Nat.Coprime m q
     · have h2 : Nat.Coprime m (2 * q) := Nat.Coprime.mul_right
         (Nat.coprime_two_right.2 hm) hc
-      rw [if_pos h2, ArithmeticFunction.IsMultiplicative.map_mul_of_coprime
+      rw [ite_eq_left h2, ArithmeticFunction.IsMultiplicative.map_mul_of_coprime
         ArithmeticFunction.isMultiplicative_moebius hc.symm]
       push_cast; ring
     · have h2 : ¬ Nat.Coprime m (2 * q) := fun h => hc (Nat.Coprime.coprime_mul_left_right h)
-      rw [if_neg h2, ArithmeticFunction.moebius_eq_zero_of_not_squarefree
+      rw [ite_eq_right h2, ArithmeticFunction.moebius_eq_zero_of_not_squarefree
         (fun h => hc (Nat.squarefree_mul_iff.1 h).1.symm)]
       simp
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     have h2 : ¬ Nat.Coprime m (2 * q) := by
       intro h
       have := Nat.Coprime.coprime_mul_right_right h
       rw [Nat.coprime_two_right] at this; exact hm this
-    rw [if_neg h2, mul_zero]
+    rw [ite_eq_right h2, mul_zero]
 
 /-- The main part: `∑_{m ≤ M, m odd, q | m} μ(m) T_{m,∘}(α)`, indexed by `m = qm'`. -/
 noncomputable def mainPart (α x M : ℝ) (q : ℕ) : ℂ :=
@@ -593,7 +593,7 @@ theorem norm_mainPart_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) 
   · -- `q` even: no odd multiples of `q`.
     have : mainPart α x M q = 0 := by
       refine sum_eq_zero fun m' _ => ?_
-      rw [if_neg]; rw [Nat.not_odd_iff_even]; exact hqe.mul_right m'
+      rw [ite_eq_right]; rw [Nat.not_odd_iff_even]; exact hqe.mul_right m'
     rw [this, norm_zero]; linarith
   -- `q` odd.
   set N := ⌊M / q⌋₊
@@ -629,11 +629,11 @@ theorem norm_mainPart_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) 
     have hodd : Odd (q * m') ↔ Odd m' := by
       rw [Nat.odd_mul]; exact ⟨fun h => h.2, fun h => ⟨hqo, h⟩⟩
     by_cases ho : Odd m'
-    · rw [if_pos (hodd.2 ho), if_pos ho, if_pos ho, (hE m' ho hm'N).1]
+    · rw [ite_eq_left (hodd.2 ho), ite_eq_left ho, ite_eq_left ho, (hE m' ho hm'N).1]
       have hm'R : (0 : ℝ) < m' := by exact_mod_cast hm'1
       push_cast
       field_simp
-    · rw [if_neg (fun h => ho (hodd.1 h)), if_neg ho, if_neg ho]; simp
+    · rw [ite_eq_right (fun h => ho (hodd.1 h)), ite_eq_right ho, ite_eq_right ho]; simp
   rw [hsplit, norm_mul, norm_e, one_mul]
   refine (norm_add_le _ _).trans (add_le_add ?_ ?_)
   · -- The main term.
@@ -656,13 +656,13 @@ theorem norm_mainPart_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x) 
         q * c₀ * (π ^ 2 - 4) / (2 * π ^ 2 * x) * (if Odd m' then (m' : ℝ) else 0) := by
       intro m' hm'
       by_cases ho : Odd m'
-      · rw [if_pos ho, if_pos ho, norm_mul]
+      · rw [ite_eq_left ho, ite_eq_left ho, norm_mul]
         have hmu : ‖(μ (q * m') : ℂ)‖ ≤ 1 := by
           rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
         have hE2 := (hE m' ho (mem_Icc.1 hm').2).2
         calc ‖(μ (q * m') : ℂ)‖ * ‖E m'‖ ≤ 1 * ‖E m'‖ := by gcongr
           _ ≤ _ := by rw [one_mul]; refine hE2.trans (le_of_eq ?_); push_cast; field_simp
-      · rw [if_neg ho, if_neg ho, norm_zero, mul_zero]
+      · rw [ite_eq_right ho, ite_eq_right ho, norm_zero, mul_zero]
     refine (sum_le_sum hterm).trans ?_
     rw [← mul_sum]
     have hodd := sum_odd_le N
@@ -855,13 +855,13 @@ theorem norm_restPart_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx :
     refine sum_le_sum fun m hm => ?_
     simp only [g, Tn, Int.toNat_natCast]
     by_cases h : Odd m ∧ ¬ ((q : ℕ) ∣ m ∧ (m : ℝ) ≤ M)
-    · rw [if_pos h, if_pos (by
+    · rw [ite_eq_left h, ite_eq_left (by
         intro ⟨hd, hle⟩; exact h.2 ⟨by exact_mod_cast hd, by exact_mod_cast hle⟩), norm_mul]
       have : ‖(μ m : ℂ)‖ ≤ 1 := by
         rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
       calc ‖(μ m : ℂ)‖ * ‖Todd α x m‖ ≤ 1 * ‖Todd α x m‖ := by gcongr
         _ = _ := one_mul _
-    · rw [if_neg h, norm_zero]; split_ifs <;> simp [norm_nonneg]
+    · rw [ite_eq_right h, norm_zero]; split_ifs <;> simp [norm_nonneg]
   -- Step 2: split the range.
   have h2 : ∑ n ∈ Ioc (0 : ℤ) ⌊D⌋, g n ≤
       ∑ n ∈ Ioc 0 ⌊(q : ℝ) / 2⌋, Tn α x n +
@@ -876,22 +876,22 @@ theorem norm_restPart_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx :
       have hgT : g n ≤ Tn α x n := by simp only [g]; split_ifs <;> linarith
       rw [mem_Ioc] at hn
       by_cases hA : n ≤ ⌊(q : ℝ) / 2⌋
-      · rw [if_pos (mem_Ioc.2 ⟨hn.1, hA⟩)]
+      · rw [ite_eq_left (mem_Ioc.2 ⟨hn.1, hA⟩)]
         have : 0 ≤ (if n ∈ Ioc ⌊(q : ℝ) / 2⌋ ⌊D'⌋ then (if (q : ℤ) ∣ n then 0 else Tn α x n) else 0) := by
           split_ifs <;> linarith
         have : 0 ≤ (if n ∈ Ioc ⌊R⌋ ⌊D⌋ then Tn α x n else 0) := by split_ifs <;> linarith
         linarith
       push Not at hA
       by_cases hB : n ≤ ⌊D'⌋
-      · rw [if_pos (mem_Ioc.2 ⟨hA, hB⟩), if_neg (by rw [mem_Ioc]; omega)]
+      · rw [ite_eq_left (mem_Ioc.2 ⟨hA, hB⟩), ite_eq_right (by rw [mem_Ioc]; omega)]
         have : 0 ≤ (if n ∈ Ioc ⌊R⌋ ⌊D⌋ then Tn α x n else 0) := by split_ifs <;> linarith
         by_cases hd : (q : ℤ) ∣ n
-        · rw [if_pos hd]
+        · rw [ite_eq_left hd]
           have hnD' : (n : ℝ) ≤ D' := (Int.cast_le.2 hB).trans (Int.floor_le _)
           have : g n = 0 := by
-            simp only [g]; rw [if_neg (not_not.2 ⟨hd, hnD'.trans hMD'⟩)]
+            simp only [g]; rw [ite_eq_right (not_not.2 ⟨hd, hnD'.trans hMD'⟩)]
           linarith
-        · rw [if_neg hd]; linarith
+        · rw [ite_eq_right hd]; linarith
       push Not at hB
       have hnR : ⌊R⌋ < n := by
         have h1 : D' < n := by
@@ -904,8 +904,8 @@ theorem norm_restPart_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx :
           linarith
         have : R < n := max_lt h1 h2
         exact Int.floor_lt.2 this
-      rw [if_neg (by rw [mem_Ioc]; omega), if_neg (by rw [mem_Ioc]; omega),
-        if_pos (mem_Ioc.2 ⟨hnR, hn.2⟩)]
+      rw [ite_eq_right (by rw [mem_Ioc]; omega), ite_eq_right (by rw [mem_Ioc]; omega),
+        ite_eq_left (mem_Ioc.2 ⟨hnR, hn.2⟩)]
       linarith
     refine (sum_le_sum hpt).trans ?_
     rw [sum_add_distrib, sum_add_distrib, sum_ite_mem, sum_ite_mem, sum_ite_mem]
@@ -1105,13 +1105,13 @@ theorem norm_restPart_le_sum {α x D M : ℝ} {q : ℕ} (hD : 0 ≤ D) :
   refine sum_le_sum fun m hm => ?_
   simp only [Tn, Int.toNat_natCast]
   by_cases h : Odd m ∧ ¬ ((q : ℕ) ∣ m ∧ (m : ℝ) ≤ M)
-  · rw [if_pos h, if_pos (by
+  · rw [ite_eq_left h, ite_eq_left (by
       intro ⟨hd, hle⟩; exact h.2 ⟨by exact_mod_cast hd, by exact_mod_cast hle⟩), norm_mul]
     have : ‖(μ m : ℂ)‖ ≤ 1 := by
       rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
     calc ‖(μ m : ℂ)‖ * ‖Todd α x m‖ ≤ 1 * ‖Todd α x m‖ := by gcongr
       _ = _ := one_mul _
-  · rw [if_neg h, norm_zero]; split_ifs <;> simp [norm_nonneg]
+  · rw [ite_eq_right h, norm_zero]; split_ifs <;> simp [norm_nonneg]
 
 set_option maxHeartbeats 1000000 in
 /-- **[H, Lemma 4.2.2], case (a), terms other than the main term**: for `|δ| ≥ 1/2c₂`, the terms
@@ -1135,7 +1135,7 @@ theorem norm_restPart_le_caseA {α x δ Q₀ D ε : ℝ} {a k : ℤ} {q : ℕ} (
     rw [hQrdef, le_div_iff₀ (by positivity)]; nlinarith
   have hqQr : (q : ℝ) ≤ Qr := hqQ₀.trans hQ₀Qr
   set M := Mof x δ q D
-  have hMdef : M = min (Qr / 2) D := by simp only [M, Mof, if_neg hδ0]; rfl
+  have hMdef : M = min (Qr / 2) D := by simp only [M, Mof, ite_eq_right hδ0]; rfl
   have hM0 : 0 < M := by rw [hMdef]; exact lt_min (by positivity) (by linarith)
   have hMQ : M ≤ Qr / 2 := by rw [hMdef]; exact min_le_left _ _
   have hMD : M ≤ D := by rw [hMdef]; exact min_le_right _ _
@@ -1174,8 +1174,8 @@ theorem norm_restPart_le_caseA {α x δ Q₀ D ε : ℝ} {a k : ℤ} {q : ℕ} (
     · rw [mem_Ioc] at hn
       have hnM : (n : ℝ) ≤ M := (Int.cast_le.2 hn.2).trans (Int.floor_le _)
       by_cases hd : (q : ℤ) ∣ n
-      · rw [if_neg (not_not.2 ⟨hd, hnM⟩), if_pos hd]
-      · rw [if_pos (fun h => hd h.1), if_neg hd]
+      · rw [ite_eq_right (not_not.2 ⟨hd, hnM⟩), ite_eq_left hd]
+      · rw [ite_eq_left (fun h => hd h.1), ite_eq_right hd]
     · split_ifs <;> linarith [Tn_nonneg α x n]
   have hA1 := sum_A1 hx hq hcop h2α hqQr hexact.le hM0.le hMQ (α := α)
   have hA1' : ∑ n ∈ Ioc ⌊(0 : ℝ)⌋ ⌊M⌋, (if (q : ℤ) ∣ n then 0 else Tn α x n) ≤
@@ -1302,13 +1302,13 @@ theorem lemma_4_2_2_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     · refine ⟨max Q₀ (2 * D), hqQ₀.trans (le_max_left _ _), by simp [hδ0], ?_, ?_⟩
       · have := le_max_right Q₀ (2 * D)
         exact (min_le_right _ _).trans (by linarith)
-      · rw [Mof, if_pos hδ0, min_eq_right]
+      · rw [Mof, ite_eq_left hδ0, min_eq_right]
         have := le_max_right Q₀ (2 * D); linarith
     · have hδpos : 0 < |δ| := abs_pos.2 hδ0
       have hQ₀le : Q₀ ≤ x / (|δ| * q) := by
         rw [abs_div, abs_of_pos hx, div_le_div_iff₀ hx (by positivity)] at hδQ₀
         rw [le_div_iff₀ (by positivity)]; nlinarith
-      refine ⟨x / (|δ| * q), hqQ₀.trans hQ₀le, ?_, ?_, by rw [Mof, if_neg hδ0]⟩
+      refine ⟨x / (|δ| * q), hqQ₀.trans hQ₀le, ?_, ?_, by rw [Mof, ite_eq_right hδ0]⟩
       · rw [abs_div, abs_of_pos hx]; field_simp; rfl
       · rcases hcase with hc | hc
         · refine (min_le_left _ _).trans ?_
@@ -1352,7 +1352,7 @@ theorem lemma_4_2_2_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
   have hδpos : 0 < |δ| := lt_of_lt_of_le (by have := c₂_pos; positivity) hδ
   have hδ0 : δ ≠ 0 := abs_pos.1 hδpos
   set M := Mof x δ q D
-  have hMdef : M = min (x / (|δ| * q) / 2) D := by simp only [M, Mof, if_neg hδ0]
+  have hMdef : M = min (x / (|δ| * q) / 2) D := by simp only [M, Mof, ite_eq_right hδ0]
   have hMD : M ≤ D := by rw [hMdef]; exact min_le_right _ _
   have hM0 : 0 ≤ M := by rw [hMdef]; exact le_min (by positivity) (by linarith)
   have hMδ : |δ| * M ≤ x / 2 := by
@@ -1370,7 +1370,7 @@ theorem lemma_4_2_2_caseA {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
 
 /-- **[H, Lemma 4.2.2]** for `η = η₂`. -/
 theorem lemma_4_2_2 {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx2 α x δ a q Q₀)
-    (hQ₀ : 16 ≤ Q₀) (hD : 1 ≤ D) (hDx : D ≤ x) :
+    (_hQ₀ : 16 ≤ Q₀) (hD : 1 ≤ D) (hDx : D ≤ x) :
     ((|δ| ≤ 1 / (2 * c₂) ∨ D ≤ Q₀ / 2) →
       ‖typeI α x D‖ ≤ bound_4_30 x δ q D + bound_4_31 x q D) ∧
     (1 / (2 * c₂) ≤ |δ| → ∀ ε, 0 < ε → ε ≤ 1 →

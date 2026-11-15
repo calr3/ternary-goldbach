@@ -119,7 +119,7 @@ theorem mellin_fδ_one (δ : ℝ) :
       simp [hg, this])).symm
   rw [hR]
   refine setIntegral_congr_fun measurableSet_Ioi fun t (ht : 0 < t) => ?_
-  simp only [hg, sub_self, Complex.cpow_zero, one_smul, if_pos ht, fδ, smul_eq_mul]
+  simp only [hg, sub_self, Complex.cpow_zero, ite_eq_left ht, fδ, smul_eq_mul]
   push_cast; ring_nf
 
 /-- The error term for `q = 1`. -/
@@ -190,7 +190,7 @@ theorem norm_SsumG_zeta_le (δ : ℝ) {x : ℝ} (hx : 1 ≤ x) {T0 : ℝ} (hT0 :
 /-! ## Monotonicity in `|δ|` -/
 
 theorem E2g_mono_A {B : ℝ → ℝ} {κ T0 EB' EA1 EA2 ρB ρ1 ρ2 : ℝ} (hZ : 0 ≤ Z3g B T0)
-    (hc : 0 ≤ c3g κ T0) (hEA1 : 0 ≤ EA1) (hEA : EA1 ≤ EA2) (hρ10 : 0 ≤ ρ1) (hρ : ρ1 ≤ ρ2)
+    (hc : 0 ≤ c3g κ T0) (hEA1 : 0 ≤ EA1) (hEA : EA1 ≤ EA2) (_hρ10 : 0 ≤ ρ1) (hρ : ρ1 ≤ ρ2)
     (hρ2 : ρ2 < 1) : E2g B κ T0 EB' EA1 ρB ρ1 ≤ E2g B κ T0 EB' EA2 ρB ρ2 := by
   unfold E2g
   have h1 := inv_one_sub_mono hρ hρ2

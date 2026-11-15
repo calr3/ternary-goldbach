@@ -9,7 +9,7 @@ open Real
 namespace TernaryGoldbach.MinorArcs
 
 /-- `2√(c₀c)/π ≤ 3.6014 √c`. -/
-theorem two_sqrt_c0_mul_le {c : ℝ} (hc : 0 ≤ c) : 2 * √(c₀ * c) / π ≤ 3.6014 * √c := by
+theorem two_sqrt_c0_mul_le {c : ℝ} (_hc : 0 ≤ c) : 2 * √(c₀ * c) / π ≤ 3.6014 * √c := by
   obtain ⟨hc0a, hc0b⟩ := sqrt_c₀_bounds
   have hpi := Real.pi_gt_d6
   rw [Real.sqrt_mul (by norm_num [c₀]) c, div_le_iff₀ (by linarith)]
@@ -21,7 +21,7 @@ set_option maxHeartbeats 1600000 in
 /-- The rest of `S_{I,2}` for `|δ| ≥ 1/2c₂` ([H, (6.14)], `ε = 0.07`) at the parameters:
 `≤ 2.5106 x/√t + (13.767 log t + 19.997) · 2x/t + 0.555 x^{5/6}`. -/
 theorem typeI2_large_rest_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
-    (hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3)
+    (_hqT : (q : ℝ) ≤ T / 6) (ht2 : 2 ≤ delta0 δ * q) (htT : delta0 δ * q ≤ T / 3)
     (hδ : 1 / (2 * c₂) ≤ |δ|) :
     let t := delta0 δ * q
     let U := (U1 T t : ℝ)

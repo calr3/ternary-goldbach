@@ -262,26 +262,26 @@ theorem integrable_ite_abs_lt {T : ℝ → ℝ} (hT : Continuous T) (w : ℝ) :
 
 theorem continuous_T {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖) (q : ℕ) :
     Continuous fun β : ℝ => ∑ b ∈ Bset q, ‖expTsum a ((b : ℝ) / q + β)‖ ^ 2 :=
-  continuous_finset_sum _ fun _ _ =>
+  continuous_finsetSum _ fun _ _ =>
     ((TernaryGoldbach.continuous_expTsum ha).comp (continuous_const.add continuous_id)).norm.pow 2
 
 theorem integrable_Farc {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖) (δ₀ R x : ℝ) :
     Integrable fun β => Farc a δ₀ R x β :=
-  integrable_finset_sum _ fun q _ => integrable_ite_abs_lt (continuous_T ha q) _
+  integrable_finsetSum _ fun q _ => integrable_ite_abs_lt (continuous_T ha q) _
 
 /-- `Σ_{q,b} ∫_{J_{q,b}} |S|² = ∫_ℝ F_R`. -/
 theorem sum_arcs_eq_integral_Farc {a : ℕ → ℂ} (ha : Summable fun n => ‖a n‖) (δ₀ R x : ℝ) :
     ∑ q ∈ Qset R, ∑ b ∈ Bset q, ∫ y in arc δ₀ R x q b, ‖expTsum a y‖ ^ 2 =
       ∫ β, Farc a δ₀ R x β := by
   unfold Farc
-  rw [integral_finset_sum _ fun q _ => integrable_ite_abs_lt (continuous_T ha q) _]
+  rw [integral_finsetSum _ fun q _ => integrable_ite_abs_lt (continuous_T ha q) _]
   refine Finset.sum_congr rfl fun q _ => ?_
   simp_rw [arc, setIntegral_Ioo_translate]
   have hint : ∀ b ∈ Bset q, Integrable fun β =>
       if |β| < wrad δ₀ R x q then ‖expTsum a ((b : ℝ) / q + β)‖ ^ 2 else 0 := fun b _ =>
     integrable_ite_abs_lt (((TernaryGoldbach.continuous_expTsum ha).comp
       (continuous_const.add continuous_id)).norm.pow 2) _
-  rw [← integral_finset_sum _ hint]
+  rw [← integral_finsetSum _ hint]
   refine integral_congr_ae (Filter.Eventually.of_forall fun β => ?_)
   simp only
   split_ifs <;> simp

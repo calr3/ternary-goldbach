@@ -155,16 +155,16 @@ theorem moebius_odd_term_w {q : ℕ} (hq : Odd q) (m : ℕ) (w : ℝ) :
       (μ q : ℝ) * (if Nat.Coprime m (2 * q) then (μ m : ℝ) / m * w else 0) := by
   have h := moebius_odd_term hq m
   by_cases hm : Odd m
-  · rw [if_pos hm] at h ⊢
+  · rw [ite_eq_left hm] at h ⊢
     by_cases hc : Nat.Coprime m (2 * q)
-    · rw [if_pos hc] at h ⊢
+    · rw [ite_eq_left hc] at h ⊢
       rw [h]; ring
-    · rw [if_neg hc] at h ⊢
+    · rw [ite_eq_right hc] at h ⊢
       rw [h]; ring
-  · rw [if_neg hm]
+  · rw [ite_eq_right hm]
     have hc : ¬ Nat.Coprime m (2 * q) := fun hc =>
       hm (Nat.coprime_two_right.1 (Nat.Coprime.coprime_mul_right_right hc))
-    rw [if_neg hc, mul_zero]
+    rw [ite_eq_right hc, mul_zero]
 
 theorem mul_log_le_inv_e {u : ℝ} (hu : 0 < u) : u * (-Real.log u) ≤ 1 / rexp 1 := by
   have h := Real.log_le_sub_one_of_pos (show 0 < 1 / (rexp 1 * u) by positivity)
@@ -220,7 +220,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
   rcases Nat.even_or_odd q with hqe | hqo
   · have : mainPartL α x M q = 0 := by
       refine sum_eq_zero fun m' _ => ?_
-      rw [if_neg]; rw [Nat.not_odd_iff_even]; exact hqe.mul_right m'
+      rw [ite_eq_right]; rw [Nat.not_odd_iff_even]; exact hqe.mul_right m'
     rw [this, norm_zero]; linarith
   set N := ⌊M / q⌋₊
   have hNM : (N : ℝ) ≤ M / q := Nat.floor_le (by positivity)
@@ -263,7 +263,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
     have hodd : Odd (q * m') ↔ Odd m' := by
       rw [Nat.odd_mul]; exact ⟨fun h => h.2, fun h => ⟨hqo, h⟩⟩
     by_cases ho : Odd m'
-    · rw [if_pos (hodd.2 ho), if_pos ho, if_pos ho, if_pos ho, (hE m' ho hm'1 hm'N).1]
+    · rw [ite_eq_left (hodd.2 ho), ite_eq_left ho, ite_eq_left ho, ite_eq_left ho, (hE m' ho hm'1 hm'N).1]
       have hm'R : (0 : ℝ) < m' := by exact_mod_cast hm'1
       have hqm : ((q * m' : ℕ) : ℝ) = q * m' := by push_cast; ring
       have hρ : 4 ≤ x / (q * m' : ℕ) := by
@@ -275,7 +275,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
       push_cast
       field_simp
       ring
-    · rw [if_neg (fun h => ho (hodd.1 h)), if_neg ho, if_neg ho, if_neg ho]; simp
+    · rw [ite_eq_right (fun h => ho (hodd.1 h)), ite_eq_right ho, ite_eq_right ho, ite_eq_right ho]; simp
   rw [hsplit, norm_mul, norm_e, one_mul]
   set XL : ℂ := ((x / (2 * q) : ℝ) : ℂ) * ηL *
         ((∑ m' ∈ Icc 1 N, (if Odd m' then ((μ (q * m') : ℤ) : ℝ) / m' * 1 else 0) : ℝ) : ℂ)
@@ -326,7 +326,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
           (if Odd m' then ((q : ℝ) * m') * (Real.log x - Real.log (q * m')) else 0) := by
       intro m' hm'
       by_cases ho : Odd m'
-      · rw [if_pos ho, if_pos ho, norm_mul]
+      · rw [ite_eq_left ho, ite_eq_left ho, norm_mul]
         have hmu : ‖(μ (q * m') : ℂ)‖ ≤ 1 := by
           rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
         have hE2 := (hE m' ho (mem_Icc.1 hm').1 (mem_Icc.1 hm').2).2
@@ -336,7 +336,7 @@ theorem norm_mainPartL_le {α x δ M D : ℝ} {a k : ℤ} {q : ℕ} (hx : 0 < x)
             rw [one_mul]; refine hE2.trans (le_of_eq ?_)
             push_cast
             rw [Real.log_div hx.ne' (by positivity : (0:ℝ) < q * m').ne']; field_simp
-      · rw [if_neg ho, if_neg ho, norm_zero, mul_zero]
+      · rw [ite_eq_right ho, ite_eq_right ho, norm_zero, mul_zero]
     refine (sum_le_sum hterm).trans ?_
     rw [← mul_sum]
     have hpi2 : (0 : ℝ) ≤ π ^ 2 - 4 := by have := Real.pi_gt_three; nlinarith
@@ -709,7 +709,7 @@ theorem sum_R3L {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hx : 1 < x) (hq : 1 ≤
       have hnR : (n : ℝ) ≤ y + q := by
         have := (Int.cast_le.2 hn.2).trans (Int.floor_le (min (R + (j + 1) * q) D))
         have := min_le_left (R + (j + 1) * q) D
-        simp only [y] at *; push_cast at *; linarith
+        simp only [y] at *; linarith
       have hn1 : (0 : ℤ) < n := by exact_mod_cast (show (0 : ℝ) < n by linarith)
       have hcast : ((n.toNat : ℕ) : ℤ) = n := Int.toNat_of_nonneg hn1.le
       have hmR : ((n.toNat : ℕ) : ℝ) = n := by exact_mod_cast hcast
@@ -1000,14 +1000,14 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
     refine sum_le_sum fun m hm => ?_
     simp only [g, TLn, Int.toNat_natCast]
     by_cases h : Odd m ∧ ¬ ((q : ℕ) ∣ m ∧ (m : ℝ) ≤ M)
-    · rw [if_pos h, if_pos (by
+    · rw [ite_eq_left h, ite_eq_left (by
         intro ⟨hd, hle⟩; exact h.2 ⟨by exact_mod_cast hd, by exact_mod_cast hle⟩), norm_mul]
       have : ‖(μ m : ℂ)‖ ≤ 1 := by
         rw [Complex.norm_intCast]; exact_mod_cast ArithmeticFunction.abs_moebius_le_one
       calc ‖(μ m : ℂ)‖ * ‖ToddG (eta2log (x / m)) α x m‖ ≤ 1 * ‖ToddG (eta2log (x / m)) α x m‖ := by
             gcongr
         _ = _ := one_mul _
-    · rw [if_neg h, norm_zero]; split_ifs <;> simp [norm_nonneg]
+    · rw [ite_eq_right h, norm_zero]; split_ifs <;> simp [norm_nonneg]
   -- Step 2: split the range.
   have h2 : ∑ n ∈ Ioc (0 : ℤ) ⌊D⌋, g n ≤
       ∑ n ∈ Ioc 0 ⌊min ((q : ℝ) / 2) D⌋, TLn α x n +
@@ -1026,7 +1026,7 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
           rw [Int.le_floor]
           exact le_min ((Int.cast_le.2 hA).trans (Int.floor_le _))
             ((Int.cast_le.2 hn.2).trans (Int.floor_le _))
-        rw [if_pos (mem_Ioc.2 ⟨hn.1, hmin⟩)]
+        rw [ite_eq_left (mem_Ioc.2 ⟨hn.1, hmin⟩)]
         have : 0 ≤ (if n ∈ Ioc ⌊(q : ℝ) / 2⌋ ⌊D'⌋ then (if (q : ℤ) ∣ n then 0 else TLn α x n) else 0) := by
           split_ifs <;> linarith
         have : 0 ≤ (if n ∈ Ioc ⌊R⌋ ⌊D⌋ then TLn α x n else 0) := by split_ifs <;> linarith
@@ -1038,15 +1038,15 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
         omega
       by_cases hB : n ≤ ⌊D'⌋
       · have hRR : ⌊D'⌋ ≤ ⌊R⌋ := Int.floor_mono (le_max_left _ _)
-        rw [if_neg hnotA, if_pos (mem_Ioc.2 ⟨hA, hB⟩),
-          if_neg (show n ∉ Ioc ⌊R⌋ ⌊D⌋ by rw [mem_Ioc]; omega)]
+        rw [ite_eq_right hnotA, ite_eq_left (mem_Ioc.2 ⟨hA, hB⟩),
+          ite_eq_right (show n ∉ Ioc ⌊R⌋ ⌊D⌋ by rw [mem_Ioc]; omega)]
         by_cases hd : (q : ℤ) ∣ n
-        · rw [if_pos hd]
+        · rw [ite_eq_left hd]
           have hnD' : (n : ℝ) ≤ D' := (Int.cast_le.2 hB).trans (Int.floor_le _)
           have : g n = 0 := by
-            simp only [g]; rw [if_neg (not_not.2 ⟨hd, hnD'.trans hMD'⟩)]
+            simp only [g]; rw [ite_eq_right (not_not.2 ⟨hd, hnD'.trans hMD'⟩)]
           linarith
-        · rw [if_neg hd]; linarith
+        · rw [ite_eq_right hd]; linarith
       push Not at hB
       have hnR : ⌊R⌋ < n := by
         have h1 : D' < n := by
@@ -1058,7 +1058,7 @@ theorem norm_restPartL_le_caseB {α x δ Q M D : ℝ} {a k : ℤ} {q : ℕ} (hx 
           have : ((⌊(q : ℝ) / 2⌋ : ℤ) : ℝ) + 1 ≤ n := by exact_mod_cast hA
           linarith
         exact Int.floor_lt.2 (max_lt h1 h2)
-      rw [if_neg hnotA, if_neg (by rw [mem_Ioc]; omega), if_pos (mem_Ioc.2 ⟨hnR, hn.2⟩)]
+      rw [ite_eq_right hnotA, ite_eq_right (by rw [mem_Ioc]; omega), ite_eq_left (mem_Ioc.2 ⟨hnR, hn.2⟩)]
       linarith
     refine (sum_le_sum hpt).trans ?_
     rw [sum_add_distrib, sum_add_distrib, sum_ite_mem, sum_ite_mem, sum_ite_mem]
@@ -1203,13 +1203,13 @@ theorem lemma_4_2_3_caseB {α x δ Q₀ D : ℝ} {a : ℤ} {q : ℕ} (h : Approx
     · refine ⟨max Q₀ (2 * D), hqQ₀.trans (le_max_left _ _), by simp [hδ0], ?_, ?_⟩
       · have := le_max_right Q₀ (2 * D)
         exact (min_le_right _ _).trans (by linarith)
-      · rw [Mof, if_pos hδ0, min_eq_right]
+      · rw [Mof, ite_eq_left hδ0, min_eq_right]
         have := le_max_right Q₀ (2 * D); linarith
     · have hδpos : 0 < |δ| := abs_pos.2 hδ0
       have hQ₀le : Q₀ ≤ x / (|δ| * q) := by
         rw [abs_div, abs_of_pos hx0, div_le_div_iff₀ hx0 (by positivity)] at hδQ₀
         rw [le_div_iff₀ (by positivity)]; nlinarith
-      refine ⟨x / (|δ| * q), hqQ₀.trans hQ₀le, ?_, ?_, by rw [Mof, if_neg hδ0]⟩
+      refine ⟨x / (|δ| * q), hqQ₀.trans hQ₀le, ?_, ?_, by rw [Mof, ite_eq_right hδ0]⟩
       · rw [abs_div, abs_of_pos hx0]; field_simp; rfl
       · rcases hcase with hc | hc
         · refine (min_le_left _ _).trans ?_

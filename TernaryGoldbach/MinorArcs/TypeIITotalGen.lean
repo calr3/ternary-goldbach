@@ -107,7 +107,7 @@ theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V :
         ((β * (1 + Real.log c / L)) * (h / β)) := by
       simp only [P]
       rw [mul_pow, Real.sq_sqrt (by positivity), hlogW]
-      field_simp; try ring
+      field_simp
     rw [← Real.sqrt_mul (by positivity), e1, Real.sqrt_mul (by positivity),
       Real.sqrt_sq (by positivity)]
     gcongr
@@ -118,7 +118,7 @@ theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V :
     have ha : a ≤ √(κ * x / W) := Real.sqrt_le_sqrt (by
       rw [show κ * x / W = x / W * κ by ring]; exact mul_le_mul_of_nonneg_left hhk (by positivity))
     have e2 : κ * x / W * R = κ * q * x / (2 * Nat.totient q) * (W * (1 + Real.log c / L)) := by
-      simp only [R]; rw [hlogW]; field_simp; try ring
+      simp only [R]; rw [hlogW]; field_simp
     calc a * √R ≤ √(κ * x / W) * √R := mul_le_mul_of_nonneg_right ha (Real.sqrt_nonneg _)
       _ = √(κ * q * x / (2 * Nat.totient q)) * √W * √(1 + Real.log c / L) := by
           rw [← Real.sqrt_mul (by positivity), e2, Real.sqrt_mul (by positivity),
@@ -133,7 +133,7 @@ theorem pointwise_gen' {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V :
       rw [show κ * x / W = x / W * κ by ring]; exact mul_le_mul_of_nonneg_left hhk (by positivity))
     have hS3 : κ * x / W * S3 ≤ (1.4262 * x * √(κ * (1 / 2 + 1 / U)) / √W) ^ 2 := by
       have hl : κ * x / W * S3 = 1.4262 ^ 2 * κ * x * (x / 2 + W) / W := by
-        simp only [S3]; field_simp; try ring
+        simp only [S3]; field_simp
       rw [hl, div_pow, mul_pow, mul_pow, Real.sq_sqrt (by positivity), Real.sq_sqrt hW0.le]
       apply div_le_div_of_nonneg_right _ hW0.le
       have hWU : W ≤ x * (1 / U) := by rw [mul_one_div]; exact hWx
@@ -345,7 +345,7 @@ theorem typeII_gen {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : ℕ
   rcases hVU.lt_or_eq with hlt | heq
   swap
   · have hint : IntervalIntegrable (Ggen x U V q c m 1) volume V (x / U) := by
-      first | (rw [← heq]; done) | (rw [← heq]; exact IntervalIntegrable.refl)
+      first | (rw [← heq]) | (rw [← heq]; exact IntervalIntegrable.refl)
     have h := norm_typeII_le' α hx hU hV2 hVU hint (fun W hW =>
       pointwise_gen hq hx hU hV hc1 hm hcV hS2gen one_pos hW)
     rw [← heq, intervalIntegral.integral_same, mul_zero] at h
@@ -461,14 +461,14 @@ theorem S2_le_640' {α x δ Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
       simp only [ε₁]; field_simp; ring
     simp only [c]
     rw [show x / (|δ| * q) * (|δ| * q * (1 + ε₁) / 4) = x * (1 + ε₁) / 4 by field_simp]
-    have : W * (q + x / (4 * W)) = q * W + x / 4 := by field_simp; try ring
+    have : W * (q + x / (4 * W)) = q * W + x / 4 := by field_simp
     rw [this]; linarith
   obtain ⟨-, hii⟩ := prop_5_2_4_c hq hcop h2α hx hW0 hδ0 hcond (U' := max (U : ℝ) (x / (2 * W)))
     (le_max_right _ _) (by positivity : (0 : ℝ) ≤ max (V : ℝ) (W / 2))
   have h := hii R hR1 hRW hRcond
   set L := Real.log (W / c)
   have hL : 0 < L := Real.log_pos (by rw [one_lt_div (by positivity)]; nlinarith)
-  have hlogR : Real.log R = L / 2 := by simp only [R, L]; rw [Real.log_sqrt (by positivity)]; try ring
+  have hlogR : Real.log R = L / 2 := by simp only [R, L]; rw [Real.log_sqrt (by positivity)]
   rw [hlogR] at h
   have hlss := logSqSum_nonneg (max (V : ℝ) (W / 2)) W
   have hWW' : W - max (V : ℝ) (W / 2) ≤ W / 2 := by have := le_max_right (V : ℝ) (W / 2); linarith

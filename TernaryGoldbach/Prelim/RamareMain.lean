@@ -68,7 +68,7 @@ theorem summable_hD {d : ℕ} (hd : 1 ≤ d) : Summable (hD d) :=
     rw [Real.norm_eq_abs]; exact abs_hD_le_wD d a
 
 theorem summable_abs_hD {d : ℕ} (hd : 1 ≤ d) : Summable fun a => |hD d a| :=
-  Summable.of_nonneg_of_le (fun a => abs_nonneg _) (abs_hD_le_wD d) (summable_wD hd)
+  Summable.of_nonneg_of_le (fun _a => abs_nonneg _) (abs_hD_le_wD d) (summable_wD hd)
 
 theorem summable_hD_log {d : ℕ} (hd : 1 ≤ d) : Summable fun a => hD d a * Real.log a :=
   Summable.of_norm_bounded ((summable_wD hd).mul_left 3) fun a => by
@@ -185,7 +185,7 @@ theorem S0_split {d p : ℕ} (hp : p.Prime) :
     S0 d p = (if p ∣ d then 1 - 1 / (p : ℝ) else 1) * (if p = 2 then 2 else 1) := by
   rw [S0_eq hp]
   by_cases h2 : p = 2
-  · subst h2; by_cases hd : 2 ∣ d <;> simp [hd] <;> norm_num
+  · subst h2; by_cases hd : 2 ∣ d <;> simp [hd]; norm_num
   · by_cases hd : p ∣ d <;> simp [h2, hd]
 
 theorem prod_S0 {d : ℕ} (hd : 1 ≤ d) {n : ℕ} (hn : 2 * d < n) :
@@ -206,13 +206,13 @@ theorem prod_S0 {d : ℕ} (hd : 1 ≤ d) {n : ℕ} (hn : 2 * d < n) :
       · rintro ⟨a, b, _⟩; exact ⟨⟨a, b.trans (dvd_mul_left d 2), by omega⟩, b⟩
     have h2 : ∏ p ∈ (2 * d).primeFactors, (if p = 2 then (2 : ℝ) else 1) = 2 := by
       rw [prod_ite_eq' (2 * d).primeFactors 2 (fun _ => (2 : ℝ))]
-      rw [if_pos (Nat.mem_primeFactors.2 ⟨Nat.prime_two, dvd_mul_right 2 d, by omega⟩)]
+      rw [ite_eq_left (Nat.mem_primeFactors.2 ⟨Nat.prime_two, dvd_mul_right 2 d, by omega⟩)]
     rw [h1, h2, totient_div hd]; ring
   · have hpp := (Nat.mem_primesBelow.1 hp).2
     have hnd : ¬ p ∣ 2 * d := fun h => hnot (Nat.mem_primeFactors.2 ⟨hpp, h, by omega⟩)
     have h2 : p ≠ 2 := by rintro rfl; exact hnd (dvd_mul_right 2 d)
     have hdd : ¬ p ∣ d := fun h => hnd (h.trans (dvd_mul_left d 2))
-    rw [S0_split hpp, if_neg hdd, if_neg h2, mul_one]
+    rw [S0_split hpp, ite_eq_right hdd, ite_eq_right h2, mul_one]
 
 theorem tsum_local_S0 {d p : ℕ} (hp : p.Prime) : ∑' e, hD d (p ^ e) = S0 d p := by
   have := hasSum_local (d := d) hp (fun _ => 1)

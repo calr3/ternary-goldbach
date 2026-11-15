@@ -79,7 +79,7 @@ theorem dfsW_le (n : ℕ) : ∀ (l : List ℕ), l.Nodup → (∀ p ∈ l, p.Prim
     intro _ _ m w hm
     have := hleaf m w
     simp only [dfsW, List.toFinset_nil, PhiW, powerset_empty, sum_singleton, prod_empty, mul_one,
-      if_pos hm, one_mul]
+      ite_eq_left hm, one_mul]
     exact this
   | cons p l ih =>
     intro hnd hpr m w hm
@@ -123,7 +123,7 @@ theorem PhiW_le (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime) (n : ℕ) :
   have hinj : Set.InjOn (fun T : Finset ℕ => ∏ q ∈ T, q)
       ((P.powerset.filter fun T => ∏ q ∈ T, q ≤ n : Finset (Finset ℕ)) : Set (Finset ℕ)) := by
     intro T1 h1 T2 h2 he
-    simp only [coe_filter, Set.mem_setOf_eq, mem_powerset] at h1 h2
+    simp only [coe_filter, Set.mem_ofPred_eq, mem_powerset] at h1 h2
     have e1 := Nat.primeFactors_prod (fun p hp => hP p (h1.1 hp))
     have e2 := Nat.primeFactors_prod (fun p hp => hP p (h2.1 hp))
     simp only at he

@@ -43,7 +43,7 @@ theorem wO_apply (n : ℕ) : wO n = (μ n : ℝ) * vO n := by
 
 theorem vO_mul (m n : ℕ) : vO (m * n) = vO m * vO n := by
   simp only [vO_apply, Nat.odd_mul]
-  by_cases hm : Odd m <;> by_cases hn : Odd n <;> simp [hm, hn] <;> ring
+  by_cases hm : Odd m <;> by_cases hn : Odd n <;> simp [hm, hn]; ring
 
 theorem isMult_vO : IsMultiplicative vO :=
   ⟨by simp [vO_apply], fun {m n} _ => vO_mul m n⟩
@@ -54,9 +54,9 @@ theorem isMult_gD (d : ℕ) : IsMultiplicative (gD d) := by
     isMultiplicative_moebius.map_mul_of_coprime hmn, Nat.totient_mul hmn]
   by_cases hm : Nat.Coprime m d
   · by_cases hn : Nat.Coprime n d
-    · rw [if_pos ⟨hm, hn⟩, if_pos hm, if_pos hn]; push_cast; ring
-    · rw [if_neg (fun h => hn h.2), if_neg hn, mul_zero]
-  · rw [if_neg (fun h => hm h.1), if_neg hm, zero_mul]
+    · rw [ite_eq_left ⟨hm, hn⟩, ite_eq_left hm, ite_eq_left hn]; push_cast; ring
+    · rw [ite_eq_right (fun h => hn h.2), ite_eq_right hn, mul_zero]
+  · rw [ite_eq_right (fun h => hm h.1), ite_eq_right hm, zero_mul]
 
 theorem isMult_wO : IsMultiplicative wO := isMultiplicative_moebius.intCast.pmul isMult_vO
 
@@ -95,8 +95,8 @@ theorem gD_p {d p : ℕ} (hp : p.Prime) : gD d p = if p ∣ d then 0 else 1 / ((
   rw [gD_apply]
   have hcop : Nat.Coprime p d ↔ ¬ p ∣ d := hp.coprime_iff_not_dvd
   by_cases h : p ∣ d
-  · rw [if_neg (by rw [hcop]; exact not_not.2 h), if_pos h]
-  · rw [if_pos (hcop.2 h), if_neg h, moebius_apply_prime hp, Nat.totient_prime hp]
+  · rw [ite_eq_right (by rw [hcop]; exact not_not.2 h), ite_eq_left h]
+  · rw [ite_eq_left (hcop.2 h), ite_eq_right h, moebius_apply_prime hp, Nat.totient_prime hp]
     push_cast [Nat.cast_sub hp.one_le]; ring
 
 theorem gD_pk {d p k : ℕ} (hp : p.Prime) (hk : 2 ≤ k) : gD d (p ^ k) = 0 := by
@@ -106,7 +106,7 @@ theorem vO_p {p : ℕ} (hp : p.Prime) : vO p = if p = 2 then 0 else 1 / (p : ℝ
   rw [vO_apply]
   by_cases h2 : p = 2
   · subst h2; simp
-  · rw [if_pos (hp.odd_of_ne_two h2), if_neg h2, one_div]
+  · rw [ite_eq_left (hp.odd_of_ne_two h2), ite_eq_right h2, one_div]
 
 theorem wO_p {p : ℕ} (hp : p.Prime) : wO p = if p = 2 then 0 else -1 / (p : ℝ) := by
   rw [wO_apply, vO_p hp, moebius_apply_prime hp]

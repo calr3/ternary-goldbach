@@ -251,10 +251,10 @@ theorem Gq_le_UA (A n : ℕ) : 1000000000000 * Gq A n ≤ (UA A n : ℝ) := by
   refine sum_le_sum fun r hr => ?_
   have hr1 : 1 ≤ r := (mem_Icc.1 hr).1
   by_cases hc : Nat.Coprime r A
-  · rw [if_pos hc]
+  · rw [ite_eq_left hc]
     by_cases hs : Squarefree r
-    · rw [if_pos ⟨hc, hs⟩, gf_eq_gQ]
-      simp only [gQ, if_pos hs]
+    · rw [ite_eq_left ⟨hc, hs⟩, gf_eq_gQ]
+      simp only [gQ, ite_eq_left hs]
       have ht : 0 < r.totient := Nat.totient_pos.2 (by omega)
       set t := r.totient
       have h1 : (1000000000000 : ℝ) / t ≤ (((1000000000000 + t - 1) / t : ℕ) : ℝ) := by
@@ -265,8 +265,8 @@ theorem Gq_le_UA (A n : ℕ) : 1000000000000 * Gq A n ≤ (UA A n : ℝ) := by
           rw [mul_comm]; omega
         exact_mod_cast h2
       push_cast; rw [← div_eq_mul_one_div]; exact h1
-    · rw [if_neg (fun h => hs h.2), gf_eq_gQ]; simp [gQ, hs]
-  · rw [if_neg hc, if_neg (fun h => hc h.1)]
+    · rw [ite_eq_right (fun h => hs h.2), gf_eq_gQ]; simp [gQ, hs]
+  · rw [ite_eq_right hc, ite_eq_right (fun h => hc h.1)]
 
 theorem Gq_mono_nat (A : ℕ) {m n : ℕ} (h : m ≤ n) : Gq A m ≤ Gq A n := by
   rw [Gq_eq, Gq_eq, Nat.floor_natCast, Nat.floor_natCast]
@@ -293,12 +293,12 @@ theorem stepAdd_spec {A r : ℕ} (hr : 1 ≤ r) {d : ℕ} (h : stepAdd A r = som
     · rw [hp] at h; simp at h
     · rw [hp] at h; simp only [Option.some.injEq] at h
       have := (phiAll_spec hr hp).1 rfl
-      rw [if_neg (fun hc => this hc.2)]; exact h.symm
+      rw [ite_eq_right (fun hc => this hc.2)]; exact h.symm
     · rw [hp] at h; simp only [Option.some.injEq] at h
       obtain ⟨hs, ht⟩ := (phiAll_spec hr hp).2 t rfl
-      rw [if_pos ⟨hg, hs⟩, ht]; exact h.symm
+      rw [ite_eq_left ⟨hg, hs⟩, ht]; exact h.symm
   · simp only [Option.some.injEq] at h
-    rw [if_neg (fun hc => hg hc.1)]; exact h.symm
+    rw [ite_eq_right (fun hc => hg hc.1)]; exact h.symm
 
 /-- Advances from `r` to `b`, returning `U_A(b)`. -/
 def advance (A : ℕ) : ℕ → ℕ → ℕ → ℕ → Option ℕ

@@ -150,7 +150,7 @@ theorem hasDerivAt_Iint {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {s₀ :
   exact h.2
 
 theorem differentiableOn_mul_Iint {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) :
-    DifferentiableOn ℂ (fun s => s * Iint χ s) {s : ℂ | 0 < s.re} := fun s hs =>
+    DifferentiableOn ℂ (fun s => s * Iint χ s) {s : ℂ | 0 < s.re} := fun _s hs =>
   (differentiableAt_id.mul (hasDerivAt_Iint hχ hs).differentiableAt).differentiableWithinAt
 
 theorem LFunction_eq_mul_Iint {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :

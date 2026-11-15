@@ -40,7 +40,7 @@ theorem hD_pow_eq {d p : ℕ} (hp : p.Prime) (e : ℕ) :
   · subst h; simp [(isMult_hD d).map_one]
   · subst h; simp
   · subst h; simp
-  · rw [hD_pk hp h, if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+  · rw [hD_pk hp h, ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 theorem hasSum_local {d p : ℕ} (hp : p.Prime) (c : ℕ → ℝ) :
     HasSum (fun e => c e * hD d (p ^ e)) (c 0 + c 1 * hD d p + c 2 * hD d (p ^ 2)) := by
@@ -56,7 +56,7 @@ theorem S0_eq {d p : ℕ} (hp : p.Prime) :
   have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
   rw [S0, hD_p' hp, hD_p2' hp]
   by_cases h2 : p = 2
-  · subst h2; by_cases hd2 : 2 ∣ d <;> simp [hd2] <;> norm_num
+  · subst h2; by_cases hd2 : 2 ∣ d <;> simp [hd2]; norm_num
   · by_cases hpd : p ∣ d <;> simp [h2, hpd]
     · ring
     · have : (p : ℝ) - 1 ≠ 0 := by linarith
@@ -68,7 +68,7 @@ theorem S1_eq {d p : ℕ} (hp : p.Prime) :
   have hp1 : (1 : ℝ) < p := by exact_mod_cast hp.one_lt
   rw [S1, hD_p' hp, hD_p2' hp]
   by_cases h2 : p = 2
-  · subst h2; by_cases hd2 : 2 ∣ d <;> simp [hd2] <;> norm_num
+  · subst h2; by_cases hd2 : 2 ∣ d <;> simp [hd2]; norm_num
   · by_cases hpd : p ∣ d <;> simp [h2, hpd]
     · have : (p : ℝ) - 1 ≠ 0 := by linarith
       have : (p : ℝ) ≠ 0 := by linarith

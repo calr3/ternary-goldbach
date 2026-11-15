@@ -20,7 +20,7 @@ theorem exp_le_rat {f u : ℚ} (hf0 : 0 ≤ f) (hf1 : f ≤ 1) (h : T12up f ≤ 
 theorem sqrt_le_rat {z w : ℝ} (hw : 0 ≤ w) (h : z ≤ w ^ 2) : √z ≤ w := by
   rw [show w = √(w ^ 2) from (Real.sqrt_sq hw).symm]; exact Real.sqrt_le_sqrt h
 
-theorem le_sqrt_rat {z w : ℝ} (hw : 0 ≤ w) (h : w ^ 2 ≤ z) : w ≤ √z := Real.le_sqrt_of_sq_le h
+theorem le_sqrt_rat {z w : ℝ} (_hw : 0 ≤ w) (h : w ^ 2 ≤ z) : w ≤ √z := Real.le_sqrt_of_sq_le h
 
 theorem inv_sqrt_le_rat {z w : ℝ} (hw : 0 < w) (h : 1 ≤ w ^ 2 * z) : 1 / √z ≤ w := by
   have hz : 0 < z := by

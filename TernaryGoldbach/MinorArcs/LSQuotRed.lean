@@ -471,7 +471,7 @@ theorem radQ_primeFactors (q : ℕ) : (radQ q).primeFactors = q.primeFactors :=
   Nat.primeFactors_prod_primeFactors q
 
 theorem radQ_ne_zero (q : ℕ) : radQ q ≠ 0 :=
-  prod_ne_zero_iff.2 fun p hp => (Nat.prime_of_mem_primeFactors hp).ne_zero
+  prod_ne_zero_iff.2 fun _p hp => (Nat.prime_of_mem_primeFactors hp).ne_zero
 
 theorem radQ_squarefree (q : ℕ) : Squarefree (radQ q) := by
   unfold radQ

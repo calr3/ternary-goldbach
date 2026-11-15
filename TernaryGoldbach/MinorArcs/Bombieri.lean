@@ -216,7 +216,7 @@ theorem totient_mul_sum_units_lift {q L : ℕ} [NeZero q] [NeZero L] (hqL : q �
     refine tsum_congr fun n => ?_
     by_cases han : a n = 0
     · simp [han]
-    rw [← map_inv, changeLevel_apply_natCast, if_pos (hcop n han)]
+    rw [← map_inv, changeLevel_apply_natCast, ite_eq_left (hcop n han)]
   rw [DirichletCharacter.conductor_changeLevel, norm_sq_gaussSum, hS, wq]
 
 end TernaryGoldbach

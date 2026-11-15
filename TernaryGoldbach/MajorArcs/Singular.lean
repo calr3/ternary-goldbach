@@ -74,10 +74,10 @@ theorem isMultiplicative_divW (n : ℕ) : (divW n).IsMultiplicative := by
   refine ⟨by simp [divW_apply], fun {a b} hab => ?_⟩
   simp only [divW_apply]
   by_cases ha : a ∣ n <;> by_cases hb : b ∣ n
-  · rw [if_pos (hab.mul_dvd_of_dvd_of_dvd ha hb), if_pos ha, if_pos hb]; push_cast; ring
-  · rw [if_neg (fun h => hb ((dvd_mul_left b a).trans h)), if_neg hb, mul_zero]
-  · rw [if_neg (fun h => ha ((dvd_mul_right a b).trans h)), if_neg ha, zero_mul]
-  · rw [if_neg (fun h => ha ((dvd_mul_right a b).trans h)), if_neg ha, zero_mul]
+  · rw [ite_eq_left (hab.mul_dvd_of_dvd_of_dvd ha hb), ite_eq_left ha, ite_eq_left hb]; push_cast; ring
+  · rw [ite_eq_right (fun h => hb ((dvd_mul_left b a).trans h)), ite_eq_right hb, mul_zero]
+  · rw [ite_eq_right (fun h => ha ((dvd_mul_right a b).trans h)), ite_eq_right ha, zero_mul]
+  · rw [ite_eq_right (fun h => ha ((dvd_mul_right a b).trans h)), ite_eq_right ha, zero_mul]
 
 theorem moebius_div_mul_moebius {q d : ℕ} (hq : Squarefree q) (hd : d ∣ q) :
     (μ (q / d) : ℝ) * μ q = μ d := by
@@ -145,7 +145,7 @@ theorem e_neg_eq_conj (t : ℝ) : e (-t) = (starRingEnd ℂ) (e t) := by
   simp only [map_mul, Complex.conj_ofReal, Complex.conj_I, map_ofNat]; push_cast; ring
 
 /-- **The main-term coefficient**: `(μ(q)/φ(q))³ Σ_{b ∈ Bset q} e(−N b/q) = ∏_{p∣q} a_p(N)`. -/
-theorem coef_eq {N q : ℕ} (hq : 1 ≤ q) :
+theorem coef_eq {N q : ℕ} (_hq : 1 ≤ q) :
     ((μ q : ℂ) / q.totient) ^ 3 * ∑ b ∈ TernaryGoldbach.MinorArcs.Bset q, e (-(N * ((b : ℝ) / q))) =
       (coefN N q : ℂ) := by
   unfold coefN
@@ -171,7 +171,7 @@ theorem coef_eq {N q : ℕ} (hq : 1 ≤ q) :
   · rw [ArithmeticFunction.moebius_eq_zero_of_not_squarefree hsq]; simp
 
 theorem divW_two_of_odd {N : ℕ} (hN : Odd N) : divW N 2 = 0 := by
-  rw [divW_apply, if_neg]; exact fun h => (Nat.not_even_iff_odd.2 hN) (even_iff_two_dvd.2 h)
+  rw [divW_apply, ite_eq_right]; exact fun h => (Nat.not_even_iff_odd.2 hN) (even_iff_two_dvd.2 h)
 
 theorem coefN_two_mul {N : ℕ} (hN : Odd N) (q : ℕ) : coefN N (2 * q) = if Odd q then coefN N q else 0 := by
   split_ifs with ho
@@ -180,13 +180,13 @@ theorem coefN_two_mul {N : ℕ} (hN : Odd N) (q : ℕ) : coefN N (2 * q) = if Od
       rw [Nat.squarefree_mul hcop]; simp [Nat.squarefree_two]
     unfold coefN
     by_cases h : Squarefree q
-    · rw [if_pos (hsq.2 h), if_pos h, Nat.primeFactors_mul (by norm_num) (by rintro rfl; simp at ho),
+    · rw [ite_eq_left (hsq.2 h), ite_eq_left h, Nat.primeFactors_mul (by norm_num) (by rintro rfl; simp at ho),
         Nat.Prime.primeFactors Nat.prime_two]
       have h2 : 2 ∉ q.primeFactors := fun hm =>
         (Nat.not_even_iff_odd.2 ho) (even_iff_two_dvd.2 (Nat.dvd_of_mem_primeFactors hm))
       rw [show ({2} : Finset ℕ) ∪ q.primeFactors = insert 2 q.primeFactors by rfl, prod_insert h2]
       unfold aP; rw [divW_two_of_odd hN]; norm_num
-    · rw [if_neg (fun h' => h (hsq.1 h')), if_neg h]
+    · rw [ite_eq_right (fun h' => h (hsq.1 h')), ite_eq_right h]
   · have he : Even q := Nat.not_odd_iff_even.1 ho
     obtain ⟨k, rfl⟩ := he
     have hns : ¬Squarefree (2 * (k + k)) := by
@@ -194,7 +194,7 @@ theorem coefN_two_mul {N : ℕ} (hN : Odd N) (q : ℕ) : coefN N (2 * q) = if Od
       have h4 : 2 * 2 ∣ 2 * (k + k) := ⟨k, by ring⟩
       have := hs 2 h4
       norm_num at this
-    unfold coefN; rw [if_neg hns]
+    unfold coefN; rw [ite_eq_right hns]
 
 /-- The pairing of even and odd moduli: `Σ_{q ∈ Qset r₀} f(q) = 2 Σ_{q ≤ r₀ odd} f(q)` when
 `f(2q) = [q odd] f(q)`. -/
@@ -211,12 +211,12 @@ theorem sum_Qset_of_two_mul {f : ℕ → ℝ} (hf : ∀ q, f (2 * q) = if Odd q 
     unfold TernaryGoldbach.MinorArcs.qt
     constructor
     · rintro ⟨⟨⟨h1, -⟩, h2⟩, ho⟩
-      rw [if_neg (Nat.not_even_iff_odd.2 ho)] at h2
+      rw [ite_eq_right (Nat.not_even_iff_odd.2 ho)] at h2
       have : q ≤ 150000 := by exact_mod_cast (by push_cast at h2; linarith : (q : ℝ) ≤ 150000)
       exact ⟨⟨h1, this⟩, ho⟩
     · rintro ⟨⟨h1, h2⟩, ho⟩
       refine ⟨⟨⟨h1, by omega⟩, ?_⟩, ho⟩
-      rw [if_neg (Nat.not_even_iff_odd.2 ho)]
+      rw [ite_eq_right (Nat.not_even_iff_odd.2 ho)]
       have : (q : ℝ) ≤ 150000 := by exact_mod_cast h2
       push_cast; linarith
   have h2 : ((Icc 1 300000).filter fun q => (TernaryGoldbach.MinorArcs.qt q : ℝ) ≤ 2 * 150000).filter
@@ -230,7 +230,7 @@ theorem sum_Qset_of_two_mul {f : ℕ → ℝ} (hf : ∀ q, f (2 * q) = if Odd q 
       exact ⟨k, ⟨by omega, by omega⟩, by ring⟩
     · rintro ⟨k, ⟨hk1, hk2⟩, rfl⟩
       refine ⟨⟨⟨by omega, by omega⟩, ?_⟩, ⟨k, by ring⟩⟩
-      rw [if_pos ⟨k, by ring⟩]
+      rw [ite_eq_left ⟨k, by ring⟩]
       have : (k : ℝ) ≤ 150000 := by exact_mod_cast hk2
       push_cast; linarith
   rw [h1, h2, sum_image (fun a _ b _ h => by omega)]
@@ -650,7 +650,7 @@ theorem mPhi2_two_mul (q : ℕ) : mPhi2 (2 * q) = if Odd q then mPhi2 q else 0 :
       have h4 : 2 * 2 ∣ 2 * (k + k) := ⟨k, by ring⟩
       have := hs 2 h4
       norm_num at this
-    unfold mPhi2; rw [if_neg hns, zero_div]
+    unfold mPhi2; rw [ite_eq_right hns, zero_div]
 
 theorem sum_Qset_mPhi2_le : ∑ q ∈ TernaryGoldbach.MinorArcs.Qset 150000, mPhi2 q ≤ 2.85 := by
   rw [sum_Qset_of_two_mul mPhi2_two_mul]

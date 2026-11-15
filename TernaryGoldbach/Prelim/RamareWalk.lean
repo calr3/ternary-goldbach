@@ -175,13 +175,13 @@ theorem Inv_step {n : ℕ} (hn : 1 ≤ n) (hn' : n + 1 < 21609) {s : WS} (h : In
   · show ((if isPr (n + 1) then s.Tlo + Lo * w3 else s.Tlo : ℕ) : ℝ) ≤ _
     rw [hTP]
     by_cases hp : (n + 1).Prime
-    · rw [if_pos (hpr.2 hp), if_pos hp, Nat.cast_add s.Tlo]; linarith
-    · rw [if_neg (fun h' => hp (hpr.1 h')), if_neg hp]; linarith
+    · rw [ite_eq_left (hpr.2 hp), ite_eq_left hp, Nat.cast_add s.Tlo]; linarith
+    · rw [ite_eq_right (fun h' => hp (hpr.1 h')), ite_eq_right hp]; linarith
   · show _ ≤ ((if isPr (n + 1) then s.Thi + Hi * (w3 + 1) else s.Thi : ℕ) : ℝ)
     rw [hTP]
     by_cases hp : (n + 1).Prime
-    · rw [if_pos (hpr.2 hp), if_pos hp, Nat.cast_add s.Thi]; linarith
-    · rw [if_neg (fun h' => hp (hpr.1 h')), if_neg hp]; linarith
+    · rw [ite_eq_left (hpr.2 hp), ite_eq_left hp, Nat.cast_add s.Thi]; linarith
+    · rw [ite_eq_right (fun h' => hp (hpr.1 h')), ite_eq_right hp]; linarith
 
 theorem walkW_spec : ∀ (len n : ℕ) (s s' : WS), 1 ≤ n → n + len < 21609 → Inv n s →
     walkW n len s = some s' → Inv (n + len) s' := by

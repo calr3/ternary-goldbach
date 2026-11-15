@@ -100,7 +100,7 @@ theorem _root_.ConvexOn.le_integral_of_midpoint {s : Set ℝ} {f : ℝ → ℝ} 
       (m - 1 / 2) (m + 1 / 2) := by
     refine ContinuousOn.intervalIntegrable_of_Icc (by linarith) ?_
     refine hc.comp (continuous_const.sub continuous_id).continuousOn fun x hx => ?_
-    simp only [mem_Icc, id] at hx ⊢; constructor <;> linarith [hx.1, hx.2]
+    simp only [mem_Icc] at hx ⊢; constructor <;> linarith [hx.1, hx.2]
   have hpt : ∀ x ∈ Icc (m - 1 / 2) (m + 1 / 2), 2 * f m ≤ f x + f (2 * m - x) := by
     intro x hx
     have hx' : 2 * m - x ∈ s := hs ⟨by linarith [hx.2], by linarith [hx.1]⟩
@@ -446,7 +446,7 @@ theorem sum_G_le {q A C : ℝ} (hq : 0 < q) (hA : 0 ≤ A) (hC : 0 ≤ C) {u₁ 
     have : G = fun u => (fun v => min A (C * (1 / Real.sin v ^ 2))) ((π / q) * u) := by
       funext u; simp only [G, fq]; ring_nf
     rw [this, intervalIntegral.integral_comp_mul_left _ hpq, smul_eq_mul, inv_div]
-    congr 2 <;> field_simp <;> simp
+    congr 2 <;> field_simp; simp
   calc ∑ i ∈ Finset.range m, G (u₁ + i)
       ≤ ∑ i ∈ Finset.range m, ∫ u in (u₁ - 1 + i)..(u₁ - 1 + (i + 1 : ℕ)), G u :=
         Finset.sum_le_sum hterm
@@ -550,7 +550,7 @@ theorem fq_half_add_le {q : ℝ} (hq : 3 ≤ q) :
 `τ_R ∈ [s - 1/2, s + 1/2]`, `0 ≤ s ≤ 1/2`. -/
 theorem core_bound₁' {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2))
-    (F : ℕ → ℝ) (hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
+    (F : ℕ → ℝ) (_hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
     (hFC : ∀ R, 1 ≤ R → R + 2 ≤ q → F R ≤ C * fq q (R + τ R)) :
     ∑ R ∈ Finset.range q, F R ≤ 2 * A + 6 * q ^ 2 / π ^ 2 * C := by
   have hextra : 0 ≤ 6 * q ^ 2 / π ^ 2 * C := by positivity
@@ -635,7 +635,7 @@ theorem core_bound₁ {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : 
 /-- **Core of the second bound of Lemma 4.1.1.** -/
 theorem core_bound₂' {q : ℕ} (hq : 1 ≤ q) {s : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1 / 2) {A C : ℝ}
     (hA : 0 ≤ A) (hC : 0 ≤ C) (τ : ℕ → ℝ) (hτ : ∀ R, τ R ∈ Icc (s - 1 / 2) (s + 1 / 2))
-    (F : ℕ → ℝ) (hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
+    (F : ℕ → ℝ) (_hF0 : ∀ R, 0 ≤ F R) (hFA : ∀ R, F R ≤ A)
     (hFC : ∀ R, 1 ≤ R → R + 2 ≤ q → F R ≤ C * fq q (R + τ R)) :
     ∑ R ∈ Finset.range q, F R ≤ 3 * A + 4 * q / π * √(A * C) := by
   set G := fun u : ℝ => min A (C * fq q u)
@@ -891,13 +891,13 @@ theorem lemma_4_1_1 {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y : 
 `min(A, C/sin² θ)`, even at `sin θ = 0`). -/
 noncomputable def minA (A C t : ℝ) : ℝ := if t = 0 then A else min A (C / t)
 
-theorem minA_le (A C t : ℝ) (hA : 0 ≤ A) : minA A C t ≤ A := by
-  unfold minA; split_ifs <;> simp [min_le_left]
+theorem minA_le (A C t : ℝ) (_hA : 0 ≤ A) : minA A C t ≤ A := by
+  unfold minA; split_ifs <;> simp
 
 theorem minA_nonneg {A C t : ℝ} (hA : 0 ≤ A) (hC : 0 ≤ C) (ht : 0 ≤ t) : 0 ≤ minA A C t := by
   unfold minA; split_ifs; exacts [hA, le_min hA (div_nonneg hC ht)]
 
-theorem min_le_minA {A C t : ℝ} (hA : 0 ≤ A) : min A (C / t) ≤ minA A C t := by
+theorem min_le_minA {A C t : ℝ} (_hA : 0 ≤ A) : min A (C / t) ≤ minA A C t := by
   unfold minA; split_ifs with h
   · exact min_le_left _ _
   · exact le_rfl
@@ -927,7 +927,7 @@ theorem lemma_4_1_1' {α Q : ℝ} {a : ℤ} {q : ℕ} (h : Approx α a q Q) (y :
       · apply div_pos (mul_pos Real.pi_pos (by linarith)) hq0
       · rw [div_lt_iff₀ hq0]; nlinarith [Real.pi_pos]
     unfold minA
-    rw [if_neg (by positivity)]
+    rw [ite_eq_right (by positivity)]
     exact (min_le_right _ _).trans (le_of_eq (by rw [fq, mul_one_div]))
   exact le_min (core_bound₁' h.1 hs0 hs1 hA hC τ hτ _ hF0 hFA hFC)
     (core_bound₂' h.1 hs0 hs1 hA hC τ hτ _ hF0 hFA hFC)
@@ -953,7 +953,7 @@ theorem sin_ge_deg3 {x : ℝ} (hx : 0 ≤ x) : x - x ^ 3 / 6 ≤ Real.sin x := b
   refine le_of_hasDerivAt_le (f := fun x => x - x ^ 3 / 6) (g := Real.sin)
     (f' := fun x => 1 - x ^ 2 / 2) (g' := Real.cos)
     (fun x => ?_) Real.hasDerivAt_sin (by simp) (fun x _ => one_sub_sq_div_two_le_cos) hx
-  convert (hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
+  convert (hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, id_eq]) | (simp; ring1) | (norm_num; ring1)
 
 theorem cos_le_deg4 {x : ℝ} (hx : 0 ≤ x) : Real.cos x ≤ 1 - x ^ 2 / 2 + x ^ 4 / 24 := by
   refine le_of_hasDerivAt_le (f := Real.cos) (g := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24)
@@ -967,7 +967,7 @@ theorem sin_le_deg5 {x : ℝ} (hx : 0 ≤ x) : Real.sin x ≤ x - x ^ 3 / 6 + x 
     (f' := Real.cos) (g' := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24)
     Real.hasDerivAt_sin (fun x => ?_) (by simp) (fun x hx => cos_le_deg4 hx) hx
   convert ((hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6)).add
-    ((hasDerivAt_pow 5 x).div_const 120) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
+    ((hasDerivAt_pow 5 x).div_const 120) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]) | (simp; ring1) | (norm_num; ring1)
 
 theorem cos_ge_deg6 {x : ℝ} (hx : 0 ≤ x) :
     1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 ≤ Real.cos x := by
@@ -984,7 +984,7 @@ theorem sin_ge_deg7 {x : ℝ} (hx : 0 ≤ x) :
     (g := Real.sin) (f' := fun x => 1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720)
     (g' := Real.cos) (fun x => ?_) Real.hasDerivAt_sin (by simp) (fun x hx => cos_ge_deg6 hx) hx
   convert (((hasDerivAt_id x).sub ((hasDerivAt_pow 3 x).div_const 6)).add
-    ((hasDerivAt_pow 5 x).div_const 120)).sub ((hasDerivAt_pow 7 x).div_const 5040) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]; done) | (simp; ring1) | (norm_num; ring1)
+    ((hasDerivAt_pow 5 x).div_const 120)).sub ((hasDerivAt_pow 7 x).div_const 5040) using 1 <;> first | ring1 | (funext y; simp only [Pi.sub_apply, Pi.add_apply, id_eq]) | (simp; ring1) | (norm_num; ring1)
 
 
 theorem cos_le_deg8 {x : ℝ} (hx : 0 ≤ x) :
@@ -1334,7 +1334,7 @@ theorem core_4_1_2 {q : ℕ} (hq : 1 ≤ q) {A C : ℝ} (hA : 0 ≤ A) (hC : 0 �
       have e1 : fq q 1 = 1 / Real.sin t ^ 2 := by simp only [fq, ht]; ring_nf
       have e2 : 3 * π / (2 * q) = 3 * t / 2 := by rw [ht]; field_simp
       have e3 : (q : ℝ) / π = 1 / t := by rw [ht]; field_simp
-      have e4 : 5 * (q : ℝ) ^ 2 / (3 * π ^ 2) = 5 / 3 / t ^ 2 := by rw [ht]; field_simp; try ring
+      have e4 : 5 * (q : ℝ) ^ 2 / (3 * π ^ 2) = 5 / 3 / t ^ 2 := by rw [ht]; field_simp
       rw [e1, e2, e3, e4, le_div_iff₀ (by positivity)]
       have h2t : t ^ 2 * (1 / t) = t := by field_simp
       calc (1 / Real.sin t ^ 2 + 1 / t * (Real.cos (3 * t / 2) / Real.sin (3 * t / 2))) * t ^ 2
@@ -1898,7 +1898,7 @@ theorem integral_hBC {B C : ℝ} {q : ℝ} (hq : 0 < q) :
   have : hBC B C q = fun u => mBC B C ((π / q) * u) := by
     funext u; simp only [hBC, mBC]; ring_nf
   rw [this, intervalIntegral.integral_comp_mul_left (fun v => mBC B C v) hpq, smul_eq_mul, inv_div]
-  congr 2 <;> field_simp <;> ring_nf <;> simp
+  congr 2 <;> field_simp
 
 theorem continuousOn_mBC {B C a b : ℝ} (ha : 0 < a) (hb : b < π) :
     ContinuousOn (mBC B C) (Icc a b) := by
@@ -1908,7 +1908,7 @@ theorem continuousOn_mBC {B C a b : ℝ} (ha : 0 < a) (hb : b < π) :
     (continuousOn_const.div (Real.continuous_sin.continuousOn.pow 2) fun v hv => pow_ne_zero 2 (hs v hv))
 
 /-- Splitting `∫_a^{π/2} min(B/sin, C/sin²)` at `w`. -/
-theorem integral_mBC_le_split {B C a w : ℝ} (hB : 0 ≤ B) (hC : 0 ≤ C) (ha : 0 < a) (haw : a ≤ w)
+theorem integral_mBC_le_split {B C a w : ℝ} (_hB : 0 ≤ B) (_hC : 0 ≤ C) (ha : 0 < a) (haw : a ≤ w)
     (hw : w ≤ π / 2) :
     ∫ v in a..(π / 2), mBC B C v ≤
       B * (logTanHalf w - logTanHalf a) + C * (Real.cos w / Real.sin w) := by
@@ -1988,10 +1988,9 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
     rcases le_or_gt 1 x with hx1 | hx1
     · -- `C ≥ B`.
       have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
-        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
+        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp,
           Real.log_div (by positivity) ha.ne', Real.log_div (by positivity) (by norm_num),
           Real.log_mul (by positivity) (by positivity), Real.log_exp]
-        try ring
       have hlx : 0 ≤ Real.log x := Real.log_nonneg hx1
       refine hbig.trans (mul_le_mul_of_nonneg_left ?_ hBa.le)
       refine le_trans ?_ (le_max_right _ _)
@@ -2017,10 +2016,9 @@ theorem final_4_1_3 {B C a : ℝ} (hB : 0 < B) (hC : 0 ≤ C) (ha : 0 < a) (ha1 
         rw [hsw, hcw, hCx]; field_simp
       rw [hFw, hCcot] at hJ
       have hlog : Real.log (C * rexp 3 / (B * (2 * a))) = Real.log x + 3 - Real.log 2 - Real.log a := by
-        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp; try ring,
+        rw [hCx, show x * B * rexp 3 / (B * (2 * a)) = x * rexp 3 / 2 / a by field_simp,
           Real.log_div (by positivity) ha.ne', Real.log_div (by positivity) (by norm_num),
           Real.log_mul (by positivity) (by positivity), Real.log_exp]
-        try ring
       have hconc := log_one_add_ge hy0 hy1
       have hJ' : (∫ v in a..(π / 2), mBC B C v) / a ≤
           B / a * (Real.log x - Real.log (1 + y) + Real.log (2 / a) + y) := by

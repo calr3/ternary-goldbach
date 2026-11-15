@@ -1,5 +1,4 @@
 import TernaryGoldbach.Prelim.MVLemma8
-import TernaryGoldbach.Prelim.SmallProdAp
 import TernaryGoldbach.Prelim.SmallG
 import TernaryGoldbach.Prelim.SmallW
 import TernaryGoldbach.Prelim.Ramare

@@ -147,14 +147,14 @@ theorem AP_AN_eq : ∀ N, N ≤ 1000 →
     have eP : AP (2 * N + 1 + 1) = AP (2 * N) + aL (2 * N + 1) := by
       unfold AP
       rw [sum_Icc_succ_top (show 1 ≤ 2 * N + 1 + 1 by omega),
-        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), if_pos ⟨by omega, by omega⟩,
-        if_neg (by omega)]
+        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), ite_eq_left ⟨by omega, by omega⟩,
+        ite_eq_right (by omega)]
       simp only [aL, add_zero]
     have eN : AN (2 * N + 1 + 1) = AN (2 * N) + aL (2 * N + 1 + 1) := by
       unfold AN
       rw [sum_Icc_succ_top (show 1 ≤ 2 * N + 1 + 1 by omega),
-        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), if_neg (by omega),
-        if_pos ⟨by omega, by omega⟩]
+        sum_Icc_succ_top (show 1 ≤ 2 * N + 1 by omega), ite_eq_right (by omega),
+        ite_eq_left ⟨by omega, by omega⟩]
       simp only [aL, add_zero]
     rw [show 2 * (N + 1) = 2 * N + 1 + 1 by ring, eP, eN, h1, h2, sum_range_succ,
       sum_range_succ (fun m => aL (2 * m)) (N + 1)]

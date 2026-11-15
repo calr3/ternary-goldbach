@@ -40,7 +40,7 @@ theorem eta2_eq_log {x : ℝ} (hx : 0 < x) {m n : ℝ} (hm : 0 < m) (hn : 0 < n)
       have h1 : 2 * n ≤ n / (2 * y) := by rw [le_div_iff₀ (by positivity)]; nlinarith
       have := lt_of_le_of_lt (le_max_left _ _) (lt_of_lt_of_le h (min_le_right _ _)); linarith
     unfold eta2
-    rw [if_pos hy0]
+    rw [ite_eq_left hy0]
     rcases le_total y (1 / 2) with h2 | h2
     · have e1 : max (n / (2 * y)) n = n / (2 * y) :=
         max_eq_left (by rw [le_div_iff₀ (by positivity)]; nlinarith)
@@ -137,27 +137,27 @@ theorem eta2_eq_integral {x : ℝ} (hx : 0 < x) {m n : ℕ} (hm : 1 ≤ m) (hn :
       exact (continuous_const.max (continuous_id.min continuous_const)).continuousOn
     · intro W hW
       rcases lt_or_ge W lo with h1 | h1
-      · rw [if_neg (by rintro ⟨h, -⟩; linarith)]
+      · rw [ite_eq_right (by rintro ⟨h, -⟩; linarith)]
         refine (hasDerivWithinAt_const W _ (Real.log lo)).congr_of_eventuallyEq ?_ ?_
         · filter_upwards [Ioo_mem_nhdsGT h1] with W' hW'
           simp only [F]; rw [max_eq_left (min_le_of_left_le hW'.2.le)]
         · simp only [F]; rw [max_eq_left (min_le_of_left_le h1.le)]
       rcases lt_or_ge W hi with h2 | h2
-      · rw [if_pos ⟨h1, h2⟩]
+      · rw [ite_eq_left ⟨h1, h2⟩]
         have hW0 : 0 < W := lt_of_lt_of_le hlo0 h1
         refine ((Real.hasDerivAt_log hW0.ne').hasDerivWithinAt.congr_of_eventuallyEq ?_ ?_).congr_deriv
           (one_div W).symm
         · filter_upwards [Ioo_mem_nhdsGT h2] with W' hW'
           simp only [F]; rw [min_eq_left hW'.2.le, max_eq_right (le_trans h1 hW'.1.le)]
         · simp only [F]; rw [min_eq_left h2.le, max_eq_right h1]
-      · rw [if_neg (by rintro ⟨-, h⟩; linarith)]
+      · rw [ite_eq_right (by rintro ⟨-, h⟩; linarith)]
         refine (hasDerivWithinAt_const W _ (Real.log hi)).congr_of_eventuallyEq ?_ ?_
         · filter_upwards [self_mem_nhdsWithin] with W' hW'
           simp only [F]; rw [min_eq_right (le_trans h2 (le_of_lt hW')), max_eq_right hlh.le]
         · simp only [F]; rw [min_eq_right h2, max_eq_right hlh.le]
   · rw [(eta2_eq_log hx hm0 hn0).2 hlh]
     have : (fun W : ℝ => if lo ≤ W ∧ W < hi then 1 / W else 0) = fun _ => 0 := by
-      ext W; rw [if_neg]; rintro ⟨h1, h2⟩; linarith
+      ext W; rw [ite_eq_right]; rintro ⟨h1, h2⟩; linarith
     rw [this]; simp
 
 
@@ -228,7 +228,7 @@ theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1
       have hn1 := (mem_Icc.1 hn).1
       rw [intervalIntegral.integral_const_mul]
       by_cases hc : Odd n ∧ V < n
-      · rw [if_pos hc, if_pos ⟨hmo, hc⟩]
+      · rw [ite_eq_left hc, ite_eq_left ⟨hmo, hc⟩]
         by_cases hmU : m ≤ U
         · have h0 : (∑ d ∈ m.divisors.filter (U < ·), (μ d : ℂ)) = 0 := coefM_eq_zero hmU
           simp [h0, coefM_eq_zero hmU]
@@ -239,9 +239,9 @@ theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1
             (le_trans (min_le_left _ _) (div_le_div_of_nonneg_left hx.le hU0 hmU'.le)),
             intervalIntegral.integral_ofReal]
           simp only [coefM, indW]; push_cast; ring
-      · rw [if_neg hc, if_neg (fun h => hc h.2)]; simp
+      · rw [ite_eq_right hc, ite_eq_right (fun h => hc h.2)]; simp
     · refine (sum_eq_zero fun n _ => ?_).symm
-      rw [if_neg (fun h => hmo h.1)]; simp
+      rw [ite_eq_right (fun h => hmo h.1)]; simp
   -- Step 2: swap sums and integral.
   rw [h1]
   have hF : ∀ m n : ℕ, IntervalIntegrable (fun W => (if Odd m ∧ Odd n ∧ V < n then
@@ -268,7 +268,7 @@ theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1
     have : ¬ (x / (2 * W) < m ∧ (m : ℝ) ≤ x / W) := by
       rintro ⟨h1, h2⟩
       exact hm' (mem_Ioc.2 ⟨(Nat.floor_lt (by positivity)).2 h1, Nat.le_floor h2⟩)
-    rw [show indW x m n W = 0 from if_neg (fun h => this ⟨h.1, h.2.1⟩)]; simp
+    rw [show indW x m n W = 0 from ite_eq_right (fun h => this ⟨h.1, h.2.1⟩)]; simp
   refine sum_congr rfl fun m hm => ?_
   simp only [mem_Ioc] at hm
   have hm1 : x / (2 * W) < m := (Nat.floor_lt (by positivity)).1 hm.1
@@ -287,19 +287,19 @@ theorem typeII_eq_integral (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hU : 1
         have : (V : ℝ) < n := lt_of_le_of_lt (le_max_left _ _) hn1
         exact_mod_cast this
       have hnW : W / 2 < n := lt_of_le_of_lt (le_max_right _ _) hn1
-      rw [show indW x m n W = 1 / W from if_pos ⟨hm1, hm2, hnW, hn2⟩]
+      rw [show indW x m n W = 1 / W from ite_eq_left ⟨hm1, hm2, hnW, hn2⟩]
       by_cases hno : Odd n
-      · rw [if_pos ⟨hmo, hno, hnV⟩, if_pos hno]; push_cast; field_simp
-      · rw [if_neg (fun h => hno h.2.1), if_neg hno]; simp
+      · rw [ite_eq_left ⟨hmo, hno, hnV⟩, ite_eq_left hno]; push_cast; field_simp
+      · rw [ite_eq_right (fun h => hno h.2.1), ite_eq_right hno]; simp
     · intro n hn hn'
       have : ¬ (V < n ∧ W / 2 < n ∧ (n : ℝ) ≤ W) := by
         rintro ⟨h1, h2, h3⟩
         refine hn' (mem_Ioc.2 ⟨(Nat.floor_lt (by positivity)).2 (max_lt ?_ h2), Nat.le_floor h3⟩)
         exact_mod_cast h1
       by_cases hc : Odd m ∧ Odd n ∧ V < n
-      · rw [if_pos hc, show indW x m n W = 0 from if_neg (fun h => this ⟨hc.2.2, h.2.2⟩)]; simp
-      · rw [if_neg hc]; simp
-  · rw [sum_eq_zero fun n _ => by rw [if_neg (fun h => hmo h.1)]; simp]; simp
+      · rw [ite_eq_left hc, show indW x m n W = 0 from ite_eq_right (fun h => this ⟨hc.2.2, h.2.2⟩)]; simp
+      · rw [ite_eq_right hc]; simp
+  · rw [sum_eq_zero fun n _ => by rw [ite_eq_right (fun h => hmo h.1)]; simp]; simp
 
 
 /-! ### Cauchy–Schwarz [H, (5.4)–(5.5)] -/
@@ -353,8 +353,8 @@ theorem norm_IIsum_le (α : ℝ) {x : ℝ} (hx : 0 < x) {U V : ℕ} (hV : 2 ≤ 
         have : (2 : ℝ) < n := by linarith
         exact_mod_cast this
       have hodd : Odd n := hp.odd_of_ne_two (by omega)
-      rw [if_pos hodd, if_pos hp, if_pos hp, add_zero, ArithmeticFunction.vonMangoldt_apply_prime hp]
-    · rw [if_neg hp, if_neg hp, zero_add]
+      rw [ite_eq_left hodd, ite_eq_left hp, ite_eq_left hp, add_zero, ArithmeticFunction.vonMangoldt_apply_prime hp]
+    · rw [ite_eq_right hp, ite_eq_right hp, zero_add]
   have hII : IIsum α x U V W = ∑ m ∈ R, (c m : ℂ) * (P m + Q m) := by
     rw [IIsum, sum_filter]
     have hsub : Ioc ⌊U'⌋₊ ⌊x / W⌋₊ ⊆ Ioc ⌊x / (2 * W)⌋₊ ⌊x / W⌋₊ :=

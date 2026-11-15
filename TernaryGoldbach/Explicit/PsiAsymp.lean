@@ -146,7 +146,7 @@ theorem MidB_asymp_le {a δ x : ℝ} (hx : Real.exp 35000 ≤ x) (hδa : δ ^ 2 
       have := Real.log_le_log (by norm_num) hΓ12; linarith
     have hK1 : ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.76e11 := by
       have := Nat.floor_le (show (0:ℝ) ≤ ((3e12 : ℝ) - 3e10) / 4.4 by norm_num)
-      norm_num at this ⊢; try linarith
+      norm_num at this ⊢
     have hK10 : (0:ℝ) ≤ ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
     have hZl := Z3g_H_le; have hZl0 := Z3g_H_nonneg
     have hcl := c3g_H_le; have hcl0 := c3g_H_nonneg

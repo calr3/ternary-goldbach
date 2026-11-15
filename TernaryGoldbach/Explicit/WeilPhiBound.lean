@@ -244,8 +244,8 @@ theorem integral_aN_Bsq_le (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) (hm : 2 ≤ m) 
     by_cases hy : y ∈ W
     · have hu : |y - t| ≤ R := by rw [abs_le]; constructor <;> linarith [hy.1, hy.2]
       rw [Set.indicator_of_mem hy]
-      have h0 : tail0 m R (y - t) = 0 := by unfold tail0; rw [if_neg (not_lt.2 hu)]
-      have h1 : tail1 m R (y - t) = 0 := by unfold tail1; rw [if_neg (not_lt.2 hu)]
+      have h0 : tail0 m R (y - t) = 0 := by unfold tail0; rw [ite_eq_right (not_lt.2 hu)]
+      have h1 : tail1 m R (y - t) = 0 := by unfold tail1; rw [ite_eq_right (not_lt.2 hu)]
       rw [h0, h1, mul_zero, add_zero, add_zero]
       refine mul_le_mul_of_nonneg_right (aN_mono (by omega) ?_) (Bsq_nonneg ℓ m (y - t))
       have := abs_sub_abs_le_abs_sub y t
@@ -255,8 +255,8 @@ theorem integral_aN_Bsq_le (hℓ0 : 0 < ℓ) (hℓ1 : ℓ ≤ 1) (hm : 2 ≤ m) 
         push Not at h
         exact hy ⟨by linarith [(abs_le.1 h).1], by linarith [(abs_le.1 h).2]⟩
       rw [Set.indicator_of_notMem hy, mul_zero, zero_add]
-      have h0 : tail0 m R (y - t) = (2 / |y - t|) ^ (2 * m) := by unfold tail0; rw [if_pos hu]
-      have h1 : tail1 m R (y - t) = √|y - t| * (2 / |y - t|) ^ (2 * m) := by unfold tail1; rw [if_pos hu]
+      have h0 : tail0 m R (y - t) = (2 / |y - t|) ^ (2 * m) := by unfold tail0; rw [ite_eq_left hu]
+      have h1 : tail1 m R (y - t) = √|y - t| * (2 / |y - t|) ^ (2 * m) := by unfold tail1; rw [ite_eq_left hu]
       rw [h0, h1]
       have hyt : y - t ≠ 0 := by intro h; rw [h, abs_zero] at hu; linarith
       have hB := Bsq_le_tail hℓ0 m hyt

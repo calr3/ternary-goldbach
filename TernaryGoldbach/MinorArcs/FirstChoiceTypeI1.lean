@@ -22,7 +22,7 @@ theorem minInv_le_delta0 (δ : ℝ) : minInv c₀ (π * δ) ≤ 2 / delta0 δ :=
   · rw [max_eq_right h]
     have hδ0 : δ ≠ 0 := by intro h0; rw [h0] at h; norm_num at h
     unfold minInv
-    rw [if_neg (mul_ne_zero Real.pi_pos.ne' hδ0)]
+    rw [ite_eq_right (mul_ne_zero Real.pi_pos.ne' hδ0)]
     refine (min_le_right _ _).trans ?_
     have hδ2 : |δ| ^ 2 = δ ^ 2 := sq_abs δ
     rw [div_le_div_iff₀ (by positivity) (by positivity), mul_pow, ← hδ2]
@@ -48,7 +48,7 @@ theorem logFB_le_delta0 (δ : ℝ) : logFourierBound δ ≤ 0.6138 * (2 / delta0
   · rw [max_eq_right h]
     have hδ0 : δ ≠ 0 := by intro h0; rw [h0] at h; norm_num at h
     unfold logFourierBound
-    rw [if_neg hδ0]
+    rw [ite_eq_right hδ0]
     refine (min_le_right _ _).trans ?_
     have hδ2 : |δ| ^ 2 = δ ^ 2 := sq_abs δ
     rw [div_le_iff₀ (by positivity), mul_pow, ← hδ2]
@@ -65,7 +65,7 @@ theorem muBound_le_one (U : ℝ) (q : ℕ) : muBound U q ≤ 1 := by
   · exact le_rfl
 
 /-- `μ L ≤ 2.8(2q/φ(2q)) + max(L - log(M/2q²), 0)` for `μ = muBound M q`, `L ≥ 0`. -/
-theorem muBound_mul_le {M L : ℝ} {q : ℕ} (hq : 1 ≤ q) (hM : 0 < M) (hL : 0 ≤ L) :
+theorem muBound_mul_le {M L : ℝ} {q : ℕ} (hq : 1 ≤ q) (hM : 0 < M) (_hL : 0 ≤ L) :
     muBound M q * L ≤ 2.8 * (2 * q / Nat.totient (2 * q)) +
       max (L - Real.log (M / (2 * q ^ 2))) 0 := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq

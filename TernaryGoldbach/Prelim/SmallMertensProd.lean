@@ -420,7 +420,7 @@ theorem Inv_stepR {n : ℕ} (hn : 1 ≤ n) {s : PS} (h : Inv n s) (hpr : (n + 1)
     rw [hlog]; push_cast; linarith
   have hth := th_succ n
   have hFp := Fp_succ n
-  rw [if_pos hpr] at hth hFp
+  rw [ite_eq_left hpr] at hth hFp
   have hT1 : ((s.Tlo + (s.Llo + incrLo n) : ℕ) : ℝ) ≤ 10 ^ 30 * th (n + 1) := by
     rw [hth, Nat.cast_add s.Tlo, mul_add]; linarith
   have hT2 : 10 ^ 30 * th (n + 1) ≤ ((s.Thi + (s.Lhi + incrHi n) : ℕ) : ℝ) := by
@@ -447,7 +447,7 @@ theorem Inv_step {n : ℕ} (hn : 1 ≤ n) {s : PS} (h : Inv n s)
   by_cases hp : isP (n + 1) = true
   · have hpr := (isP_iff _).1 hp
     have hps : pstep n s = pstepR n s (adv 30 (s.Tlo + (s.Llo + incrLo n)) s.m s.Mlo s.Mhi) := by
-      unfold pstep pstepP; rw [if_pos hp]
+      unfold pstep pstepP; rw [ite_eq_left hp]
     rw [hps] at hc ⊢
     have hh := h
     obtain ⟨-, -, -, -, -, m1, m2, m3, -⟩ := hh
@@ -468,8 +468,8 @@ theorem Inv_step {n : ℕ} (hn : 1 ≤ n) {s : PS} (h : Inv n s)
     have hth := th_succ n
     have hFp := Fp_succ n
     have hnp : ¬ (n + 1).Prime := fun h' => hp ((isP_iff _).2 h')
-    rw [if_neg hnp] at hth hFp
-    have hps : pstep n s = pstepN n s := by unfold pstep; rw [if_neg hp]
+    rw [ite_eq_right hnp] at hth hFp
+    have hps : pstep n s = pstepN n s := by unfold pstep; rw [ite_eq_right hp]
     rw [hps]
     unfold pstepN
     refine ⟨hL1, hL2, ?_, ?_, ?_, m1, m2, m3, fun x hx5 hxn hxp => ?_⟩
@@ -490,7 +490,6 @@ theorem walkP_spec : ∀ (len n : ℕ) (s s' : PS), 1 ≤ n → Inv n s → walk
   | succ len ih =>
     intro n s s' hn h hw
     rw [walkP] at hw
-    try simp only at hw
     split_ifs at hw with hc
     rw [show n + (len + 1) = n + 1 + len by ring]
     exact ih (n + 1) _ _ (by omega) (Inv_step hn h hc.2) hw

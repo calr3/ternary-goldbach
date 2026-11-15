@@ -39,7 +39,7 @@ theorem hasDerivAt_gauss1 (t : ℝ) :
 theorem hasDerivAt_P0 (t : ℝ) : HasDerivAt P0 (P1 t) t := by
   have h1 : HasDerivAt (fun t : ℝ => (t * (2 - t)) ^ 3) (3 * (t * (2 - t)) ^ 2 * (2 - 2 * t)) t :=
     (((hasDerivAt_id' t).mul ((hasDerivAt_const t (2:ℝ)).sub (hasDerivAt_id' t))).pow 3).congr_deriv
-      (by simp only [Pi.mul_apply, Pi.sub_apply, Pi.pow_apply, Pi.neg_apply]; push_cast; ring)
+      (by simp only [Pi.mul_apply, Pi.sub_apply]; push_cast; ring)
   unfold P0 P1
   exact (h1.mul (hasDerivAt_gauss1 t)).congr_deriv (by ring)
 

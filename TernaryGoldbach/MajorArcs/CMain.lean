@@ -380,7 +380,7 @@ theorem etaU_of_nonpos {u : ℝ} (hu : u ≤ 0) : etaU u = 0 := by
   rw [etaU_eq]
   refine setIntegral_eq_zero_of_forall_eq_zero fun r (hr : 0 < r) => ?_
   unfold phiPos
-  rw [if_neg (not_lt.2 (div_nonpos_of_nonpos_of_nonneg hu hr.le))]; simp
+  rw [ite_eq_right (not_lt.2 (div_nonpos_of_nonpos_of_nonneg hu hr.le))]; simp
 
 theorem sqrt_pi_div_two_pos : 0 < √(π / 2) := Real.sqrt_pos.2 (by positivity)
 
@@ -502,7 +502,7 @@ theorem Cmain_ge (c : ℝ) :
         ((integrable_pow_mul_etaU 0 (by norm_num)).const_mul (c ^ 2)))
     have h' := h.comp_mul_left' hκpos.ne'
     refine (h'.const_mul (1 / κ ^ 2)).congr (Filter.Eventually.of_forall fun σ => ?_)
-    simp only [Function.comp, etaS, Pi.sub_apply]
+    simp only [etaS, Pi.sub_apply]
     have hκ := hκpos
     field_simp; ring
   have hlow : Integrable fun σ => (∫ t, etaO t ^ 2) * etaS σ - 8.82 * ((σ - c / κ) ^ 2 * etaS σ) :=

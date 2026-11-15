@@ -233,7 +233,7 @@ theorem c3g_le {κ T0 Tm C : ℝ} (hκ : 0 ≤ κ) (hTm : 0 < Tm) (hT : Tm ≤ T
 theorem c3g_nonneg {κ T0 : ℝ} (hκ : 0 ≤ κ) (hT0 : 0 < T0) : 0 ≤ c3g κ T0 :=
   div_nonneg (by positivity) (Explicit.log_ratio_pos (by norm_num) (by norm_num)).le
 
-theorem u_le {δ D u0 T0 q : ℝ} (hq : 0 < q) (hδ : |δ| ≤ D / q) (hu0 : 0 ≤ u0)
+theorem u_le {δ D u0 T0 q : ℝ} (_hq : 0 < q) (hδ : |δ| ≤ D / q) (hu0 : 0 ≤ u0)
     (h : u0 * (3.1416 * (D / q)) ≤ T0 - 200) : δ ≠ 0 → u0 ≤ (T0 - 200) / (π * |δ|) := by
   intro hδ0
   have hpi := Real.pi_lt_d4
@@ -556,7 +556,7 @@ theorem errPZ_le {x : ℝ} (hx : 4.9e26 ≤ x) {δ : ℝ} (hδ : |δ| ≤ 6e5) :
 
 /-! ## [H, Thm 7.1.4] -/
 
-theorem hT0_of {q δ D T0 : ℝ} (hq : 0 < q) (hδ : |δ| ≤ D / q) (h1 : 10 * 3.1416 * D / q ≤ T0 - 200)
+theorem hT0_of {q δ D T0 : ℝ} (_hq : 0 < q) (hδ : |δ| ≤ D / q) (h1 : 10 * 3.1416 * D / q ≤ T0 - 200)
     (h2 : 250 ≤ T0) : 200 + max (10 * π * |δ|) 50 ≤ T0 := by
   have hpi := Real.pi_lt_d4
   have : 10 * π * |δ| ≤ 10 * 3.1416 * (D / q) :=
@@ -600,7 +600,7 @@ theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd :
   have hq0 : (0:ℝ) < q := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne q)
   by_cases hq1 : q = 1
   · subst hq1
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     refine (thm_7_1_4_one hx χ (by simpa using hδ)).trans (mul_le_mul_of_nonneg_right ?_ hx0.le)
     simp only [Nat.cast_one, Real.sqrt_one, div_one]
     have : 6.24e6 / √x ≤ 7.7e6 / √x := div_le_div_of_nonneg_right (by norm_num) (by linarith)
@@ -614,10 +614,10 @@ theorem thm_7_1_4_odd {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (hodd :
     rw [show (1e8 : ℝ) / q - 200 = (1e8 - 200 * q) / q by field_simp]
     exact div_le_div_of_nonneg_right (by nlinarith) hq0.le
   have h := prop_9_4_2 (x := x) (by linarith) δ χ hχ hT0 (platt_odd hodd (by omega) χ hχ)
-  rw [if_neg hq1] at h ⊢
+  rw [ite_eq_right hq1] at h ⊢
   refine h.trans (mul_le_mul_of_nonneg_right ?_ hx0.le)
   unfold err942N
-  rw [if_neg hq1]
+  rw [ite_eq_right hq1]
   have hD : |δ| ≤ 6e5 := hδ.trans (by rw [div_le_iff₀ hq0]; nlinarith)
   refine errP_le_of hx (by omega) hD (E1P_le (Cq := 1.010467e8) (Z := 145.21) (S1 := 28515) (S2 := 37864)
     (by positivity) ?_ (ZL_le hq2 (by omega)) (by norm_num) (by norm_num) (by norm_num) (by norm_num))
@@ -647,10 +647,10 @@ theorem thm_7_1_4_even {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (heven
       rw [show (1e8 : ℝ) / q - 200 = (1e8 - 200 * q) / q by field_simp]
       exact div_le_div_of_nonneg_right (by nlinarith) hq0.le
     have h := prop_9_4_2 (x := x) (by linarith) δ χ hχ hT0 (platt_grh hq χ hχ)
-    rw [if_neg hq1] at h ⊢
+    rw [ite_eq_right hq1] at h ⊢
     refine h.trans (mul_le_mul_of_nonneg_right ?_ hx0.le)
     unfold err942N
-    rw [if_neg hq1]
+    rw [ite_eq_right hq1]
     have hE1 := E1P_le (q := q) (T0 := 1e8 / q) (Cq := 1.010467e8) (Z := 145.21) (S1 := 28515) (S2 := 37864)
       (by positivity) (by
         rw [show (1e8 : ℝ) / q + 3.48 = (1e8 + 3.48 * q) / q by field_simp]
@@ -669,10 +669,10 @@ theorem thm_7_1_4_even {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} [NeZero q] (heven
     have hG : GRHUpTo χ (200 + 7.5e7 / q) :=
       (platt_even heven (by omega) χ hχ).mono (le_max_right _ _)
     have h := prop_9_4_2 (x := x) (by linarith) δ χ hχ hT0 hG
-    rw [if_neg hq1] at h ⊢
+    rw [ite_eq_right hq1] at h ⊢
     refine h.trans (mul_le_mul_of_nonneg_right ?_ hx0.le)
     unfold err942N
-    rw [if_neg hq1]
+    rw [ite_eq_right hq1]
     refine errP_le_of hx hq hD (E1P_le (Cq := 1.36044e8) (Z := 143.21) (S1 := 33086) (S2 := 43934)
       (by positivity) ?_ (ZL_R3_le (not_le.1 h125) hq) (by norm_num) (by norm_num) (by norm_num)
       (by norm_num)) (by norm_num) (E2_R3 (not_le.1 h125) hq hδ) (by norm_num)

@@ -17,7 +17,7 @@ theorem term_real (f : ℕ → ℝ) (hf : f 0 = 0) (n : ℕ) :
     LSeries.term (fun n => (f n : ℂ)) 2 n = ((f n / (n : ℝ) ^ 2 : ℝ) : ℂ) := by
   rcases Nat.eq_zero_or_pos n with h | h
   · subst h; simp [LSeries.term, hf]
-  · rw [LSeries.term, if_neg h.ne']
+  · rw [LSeries.term, ite_eq_right h.ne']
     push_cast
     congr 1
     rw [show (2 : ℂ) = ((2 : ℕ) : ℂ) by norm_num, Complex.cpow_natCast]
@@ -68,8 +68,8 @@ theorem hasSum_vonMangoldt_pp {s : ℝ} (h : HasSum (fun n : ℕ => (ArithmeticF
     (fun x => x.1.1 ^ (x.1.2 + 1)) ?_ ?_ ?_).1 h
   · rintro ⟨⟨q, k⟩, hx⟩ ⟨⟨q', k'⟩, hy⟩ hxy
     simp only [mem_support, ppTerm] at hx hy hxy
-    have hq : q.Prime := by by_contra h'; simp [ppTerm, h'] at hx
-    have hq' : q'.Prime := by by_contra h'; simp [ppTerm, h'] at hy
+    have hq : q.Prime := by by_contra h'; simp [h'] at hx
+    have hq' : q'.Prime := by by_contra h'; simp [h'] at hy
     have := Nat.Prime.pow_inj hq hq' hxy
     obtain ⟨rfl, hk⟩ := this
     have : k = k' := by omega
@@ -79,7 +79,7 @@ theorem hasSum_vonMangoldt_pp {s : ℝ} (h : HasSum (fun n : ℕ => (ArithmeticF
     have hΛ : Λ n ≠ 0 := by intro h0; apply hn; simp [h0]
     obtain ⟨q, k, hq, hk, rfl⟩ := (isPrimePow_nat_iff n).1 (vonMangoldt_ne_zero_iff.1 hΛ)
     refine ⟨⟨(q, k - 1), ?_⟩, ?_⟩
-    · simp only [mem_support, ppTerm, if_pos hq, ne_eq, mul_eq_zero, not_or]
+    · simp only [mem_support, ppTerm, ite_eq_left hq, ne_eq, mul_eq_zero, not_or]
       refine ⟨(Real.log_pos (by exact_mod_cast hq.one_lt)).ne', ?_⟩
       have : (0 : ℝ) < q := by exact_mod_cast hq.pos
       exact pow_ne_zero _ (by positivity)
@@ -87,7 +87,7 @@ theorem hasSum_vonMangoldt_pp {s : ℝ} (h : HasSum (fun n : ℕ => (ArithmeticF
   · rintro ⟨⟨q, k⟩, hx⟩
     simp only [ppTerm] at hx ⊢
     have hq : q.Prime := by by_contra h'; simp [ppTerm, h'] at hx
-    rw [if_pos hq, vonMangoldt_apply_pow (by omega), vonMangoldt_apply_prime hq]
+    rw [ite_eq_left hq, vonMangoldt_apply_pow (by omega), vonMangoldt_apply_prime hq]
     push_cast
     rw [div_pow, one_pow, ← pow_mul, one_div, ← inv_pow, div_eq_mul_inv]
     congr 1; ring
@@ -120,12 +120,12 @@ theorem hasSum_vonMangoldt_primes :
     have hr1 : r < 1 := by rw [hr, div_lt_one (by positivity)]; nlinarith
     have hg := ((hasSum_geometric_of_lt_one hr0 hr1).mul_left (Real.log q * r))
     convert hg using 1
-    · funext k; simp only [ppTerm, if_pos hq]; rw [pow_succ]; ring
-    · rw [if_pos hq, hr]
+    · funext k; simp only [ppTerm, ite_eq_left hq]; rw [pow_succ]; ring
+    · rw [ite_eq_left hq, hr]
       have : (q : ℝ) ^ 2 - 1 ≠ 0 := by nlinarith
       have : (q : ℝ) ^ 2 ≠ 0 := by positivity
       field_simp
-  · simp only [ppTerm, if_neg hq]
+  · simp only [ppTerm, ite_eq_right hq]
     exact hasSum_zero
 
 /-- **`∑ Λ(n)/n² = ∑_p log p/(p² − 1)`.** -/

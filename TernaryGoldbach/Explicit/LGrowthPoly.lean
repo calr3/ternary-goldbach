@@ -53,7 +53,7 @@ theorem cos_rpow_neg_le (t : ℝ) {a : ℝ} (ha : 0 ≤ a) :
     _ ≤ _ := hcos
 
 /-- `|1/Γ(w)| ≤ (1/π) e^{π|ℑw|} |Γ(1−w)|` (reflection), `−4 ≤ ℜw ≤ 5/8`. -/
-theorem norm_inv_Gamma_le_refl {w : ℂ} (h1 : -4 ≤ w.re) (h2 : w.re ≤ 5 / 8) :
+theorem norm_inv_Gamma_le_refl {w : ℂ} (_h1 : -4 ≤ w.re) (h2 : w.re ≤ 5 / 8) :
     ‖(Complex.Gamma w)⁻¹‖ ≤ 1 / π * Real.exp (π * |w.im|) * ‖Complex.Gamma (1 - w)‖ := by
   by_cases hΓ : Complex.Gamma w = 0
   · rw [hΓ, inv_zero, norm_zero]; positivity
@@ -220,7 +220,7 @@ theorem norm_LFunction_left_poly {N : ℕ} [NeZero N] {χ : DirichletCharacter �
     Complex.norm_natCast_cpow_of_pos (Nat.pos_of_ne_zero (NeZero.ne N))]
   have hNp : (N : ℝ) ^ (s - 1 / 2).re ≤ (N : ℝ) ^ 9 := by
     rw [← Real.rpow_natCast]
-    exact Real.rpow_le_rpow_of_exponent_le hN1 (by simp; push_cast; linarith)
+    exact Real.rpow_le_rpow_of_exponent_le hN1 (by simp; linarith)
   have hLs : ‖χ⁻¹.LFunction s‖ ≤ ((N : ℝ) + 1) * (t + 9) / (3 / 4) := by
     refine (norm_LFunction_le hχi (by linarith)).trans ?_
     have hsn : ‖s‖ ≤ t + 9 := by

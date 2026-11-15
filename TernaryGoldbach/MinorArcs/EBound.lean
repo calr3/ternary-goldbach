@@ -61,21 +61,21 @@ theorem eTerm_low {x : ℝ} (hx : 1 ≤ x) {n : ℕ} (hn : n ∈ Icc 1 ⌊x⌋�
   have hNP := lamNP_nonneg n
   have hite : 0 ≤ (if (n : ℝ) ≤ √x then (Λ n : ℝ) else 0) := by split_ifs <;> simp [hΛ0]
   by_cases hp : n.Prime ∧ √x < n
-  · rw [eTerm, if_pos hp]; positivity
-  rw [eTerm, if_neg hp]
+  · rw [eTerm, ite_eq_left hp]; positivity
+  rw [eTerm, ite_eq_right hp]
   have key : (Λ n : ℝ) * Λ n ≤ Real.log x / 2 * (if (n : ℝ) ≤ √x then (Λ n : ℝ) else 0) +
       Real.log x * lamNP n := by
     by_cases hs : (n : ℝ) ≤ √x
-    · rw [if_pos hs]
+    · rw [ite_eq_left hs]
       have : (Λ n : ℝ) ≤ Real.log x / 2 := by
         have : Real.log n ≤ Real.log √x := Real.log_le_log (by linarith) hs
         rw [Real.log_sqrt hx0.le] at this; linarith
       have := mul_le_mul_of_nonneg_right this hΛ0
       have := mul_nonneg hlx hNP
       linarith
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       have hnp : ¬ n.Prime := fun h => hp ⟨h, lt_of_not_ge hs⟩
-      have hl : lamNP n = Λ n := by rw [lamNP, if_neg hnp]
+      have hl : lamNP n = Λ n := by rw [lamNP, ite_eq_right hnp]
       rw [hl]
       have : (Λ n : ℝ) ≤ Real.log x := hΛlog.trans (Real.log_le_log (by linarith) hnx)
       have := mul_le_mul_of_nonneg_right this hΛ0
@@ -106,8 +106,8 @@ theorem eTerm_block {x : ℝ} (hx : 1 ≤ x) (j : ℕ) {n : ℕ}
     have := Real.log_nonneg (by norm_num : (1:ℝ) ≤ 2)
     positivity
   by_cases hp : n.Prime
-  · rw [eTerm, if_pos ⟨hp, hsx⟩, lamNP, if_pos hp, zero_mul]
-  rw [eTerm, if_neg (fun h => hp h.1), lamNP, if_neg hp]
+  · rw [eTerm, ite_eq_left ⟨hp, hsx⟩, lamNP, ite_eq_left hp, zero_mul]
+  rw [eTerm, ite_eq_right (fun h => hp h.1), lamNP, ite_eq_right hp]
   · -- not prime
     have hΛ0 : (0 : ℝ) ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
     have hΛlog : (Λ n : ℝ) ≤ (j + 1) * Real.log 2 + Real.log x := by
@@ -160,7 +160,7 @@ theorem geom_sums_le {r : ℝ} (h0 : 0 ≤ r) (h1 : r < 1) (J : ℕ) :
   rw [e]; linarith
 
 /-- `√(2^{j+1} y) = √2^{j+1} √y`. -/
-theorem sqrt_two_pow_mul (j : ℕ) {y : ℝ} (hy : 0 ≤ y) :
+theorem sqrt_two_pow_mul (j : ℕ) {y : ℝ} (_hy : 0 ≤ y) :
     √(2 ^ (j + 1) * y) = √2 ^ (j + 1) * √y := by
   rw [Real.sqrt_mul (by positivity)]
   congr 1

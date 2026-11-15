@@ -46,7 +46,7 @@ theorem norm_S0two_le (α : ℝ) {x : ℝ} (hx : 1 ≤ x) : ‖S0two α x‖ ≤
       simp [ho, this]
     · have : 2 ∣ n := by
         rw [← even_iff_two_dvd]; exact Nat.not_odd_iff_even.1 ho
-      rw [if_neg ho, if_pos this, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hΛ]
+      rw [ite_eq_right ho, ite_eq_left this, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hΛ]
       exact mul_le_mul_of_nonneg_left (norm_wt_le _ _ _) hΛ
   have h2 := sum_vonMangoldt_pow_dvd_le Nat.prime_two le_rfl (fun _ => (3 : ℝ))
     (fun _ => by norm_num) (N := N)

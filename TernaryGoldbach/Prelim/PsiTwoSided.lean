@@ -46,21 +46,21 @@ theorem cB_le_355 {n : ℕ} (h : n ≤ 32000000000) : cB n ≤ 35.5 := by
                                   linarith) (cast_le_of h (by norm_num))
 
 theorem cB_le_315 {n : ℕ} (h1 : 10000000 < n) (h : n ≤ 100000000) : cB n ≤ 31.5 := by
-  unfold cB; rw [if_neg (by omega)]
+  unfold cB; rw [ite_eq_right (by omega)]
   exact Explicit.cW8_le_315 (by have : (10000000 : ℝ) < n := by exact_mod_cast h1
                                 linarith) (cast_le_of h (by norm_num))
 
 theorem cB_le_4282 {n : ℕ} (h1 : 320000000000 < n) (h : n ≤ 3200000000000) : cB n ≤ 42.82 := by
-  unfold cB; rw [if_neg (by omega)]
+  unfold cB; rw [ite_eq_right (by omega)]
   exact Explicit.cW8_le_4282 (by have : (320000000000 : ℝ) < n := by exact_mod_cast h1
                                  linarith) (cast_le_of h (by norm_num))
 
 theorem cB_le_4508 {n : ℕ} (h1 : 320000000000 < n) (h : n ≤ 10000000000000) : cB n ≤ 45.08 := by
-  unfold cB; rw [if_neg (by omega)]
+  unfold cB; rw [ite_eq_right (by omega)]
   exact Explicit.cW8_le_4508 (by have : (320000000000 : ℝ) < n := by exact_mod_cast h1
                                  linarith) (cast_le_of h (by norm_num))
 
-theorem cB_small {n : ℕ} (h : n < 1000000) : cB n = 1 := by unfold cB; rw [if_pos h]
+theorem cB_small {n : ℕ} (h : n < 1000000) : cB n = 1 := by unfold cB; rw [ite_eq_left h]
 
 theorem thS_add_ppS (n : ℕ) : SmallTab.thS n + SmallTab.ppS n = ∑ m ∈ Icc 1 n, (Λ m : ℝ) := by
   unfold SmallTab.thS SmallTab.ppS
@@ -84,7 +84,7 @@ theorem psi_two_sided {n : ℕ} (h1 : 12 ≤ n) (h2 : n ≤ 10 ^ 17) :
     rw [Nat.floor_natCast, thS_add_ppS] at r1 r2
     norm_num at r1 r2
     rw [abs_le]; constructor <;> linarith
-  · unfold cB; rw [if_neg (by omega)]
+  · unfold cB; rw [ite_eq_right (by omega)]
     have ha : ((1000000 : ℕ) : ℝ) ≤ (n : ℝ) := by exact_mod_cast h
     have hb : (n : ℝ) ≤ ((10 ^ 17 : ℕ) : ℝ) := by exact_mod_cast h2
     have hm := Explicit.psi_mid8 (x := (n : ℝ)) (by norm_num at ha ⊢; linarith) (by norm_num at hb ⊢; linarith)

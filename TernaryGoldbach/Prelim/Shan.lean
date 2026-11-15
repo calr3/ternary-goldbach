@@ -354,7 +354,7 @@ theorem one_side (hf : Good f) (S : Finset ℝ) {l : ℝ} (hl : l ∈ S) (δ : �
       simp [a, prev]
     | succ n ih =>
       rw [lam_succ, ih (by omega)]
-      simp only [a, show min (n + 1) (N - 1) = n + 1 by omega, prev, if_neg (Nat.succ_ne_zero n),
+      simp only [a, show min (n + 1) (N - 1) = n + 1 by omega, prev, ite_eq_right (Nat.succ_ne_zero n),
         show n + 1 - 1 = n by omega]
       field_simp; ring
   -- weights
@@ -368,7 +368,7 @@ theorem one_side (hf : Good f) (S : Finset ℝ) {l : ℝ} (hl : l ∈ S) (δ : �
       have h := hsep (pos n) hposS (prev n) (hprevS n) (hprev_ne n hn)
       rwa [abs_of_pos (hgap_pos n hn)] at h
     · rcases Nat.lt_or_ge (n + 1) N with h1 | h1
-      · simp only [a, show min (n + 1) (N - 1) = n + 1 by omega, prev, if_neg (Nat.succ_ne_zero n),
+      · simp only [a, show min (n + 1) (N - 1) = n + 1 by omega, prev, ite_eq_right (Nat.succ_ne_zero n),
           show n + 1 - 1 = n by omega]
         rw [div_mul_cancel₀ _ hδl.ne']
         have hlt := hpos_mono n (n + 1) (by omega) h1

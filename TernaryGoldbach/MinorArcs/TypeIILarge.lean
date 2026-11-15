@@ -184,7 +184,7 @@ theorem pointwise_53 {α x : ℝ} {q : ℕ} (hq : 1 ≤ q) (hx : 0 < x) {U V : �
   have T3 : a * √S3 ≤ 1.4262 * x * √(κ * (1 / 2 + 1 / U)) / √W := by
     have hS3 : κ * x / W * S3 ≤ (1.4262 * x * √(κ * (1 / 2 + 1 / U)) / √W) ^ 2 := by
       have hl : κ * x / W * S3 = 1.4262 ^ 2 * κ * x * (x / 2 + W) / W := by
-        simp only [S3]; field_simp; try ring
+        simp only [S3]; field_simp
       rw [hl, div_pow, mul_pow, mul_pow, Real.sq_sqrt (by positivity), Real.sq_sqrt hW0.le]
       apply div_le_div_of_nonneg_right _ hW0.le
       have hWU : W ≤ x * (1 / U) := by rw [mul_one_div]; exact hWx
@@ -291,7 +291,7 @@ set_option maxHeartbeats 1000000 in
 omit [Fact TernaryGoldbach.PlattGRH] in
 /-- Integrating `G53` over `[V, A]`: with `κ = κ₁`, `M = r x²/16q + qx`, `L_A = log A`,
 `∫ ≤ √κ (√M (2/3)(L_A^{3/2} - L_V^{3/2}) + √r x (√L_V + 1/√L_V)/√V + √(xA) √L_A) + c₄(2/√V - 2/√A)`. -/
-theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (hr : 0 ≤ r) {A : ℝ}
+theorem integral_G53_le {x : ℝ} (hx : 0 < x) (U V : ℝ) (M : ℝ) {r : ℝ} (_hr : 0 ≤ r) {A : ℝ}
     (hV : 1 < V) (hVA : V ≤ A) :
     IntervalIntegrable (G53 x U V M r) volume V A ∧
     ∫ W in V..A, G53 x U V M r W ≤

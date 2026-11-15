@@ -689,7 +689,7 @@ theorem a1_M3_le {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q)
     _ = _ := by ring
 
 /-- `|2α - a/q - k| ≤ 1/(qQ)` from `Approx2`. -/
-theorem approx2_abs {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (hx : 0 < x) (h : Approx2 α x δ a q Q) :
+theorem approx2_abs {α x δ Q : ℝ} {a : ℤ} {q : ℕ} (_hx : 0 < x) (h : Approx2 α x δ a q Q) :
     ∃ k : ℤ, |2 * α - a / q - k| ≤ 1 / (q * Q) := by
   obtain ⟨-, -, ⟨k, hk⟩, hδ, -⟩ := h
   exact ⟨k, by rw [show 2 * α - a / q - k = δ / x by rw [hk]; ring]; exact hδ⟩

@@ -156,7 +156,7 @@ theorem gS_prod_primes (T : Finset ℕ) (hT : ∀ p ∈ T, p.Prime) :
     simp only [Function.onFun, ← Nat.coprime_iff_isRelPrime]
     exact (Nat.coprime_primes (hT a ha) (hT b hb)).mpr hab
   unfold gS
-  rw [if_pos hsq, totient_prod_primes T hT, Nat.cast_prod, one_div, ← prod_inv_distrib]
+  rw [ite_eq_left hsq, totient_prod_primes T hT, Nat.cast_prod, one_div, ← prod_inv_distrib]
   refine prod_congr rfl fun p hp => ?_
   rw [Nat.cast_sub (hT p hp).one_le, Nat.cast_one, one_div]
 
@@ -168,7 +168,7 @@ theorem Phi_le_GS (P : Finset ℕ) (hP : ∀ p ∈ P, p.Prime) (r : ℕ) : Phi r
   have hinj : Set.InjOn (fun T : Finset ℕ => ∏ q ∈ T, q)
       ((P.powerset.filter fun T => ∏ q ∈ T, q ≤ r : Finset (Finset ℕ)) : Set (Finset ℕ)) := by
     intro T1 h1 T2 h2 he
-    simp only [coe_filter, Set.mem_setOf_eq, mem_powerset] at h1 h2
+    simp only [coe_filter, Set.mem_ofPred_eq, mem_powerset] at h1 h2
     have e1 := Nat.primeFactors_prod (fun p hp => hP p (h1.1 hp))
     have e2 := Nat.primeFactors_prod (fun p hp => hP p (h2.1 hp))
     simp only at he

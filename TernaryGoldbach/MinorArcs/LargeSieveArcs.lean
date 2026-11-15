@@ -41,29 +41,29 @@ theorem mem_majorArcs_iff {δ₀ R x α : ℝ} :
       |α - a / q| < wrad δ₀ R x q := by
   simp only [majorArcs, Set.mem_union, Set.mem_iUnion, Set.mem_Ioo, exists_prop]
   have hodd : ∀ q : ℕ, ¬ Even q → wrad δ₀ R x q = δ₀ * R / (2 * q * x) := fun q h => by
-    unfold wrad qt; rw [if_neg h]; push_cast; ring_nf
+    unfold wrad qt; rw [ite_eq_right h]; push_cast; ring_nf
   have hev : ∀ q : ℕ, Even q → wrad δ₀ R x q = δ₀ * R / (q * x) := fun q h => by
-    unfold wrad qt; rw [if_pos h]
+    unfold wrad qt; rw [ite_eq_left h]
   constructor
   · rintro (⟨q, ⟨hq1, hqR, ho⟩, a, hcop, h1, h2⟩ | ⟨q, ⟨hq1, hqR, he⟩, a, hcop, h1, h2⟩)
     · have hne : ¬ Even q := Nat.not_even_iff_odd.2 ho
       refine ⟨q, hq1, ?_, a, hcop, ?_⟩
-      · unfold qt; rw [if_neg hne]; push_cast; linarith
+      · unfold qt; rw [ite_eq_right hne]; push_cast; linarith
       · rw [hodd q hne, abs_sub_lt_iff]; constructor <;> linarith
     · refine ⟨q, hq1, ?_, a, hcop, ?_⟩
-      · unfold qt; rw [if_pos he]; exact hqR
+      · unfold qt; rw [ite_eq_left he]; exact hqR
       · rw [hev q he, abs_sub_lt_iff]; constructor <;> linarith
   · rintro ⟨q, hq1, hqR, a, hcop, h⟩
     rw [abs_sub_lt_iff] at h
     by_cases he : Even q
     · right
       refine ⟨q, ⟨hq1, ?_, he⟩, a, hcop, ?_, ?_⟩
-      · unfold qt at hqR; rw [if_pos he] at hqR; exact hqR
+      · unfold qt at hqR; rw [ite_eq_left he] at hqR; exact hqR
       · rw [hev q he] at h; linarith
       · rw [hev q he] at h; linarith
     · left
       refine ⟨q, ⟨hq1, ?_, Nat.not_even_iff_odd.1 he⟩, a, hcop, ?_, ?_⟩
-      · unfold qt at hqR; rw [if_neg he] at hqR; push_cast at hqR; linarith
+      · unfold qt at hqR; rw [ite_eq_right he] at hqR; push_cast at hqR; linarith
       · rw [hodd q he] at h; linarith
       · rw [hodd q he] at h; linarith
 
@@ -71,7 +71,7 @@ theorem mem_majorArcs_iff {δ₀ R x α : ℝ} :
 noncomputable def arc (δ₀ R x : ℝ) (q b : ℕ) : Set ℝ :=
   Ioo ((b : ℝ) / q - wrad δ₀ R x q) ((b : ℝ) / q + wrad δ₀ R x q)
 
-theorem wrad_le_half {δ₀ R x : ℝ} (hx : 0 < x) (hδ : 0 ≤ δ₀ * R) (hw : δ₀ * R ≤ x) {q : ℕ}
+theorem wrad_le_half {δ₀ R x : ℝ} (hx : 0 < x) (_hδ : 0 ≤ δ₀ * R) (hw : δ₀ * R ≤ x) {q : ℕ}
     (hq : 1 ≤ q) : wrad δ₀ R x q ≤ 1 / 2 := by
   unfold wrad
   have h2 : (2 : ℝ) ≤ qt q := by exact_mod_cast two_le_qt hq
@@ -110,20 +110,20 @@ theorem integral_majorArcs_le {g : ℝ → ℝ} (hg : Continuous g) (hper : Func
     · exact ((measurable_const.indicator measurableSet_Ioo).comp
         (measurable_sub_const _)).aestronglyMeasurable
     · exact Filter.Eventually.of_forall fun α => by simp only [indicator]; split_ifs <;> simp
-  simp_rw [← integral_finset_sum _ fun _ _ => hint _ _ _]
+  simp_rw [← integral_finsetSum _ fun _ _ => hint _ _ _]
   have hint2 : ∀ q b, IntegrableOn (fun α => ∑ k ∈ K, (arc δ₀ R x q b).indicator 1 (α - k) * g α)
-      (Ioc (0 : ℝ) 1) := fun q b => integrable_finset_sum _ fun k _ => hint q b k
+      (Ioc (0 : ℝ) 1) := fun q b => integrable_finsetSum _ fun k _ => hint q b k
   have hmerge : ∑ q ∈ Qset R, ∑ b ∈ Bset q, ∫ α in Ioc (0 : ℝ) 1,
       ∑ k ∈ K, (arc δ₀ R x q b).indicator 1 (α - k) * g α =
       ∫ α in Ioc (0 : ℝ) 1, ∑ q ∈ Qset R, ∑ b ∈ Bset q, ∑ k ∈ K,
         (arc δ₀ R x q b).indicator 1 (α - k) * g α := by
-    rw [integral_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b]
-    exact Finset.sum_congr rfl fun q _ => (integral_finset_sum _ fun b _ => hint2 q b).symm
+    rw [integral_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b]
+    exact Finset.sum_congr rfl fun q _ => (integral_finsetSum _ fun b _ => hint2 q b).symm
   rw [hmerge, ← setIntegral_indicator (TernaryGoldbach.Helfgott.measurableSet_majorArcs _ _ _)]
   refine setIntegral_mono_on ?_ ?_ measurableSet_Ioc fun α hα => ?_
   · exact ((hg.integrableOn_Icc (a := 0) (b := 1)).mono_set Ioc_subset_Icc_self).indicator
       (TernaryGoldbach.Helfgott.measurableSet_majorArcs _ _ _)
-  · exact integrable_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b
+  · exact integrable_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b
   -- pointwise
   by_cases hM : α ∈ majorArcs δ₀ R x
   · rw [indicator_of_mem hM]
@@ -196,7 +196,7 @@ theorem wrad_add_le {δ₀ Q x : ℝ} (hx : 0 < x) (hδ : 0 < δ₀) (hQ : 0 < Q
       _ = 1 / (2 * Q * qt p) := by field_simp
   refine (add_le_add (hw q hq) (hw q' hq')).trans ?_
   unfold qt at hqQ hqQ' ⊢
-  by_cases he : Even q <;> by_cases he' : Even q' <;> simp only [he, he', if_true, if_false,
+  by_cases he : Even q <;> by_cases he' : Even q' <;> simp only [he, he', ite_true, ite_false,
     and_self, and_true, and_false] at hqQ hqQ' ⊢ <;> push_cast at hqQ hqQ' ⊢ <;>
     rw [div_add_div _ _ (by positivity) (by positivity), div_le_div_iff₀ (by positivity) (by positivity)] <;>
     nlinarith [mul_pos hqr hqr', mul_pos (mul_pos hqr hqr') hQ]
@@ -333,18 +333,18 @@ theorem sum_arcs_le_integral {g : ℝ → ℝ} (hg : Continuous g) (hper : Funct
     · exact ((measurable_const.indicator measurableSet_Ioo).comp
         (measurable_sub_const _)).aestronglyMeasurable
     · exact Filter.Eventually.of_forall fun α => by simp only [indicator]; split_ifs <;> simp
-  simp_rw [← integral_finset_sum _ fun _ _ => hint _ _ _]
+  simp_rw [← integral_finsetSum _ fun _ _ => hint _ _ _]
   have hint2 : ∀ q b, IntegrableOn (fun α => ∑ k ∈ K, (arc δ₀ Q x q b).indicator 1 (α - k) * g α)
-      (Ioc (0 : ℝ) 1) := fun q b => integrable_finset_sum _ fun k _ => hint q b k
+      (Ioc (0 : ℝ) 1) := fun q b => integrable_finsetSum _ fun k _ => hint q b k
   have hmerge : ∑ q ∈ Qset Q, ∑ b ∈ Bset q, ∫ α in Ioc (0 : ℝ) 1,
       ∑ k ∈ K, (arc δ₀ Q x q b).indicator 1 (α - k) * g α =
       ∫ α in Ioc (0 : ℝ) 1, ∑ q ∈ Qset Q, ∑ b ∈ Bset q, ∑ k ∈ K,
         (arc δ₀ Q x q b).indicator 1 (α - k) * g α := by
-    rw [integral_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b]
-    exact Finset.sum_congr rfl fun q _ => (integral_finset_sum _ fun b _ => hint2 q b).symm
+    rw [integral_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b]
+    exact Finset.sum_congr rfl fun q _ => (integral_finsetSum _ fun b _ => hint2 q b).symm
   rw [hmerge]
   refine setIntegral_mono_on ?_ ?_ measurableSet_Ioc fun α _ => ?_
-  · exact integrable_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b
+  · exact integrable_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b
   · exact (hg.integrableOn_Icc (a := 0) (b := 1)).mono_set Ioc_subset_Icc_self
   · simp_rw [← Finset.sum_mul]
     have := sum_arc_indicator_le_one hx hδ hQ hQx α

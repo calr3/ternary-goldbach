@@ -133,7 +133,7 @@ theorem walkS_spec : ∀ (len q r : ℕ), walkS q (Lt q) len = some r → r = Lt
     intro q r h
     rw [walkS] at h
     split_ifs at h with hL hev
-    · have e : Lt (q + 1) = Lt q := by rw [Lt_succ, if_neg (by omega), add_zero]
+    · have e : Lt (q + 1) = Lt q := by rw [Lt_succ, ite_eq_right (by omega), add_zero]
       rw [← e] at h
       rw [ih (q + 1) r h]; congr 1; omega
     · have hodd : (q + 1) % 2 = 1 := by omega
@@ -143,7 +143,7 @@ theorem walkS_spec : ∀ (len q r : ℕ), walkS q (Lt q) len = some r → r = Lt
         have hs := (phiTD_spec _ _ _ _ le_rfl rfl (by omega)
           (fun p hp hpq => odd_factor hodd hp hpq) hpt).1 rfl
         have e : Lt (q + 1) = Lt q := by
-          rw [Lt_succ, if_neg (fun hc => hs hc.2), add_zero]
+          rw [Lt_succ, ite_eq_right (fun hc => hs hc.2), add_zero]
         simp only at h
         rw [← e] at h
         rw [ih (q + 1) r h]; congr 1; omega
@@ -151,7 +151,7 @@ theorem walkS_spec : ∀ (len q r : ℕ), walkS q (Lt q) len = some r → r = Lt
         obtain ⟨hs, ht⟩ := (phiTD_spec _ _ _ _ le_rfl rfl (by omega)
           (fun p hp hpq => odd_factor hodd hp hpq) hpt).2 t rfl
         have e : Lt (q + 1) = Lt q + 1000000000000000000 / t := by
-          rw [Lt_succ, if_pos ⟨hodd, hs⟩, ht]
+          rw [Lt_succ, ite_eq_left ⟨hodd, hs⟩, ht]
         simp only at h
         rw [← e] at h
         rw [ih (q + 1) r h]; congr 1; omega
@@ -171,9 +171,9 @@ theorem S_approx (K : ℕ) : (Lt K : ℝ) ≤ 1000000000000000000 * S K ∧
     rw [hS, Lt_succ]
     by_cases ho : (K + 1) % 2 = 1
     · have hO : Odd (K + 1) := Nat.odd_iff.2 ho
-      rw [if_pos hO]
+      rw [ite_eq_left hO]
       by_cases hsq : Squarefree (K + 1)
-      · rw [if_pos hsq, if_pos ⟨ho, hsq⟩]
+      · rw [ite_eq_left hsq, ite_eq_left ⟨ho, hsq⟩]
         have ht : 0 < (K + 1).totient := Nat.totient_pos.2 (by omega)
         have ht' : (0 : ℝ) < (K + 1).totient := by exact_mod_cast ht
         set t := (K + 1).totient
@@ -190,11 +190,11 @@ theorem S_approx (K : ℕ) : (Lt K : ℝ) ≤ 1000000000000000000 * S K ∧
             1000000000000000000 * S K + 1000000000000000000 / (t : ℝ) := by ring
         rw [e]; push_cast
         constructor <;> linarith [ih.1, ih.2]
-      · rw [if_neg hsq, if_neg (fun hc => hsq hc.2), zero_div]
+      · rw [ite_eq_right hsq, ite_eq_right (fun hc => hsq hc.2), zero_div]
         push_cast
         constructor <;> linarith [ih.1, ih.2]
     · have hO : ¬ Odd (K + 1) := fun h => ho (Nat.odd_iff.1 h)
-      rw [if_neg hO, if_neg (fun hc => ho hc.1)]
+      rw [ite_eq_right hO, ite_eq_right (fun hc => ho hc.1)]
       push_cast
       constructor <;> linarith [ih.1, ih.2]
 

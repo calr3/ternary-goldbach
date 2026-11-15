@@ -301,8 +301,8 @@ theorem sandwich_lower {δ K b x : ℝ} (hδ : 0 < δ) (hKδ : δ ≤ K) (hx : 0
   have hint_n : ∀ n ∈ range N, Integrable fun z => Λ n * (Iic (hi n)).indicator gpdf z :=
     fun n _ => (integrable_gpdf.indicator measurableSet_Iic).const_mul _
   simp_rw [← integral_const_mul]
-  rw [← integral_finset_sum _ hint_n]
-  refine integral_mono (integrable_finset_sum _ hint_n) hGint fun z => ?_
+  rw [← integral_finsetSum _ hint_n]
+  refine integral_mono (integrable_finsetSum _ hint_n) hGint fun z => ?_
   -- pointwise
   show ∑ n ∈ range N, Λ n * (Iic (hi n)).indicator gpdf z ≤ gpdf z * psiR (x * Real.exp (a - δ * z))
   have hY : 0 < x * Real.exp (a - δ * z) := by positivity

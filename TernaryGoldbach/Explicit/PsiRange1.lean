@@ -102,7 +102,7 @@ theorem MidB0_lo_le {a δ x : ℝ} (hδa : δ ^ 2 / 2 + |a| ≤ 1e-10) (hx : 200
     nlinarith
   have hK : ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 6.76e11 := by
     have := Nat.floor_le (show (0:ℝ) ≤ ((3e12 : ℝ) - 3e10) / 4.4 by norm_num)
-    norm_num at this ⊢; try linarith
+    norm_num at this ⊢
   have hZ := Z3g_H_le; have hZ0 := Z3g_H_nonneg
   have hc := c3g_H_le; have hc0 := c3g_H_nonneg
   have hK0 : (0:ℝ) ≤ ((⌊((3e12 : ℝ) - 3e10) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity
@@ -130,7 +130,7 @@ theorem MidB_r1_le {a x : ℝ} (ha : |a| ≤ 1.3e-14) (hx : 20000 ≤ Real.log x
     nlinarith
   have hK : ((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1 ≤ 1.4614e15 := by
     have := Nat.floor_le (show (0:ℝ) ≤ ((6.43e15 : ℝ) - 3e12) / 4.4 by norm_num)
-    norm_num at this ⊢; try linarith
+    norm_num at this ⊢
   have hZ := Z3g_3e12_le; have hZ0 := Z3g_3e12_nonneg
   have hc := c3g_3e12_le; have hc0 := c3g_3e12_nonneg
   have hK0 : (0:ℝ) ≤ ((⌊((6.43e15 : ℝ) - 3e12) / 4.4⌋₊ : ℕ) : ℝ) + 1 := by positivity

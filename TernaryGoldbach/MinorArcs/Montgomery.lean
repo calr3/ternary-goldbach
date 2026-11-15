@@ -63,7 +63,7 @@ theorem sum_e_range (m n : ℕ) (hm : 1 ≤ m) :
       rw [← e_nat_mul', (e_eq_one_iff _).2 ⟨n, by push_cast; field_simp⟩]
     rw [this]; simp
 
-theorem sum_moebius_divisors (g : ℕ) (hg : 1 ≤ g) :
+theorem sum_moebius_divisors (g : ℕ) (_hg : 1 ≤ g) :
     ∑ d ∈ g.divisors, (μ d : ℂ) = if g = 1 then 1 else 0 := by
   have h := congrArg (fun f : ArithmeticFunction ℂ => f g)
     (ArithmeticFunction.coe_moebius_mul_coe_zeta (R := ℂ))
@@ -122,8 +122,8 @@ theorem ramanujan_coprime (q n : ℕ) (hq : 1 ≤ q) (hn : Nat.Coprime n q) :
         have : m ∣ Nat.gcd n q := Nat.dvd_gcd hmn ⟨d, by rw [hm]; ring⟩
         rw [hn] at this; exact Nat.dvd_one.1 this
       have hdq : d = q := by rw [hm, hm1', mul_one]
-      rw [if_pos hmn, if_pos hdq, hm1', hdq]; simp
-    · rw [if_neg hmn, mul_zero, if_neg]
+      rw [ite_eq_left hmn, ite_eq_left hdq, hm1', hdq]; simp
+    · rw [ite_eq_right hmn, mul_zero, ite_eq_right]
       rintro rfl
       apply hmn
       have : m = 1 := by

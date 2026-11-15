@@ -647,7 +647,7 @@ theorem E1_var {x : ℕ} (hx : 10 ^ 12 ≤ x) {t : ℝ} (ht : (x : ℝ) ≤ t) :
   have hp2 : 0 ≤ 1 / (x : ℝ) := by positivity
   have hp3 : 0 ≤ 1 / Real.log x ^ 3 := by positivity
   by_cases hL : Real.log x < 20000
-  · rw [Dvar, if_pos hL]
+  · rw [Dvar, ite_eq_left hL]
     set T : ℕ := ⌈Real.exp 20000⌉₊ with hTdef
     have hT1 : Real.exp 20000 ≤ T := Nat.le_ceil _
     have hT2 : (T : ℝ) ≤ Real.exp 20001 := by
@@ -696,7 +696,7 @@ theorem E1_var {x : ℕ} (hx : 10 ^ 12 ≤ x) {t : ℝ} (ht : (x : ℝ) ≤ t) :
           norm_num
         linarith
       linarith
-  · rw [Dvar, if_neg hL]
+  · rw [Dvar, ite_eq_right hL]
     push Not at hL
     have h := E1_diff hx' hL ht
     have e1 : (7.04 : ℝ) / √(x : ℝ) = 7.04 * (1 / √(x : ℝ)) := by ring
@@ -1149,7 +1149,7 @@ theorem wl_diff {n : ℕ} (hn : 2 ≤ n) :
     have e2 : 1 / (n * ((n : ℝ) + 1)) * (1 / Real.log n + 1 / Real.log n ^ 2) *
         (n * ((n : ℝ) + 1) * Real.log n * Real.log ((n : ℝ) + 1)) =
         Real.log ((n : ℝ) + 1) + Real.log ((n : ℝ) + 1) / Real.log n := by
-      field_simp; try ring
+      field_simp
     rw [e2]
     have : 1 ≤ Real.log ((n : ℝ) + 1) / Real.log n := by rw [le_div_iff₀ ha]; linarith
     linarith
@@ -1307,7 +1307,7 @@ theorem E2_1e18 : |E₂Λ ((10 ^ 18 : ℕ) : ℝ)| ≤ 0.0000683 := by
     rw [show (((10 ^ 18 : ℕ) : ℝ)) = (1e9) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   refine h.trans ?_
   unfold Dvar
-  rw [if_pos hL2, hs]
+  rw [ite_eq_left hL2, hs]
   generalize Real.log ((10 ^ 18 : ℕ) : ℝ) = L at hL ⊢
   have h3 : 16 / L ^ 3 ≤ 16 / 41 ^ 3 :=
     div_le_div_of_nonneg_left (by norm_num) (by norm_num) (pow_le_pow_left₀ (by norm_num) hL 3)
@@ -1382,9 +1382,9 @@ theorem tail_sum_le (M N : ℕ) :
     refine sum_congr rfl fun n _ => ?_
     by_cases h1 : 10 ^ 15 < n
     · by_cases h2 : n ≤ 10 ^ 17
-      · rw [if_pos h1, if_pos ⟨h1, h2⟩, if_neg (by omega), add_zero]
-      · rw [if_pos h1, if_neg (by omega), if_pos (by omega), zero_add]
-    · rw [if_neg h1, if_neg (by omega), if_neg (by omega), add_zero]
+      · rw [ite_eq_left h1, ite_eq_left ⟨h1, h2⟩, ite_eq_right (by omega), add_zero]
+      · rw [ite_eq_left h1, ite_eq_right (by omega), ite_eq_left (by omega), zero_add]
+    · rw [ite_eq_right h1, ite_eq_right (by omega), ite_eq_right (by omega), add_zero]
   set g : ℕ → ℝ := fun n => 1 / (√(n : ℝ) * (n + 1)) with hg
   have hg0 : ∀ n, 0 ≤ g n := fun n => by simp only [hg]; positivity
   have hmid : ∀ n ∈ Ioo M N,
@@ -1392,7 +1392,7 @@ theorem tail_sum_le (M N : ℕ) :
         200 * (1 / 34 + 1 / 34 ^ 2) * (if 10 ^ 15 < n then g n else 0) := by
     intro n _
     by_cases h : 10 ^ 15 < n ∧ n ≤ 10 ^ 17
-    · rw [if_pos h, if_pos h.1]
+    · rw [ite_eq_left h, ite_eq_left h.1]
       have hn0 : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
       have hss : √(n : ℝ) * √(n : ℝ) = n := Real.mul_self_sqrt hn0.le
       have hL : (34 : ℝ) ≤ Real.log n := by
@@ -1414,7 +1414,7 @@ theorem tail_sum_le (M N : ℕ) :
       calc 200 * √(n : ℝ) * (1 / (n * ((n : ℝ) + 1)) * (1 / 34 + 1 / 34 ^ 2))
           = 200 * (1 / 34 + 1 / 34 ^ 2) * (√(n : ℝ) * (1 / (n * ((n : ℝ) + 1)))) := by ring
         _ = _ := by rw [c]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact mul_nonneg (by norm_num) (by split_ifs; exacts [hg0 n, le_rfl])
   have hm := sum_le_sum hmid
   rw [← mul_sum] at hm
@@ -1509,8 +1509,8 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
     rw [← sum_add_distrib]
     refine sum_congr rfl fun n _ => ?_
     by_cases h : n ≤ 10 ^ 15
-    · rw [if_pos h, if_neg (by omega), add_zero]
-    · rw [if_neg h, if_pos (by omega), zero_add]
+    · rw [ite_eq_left h, ite_eq_right (by omega), add_zero]
+    · rw [ite_eq_right h, ite_eq_left (by omega), zero_add]
   have htail := tail_sum_le M N₁
   set κ := 1 / L₀ + 1 / L₀ ^ 2 with hκ
   have hκ0 : 0 ≤ κ := by positivity
@@ -1532,7 +1532,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
       simp only [hg]
       rw [mul_one_div, div_eq_div_iff (by positivity) (by positivity), ← mul_assoc, hss]; ring
     by_cases h17 : n ≤ 10 ^ 15
-    · rw [if_pos h17]
+    · rw [ite_eq_left h17]
       have he := hc n hn1 h17
       have hcpos : 0 ≤ c₀ + d₁ * (if 999999 < n then 1 else 0) + d₂ * (if 49999999 < n then 1 else 0) +
           d₃ * (if 10 ^ 8 < n then 1 else 0) + d₄ * (if 32000000000 < n then 1 else 0) := by
@@ -1548,7 +1548,7 @@ theorem E2_le_bin {M : ℕ} (hM : 100000 ≤ M) (hM17 : M < 10 ^ 17) {c₀ d₁ 
       rw [e, hgn]
       congr 1
       split_ifs <;> ring
-    · rw [if_neg h17]
+    · rw [ite_eq_right h17]
       have := hg0 n
       have : 0 ≤ c₀ * g n + d₁ * (if 999999 < n then g n else 0) + d₂ * (if 49999999 < n then g n else 0) +
           d₃ * (if 10 ^ 8 < n then g n else 0) + d₄ * (if 32000000000 < n then g n else 0) := by
@@ -1948,36 +1948,36 @@ theorem psi_cE {n : ℕ} (h12 : 12 ≤ n) (h17 : n ≤ 10 ^ 15) : |psiN n - n| �
   rcases lt_or_ge n 1000000 with h6 | h6
   · have hb := psi_two_sided h12 (by omega)
     rw [cB_small h6] at hb
-    have : cE n = 1 := by unfold cE; simp only [if_neg (show ¬ 999999 < n by omega),
-      if_neg (show ¬ 49999999 < n by omega), if_neg (show ¬ 10 ^ 8 < n by omega),
-      if_neg (show ¬ 32000000000 < n by omega)]; norm_num
+    have : cE n = 1 := by unfold cE; simp only [ite_eq_right (show ¬ 999999 < n by omega),
+      ite_eq_right (show ¬ 49999999 < n by omega), ite_eq_right (show ¬ 10 ^ 8 < n by omega),
+      ite_eq_right (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this]; exact hb
   rcases lt_or_ge n 50000000 with h7 | h7
   · obtain ⟨hu, hl⟩ := thetaN_sieve h6 h7
     have hθψ := thetaN_le_psiN n
     have hnp := nonprime_small n (by omega) (by omega)
     have he := psiN_eq n
-    have : cE n = 5 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
-      if_neg (show ¬ 49999999 < n by omega), if_neg (show ¬ 10 ^ 8 < n by omega),
-      if_neg (show ¬ 32000000000 < n by omega)]; norm_num
+    have : cE n = 5 := by unfold cE; simp only [ite_eq_left (show 999999 < n by omega),
+      ite_eq_right (show ¬ 49999999 < n by omega), ite_eq_right (show ¬ 10 ^ 8 < n by omega),
+      ite_eq_right (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this, abs_le]; constructor <;> linarith
   have hb := psi_two_sided h12 (by omega)
   rcases le_or_gt n (10 ^ 8) with h8 | h8
   · have hc := cB_le_315 (n := n) (by omega) h8
-    have : cE n = 31.5 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
-      if_pos (show 49999999 < n by omega), if_neg (show ¬ 10 ^ 8 < n by omega),
-      if_neg (show ¬ 32000000000 < n by omega)]; norm_num
+    have : cE n = 31.5 := by unfold cE; simp only [ite_eq_left (show 999999 < n by omega),
+      ite_eq_left (show 49999999 < n by omega), ite_eq_right (show ¬ 10 ^ 8 < n by omega),
+      ite_eq_right (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this]; exact hb.trans (mul_le_mul_of_nonneg_right hc hs)
   rcases le_or_gt n 32000000000 with h10 | h10
   · have hc := cB_le_355 (n := n) h10
-    have : cE n = 35.5 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
-      if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega),
-      if_neg (show ¬ 32000000000 < n by omega)]; norm_num
+    have : cE n = 35.5 := by unfold cE; simp only [ite_eq_left (show 999999 < n by omega),
+      ite_eq_left (show 49999999 < n by omega), ite_eq_left (show 10 ^ 8 < n by omega),
+      ite_eq_right (show ¬ 32000000000 < n by omega)]; norm_num
     rw [this]; exact hb.trans (mul_le_mul_of_nonneg_right hc hs)
   · have hc := cB_le_72 h17
-    have : cE n = 72 := by unfold cE; simp only [if_pos (show 999999 < n by omega),
-      if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega),
-      if_pos (show 32000000000 < n by omega)]; norm_num
+    have : cE n = 72 := by unfold cE; simp only [ite_eq_left (show 999999 < n by omega),
+      ite_eq_left (show 49999999 < n by omega), ite_eq_left (show 10 ^ 8 < n by omega),
+      ite_eq_left (show 32000000000 < n by omega)]; norm_num
     rw [this]; exact hb.trans (mul_le_mul_of_nonneg_right hc hs)
 
 /-- `cE` written with the coefficients of a bin: `c₀` absorbs the thresholds below `M`. -/
@@ -2016,9 +2016,9 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 1) (d₁ := 4) (d₂ := 26.5) (d₃ := 4) (d₄ := 36.5)
       (L₀ := 11) (s₀ := 316) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (fun n hn h17 => cE_eq (by unfold cE; ring) (psi_cE (by omega) h17))
-      (hcM 1 (by unfold cE; simp only [if_neg (show ¬ 999999 < x by omega),
-        if_neg (show ¬ 49999999 < x by omega), if_neg (show ¬ 10 ^ 8 < x by omega),
-        if_neg (show ¬ 32000000000 < x by omega)]; norm_num))
+      (hcM 1 (by unfold cE; simp only [ite_eq_right (show ¬ 999999 < x by omega),
+        ite_eq_right (show ¬ 49999999 < x by omega), ite_eq_right (show ¬ 10 ^ 8 < x by omega),
+        ite_eq_right (show ¬ 32000000000 < x by omega)]; norm_num))
       (by exact_mod_cast lnat x 11 (by norm_num; linarith)) (by norm_num)
       (Real.le_sqrt_of_sq_le (by linarith)) (by norm_num)
     refine F_mid_gen (S0 := 316) (Lm := 12.62) (cθ := 2.3662) hx1 le_rfl (by rw [Nat.le_sqrt]; omega)
@@ -2029,9 +2029,9 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 1) (d₁ := 4) (d₂ := 26.5) (d₃ := 4) (d₄ := 36.5)
       (L₀ := 12) (s₀ := 547) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (fun n hn h17 => cE_eq (by unfold cE; ring) (psi_cE (by omega) h17))
-      (hcM 1 (by unfold cE; simp only [if_neg (show ¬ 999999 < x by omega),
-        if_neg (show ¬ 49999999 < x by omega), if_neg (show ¬ 10 ^ 8 < x by omega),
-        if_neg (show ¬ 32000000000 < x by omega)]; norm_num))
+      (hcM 1 (by unfold cE; simp only [ite_eq_right (show ¬ 999999 < x by omega),
+        ite_eq_right (show ¬ 49999999 < x by omega), ite_eq_right (show ¬ 10 ^ 8 < x by omega),
+        ite_eq_right (show ¬ 32000000000 < x by omega)]; norm_num))
       (by exact_mod_cast lnat x 12 (by norm_num; have : (300000 : ℝ) ≤ x := by exact_mod_cast h1
                                        linarith)) (by norm_num)
       (Real.le_sqrt_of_sq_le (by have : (300000 : ℝ) ≤ x := by exact_mod_cast h1
@@ -2042,11 +2042,11 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
   have hc5 : ∀ n : ℕ, x < n → n ≤ 10 ^ 15 → |psiN n - n| ≤ (5 + 0 * (if 999999 < n then 1 else 0) +
       26.5 * (if 49999999 < n then 1 else 0) + 4 * (if 10 ^ 8 < n then 1 else 0) +
       36.5 * (if 32000000000 < n then 1 else 0)) * √(n : ℝ) := fun n hn h17 =>
-    cE_eq (by unfold cE; rw [if_pos (show 999999 < n by omega)]; ring) (psi_cE (by omega) h17)
+    cE_eq (by unfold cE; rw [ite_eq_left (show 999999 < n by omega)]; ring) (psi_cE (by omega) h17)
   have hcM5 : x < 50000000 → |psiN x - x| ≤ 5 * √(x : ℝ) := fun h => hcM 5 (by
-    unfold cE; simp only [if_pos (show 999999 < x by omega),
-      if_neg (show ¬ 49999999 < x by omega), if_neg (show ¬ 10 ^ 8 < x by omega),
-      if_neg (show ¬ 32000000000 < x by omega)]; norm_num)
+    unfold cE; simp only [ite_eq_left (show 999999 < x by omega),
+      ite_eq_right (show ¬ 49999999 < x by omega), ite_eq_right (show ¬ 10 ^ 8 < x by omega),
+      ite_eq_right (show ¬ 32000000000 < x by omega)]; norm_num)
   rcases lt_or_ge x 5000000 with h3 | h3
   · -- `[10⁶, 5·10⁶)`
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 5) (d₁ := 0) (d₂ := 26.5) (d₃ := 4) (d₄ := 36.5)
@@ -2075,11 +2075,11 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
   · -- `[5·10⁷, 10⁸]`
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 31.5) (d₁ := 0) (d₂ := 0) (d₃ := 4) (d₄ := 36.5)
       (L₀ := 17) (s₀ := 7071) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      (fun n hn h17 => cE_eq (by unfold cE; rw [if_pos (show 999999 < n by omega),
-        if_pos (show 49999999 < n by omega)]; ring) (psi_cE (by omega) h17))
-      (hcM 31.5 (by unfold cE; simp only [if_pos (show 999999 < x by omega),
-        if_pos (show 49999999 < x by omega), if_neg (show ¬ 10 ^ 8 < x by omega),
-        if_neg (show ¬ 32000000000 < x by omega)]; norm_num))
+      (fun n hn h17 => cE_eq (by unfold cE; rw [ite_eq_left (show 999999 < n by omega),
+        ite_eq_left (show 49999999 < n by omega)]; ring) (psi_cE (by omega) h17))
+      (hcM 31.5 (by unfold cE; simp only [ite_eq_left (show 999999 < x by omega),
+        ite_eq_left (show 49999999 < x by omega), ite_eq_right (show ¬ 10 ^ 8 < x by omega),
+        ite_eq_right (show ¬ 32000000000 < x by omega)]; norm_num))
       (by exact_mod_cast lnat x 17 (by norm_num; have : (50000000 : ℝ) ≤ x := by exact_mod_cast h4
                                        linarith)) (by norm_num)
       (Real.le_sqrt_of_sq_le (by have : (50000000 : ℝ) ≤ x := by exact_mod_cast h4
@@ -2092,12 +2092,12 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
   · -- `(10⁸, 3.2·10¹⁰]`
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 35.5) (d₁ := 0) (d₂ := 0) (d₃ := 0) (d₄ := 36.5)
       (L₀ := 18) (s₀ := 10000) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      (fun n hn h17 => cE_eq (by unfold cE; rw [if_pos (show 999999 < n by omega),
-        if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega)]; ring)
+      (fun n hn h17 => cE_eq (by unfold cE; rw [ite_eq_left (show 999999 < n by omega),
+        ite_eq_left (show 49999999 < n by omega), ite_eq_left (show 10 ^ 8 < n by omega)]; ring)
         (psi_cE (by omega) h17))
-      (hcM 35.5 (by unfold cE; simp only [if_pos (show 999999 < x by omega),
-        if_pos (show 49999999 < x by omega), if_pos (show 10 ^ 8 < x by omega),
-        if_neg (show ¬ 32000000000 < x by omega)]; norm_num))
+      (hcM 35.5 (by unfold cE; simp only [ite_eq_left (show 999999 < x by omega),
+        ite_eq_left (show 49999999 < x by omega), ite_eq_left (show 10 ^ 8 < x by omega),
+        ite_eq_right (show ¬ 32000000000 < x by omega)]; norm_num))
       (by exact_mod_cast lnat x 18 (by norm_num; have : (100000000 : ℝ) < x := by exact_mod_cast h5
                                        linarith)) (by norm_num)
       (Real.le_sqrt_of_sq_le (by have : (100000000 : ℝ) < x := by exact_mod_cast h5
@@ -2109,12 +2109,12 @@ theorem F_mid {x : ℕ} (hx1 : 100000 ≤ x) (hx2 : x < 10 ^ 12) :
   · -- `(3.2·10¹⁰, 10¹²)`
     have hE := E2_le_bin (M := x) hx1 (by omega) (c₀ := 72) (d₁ := 0) (d₂ := 0) (d₃ := 0) (d₄ := 0)
       (L₀ := 24) (s₀ := 178885) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-      (fun n hn h17 => cE_eq (by unfold cE; rw [if_pos (show 999999 < n by omega),
-        if_pos (show 49999999 < n by omega), if_pos (show 10 ^ 8 < n by omega),
-        if_pos (show 32000000000 < n by omega)]; ring) (psi_cE (by omega) h17))
-      (hcM 72 (by unfold cE; simp only [if_pos (show 999999 < x by omega),
-        if_pos (show 49999999 < x by omega), if_pos (show 10 ^ 8 < x by omega),
-        if_pos (show 32000000000 < x by omega)]; norm_num))
+      (fun n hn h17 => cE_eq (by unfold cE; rw [ite_eq_left (show 999999 < n by omega),
+        ite_eq_left (show 49999999 < n by omega), ite_eq_left (show 10 ^ 8 < n by omega),
+        ite_eq_left (show 32000000000 < n by omega)]; ring) (psi_cE (by omega) h17))
+      (hcM 72 (by unfold cE; simp only [ite_eq_left (show 999999 < x by omega),
+        ite_eq_left (show 49999999 < x by omega), ite_eq_left (show 10 ^ 8 < x by omega),
+        ite_eq_left (show 32000000000 < x by omega)]; norm_num))
       (by exact_mod_cast lnat x 24 (by norm_num; have : (32000000000 : ℝ) < x := by exact_mod_cast h6
                                        linarith)) (by norm_num)
       (Real.le_sqrt_of_sq_le (by have : (32000000000 : ℝ) < x := by exact_mod_cast h6

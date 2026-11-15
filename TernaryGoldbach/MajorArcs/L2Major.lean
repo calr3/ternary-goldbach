@@ -153,7 +153,7 @@ theorem Jq_bounds {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq : q ∈ Qset r₀)
   have hA : ∑ b ∈ Bset q, ∫ y in arc 8 r₀ x q b, G y = ∫ β in -w..w, ∑ b ∈ Bset q, G ((b : ℝ) / q + β) := by
     have hint : ∀ b ∈ Bset q, IntervalIntegrable (fun β => G ((b : ℝ) / q + β)) volume (-w) w :=
       fun b _ => (hGc.comp (continuous_const.add continuous_id)).intervalIntegrable _ _
-    rw [intervalIntegral.integral_finset_sum hint]
+    rw [intervalIntegral.integral_finsetSum hint]
     exact Finset.sum_congr rfl fun b _ => setIntegral_arc_eq hw0
   -- Step B: pointwise bounds
   set A1lo := (1 - t) ^ 2 * m

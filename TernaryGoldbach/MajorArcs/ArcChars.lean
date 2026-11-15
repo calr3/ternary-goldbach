@@ -306,9 +306,9 @@ theorem coprime_split {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (h
 
 theorem summable_sub_coprimePart {x : ℝ} (hx : 0 < x) (q : ℕ) :
     Summable fun n => ‖(cP x - coprimePart q (cP x)) n‖ :=
-  ((summable_cP hx).add ((summable_cP hx).of_nonneg_of_le (fun n => norm_nonneg _)
-    (norm_coprimePart_le q (cP x)))).of_nonneg_of_le (fun n => norm_nonneg _)
-    fun n => norm_sub_le _ _
+  ((summable_cP hx).add ((summable_cP hx).of_nonneg_of_le (fun _n => norm_nonneg _)
+    (norm_coprimePart_le q (cP x)))).of_nonneg_of_le (fun _n => norm_nonneg _)
+    fun _n => norm_sub_le _ _
 
 /-- `|S_{η₊}(α) − S'_q(α)| ≤ 10⁻¹⁵ x`. -/
 theorem norm_S_sub_coprime_le {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hq : q ≤ 300000)
@@ -352,7 +352,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
         (if Squarefree q then (1:ℝ) else 0) / q.totient * ‖expTsum (coprimePart q (cP x)) β‖ ^ 2 +
           (4.25e-7 * x) ^ 2) ∧
       ‖expTsum (coprimePart q (cP x)) β - 𝓕 etaPC (-(β * x)) * x‖ ≤ 2.83e-7 * x := by
-  haveI : NeZero q := ⟨by omega⟩
+  have : NeZero q := ⟨by omega⟩
   have hx0 : 0 < x := by linarith
   set a := coprimePart q (cP x) with ha_def
   have hc := summable_cP hx0
@@ -380,7 +380,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
       ‖gaussSum ψ ZMod.stdAddChar‖ * ‖Schar ψ⁻¹ a β‖ ≤ 4.25e-7 * x := by
     intro ψ hψ
     set c' := ψ⁻¹.conductor with hc'
-    haveI : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
+    have : NeZero c' := ⟨DirichletCharacter.conductor_ne_zero _⟩
     have hc'1 : c' ≠ 1 := fun h =>
       hψ (inv_eq_one.1 ((DirichletCharacter.eq_one_iff_conductor_eq_one (χ := ψ⁻¹)).2 h))
     have hc'2 : 2 ≤ c' := by have := NeZero.ne c'; omega
@@ -404,14 +404,14 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
         ((7.5e-8 + 7.7e6 / √x) / √(c' : ℝ)) * x := by
       rcases Nat.even_or_odd c' with hev | hod
       · have hqev : Even q := (even_iff_two_dvd.1 hev).trans hc'q |> even_iff_two_dvd.2
-        have hqtq : qt q = q := by unfold qt; rw [if_pos hqev]
+        have hqtq : qt q = q := by unfold qt; rw [ite_eq_left hqev]
         have hc'3 : c' ≤ 300000 := le_trans hc'le hq3
         have hδ : |β * x| ≤ 1200000 / c' := by
           refine hβ.trans ?_
           rw [hqtq]
           exact div_le_div_of_nonneg_left (by norm_num) (by exact_mod_cast (by omega : 0 < c')) hcr
         have := thm_7_1_4_even hx hev hc'3 χ hχ hδ
-        rw [if_neg hc'1, sub_zero, hδx] at this
+        rw [ite_eq_right hc'1, sub_zero, hδx] at this
         exact this
       · have hc'pos : (0 : ℝ) < c' := by exact_mod_cast (by omega : 0 < c')
         have key : 2 * c' ≤ qt q := by
@@ -430,7 +430,7 @@ theorem arc_chars {x : ℝ} (hx : 4.9e26 ≤ x) {q : ℕ} (hq1 : 1 ≤ q) (hqt :
           refine hβ.trans ?_
           rw [div_le_div_iff₀ hqt0 hc'pos]; nlinarith
         have := thm_7_1_4_odd hx hod hc'3 χ hχ hδ
-        rw [if_neg hc'1, sub_zero, hδx] at this
+        rw [ite_eq_right hc'1, sub_zero, hδx] at this
         exact this
     have hc'3r : (c' : ℝ) ≤ 300000 := hcr.trans (by exact_mod_cast hq3)
     have hc'2r : (2 : ℝ) ≤ c' := by exact_mod_cast hc'2

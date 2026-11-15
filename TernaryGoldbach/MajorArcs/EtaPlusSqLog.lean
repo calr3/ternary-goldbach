@@ -316,12 +316,12 @@ theorem gL_cases (u : ℝ) : (Real.exp u ≤ 2 ∧ gL u = hP (Real.exp u) ∧
   rcases le_or_gt (Real.exp u) 2 with h | h
   · left
     refine ⟨h, hBase_eq_hP he.le h, ?_, ?_⟩
-    · rw [gL', hBd, if_pos h]; ring
-    · rw [gL'', hBdd, hBd, if_pos h, if_pos h]; ring
+    · rw [gL', hBd, ite_eq_left h]; ring
+    · rw [gL'', hBdd, hBd, ite_eq_left h, ite_eq_left h]; ring
   · right
     refine ⟨h, hBase_of_two_le h.le, ?_, ?_⟩
-    · rw [gL', hBd, if_neg (not_le.2 h)]; ring
-    · rw [gL'', hBdd, hBd, if_neg (not_le.2 h), if_neg (not_le.2 h)]; ring
+    · rw [gL', hBd, ite_eq_right (not_le.2 h)]; ring
+    · rw [gL'', hBdd, hBd, ite_eq_right (not_le.2 h), ite_eq_right (not_le.2 h)]; ring
 
 /-- From the pieces: `W(u) = eᵘ 1_{[0,2]}(eᵘ) k(eᵘ)` when `W(u) = F(eᵘ, g, g', g'')` vanishes with `g`. -/
 theorem IF_of_cases {W k : ℝ → ℝ}

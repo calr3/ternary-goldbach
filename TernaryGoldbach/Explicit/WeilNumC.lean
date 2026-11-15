@@ -416,7 +416,7 @@ theorem PhiC_inv {δ : ℝ} (hδ : 0 < δ) (c₀ κ₁ c₂ : ℝ) :
       7 * c₀ / 32 + 15 * κ₁ / 128 - 35 / 24 * c₂ * δ := by
   unfold PhiC; field_simp; ring
 
-theorem PhiC_U_ge {δ U c₀ κ₁ c₂ : ℝ} (hU : 0 < U) (hδ : 0 ≤ δ) (hc2 : 0 ≤ c₂)
+theorem PhiC_U_ge {δ U c₀ κ₁ c₂ : ℝ} (hU : 0 < U) (_hδ : 0 ≤ δ) (hc2 : 0 ≤ c₂)
     (hX4 : 0 ≤ c₀ / 4 + κ₁ * (Real.log U / 4 - 1 / 16)) :
     c₀ * Real.log U + κ₁ / 2 * Real.log U ^ 2 - (δ * U) ^ 2 / 2 * (c₀ / 2 + κ₁ * (Real.log U / 2 - 1 / 4)) -
       c₂ / U - c₂ * δ ^ 2 * U / 2 ≤ PhiC δ c₀ κ₁ c₂ U := by

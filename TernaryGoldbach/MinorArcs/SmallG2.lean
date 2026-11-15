@@ -230,25 +230,25 @@ theorem stepG_spec {n : ℕ} (hn1 : 1 ≤ n) (hn : n < 2 ^ 20) {t : Tr ℤ} {G :
     rw [Gtil_succ, hF, hG]; simp
   unfold stepG
   by_cases he : (k + 1) % 2 = 0
-  · simp only [he, if_true]
+  · simp only [he, ite_true]
     exact hzero (Fq_eq_zero_of_not (by omega))
-  simp only [he, if_false]
+  simp only [he, ite_false]
   have ho : (k + 1) % 2 = 1 := by omega
   have hodd : Odd (k + 1) := Nat.odd_iff.2 ho
   set ps := oddPrimes (k + 1)
   have hnd : ps.Nodup := nodup_oddPrimes (by omega)
   have hpr : ∀ p ∈ ps, p.Prime := fun p hp => ((mem_oddPrimes (by omega)).1 hp).1
   by_cases hsq : ps.prod = k + 1
-  · simp only [hsq, if_true]
+  · simp only [hsq, ite_true]
     -- `F` is `Fq (k+1)`
     have hF : (if ps.length % 2 = 0 then (1 : ℤ) else -1) * ((D / (ps.map (· + 1)).prod : ℕ) : ℤ) =
         Fq (k + 1) := by
       unfold Fq
-      rw [if_pos ho, ← hsq, moebius_prod_primes ps hnd hpr, sigma_prod_primes ps hnd hpr]
+      rw [ite_eq_left ho, ← hsq, moebius_prod_primes ps hnd hpr, sigma_prod_primes ps hnd hpr]
       congr 1
       rcases Nat.even_or_odd ps.length with h | h
-      · rw [if_pos (Nat.even_iff.1 h), h.neg_one_pow]
-      · rw [if_neg (by have := Nat.odd_iff.1 h; omega), h.neg_one_pow]
+      · rw [ite_eq_left (Nat.even_iff.1 h), h.neg_one_pow]
+      · rw [ite_eq_right (by have := Nat.odd_iff.1 h; omega), h.neg_one_pow]
     rw [hF]
     obtain ⟨i1, i2, i3⟩ := dvs_spec ps hnd hpr
     have hdvd : ∀ x ∈ dvs ps, x.1 ∣ k + 1 := fun x hx =>
@@ -277,8 +277,8 @@ theorem stepG_spec {n : ℕ} (hn1 : 1 ≤ n) (hn : n < 2 ^ 20) {t : Tr ℤ} {G :
           obtain ⟨x, hx, hx1⟩ := List.mem_map.1 ((i2 (2 * m + 1)).2 (hsq ▸ h))
           exact List.mem_map.2 ⟨x, hx, by rw [hx1]; omega⟩
       by_cases h : 2 * m + 1 ∣ k + 1
-      · rw [if_pos (hiff.2 h), if_pos h]
-      · rw [if_neg (fun h' => h (hiff.1 h')), if_neg h]
+      · rw [ite_eq_left (hiff.2 h), ite_eq_left h]
+      · rw [ite_eq_right (fun h' => h (hiff.1 h')), ite_eq_right h]
     · rw [u2, Gtil_succ, hG]
       congr 1
       have hs := sum_dvs (fun d => μ d * (Fq (k + 1) * (2 * Atil k d + Fq (k + 1)))) hnd hpr
@@ -288,7 +288,7 @@ theorem stepG_spec {n : ℕ} (hn1 : 1 ≤ n) (hn : n < 2 ^ 20) {t : Tr ℤ} {G :
       rw [i3 x hx, ht]
       have := hxodd x hx
       rw [show 2 * (x.1 / 2) + 1 = x.1 by omega]
-  · simp only [hsq, if_false]
+  · simp only [hsq, ite_false]
     exact hzero (Fq_eq_zero_of_not fun ⟨_, h⟩ => hsq ((squarefree_iff_prod_oddPrimes hodd).1 h))
 
 /-! ### The walk invariant -/
@@ -360,8 +360,8 @@ theorem stepA_spec {n : ℕ} {s s' : SA} (hn : n + 1 ≤ XX) (h : Inv n s) (hs :
   have hS0 : S0 = 700 := rfl
   unfold stepA at hs
   by_cases hab : 16 ≤ n ∧ n < S0 ∧ chkAB s.a s.c s.ta s.tc n = false
-  · rw [if_pos hab] at hs; exact absurd hs (by simp)
-  rw [if_neg hab] at hs
+  · rw [ite_eq_left hab] at hs; exact absurd hs (by simp)
+  rw [ite_eq_right hab] at hs
   have gAB : 16 ≤ n → n < S0 → GoodAB n := by
     intro h1 h2
     have hmin : min n (S0 - 1) = n := by omega
@@ -383,13 +383,13 @@ theorem stepA_spec {n : ℕ} {s s' : SA} (hn : n + 1 ≤ XX) (h : Inv n s) (hs :
   have hI' : Isp (n + 1) ≤ ((s.I + dI : ℤ) : ℝ) := by
     rcases Nat.eq_zero_or_pos n with rfl | hn0
     · have e1 : Isp (0 + 1) = 0 := by simp [Isp]
-      rw [e1, hdI, if_pos rfl, add_zero]
+      rw [e1, hdI, ite_eq_left rfl, add_zero]
       have e0 : Isp 0 = 0 := by simp [Isp]
       rw [e0] at hI; exact hI
     rw [Isp_succ hn0]
     push_cast
     refine add_le_add hI ?_
-    rw [hdI, if_neg (by omega)]
+    rw [hdI, ite_eq_right (by omega)]
     obtain ⟨l1, l2⟩ := log_bounds hn0
     have hD1 : 0 < lhiD n := by unfold lhiD; positivity
     have hD0 : 0 < lloD n := by unfold lloD; positivity
@@ -405,8 +405,8 @@ theorem stepA_spec {n : ℕ} {s s' : SA} (hn : n + 1 ≤ XX) (h : Inv n s) (hs :
   have hJ' : s.J + s.G.natAbs = Jsp (n + 1) := by
     rw [Jsp_succ n (fun h => by subst h; exact Gtil_zero), hJ, hG]
   by_cases hij : S0 ≤ n ∧ chkIJ n s.I (s.I + dI) s.J (s.J + s.G.natAbs) = false
-  · rw [if_pos hij] at hs; exact absurd hs (by simp)
-  rw [if_neg hij] at hs
+  · rw [ite_eq_left hij] at hs; exact absurd hs (by simp)
+  rw [ite_eq_right hij] at hs
   have gIJ : S0 ≤ n → GoodIJ n := by
     intro h1
     refine ⟨s.I, s.I + dI, hI, hI', ?_⟩
@@ -414,7 +414,7 @@ theorem stepA_spec {n : ℕ} {s s' : SA} (hn : n + 1 ≤ XX) (h : Inv n s) (hs :
     by_contra hf; exact hij ⟨h1, by simpa using hf⟩
   refine ⟨?_, gAB, gIJ⟩
   by_cases hm : n + 1 < S0
-  · rw [if_pos hm] at hs
+  · rw [ite_eq_left hm] at hs
     simp only [Option.some.injEq] at hs
     subst hs
     have hmin : min (n + 1) (S0 - 1) = n + 1 := by omega
@@ -452,20 +452,20 @@ theorem stepA_spec {n : ℕ} {s s' : SA} (hn : n + 1 ≤ XX) (h : Inv n s) (hs :
       · show (Tr.set 0 12 s.ta (n + 1) _).get 0 k = _
         rw [Tr.get_set _ _ _ _ _ _ hfuel]
         by_cases he : k = n + 1
-        · rw [if_pos he, he, hsig, atil_succ, ← ha]
+        · rw [ite_eq_left he, he, hsig, atil_succ, ← ha]
           split_ifs <;> simp
-        · rw [if_neg he]; exact (htr k (by omega)).2.1
+        · rw [ite_eq_right he]; exact (htr k (by omega)).2.1
       · show (Tr.set 0 12 s.tc (n + 1) _).get 0 k = _
         rw [Tr.get_set _ _ _ _ _ _ hfuel]
         by_cases he : k = n + 1
-        · rw [if_pos he, he, hsig, ctil_succ, ← hc]
-        · rw [if_neg he]; exact (htr k (by omega)).2.2
+        · rw [ite_eq_left he, he, hsig, ctil_succ, ← hc]
+        · rw [ite_eq_right he]; exact (htr k (by omega)).2.2
     · show _ + _ = _
       rw [hmin, hsig, atil_succ, ← ha]
       split_ifs <;> simp
     · show _ - _ = _
       rw [hmin, hsig, ctil_succ, ← hc]
-  · rw [if_neg hm] at hs
+  · rw [ite_eq_right hm] at hs
     simp only [Option.some.injEq] at hs
     subst hs
     have hmin : min (n + 1) (S0 - 1) = min n (S0 - 1) := by omega

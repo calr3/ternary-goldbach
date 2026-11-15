@@ -489,15 +489,15 @@ theorem outerT_spec {aN aD bN bD : ℕ} (haD : 0 < aD) (hbD : 0 < bD) :
     by_cases hc : (L1 = 0 ∨ (chkLow L1 S (n + G) = true ∧ chkStep H1 S 1 (n + G) = true)) ∧ 1 ≤ G ∧
         G ≤ 32768 ∧ 7100 ≤ n ∧ n + G < 50452609
     swap
-    · rw [if_neg hc] at h; exact absurd h (by simp)
-    rw [if_pos hc] at h
+    · rw [ite_eq_right hc] at h; exact absurd h (by simp)
+    rw [ite_eq_left hc] at h
     obtain ⟨hc, hG1, hG2, hn1, hn2⟩ := hc
     have hlog : ((if L1 = 0 then LL + S * G / (n + G) else L1 : ℕ) : ℝ) / S ≤ Real.log ((n + G : ℕ) : ℝ) ∧
         Real.log ((n + G : ℕ) : ℝ) ≤ ((if L1 = 0 then LH + (S * G + n - 1) / n else H1 : ℕ) : ℝ) / S := by
       by_cases h0 : L1 = 0
-      · simp only [h0, if_true]
+      · simp only [h0, ite_true]
         exact ⟨log_chain_lo hn hL, log_chain_hi hn hH⟩
-      · simp only [h0, if_false]
+      · simp only [h0, ite_false]
         rcases hc with hc | ⟨hc1, hc2⟩
         · exact absurd hc h0
         · have hpos : 0 < n + G := by omega
@@ -506,8 +506,8 @@ theorem outerT_spec {aN aD bN bD : ℕ} (haD : 0 < aD) (hbD : 0 < bD) :
     set LHe := (if L1 = 0 then LH + (S * G + n - 1) / n else H1 : ℕ) with hLHe
     by_cases hw : winOKT n (n + G) tlo (thi + cnt n G * LHe) aN aD bN bD = true
     swap
-    · rw [if_neg hw] at h; exact absurd h (by simp)
-    rw [if_pos hw] at h
+    · rw [ite_eq_right hw] at h; exact absurd h (by simp)
+    rw [ite_eq_left hw] at h
     -- the window's primes
     have hcnt := cnt_spec hn1 hn2 hG2
     have hsub := thS_sub (show n ≤ n + G by omega)

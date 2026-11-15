@@ -24,7 +24,7 @@ theorem mem_majorArcs_of_arc {δ₀ R x α : ℝ} {q b : ℕ} {k : ℤ} (hq : q 
   · rw [Int.isCoprime_iff_gcd_eq_one]
     have : Int.gcd ((b : ℤ) + k * q) q = Int.gcd b q := by
       rw [Int.gcd_comm, Int.gcd_comm (b : ℤ)]
-      simpa using Int.gcd_add_mul_self (q : ℤ) b k
+      simp
     rw [this, Int.gcd_natCast_natCast]; exact hbc
   · obtain ⟨h1, h2⟩ := h
     have e : (((b : ℤ) + k * q : ℤ) : ℝ) / q = b / q + k := by push_cast; field_simp
@@ -53,18 +53,18 @@ theorem sum_arcs_le_integral_majorArcs {g : ℝ → ℝ} (hg : Continuous g) (hp
     · exact ((measurable_const.indicator measurableSet_Ioo).comp
         (measurable_sub_const _)).aestronglyMeasurable
     · exact Filter.Eventually.of_forall fun α => by simp only [indicator]; split_ifs <;> simp
-  simp_rw [← integral_finset_sum _ fun _ _ => hint _ _ _]
+  simp_rw [← integral_finsetSum _ fun _ _ => hint _ _ _]
   have hint2 : ∀ q b, IntegrableOn (fun α => ∑ k ∈ K, (arc δ₀ Q x q b).indicator 1 (α - k) * g α)
-      (Ioc (0 : ℝ) 1) := fun q b => integrable_finset_sum _ fun k _ => hint q b k
+      (Ioc (0 : ℝ) 1) := fun q b => integrable_finsetSum _ fun k _ => hint q b k
   have hmerge : ∑ q ∈ Qset Q, ∑ b ∈ Bset q, ∫ α in Ioc (0 : ℝ) 1,
       ∑ k ∈ K, (arc δ₀ Q x q b).indicator 1 (α - k) * g α =
       ∫ α in Ioc (0 : ℝ) 1, ∑ q ∈ Qset Q, ∑ b ∈ Bset q, ∑ k ∈ K,
         (arc δ₀ Q x q b).indicator 1 (α - k) * g α := by
-    rw [integral_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b]
-    exact Finset.sum_congr rfl fun q _ => (integral_finset_sum _ fun b _ => hint2 q b).symm
+    rw [integral_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b]
+    exact Finset.sum_congr rfl fun q _ => (integral_finsetSum _ fun b _ => hint2 q b).symm
   rw [hmerge, ← setIntegral_indicator (Helfgott.measurableSet_majorArcs δ₀ Q x)]
   refine setIntegral_mono_on ?_ ?_ measurableSet_Ioc fun α _ => ?_
-  · exact integrable_finset_sum _ fun q _ => integrable_finset_sum _ fun b _ => hint2 q b
+  · exact integrable_finsetSum _ fun q _ => integrable_finsetSum _ fun b _ => hint2 q b
   · exact ((hg.integrableOn_Icc (a := 0) (b := 1)).mono_set Ioc_subset_Icc_self).indicator
       (Helfgott.measurableSet_majorArcs δ₀ Q x)
   · simp_rw [← Finset.sum_mul]

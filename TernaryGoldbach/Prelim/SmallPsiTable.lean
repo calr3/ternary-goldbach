@@ -110,7 +110,7 @@ theorem spf_pos {L : List ℕ} {n q : ℕ} (h : spf L n = q) (hq : q ≠ 0) (hL 
       · exact fun hd => h2 (Nat.mod_eq_zero_of_dvd hd)
       · exact hlt p hp' hpq
 
-theorem P1000_pos : ∀ p ∈ P1000, 0 < p := fun p hp => (prime_of_mem_P1000 hp).pos
+theorem P1000_pos : ∀ p ∈ P1000, 0 < p := fun _p hp => (prime_of_mem_P1000 hp).pos
 
 /-- **Trial division decides primality** for `2 ≤ n ≤ 10⁶`. -/
 theorem spf_eq_zero_iff {n : ℕ} (h2 : 2 ≤ n) (h6 : n ≤ 1000000) : spf P1000 n = 0 ↔ n.Prime := by
@@ -185,7 +185,7 @@ theorem isPowOf_pow {q : ℕ} (hq : 2 ≤ q) : ∀ {k j : ℕ}, j < k → isPowO
     · simp
     · have h1 : q ^ (j + 1) ≠ 1 := (Nat.one_lt_pow (Nat.succ_ne_zero j) (by omega : 1 < q)).ne'
       have h2 : q ^ (j + 1) % q = 0 := by rw [pow_succ]; simp
-      rw [if_neg h1, if_pos h2, pow_succ, Nat.mul_div_cancel _ (by omega)]
+      rw [ite_eq_right h1, ite_eq_left h2, pow_succ, Nat.mul_div_cancel _ (by omega)]
       exact ih (by omega)
 
 open ArithmeticFunction in
@@ -313,10 +313,10 @@ theorem inner_spec {LL LH : ℕ} : ∀ (k m tlo thi plo phi a b c d : ℕ), 1 �
         (fun p hp1 hp2 hpp => hL p (by omega) (by omega) hpp) ?_ h
       · rwa [show m + 1 + k = m + (k + 1) by omega] at this
       refine ⟨?_, ?_, ?_, ?_⟩
-      · rw [thS_succ, if_pos hp]; push_cast; rw [add_div]; push_cast at hlog; linarith [hlog.1]
-      · rw [thS_succ, if_pos hp]; push_cast; rw [add_div]; push_cast at hlog; linarith [hlog.2]
-      · rw [ppS_succ, if_pos hp]; linarith
-      · rw [ppS_succ, if_pos hp]; linarith
+      · rw [thS_succ, ite_eq_left hp]; push_cast; rw [add_div]; push_cast at hlog; linarith [hlog.1]
+      · rw [thS_succ, ite_eq_left hp]; push_cast; rw [add_div]; push_cast at hlog; linarith [hlog.2]
+      · rw [ppS_succ, ite_eq_left hp]; linarith
+      · rw [ppS_succ, ite_eq_left hp]; linarith
     · rw [hq] at h
       simp only at h
       have hmin := spf_eq_minFac (by omega) hq (by omega)
@@ -325,24 +325,24 @@ theorem inner_spec {LL LH : ℕ} : ∀ (k m tlo thi plo phi a b c d : ℕ), 1 �
       have hmem := (spf_pos hq (by omega) P1000_sorted).1
       split_ifs at h with hpow hb
       · have hlq := lq_spec hmem
-        rw [if_pos hpow] at hΛ
+        rw [ite_eq_left hpow] at hΛ
         have := ih (m + 1) _ _ _ _ a b c d (by omega) (by omega)
           (fun p hp1 hp2 hpp => hL p (by omega) (by omega) hpp) ?_ h
         · rwa [show m + 1 + k = m + (k + 1) by omega] at this
         refine ⟨?_, ?_, ?_, ?_⟩
-        · rw [thS_succ, if_neg hnp]; linarith
-        · rw [thS_succ, if_neg hnp]; linarith
-        · rw [ppS_succ, if_neg hnp, hΛ]; push_cast at hlq ⊢; rw [add_div]; linarith [hlq.1]
-        · rw [ppS_succ, if_neg hnp, hΛ]; push_cast at hlq ⊢; rw [add_div]; linarith [hlq.2]
-      · rw [if_neg hpow] at hΛ
+        · rw [thS_succ, ite_eq_right hnp]; linarith
+        · rw [thS_succ, ite_eq_right hnp]; linarith
+        · rw [ppS_succ, ite_eq_right hnp, hΛ]; push_cast at hlq ⊢; rw [add_div]; linarith [hlq.1]
+        · rw [ppS_succ, ite_eq_right hnp, hΛ]; push_cast at hlq ⊢; rw [add_div]; linarith [hlq.2]
+      · rw [ite_eq_right hpow] at hΛ
         have := ih (m + 1) _ _ _ _ a b c d (by omega) (by omega)
           (fun p hp1 hp2 hpp => hL p (by omega) (by omega) hpp) ?_ h
         · rwa [show m + 1 + k = m + (k + 1) by omega] at this
         refine ⟨?_, ?_, ?_, ?_⟩
-        · rw [thS_succ, if_neg hnp]; linarith
-        · rw [thS_succ, if_neg hnp]; linarith
-        · rw [ppS_succ, if_neg hnp, hΛ]; linarith
-        · rw [ppS_succ, if_neg hnp, hΛ]; linarith
+        · rw [thS_succ, ite_eq_right hnp]; linarith
+        · rw [thS_succ, ite_eq_right hnp]; linarith
+        · rw [ppS_succ, ite_eq_right hnp, hΛ]; linarith
+        · rw [ppS_succ, ite_eq_right hnp, hΛ]; linarith
 
 /-! ### Checkpoints -/
 
@@ -452,7 +452,7 @@ theorem log_chain_lo {n G LL : ℕ} (hn : 1 ≤ n) (h : (LL : ℝ) / S ≤ Real.
   push_cast at h1 ⊢
   rw [add_div]
   have : ((S * G / (n + G) : ℕ) : ℝ) / S ≤ (G : ℝ) / ((n : ℝ) + G) := by
-    rw [div_le_iff₀ hS]; push_cast at h1 ⊢; field_simp at h1 ⊢; nlinarith
+    rw [div_le_iff₀ hS]; field_simp at h1 ⊢; nlinarith
   push_cast at this h2
   linarith
 
@@ -504,15 +504,15 @@ theorem outer_spec {cN cD tN tD : ℕ} (hcD : 0 < cD) (htD : 0 < tD) :
     simp only at h
     by_cases hc : L1 = 0 ∨ (chkLow L1 S (n + G) = true ∧ chkStep H1 S 1 (n + G) = true)
     swap
-    · rw [if_neg hc] at h; exact absurd h (by simp)
-    rw [if_pos hc] at h
+    · rw [ite_eq_right hc] at h; exact absurd h (by simp)
+    rw [ite_eq_left hc] at h
     -- the log bounds at `n + G`
     have hlog : ((if L1 = 0 then LL + S * G / (n + G) else L1 : ℕ) : ℝ) / S ≤ Real.log ((n + G : ℕ) : ℝ) ∧
         Real.log ((n + G : ℕ) : ℝ) ≤ ((if L1 = 0 then LH + (S * G + n - 1) / n else H1 : ℕ) : ℝ) / S := by
       by_cases h0 : L1 = 0
-      · simp only [h0, if_true]
+      · simp only [h0, ite_true]
         exact ⟨log_chain_lo hn hL, log_chain_hi hn hH⟩
-      · simp only [h0, if_false]
+      · simp only [h0, ite_false]
         rcases hc with hc | ⟨hc1, hc2⟩
         · exact absurd hc h0
         · have hpos : 0 < n + G := by omega
@@ -525,8 +525,8 @@ theorem outer_spec {cN cD tN tD : ℕ} (hcD : 0 < cD) (htD : 0 < tD) :
     simp only at h
     by_cases hw : winOK n (n + G) tlo plo b d cN cD tN tD = true
     swap
-    · rw [if_neg hw] at h; exact absurd h (by simp)
-    rw [if_pos hw] at h
+    · rw [ite_eq_right hw] at h; exact absurd h (by simp)
+    rw [ite_eq_left hw] at h
     -- primes in the window
     have hp : ∀ p : ℕ, n < p → p ≤ n + G → p.Prime →
         ((if G = 1 then LLe else LL : ℕ) : ℝ) / S ≤ Real.log p ∧ Real.log p ≤ (LHe : ℝ) / S := by
@@ -536,10 +536,10 @@ theorem outer_spec {cN cD tN tD : ℕ} (hcD : 0 < cD) (htD : 0 < tD) :
         Real.log_le_log hp0 (by exact_mod_cast hp2)
       refine ⟨?_, hle.trans hlog.2⟩
       by_cases hG : G = 1
-      · rw [if_pos hG]
+      · rw [ite_eq_left hG]
         have : p = n + G := by omega
         rw [this]; exact hlog.1
-      · rw [if_neg hG]
+      · rw [ite_eq_right hG]
         exact hL.trans (Real.log_le_log (by exact_mod_cast hn) (by exact_mod_cast hp1.le))
     have hI1 := inner_spec G n tlo thi plo phi a b c d hn (by omega) hp hI hin
     obtain ⟨ihR, ihI, ihL, ihH⟩ := ih (n + G) a b c d LLe LHe n' tlo' thi' plo' phi' LL' LH' (by omega)

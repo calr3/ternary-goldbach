@@ -132,7 +132,7 @@ theorem harm_bounds {n : ℕ} (hn : 1 ≤ n) :
   have hlim : Tendsto u atTop (𝓝 (((harmonic n : ℚ) : ℝ) - Real.log n - eulerMascheroniConstant)) :=
     tendsto_const_nhds.sub tendsto_eulerMascheroniSeq'
   have hseq : ∀ M, 1 ≤ M → eulerMascheroniSeq' M = ((harmonic M : ℚ) : ℝ) - Real.log M := by
-    intro M hM; rw [eulerMascheroniSeq', if_neg (by omega)]
+    intro M hM; rw [eulerMascheroniSeq', ite_eq_right (by omega)]
   -- the telescoped bounds for `M ≥ n`
   have hlow : ∀ M, n ≤ M → 1 / (2 * ((n : ℝ) + 1)) - 1 / (2 * ((M : ℝ) + 1)) ≤ u M := by
     intro M hM

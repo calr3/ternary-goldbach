@@ -135,11 +135,11 @@ theorem dual_expand (s : Finset ι) (α : ι → ℝ)
     intro r hr r' hr'
     by_cases h : r = r'
     · subst h
-      rw [if_pos rfl, if_pos rfl, add_zero]
+      rw [ite_eq_left rfl, ite_eq_left rfl, add_zero]
       simp only [sub_self, zero_mul, e_zero, sum_const, Nat.card_Ioc, nsmul_eq_mul, mul_one,
         Nat.add_sub_cancel_left]
       ring
-    · rw [if_neg h, if_neg h, zero_add]
+    · rw [ite_eq_right h, ite_eq_right h, zero_add]
       exact offdiag_term α b M N (fun n hn => hdist r' hr' r hr (Ne.symm h) n hn)
   rw [sum_congr rfl fun r hr => sum_congr rfl fun r' hr' => hsplit r hr r' hr']
   simp only [sum_add_distrib]
@@ -147,7 +147,7 @@ theorem dual_expand (s : Finset ι) (α : ι → ℝ)
       N * ((∑ r ∈ s, ‖b r‖ ^ 2 : ℝ) : ℂ) := by
     rw [Complex.ofReal_sum, mul_sum]
     refine sum_congr rfl fun r hr => ?_
-    rw [sum_ite_eq, if_pos hr, hnorm]
+    rw [sum_ite_eq, ite_eq_left hr, hnorm]
   rw [hdiag]
   simp only [cscForm]
   rw [sub_eq_add_neg]
@@ -175,7 +175,7 @@ theorem dual_bound_aux (s : Finset ι) (α : ι → ℝ)
     cscForm s α (fun r => b r * e (α r * (M + 1 / 2))))
   have hw : ‖w‖ ≤ B / Real.pi := by
     have hpi := Real.pi_pos
-    simp only [w, norm_mul, norm_div, norm_one, Complex.norm_mul, Complex.norm_I, Complex.norm_real,
+    simp only [w, norm_mul, norm_div, norm_one, Complex.norm_I, Complex.norm_real,
       Complex.norm_two, Real.norm_eq_abs, abs_of_pos hpi, mul_one]
     have h1 := hB ((M + N : ℕ) + 1 / 2)
     have h2 := hB (M + 1 / 2)

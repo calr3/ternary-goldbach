@@ -49,7 +49,7 @@ theorem abs_g2_le (y : ℝ) : |g2 y| ≤ (⌊y⌋₊ : ℝ) ^ 2 := by
         exact (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun r₂ hr₂ => h1 r₁ hr₁ r₂ hr₂)
     _ = (⌊y⌋₊ : ℝ) ^ 2 := by simp; ring
 
-theorem integrableOn_g2_Ioc (a b : ℝ) (hb : 0 ≤ b) : IntegrableOn g2 (Set.Ioc a b) := by
+theorem integrableOn_g2_Ioc (a b : ℝ) (_hb : 0 ≤ b) : IntegrableOn g2 (Set.Ioc a b) := by
   refine MeasureTheory.IntegrableOn.of_bound measure_Ioc_lt_top measurable_g2.aestronglyMeasurable
     ((⌊b⌋₊ : ℝ) ^ 2) ?_
   refine (ae_restrict_iff' measurableSet_Ioc).2 (Filter.Eventually.of_forall fun y hy => ?_)
@@ -145,7 +145,7 @@ theorem T2_eq_integral {S : ℝ} (hS : 1 ≤ S) :
       rw [hsub]; field_simp
     · simp
   unfold T2
-  rw [sum_congr rfl hterm, ← mul_sum, ← integral_finset_sum _ hint]
+  rw [sum_congr rfl hterm, ← mul_sum, ← integral_finsetSum _ hint]
   congr 1
   refine setIntegral_congr_fun measurableSet_Ioc fun y _ => ?_
   simp only [Nodd, mul_sum]
@@ -168,8 +168,8 @@ theorem Nodd_eq {S y : ℝ} (hy : 1 ≤ y) (hyS : y ≤ S) :
       else 0) = if (Odd s ∧ S / (2 * s) < y ∧ y ≤ S / s) then 1 else 0 := by
     intro s
     by_cases ho : Odd s
-    · simp only [ho, if_true, true_and, Set.indicator_apply, Set.mem_Ioc]
-    · simp only [ho, if_false, false_and]
+    · simp only [ho, ite_true, true_and, Set.indicator_apply, Set.mem_Ioc]
+    · simp only [ho, ite_false, false_and]
   unfold Nodd
   simp_rw [e1]
   rw [sum_boole]

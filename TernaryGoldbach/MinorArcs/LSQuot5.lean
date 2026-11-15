@@ -185,7 +185,7 @@ theorem IHk_step {k : ℕ} (hk : 11 ≤ k) (ih : IHk k) : IHk (k + 1) := by
   have hκ' : kapk k (primk k) ≤ kapk (k + 1) (primk (k + 1)) := by
     unfold kapk
     rw [Sk_succ, primk_succ]
-    have hsh : shat p = Real.log p / p := by unfold shat; rw [if_neg (by omega)]
+    have hsh : shat p = Real.log p / p := by unfold shat; rw [ite_eq_right (by omega)]
     rw [hsh]; push_cast
     rw [Real.log_mul hprim0.ne' (by positivity)]
     have hlp : 0 ≤ Real.log p := Real.log_natCast_nonneg p

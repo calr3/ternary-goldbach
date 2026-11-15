@@ -170,7 +170,7 @@ theorem typeI2_mu_first {δ T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q)
 
 /-- The `c₀(1/8 - 1/2π²)` term of `S_{I,2}` at the parameters: `≤ 0.152 · 2x/t + 0.0005 x^{5/6}`. -/
 theorem typeI2_c0_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqT : (q : ℝ) ≤ T / 6)
-    (ht2 : 2 ≤ t) (htT : t ≤ T / 3) :
+    (ht2 : 2 ≤ t) (_htT : t ≤ T / 3) :
     c₀ * (1 / 8 - 1 / (2 * π ^ 2)) / T ^ 3 *
         ((U1 T t : ℝ) ^ 2 / q * (0.5004 * (V1 T : ℝ) ^ 2 + V1 T * q * Real.log q) +
           (2 * U1 T t + q) * (0.5004 * (V1 T : ℝ) ^ 2)) ≤

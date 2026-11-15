@@ -68,7 +68,7 @@ theorem cq_cases {q k : ℕ} (hq : q ≠ 0) (hk : k ≠ 0) :
     constructor
     · refine prod_eq_one fun p hp => ?_
       have hpp : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
-      rw [cq_prime_pow hpp (Nat.pos_of_ne_zero (Finsupp.mem_support_iff.1 hp)), if_pos (h p hp)]
+      rw [cq_prime_pow hpp (Nat.pos_of_ne_zero (Finsupp.mem_support_iff.1 hp)), ite_eq_left (h p hp)]
     · rw [Nat.mem_factoredNumbers']
       intro p hp hpk
       have hs : p ∈ k.factorization.support := by
@@ -79,7 +79,7 @@ theorem cq_cases {q k : ℕ} (hq : q ≠ 0) (hk : k ≠ 0) :
     obtain ⟨p, hp, hpq⟩ := h
     refine prod_eq_zero hp ?_
     have hpp : p.Prime := Nat.prime_of_mem_primeFactors (by simpa using hp)
-    rw [cq_prime_pow hpp (Nat.pos_of_ne_zero (Finsupp.mem_support_iff.1 hp)), if_neg hpq]
+    rw [cq_prime_pow hpp (Nat.pos_of_ne_zero (Finsupp.mem_support_iff.1 hp)), ite_eq_right hpq]
 
 /-- `n ↦ 1/n` as a monoid hom. -/
 noncomputable def invHom : ℕ →* ℝ where
@@ -148,7 +148,7 @@ theorem P_bounds {q : ℕ} (hq : 1 ≤ q) (N : ℕ) :
     refine sum_le_sum fun k hk => ?_
     have hk0 : k ≠ 0 := by have := (mem_Ioc.1 hk).1; omega
     rcases cq_cases hq0 hk0 with ⟨h, hm⟩ | h
-    · rw [h, if_pos hm, one_div]
+    · rw [h, ite_eq_left hm, one_div]
     · rw [h, zero_div]; split_ifs <;> positivity
 
 /-- `|H(M) − log y − γ| ≤ 1/M` for `M ≥ 1`, `M ≤ y < M + 1`. -/
@@ -158,7 +158,7 @@ theorem harmonic_err {M : ℕ} (hM : 1 ≤ M) {y : ℝ} (h1 : (M : ℝ) ≤ y) (
   have hlo := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant M
   have hhi := Real.eulerMascheroniConstant_lt_eulerMascheroniSeq' M
   rw [Real.eulerMascheroniSeq] at hlo
-  rw [Real.eulerMascheroniSeq', if_neg (by omega)] at hhi
+  rw [Real.eulerMascheroniSeq', ite_eq_right (by omega)] at hhi
   have hl1 : Real.log M ≤ Real.log y := Real.log_le_log hM0 h1
   have hl2 : Real.log y ≤ Real.log (M + 1) := Real.log_le_log (by linarith) h2.le
   have hd : Real.log ((M : ℝ) + 1) - Real.log M ≤ 1 / M := by

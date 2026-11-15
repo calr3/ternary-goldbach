@@ -22,11 +22,11 @@ theorem integral_rpow_exp_quad_le_ext {p c b : ℝ} (hp : -1 / 2 ≤ p) (hp2 : p
   have j1 : IntegrableOn (fun r : ℝ => r ^ (-1 / 2 : ℝ) * Real.exp (-(c / 4) * r ^ (2:ℝ))) (Ioi 0) := by
     have := integrableOn_rpow_mul_exp_quad (p := -1 / 2) (a := c / 4) (b := 0) (by norm_num) hc4
     refine this.congr_fun (fun r hr => ?_) measurableSet_Ioi
-    simp [Real.rpow_two]
+    simp
   have j2 : IntegrableOn (fun r : ℝ => r ^ (2 : ℝ) * Real.exp (-(c / 4) * r ^ (2:ℝ))) (Ioi 0) := by
     have := integrableOn_rpow_mul_exp_quad (p := 2) (a := c / 4) (b := 0) (by norm_num) hc4
     refine this.congr_fun (fun r hr => ?_) measurableSet_Ioi
-    simp [Real.rpow_two]
+    simp
   have hL := integrableOn_rpow_mul_exp_quad (p := p) (a := c / 2) (b := b) (by linarith) (half_pos hc)
   set R : ℝ → ℝ := fun r => Real.exp (b ^ 2 / c) * (r ^ (-1 / 2 : ℝ) * Real.exp (-(c / 4) * r ^ (2:ℝ)) +
     r ^ (2 : ℝ) * Real.exp (-(c / 4) * r ^ (2:ℝ))) with hR

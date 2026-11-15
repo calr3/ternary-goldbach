@@ -90,7 +90,7 @@ theorem psi_sub_theta_le_sum (N : ℕ) :
   by_cases hm : m.Prime
   · simp only [hm, true_and]
     rw [sum_ite_eq (range (N + 1)) (m ^ k) (fun _ => Real.log (m : ℝ))]
-    simp [Nat.lt_succ_iff]
+    simp
   · simp [hm]
 
 open Classical in
@@ -106,7 +106,7 @@ theorem sum_pow_le_theta {N k M : ℕ} (hMN : M ≤ N) (hM : ∀ m, m.Prime → 
   by_cases hp : m.Prime
   · by_cases hk : m ^ k ≤ N
     · simp [hp, hk, hM m hp hk, ArithmeticFunction.vonMangoldt_apply_prime hp]
-    · simp only [hp, hk, and_false, ite_false, true_and]
+    · simp only [hp, hk, and_false, ite_false]
       split_ifs <;> simp [ArithmeticFunction.vonMangoldt_apply_prime hp,
         Real.log_nonneg, hp.one_lt.le]
   · simp [hp]

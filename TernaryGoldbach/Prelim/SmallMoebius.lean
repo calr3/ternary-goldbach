@@ -29,7 +29,7 @@ theorem moebius_zero_of_sqfN {v : ℕ} (h : sqfN v = false) : μ v = 0 := by
     have : sqfN v = true := by
       unfold sqfN; rw [List.all_eq_true]; intro d hd; simpa using hall d hd
     rw [h] at this; exact Bool.false_ne_true this
-  push_neg at hn
+  push Not at hn
   obtain ⟨d, hd, hmod⟩ := hn
   rw [List.mem_range'_1] at hd
   apply moebius_eq_zero_of_not_squarefree
@@ -146,16 +146,16 @@ theorem sum_approx (k : ℕ) :
       linarith
     rw [abs_le] at ih ⊢
     rcases mu_cases (k + 1) with h | h | h
-    · rw [h, if_pos rfl, if_neg (by norm_num)]
+    · rw [h, ite_eq_left rfl, ite_eq_right (by norm_num)]
       push_cast
       have e : (1000000000000 : ℝ) * (1 / ((k : ℝ) + 1)) = 1000000000000 / ((k : ℝ) + 1) := by ring
       constructor <;> linarith [ih.1, ih.2]
-    · rw [h, if_neg (by norm_num), if_pos rfl]
+    · rw [h, ite_eq_right (by norm_num), ite_eq_left rfl]
       push_cast
       have e : (1000000000000 : ℝ) * (-1 / ((k : ℝ) + 1)) = -(1000000000000 / ((k : ℝ) + 1)) := by ring
       constructor <;> linarith [ih.1, ih.2]
-    · rw [h, if_neg (by norm_num), if_neg (by norm_num)]
-      simp only [zero_div, add_zero, Nat.cast_add, Nat.cast_zero]
+    · rw [h, ite_eq_right (by norm_num), ite_eq_right (by norm_num)]
+      simp only [zero_div, add_zero, Nat.cast_add]
       constructor <;> linarith [ih.1, ih.2]
 
 /-- The bound at `k` from the check at `k`. -/
@@ -194,7 +194,7 @@ theorem w_11 : walk 10000 3320665230571 3322747930336 1000 = some (3350103827551
 theorem w_12 : walk 11000 3350103827551 3350882278162 814 = some (3373768577726, 3370538571941) := by decide +kernel
 
 theorem s_1 : Pt 1 = 1000000000000 ∧ Qt 1 = 0 := by
-  constructor <;> simp [Pt, Qt] <;> norm_num
+  constructor <;> simp [Pt, Qt]; norm_num
 theorem c_1 : (Pt 1000 = 2623402499216 ∧ Qt 1000 = 2618990629438) ∧ ∀ k, 1 < k → k ≤ 1000 → chk k (Pt k) (Qt k) = true := by
   have h := w_1
   rw [← s_1.1, ← s_1.2] at h

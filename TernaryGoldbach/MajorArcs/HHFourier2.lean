@@ -59,18 +59,18 @@ theorem hasDerivAt_hBd {t : ℝ} (ht : 0 < t) : HasDerivAt hBd (hBdd t) t := by
   rcases lt_trichotomy t 2 with h | h | h
   · have : hBd =ᶠ[nhds t] hP' := by
       filter_upwards [Iio_mem_nhds h] with s hs
-      unfold hBd; rw [if_pos hs.le]
-    rw [hBdd, if_pos h.le]
+      unfold hBd; rw [ite_eq_left hs.le]
+    rw [hBdd, ite_eq_left h.le]
     exact (hasDerivAt_hP' t).congr_of_eventuallyEq this
   · subst h
-    rw [hBdd, if_pos le_rfl, hP''_two]
+    rw [hBdd, ite_eq_left le_rfl, hP''_two]
     have hl : HasDerivWithinAt hBd 0 (Iic 2) 2 := by
       have := (hasDerivAt_hP' 2).hasDerivWithinAt (s := Iic 2)
       rw [hP''_two] at this
-      refine this.congr_of_eventuallyEq ?_ (by unfold hBd; rw [if_pos le_rfl])
+      refine this.congr_of_eventuallyEq ?_ (by unfold hBd; rw [ite_eq_left le_rfl])
       filter_upwards [self_mem_nhdsWithin] with s hs
       have hs' : s ≤ 2 := hs
-      unfold hBd; rw [if_pos hs']
+      unfold hBd; rw [ite_eq_left hs']
     have hr : HasDerivWithinAt hBd 0 (Ici 2) 2 := by
       refine (hasDerivWithinAt_const (2:ℝ) (Ici 2) (0:ℝ)).congr_of_eventuallyEq ?_
         (hBd_of_two_le le_rfl)
@@ -79,7 +79,7 @@ theorem hasDerivAt_hBd {t : ℝ} (ht : 0 < t) : HasDerivAt hBd (hBdd t) t := by
     rwa [Iic_union_Ici, hasDerivWithinAt_univ] at this
   · have : hBd =ᶠ[nhds t] fun _ => 0 := by
       filter_upwards [Ioi_mem_nhds h] with s hs using hBd_of_two_le hs.le
-    rw [hBdd, if_neg (not_le.2 h)]
+    rw [hBdd, ite_eq_right (not_le.2 h)]
     exact (hasDerivAt_const t (0:ℝ)).congr_of_eventuallyEq this
 
 /-- `g''(u) = e^{2u} h''(eᵘ) + eᵘ h'(eᵘ)`. -/
@@ -94,8 +94,8 @@ theorem hasDerivAt_gL' (u : ℝ) : HasDerivAt gL' (gL'' u) u := by
 
 theorem hBdd_eq {t : ℝ} (ht : 0 < t) : hBdd t = (Icc (0 : ℝ) 2).indicator hP'' t := by
   by_cases h2 : t ≤ 2
-  · rw [indicator_of_mem (show t ∈ Icc (0:ℝ) 2 from ⟨ht.le, h2⟩), hBdd, if_pos h2]
-  · rw [indicator_of_notMem (fun hm => h2 hm.2), hBdd, if_neg h2]
+  · rw [indicator_of_mem (show t ∈ Icc (0:ℝ) 2 from ⟨ht.le, h2⟩), hBdd, ite_eq_left h2]
+  · rw [indicator_of_notMem (fun hm => h2 hm.2), hBdd, ite_eq_right h2]
 
 theorem gL''_G_eq {t : ℝ} (ht : 0 < t) :
     hBdd t * t + hBd t = (Icc (0 : ℝ) 2).indicator (fun t => hP'' t * t + hP' t) t := by

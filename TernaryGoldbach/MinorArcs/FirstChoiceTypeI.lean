@@ -50,7 +50,7 @@ theorem logPlus_le_log {y : ℝ} (hy : 1 ≤ y) : logPlus y = Real.log y :=
 theorem eta2'L1_le : eta2'L1 ≤ 5.5452 := by
   unfold eta2'L1; have := Real.log_two_lt_d9; linarith
 
-theorem log_le_of_le_exp_bound {y : ℝ} (hy : 0 < y) {a b : ℝ} (h : y ≤ a) (ha : 0 < a)
+theorem log_le_of_le_exp_bound {y : ℝ} (hy : 0 < y) {a b : ℝ} (h : y ≤ a) (_ha : 0 < a)
     (hb : Real.log a ≤ b) : Real.log y ≤ b := (Real.log_le_log hy h).trans hb
 
 /-- `log 16 ≤ 2.7726`. -/

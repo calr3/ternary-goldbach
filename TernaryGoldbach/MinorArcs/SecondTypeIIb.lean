@@ -526,7 +526,7 @@ theorem b_M2_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
 
 set_option maxHeartbeats 4000000 in
 theorem b_M3_le {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
-    (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (hq : (q : ℝ) ≤ T / 6) (hδq : 8 * (T / 6) < |δ| * q) :
+    (h : Approx2 α (T ^ 3) δ a q (Q2 T)) (_hq : (q : ℝ) ≤ T / 6) (hδq : 8 * (T / 6) < |δ| * q) :
     4 * (√(kap1 (T ^ 3) (U2 T) (V2 T)) * (√((T ^ 3) ^ 2 / (2 * |δ| * q) +
       (T ^ 3) ^ 2 / (16 * (1 - T / 6 / Q2 T) * Q2 T)) * (2 / 3 *
       (Real.log (8 * |δ| * q) * √(Real.log (8 * |δ| * q)) - Real.log (V2 T) * √(Real.log (V2 T)))) +

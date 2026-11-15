@@ -30,7 +30,7 @@ noncomputable def VgL (D Kv θv : ℝ) : ℝ :=
 
 /-- **The line `ℜs = −1/2`**, general smoothing, `χ`. -/
 theorem norm_integral_hIntG_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ.IsPrimitive)
-    (hχ1 : χ ≠ 1) {φ : ℝ → ℂ} {Kv θv : ℝ} (hθv : 0 < θv) (hKv : 0 ≤ Kv)
+    (hχ1 : χ ≠ 1) {φ : ℝ → ℂ} {Kv θv : ℝ} (hθv : 0 < θv) (_hKv : 0 ≤ Kv)
     (hv : ∀ y : ℝ, ‖mellin φ (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ Kv * Real.exp (-(θv * |y|)))
     {x : ℝ} (hx : 0 < x) :
     ‖∫ y : ℝ, hIntG χ φ x (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ x ^ (-(1 / 2) : ℝ) * VgL (DN N) Kv θv := by
@@ -68,7 +68,7 @@ theorem norm_integral_hIntG_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ
   unfold VgL; rw [← hc₁]; ring
 
 /-- **The line `ℜs = −1/2`**, general smoothing, `ζ`. -/
-theorem norm_integral_hZeta_le_gen {φ : ℝ → ℂ} {Kv θv : ℝ} (hθv : 0 < θv) (hKv : 0 ≤ Kv)
+theorem norm_integral_hZeta_le_gen {φ : ℝ → ℂ} {Kv θv : ℝ} (hθv : 0 < θv) (_hKv : 0 ≤ Kv)
     (hv : ∀ y : ℝ, ‖mellin φ (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ Kv * Real.exp (-(θv * |y|)))
     {x : ℝ} (hx : 0 < x) :
     ‖∫ y : ℝ, hZeta φ x (((-1 / 2 : ℝ) : ℂ) + y * I)‖ ≤ x ^ (-(1 / 2) : ℝ) * VgL 3 Kv θv := by
@@ -120,7 +120,7 @@ theorem norm_integral_hZeta_le_gen {φ : ℝ → ℂ} {Kv θv : ℝ} (hθv : 0 <
     integral_exp_neg_mul_abs hθv, integral_abs_mul_exp_neg_mul_abs hθv]
   unfold VgL; rw [← hc₁]; ring
 
-theorem final_combine {x E0 E1 E2 V A : ℝ} (hx : 0 < x) (hA : A ≤ x ^ (-(1 / 2) : ℝ) * V / (2 * π)) :
+theorem final_combine {x E0 E1 E2 V A : ℝ} (_hx : 0 < x) (hA : A ≤ x ^ (-(1 / 2) : ℝ) * V / (2 * π)) :
     E0 + √x * E1 + x * E2 + A ≤ E0 + √x * E1 + x * E2 + x ^ (-(1 / 2) : ℝ) * V / (2 * π) := by
   linarith
 

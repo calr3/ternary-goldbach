@@ -63,7 +63,7 @@ theorem norm_intExp_line_le {a b : ℝ} (hab : b ≤ a) (y : ℝ) :
   linarith
 
 /-- On the critical line: `‖M(½ + iγ)‖ ≤ 2e^{δ²/2 + |a|}/max(1, |γ|)`. -/
-theorem norm_Mg_line_le {a b δ : ℝ} (hab : b ≤ a) (hb : b ≤ 0) (y : ℝ) :
+theorem norm_Mg_line_le {a b δ : ℝ} (hab : b ≤ a) (_hb : b ≤ 0) (y : ℝ) :
     ‖Mg a b δ (((1 / 2 : ℝ) : ℂ) + y * I)‖ * max 1 |y| ≤ 2 * Real.exp (δ ^ 2 / 2 + |a|) := by
   set s : ℂ := ((1 / 2 : ℝ) : ℂ) + y * I with hs
   have hg : ‖cexp ((δ : ℂ) ^ 2 * s ^ 2 / 2)‖ ≤ Real.exp (δ ^ 2 / 2) := by
@@ -159,7 +159,7 @@ theorem sum_inv_one_add_le (J : ℕ) :
 
 /-- **Line zeros**: `Σ m_ρ g(ρ) ≤ ZL · C · 4(1 + (1 + log J)/3.48)` if `g(ρ) max(1, |γ|) ≤ C`. -/
 theorem line_sum_le {T H : ℝ} (hH : 0 ≤ H) (S : Finset ℂ) (hS : S ⊆ zerosRectD zetaF T)
-    (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ H) (g : ℂ → ℝ) (hg0 : ∀ u ∈ S, 0 ≤ g u)
+    (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ H) (g : ℂ → ℝ) (_hg0 : ∀ u ∈ S, 0 ≤ g u)
     {C : ℝ} (hC : 0 ≤ C) (hg : ∀ u ∈ S, g u * max 1 |u.im| ≤ C) :
     ∑ u ∈ S, (multRectD zetaF T u : ℝ) * g u ≤
       ZLg BPz2 H * C * (4 * (1 + (1 + Real.log (Jl H)) / 3.48)) := by
@@ -233,12 +233,12 @@ theorem line_sum_le {T H : ℝ} (hH : 0 ≤ H) (S : Finset ℂ) (hS : S ⊆ zero
           refine Finset.sum_congr rfl fun k hk => ?_
           rw [Finset.mem_range] at hk
           simp only [hw, hd]
-          rw [if_neg (by omega), show J - 1 - (J - 1 - k) = k by omega]
+          rw [ite_eq_right (by omega), show J - 1 - (J - 1 - k) = k by omega]
         have hB : ∑ k ∈ Finset.Ico J (2 * J), w k = ∑ m ∈ Finset.range J, 2 / (1 + 3.48 * (m : ℝ)) := by
           rw [Finset.sum_Ico_eq_sum_range, show 2 * J - J = J by omega]
           refine Finset.sum_congr rfl fun k _ => ?_
           simp only [hw, hd]
-          rw [if_pos (by omega), show J + k - J = k by omega]
+          rw [ite_eq_left (by omega), show J + k - J = k by omega]
         rw [hA, hB]
         have h := sum_inv_one_add_le J
         have e : ∑ m ∈ Finset.range J, 2 / (1 + 3.48 * (m : ℝ)) =
@@ -290,7 +290,7 @@ theorem norm_Mg_line_le' (a b δ y : ℝ) :
 /-- `J = ⌊T₀/h⌋ + 1` line windows of height `h` on each side. -/
 noncomputable def JlH (h T0 : ℝ) : ℕ := ⌊T0 / h⌋₊ + 1
 
-theorem lt_JlH {h T0 : ℝ} (hh : 0 < h) (hT : 0 ≤ T0) : T0 < JlH h T0 * h := by
+theorem lt_JlH {h T0 : ℝ} (hh : 0 < h) (_hT : 0 ≤ T0) : T0 < JlH h T0 * h := by
   unfold JlH; push_cast
   have := Nat.lt_floor_add_one (T0 / h)
   rw [div_lt_iff₀ hh] at this; linarith
@@ -415,7 +415,7 @@ theorem sum_log_div_le {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (n : ℕ) :
 `Σ m_ρ g(ρ) ≤ 2C Σ_{d<J} log(B((d + ½)h)/0.355)/log(10/r) · 1/max(½, hd)` if `g(ρ) max(½, |γ|) ≤ C`. -/
 theorem line_sum_leH {T H h r : ℝ} (hH : 0 ≤ H) (hh : 0 < h) (hr : 0 < r) (hr10 : r < 10)
     (hhr : 1.5 ^ 2 + (h / 2) ^ 2 ≤ r ^ 2) (S : Finset ℂ) (hS : S ⊆ zerosRectD zetaF T)
-    (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ H) (g : ℂ → ℝ) (hg0 : ∀ u ∈ S, 0 ≤ g u)
+    (hre : ∀ u ∈ S, u.re = 1 / 2) (him : ∀ u ∈ S, |u.im| ≤ H) (g : ℂ → ℝ) (_hg0 : ∀ u ∈ S, 0 ≤ g u)
     {C : ℝ} (hC : 0 ≤ C) (hg : ∀ u ∈ S, g u * max (1 / 2) |u.im| ≤ C) :
     ∑ u ∈ S, (multRectD zetaF T u : ℝ) * g u ≤
       C * (2 * ∑ m ∈ Finset.range (JlH h H), Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) /
@@ -510,14 +510,14 @@ theorem line_sum_leH {T H h r : ℝ} (hH : 0 ≤ H) (hh : 0 < h) (hr : 0 < r) (h
           refine Finset.sum_congr rfl fun k hk => ?_
           rw [Finset.mem_range] at hk
           have e1 : J - 1 - (J - 1 - k) = k := by omega
-          simp only [hw, hd, hZw, hdn, if_neg (show ¬ J ≤ J - 1 - k by omega), e1]
+          simp only [hw, hd, hZw, hdn, ite_eq_right (show ¬ J ≤ J - 1 - k by omega), e1]
         have hB : ∑ k ∈ Finset.Ico J (2 * J), Zw k * w k = ∑ m ∈ Finset.range J,
             Real.log (BPz2 (((m : ℝ) + 1 / 2) * h) / 0.355) / Real.log (10 / r) *
               (1 / max (1 / 2 : ℝ) (h * (m : ℝ))) := by
           rw [Finset.sum_Ico_eq_sum_range, show 2 * J - J = J by omega]
           refine Finset.sum_congr rfl fun k _ => ?_
           have e1 : J + k - J = k := by omega
-          simp only [hw, hd, hZw, hdn, if_pos (show J ≤ J + k by omega), e1]
+          simp only [hw, hd, hZw, hdn, ite_eq_left (show J ≤ J + k by omega), e1]
         rw [hA, hB]; ring
 
 /-! ## Zeros above `H`: Gaussian windows -/

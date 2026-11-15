@@ -158,7 +158,7 @@ theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
     have ha : a ≤ √(κ * x / W) := Real.sqrt_le_sqrt (by
       rw [show κ * x / W = x / W * κ by ring]; exact mul_le_mul_of_nonneg_left hhk (by positivity))
     have e2 : κ * x / W * R = κ * q * x / (2 * Nat.totient q) * (W * (1 + Real.log (2 * q) / L)) := by
-      simp only [R]; rw [hlogW]; field_simp; try ring
+      simp only [R]; rw [hlogW]; field_simp
     calc a * √R ≤ √(κ * x / W) * √R := mul_le_mul_of_nonneg_right ha (Real.sqrt_nonneg _)
       _ = √(κ * q * x / (2 * Nat.totient q)) * √W * √(1 + Real.log (2 * q) / L) := by
           rw [← Real.sqrt_mul (by positivity), e2, Real.sqrt_mul (by positivity),
@@ -173,7 +173,7 @@ theorem pointwise_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop 
       rw [show κ * x / W = x / W * κ by ring]; exact mul_le_mul_of_nonneg_left hhk (by positivity))
     have hS3 : κ * x / W * S3 ≤ (1.4262 * x * √(κ * (1 / 2 + 1 / U)) / √W) ^ 2 := by
       have hl : κ * x / W * S3 = 1.4262 ^ 2 * κ * x * (x / 2 + W) / W := by
-        simp only [S3]; field_simp; try ring
+        simp only [S3]; field_simp
       rw [hl, div_pow, mul_pow, mul_pow, Real.sq_sqrt (by positivity), Real.sq_sqrt hW0.le]
       apply div_le_div_of_nonneg_right _ hW0.le
       have hWU : W ≤ x * (1 / U) := by rw [mul_one_div]; exact hWx
@@ -366,7 +366,7 @@ theorem typeII_637 {α x Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : I
   swap
   · -- Degenerate range.
     have hint : IntervalIntegrable (G637 x U V q 1) volume V (x / U) := by
-      first | (rw [← heq]; done) | (rw [← heq]; exact IntervalIntegrable.refl)
+      first | (rw [← heq]) | (rw [← heq]; exact IntervalIntegrable.refl)
     have h := norm_typeII_le' α hx hU hV2 hVU hint (fun W hW =>
       pointwise_637 hq hcop hα hx hU hV hQ hqV one_pos hW)
     rw [← heq, intervalIntegral.integral_same, mul_zero] at h

@@ -201,7 +201,7 @@ theorem integral_fourier_etaPlus_Ioo_bounds {T : ℝ} (hT : 4 ≤ T) :
   have hT0 : 0 < T := by linarith
   have hint := integrable_norm_sq_fourier integrable_etaPC memLp_etaPC
   have hcompl : (Ioo (-T) T)ᶜ = {ξ : ℝ | T ≤ |ξ|} := by
-    ext ξ; simp only [mem_compl_iff, mem_Ioo, not_and_or, not_lt, mem_setOf_eq, le_abs]
+    ext ξ; simp only [mem_compl_iff, mem_Ioo, not_and_or, not_lt, mem_ofPred_eq, le_abs]
     constructor
     · rintro (h | h)
       · right; linarith

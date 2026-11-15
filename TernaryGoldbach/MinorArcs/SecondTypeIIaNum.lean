@@ -85,7 +85,7 @@ theorem a1SEC_le {L : ℝ} (hL : 15.6 ≤ L) : a1SEC L ≤ a1E L * (L * √L) :=
 /-! ### One piece -/
 
 /-- `(L - c)/L² ≤ (a - c)/a²` for `2c ≤ a ≤ L`. -/
-theorem div_sq_anti {a L c : ℝ} (hc : 0 ≤ c) (ha0 : 0 < a) (ha : 2 * c ≤ a) (haL : a ≤ L) :
+theorem div_sq_anti {a L c : ℝ} (_hc : 0 ≤ c) (ha0 : 0 < a) (ha : 2 * c ≤ a) (haL : a ≤ L) :
     (L - c) / L ^ 2 ≤ (a - c) / a ^ 2 := by
   have hL0 : 0 < L := by linarith
   rw [div_le_div_iff₀ (by positivity) (by positivity)]

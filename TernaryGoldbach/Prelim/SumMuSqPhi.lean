@@ -306,7 +306,7 @@ theorem log_le_sum_coprime {q : ℕ} (hq : 1 ≤ q) {R : ℝ} (hR : 0 ≤ R) :
   have h4 : Real.log R ≤ q / Nat.totient q *
       ∑ r ∈ (Icc 1 ⌊R⌋₊).filter (fun r => Squarefree r ∧ Nat.Coprime r q), (Nat.totient r : ℝ)⁻¹ := by
     have := h3
-    simp only [div_eq_mul_inv, one_mul] at this ⊢
+    simp only [div_eq_mul_inv] at this ⊢
     linarith
   rw [div_mul_eq_mul_div, div_le_iff₀ hq0]
   calc (Nat.totient q : ℝ) * Real.log R ≤ Nat.totient q * (q / Nat.totient q *

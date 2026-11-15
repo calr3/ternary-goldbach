@@ -56,9 +56,9 @@ theorem oddsum (m : ℕ) :
     rw [show 2 * (m + 1) = 2 * m + 1 + 1 by ring, sum_Icc_succ_top (by omega),
       sum_Icc_succ_top (by omega), ih, harmonic_succ, harmonic_succ, harmonic_succ]
     have h1 : vO (2 * m + 1) = 1 / ((2 * m + 1 : ℕ) : ℝ) := by
-      rw [vO_apply, if_pos (by exact odd_two_mul_add_one m), one_div]
+      rw [vO_apply, ite_eq_left (by exact odd_two_mul_add_one m), one_div]
     have h2 : vO (2 * m + 1 + 1) = 0 := by
-      rw [vO_apply, if_neg]
+      rw [vO_apply, ite_eq_right]
       rw [Nat.not_odd_iff_even]; exact ⟨m + 1, by ring⟩
     rw [h1, h2]
     push_cast
@@ -68,7 +68,7 @@ theorem oddsum (m : ℕ) :
 theorem oddsum' (m : ℕ) (hm : 1 ≤ m) :
     ∑ b ∈ Icc 1 (2 * m - 1), vO b = ((harmonic (2 * m) : ℚ) : ℝ) - ((harmonic m : ℚ) : ℝ) / 2 := by
   have h2 : vO (2 * m) = 0 := by
-    rw [vO_apply, if_neg]
+    rw [vO_apply, ite_eq_right]
     rw [Nat.not_odd_iff_even]; exact ⟨m, by ring⟩
   have h := sum_Icc_succ_top (show 1 ≤ 2 * m - 1 + 1 by omega) (fun b => vO b)
   rw [show 2 * m - 1 + 1 = 2 * m by omega, h2, add_zero] at h

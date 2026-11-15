@@ -105,8 +105,8 @@ theorem sum_ΛBad_le (N : ℕ) : ∑ n ∈ range (N + 1), ΛBad n ≤ psi N - th
     · have : n = 2 := (hp.eq_two_or_odd').resolve_right ho
       subst this
       simp [hp, ho, vonMangoldt_apply_prime hp]
-  · simp only [hp, false_and, ite_false, ite_true]
-    split_ifs <;> simp [vonMangoldt_nonneg, h2]
+  · simp only [hp, false_and, ite_false]
+    split_ifs <;> simp [h2]
 
 /-- **[H, (14.51)] with the constants as parameters.** -/
 theorem repSum_sub_le_of_bounds {N : ℕ} (hN : 1 ≤ N) {Ap As : ℝ}

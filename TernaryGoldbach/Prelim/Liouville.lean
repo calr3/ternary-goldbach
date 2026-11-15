@@ -90,7 +90,7 @@ theorem msq_apply (n : ℕ) : msq n = if n ≠ 0 ∧ IsSquare n then (μ (Nat.sq
   simp only [msq, coe_mk]
 
 theorem msq_sq (u : ℕ) (hu : u ≠ 0) : msq (u * u) = μ u := by
-  rw [msq_apply, if_pos ⟨mul_ne_zero hu hu, ⟨u, rfl⟩⟩, Nat.sqrt_eq]
+  rw [msq_apply, ite_eq_left ⟨mul_ne_zero hu hu, ⟨u, rfl⟩⟩, Nat.sqrt_eq]
 
 theorem msq_mult : msq.IsMultiplicative := by
   refine ⟨by rw [show (1 : ℕ) = 1 * 1 from rfl, msq_sq 1 one_ne_zero]; simp, fun {m n} hmn => ?_⟩
@@ -108,17 +108,17 @@ theorem msq_mult : msq.IsMultiplicative := by
       msq_sq _ hs0, msq_sq _ ht0, isMultiplicative_moebius.map_mul_of_coprime hst]
     push_cast; ring
   · have hmn' : ¬ IsSquare (m * n) := by rwa [isSquare_mul_of_coprime hmn hm hn]
-    rw [msq_apply, if_neg (fun h => hmn' h.2)]
+    rw [msq_apply, ite_eq_right (fun h => hmn' h.2)]
     simp only [not_and_or] at hs
     rcases hs with h | h
-    · rw [msq_apply m, if_neg (fun h' => h h'.2), zero_mul]
-    · rw [msq_apply n, if_neg (fun h' => h h'.2), mul_zero]
+    · rw [msq_apply m, ite_eq_right (fun h' => h h'.2), zero_mul]
+    · rw [msq_apply n, ite_eq_right (fun h' => h h'.2), mul_zero]
 
-theorem msq_pp_zero {p : ℕ} (hp : p.Prime) : msq (p ^ 0) = 1 := by
+theorem msq_pp_zero {p : ℕ} (_hp : p.Prime) : msq (p ^ 0) = 1 := by
   rw [pow_zero, show (1 : ℕ) = 1 * 1 from rfl, msq_sq 1 one_ne_zero]; simp
 
 theorem msq_pp_one {p : ℕ} (hp : p.Prime) : msq (p ^ 1) = 0 := by
-  rw [msq_apply, if_neg]; rintro ⟨-, h⟩
+  rw [msq_apply, ite_eq_right]; rintro ⟨-, h⟩
   have := (isSquare_prime_pow_iff hp).1 h
   exact Nat.not_even_one this
 
@@ -130,10 +130,10 @@ theorem msq_pp_ge3 {p : ℕ} (hp : p.Prime) (i : ℕ) : msq (p ^ (i + 3)) = 0 :=
   by_cases he : Even (i + 3)
   · obtain ⟨r, hr⟩ := he
     have hpr : p ^ (i + 3) = p ^ r * p ^ r := by rw [hr, pow_add]
-    rw [if_pos ⟨pow_ne_zero _ hp.ne_zero, (isSquare_prime_pow_iff hp).2 ⟨r, hr⟩⟩, hpr, Nat.sqrt_eq,
-      moebius_apply_prime_pow hp (by omega), if_neg (by omega)]
+    rw [ite_eq_left ⟨pow_ne_zero _ hp.ne_zero, (isSquare_prime_pow_iff hp).2 ⟨r, hr⟩⟩, hpr, Nat.sqrt_eq,
+      moebius_apply_prime_pow hp (by omega), ite_eq_right (by omega)]
     simp
-  · rw [if_neg]; rintro ⟨-, h⟩; exact he ((isSquare_prime_pow_iff hp).1 h)
+  · rw [ite_eq_right]; rintro ⟨-, h⟩; exact he ((isSquare_prime_pow_iff hp).1 h)
 
 /-- `d_q(d) = μ²(d)` for `d ∣ q`, else `0`. -/
 noncomputable def dq (q : ℕ) : ArithmeticFunction ℝ :=
@@ -153,7 +153,7 @@ theorem dq_mult (q : ℕ) : (dq q).IsMultiplicative := by
       fun ⟨a, b⟩ => hmn.mul_dvd_of_dvd_of_dvd a b⟩
   simp only [dq_apply, ne_eq, mul_eq_zero, hm, hn, or_self, not_false_eq_true, true_and, hiff,
     isMultiplicative_moebius.map_mul_of_coprime hmn]
-  split_ifs <;> simp_all <;> push_cast <;> ring
+  split_ifs <;> simp_all; ring
 
 /-! ### Convolutions at prime powers -/
 
@@ -170,9 +170,9 @@ theorem sum_neg_one_pow (k : ℕ) : ∑ i ∈ range (k + 1), (-1 : ℝ) ^ i = if
     rw [sum_range_succ, ih]
     by_cases hk : Even k
     · have : ¬ Even (k + 1) := by rw [Nat.even_add_one]; exact not_not.2 hk
-      rw [if_pos hk, if_neg this, pow_succ, hk.neg_one_pow]; ring
+      rw [ite_eq_left hk, ite_eq_right this, pow_succ, hk.neg_one_pow]; ring
     · have : Even (k + 1) := by rw [Nat.even_add_one]; exact hk
-      rw [if_neg hk, if_pos this, pow_succ, (Nat.not_even_iff_odd.1 hk).neg_one_pow]; ring
+      rw [ite_eq_right hk, ite_eq_left this, pow_succ, (Nat.not_even_iff_odd.1 hk).neg_one_pow]; ring
 
 /-- `λ ∗ 1 = sq`. -/
 theorem lam_mul_zeta : lam * (ζ : ArithmeticFunction ℝ) = sqI := by
@@ -200,7 +200,7 @@ theorem moebius_eq_msq_mul_lam : (μ : ArithmeticFunction ℝ) = msq * lam := by
     simp [hl1, lam_mult.map_one]
   · rw [sum_range_succ', sum_range_succ', sum_range_succ']
     rw [sum_eq_zero fun i _ => by rw [msq_pp_ge3 hp, zero_mul]]
-    rw [moebius_apply_prime_pow hp (by omega), if_neg (by omega)]
+    rw [moebius_apply_prime_pow hp (by omega), ite_eq_right (by omega)]
     rw [msq_pp_zero hp, msq_pp_one hp, msq_pp_two hp]
     simp only [lam_pp hp]
     have e1 : k + 1 + 1 - (0 + 1 + 1) = k := by omega
@@ -214,12 +214,12 @@ theorem lam_chiq_eq (q : ℕ) : pmul lam (chiq q) = dq q * lam := by
   intro p k hp
   rw [conv_pp _ _ hp, pmul_apply, chiq_apply, lam_pp hp]
   rcases k with _ | k
-  · simp [(dq_mult q).map_one, lam_mult.map_one, chiq_apply]
+  · simp [(dq_mult q).map_one, lam_mult.map_one]
   · rw [sum_range_succ', sum_range_succ']
     have h0 : ∀ i ∈ range k, dq q (p ^ (i + 1 + 1)) * lam (p ^ (k + 1 - (i + 1 + 1))) = 0 := by
       intro i _
       have hm : (μ (p ^ (i + 1 + 1)) : ℝ) = 0 := by
-        rw [moebius_apply_prime_pow hp (by omega), if_neg (by omega)]; simp
+        rw [moebius_apply_prime_pow hp (by omega), ite_eq_right (by omega)]; simp
       rw [dq_apply]; split_ifs <;> simp [hm]
     rw [sum_eq_zero h0, zero_add]
     have hc : Nat.Coprime (p ^ (k + 1)) q ↔ ¬ p ∣ q := by
@@ -233,8 +233,8 @@ theorem lam_chiq_eq (q : ℕ) : pmul lam (chiq q) = dq q * lam := by
     rw [hd1, hd0, lam_pp hp, lam_pp hp, e1, e2]
     simp only [ne_eq, hp0, not_false_eq_true, true_and, hc]
     by_cases hd : p ∣ q
-    · rw [if_pos hd, if_neg (not_not.2 hd), pow_succ]; ring
-    · rw [if_neg hd, if_pos hd, pow_succ]; ring
+    · rw [ite_eq_left hd, ite_eq_right (not_not.2 hd), pow_succ]; ring
+    · rw [ite_eq_right hd, ite_eq_left hd, pow_succ]; ring
 
 /-! ### Coprimality and partial sums -/
 
@@ -348,7 +348,7 @@ theorem mqs_eq (q : ℕ) (x : ℝ) :
       if a ≠ 0 ∧ IsSquare a then msq a * chiq q a / a * lqs q (x / a) else 0 := by
     intro a _
     rw [pmul_apply, msq_apply, lqs]
-    split_ifs with h <;> simp [msq_apply, h]
+    split_ifs with h <;> simp
   rw [sum_congr rfl e2, sum_sq_reindex (fun a => msq a * chiq q a / a * lqs q (x / a))]
   refine sum_congr rfl fun u hu => ?_
   rw [chiq_sq, msq_sq u (by have := (mem_Icc.1 hu).1; omega)]
@@ -362,11 +362,11 @@ theorem lqs_eq_dq (q : ℕ) (x : ℝ) :
 theorem lqs_one (x : ℝ) : lqs 1 x = ls x := by
   rw [lqs, ls]; refine sum_congr rfl fun n hn => ?_
   have hn0 : n ≠ 0 := by have := (mem_Icc.1 hn).1; omega
-  rw [pmul_apply, chiq_apply, if_pos ⟨hn0, Nat.coprime_one_right n⟩, mul_one]
+  rw [pmul_apply, chiq_apply, ite_eq_left ⟨hn0, Nat.coprime_one_right n⟩, mul_one]
 
 theorem mqs_one (x : ℝ) : mqs 1 x = ∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n := by
   rw [mqs]; refine sum_congr rfl fun n hn => ?_
   have hn0 : n ≠ 0 := by have := (mem_Icc.1 hn).1; omega
-  rw [muq, pmul_apply, chiq_apply, if_pos ⟨hn0, Nat.coprime_one_right n⟩, mul_one, intCoe_apply]
+  rw [muq, pmul_apply, chiq_apply, ite_eq_left ⟨hn0, Nat.coprime_one_right n⟩, mul_one, intCoe_apply]
 
 end TernaryGoldbach.Prelim

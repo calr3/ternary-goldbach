@@ -39,18 +39,18 @@ theorem typeI2_eq {α x : ℝ} (hx : 0 < x) {U V : ℝ} (hU : 0 ≤ U) (hV : 0 �
     rw [typeI2, sum_product]
     refine sum_congr rfl fun v hv => ?_
     by_cases hvo : Odd v
-    · rw [if_pos hvo, mul_sum]
+    · rw [ite_eq_left hvo, mul_sum]
       refine sum_congr rfl fun u hu => ?_
       by_cases huo : Odd u
-      · rw [if_pos huo, if_pos ⟨hvo, huo⟩]
+      · rw [ite_eq_left huo, ite_eq_left ⟨hvo, huo⟩]
         have hvu : 1 ≤ v * u := Nat.one_le_iff_ne_zero.2
           (Nat.mul_ne_zero (by have := (mem_Icc.1 hv).1; omega) (by have := (mem_Icc.1 hu).1; omega))
         rw [← inner_eq_Todd hx hvu]
         push_cast
         simp only [mul_assoc]
-      · rw [if_neg huo, if_neg (fun h => huo h.2), mul_zero]
-    · rw [if_neg hvo]
-      exact (sum_eq_zero fun u _ => by rw [if_neg (fun h => hvo h.1)]).symm
+      · rw [ite_eq_right huo, ite_eq_right (fun h => huo h.2), mul_zero]
+    · rw [ite_eq_right hvo]
+      exact (sum_eq_zero fun u _ => by rw [ite_eq_right (fun h => hvo h.1)]).symm
   rw [h1]
   -- Step 2: group by `a = vu`.
   rw [← sum_fiberwise_of_maps_to (t := Icc 1 (NV * NU)) (g := fun p : ℕ × ℕ => p.1 * p.2)
@@ -96,14 +96,14 @@ theorem typeI2_eq {α x : ℝ} (hx : 0 < x) {U V : ℝ} (hU : 0 ≤ U) (hV : 0 �
       have hodd : Odd p.1 ∧ Odd p.2 ↔ Odd a := by rw [← h5, Nat.odd_mul]
       simp only [hdiv, h5]
       by_cases ho : Odd a
-      · rw [if_pos (hodd.2 ho), if_pos ho]
-      · rw [if_neg (fun h => ho (hodd.1 h)), if_neg ho]
+      · rw [ite_eq_left (hodd.2 ho), ite_eq_left ho]
+      · rw [ite_eq_right (fun h => ho (hodd.1 h)), ite_eq_right ho]
   rw [hfib, coefI2, sum_filter]
   by_cases ho : Odd a
-  · rw [if_pos ho, Complex.ofReal_sum, sum_mul]
+  · rw [ite_eq_left ho, Complex.ofReal_sum, sum_mul]
     refine sum_congr rfl fun v _ => ?_
     split_ifs <;> simp
-  · rw [if_neg ho]
+  · rw [ite_eq_right ho]
     exact sum_eq_zero fun v _ => by split_ifs <;> rfl
 
 
@@ -157,8 +157,8 @@ theorem abs_sum_moebius_odd_dvd_le {q' : ℕ} (hq' : Odd q') (R : ℝ) (hR : 0 �
     have hw1 : (0 : ℝ) < w := by exact_mod_cast (mem_Icc.1 hw).1
     rw [← moebius_odd_term hq' w]
     by_cases ho : Odd w
-    · rw [if_pos ((hodd w).2 ho), if_pos ho]; push_cast; field_simp
-    · rw [if_neg (fun h => ho ((hodd w).1 h)), if_neg ho, mul_zero]
+    · rw [ite_eq_left ((hodd w).2 ho), ite_eq_left ho]; push_cast; field_simp
+    · rw [ite_eq_right (fun h => ho ((hodd w).1 h)), ite_eq_right ho, mul_zero]
   rw [sum_congr rfl hterm, ← mul_sum, ← mul_sum, abs_mul, abs_mul, abs_of_pos (by positivity)]
   have h1 : |(μ q' : ℝ)| ≤ 1 := by exact_mod_cast ArithmeticFunction.abs_moebius_le_one
   have h2 := Prelim.abs_sum_moebius_div_coprime_le_one (R / q') (q := 2 * q') (by omega)
@@ -199,11 +199,11 @@ theorem vonMangoldt_gcd_term (q v : ℕ) (hq : q ≠ 0) (hv : v ≠ 0) :
           (Λ (v / Nat.gcd q v) : ℝ) / ((v / Nat.gcd q v : ℕ) : ℝ) else 0) := by
   have hv0 : (0 : ℝ) < v := by exact_mod_cast Nat.pos_of_ne_zero hv
   by_cases hd : v ∣ q
-  · rw [if_pos hd, if_neg (fun h => h.1 hd), add_zero, Nat.gcd_eq_right hd]
+  · rw [ite_eq_left hd, ite_eq_right (fun h => h.1 hd), add_zero, Nat.gcd_eq_right hd]
     field_simp
-  · rw [if_neg hd, zero_add]
+  · rw [ite_eq_right hd, zero_add]
     by_cases hpp : IsPrimePow v
-    · rw [if_pos ⟨hd, hpp⟩]
+    · rw [ite_eq_left ⟨hd, hpp⟩]
       obtain ⟨p, k, hp, hk, rfl⟩ := (isPrimePow_nat_iff v).1 hpp
       obtain ⟨hlt, hdiv⟩ := div_gcd_of_prime_pow hp hq hd
       rw [hdiv, gcd_prime_pow hp hq, min_eq_left hlt.le,
@@ -214,14 +214,14 @@ theorem vonMangoldt_gcd_term (q v : ℕ) (hq : q ≠ 0) (hv : v ≠ 0) :
       rw [show k = (k - q.factorization p) + q.factorization p by omega, pow_add]
       simp only [Nat.add_sub_cancel]
       field_simp
-    · rw [if_neg (fun h => hpp h.2), (ArithmeticFunction.vonMangoldt_eq_zero_iff).2 hpp]
+    · rw [ite_eq_right (fun h => hpp h.2), (ArithmeticFunction.vonMangoldt_eq_zero_iff).2 hpp]
       simp
 
 /-- `v ↦ v/gcd(q,v)` is injective on prime powers not dividing `q`. -/
 theorem injOn_div_gcd (q : ℕ) (hq : q ≠ 0) (S : Finset ℕ) :
     Set.InjOn (fun v => v / Nat.gcd q v) ↑(S.filter (fun v => ¬ v ∣ q ∧ IsPrimePow v)) := by
   intro v hv v' hv' heq
-  simp only [coe_filter, Set.mem_setOf_eq] at hv hv'
+  simp only [coe_filter, Set.mem_ofPred_eq] at hv hv'
   obtain ⟨_, hd, hpp⟩ := hv
   obtain ⟨_, hd', hpp'⟩ := hv'
   obtain ⟨p, k, hp, hk, rfl⟩ := (isPrimePow_nat_iff v).1 hpp
@@ -314,10 +314,10 @@ theorem sum_pairs_eq_sum_divisors {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) (g :
     simp only [hdiv]
 
 /-- `c(a) = 0` for `a > ⌊V⌋⌊U⌋`. -/
-theorem coefI2_eq_zero_of_gt {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) {a : ℕ}
+theorem coefI2_eq_zero_of_gt {U V : ℝ} (_hU : 0 ≤ U) (_hV : 0 ≤ V) {a : ℕ}
     (ha : ⌊V⌋₊ * ⌊U⌋₊ < a) : coefI2 U V a = 0 := by
   refine sum_eq_zero fun v hv => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h1, h2⟩
   have hva : v ∣ a := (Nat.mem_divisors.1 hv).1
   have : v * (a / v) ≤ ⌊V⌋₊ * ⌊U⌋₊ := Nat.mul_le_mul (Nat.le_floor h1) (Nat.le_floor h2)
@@ -340,11 +340,11 @@ theorem sum_coefI2_eq {U V : ℝ} (hU : 0 ≤ U) (hV : 0 ≤ V) (P : ℕ → Pro
   · rw [sum_mul]
     refine sum_congr rfl fun v hv => ?_
     have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
-    rw [hva, if_pos hP]
+    rw [hva, ite_eq_left hP]
     split_ifs <;> ring
   · refine (sum_eq_zero fun v hv => ?_).symm
     have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
-    rw [hva, if_neg hP]; split_ifs <;> rfl
+    rw [hva, ite_eq_right hP]; split_ifs <;> rfl
 
 
 /-- `q | vu ⟺ q/gcd(q,v) | u`. -/
@@ -375,7 +375,7 @@ theorem dvd_mul_iff_div_gcd {q v u : ℕ} (hq : 0 < q) :
 
 variable [Fact TernaryGoldbach.PlattGRH] in
 /-- **[H, p. 72]**: `|∑_{a ≤ M, a odd, q | a} c(a)/a| ≤ (log q + log V)/q` for `q` odd. -/
-theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 0 ≤ M) {q : ℕ}
+theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (_hM : 0 ≤ M) {q : ℕ}
     (hq : Odd q) :
     |∑ a ∈ Icc 1 ⌊M⌋₊, (if Odd a ∧ q ∣ a then coefI2 U V a * (1 / a) else 0)| ≤
       (Real.log q + Real.log V) / q := by
@@ -391,12 +391,12 @@ theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
     rw [← sum_subset (Icc_subset_Icc le_rfl (le_max_left _ _) : Icc 1 NM ⊆ Icc 1 N)
       (fun a ha hna => by
         simp only [mem_Icc] at ha hna
-        rw [if_neg (fun h => by omega)])]
+        rw [ite_eq_right (fun h => by omega)])]
     refine sum_congr rfl fun a ha => ?_
     have : a ≤ NM := (mem_Icc.1 ha).2
     by_cases h : Odd a ∧ q ∣ a
-    · rw [if_pos h, if_pos ⟨h, this⟩]
-    · rw [if_neg h, if_neg (fun h' => h h'.1)]
+    · rw [ite_eq_left h, ite_eq_left ⟨h, this⟩]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.1)]
   rw [hext, sum_coefI2_eq (by linarith) (by linarith) _ _ (le_max_right _ _), sum_product]
   refine (abs_sum_le_sum_abs _ _).trans ?_
   -- Each `v`.
@@ -411,7 +411,7 @@ theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
     have hRHS : 0 ≤ (Λ v : ℝ) * Nat.gcd q v / v * (1 / q) := by positivity
     rcases Nat.even_or_odd v with hve | hvo
     · rw [sum_eq_zero fun u _ => by
-        rw [if_neg]; rintro ⟨⟨ho, _⟩, _⟩
+        rw [ite_eq_right]; rintro ⟨⟨ho, _⟩, _⟩
         exact (Nat.not_odd_iff_even.2 (hve.mul_right u)) ho]
       simpa using hRHS
     set q' := q / Nat.gcd q v
@@ -426,7 +426,7 @@ theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
       rw [mul_sum]
       rw [← sum_subset (Icc_subset_Icc le_rfl (min_le_left _ _) : Icc 1 (min NU (NM / v)) ⊆ Icc 1 NU)
         (fun u hu hnu => by
-          rw [if_neg]
+          rw [ite_eq_right]
           rintro ⟨_, hle⟩
           simp only [mem_Icc] at hu hnu
           have : u ≤ NM / v := (Nat.le_div_iff_mul_le hv1).2 (by rw [mul_comm]; exact hle)
@@ -439,10 +439,10 @@ theorem abs_sum_coefI2_div_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
         rw [Nat.odd_mul]; exact ⟨fun h => h.2, fun h => ⟨hvo, h⟩⟩
       have hdvd := dvd_mul_iff_div_gcd (q := q) (v := v) (u := u) (by omega)
       by_cases h : Odd u ∧ q' ∣ u
-      · rw [if_pos ⟨⟨hodd.2 h.1, hdvd.2 h.2⟩, hvu⟩, if_pos h]
+      · rw [ite_eq_left ⟨⟨hodd.2 h.1, hdvd.2 h.2⟩, hvu⟩, ite_eq_left h]
         have hu0 : (0 : ℝ) < u := by exact_mod_cast (mem_Icc.1 hu).1
         push_cast; field_simp
-      · rw [if_neg (fun h' => h ⟨hodd.1 h'.1.1, hdvd.1 h'.1.2⟩), if_neg h, mul_zero]
+      · rw [ite_eq_right (fun h' => h ⟨hodd.1 h'.1.1, hdvd.1 h'.1.2⟩), ite_eq_right h, mul_zero]
     rw [hrw, abs_mul, abs_of_nonneg (by positivity)]
     have hA := abs_sum_moebius_odd_dvd_le hq'odd ((min NU (NM / v) : ℕ) : ℝ) (Nat.cast_nonneg _)
     rw [Nat.floor_natCast] at hA
@@ -481,11 +481,11 @@ theorem sum_vonMangoldt_mul_not_coprime_le {q : ℕ} (hq : Odd q) {V : ℝ} (hV 
     rw [sum_filter]
     refine sum_congr rfl fun v _ => ?_
     by_cases hc : Nat.Coprime q v
-    · rw [if_neg (fun h => h hc), if_neg (fun h => h.1 hc)]
-    · rw [if_pos hc]
+    · rw [ite_eq_right (fun h => h hc), ite_eq_right (fun h => h.1 hc)]
+    · rw [ite_eq_left hc]
       by_cases hpp : IsPrimePow v
-      · rw [if_pos ⟨hc, hpp⟩]
-      · rw [if_neg (fun h => hpp h.2), (ArithmeticFunction.vonMangoldt_eq_zero_iff).2 hpp]; simp
+      · rw [ite_eq_left ⟨hc, hpp⟩]
+      · rw [ite_eq_right (fun h => hpp h.2), (ArithmeticFunction.vonMangoldt_eq_zero_iff).2 hpp]; simp
   rw [h1]
   set S := (Icc 1 NV).filter (fun v => ¬ Nat.Coprime q v ∧ IsPrimePow v)
   -- Group by the prime `p = minFac v`, which divides `q`.
@@ -570,8 +570,8 @@ theorem sum_odd_dvd_le {q : ℕ} (hq : Odd q) (K : ℕ) :
       q * ∑ w ∈ Icc 1 N, (if Odd w then (w : ℝ) else 0) := by
     rw [mul_sum]; refine sum_congr rfl fun w _ => ?_
     by_cases ho : Odd w
-    · rw [if_pos ((hodd w).2 ho), if_pos ho]; push_cast; ring
-    · rw [if_neg (fun h => ho ((hodd w).1 h)), if_neg ho, mul_zero]
+    · rw [ite_eq_left ((hodd w).2 ho), ite_eq_left ho]; push_cast; ring
+    · rw [ite_eq_right (fun h => ho ((hodd w).1 h)), ite_eq_right ho, mul_zero]
   rw [e]
   have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg _
   rcases Nat.eq_zero_or_pos N with h0 | hpos
@@ -615,7 +615,7 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
   have hz : ∀ a, NV * NU < a → c0 a = 0 := by
     intro a ha
     refine sum_eq_zero fun v hv => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     have hva : v ∣ a := (Nat.mem_divisors.1 hv).1
     have : v * (a / v) ≤ NV * NU := Nat.mul_le_mul (Nat.le_floor h1) (Nat.le_floor h2)
@@ -628,12 +628,12 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
           sum_le_sum fun a ha => by
             have : a ≤ NM := (mem_Icc.1 ha).2
             by_cases h : Odd a ∧ q ∣ a
-            · rw [if_pos h, if_pos ⟨h, this⟩]
+            · rw [ite_eq_left h, ite_eq_left ⟨h, this⟩]
               exact mul_le_mul_of_nonneg_right (hc0 a) (Nat.cast_nonneg _)
-            · rw [if_neg h, if_neg (fun h' => h h'.1)]
+            · rw [ite_eq_right h, ite_eq_right (fun h' => h h'.1)]
       _ = ∑ a ∈ Icc 1 N, (if (Odd a ∧ q ∣ a) ∧ a ≤ NM then c0 a * a else 0) :=
           sum_subset (Icc_subset_Icc le_rfl (le_max_left _ _)) (fun a ha hna => by
-            simp only [mem_Icc] at ha hna; rw [if_neg (fun h => by omega)])
+            simp only [mem_Icc] at ha hna; rw [ite_eq_right (fun h => by omega)])
       _ = ∑ a ∈ Icc 1 (NV * NU), (if (Odd a ∧ q ∣ a) ∧ a ≤ NM then c0 a * a else 0) :=
           (sum_subset (Icc_subset_Icc le_rfl (le_max_right _ _)) (fun a ha hna => by
             simp only [mem_Icc] at ha hna
@@ -650,11 +650,11 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
           · rw [sum_mul]
             refine sum_congr rfl fun v hv => ?_
             have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
-            rw [hva, if_pos h]
+            rw [hva, ite_eq_left h]
             split_ifs <;> simp
           · refine (sum_eq_zero fun v hv => ?_).symm
             have hva : v * (a / v) = a := Nat.mul_div_cancel' (Nat.mem_divisors.1 hv).1
-            rw [hva, if_neg h]; split_ifs <;> rfl
+            rw [hva, ite_eq_right h]; split_ifs <;> rfl
       _ = _ := (sum_pairs_eq_sum_divisors (by linarith) (by linarith) (fun v u =>
             if (Odd (v * u) ∧ q ∣ v * u) ∧ v * u ≤ NM then
               (Λ v : ℝ) * ((v * u : ℕ) : ℝ) else 0)).symm
@@ -676,7 +676,7 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
       split_ifs <;> positivity
     rcases Nat.even_or_odd v with hve | hvo
     · rw [sum_eq_zero fun u _ => by
-        rw [if_neg]; rintro ⟨⟨ho, _⟩, _⟩
+        rw [ite_eq_right]; rintro ⟨⟨ho, _⟩, _⟩
         exact (Nat.not_odd_iff_even.2 (hve.mul_right u)) ho]
       exact hRHS
     have hfac : ∀ u, (Λ v : ℝ) * ((v * u : ℕ) : ℝ) = (Λ v : ℝ) * v * u := fun u => by
@@ -687,13 +687,13 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
       fun u => by split_ifs <;> simp
     rw [sum_congr rfl fun u _ => hfac2 u, ← mul_sum]
     by_cases hc : Nat.Coprime q v
-    · rw [if_pos hc, if_neg (fun h => h hc), add_zero]
+    · rw [ite_eq_left hc, ite_eq_right (fun h => h hc), add_zero]
       have hrw : ∑ u ∈ Icc 1 NU, (if (Odd (v * u) ∧ q ∣ v * u) ∧ v * u ≤ NM then (u : ℝ) else 0) =
           ∑ u ∈ Icc 1 (min NU (NM / v)), (if Odd u ∧ q ∣ u then (u : ℝ) else 0) := by
         rw [← sum_subset (Icc_subset_Icc le_rfl (min_le_left _ _) :
             Icc 1 (min NU (NM / v)) ⊆ Icc 1 NU)
           (fun u hu hnu => by
-            rw [if_neg]
+            rw [ite_eq_right]
             rintro ⟨_, hle⟩
             simp only [mem_Icc] at hu hnu
             have : u ≤ NM / v := (Nat.le_div_iff_mul_le hv1).2 (by rw [mul_comm]; exact hle)
@@ -706,8 +706,8 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
           rw [Nat.odd_mul]; exact ⟨fun h => h.2, fun h => ⟨hvo, h⟩⟩
         have hdvd : q ∣ v * u ↔ q ∣ u := hc.dvd_mul_left
         by_cases h : Odd u ∧ q ∣ u
-        · rw [if_pos ⟨⟨hodd.2 h.1, hdvd.2 h.2⟩, hvu⟩, if_pos h]
-        · rw [if_neg (fun h' => h ⟨hodd.1 h'.1.1, hdvd.1 h'.1.2⟩), if_neg h]
+        · rw [ite_eq_left ⟨⟨hodd.2 h.1, hdvd.2 h.2⟩, hvu⟩, ite_eq_left h]
+        · rw [ite_eq_right (fun h' => h ⟨hodd.1 h'.1.1, hdvd.1 h'.1.2⟩), ite_eq_right h]
       rw [hrw]
       have hE := sum_odd_dvd_le hq (min NU (NM / v))
       have hK : ((min NU (NM / v) : ℕ) : ℝ) ≤ M / v := by
@@ -722,7 +722,7 @@ theorem sum_abs_coefI2_mul_le {U V M : ℝ} (hU : 1 ≤ U) (hV : 1 ≤ V) (hM : 
               3 * ((min NU (NM / v) : ℕ) : ℝ) / 4) := by gcongr
         _ ≤ (Λ v : ℝ) * v * ((M / v) ^ 2 / (4 * q) + 3 * (M / v) / 4) := by gcongr
         _ = _ := by field_simp
-    · rw [if_neg hc, if_pos hc, zero_add]
+    · rw [ite_eq_right hc, ite_eq_left hc, zero_add]
       have hle : ∑ u ∈ Icc 1 NU, (if (Odd (v * u) ∧ q ∣ v * u) ∧ v * u ≤ NM then (u : ℝ) else 0) ≤
           ∑ u ∈ Icc 1 NU, (if Odd u then (u : ℝ) else 0) := sum_le_sum fun u _ => by
         have hodd : Odd (v * u) ↔ Odd u := by
@@ -804,7 +804,7 @@ theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 
   rcases Nat.even_or_odd q with hqe | hqo
   · have : mainPartI2 α x M U V q = 0 := by
       refine sum_eq_zero fun a _ => ?_
-      rw [if_neg]; rintro ⟨ho, hd⟩
+      rw [ite_eq_right]; rintro ⟨ho, hd⟩
       exact (Nat.not_even_iff_odd.2 ho) ((even_iff_two_dvd.2 (even_iff_two_dvd.1 hqe)).trans_dvd hd |>
         fun h => h)
     rw [this, norm_zero]; exact hRHS
@@ -836,10 +836,10 @@ theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 
     have ha1 : 1 ≤ a := (mem_Icc.1 ha).1
     have haN : a ≤ NM := (mem_Icc.1 ha).2
     by_cases h : Odd a ∧ q ∣ a
-    · rw [if_pos h, if_pos h, if_pos h, (hE a h.1 h.2 ha1 haN).1]
+    · rw [ite_eq_left h, ite_eq_left h, ite_eq_left h, (hE a h.1 h.2 ha1 haN).1]
       have ha0 : (0 : ℝ) < a := by exact_mod_cast ha1
       push_cast; field_simp
-    · rw [if_neg h, if_neg h, if_neg h]; simp
+    · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h]; simp
   rw [hsplit, norm_mul, norm_e, one_mul]
   refine (norm_add_le _ _).trans ?_
   have h1 : ‖((x / 2 : ℝ) : ℂ) * η0 *
@@ -862,12 +862,12 @@ theorem norm_mainPartI2_le {α x δ M U V : ℝ} {a₀ k : ℤ} {q : ℕ} (hx : 
         c₀ * (π ^ 2 - 4) / (2 * π ^ 2 * x) * (if Odd a ∧ q ∣ a then |coefI2 U V a| * a else 0) := by
       intro a ha
       by_cases h : Odd a ∧ q ∣ a
-      · rw [if_pos h, if_pos h, norm_mul, Complex.norm_real, Real.norm_eq_abs]
+      · rw [ite_eq_left h, ite_eq_left h, norm_mul, Complex.norm_real, Real.norm_eq_abs]
         have hE2 := (hE a h.1 h.2 (mem_Icc.1 ha).1 (mem_Icc.1 ha).2).2
         calc |coefI2 U V a| * ‖E a‖ ≤ |coefI2 U V a| * (a / x * (c₀ / (2 * π ^ 2)) * (π ^ 2 - 4)) :=
               mul_le_mul_of_nonneg_left hE2 (abs_nonneg _)
           _ = _ := by field_simp
-      · rw [if_neg h, if_neg h, norm_zero, mul_zero]
+      · rw [ite_eq_right h, ite_eq_right h, norm_zero, mul_zero]
     refine (sum_le_sum hterm).trans ?_
     rw [← mul_sum]
     have hpi2 : (0 : ℝ) ≤ π ^ 2 - 4 := by have := Real.pi_gt_three; nlinarith
@@ -930,15 +930,15 @@ theorem typeI2_eq_main_add_rest {α x M U V : ℝ} {q : ℕ} (hx : 0 < x) (hU : 
       ∑ a ∈ Icc 1 N, (if Odd a ∧ (q ∣ a ∧ (a : ℝ) ≤ M) then (coefI2 U V a : ℂ) * Todd α x a else 0) := by
     rw [← sum_subset (Icc_subset_Icc le_rfl (le_max_left _ _) : Icc 1 NM ⊆ Icc 1 N) (fun a ha hna => by
       simp only [mem_Icc] at ha hna
-      rw [if_neg]
+      rw [ite_eq_right]
       rintro ⟨_, _, hle⟩
       have : a ≤ NM := Nat.le_floor hle
       omega)]
     refine sum_congr rfl fun a ha => ?_
     have hle : (a : ℝ) ≤ M := (Nat.cast_le.2 (mem_Icc.1 ha).2).trans (Nat.floor_le hM0)
     by_cases h : Odd a ∧ q ∣ a
-    · rw [if_pos h, if_pos ⟨h.1, h.2, hle⟩]
-    · rw [if_neg h, if_neg (fun h' => h ⟨h'.1, h'.2.1⟩)]
+    · rw [ite_eq_left h, ite_eq_left ⟨h.1, h.2, hle⟩]
+    · rw [ite_eq_right h, ite_eq_right (fun h' => h ⟨h'.1, h'.2.1⟩)]
   rw [hA, hB]
 
 end TernaryGoldbach.MinorArcs

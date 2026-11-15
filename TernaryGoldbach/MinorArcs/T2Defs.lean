@@ -77,12 +77,12 @@ theorem integral_g2 {y : ℝ} (hy : 0 < y) :
     rw [sum_filter]
     simp only [hmax]
     by_cases h1 : (r₁ : ℝ) ≤ u * y
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       refine sum_congr rfl fun r₂ _ => ?_
       by_cases h2 : (r₂ : ℝ) ≤ u * y
       · simp [h1, h2, c]
       · simp [h2]
-    · rw [if_neg h1]; symm
+    · rw [ite_eq_right h1]; symm
       exact sum_eq_zero fun r₂ _ => by simp [h1]
   have hint : ∀ r₁ r₂, IntervalIntegrable
       (fun u : ℝ => c r₁ r₂ * (if max ((r₁ : ℝ) / y) (r₂ / y) ≤ u then 1 else 0))
@@ -93,10 +93,10 @@ theorem integral_g2 {y : ℝ} (hy : 0 < y) :
     intro r₁
     have := IntervalIntegrable.sum (Icc 1 ⌊y⌋₊) (fun r₂ _ => hint r₁ r₂)
     convert this using 1; ext u; simp [Finset.sum_apply]
-  rw [intervalIntegral.integral_congr hpt, intervalIntegral.integral_finset_sum
+  rw [intervalIntegral.integral_congr hpt, intervalIntegral.integral_finsetSum
     (fun r₁ _ => hint2 r₁)]
   refine sum_congr rfl fun r₁ hr₁ => ?_
-  rw [intervalIntegral.integral_finset_sum (fun r₂ _ => hint r₁ r₂)]
+  rw [intervalIntegral.integral_finsetSum (fun r₂ _ => hint r₁ r₂)]
   refine sum_congr rfl fun r₂ hr₂ => ?_
   rw [intervalIntegral.integral_const_mul, integral_ite_le, wM]
   have h1 : (r₁ : ℝ) ≤ y := (Nat.cast_le.2 (mem_Icc.1 hr₁).2).trans (Nat.floor_le hy.le)
@@ -136,13 +136,13 @@ theorem measurable_T2 : Measurable T2 := by
     apply Finset.measurable_sum
     intro s _
     by_cases hs : Odd s
-    · simp only [hs, if_true]
+    · simp only [hs, ite_true]
       refine Measurable.const_mul ?_ _
       simp_rw [intervalIntegral.integral_of_le (show (1 / 2 : ℝ) ≤ 1 by norm_num)]
       have hf : MeasureTheory.StronglyMeasurable (fun p : ℝ × ℝ => g2 (p.2 * p.1 / s)) :=
         (measurable_g2.comp (by fun_prop)).stronglyMeasurable
       exact (hf.integral_prod_right' (ν := MeasureTheory.volume.restrict (Set.Ioc (1 / 2 : ℝ) 1))).measurable
-    · simp only [hs, if_false]; exact measurable_const
+    · simp only [hs, ite_false]; exact measurable_const
   have : T2 = F ∘ fun S => (⌊S⌋₊, S) := rfl
   rw [this]
   exact hF.comp (Nat.measurable_floor.prodMk measurable_id)
@@ -156,6 +156,6 @@ theorem H2_eq_zero_of_lt_one {S : ℝ} (hS : S < 1) : H2 S = 0 := by
   have hT : T2 S = 0 := by
     unfold T2
     rw [Nat.floor_eq_zero.2 hS]; simp
-  unfold H2; rw [if_pos (by linarith), hT]; simp
+  unfold H2; rw [ite_eq_left (by linarith), hT]; simp
 
 end TernaryGoldbach.MinorArcs

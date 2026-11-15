@@ -100,13 +100,13 @@ theorem ldatum_zeta2 : LDatum zetaF BPz2 0 (C3 + 2) where
   diff := differentiable_zetaF
   center_ge := zetaF_center_ge
   center_lt := zetaF_center_lt2
-  bound := fun T w hw => norm_zetaF_le_BPz2 T hw
+  bound := fun T _w hw => norm_zetaF_le_BPz2 T hw
   B_ge := polyDatum_zeta2.B_ge
   B_mono := polyDatum_zeta2.B_mono
   logB_lin := log_BPz2_lin
   D_nonneg := le_rfl
-  nz_strip := fun s h1 h2 => zetaF_ne_zero_strip h1 h2
-  nz_right := fun s h => zetaF_ne_zero_right h
+  nz_strip := fun _s h1 h2 => zetaF_ne_zero_strip h1 h2
+  nz_right := fun _s h => zetaF_ne_zero_right h
   right_bound := norm_logDeriv_zetaF_right
 
 /-- `HkD B''_ζ k ≤ 11.4 P² + 7.7 P`, `P = 10.24 + 10 log(1.25(k + 23))`. -/
@@ -678,7 +678,7 @@ theorem xiF_conj (s : ℂ) : xiF (starRingEnd ℂ s) = starRingEnd ℂ (xiF s) :
     intro w _ _
     rw [completedRiemannZeta_eq]; unfold xiF; ring
   rw [e _ h0' h1', e _ h0 h1, completedRiemannZeta_conj]
-  simp [map_add, map_mul, map_sub, map_div₀, map_one]
+  simp [map_add, map_mul, map_sub, map_one]
 
 theorem logDeriv_xiF_conj (s : ℂ) : logDeriv xiF (starRingEnd ℂ s) = starRingEnd ℂ (logDeriv xiF s) := by
   have hf : (starRingEnd ℂ ∘ xiF ∘ starRingEnd ℂ) = xiF := by

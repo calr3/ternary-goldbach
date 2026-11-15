@@ -43,7 +43,7 @@ theorem mellin_fP_one (δ : ℝ) : mellin (fP δ) 1 = 𝓕 (fun u => (etaPlus u 
       simp [hg, etaPlus_of_nonpos this])).symm
   rw [hR]
   refine setIntegral_congr_fun measurableSet_Ioi fun t (ht : 0 < t) => ?_
-  simp only [hg, sub_self, Complex.cpow_zero, one_smul, fP, smul_eq_mul]
+  simp only [hg, sub_self, Complex.cpow_zero, fP, smul_eq_mul]
   push_cast; ring_nf
 
 /-- The error term for `q ≥ 2`. -/
@@ -84,7 +84,7 @@ theorem prop_9_4_2 {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ 
   · subst hq
     have hχ1 : χ = 1 := Subsingleton.elim _ _
     subst hχ1
-    simp only [if_true]; rw [← mellin_fP_one]
+    simp only [ite_true]; rw [← mellin_fP_one]
     have hRH : ∀ ρ : ℂ, riemannZeta ρ = 0 → 0 < ρ.re → ρ.re < 1 → |ρ.im| ≤ T0 → ρ.re = 1 / 2 := by
       intro ρ h0 h1 h2 h3
       exact hG ρ (by rw [Explicit.LFunction_one_mod_one]; exact h0) h1 h2 h3
@@ -92,7 +92,7 @@ theorem prop_9_4_2 {x : ℝ} (hx : 1 ≤ x) (δ : ℝ) {q : ℕ} [NeZero q] (χ 
       (le_of_eq ?_)
     unfold errPZ
     exact rearrange hx0
-  · simp only [hq, if_false, sub_zero]
+  · simp only [hq, ite_false, sub_zero]
     refine (Explicit.norm_SsumG_fP_le hχ (ne_one_of_primitive hq hχ) δ hx hT0
       (fun ρ h0 h1 h2 h3 => hG ρ h0 h1 h2 h3) (by norm_num) integral_etaPlus_sq_le).trans (le_of_eq ?_)
     unfold errP

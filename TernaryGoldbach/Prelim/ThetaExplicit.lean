@@ -32,7 +32,7 @@ theorem epl_le (x : ℝ) : epl x ≤ 4.92e-7 := by unfold epl; split_ifs <;> nor
 
 theorem theta_eq (n : ℕ) : theta n = ∑ p ∈ (Icc 1 n).filter Nat.Prime, Real.log p := by
   rw [theta, sum_filter, Finset.range_eq_Ico, Finset.sum_eq_sum_Ico_succ_bot (by omega)]
-  simp only [Nat.not_prime_zero, if_false, zero_add]
+  simp only [Nat.not_prime_zero, ite_false, zero_add]
   rw [show Icc 1 n = Ico 1 (n + 1) from rfl]
   refine sum_congr rfl fun p _ => ?_
   split_ifs with hp
@@ -139,7 +139,7 @@ theorem sum_pow_le_theta' {N k M : ℕ} (hMN : M ≤ N) (hM : ∀ m, m.Prime →
   by_cases hp : m.Prime
   · by_cases hk : m ^ k ≤ N
     · simp [hp, hk, hM m hp hk, ArithmeticFunction.vonMangoldt_apply_prime hp]
-    · simp only [hp, hk, and_false, ite_false, true_and]
+    · simp only [hp, hk, and_false, ite_false]
       split_ifs <;> simp [ArithmeticFunction.vonMangoldt_apply_prime hp,
         Real.log_nonneg, hp.one_lt.le]
   · simp [hp]
@@ -658,7 +658,7 @@ theorem theta_explicit {n : ℕ} (hn : 1000000000000 ≤ n) :
   have hx60 : (1e52 : ℝ) ≤ x := by nlinarith
   rcases lt_or_ge L 20000 with h5 | h5
   · -- the plateau
-    have hepl : epl x = 4.92e-7 := by unfold epl; rw [if_pos ⟨h3, h5⟩]
+    have hepl : epl x = 4.92e-7 := by unfold epl; rw [ite_eq_left ⟨h3, h5⟩]
     have hP := psi_plateau8 hx19.le
     have h1' : 2.001 * L * √x ≤ 40020 * √x := by
       have := mul_le_mul_of_nonneg_right (show 2.001 * L ≤ 40020 by linarith) hs0.le; linarith
@@ -719,7 +719,7 @@ theorem theta_explicit {n : ℕ} (hn : 1000000000000 ≤ n) :
 
 /-- `ε_pl(n) = 0` once `log n ≥ 20000`. -/
 theorem epl_eq_zero {x : ℝ} (h : 20000 ≤ Real.log x) : epl x = 0 := by
-  unfold epl; rw [if_neg]; push Not; intro _; exact h
+  unfold epl; rw [ite_eq_right]; push Not; intro _; exact h
 
 theorem epl_ne_zero {x : ℝ} (h : epl x ≠ 0) : 120 < Real.log x ∧ Real.log x < 20000 := by
   unfold epl at h; split_ifs at h with hh
@@ -759,7 +759,7 @@ theorem sum_epl_div_le (a b : ℕ) :
         · rw [hm2, Nat.lt_succ_iff]
           apply Nat.le_floor
           have := (Real.log_lt_iff_lt_exp hn0).1 hl2; linarith
-      rw [if_pos hmem, epl, if_pos ⟨hl1, hl2⟩]
+      rw [ite_eq_left hmem, epl, ite_eq_left ⟨hl1, hl2⟩]
       have h1 : 1 / ((n : ℝ) + 1) ≤ Real.log ((n : ℝ) + 1) - Real.log n := by
         have := Real.one_sub_inv_le_log_of_pos (x := ((n : ℝ) + 1) / n) (by positivity)
         rw [Real.log_div (by positivity) hn0.ne'] at this

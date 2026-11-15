@@ -39,7 +39,7 @@ theorem abs_sum_moebius_div_le_sqrt {x : ℝ} (hx : 0 < x) (hx' : x < 11815) :
     |∑ n ∈ Icc 1 ⌊x⌋₊, (μ n : ℝ) / n| ≤ √(2 / x) := by
   rcases lt_or_ge x 1 with h | h
   · have : ⌊x⌋₊ = 0 := Nat.floor_eq_zero.2 h
-    rw [this]; simp only [Finset.Icc_self, Icc_eq_empty_of_lt zero_lt_one, sum_empty, abs_zero]
+    rw [this]; simp only [Icc_eq_empty_of_lt zero_lt_one, sum_empty, abs_zero]
     positivity
   · rw [Real.sqrt_div (by norm_num)]; exact m_sqrt h hx'
 
@@ -49,7 +49,7 @@ theorem abs_ls_le (z : ℝ) :
   rw [← lqs_one, lqs_eq]
   refine (abs_sum_le_sum_abs _ _).trans (le_of_eq (sum_congr rfl fun u hu => ?_))
   have hu0 : u ≠ 0 := by have := (mem_Icc.1 hu).1; omega
-  rw [chiq_apply, if_pos ⟨hu0, Nat.coprime_one_right u⟩, mqs_one, abs_mul, abs_div, abs_one,
+  rw [chiq_apply, ite_eq_left ⟨hu0, Nat.coprime_one_right u⟩, mqs_one, abs_mul, abs_div, abs_one,
     Nat.abs_cast]
   ring
 
@@ -385,8 +385,8 @@ theorem mqs_eq_sum (q : ℕ) (x : ℝ) :
   have hn0 : n ≠ 0 := by have := (mem_Icc.1 hn).1; omega
   rw [muq, pmul_apply, chiq_apply, intCoe_apply]
   by_cases h : Nat.Coprime n q
-  · rw [if_pos ⟨hn0, h⟩, if_pos h, mul_one]
-  · rw [if_neg (fun h' => h h'.2), if_neg h, mul_zero, zero_div]
+  · rw [ite_eq_left ⟨hn0, h⟩, ite_eq_left h, mul_one]
+  · rw [ite_eq_right (fun h' => h h'.2), ite_eq_right h, mul_zero, zero_div]
 
 theorem abs_mqs_le_one {q : ℕ} (hq : 1 ≤ q) (x : ℝ) : |mqs q x| ≤ 1 := by
   rw [mqs_eq_sum]; exact abs_sum_moebius_div_coprime_le_one x hq
@@ -454,7 +454,7 @@ theorem abs_lqs_mul_log_le {q : ℕ} (hq : 1 ≤ q) {x : ℝ} (hqx : (q : ℝ) <
       calc |ls (x / d)| * Real.log (x / q) ≤ |ls (x / d)| * Real.log (x / d) :=
             mul_le_mul_of_nonneg_left hl (abs_nonneg _)
         _ ≤ 0.99 := hb
-    · have : dq q d = 0 := by rw [dq_apply, if_neg h]
+    · have : dq q d = 0 := by rw [dq_apply, ite_eq_right h]
       rw [this]; simp
   calc |∑ d ∈ Icc 1 ⌊x⌋₊, dq q d / d * ls (x / d)| * Real.log (x / q)
       ≤ (∑ d ∈ Icc 1 ⌊x⌋₊, dq q d / d * (0.99 / Real.log (x / q))) * Real.log (x / q) :=
@@ -481,9 +481,9 @@ theorem betaf_le (a : ℝ) (u : ℕ) : betaf a u ≤ 5 / 3 := by
 theorem betaf_anti {a y : ℝ} (hay : a ≤ y) (u : ℕ) : betaf y u ≤ betaf a u := by
   unfold betaf
   by_cases h1 : 2 * Real.log u < a
-  · rw [if_pos (lt_of_lt_of_le h1 hay), if_pos h1]
+  · rw [ite_eq_left (lt_of_lt_of_le h1 hay), ite_eq_left h1]
     exact min_le_min le_rfl (div_le_div_of_nonneg_left (by norm_num) (by linarith) (by linarith))
-  · rw [if_neg h1]; split_ifs
+  · rw [ite_eq_right h1]; split_ifs
     · exact min_le_left _ _
     · exact le_rfl
 
@@ -581,7 +581,7 @@ theorem yS_large {y : ℝ} (hy : 80 ≤ y) (N : ℕ) :
           have hl0 : 0 ≤ Real.log u := Real.log_nonneg hu1
           have hb : betaf y u ≤ 1.32 / y := by
             unfold betaf
-            rw [if_pos (by linarith)]
+            rw [ite_eq_left (by linarith)]
             refine (min_le_right _ _).trans ?_
             rw [div_le_div_iff₀ (by linarith) hy0]; nlinarith
           have hμ : |(μ u : ℝ)| ≤ 1 := by exact_mod_cast ArithmeticFunction.abs_moebius_le_one

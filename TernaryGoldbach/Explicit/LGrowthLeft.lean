@@ -53,7 +53,7 @@ theorem norm_sin_le_exp (w : ℂ) : ‖Complex.sin w‖ ≤ Real.exp |w.im| := b
     rw [div_le_div_iff_of_pos_right (by norm_num)]
     refine (norm_sub_le _ _).trans (le_of_eq ?_)
     rw [Complex.norm_exp, Complex.norm_exp]
-    simp [Complex.mul_re, add_comm]
+    simp [Complex.mul_re]
   refine h.trans ?_
   rcases le_total 0 w.im with hw | hw
   · rw [abs_of_nonneg hw]
@@ -271,7 +271,7 @@ theorem norm_LFunction_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     Complex.norm_natCast_cpow_of_pos (Nat.pos_of_ne_zero (NeZero.ne N))]
   have hNp : (N : ℝ) ^ (s - 1 / 2).re ≤ (N : ℝ) ^ 9 := by
     rw [← Real.rpow_natCast]
-    exact Real.rpow_le_rpow_of_exponent_le hN1 (by simp; push_cast; linarith)
+    exact Real.rpow_le_rpow_of_exponent_le hN1 (by simp; linarith)
   have hLs : ‖χ⁻¹.LFunction s‖ ≤ ((N : ℝ) + 1) * (|z.im| + 9) / (3 / 4) := by
     refine (norm_LFunction_le hχi (by linarith)).trans ?_
     have hsn : ‖s‖ ≤ |z.im| + 9 := by

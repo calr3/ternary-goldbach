@@ -34,7 +34,7 @@ theorem g2_term_eq (r₁ r₂ : ℕ) :
   unfold fo
   by_cases hc : Nat.Coprime r₁ r₂
   · by_cases h₁ : Odd r₁ <;> by_cases h₂ : Odd r₂ <;>
-      simp [hc, h₁, h₂, Nat.odd_mul, div_mul_div_comm]
+      simp [h₁, h₂, Nat.odd_mul, div_mul_div_comm]
   · simp [hc]
 
 /-- **`g₂(x) = ∑_{d ≤ N} μ(d) (∑_{r ≤ N, d ∣ r} f(r))²`**, `N = ⌊x⌋`. -/
@@ -84,7 +84,7 @@ theorem fo_mul_of_coprime {a b : ℕ} (h : Nat.Coprime a b) : fo (a * b) = fo a 
   rw [ArithmeticFunction.isMultiplicative_moebius.map_mul_of_coprime h,
     ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime h]
   by_cases ha : Odd a <;> by_cases hb : Odd b <;> simp [ha, hb, Nat.odd_mul]
-  push_cast; rw [div_mul_div_comm]
+  rw [div_mul_div_comm]
 
 theorem fo_mul_eq_zero {d r : ℕ} (h : ¬Nat.Coprime d r) : fo (d * r) = 0 := by
   unfold fo
@@ -111,8 +111,8 @@ theorem sum_dvd_fo {d N : ℕ} (hd0 : 1 ≤ d) :
   rw [himg, sum_image (fun a _ b _ h => Nat.eq_of_mul_eq_mul_left hd0 h), Sd, mul_sum]
   refine sum_congr rfl fun r _ => ?_
   by_cases hc : Nat.Coprime r d
-  · rw [if_pos hc, fo_mul_of_coprime hc.symm]
-  · rw [if_neg hc, mul_zero, fo_mul_eq_zero (fun h => hc h.symm)]
+  · rw [ite_eq_left hc, fo_mul_of_coprime hc.symm]
+  · rw [ite_eq_right hc, mul_zero, fo_mul_eq_zero (fun h => hc h.symm)]
 
 /-- **[H, (5.20)]**: `g₂(x) = ∑_{d ≤ N} μ(d) f(d)² S_d(N/d)²`, `N = ⌊x⌋`. -/
 theorem g2_eq_sum_moebius (x : ℝ) :
@@ -195,7 +195,7 @@ theorem fo_prime {p : ℕ} (hp : p.Prime) : fo p = if p = 2 then 0 else -1 / ((p
     have hs : (σ 1 p : ℝ) = p + 1 := by
       have := sigma_one_apply_prime_pow (i := 1) hp
       simp only [pow_one] at this; rw [this]; simp [sum_range_succ]; ring
-    rw [if_pos hodd, if_neg h2, moebius_apply_prime hp, hs]; push_cast; ring
+    rw [ite_eq_left hodd, ite_eq_right h2, moebius_apply_prime hp, hs]; push_cast; ring
 
 theorem fo_prime_pow {p k : ℕ} (hp : p.Prime) (hk : 2 ≤ k) : fo (p ^ k) = 0 := by
   unfold fo
@@ -206,9 +206,9 @@ theorem isMultiplicative_Fd (d : ℕ) : IsMultiplicative (Fd d) := by
   simp only [Fd_apply, Nat.coprime_mul_iff_left]
   by_cases hm : Nat.Coprime m d
   · by_cases hn : Nat.Coprime n d
-    · rw [if_pos ⟨hm, hn⟩, if_pos hm, if_pos hn, fo_mul_of_coprime hmn]
-    · rw [if_neg fun h => hn h.2, if_neg hn, mul_zero]
-  · rw [if_neg fun h => hm h.1, if_neg hm, zero_mul]
+    · rw [ite_eq_left ⟨hm, hn⟩, ite_eq_left hm, ite_eq_left hn, fo_mul_of_coprime hmn]
+    · rw [ite_eq_right fun h => hn h.2, ite_eq_right hn, mul_zero]
+  · rw [ite_eq_right fun h => hm h.1, ite_eq_right hm, zero_mul]
 
 theorem isMultiplicative_Rc : IsMultiplicative Rc :=
   ⟨by simp [Rc_apply], fun {m n} _ => by simp only [Rc_apply, Nat.cast_mul, mul_inv]⟩
@@ -220,11 +220,6 @@ theorem isMultiplicative_Hd (d : ℕ) : IsMultiplicative (Hd d) :=
 noncomputable def kapH (d p : ℕ) : ℝ := if p ≠ 2 ∧ ¬ p ∣ d then 1 / (p + 1) else 1
 
 theorem kapH_nonneg (d p : ℕ) : 0 ≤ kapH d p := by unfold kapH; split_ifs <;> positivity
-
-theorem kapH_le_one (d p : ℕ) : kapH d p ≤ 1 := by
-  unfold kapH; split_ifs
-  · rw [div_le_one (by positivity)]; linarith [(Nat.cast_nonneg p : (0 : ℝ) ≤ p)]
-  · exact le_rfl
 
 theorem Hd_prime_pow {d p : ℕ} (hp : p.Prime) (k : ℕ) :
     Hd d (p ^ (k + 1)) = kapH d p * ((p : ℝ)⁻¹) ^ (k + 1) := by
@@ -240,10 +235,10 @@ theorem Hd_prime_pow {d p : ℕ} (hp : p.Prime) (k : ℕ) :
   by_cases h2 : p = 2
   · subst h2
     simp [fo_prime hp]
-  · rw [fo_prime hp, if_neg h2]
+  · rw [fo_prime hp, ite_eq_right h2]
     by_cases hd : p ∣ d
     · simp [hcop, hd, h2]
-    · rw [if_pos (hcop.2 hd), if_pos ⟨h2, hd⟩, inv_pow]
+    · rw [ite_eq_left (hcop.2 hd), ite_eq_left ⟨h2, hd⟩, inv_pow]
       have hp1 : (p : ℝ) + 1 ≠ 0 := by positivity
       push_cast
       field_simp

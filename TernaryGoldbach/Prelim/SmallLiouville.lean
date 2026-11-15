@@ -146,9 +146,9 @@ theorem walk_spec (u : ℕ) : ∀ (len n : ℕ) (r : ℕ × ℕ), walk u n (Pt n
     simp only at h
     have hl := lamB_spec (by omega) hb
     have hP : Pt (n + 1) = if b then Pt n + 1000000000000 / (n + 1) else Pt n := by
-      rw [Pt_succ]; cases b <;> simp [hl] <;> norm_num
+      rw [Pt_succ]; cases b <;> simp [hl]; norm_num
     have hQ : Qt (n + 1) = if b then Qt n else Qt n + 1000000000000 / (n + 1) := by
-      rw [Qt_succ]; cases b <;> simp [hl] <;> norm_num
+      rw [Qt_succ]; cases b <;> simp [hl]; norm_num
     rw [← hP, ← hQ] at h
     split_ifs at h with hc
     obtain ⟨h1, h2⟩ := ih (n + 1) r h
@@ -175,12 +175,12 @@ theorem sum_approx (k : ℕ) :
       push_cast at this
       linarith
     rcases lam_eq_or (show 1 ≤ k + 1 by omega) with hl | hl
-    · rw [hl, if_pos rfl, if_pos rfl]
+    · rw [hl, ite_eq_left rfl, ite_eq_left rfl]
       rw [abs_le] at ih ⊢
       push_cast
       have e : (1000000000000 : ℝ) * (1 / ((k : ℝ) + 1)) = 1000000000000 / ((k : ℝ) + 1) := by ring
       constructor <;> linarith [ih.1, ih.2]
-    · rw [hl, if_neg (by norm_num), if_neg (by norm_num)]
+    · rw [hl, ite_eq_right (by norm_num), ite_eq_right (by norm_num)]
       rw [abs_le] at ih ⊢
       push_cast
       have e : (1000000000000 : ℝ) * (-1 / ((k : ℝ) + 1)) = -(1000000000000 / ((k : ℝ) + 1)) := by ring
@@ -226,7 +226,6 @@ theorem bound_of_chk {k u B : ℕ} (hk : 1 ≤ k) (hkB : k + 1 ≤ B)
     have e : (|(Pt k : ℝ) - Qt k| + k) / 10 ^ 12 * ((u : ℝ) / 10 ^ 6) =
         100 * (|(Pt k : ℝ) - Qt k| + k) * u / (100 * 10 ^ 18) := by ring
     rw [e, div_le_iff₀ (by norm_num)]; linarith
-  push_cast
   linarith
 
 /-- One chunk: from the state at `n₀` to the state at `n₁`, with the check on `(n₀, n₁]`. -/

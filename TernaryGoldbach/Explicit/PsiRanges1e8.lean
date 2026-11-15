@@ -1188,68 +1188,68 @@ noncomputable def cW8 (x : ℝ) : ℝ :=
 theorem psi_mid8 {x : ℝ} (h1 : 1e6 ≤ x) (h2 : x ≤ 1e17) : |psiR x - x| ≤ cW8 x * √x := by
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
-  · rw [if_pos h0]; exact psi_range8_0 (by norm_num at h1 ⊢; linarith) h0
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; exact psi_range8_0 (by norm_num at h1 ⊢; linarith) h0
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
-  · rw [if_pos h1]; exact psi_range8_1 (by push Not at h0; linarith) h1
-  rw [if_neg h1]
+  · rw [ite_eq_left h1]; exact psi_range8_1 (by push Not at h0; linarith) h1
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; exact psi_range8_2 (by push Not at h1; linarith) h2
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; exact psi_range8_2 (by push Not at h1; linarith) h2
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; exact psi_range8_3 (by push Not at h2; linarith) h3
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; exact psi_range8_3 (by push Not at h2; linarith) h3
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
-  · rw [if_pos h4]; exact psi_range8_4 (by push Not at h3; linarith) h4
-  rw [if_neg h4]
+  · rw [ite_eq_left h4]; exact psi_range8_4 (by push Not at h3; linarith) h4
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
-  · rw [if_pos h5]; exact psi_range8_5 (by push Not at h4; linarith) h5
-  rw [if_neg h5]
+  · rw [ite_eq_left h5]; exact psi_range8_5 (by push Not at h4; linarith) h5
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
-  · rw [if_pos h6]; exact psi_range8_6 (by push Not at h5; linarith) h6
-  rw [if_neg h6]
+  · rw [ite_eq_left h6]; exact psi_range8_6 (by push Not at h5; linarith) h6
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
-  · rw [if_pos h7]; exact psi_range8_7 (by push Not at h6; linarith) h7
-  rw [if_neg h7]
+  · rw [ite_eq_left h7]; exact psi_range8_7 (by push Not at h6; linarith) h7
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
-  · rw [if_pos h8]; exact psi_range8_8 (by push Not at h7; linarith) h8
-  rw [if_neg h8]
+  · rw [ite_eq_left h8]; exact psi_range8_8 (by push Not at h7; linarith) h8
+  rw [ite_eq_right h8]
   by_cases h9 : x ≤ (100000000000 : ℝ)
-  · rw [if_pos h9]; exact psi_range8_9 (by push Not at h8; linarith) h9
-  rw [if_neg h9]
+  · rw [ite_eq_left h9]; exact psi_range8_9 (by push Not at h8; linarith) h9
+  rw [ite_eq_right h9]
   by_cases h10 : x ≤ (320000000000 : ℝ)
-  · rw [if_pos h10]; exact psi_range8_10 (by push Not at h9; linarith) h10
-  rw [if_neg h10]
+  · rw [ite_eq_left h10]; exact psi_range8_10 (by push Not at h9; linarith) h10
+  rw [ite_eq_right h10]
   by_cases h11 : x ≤ (1000000000000 : ℝ)
-  · rw [if_pos h11]; exact psi_range8_11 (by push Not at h10; linarith) h11
-  rw [if_neg h11]
+  · rw [ite_eq_left h11]; exact psi_range8_11 (by push Not at h10; linarith) h11
+  rw [ite_eq_right h11]
   by_cases h12 : x ≤ (3200000000000 : ℝ)
-  · rw [if_pos h12]; exact psi_range8_12 (by push Not at h11; linarith) h12
-  rw [if_neg h12]
+  · rw [ite_eq_left h12]; exact psi_range8_12 (by push Not at h11; linarith) h12
+  rw [ite_eq_right h12]
   by_cases h13 : x ≤ (10000000000000 : ℝ)
-  · rw [if_pos h13]; exact psi_range8_13 (by push Not at h12; linarith) h13
-  rw [if_neg h13]
+  · rw [ite_eq_left h13]; exact psi_range8_13 (by push Not at h12; linarith) h13
+  rw [ite_eq_right h13]
   by_cases h14 : x ≤ (32000000000000 : ℝ)
-  · rw [if_pos h14]; exact psi_range8_14 (by push Not at h13; linarith) h14
-  rw [if_neg h14]
+  · rw [ite_eq_left h14]; exact psi_range8_14 (by push Not at h13; linarith) h14
+  rw [ite_eq_right h14]
   by_cases h15 : x ≤ (100000000000000 : ℝ)
-  · rw [if_pos h15]; exact psi_range8_15 (by push Not at h14; linarith) h15
-  rw [if_neg h15]
+  · rw [ite_eq_left h15]; exact psi_range8_15 (by push Not at h14; linarith) h15
+  rw [ite_eq_right h15]
   by_cases h16 : x ≤ (320000000000000 : ℝ)
-  · rw [if_pos h16]; exact psi_range8_16 (by push Not at h15; linarith) h16
-  rw [if_neg h16]
+  · rw [ite_eq_left h16]; exact psi_range8_16 (by push Not at h15; linarith) h16
+  rw [ite_eq_right h16]
   by_cases h17 : x ≤ (1000000000000000 : ℝ)
-  · rw [if_pos h17]; exact psi_range8_17 (by push Not at h16; linarith) h17
-  rw [if_neg h17]
+  · rw [ite_eq_left h17]; exact psi_range8_17 (by push Not at h16; linarith) h17
+  rw [ite_eq_right h17]
   by_cases h18 : x ≤ (3200000000000000 : ℝ)
-  · rw [if_pos h18]; exact psi_range8_18 (by push Not at h17; linarith) h18
-  rw [if_neg h18]
+  · rw [ite_eq_left h18]; exact psi_range8_18 (by push Not at h17; linarith) h18
+  rw [ite_eq_right h18]
   by_cases h19 : x ≤ (10000000000000000 : ℝ)
-  · rw [if_pos h19]; exact psi_range8_19 (by push Not at h18; linarith) h19
-  rw [if_neg h19]
+  · rw [ite_eq_left h19]; exact psi_range8_19 (by push Not at h18; linarith) h19
+  rw [ite_eq_right h19]
   by_cases h20 : x ≤ (32000000000000000 : ℝ)
-  · rw [if_pos h20]; exact psi_range8_20 (by push Not at h19; linarith) h20
-  rw [if_neg h20]
+  · rw [ite_eq_left h20]; exact psi_range8_20 (by push Not at h19; linarith) h20
+  rw [ite_eq_right h20]
   push Not at h20
   exact psi_range8_21 h20.le (by norm_num at h2 ⊢; linarith)
 
@@ -1259,43 +1259,43 @@ theorem cW8_le_4282 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 3.2e12) : cW8 x �
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
   · exfalso; norm_num at hx1 h0; linarith
-  rw [if_neg h0]
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
   · exfalso; norm_num at hx1 h1; linarith
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
   · exfalso; norm_num at hx1 h2; linarith
-  rw [if_neg h2]
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
   · exfalso; norm_num at hx1 h3; linarith
-  rw [if_neg h3]
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
   · exfalso; norm_num at hx1 h4; linarith
-  rw [if_neg h4]
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
   · exfalso; norm_num at hx1 h5; linarith
-  rw [if_neg h5]
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
   · exfalso; norm_num at hx1 h6; linarith
-  rw [if_neg h6]
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
   · exfalso; norm_num at hx1 h7; linarith
-  rw [if_neg h7]
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
   · exfalso; norm_num at hx1 h8; linarith
-  rw [if_neg h8]
+  rw [ite_eq_right h8]
   by_cases h9 : x ≤ (100000000000 : ℝ)
   · exfalso; norm_num at hx1 h9; linarith
-  rw [if_neg h9]
+  rw [ite_eq_right h9]
   by_cases h10 : x ≤ (320000000000 : ℝ)
   · exfalso; norm_num at hx1 h10; linarith
-  rw [if_neg h10]
+  rw [ite_eq_right h10]
   by_cases h11 : x ≤ (1000000000000 : ℝ)
-  · rw [if_pos h11]; norm_num
-  rw [if_neg h11]
+  · rw [ite_eq_left h11]; norm_num
+  rw [ite_eq_right h11]
   by_cases h12 : x ≤ (3200000000000 : ℝ)
-  · rw [if_pos h12]; norm_num
-  rw [if_neg h12]
+  · rw [ite_eq_left h12]; norm_num
+  rw [ite_eq_right h12]
   exfalso; push Not at h12; norm_num at hx2; linarith
 
 omit [Fact TernaryGoldbach.PlattGRH] in
@@ -1303,46 +1303,46 @@ theorem cW8_le_4508 {x : ℝ} (hx1 : 3.2e11 < x) (hx2 : x ≤ 1e13) : cW8 x ≤ 
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
   · exfalso; norm_num at hx1 h0; linarith
-  rw [if_neg h0]
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
   · exfalso; norm_num at hx1 h1; linarith
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
   · exfalso; norm_num at hx1 h2; linarith
-  rw [if_neg h2]
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
   · exfalso; norm_num at hx1 h3; linarith
-  rw [if_neg h3]
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
   · exfalso; norm_num at hx1 h4; linarith
-  rw [if_neg h4]
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
   · exfalso; norm_num at hx1 h5; linarith
-  rw [if_neg h5]
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
   · exfalso; norm_num at hx1 h6; linarith
-  rw [if_neg h6]
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
   · exfalso; norm_num at hx1 h7; linarith
-  rw [if_neg h7]
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
   · exfalso; norm_num at hx1 h8; linarith
-  rw [if_neg h8]
+  rw [ite_eq_right h8]
   by_cases h9 : x ≤ (100000000000 : ℝ)
   · exfalso; norm_num at hx1 h9; linarith
-  rw [if_neg h9]
+  rw [ite_eq_right h9]
   by_cases h10 : x ≤ (320000000000 : ℝ)
   · exfalso; norm_num at hx1 h10; linarith
-  rw [if_neg h10]
+  rw [ite_eq_right h10]
   by_cases h11 : x ≤ (1000000000000 : ℝ)
-  · rw [if_pos h11]; norm_num
-  rw [if_neg h11]
+  · rw [ite_eq_left h11]; norm_num
+  rw [ite_eq_right h11]
   by_cases h12 : x ≤ (3200000000000 : ℝ)
-  · rw [if_pos h12]; norm_num
-  rw [if_neg h12]
+  · rw [ite_eq_left h12]; norm_num
+  rw [ite_eq_right h12]
   by_cases h13 : x ≤ (10000000000000 : ℝ)
-  · rw [if_pos h13]; norm_num
-  rw [if_neg h13]
+  · rw [ite_eq_left h13]; norm_num
+  rw [ite_eq_right h13]
   exfalso; push Not at h13; norm_num at hx2; linarith
 
 omit [Fact TernaryGoldbach.PlattGRH] in
@@ -1350,192 +1350,192 @@ theorem cW8_le_315 {x : ℝ} (hx1 : 1e7 < x) (hx2 : x ≤ 1e8) : cW8 x ≤ 31.5 
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
   · exfalso; norm_num at hx1 h0; linarith
-  rw [if_neg h0]
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
   · exfalso; norm_num at hx1 h1; linarith
-  rw [if_neg h1]
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; norm_num
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; norm_num
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; norm_num
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; norm_num
+  rw [ite_eq_right h3]
   exfalso; push Not at h3; norm_num at hx2; linarith
 
 omit [Fact TernaryGoldbach.PlattGRH] in
-theorem cW8_le_355 {x : ℝ} (hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW8 x ≤ 35.5 := by
+theorem cW8_le_355 {x : ℝ} (_hx1 : 0 < x) (hx2 : x ≤ 3.2e10) : cW8 x ≤ 35.5 := by
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
-  · rw [if_pos h0]; norm_num
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; norm_num
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
-  · rw [if_pos h1]; norm_num
-  rw [if_neg h1]
+  · rw [ite_eq_left h1]; norm_num
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; norm_num
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; norm_num
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; norm_num
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; norm_num
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
-  · rw [if_pos h4]; norm_num
-  rw [if_neg h4]
+  · rw [ite_eq_left h4]; norm_num
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
-  · rw [if_pos h5]; norm_num
-  rw [if_neg h5]
+  · rw [ite_eq_left h5]; norm_num
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
-  · rw [if_pos h6]; norm_num
-  rw [if_neg h6]
+  · rw [ite_eq_left h6]; norm_num
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
-  · rw [if_pos h7]; norm_num
-  rw [if_neg h7]
+  · rw [ite_eq_left h7]; norm_num
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
-  · rw [if_pos h8]; norm_num
-  rw [if_neg h8]
+  · rw [ite_eq_left h8]; norm_num
+  rw [ite_eq_right h8]
   exfalso; push Not at h8; norm_num at hx2; linarith
 
 omit [Fact TernaryGoldbach.PlattGRH] in
 theorem cW8_le_200 (x : ℝ) : cW8 x ≤ 200 := by
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
-  · rw [if_pos h0]; norm_num
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; norm_num
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
-  · rw [if_pos h1]; norm_num
-  rw [if_neg h1]
+  · rw [ite_eq_left h1]; norm_num
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; norm_num
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; norm_num
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; norm_num
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; norm_num
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
-  · rw [if_pos h4]; norm_num
-  rw [if_neg h4]
+  · rw [ite_eq_left h4]; norm_num
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
-  · rw [if_pos h5]; norm_num
-  rw [if_neg h5]
+  · rw [ite_eq_left h5]; norm_num
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
-  · rw [if_pos h6]; norm_num
-  rw [if_neg h6]
+  · rw [ite_eq_left h6]; norm_num
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
-  · rw [if_pos h7]; norm_num
-  rw [if_neg h7]
+  · rw [ite_eq_left h7]; norm_num
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
-  · rw [if_pos h8]; norm_num
-  rw [if_neg h8]
+  · rw [ite_eq_left h8]; norm_num
+  rw [ite_eq_right h8]
   by_cases h9 : x ≤ (100000000000 : ℝ)
-  · rw [if_pos h9]; norm_num
-  rw [if_neg h9]
+  · rw [ite_eq_left h9]; norm_num
+  rw [ite_eq_right h9]
   by_cases h10 : x ≤ (320000000000 : ℝ)
-  · rw [if_pos h10]; norm_num
-  rw [if_neg h10]
+  · rw [ite_eq_left h10]; norm_num
+  rw [ite_eq_right h10]
   by_cases h11 : x ≤ (1000000000000 : ℝ)
-  · rw [if_pos h11]; norm_num
-  rw [if_neg h11]
+  · rw [ite_eq_left h11]; norm_num
+  rw [ite_eq_right h11]
   by_cases h12 : x ≤ (3200000000000 : ℝ)
-  · rw [if_pos h12]; norm_num
-  rw [if_neg h12]
+  · rw [ite_eq_left h12]; norm_num
+  rw [ite_eq_right h12]
   by_cases h13 : x ≤ (10000000000000 : ℝ)
-  · rw [if_pos h13]; norm_num
-  rw [if_neg h13]
+  · rw [ite_eq_left h13]; norm_num
+  rw [ite_eq_right h13]
   by_cases h14 : x ≤ (32000000000000 : ℝ)
-  · rw [if_pos h14]; norm_num
-  rw [if_neg h14]
+  · rw [ite_eq_left h14]; norm_num
+  rw [ite_eq_right h14]
   by_cases h15 : x ≤ (100000000000000 : ℝ)
-  · rw [if_pos h15]; norm_num
-  rw [if_neg h15]
+  · rw [ite_eq_left h15]; norm_num
+  rw [ite_eq_right h15]
   by_cases h16 : x ≤ (320000000000000 : ℝ)
-  · rw [if_pos h16]; norm_num
-  rw [if_neg h16]
+  · rw [ite_eq_left h16]; norm_num
+  rw [ite_eq_right h16]
   by_cases h17 : x ≤ (1000000000000000 : ℝ)
-  · rw [if_pos h17]; norm_num
-  rw [if_neg h17]
+  · rw [ite_eq_left h17]; norm_num
+  rw [ite_eq_right h17]
   by_cases h18 : x ≤ (3200000000000000 : ℝ)
-  · rw [if_pos h18]; norm_num
-  rw [if_neg h18]
+  · rw [ite_eq_left h18]; norm_num
+  rw [ite_eq_right h18]
   by_cases h19 : x ≤ (10000000000000000 : ℝ)
-  · rw [if_pos h19]; norm_num
-  rw [if_neg h19]
+  · rw [ite_eq_left h19]; norm_num
+  rw [ite_eq_right h19]
   by_cases h20 : x ≤ (32000000000000000 : ℝ)
-  · rw [if_pos h20]; norm_num
-  rw [if_neg h20]
+  · rw [ite_eq_left h20]; norm_num
+  rw [ite_eq_right h20]
   norm_num
 
 omit [Fact TernaryGoldbach.PlattGRH] in
 theorem cW8_le_72 {x : ℝ} (hx : x ≤ 1e15) : cW8 x ≤ 72 := by
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
-  · rw [if_pos h0]; norm_num
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; norm_num
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
-  · rw [if_pos h1]; norm_num
-  rw [if_neg h1]
+  · rw [ite_eq_left h1]; norm_num
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; norm_num
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; norm_num
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; norm_num
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; norm_num
+  rw [ite_eq_right h3]
   by_cases h4 : x ≤ (320000000 : ℝ)
-  · rw [if_pos h4]; norm_num
-  rw [if_neg h4]
+  · rw [ite_eq_left h4]; norm_num
+  rw [ite_eq_right h4]
   by_cases h5 : x ≤ (1000000000 : ℝ)
-  · rw [if_pos h5]; norm_num
-  rw [if_neg h5]
+  · rw [ite_eq_left h5]; norm_num
+  rw [ite_eq_right h5]
   by_cases h6 : x ≤ (3200000000 : ℝ)
-  · rw [if_pos h6]; norm_num
-  rw [if_neg h6]
+  · rw [ite_eq_left h6]; norm_num
+  rw [ite_eq_right h6]
   by_cases h7 : x ≤ (10000000000 : ℝ)
-  · rw [if_pos h7]; norm_num
-  rw [if_neg h7]
+  · rw [ite_eq_left h7]; norm_num
+  rw [ite_eq_right h7]
   by_cases h8 : x ≤ (32000000000 : ℝ)
-  · rw [if_pos h8]; norm_num
-  rw [if_neg h8]
+  · rw [ite_eq_left h8]; norm_num
+  rw [ite_eq_right h8]
   by_cases h9 : x ≤ (100000000000 : ℝ)
-  · rw [if_pos h9]; norm_num
-  rw [if_neg h9]
+  · rw [ite_eq_left h9]; norm_num
+  rw [ite_eq_right h9]
   by_cases h10 : x ≤ (320000000000 : ℝ)
-  · rw [if_pos h10]; norm_num
-  rw [if_neg h10]
+  · rw [ite_eq_left h10]; norm_num
+  rw [ite_eq_right h10]
   by_cases h11 : x ≤ (1000000000000 : ℝ)
-  · rw [if_pos h11]; norm_num
-  rw [if_neg h11]
+  · rw [ite_eq_left h11]; norm_num
+  rw [ite_eq_right h11]
   by_cases h12 : x ≤ (3200000000000 : ℝ)
-  · rw [if_pos h12]; norm_num
-  rw [if_neg h12]
+  · rw [ite_eq_left h12]; norm_num
+  rw [ite_eq_right h12]
   by_cases h13 : x ≤ (10000000000000 : ℝ)
-  · rw [if_pos h13]; norm_num
-  rw [if_neg h13]
+  · rw [ite_eq_left h13]; norm_num
+  rw [ite_eq_right h13]
   by_cases h14 : x ≤ (32000000000000 : ℝ)
-  · rw [if_pos h14]; norm_num
-  rw [if_neg h14]
+  · rw [ite_eq_left h14]; norm_num
+  rw [ite_eq_right h14]
   by_cases h15 : x ≤ (100000000000000 : ℝ)
-  · rw [if_pos h15]; norm_num
-  rw [if_neg h15]
+  · rw [ite_eq_left h15]; norm_num
+  rw [ite_eq_right h15]
   by_cases h16 : x ≤ (320000000000000 : ℝ)
-  · rw [if_pos h16]; norm_num
-  rw [if_neg h16]
+  · rw [ite_eq_left h16]; norm_num
+  rw [ite_eq_right h16]
   by_cases h17 : x ≤ (1000000000000000 : ℝ)
-  · rw [if_pos h17]; norm_num
-  rw [if_neg h17]
+  · rw [ite_eq_left h17]; norm_num
+  rw [ite_eq_right h17]
   exfalso; push Not at h17; norm_num at hx; linarith
 
 omit [Fact TernaryGoldbach.PlattGRH] in
 theorem cW8_le_33 {x : ℝ} (hx : x ≤ 1e8) : cW8 x ≤ 33 := by
   unfold cW8
   by_cases h0 : x ≤ (3200000 : ℝ)
-  · rw [if_pos h0]; norm_num
-  rw [if_neg h0]
+  · rw [ite_eq_left h0]; norm_num
+  rw [ite_eq_right h0]
   by_cases h1 : x ≤ (10000000 : ℝ)
-  · rw [if_pos h1]; norm_num
-  rw [if_neg h1]
+  · rw [ite_eq_left h1]; norm_num
+  rw [ite_eq_right h1]
   by_cases h2 : x ≤ (32000000 : ℝ)
-  · rw [if_pos h2]; norm_num
-  rw [if_neg h2]
+  · rw [ite_eq_left h2]; norm_num
+  rw [ite_eq_right h2]
   by_cases h3 : x ≤ (100000000 : ℝ)
-  · rw [if_pos h3]; norm_num
-  rw [if_neg h3]
+  · rw [ite_eq_left h3]; norm_num
+  rw [ite_eq_right h3]
   exfalso; push Not at h3; norm_num at hx; linarith
 
 end TernaryGoldbach.Explicit

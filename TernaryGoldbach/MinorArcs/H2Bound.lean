@@ -163,7 +163,7 @@ theorem H2_piece {n : ℕ} (hn1 : 1 ≤ n) (hn : n ≤ 15) {S : ℝ} (h1 : (n : 
   have hS16 : S < 16 := by have : (n : ℝ) ≤ 15 := by exact_mod_cast hn
                            linarith
   unfold H2
-  rw [if_pos hS16, T2_eq' hn1 hn h1 h2, max_eq_left (piece_bounds hn1 hn h1 h2.le).1]
+  rw [ite_eq_left hS16, T2_eq' hn1 hn h1 h2, max_eq_left (piece_bounds hn1 hn h1 h2.le).1]
 
 end H2B
 
@@ -181,7 +181,7 @@ theorem H2_le (S : ℝ) : H2 S ≤ 2 / π ^ 2 := by
     rw [H2_piece hn1 hn15 h1 h2]
     have := (piece_bounds hn1 hn15 h1 h2.le).2
     rw [div_mul_eq_mul_div, div_le_div_iff_of_pos_right hpi]; linarith
-  · unfold H2; rw [if_neg (not_lt.2 h16)]
+  · unfold H2; rw [ite_eq_right (not_lt.2 h16)]
     have := Real.pi_lt_d2
     rw [le_div_iff₀ hpi]; nlinarith [Real.pi_pos]
 
@@ -249,7 +249,7 @@ theorem integral_ge16 {a b : ℝ} (ha : 16 ≤ a) (hab : a ≤ b) :
   · rw [intervalIntegral.integral_const_mul, integral_inv_of_pos ha0 (by linarith)]
   · rw [Set.uIcc_of_le hab] at hS
     simp only
-    unfold H2; rw [if_neg (by linarith [hS.1]), div_eq_mul_inv]
+    unfold H2; rw [ite_eq_right (by linarith [hS.1]), div_eq_mul_inv]
 
 /-- `∫ₙⁿ⁺¹ H₂/S` for an integer `n`. -/
 noncomputable def P (j : ℕ) : ℝ :=
@@ -486,7 +486,7 @@ theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
       rw [hn15'] at h1 h2
       push_cast at h1 h2
       have hD15 := hD 15 (by norm_num) (by norm_num)
-      rw [if_pos rfl] at hD15
+      rw [ite_eq_left rfl] at hD15
       have hsplit := intervalIntegral.integral_add_adjacent_intervals
         (intervalIntegrable_H2_div' 1 ((15 : ℕ) : ℝ)) (intervalIntegrable_H2_div' ((15 : ℕ) : ℝ) T)
       rw [integral_piece (n := 15) (by norm_num) le_rfl le_rfl h1 (by push_cast; linarith)] at hsplit
@@ -506,7 +506,7 @@ theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
         exact (mul_le_mul_of_nonneg_right kh hα).trans this
       have hpos : (0 : ℝ) ≤ α + β / 15 := by
         have := (piece_bounds (n := 15) (by norm_num) le_rfl (S := 15) (by norm_num) (by norm_num)).1
-        push_cast at this; exact this
+        exact this
       have hE : (k * (α + β / 15) - 0.15107) * (1 - 15 / T) ≤ (E15 : ℝ) := by
         have hm : k * (α + β / 15) - 0.15107 ≤ max 0 ((kHi : ℝ) * (α + β / 15) - 0.15107) :=
           le_max_of_le_right (by linarith [mul_le_mul_of_nonneg_right kh hpos])
@@ -532,7 +532,7 @@ theorem integral_H2_le {T : ℝ} (hT : 1 ≤ T) :
       nlinarith
   · -- `T ≥ 16`: `d` is constant
     have hD16 := hD 16 (by norm_num) le_rfl
-    rw [if_neg (by norm_num), add_zero] at hD16
+    rw [ite_eq_right (by norm_num), add_zero] at hD16
     have hsplit := intervalIntegral.integral_add_adjacent_intervals
       (intervalIntegrable_H2_div' 1 ((16 : ℕ) : ℝ)) (intervalIntegrable_H2_div' ((16 : ℕ) : ℝ) T)
     push_cast at hsplit hD16

@@ -309,7 +309,7 @@ def LwR (W : ℝ) : ℝ := 4 * (25 + 324 * W + 5202 * W ^ 2)
 theorem norm_B_le {z : ℂ} (hz : ‖z‖ = 1) (a b c : ℝ) :
     ‖(a : ℂ) * z ^ 2 + b * z + c * z ^ 4‖ ≤ |a| + |b| + |c| := by
   refine (norm_add_le _ _).trans (add_le_add ((norm_add_le _ _).trans (add_le_add ?_ ?_)) ?_) <;>
-    simp [norm_mul, norm_pow, hz]
+    simp [norm_pow, hz]
 
 /-- `F` is `Lw(W)`-Lipschitz in `w ∈ [0, W]`, for `‖z‖ = 1`. -/
 theorem norm_Fz_sub_w {z : ℂ} (hz : ‖z‖ = 1) {w w' W : ℝ} (hw : 0 ≤ w) (hw' : 0 ≤ w')

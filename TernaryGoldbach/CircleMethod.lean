@@ -352,7 +352,7 @@ theorem circle_identity_tsum (N : ℕ) {a b c : ℕ → ℂ} (ha : Summable fun 
     (continuous_const.mul (continuous_e.comp (continuous_const.mul continuous_id))).integrableOn_Ioc
   have hFnorm : ∀ t, ∫ α in Set.Ioc (0:ℝ) 1, ‖F t α‖ = ‖a t.1.1‖ * ‖b t.1.2‖ * ‖c t.2‖ := by
     intro t
-    simp [F, norm_mul, abs_e]
+    simp [F, abs_e]
   rw [← integral_tsum_of_summable_integral_norm hFint (by simpa only [hFnorm] using habc)]
   simp only [F, setIntegral_const_mul_e_int, sub_eq_zero, Nat.cast_inj]
   rw [tsum_eq_sum (s := (range (N + 1) ×ˢ range (N + 1)) ×ˢ range (N + 1))]

@@ -163,7 +163,7 @@ theorem T_mono {n n' : ℕ} (h : n ≤ n') : T n ≤ T n' := by
   exact ⟨hk.1, le_trans hk.2 h⟩
 
 theorem block_ok {a c n : ℕ} (hblk : T c ^ 2 * 10 ^ 8 < 203404644 * a * 10 ^ 18)
-    (han : a ≤ n) (hnc : n ≤ c) (hn : n ≤ 10 ^ 6) (ha : 1 ≤ a) :
+    (han : a ≤ n) (hnc : n ≤ c) (hn : n ≤ 10 ^ 6) (_ha : 1 ≤ a) :
     ∑ m ∈ Icc 1 n, (if m.Prime then 0 else (Λ m : ℝ)) < 1.4262 * √n := by
   refine (nonprime_le_T hn).trans_lt ?_
   have hT : T n ≤ T c := T_mono hnc

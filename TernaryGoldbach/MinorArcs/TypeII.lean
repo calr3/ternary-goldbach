@@ -31,7 +31,7 @@ theorem logSqSum_nonneg (W' W : ℝ) : 0 ≤ logSqSum W' W :=
 theorem large_sieve_primes {ι : Type*} (s : Finset ι) (β : ι → ℝ) {δ : ℝ} (hδ : 0 < δ)
     (hδ1 : δ ≤ 1)
     (hsep : ∀ r ∈ s, ∀ r' ∈ s, r ≠ r' → δ ≤ |(β r - β r') - round (β r - β r')|)
-    {W' W : ℝ} (hW' : 0 ≤ W') :
+    {W' W : ℝ} (_hW' : 0 ≤ W') :
     ∑ r ∈ s, ‖primeExpSum W' W (β r)‖ ^ 2 ≤ (W - W' + δ⁻¹) * logSqSum W' W := by
   rcases lt_or_ge ⌊W'⌋₊ ⌊W⌋₊ with hlt | hge
   · set M := ⌊W'⌋₊
@@ -84,7 +84,7 @@ theorem dist_round_ge {q : ℕ} (hq : 1 ≤ q) {b : ℤ} (hb : ¬ (q : ℤ) ∣ 
 
 /-- The separation of `2αj` for `0 < |j| < q`, `2α = a/q + O*(1/qQ)` (mod 1). -/
 theorem dist_two_alpha_mul {α Q : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 ≤ q) (hcop : IsCoprime a (q : ℤ))
-    (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (hQ : 0 < Q) {j : ℤ} (hj0 : j ≠ 0)
+    (hα : |2 * α - a / q - k| ≤ 1 / (q * Q)) (_hQ : 0 < Q) {j : ℤ} (hj0 : j ≠ 0)
     (hjq : |j| < q) : 1 / q - |j| / (q * Q) ≤ |2 * α * j - round (2 * α * j)| := by
   have hq0 : (0 : ℝ) < q := by exact_mod_cast hq
   refine dist_round_ge hq (b := a * j + k * q * j) ?_ ?_
@@ -821,7 +821,7 @@ theorem prop_5_2_4_d {α x δ Q ρ U' W' W : ℝ} {a k : ℤ} {q : ℕ} (hq : 1 
 theorem large_sieve_primes_weighted {ι : Type*} (s : Finset ι) (β δ : ι → ℝ)
     (hδ : ∀ r ∈ s, 0 < δ r)
     (hsep : ∀ r ∈ s, ∀ r' ∈ s, r ≠ r' → δ r ≤ |(β r - β r') - round (β r - β r')|)
-    {W' W : ℝ} (hW' : 0 ≤ W') :
+    {W' W : ℝ} (_hW' : 0 ≤ W') :
     ∑ r ∈ s, (W - W' + 1 + 3 / 2 * (δ r)⁻¹)⁻¹ * ‖primeExpSum W' W (β r)‖ ^ 2 ≤ logSqSum W' W := by
   rcases lt_or_ge ⌊W'⌋₊ ⌊W⌋₊ with hlt | hge
   · set M := ⌊W'⌋₊
