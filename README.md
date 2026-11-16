@@ -75,6 +75,15 @@ against this repository at `192ca57`, whose modules it imports. It provides:
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 (`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses.
 
+**Why the files are copied.** RSBounds depends on this repository: 25 of its files import modules of
+`TernaryGoldbach` (the explicit formulas, the zero-free region, `PNTMertens` and others), and it
+requires this repository at `192ca57`. If this repository required RSBounds through Lake, it would
+depend on an older copy of itself, which Lake cannot build. The copied files are compiled against the
+current `TernaryGoldbach` modules instead; the full build at `acb9dc7` shows they still check.
+Helfgott and Steve Hubbard suggested the alternative: a separate package, depending on both, that
+states the two-hypothesis theorem. Copying keeps the main theorems, `Challenge.lean` and the
+Comparator setup in one repository, at the cost of 2,429 more modules in every build.
+
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
