@@ -99,9 +99,7 @@ theorem gp_le_ghat {p : ℕ} (hp : p.Prime) : gp p ≤ gHatQ p := by
       exact (mul_le_mul_of_nonneg_left (f1p_le_of hp2 hu0 hu)
         (div_nonneg (by linarith) (by linarith))).trans hU
     interval_cases p
-    all_goals first
-      | (exfalso; revert hp; decide)
-      | skip
+    all_goals try (exfalso; revert hp; decide)
     · exact (key 1.259921 (by norm_num) (by norm_num) 1.39953 (by norm_num)).trans (by norm_num [gHatQ])
     · exact (key 1.442249 (by norm_num) (by norm_num) 1.39953 (by norm_num)).trans (by norm_num [gHatQ])
     · exact (key 1.709975 (by norm_num) (by norm_num) 1.36194 (by norm_num)).trans (by norm_num [gHatQ])

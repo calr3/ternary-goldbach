@@ -199,7 +199,8 @@ theorem hasDerivAt_hP (u : ℝ) : HasDerivAt hP (hP' u) u := by
     have hc : HasDerivAt (fun u : ℝ => 2 - u) (-1) u := by
       simpa using (hasDerivAt_id u).const_sub 2
     have := (hasDerivAt_pow 3 (2 - u)).comp u hc
-    convert this using 1 <;> first | rfl | (push_cast; ring) | simp
+    convert this using 1
+    rfl
   have h3 : HasDerivAt (fun u : ℝ => Real.exp (u - 1 / 2)) (Real.exp (u - 1 / 2)) u := by
     have := (Real.hasDerivAt_exp (u - 1 / 2)).comp u ((hasDerivAt_id u).sub_const (1 / 2))
     convert this using 1
