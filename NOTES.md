@@ -11,7 +11,7 @@ the hypotheses and checks them against their sources.
   book's. Its minor-arc bound is `1.00948` (the 2013 paper has `0.97392`), so [H]'s final margin is
   `0.048779·x²/κ`. Ours is `0.0418·x²/κ` (`1.049 − 1.0072`).
 * Where the final inequality has room, we prove cruder constants than the book's sharp ones (e.g.
-  the non-prime terms: `6.7·10⁶` instead of `7.3306`). Each change is recorded in the docstrings and
+  the non-prime terms: `35.5` instead of `7.3306`). Each change is recorded in the docstrings and
   in the README.
 * Published results enter only as the two hypotheses of `Statement.lean`, as `Fact` instances
   (`RamareMoebius` is also a `Fact`, provided from `Fact PlattGRH` by `Prelim/RamareMoebius.lean`).

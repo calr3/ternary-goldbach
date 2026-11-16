@@ -19,11 +19,10 @@ theorem xOf_denom_bounds : 0 < 2 + 9 / (196 * √(2 * Real.pi)) ∧
   have h2 : (9 : ℝ) / (196 * 2.4) ≤ 0.02 := by norm_num
   linarith
 
-/-- The final inequality with the cruder constant that comes from the easy sup-norm bounds
-(`Helfgott/SupNorms.lean`) and elementary Chebyshev bounds (`Helfgott/Chebyshev.lean`): for `N ≥ 10²⁷`,
-`6.7 · 10⁶ · N^{3/2} log N < (1.049 - 1.0072) x²/κ`. -/
+/-- The final inequality with our constant `35.5` for the non-prime terms ([H]: `7.3306`; see
+`Helfgott.nonprime_input`): for `N ≥ 10²⁷`, `35.5 · N^{3/2} log N < (1.049 - 1.0072) x²/κ`. -/
 theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
-    6.7e6 * (N * √N) * Real.log N < (1.049 - 1.0072) * xOf N ^ 2 / κ := by
+    35.5 * (N * √N) * Real.log N < (1.049 - 1.0072) * xOf N ^ 2 / κ := by
   obtain ⟨hc0, hc1⟩ := xOf_denom_bounds
   set c := 2 + 9 / (196 * √(2 * Real.pi)) with hc
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN
@@ -73,16 +72,16 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
   rw [hx, hlog, ← hv32, ← hv64]
   have hc2 : c ^ 2 ≤ 4.0804 := by nlinarith [mul_le_mul hc1 hc1 hc0.le (by norm_num)]
   have hc2' : 0 < c ^ 2 := by positivity
-  have lhs : 6.7e6 * (v ^ 64 * v ^ 32) * (64 * Real.log v) ≤ 1.589e8 * v ^ 97 := by
+  have lhs : 35.5 * (v ^ 64 * v ^ 32) * (64 * Real.log v) ≤ 842 * v ^ 97 := by
     have : v ^ 64 * v ^ 32 * Real.log v ≤ v ^ 64 * v ^ 32 * (v / 2.7) :=
       mul_le_mul_of_nonneg_left hlogv (by positivity)
     have e : v ^ 64 * v ^ 32 * (v / 2.7) = v ^ 97 / 2.7 := by ring
     have h97 : 0 ≤ v ^ 97 := by positivity
     rw [e] at this
-    rw [show 6.7e6 * (v ^ 64 * v ^ 32) * (64 * Real.log v) = 4.288e8 * (v ^ 64 * v ^ 32 * Real.log v)
+    rw [show 35.5 * (v ^ 64 * v ^ 32) * (64 * Real.log v) = 2272 * (v ^ 64 * v ^ 32 * Real.log v)
       by ring]
-    calc 4.288e8 * (v ^ 64 * v ^ 32 * Real.log v) ≤ 4.288e8 * (v ^ 97 / 2.7) := by gcongr
-      _ ≤ 1.589e8 * v ^ 97 := by rw [mul_div_assoc']; rw [div_le_iff₀ (by norm_num)]; nlinarith
+    calc 2272 * (v ^ 64 * v ^ 32 * Real.log v) ≤ 2272 * (v ^ 97 / 2.7) := by gcongr
+      _ ≤ 842 * v ^ 97 := by rw [mul_div_assoc']; rw [div_le_iff₀ (by norm_num)]; nlinarith
   have rhs : 0.0418 * v ^ 128 / (4.0804 * 49) ≤ (1.049 - 1.0072) * (v ^ 128 / c ^ 2) / κ := by
     rw [κ]
     have : v ^ 128 / 4.0804 ≤ v ^ 128 / c ^ 2 :=
@@ -90,7 +89,7 @@ theorem final_inequality_crude (N : ℕ) (hN : 10 ^ 27 ≤ N) :
     calc 0.0418 * v ^ 128 / (4.0804 * 49) = (1.049 - 1.0072) * (v ^ 128 / 4.0804) / 49 := by
           ring
       _ ≤ _ := by gcongr
-  have key : 1.589e8 * v ^ 97 < 0.0418 * v ^ 128 / (4.0804 * 49) := by
+  have key : 842 * v ^ 97 < 0.0418 * v ^ 128 / (4.0804 * 49) := by
     have h97 : 0 < v ^ 97 := by positivity
     have h31 : (2.64 : ℝ) ^ 31 ≤ v ^ 31 := pow_le_pow_left₀ (by norm_num) hvbig 31
     rw [show v ^ 128 = v ^ 31 * v ^ 97 by ring, lt_div_iff₀ (by norm_num)]

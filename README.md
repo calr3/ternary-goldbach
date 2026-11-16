@@ -203,7 +203,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
     * the large sieve for primes (Props 12.1.2 and 12.2.4 proved; 12.2.4 with `c₊ = 2`);
     * Ch. 11 and a repaired Theorem 13.2.1;
     * [H, (14.28)] in a weaker form;
-  * **non-prime terms**, [H, (14.51)], with cruder constants;
+  * **non-prime terms**, [H, (14.51)], with constant `35.5` for [H]'s `7.3306`;
   * **final inequality**: `(1.049 − 1.0072) x²/κ = 0.0418 x²/κ > 0` beats the error terms
     (`Helfgott/Numerics.lean`).
 * **Inputs from [H, §2]** (`Prelim/`):
@@ -258,7 +258,7 @@ Because of the route we took:
 | Cor 7.1.3, Thm 7.1.4, Prop 7.1.5 | error terms from GRH, e.g. Cor 7.1.3 | `2.485·10⁻¹⁹ + (381500/√q + 76)/√y` | `10⁻¹⁷ + 4.7·10⁶/(√q √y)`, `y ≥ 10²⁵` | they come from the weaker explicit formulas; each is stated for the range the proof uses (`NOTES.md`) |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` | our own assembly of the main term and the error terms |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` | [H]'s value needs the sharp sup norms of Appendix A; we use the cruder `\|h_H\| ≤ 3.15` |
-| (14.51) | non-prime terms | `7.3306` | `6.7·10⁶` | cruder bounds |
+| (14.51) | non-prime terms | `7.3306` | `35.5` | [H]'s formula and [H]'s `\|η_*\|_∞ ≤ 1.414`, with `\|η₊\|_∞ ≤ 1.94` for [H]'s `1.079955` (which needs the sharp sup norms of Appendix A) and elementary bounds for `ψ` and `ψ − θ` |
 | (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | [H]'s `4/5` comes from an argument of Ramaré's [Ramb] that is not formalized. We use Ramaré's Liouville route, which gives at best about `1.78` (`NOTES.md`); the proof needs only `2.8` |
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | [H] takes it from [Ramb]; we prove an elementary bound |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` | our proof needs `2Q ≤ √x`, so that primes above `√x` are coprime to every modulus `q ≤ 2Q`. [H] applies it only with `δ₀ = 8` |

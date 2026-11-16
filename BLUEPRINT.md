@@ -19,7 +19,7 @@ differences from [H]; `NOTES.md` has the details.
 | (14.50) circle identity | `circle_identity_input` | ✅ |
 | (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input` (`MajorArcs/MajorTotal.lean`) | ✅ with `1.049` |
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input` (`MinorArcs/MinorTotal.lean`) | ✅ with `1.0072`, via repair 3 of Thm 13.2.1 |
-| (14.51) non-prime terms | `nonprime_input` | ✅ with `6.7·10⁶` for `7.3306` |
+| (14.51) non-prime terms | `nonprime_input` | ✅ with `35.5` for `7.3306` |
 | final inequality | `final_inequality_crude` (`Helfgott/Numerics.lean`) | ✅ margin `0.0418 x²/κ` |
 | `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`) | ✅ binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`, the hypothesis `BinaryGoldbachInput`) and a prime in `[n − 4·10¹⁸, n − 4]` from a prime ladder up to `10²⁷` (`Ladder.ladder_prime`, `Ladder/`), checked by the kernel, in place of [HP13]'s |
 

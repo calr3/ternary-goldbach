@@ -2,6 +2,7 @@ import TernaryGoldbach.Helfgott.Decay
 import TernaryGoldbach.Helfgott.Numerics
 import TernaryGoldbach.Helfgott.NonPrime
 import TernaryGoldbach.Helfgott.SupNorms
+import TernaryGoldbach.Helfgott.HHBound
 import TernaryGoldbach.Helfgott.Chebyshev
 import TernaryGoldbach.MinorArcs.NumericsFinal
 import TernaryGoldbach.MajorArcs.MajorTotal
@@ -114,22 +115,22 @@ theorem minor_arcs_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
   exact MinorArcs.minor_total hx (MinorArcs.numerics_M hx)
 
 /-- **Non-prime and even terms**, a weaker form of [H, (14.51)]: the terms where some `nᵢ` is
-even or not prime contribute at most `6.7 · 10⁶ · N^{3/2} log N`.
+even or not prime contribute at most `35.5 · N^{3/2} log N`.
 
-[H] gets the constant `7.3306` from the sharp sup norms `|η₊|_∞ ≤ 1.079955`,
-`|η_*|_∞ ≤ 1.414` and the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x`,
-`ψ(x) - θ(x) < 1.4262 √x`.  We use the easy bounds `|η₊| ≤ 400`, `|η_*| ≤ 6.2`
-(`Helfgott/SupNorms.lean`) and the elementary `ψ(N) ≤ 1.387 N`, `ψ(N) - θ(N) ≤ 1.6 √N`
-(`Helfgott/Chebyshev.lean`) instead; the final inequality still has room
+[H] gets the constant `7.3306 = 3 · 1.079955² · 1.414 · 1.4262 · 1.03883` from the sup norms
+`|η₊|_∞ ≤ 1.079955`, `|η_*|_∞ ≤ 1.414` and the Rosser–Schoenfeld bounds `ψ(x) < 1.03883 x`,
+`ψ(x) - θ(x) < 1.4262 √x`.  We use the same formula with `|η₊| ≤ 1.94` (`Helfgott/HHBound.lean`),
+[H]'s `|η_*| ≤ 1.414` (`Helfgott/SupNorms.lean`) and the elementary `ψ(N) ≤ 1.387 N`,
+`ψ(N) - θ(N) ≤ 1.6 √N` (`Helfgott/Chebyshev.lean`); the final inequality has room
 (`final_inequality_crude`).
 
 *Proved.* -/
 theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
     repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N ≤
-      6.7e6 * (N * √N) * Real.log N := by
+      35.5 * (N * √N) * Real.log N := by
   have hN : 1 ≤ N := le_trans (by norm_num) hN27
-  have h := repSum_sub_le_of_bounds hN (fun t ht => abs_etaPlus_le_400 ht)
-    (fun t _ => abs_etaStar_le_const t)
+  have h := repSum_sub_le_of_bounds hN (fun t ht => abs_etaPlus_le_A ht)
+    (fun t _ => abs_etaStar_le_1414 t)
   have hpsi := psi_le N hN27
   have hpt := psi_sub_theta_le N hN27
   have hNr : (10 : ℝ) ^ 27 ≤ N := by exact_mod_cast hN27
@@ -142,11 +143,11 @@ theorem nonprime_input (N : ℕ) (hN27 : 10 ^ 27 ≤ N) :
   have hpsi0 : 0 ≤ psi N := Finset.sum_nonneg fun n _ => vonMangoldt_nonneg
   have hs0 : 0 ≤ √(N : ℝ) := Real.sqrt_nonneg _
   calc repSum (fun _ => True) N - repSum (fun n => n.Prime ∧ Odd n) N
-      ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (psi N - theta N + Real.log 2) * psi N := h
-    _ ≤ 3 * (400 ^ 2 * 6.2) * Real.log N * (1.6001 * √N) * (1.387 * N) := by
+      ≤ 3 * (1.94 ^ 2 * 1.414) * Real.log N * (psi N - theta N + Real.log 2) * psi N := h
+    _ ≤ 3 * (1.94 ^ 2 * 1.414) * Real.log N * (1.6001 * √N) * (1.387 * N) := by
         gcongr; linarith
-    _ = (3 * (400 ^ 2 * 6.2) * 1.6001 * 1.387) * (N * √N) * Real.log N := by ring
-    _ ≤ 6.7e6 * (N * √N) * Real.log N := by gcongr; norm_num
+    _ = (3 * (1.94 ^ 2 * 1.414) * 1.6001 * 1.387) * (N * √N) * Real.log N := by ring
+    _ ≤ 35.5 * (N * √N) * Real.log N := by gcongr; norm_num
 
 /-! ## Computational inputs (for the small cases) -/
 
