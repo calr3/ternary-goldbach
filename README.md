@@ -268,7 +268,7 @@ Because of the route we took:
 | [H] | Statement | [H]'s range | ours | why |
 |---|---|---|---|---|
 | (2.14), (2.17) | `ψ(y) ≤ 1.0004 y`, `∑_{n≤y} Λ(n) n < 1.0008 y²/2` | (2.14): `y ≥ 2·10⁶` | `y ≥ 2.5·10⁷` | Helfgott's proof (RSBounds); the minor arcs use them only for `y ≥ 2.7·10⁷` |
-| (2.19) | `∑_{y/2<p≤y} (log p)² ≤ ½ y log y` | `y ≥ 117` | `y ≥ 2·10⁶` | the range the minor arcs use. Our interval-arithmetic check (`scripts/rigorous/`), outside Lean, confirms it for integers `117 ≤ n ≤ 10⁶` |
+| (2.19) | `∑_{y/2<p≤y} (log p)² ≤ ½ y log y` | `y ≥ 117` | `y ≥ 2·10⁶` | the range the minor arcs use. Our interval-arithmetic check (`scripts/rigorous/`), outside Lean, confirms [H]'s statement for integers `117 ≤ n ≤ 2·10⁶`, so for all `117 ≤ y ≤ 2·10⁶` (on `[n, n+1)` the left side only decreases and the right side only increases) |
 
 Stronger than [H]'s: the minor-arc total (14.49) is `1.0072 x²/κ`, against [H]'s `1.00948 x²/κ`.
 It comes from the repaired Thm 13.2.1 (repair 3, below).

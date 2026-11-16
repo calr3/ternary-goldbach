@@ -238,8 +238,8 @@ static void ls_prime(uint64_t p, void *c) {
   LSctx *s = c; Ilog_ui(&s->L, p); Imul(&s->L, &s->L, &s->L); Iadd(&s->L2[p], &s->L2[p], &s->L);
 }
 static void check_logsq(void) {
-  printf("== logsq_small: sum_{n/2<p<=n} (log p)^2 <= n log(n)/2, 117 <= n <= 10^6\n");
-  uint64_t N = 1000000; LSctx s; s.N = N; Iinit(&s.L);
+  printf("== logsq_small: sum_{n/2<p<=n} (log p)^2 <= n log(n)/2, 117 <= n <= 2*10^6\n");
+  uint64_t N = 2000000; LSctx s; s.N = N; Iinit(&s.L);
   s.L2 = malloc(sizeof(I) * (N + 1));
   for (uint64_t i = 0; i <= N; i++) { Iinit(&s.L2[i]); Iset_ui(&s.L2[i], 0); }
   for_primes(N, ls_prime, &s);

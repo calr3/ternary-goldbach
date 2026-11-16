@@ -13,7 +13,7 @@ mertens_lower_small: OK (rigorous)
   value in [-1.577205625, -1.577205625]
 mertens_point: OK (rigorous)
 
-== logsq_small: sum_{n/2<p<=n} (log p)^2 <= n log(n)/2, 117 <= n <= 10^6
+== logsq_small: sum_{n/2<p<=n} (log p)^2 <= n log(n)/2, 117 <= n <= 2*10^6
   min margin in [2.137274, 2.137274] at n = 117
 logsq_small: OK (rigorous)
 

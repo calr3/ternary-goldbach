@@ -32,7 +32,7 @@ Lean proof uses, or check [H]'s own constants.
 |---|---|---|---|---|
 | `nonprime` | (5.5): `ψ(n) − θ(n) < 1.4262 √n` | kernel to `10⁶` (`SmallNonprime.lean`), analytic above | prime powers `p^k ≤ 10¹²`, `k ≥ 2` | < 1 s |
 | `mertens_lower` | (2.13) and its base value | kernel to `10⁴` (`SmallMertensLower.lean`), summation by parts above | `n ≤ 10⁶` | 1 s |
-| `logsq` | (2.19): `∑_{n/2<p≤n} (log p)² ≤ ½ n log n` | used for `n ≥ 2·10⁶` only, from the tables | `117 ≤ n ≤ 10⁶` | 2 s |
+| `logsq` | (2.19): `∑_{n/2<p≤n} (log p)² ≤ ½ n log n` | used for `n ≥ 2·10⁶` only, from the tables | `117 ≤ n ≤ 2·10⁶`, so with the Lean proof [H]'s whole range | 5 s |
 | `mertens_product` | [RS62, Thm 15] at primes | kernel to `10⁵` (`SmallMertensProd.lean`), `F_mid` above | primes `≤ 2·10⁸` | 70 s |
 | `K` | `∑_{n≤x} \|E(x/n) − E(x)\|/n ≤ 0.54`, an elementary route to the `q = 1` Möbius bound | not used: `MoebiusBound.lean` derives that bound from `ramare_moebius` | prime powers `≤ 10⁹` | 2 min |
 | `liouville` | `\|∑_{n≤k} λ(n)/n\| log(k+1) ≤ 0.99` | kernel (`SmallLiouville.lean`) | `k ≤ 10⁵` | < 1 s |
