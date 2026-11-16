@@ -45,12 +45,12 @@ sources:
     relationship: "background"
     note: >-
       Stated as `TernaryGoldbach.RamareMoebius` and proved from Platt's GRH verification by
-      Helfgott's formalization (RSBounds, vendored in vendor/rsbounds/).
+      Helfgott's formalization (RSBounds, a Lake dependency).
   - title: "RSBounds"
     type: "formalization"
     authors: ["H. A. Helfgott"]
     id: "https://github.com/Garald1/RSBounds"
-    location: "vendor/rsbounds/ (commit 0393b52, unchanged; source-provenance.json)"
+    location: "Lake dependency, pinned to commit 0393b52 (lakefile.lean, lake-manifest.json)"
     relationship: "uses"
     license: "MIT"
     note: >-
@@ -133,7 +133,9 @@ review:
   status: "agent-reviewed"
   reviewers: []
   notes: >-
-    A full `lake build` succeeded on 2026-11-14 at commit acb9dc7. The hypothesis statements
+    A full `lake build` succeeded on 2026-11-14 at commit acb9dc7, when RSBounds was copied into
+    vendor/rsbounds/; it is now a Lake dependency with byte-identical sources, and the current
+    layout has not had a full build yet. The hypothesis statements
     were checked against their sources (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
     leanprover/comparator. The current two-hypothesis statements have not been through
     Comparator yet. The only recorded run is from 2026-11-06, at commit 83ac1e1, when the main

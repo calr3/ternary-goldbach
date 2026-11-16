@@ -1687,7 +1687,7 @@ theorem sum_log_sq_primes_le {y : ℝ} (hy : 2e6 ≤ y) :
 
 /- [H, (2.21)] (Ramaré [Ram13]: `|∑_{n ≤ x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815`) is
 `ramare_moebius` (`Prelim/RamareMoebius.lean`), stated for the same range and proved from `PlattGRH`
-by Helfgott's formalization of `mobius003.tex` (RSBounds, `vendor/rsbounds/`). -/
+by Helfgott's formalization of `mobius003.tex` (Garald1/RSBounds). -/
 
 /- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route

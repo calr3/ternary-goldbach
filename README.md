@@ -37,8 +37,8 @@ it depends on:
 
 Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
 proved from `PlattGRH` (`Prelim.ramareMoebius_of_plattGRH`). The proof is Helfgott's formalization
-of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds, vendored
-unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below). The minor arcs take it as a
+of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds, a Lake
+dependency pinned to commit `0393b52`; see "Helfgott's RSBounds" below). The minor arcs take it as a
 `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. RSBounds also
 proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
 
@@ -52,11 +52,9 @@ our proof avoids it (`HYPOTHESES.md`, Finding 5).
 
 ### Helfgott's RSBounds
 
-`vendor/rsbounds/` holds the part of H. A. Helfgott's RSBounds development (Garald1/RSBounds, with
-Claude; MIT, with Apache 2.0 file headers) that this proof uses: 2429 modules, copied unchanged from commit `0393b52`.
-`vendor/rsbounds/source-provenance.json` records the source path, Git blob and SHA-256 of every
-file; `python3 vendor/rsbounds/check_source_provenance.py` checks them. RSBounds was itself built
-against this repository at `192ca57`, whose modules it imports. It provides:
+H. A. Helfgott's RSBounds development (https://github.com/Garald1/RSBounds, with Claude; MIT, with
+Apache 2.0 file headers) is a Lake dependency, pinned in `lakefile.lean` and `lake-manifest.json` to
+commit `0393b52`. The proof uses 2429 of its modules. It provides:
 * `RSBounds.Moebius003.ramareMoebius_of_finiteRH`: [H, (2.21)], Ramaré's `0.03/log x` for
   `x ≥ 11815`, from RH up to `1894438.5122` (the formalization of `mobius003.tex`). Its inputs are
   Schoenfeld's (5.6b*) (1976), PsiCert, and kernel-checked bounds for sums of `μ` (`MoebiusCert`)
@@ -64,26 +62,26 @@ against this repository at `192ca57`, whose modules it imports. It provides:
 * PsiCert (`PsiFinite.psi_abs_sub_le_four_fifths_sqrt`): `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`,
   a kernel-checked sieve campaign;
 * Rosser–Schoenfeld (1975), `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to
-  `1894438.5122`, with the first 29 zeros located by kernel-checked certificates (`vendor/rsbounds/rh100/`,
-  from `teal-sea/zeta-lab`);
+  `1894438.5122`, with the first 29 zeros located by kernel-checked certificates (RSBounds'
+  `vendor/rh100/`, from `teal-sea/zeta-lab`);
 * `RSBounds.HelfgottPsiBoundsFinal`: [H, (2.14)] and (2.17) with `1.0004` and `1.0008`.
 
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 (`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses.
 
-**Why the files are copied.** RSBounds depends on this repository: 25 of its files import modules of
-`TernaryGoldbach` (the explicit formulas, the zero-free region, `PNTMertens` and others), and it
-requires this repository at `192ca57`. If this repository required RSBounds through Lake, it would
-depend on an older copy of itself, which Lake cannot build. The copied files are compiled against the
-current `TernaryGoldbach` modules instead; the full build at `acb9dc7` shows they still check.
-Helfgott and Steve Hubbard suggested the alternative: a separate package, depending on both, that
-states the two-hypothesis theorem. Copying keeps the main theorems, `Challenge.lean` and the
-Comparator setup in one repository, at the cost of 2,429 more modules in every build.
+**RSBounds depends on this repository.** 25 of its files import modules of `TernaryGoldbach` (the
+explicit formulas, the zero-free region, `PNTMertens` and others), and it requires this repository at
+`192ca57`. Lake resolves that requirement to this repository itself, not to a second copy at the
+older commit, so RSBounds is compiled against the current modules. (`lake-manifest.json` still lists
+the `TernaryGoldbach` entry at `192ca57`; it is never fetched.) RSBounds' sources at `0393b52` are
+byte-identical to the copy that the full build at `acb9dc7` compiled.
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
 A full `lake build` (with `Challenge` and `Solution`) succeeded on 2026-11-14 at commit `acb9dc7`.
+RSBounds was then a copy in `vendor/rsbounds/`; it is now a Lake dependency at the same commit, with
+byte-identical sources, and the current layout has not had a full build yet.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
@@ -114,8 +112,9 @@ CI (`.github/workflows/ci.yml`) does not run the full build, which takes many ho
 and pull request it runs `scripts/ci_checks.py` (no Lean needed): imports resolve against
 `lakefile.lean`; nothing the main theorems import contains `sorry`, `admit`, `native_decide` or an
 `axiom`; `TernaryGoldbach.lean` imports every file; `Challenge.lean` matches `Statement.lean` and
-`MainTheorems.lean`; the vendored sources match their provenance record; the file paths in the docs
-exist. It also builds `Statement.lean` and `Challenge.lean` against Mathlib's prebuilt files.
+`MainTheorems.lean`; RSBounds is fetched at the commit `lakefile.lean` pins, and the checks above
+cover the RSBounds modules the main theorems use; the file paths in the docs exist. It also builds
+`Statement.lean` and `Challenge.lean` against Mathlib's prebuilt files.
 
 Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The development uses no
 `native_decide`. The kernel itself evaluates the finite computations of the proof:
@@ -136,9 +135,9 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
   `ψ` ranges (`Explicit/PsiRanges1e8.lean`);
 * the reduction of [H, Prop 12.2.4] to the divisors of `30030` (`MinorArcs/LSQuot8g.lean`);
 * the prime ladder up to `10²⁷`: `2.5·10⁸` Proth primes (`Ladder/`, below);
-* in `vendor/rsbounds/`, Helfgott's checks: PsiCert (`RSBounds/PsiFinite/`, about 1000 modules),
-  the Möbius certificates (`MoebiusCert/`), and the zero certificates up to height 100 (`rh100/`).
-  None uses `native_decide`.
+* in RSBounds, Helfgott's checks: PsiCert (`RSBounds/PsiFinite/`, about 1000 modules), the Möbius
+  certificates (`MoebiusCert/`), and the zero certificates up to height 100 (`vendor/rh100/`). None
+  uses `native_decide`.
 
 **The prime ladder.** Rung `i` (`1 ≤ i ≤ 254638308`) is `c = (111616 i − t)·2⁴⁵ + 1` with
 `0 ≤ t < 2048`, and its certificate is `3^((c−1)/2) ≡ −1 (mod c)`: every prime factor of `c` is then
@@ -339,7 +338,6 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 | `MajorArcs/` | [H, Chs. 7, 9–11] and §14.1–14.2: GRH input, Cor 7.1.3, Thm 7.1.4, Prop 7.1.5, (14.7), the singular series, the major-arc total |
 | `Explicit/` | explicit formulas for `L(s, χ)` and `ζ`; growth, Jensen and Landau bounds; the zero-free region; the explicit prime number theorem for `ψ` |
 | `Prelim/` | [H, §2]: `ψ`, `θ`, Mertens products, sums of `μ` and Liouville's function; the large sieves of [MV73]; Hilbert inequalities; Plancherel; Gauss sums |
-| `vendor/rsbounds/` | Helfgott's RSBounds (Garald1/RSBounds), vendored unchanged: (2.21), (2.14), (2.17), PsiCert, Rosser–Schoenfeld (1975) |
 | `scripts/` | generators of the numeric Lean files (`gen_*.py`); independent float and interval-arithmetic checks of numerical claims of [H] and of quantities in the proof (`scripts/rigorous/`); models behind the errata |
 | `Challenge.lean`, `Solution.lean`, `comparator/` | the Comparator check of the main theorems |
 | `HYPOTHESES.md` | the hypotheses, checked against their sources; errors found in the sources |
@@ -367,9 +365,9 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
   for `x ≥ 11815` along Ramaré's recursive idea, shared on the Lean Zulip; formalized in
   Garald1/RSBounds (`RSBounds/Moebius003/`).
-* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `0393b52`), vendored in
-  `vendor/rsbounds/` (MIT, with Apache 2.0 file headers; it contains code from PrimeNumberTheoremAnd, IEANTN and
-  teal-sea/zeta-lab, whose licenses are in `vendor/rsbounds/licenses/` and `vendor/rsbounds/rh100/`).
+* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `0393b52`), a Lake
+  dependency (MIT, with Apache 2.0 file headers; it contains code from PrimeNumberTheoremAnd, IEANTN
+  and teal-sea/zeta-lab, under their own licenses).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).
 
 Toolchain: Lean `v4.35.0`, Mathlib `v4.35.0`.

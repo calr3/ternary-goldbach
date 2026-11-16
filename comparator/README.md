@@ -70,5 +70,5 @@ Notes for running it in a container:
 * On a kernel that supports only an older Landlock ABI, `landrun` needs `--best-effort`, which is a
   weaker sandbox. `Solution.lean` is the project's own code, so this matters less than it would for
   untrusted input; the kernel check is unaffected.
-* Expect the kernel replay of `Solution` to take well over 11 hours (see above): it re-checks the
-  vendored RSBounds certificates. Use a machine that will not be interrupted.
+* Expect the kernel replay of `Solution` to take well over 11 hours (see above): it re-checks
+  RSBounds' certificates. Use a machine that will not be interrupted.

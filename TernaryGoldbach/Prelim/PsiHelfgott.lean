@@ -6,8 +6,8 @@ import RSBounds.HelfgottPsiBoundsFinal
 # [H, (2.14)] and [H, (2.17)] with [H]'s constants
 
 `ψ(y) ≤ 1.0004 y` and `∑_{n ≤ y} Λ(n) n < 1.0008 y²/2` for `y ≥ 2.5·10⁷`, from `PlattGRH`.
-The proofs are Helfgott's (Garald1/RSBounds, `RSBounds.HelfgottPsiBoundsFinal`, vendored unchanged
-under `vendor/rsbounds/`):
+The proofs are Helfgott's (Garald1/RSBounds, `RSBounds.HelfgottPsiBoundsFinal`, a Lake
+dependency):
 * on `[2.5·10⁷, 10¹⁰]`, PsiCert: the kernel-checked `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`
   (`PsiFinite.psi_abs_sub_le_four_fifths_sqrt`);
 * above `e²³ < 10¹⁰`, Rosser–Schoenfeld (1975): `|ψ(x) − x| < 0.00020211 x`, from RH up to height

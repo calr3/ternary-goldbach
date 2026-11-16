@@ -18,9 +18,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      # RSBounds' sources, at the commit lake-manifest.json pins, where Lake would put them.
+      - name: Fetch RSBounds
+        run: |
+          rev=$(python3 -c "import json; print(next(p['rev'] for p in json.load(open('lake-manifest.json'))['packages'] if p['name'] == 'RSBounds'))")
+          git init -q .lake/packages/RSBounds
+          git -C .lake/packages/RSBounds fetch -q --depth 1 https://github.com/Garald1/RSBounds "$rev"
+          git -C .lake/packages/RSBounds checkout -q FETCH_HEAD
       # Imports resolve against lakefile.lean; no sorry/admit/native_decide/axiom in what the main
       # theorems import; every file is built by the default target; Challenge.lean matches the
-      # code; vendored sources unchanged; file paths in the docs exist.
+      # code; RSBounds at the pinned commit; file paths in the docs exist.
       - run: python3 scripts/ci_checks.py
 
   statements:

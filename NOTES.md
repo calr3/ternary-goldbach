@@ -357,7 +357,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
 
 * **(2.21)** `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`, `x ≥ 11815` (`RamareMoebius`, `ramare_moebius`) is
   proved from `PlattGRH` (`ramareMoebius_of_plattGRH`) by Helfgott's formalization of
-  `mobius003.tex` (RSBounds, `vendor/rsbounds/RSBounds/Moebius003/`), which follows Ramaré's
+  `mobius003.tex` (RSBounds, `RSBounds/Moebius003/`), which follows Ramaré's
   recursive idea with inputs Schoenfeld's (5.6b*), PsiCert and kernel-checked `M` bounds
   (`MoebiusCert`). `MoebiusBound.lean` derives the weaker `0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
   from it.
@@ -772,7 +772,7 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 * Compile single files with `timeout 1500 lake env lean -M 9000 File.lean` (`-M 20000` for the kernel
   data files). Build heavy modules sequentially. A full `lake build` succeeded on 2026-11-14 at
   commit `acb9dc7` (4 cores, 15 GB). The heaviest parts are the 128 ladder files (about 4 min and
-  1.7 GB each), RSBounds' PsiCert campaign (`vendor/rsbounds/RSBounds/PsiFinite/Campaign/T1/`, 957
+  1.7 GB each), RSBounds' PsiCert campaign (`RSBounds/PsiFinite/Campaign/T1/`, 957
   files of 50–100 s), and `SmallPsiData*.lean` (about 3 min per file). With 4 parallel jobs on
   15 GB, `MinorArcs/G2TailNum.lean` ran out of memory; built alone (`lake build
   TernaryGoldbach.MinorArcs.G2TailNum`), it takes 162 s.

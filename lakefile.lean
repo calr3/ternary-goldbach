@@ -5,49 +5,17 @@ package TernaryGoldbach
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "v4.35.0"
 
+-- Helfgott's RSBounds (Garald1/RSBounds), pinned to the commit checked so far. It proves [H, (2.21)]
+-- (`RamareMoebius`, from `mobius003.tex`) and [H, (2.14)], (2.17) with [H]'s constants. RSBounds in
+-- turn requires this repository (as `TernaryGoldbach`, at `192ca57`). Lake resolves that requirement
+-- to this package instead of fetching the older commit, so RSBounds is compiled against the current
+-- modules. Only the RSBounds modules that `TernaryGoldbach` imports, and their dependencies, are built.
+require RSBounds from git "https://github.com/Garald1/RSBounds" @
+  "0393b52234b29baf18fbfd02a60a2fca341a5c64"
+
 -- Each theorem takes as `Fact` instances only the hypotheses its proof uses; the
 -- `unusedSectionVars` linter (on by default) reports a hypothesis a theorem takes but does not use.
 @[default_target] lean_lib TernaryGoldbach
-
--- Helfgott's RSBounds development (Garald1/RSBounds), vendored unchanged under `vendor/rsbounds/`
--- (`source-provenance.json` records the commit and the SHA-256 of every file). It proves
--- [H, (2.21)] (`RamareMoebius`, from `mobius003.tex`) and [H, (2.14)], (2.17) with [H]'s constants.
--- Only the modules that `TernaryGoldbach` imports, and their dependencies, are built. The options of
--- the `rh100` libraries are those of RSBounds' own lakefile.
-lean_lib RSBounds where
-  srcDir := "vendor/rsbounds"
-  globs := #[.submodules `RSBounds]
-
-lean_lib MoebiusCert where
-  srcDir := "vendor/rsbounds"
-  globs := #[.submodules `MoebiusCert]
-
-lean_lib Zeta23 where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `Zeta23]
-  leanOptions := #[⟨`relaxedAutoImplicit, false⟩, ⟨`pp.unicode.fun, true⟩]
-
-lean_lib ZetaLean where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `ZetaLean]
-
-lean_lib RHHeight where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `RHHeight]
-  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
-
-lean_lib RHHeight100 where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `RHHeight100]
-  leanOptions := #[⟨`autoImplicit, false⟩, ⟨`relaxedAutoImplicit, false⟩]
-
-lean_lib HardyFirstZero where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `HardyFirstZero]
-
-lean_lib HardyTenZeros where
-  srcDir := "vendor/rsbounds/rh100"
-  globs := #[.submodules `HardyTenZeros]
 
 -- The search for the prime-ladder hints (`LadderHints.lean`) runs during elaboration; compiling it
 -- to native code makes it fast. The hints are only a guide: the kernel checks every rung.

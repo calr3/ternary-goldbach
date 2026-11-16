@@ -5,8 +5,8 @@ import RSBounds.Moebius003.Upstream
 # Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` ([H, (2.21)])
 
 Stated for `x ≥ 11815` as in [Ram13, Cor. 1.4] and [H, (2.21)], and **proved** from `PlattGRH`:
-Helfgott's formalization of his note `mobius003.tex` (Garald1/RSBounds, vendored unchanged under
-`vendor/rsbounds/`; see its `source-provenance.json`) proves `RamareMoebius` from RH up to height
+Helfgott's formalization of his note `mobius003.tex` (Garald1/RSBounds, a Lake dependency pinned
+in `lakefile.lean`) proves `RamareMoebius` from RH up to height
 `1894438.5122` (`RSBounds.Moebius003.ramareMoebius_of_finiteRH`). The argument follows Ramaré's
 recursive idea. Its inputs, all proved there:
 * Schoenfeld's (5.6b*) from RH up to `1894438.5122` (Rosser–Schoenfeld's height);

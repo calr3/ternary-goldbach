@@ -1,17 +1,21 @@
 """Fast repository checks that need no Lean toolchain (run by CI; takes a few seconds).
 
-1. Every import of a local module resolves: the module belongs to a `lean_lib` of `lakefile.lean`
-   (by its `globs`, or by its root name when `globs` is not set) and its file exists.
-2. Nothing in the import closure of `TernaryGoldbach.MainTheorems` and `Solution` contains `sorry`,
-   `admit`, `native_decide` or an `axiom` declaration (comments stripped). This is a source-level
-   check; `#print axioms` after a build is the authoritative one.
+1. Every import of a local module resolves: the module belongs to a `lean_lib` of `lakefile.lean`,
+   or of RSBounds' lakefile (by its root name or its `globs`, as Lake decides), and its file exists.
+2. Nothing in the import closure of `TernaryGoldbach.MainTheorems` and `Solution`, RSBounds' modules
+   included, contains `sorry`, `admit`, `native_decide` or an `axiom` declaration (comments
+   stripped). This is a source-level check; `#print axioms` after a build is the authoritative one.
 3. Every file under `TernaryGoldbach/` is imported (directly or not) by `TernaryGoldbach.lean`, so
    the default `lake build` checks it.
 4. `Challenge.lean` matches the code: its definitions are those of `TernaryGoldbach/Statement.lean`,
    its theorem statements those of `TernaryGoldbach/MainTheorems.lean`, and `comparator/config.json`
    names exactly its theorems.
-5. The vendored RSBounds sources match `vendor/rsbounds/source-provenance.json`.
+5. RSBounds is pinned to one commit: the revision in `lakefile.lean`, the one in `lake-manifest.json`
+   and the checkout in `.lake/packages/RSBounds` agree.
 6. Every file path written in backticks in the Markdown docs exists.
+
+RSBounds' sources must be present in `.lake/packages/RSBounds`: any `lake` command (for example
+`lake exe cache get`) fetches them, and CI fetches them with git.
 
 Usage: python3 scripts/ci_checks.py   (from the repository root)"""
 import json, os, re, subprocess, sys
@@ -52,32 +56,41 @@ def norm(s):
     return re.sub(r"\s+", " ", s).strip()
 
 
-# --- the libraries of lakefile.lean -------------------------------------------------------------
+# --- the libraries of lakefile.lean and of RSBounds' lakefile ------------------------------------
+def parse_libs(lakefile, base):
+    out = []
+    for m in re.finditer(r"^(?:@\[[^\]]*\]\s*)?lean_lib\s+(\w+)(.*?)(?=^\S|\Z)", lakefile, re.M | re.S):
+        name, body = m.group(1), m.group(2)
+        src = re.search(r'srcDir\s*:=\s*"([^"]*)"', body)
+        globs = re.search(r"globs\s*:=\s*#\[(.*?)\]", body, re.S)
+        roots = re.search(r"roots\s*:=\s*#\[(.*?)\]", body, re.S)
+        out.append({"name": name, "src": os.path.join(base, src.group(1) if src else "."),
+                    "roots": re.findall(r"`([\w.]+)", roots.group(1)) if roots else [name],
+                    "globs": [(kind or "one", mod) for kind, mod in re.findall(
+                        r"(?:\.(one|submodules|andSubmodules)\s+)?`([\w.]+)", globs.group(1))]
+                    if globs else []})
+    return out
+
+
 lakefile = open("lakefile.lean", encoding="utf8").read()
-libs = []
-for m in re.finditer(r"^(?:@\[[^\]]*\]\s*)?lean_lib\s+(\w+)(.*?)(?=^\S|\Z)", lakefile, re.M | re.S):
-    name, body = m.group(1), m.group(2)
-    src = re.search(r'srcDir\s*:=\s*"([^"]*)"', body)
-    globs = re.search(r"globs\s*:=\s*#\[(.*?)\]", body, re.S)
-    roots = re.search(r"roots\s*:=\s*#\[(.*?)\]", body, re.S)
-    lib = {"name": name, "src": src.group(1) if src else ".",
-           "roots": re.findall(r"`([\w.]+)", roots.group(1)) if roots else [name], "globs": None}
-    if globs:
-        lib["globs"] = [(kind or "one", mod) for kind, mod in
-                        re.findall(r"(?:\.(one|submodules|andSubmodules)\s+)?`([\w.]+)", globs.group(1))]
-    libs.append(lib)
+libs = parse_libs(lakefile, ".")
+RSB = os.path.join(".lake", "packages", "RSBounds")
+if os.path.exists(os.path.join(RSB, "lakefile.lean")):
+    libs += parse_libs(open(os.path.join(RSB, "lakefile.lean"), encoding="utf8").read(), RSB)
+else:
+    fail("rsbounds", f"{RSB} is missing: run any `lake` command (e.g. `lake exe cache get`) to fetch it")
 
 
 def owner(mod):
+    """The library that Lake builds `mod` in: a root of the library is a prefix of `mod`, or one of
+    its `globs` matches `mod`. This project's libraries come first."""
     for lib in libs:
-        if lib["globs"] is None:
-            if any(mod == r or mod.startswith(r + ".") for r in lib["roots"]):
+        if any(mod == r or mod.startswith(r + ".") for r in lib["roots"]):
+            return lib
+        for kind, g in lib["globs"]:
+            if ((kind in ("one", "andSubmodules") and mod == g)
+                    or (kind in ("submodules", "andSubmodules") and mod.startswith(g + "."))):
                 return lib
-        else:
-            for kind, g in lib["globs"]:
-                if ((kind in ("one", "andSubmodules") and mod == g)
-                        or (kind in ("submodules", "andSubmodules") and mod.startswith(g + "."))):
-                    return lib
     return None
 
 
@@ -92,15 +105,22 @@ def path_of(mod):
 files = subprocess.run(["git", "ls-files", "*.lean"], capture_output=True, text=True,
                        check=True).stdout.split()
 local_roots = {r for lib in libs for r in lib["roots"]} | {g.split(".")[0] for lib in libs
-                                                           for _, g in (lib["globs"] or [])}
+                                                           for _, g in lib["globs"]}
 imports = {}
+
+
+def imports_of(f):
+    if f not in imports:
+        header = re.match(r"(?:\s*(?:prelude|module|(?:public\s+|meta\s+)*import\s+[\w.]+))*",
+                          strip_comments(open(f, encoding="utf8").read())).group(0)
+        imports[f] = re.findall(r"import\s+([\w.]+)", header)
+    return imports[f]
+
+
 for f in files:
     if f == "lakefile.lean":
         continue
-    header = re.match(r"(?:\s*(?:prelude|module|(?:public\s+|meta\s+)*import\s+[\w.]+))*",
-                      strip_comments(open(f, encoding="utf8").read())).group(0)
-    imports[f] = re.findall(r"import\s+([\w.]+)", header)
-    for mod in imports[f]:
+    for mod in imports_of(f):
         root = mod.split(".")[0]
         if root in EXTERNAL:
             continue
@@ -122,16 +142,20 @@ def closure(start_files):
         if f in seen or not os.path.exists(f):
             continue
         seen.add(f)
-        for mod in imports.get(f, []):
+        for mod in imports_of(f):
             if mod.split(".")[0] not in EXTERNAL:
                 p = path_of(mod)
-                if p:
+                if p and os.path.exists(p):
                     stack.append(p)
+                elif f.startswith(RSB):
+                    fail("imports", f"{f}: `import {mod}` does not resolve, so the checks cannot "
+                                    "follow it")
     return seen
 
 
 # --- 2. no sorry / admit / native_decide / axiom in what the main theorems use -------------------
-for f in sorted(closure(["TernaryGoldbach/MainTheorems.lean", "Solution.lean"])):
+used = closure(["TernaryGoldbach/MainTheorems.lean", "Solution.lean"])
+for f in sorted(used):
     t = strip_comments(open(f, encoding="utf8").read())
     for word in ("sorry", "admit", "native_decide"):
         if re.search(r"(?<![\w.'])" + word + r"(?![\w'])", t):
@@ -170,14 +194,18 @@ if sorted(n.removeprefix("TernaryGoldbach.") for n in cfg["theorem_names"]) != s
 if not ch_thms:
     fail("challenge", "no theorems found in Challenge.lean")
 
-# --- 5. vendored sources unchanged ------------------------------------------------------------------
-r = subprocess.run([sys.executable, "vendor/rsbounds/check_source_provenance.py"],
-                   capture_output=True, text=True)
-if r.returncode:
-    fail("vendor", r.stdout.strip().splitlines()[-1] if r.stdout.strip() else "provenance check failed")
-    for line in r.stdout.splitlines()[:20]:
-        if line.startswith(("MISMATCH", "UNLISTED")):
-            fail("vendor", line)
+# --- 5. RSBounds is pinned to one commit -----------------------------------------------------------
+pin = re.search(r'require\s+RSBounds\s+from\s+git\s+"[^"]*"\s*@\s*"([0-9a-f]{40})"', lakefile)
+manifest = {p["name"]: p for p in json.load(open("lake-manifest.json"))["packages"]}
+if not pin:
+    fail("rsbounds", "lakefile.lean does not require RSBounds at a full commit hash")
+elif manifest.get("RSBounds", {}).get("rev") != pin.group(1):
+    fail("rsbounds", "lake-manifest.json does not pin RSBounds at the commit in lakefile.lean")
+elif os.path.isdir(RSB):
+    head = subprocess.run(["git", "-C", RSB, "rev-parse", "HEAD"], capture_output=True,
+                          text=True).stdout.strip()
+    if head != pin.group(1):
+        fail("rsbounds", f"{RSB} is at {head or '?'}, not at the pinned {pin.group(1)}")
 
 # --- 6. file paths in the docs exist ---------------------------------------------------------------
 tracked = set(subprocess.run(["git", "ls-files"], capture_output=True, text=True, check=True).stdout.split())
@@ -196,4 +224,5 @@ if problems:
     print("\n".join(problems))
     print(f"\n{len(problems)} problem(s)")
     sys.exit(1)
-print(f"all checks passed ({len(files)} Lean files, {len(libs)} libraries)")
+print(f"all checks passed ({len(files)} Lean files, {len(libs)} libraries; "
+      f"{sum(f.startswith(RSB) for f in used)} RSBounds files in what the main theorems use)")

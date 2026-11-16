@@ -66,7 +66,7 @@ def BinaryGoldbachInput : Prop := BinaryGoldbachUpTo (4 * 10 ^ 18)
 /-! ## Proved inputs
 
 `RamareMoebius` is not a hypothesis: `Prelim.ramareMoebius_of_plattGRH` (`Prelim/RamareMoebius.lean`)
-proves it from `PlattGRH`, by Helfgott's formalization of `mobius003.tex` (vendored from
+proves it from `PlattGRH`, by Helfgott's formalization of `mobius003.tex` (from
 Garald1/RSBounds). Inside the development it is passed as a `Fact` instance, which
 `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. -/
 

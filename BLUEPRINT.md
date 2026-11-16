@@ -79,7 +79,7 @@ differences from [H]; `NOTES.md` has the details.
  Preliminaries: §2.5 explicit bounds on sums of μ and Λ ✅ Prelim/LambdaMu.lean and the files it
  imports: (2.12)–(2.15), (2.17), (2.19), (5.5) from Prelim/PsiTwoSided.lean, the kernel tables and
  Prelim/ThetaExplicit.lean; (2.20) MoebiusCoprime; (2.21) RamareMoebius, proved from PlattGRH by
- Helfgott's RSBounds (vendor/rsbounds; Prelim/RamareMoebius.lean); (2.14), (2.17) with [H]'s
+ Helfgott's RSBounds (a Lake dependency; Prelim/RamareMoebius.lean); (2.14), (2.17) with [H]'s
  constants Prelim/PsiHelfgott.lean (RSBounds);
  (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog; (2.24) for x < 11815
  SmallMoebius
