@@ -73,15 +73,16 @@ RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 explicit formulas, the zero-free region, `PNTMertens` and others), and it requires this repository at
 `192ca57`. Lake resolves that requirement to this repository itself, not to a second copy at the
 older commit, so RSBounds is compiled against the current modules. (`lake-manifest.json` still lists
-the `TernaryGoldbach` entry at `192ca57`; it is never fetched.) RSBounds' sources at `0393b52` are
-byte-identical to the copy that the full build at `acb9dc7` compiled.
+the `TernaryGoldbach` entry at `192ca57`; it is never fetched.)
 
 So this is a Lean proof of the ternary Goldbach conjecture, following Helfgott, relative to these
 hypotheses.
 
-A full `lake build` (with `Challenge` and `Solution`) succeeded on 2026-11-14 at commit `acb9dc7`.
-RSBounds was then a copy in `vendor/rsbounds/`; it is now a Lake dependency at the same commit, with
-byte-identical sources, and the current layout has not had a full build yet.
+A full `lake build TernaryGoldbach Challenge Solution` succeeded on 2026-11-16 at commit `60ac565`,
+with RSBounds as a Lake dependency at `0393b52` (11924 jobs; about 8.5 hours on 4 cores, with
+Mathlib's prebuilt files). `#print axioms` gives only `propext`, `Classical.choice` and `Quot.sound`
+for both main theorems. With 16 GB of memory, `MinorArcs/G2TailNum.lean` was killed for lack of
+memory while three other modules compiled alongside it; rerunning `lake build` compiled it alone.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
