@@ -5,7 +5,7 @@ import TernaryGoldbach.MinorArcs.LSQuot6
 /-!
 # Proof of [H, Prop. 12.1.2] and [H, Cor. 12.2.5]
 
-`prop_12_1_2`: for `aₙ` supported on primes `> √x` (in `ℓ¹`), `δ₀ ≥ 2`, `Q₀ ≥ 1`,
+`prop_12_1_2`: for `aₙ` supported on primes `> √x` (in `ℓ¹`), `δ₀ ≥ 1`, `Q₀ ≥ 1`,
 `δ₀Q₀² ≤ x/2`, `Q = √(x/2δ₀)`, and `C` with `G_q(2Q₀/sq) ≤ C G_q(2Q/sq)` for even `q ≤ 2Q₀`,
 `1 ≤ s ≤ 2Q₀/q`:  `∫_{𝔐_{δ₀,Q₀}} |S|² ≤ C Σ |aₙ|²`.
 
@@ -18,9 +18,11 @@ Proof ([H, §12.1], [Bom74, Thm. 7A]):
    `F_R(β)`, with `m_R(β)` the largest `n ≤ 2R` with `n|β|x < δ₀R`; then use `hC` with
    `s = 2Q₀/m_{Q₀}(β)` and `⌊m_{Q₀} Q/Q₀⌋ ≤ m_Q`.
 
-**Change from [H]:** we assume `δ₀ ≥ 2` (not `δ₀ ≥ 1`): the proof needs every prime `n > √x` to be
-coprime to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x`.  [H] applies the result with
-`δ₀ = 8`.
+The character expansions need every prime `n > √x` to be coprime to every modulus `q ∈ Qset Q`.
+These go up to `2Q = √(2x/δ₀)`, which exceeds `√x` when `δ₀ < 2`, but a modulus `q > Q` is even
+with odd part `≤ Q < n`, so only `n = 2` can divide one. [H] leaves this implicit ("much as
+before"). For `x ≥ 4`, `n > √x ≥ 2` is odd. For `x < 4`, `Q < 2` and the bound is trivial, since
+`C ≥ 1`.
 -/
 
 open MeasureTheory Set Finset
@@ -173,6 +175,14 @@ theorem even_qt (q : ℕ) : Even (qt q) := by
   · exact h
   · exact even_two_mul q
 
+theorem dvd_qt (q : ℕ) : q ∣ qt q := by
+  unfold qt; split_ifs
+  · exact dvd_rfl
+  · exact dvd_mul_left q 2
+
+theorem Gq_two_one : Gq 2 1 = 1 := by
+  simp [Gq, Finset.filter_singleton]
+
 /-- **The key comparison of weights**: `G_{c̃}(m_{Q₀}(β)/c̃) ≤ C G_{c̃}(m_Q(β)/c̃)`. -/
 theorem Gq_mR_le {δ₀ Q₀ Q x β C : ℝ} (hx : 0 < x) (hQ₀ : 1 ≤ Q₀) (hQQ : Q₀ ≤ Q) (hC0 : 0 ≤ C)
     (hC : ∀ q : ℕ, 1 ≤ q → Even q → (q : ℝ) ≤ 2 * Q₀ → ∀ s : ℝ, 1 ≤ s → s ≤ 2 * Q₀ / q →
@@ -288,12 +298,12 @@ theorem sum_arcs_eq_integral_Farc {a : ℕ → ℂ} (ha : Summable fun n => ‖a
 
 /-! ## The proposition -/
 
-/-- **[H, Prop. 12.1.2]** (with `δ₀ ≥ 2`, see the module docstring).  Let `aₙ` be supported on
-primes `> √x`, in `ℓ¹`; `δ₀ ≥ 2`, `Q₀ ≥ 1`, `δ₀Q₀² ≤ x/2`, `Q = √(x/2δ₀)`.  If
+/-- **[H, Prop. 12.1.2]**.  Let `aₙ` be supported on
+primes `> √x`, in `ℓ¹`; `δ₀ ≥ 1`, `Q₀ ≥ 1`, `δ₀Q₀² ≤ x/2`, `Q = √(x/2δ₀)`.  If
 `G_q(2Q₀/sq) ≤ C G_q(2Q/sq)` for every even `q ≤ 2Q₀` and `1 ≤ s ≤ 2Q₀/q`, then
 `∫_{𝔐_{δ₀,Q₀}} |S(α)|² dα ≤ C Σ |aₙ|²`. -/
 theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupported x a)
-    (hδ₀ : 2 ≤ δ₀) (hQ₀ : 1 ≤ Q₀) (hx : δ₀ * Q₀ ^ 2 ≤ x / 2)
+    (hδ₀ : 1 ≤ δ₀) (hQ₀ : 1 ≤ Q₀) (hx : δ₀ * Q₀ ^ 2 ≤ x / 2)
     (hC : ∀ q : ℕ, 1 ≤ q → Even q → (q : ℝ) ≤ 2 * Q₀ → ∀ s : ℝ, 1 ≤ s → s ≤ 2 * Q₀ / q →
       Gq q (2 * Q₀ / (s * q)) ≤ C * Gq q (2 * √(x / (2 * δ₀)) / (s * q))) :
     ∫ α in Ioc (0 : ℝ) 1 ∩ majorArcs δ₀ Q₀ x, ‖expTsum a α‖ ^ 2 ≤ C * ∑' n, ‖a n‖ ^ 2 := by
@@ -316,32 +326,6 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
       rw [show δ₀ ^ 2 * (x / (2 * δ₀)) = δ₀ * x / 2 by field_simp]
       nlinarith
     nlinarith [mul_pos hδ0 hQ0]
-  have h2Q : 2 * Q ≤ √x := by
-    apply Real.le_sqrt_of_sq_le
-    rw [mul_pow, hQsq]
-    rw [show (2 : ℝ) ^ 2 * (x / (2 * δ₀)) = 2 * x / δ₀ by field_simp, div_le_iff₀ hδ0]
-    nlinarith
-  -- the common modulus
-  set L := ∏ q ∈ Finset.Icc 1 ⌊2 * Q⌋₊, q with hL
-  have hL0 : L ≠ 0 := Finset.prod_ne_zero_iff.2 fun q hq => by
-    have := (Finset.mem_Icc.1 hq).1; omega
-  have : NeZero L := ⟨hL0⟩
-  have hqL : ∀ R, R ≤ Q → ∀ q ∈ Qset R, q ∣ L := by
-    intro R hR q hq
-    apply Finset.dvd_prod_of_mem
-    obtain ⟨hq1, -⟩ := Finset.mem_filter.1 hq
-    obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hq1
-    exact Finset.mem_Icc.2 ⟨h1, h2.trans (Nat.floor_le_floor (by linarith))⟩
-  have hcop : ∀ n, a n ≠ 0 → Nat.Coprime n L := by
-    intro n hn
-    obtain ⟨hp, hnx⟩ := hsupp n hn
-    refine Nat.Coprime.prod_right fun q hq => ?_
-    obtain ⟨hq1, hq2⟩ := Finset.mem_Icc.1 hq
-    refine (Nat.coprime_or_dvd_of_prime hp q).resolve_right fun hdvd => ?_
-    have hle := Nat.le_of_dvd (by omega) hdvd
-    have : (q : ℝ) ≤ 2 * Q := le_trans (by exact_mod_cast hq2) (Nat.floor_le (by positivity))
-    have : (n : ℝ) ≤ q := by exact_mod_cast hle
-    linarith
   -- `C ≥ 0`
   have hC0 : 0 ≤ C := by
     have h := hC 2 (by norm_num) even_two (by push_cast; linarith) 1 le_rfl (by
@@ -352,11 +336,67 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
     have hGQ := Gq_nonneg 2 (2 * Q / (1 * ((2 : ℕ) : ℝ)))
     by_contra hneg; push Not at hneg
     nlinarith
-  -- the chain
   set g : ℝ → ℝ := fun α => ‖expTsum a α‖ ^ 2
   have hg : Continuous g := (TernaryGoldbach.continuous_expTsum hsum).norm.pow 2
   have hper : Function.Periodic g 1 := fun α => by simp only [g, expTsum_periodic a α]
   have hg0 : ∀ α, 0 ≤ g α := fun α => by positivity
+  -- `x < 4`: then `Q < 2`, `C ≥ G_2(Q₀)/G_2(Q) ≥ 1`, and the bound is trivial
+  rcases lt_or_ge x 4 with hx4 | hx4
+  · have hQ2 : Q < 2 := by
+      by_contra h; push Not at h
+      nlinarith [sq_nonneg Q]
+    have hGQ : Gq 2 Q ≤ 1 := by
+      have hfl : ⌊Q⌋₊ ≤ ⌊(1 : ℝ)⌋₊ := by
+        rw [Nat.floor_one]
+        exact Nat.le_of_lt_succ ((Nat.floor_lt hQ0.le).2 (by norm_num; linarith))
+      exact (Gq_mono hfl).trans Gq_two_one.le
+    have hC1 : 1 ≤ C := by
+      have h := hC 2 (by norm_num) even_two (by push_cast; linarith) 1 le_rfl (by
+        rw [le_div_iff₀ (by norm_num)]; push_cast; linarith)
+      have e1 : 2 * Q₀ / (1 * ((2 : ℕ) : ℝ)) = Q₀ := by push_cast; ring
+      have e2 : 2 * Q / (1 * ((2 : ℕ) : ℝ)) = Q := by push_cast; ring
+      rw [e1, e2] at h
+      have hG1 := one_le_Gq_two hQ₀
+      nlinarith [Gq_nonneg 2 Q]
+    calc ∫ α in Ioc (0 : ℝ) 1 ∩ majorArcs δ₀ Q₀ x, ‖expTsum a α‖ ^ 2
+        ≤ ∫ α in Ioc (0 : ℝ) 1, g α :=
+          setIntegral_mono_set (hg.integrableOn_Icc.mono_set Ioc_subset_Icc_self)
+            (Filter.Eventually.of_forall hg0) inter_subset_left.eventuallyLE
+      _ ≤ C * ∫ α in Ioc (0 : ℝ) 1, g α :=
+          le_mul_of_one_le_left (setIntegral_nonneg measurableSet_Ioc fun α _ => hg0 α) hC1
+      _ = C * ∑' n, ‖a n‖ ^ 2 := by rw [TernaryGoldbach.setIntegral_norm_sq_expTsum hsum]
+  have hQx : Q ≤ √x := Real.sqrt_le_sqrt (div_le_self hx0.le (by linarith))
+  have h2x : 2 ≤ √x := Real.le_sqrt_of_sq_le (by norm_num; linarith)
+  -- the common modulus
+  set L := ∏ q ∈ Qset Q, q with hL
+  have hL0 : L ≠ 0 := Finset.prod_ne_zero_iff.2 fun q hq => by
+    have := (Finset.mem_Icc.1 (Finset.mem_filter.1 hq).1).1; omega
+  have : NeZero L := ⟨hL0⟩
+  have hqL : ∀ R, R ≤ Q → ∀ q ∈ Qset R, q ∣ L := by
+    intro R hR q hq
+    apply Finset.dvd_prod_of_mem
+    obtain ⟨hq1, hqt⟩ := Finset.mem_filter.1 hq
+    obtain ⟨h1, h2⟩ := Finset.mem_Icc.1 hq1
+    exact Finset.mem_filter.2
+      ⟨Finset.mem_Icc.2 ⟨h1, h2.trans (Nat.floor_le_floor (by linarith))⟩, by linarith⟩
+  -- a prime `n > √x ≥ 2` is odd, and `n ∣ q` with `q̃ ≤ 2Q` would give `2n ≤ 2Q ≤ 2√x`
+  have hcop : ∀ n, a n ≠ 0 → Nat.Coprime n L := by
+    intro n hn
+    obtain ⟨hp, hnx⟩ := hsupp n hn
+    have hn2 : n ≠ 2 := by
+      rintro rfl; push_cast at hnx; linarith
+    have hodd : Odd n := hp.odd_of_ne_two hn2
+    refine Nat.Coprime.prod_right fun q hq => ?_
+    obtain ⟨hq1, hqt⟩ := Finset.mem_filter.1 hq
+    have hq1' := (Finset.mem_Icc.1 hq1).1
+    refine (Nat.coprime_or_dvd_of_prime hp q).resolve_right fun hdvd => ?_
+    have h2n : 2 * n ∣ qt q := Nat.Coprime.mul_dvd_of_dvd_of_dvd (Nat.coprime_two_left.2 hodd)
+      (even_qt q).two_dvd (hdvd.trans (dvd_qt q))
+    have hle := Nat.le_of_dvd (by have := two_le_qt hq1'; omega) h2n
+    have : ((2 * n : ℕ) : ℝ) ≤ 2 * Q := le_trans (by exact_mod_cast hle) hqt
+    push_cast at this
+    linarith
+  -- the chain
   have hδQ₀ : δ₀ * Q₀ ≤ x := by nlinarith
   calc ∫ α in Ioc (0 : ℝ) 1 ∩ majorArcs δ₀ Q₀ x, ‖expTsum a α‖ ^ 2
       ≤ ∑ q ∈ Qset Q₀, ∑ b ∈ Bset q, ∫ y in arc δ₀ Q₀ x q b, g y :=
@@ -372,11 +412,11 @@ theorem prop_12_1_2 {x δ₀ Q₀ C : ℝ} {a : ℕ → ℂ} (ha : PrimeSupporte
     _ = C * ∑' n, ‖a n‖ ^ 2 := by rw [TernaryGoldbach.setIntegral_norm_sq_expTsum hsum]
 
 variable [Fact TernaryGoldbach.PlattGRH] in
-/-- **[H, Cor. 12.2.5, (12.42)]** (with `δ₀ ≥ 2`).  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 2`,
+/-- **[H, Cor. 12.2.5, (12.42)]**.  Let `Q₀ ≥ 10⁵`, `δ₀ ≥ 1`,
 `(20000 Q₀)² ≤ x/2δ₀`, `Q = √(x/2δ₀)`, `2Q₀ ≤ (2Q)^{0.6}`.  Then
 `∫_{𝔐_{δ₀,Q₀}} |S|² ≤ (log 2Q₀ + 2)/(log 2Q + c_E) Σ|aₙ|²`. -/
 theorem cor_12_2_5 {x δ₀ Q₀ : ℝ} {a : ℕ → ℂ} (ha : PrimeSupported x a)
-    (hQ₀ : 1e5 ≤ Q₀) (hδ₀ : 2 ≤ δ₀) (hx : (20000 * Q₀) ^ 2 ≤ x / (2 * δ₀))
+    (hQ₀ : 1e5 ≤ Q₀) (hδ₀ : 1 ≤ δ₀) (hx : (20000 * Q₀) ^ 2 ≤ x / (2 * δ₀))
     (hρ : 2 * Q₀ ≤ (2 * √(x / (2 * δ₀))) ^ (0.6 : ℝ)) :
     ∫ α in Ioc (0 : ℝ) 1 ∩ majorArcs δ₀ Q₀ x, ‖expTsum a α‖ ^ 2 ≤
       (Real.log (2 * Q₀) + 2) / (Real.log (2 * √(x / (2 * δ₀))) + cE) * ∑' n, ‖a n‖ ^ 2 := by

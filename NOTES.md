@@ -549,9 +549,13 @@ that `Prop1123b.lean` assembles into Prop 11.2.3′.
 * **Prop 12.1.2** (`LargeSieveProof.lean`): Bombieri's identity in the form
   `φ(q) Σ_b^* |S(b/q+β)|² = Σ_{Ψ mod L, cond Ψ ∣ q} w(q, cond Ψ) |S_{Ψ⁻¹}(β)|²` (Parseval over
   characters, `gaussSum_mulShift_eq`, `τ(χ↑) = μ(r)χ(r)τ(χ)`, `|τ(χ)|² = N` for primitive `χ`, and the
-  lift to one modulus `L = ∏_{q ≤ 2Q} q`, which avoids dependent types); `weight_sum`; periodization,
-  covering and Farey disjointness at level `Q`. **`δ₀ ≥ 2` instead of [H]'s `δ₀ ≥ 1`**: primes
-  `n > √x` must be coprime to every modulus `q ≤ 2Q = √(2x/δ₀)`, which needs `2Q ≤ √x` ([H] uses `δ₀ = 8`).
+  lift to one modulus `L`, the product of the moduli of `𝔐_{δ₀,Q}`, which avoids dependent types);
+  `weight_sum`; periodization, covering and Farey disjointness at level `Q`. With [H]'s `δ₀ ≥ 1`, the
+  moduli go up to `2Q = √(2x/δ₀)`, which can exceed `√x`, so "`n > √x` prime, hence coprime to `q`"
+  ([H]'s proof of Prop 12.1.1) does not carry over directly; [H]'s proof of 12.1.2 says "much as
+  before". It works because a modulus above `Q` is even, with odd part `≤ Q < n`; so only `n = 2`
+  could divide one. For `x ≥ 4`, `n > √x ≥ 2` is odd. For `x < 4`, `Q < 2` and the bound is trivial
+  (`C ≥ G_2(Q₀)/G_2(Q) = 1`).
 * **Prop 12.2.4 with `c₊ = 2`** ([H]: `1.36`). [H]'s argument covers `q ≥ 2.2·10¹⁰` (`star_suffices`,
   `regionL`, `regionS`, `large_q_hS`: `λ⁷ ≤ (103/120)⁹ q²` by exchange and primorial induction); for
   smaller `q` [H] needs a computation over 88 million `(q, n)`. Weakening the constant alone leaves

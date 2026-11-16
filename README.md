@@ -264,7 +264,6 @@ Because of the route we took:
 | (14.51) | non-prime terms | `7.3306` | `35.5` | [H]'s formula and [H]'s `\|η_*\|_∞ ≤ 1.414`, with `\|η₊\|_∞ ≤ 1.94` for [H]'s `1.079955` (which needs the sharp sup norms of Appendix A) and elementary bounds for `ψ` and `ψ − θ` |
 | (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | [H]'s `4/5` comes from an argument of Ramaré's [Ramb] that is not formalized. We use Ramaré's Liouville route, which gives at best about `1.78` (`NOTES.md`); the proof needs only `2.8` |
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | the minor arcs use an elementary bound, which needs no hypothesis and suffices. [H]'s `1.00303 q/φ(q)` ([Ramb, Cor. 1.10]) is proved too, from `PlattGRH` (`Prelim/MoebiusLogSharp.lean`) |
-| Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` | our proof needs `2Q ≤ √x`, so that primes above `√x` are coprime to every modulus `q ≤ 2Q`. [H] applies it only with `δ₀ = 8` |
 
 [H]'s constants on a narrower range:
 
