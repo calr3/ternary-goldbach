@@ -23,23 +23,28 @@ theorem TernaryGoldbach.ternary_goldbach_large_of_hypotheses (hGRH : PlattGRH) :
 
 (`TernaryGoldbach/MainTheorems.lean`). The large case `n ≥ 10²⁷` does not need binary Goldbach.
 Inside the development, the hypotheses are `Fact` instances, restated as the theorems
-`MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`; `RamareMoebius` is also passed
-as a `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. Each theorem takes only the instances its proof uses (the
-`unusedSectionVars` linter checks this), so its statement shows what it depends on:
+`MajorArcs.platt_verification` and `Helfgott.binary_goldbach_input`. Each theorem takes only the
+instances its proof uses (the `unusedSectionVars` linter checks this), so its statement shows what
+it depends on:
 
 | Stage of [H, §14.4] | Lean | Hypotheses |
 |---|---|---|
 | major arcs, (14.27) | `Helfgott.major_arcs_input` | `PlattGRH` |
-| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH` (and `RamareMoebius`, proved from it) |
+| minor arcs, (14.49) | `Helfgott.minor_arcs_input` | `PlattGRH` |
 | non-prime terms, (14.51) | `Helfgott.nonprime_input` | none |
 | circle identity (14.50); final inequality | `Helfgott.circle_identity_input`; `Helfgott.final_inequality_crude` | none |
 | odd `n < 10²⁷` | `Helfgott.ternaryGoldbachUpTo_1e27` | `BinaryGoldbachInput` |
 
 Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
-**proved**, from `PlattGRH`: `Prelim.ramareMoebius_of_plattGRH`. The proof is Helfgott's
-formalization of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds,
-vendored unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below). So are [H, (2.14)] and
-(2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
+**not a hypothesis**: it is proved from `PlattGRH` (`Prelim.ramareMoebius_of_plattGRH`). The proof
+is Helfgott's formalization of his note `mobius003.tex`, which follows Ramaré's recursive idea
+(Garald1/RSBounds, vendored unchanged under `vendor/rsbounds/`; see "Helfgott's RSBounds" below).
+RSBounds also proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008`
+(`Prelim/PsiHelfgott.lean`).
+
+The minor-arc theorems still take Ramaré's bound as an instance, `[Fact RamareMoebius]`, from when it
+was a hypothesis. `Prelim/RamareMoebius.lean` supplies that instance from `Fact PlattGRH`, and the
+main theorems discharge it the same way, so it adds nothing to what they assume.
 
 The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s citations of
 [RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
