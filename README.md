@@ -139,6 +139,9 @@ Beyond these hypotheses, the trust base is the Lean kernel and Mathlib. The deve
   certificates (`MoebiusCert/`), and the zero certificates up to height 100 (`vendor/rh100/`). None
   uses `native_decide`.
 
+The kernel also checks `|m̌(k)| ≤ 1.00303` for `k ≤ 2·10⁵`, for [H]'s (2.23) with `1.00303`
+(`Prelim/SmallMcheck*.lean`); the main theorems do not use it.
+
 **The prime ladder.** Rung `i` (`1 ≤ i ≤ 254638308`) is `c = (111616 i − t)·2⁴⁵ + 1` with
 `0 ≤ t < 2048`, and its certificate is `3^((c−1)/2) ≡ −1 (mod c)`: every prime factor of `c` is then
 `≡ 1 (mod 2⁴⁵)` (Mathlib's `Nat.pow_pow_add_primeFactors_one_lt`), and `c < (2⁴⁵ + 1)²`
@@ -211,7 +214,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * Mertens products ([H, Lemma C.2.2]);
   * the large sieves of [MV73];
   * (2.22) with constant `2.8`, by Ramaré's Liouville route;
-  * (2.23) in the form `q/φ(q) + 2.67`.
+  * (2.23) in the form `q/φ(q) + 2.67` (and, not used, with [H]'s `1.00303 q/φ(q)`).
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
   `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 4.92·10⁻⁷` for
   `120 < log n < 20000` and `0` otherwise. [H] quotes its bounds for `ψ` and `θ` ([H, §2.5]) from
@@ -260,7 +263,7 @@ Because of the route we took:
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` | [H]'s value needs the sharp sup norms of Appendix A; we use the cruder `\|h_H\| ≤ 3.15` |
 | (14.51) | non-prime terms | `7.3306` | `35.5` | [H]'s formula and [H]'s `\|η_*\|_∞ ≤ 1.414`, with `\|η₊\|_∞ ≤ 1.94` for [H]'s `1.079955` (which needs the sharp sup norms of Appendix A) and elementary bounds for `ψ` and `ψ − θ` |
 | (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | [H]'s `4/5` comes from an argument of Ramaré's [Ramb] that is not formalized. We use Ramaré's Liouville route, which gives at best about `1.78` (`NOTES.md`); the proof needs only `2.8` |
-| (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | [H] takes it from [Ramb]; we prove an elementary bound |
+| (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | the minor arcs use an elementary bound, which needs no hypothesis and suffices. [H]'s `1.00303 q/φ(q)` ([Ramb, Cor. 1.10]) is proved too, from `PlattGRH` (`Prelim/MoebiusLogSharp.lean`) |
 | Prop 12.1.2 | large sieve for primes | `δ₀ ≥ 1` | `δ₀ ≥ 2` | our proof needs `2Q ≤ √x`, so that primes above `√x` are coprime to every modulus `q ≤ 2Q`. [H] applies it only with `δ₀ = 8` |
 
 [H]'s constants on a narrower range:
@@ -360,6 +363,8 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [MV73] H. L. Montgomery, R. C. Vaughan, *The large sieve*, Mathematika 20 (1973).
 * [Ram95] O. Ramaré, *On Šnirel'man's constant*, Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 22
   (1995), 645–706.
+* [Ramb] O. Ramaré, *Explicit estimates on several summatory functions involving the Moebius
+  function*, Math. Comp. 84 (2015), 1359–1387; corrigendum, Math. Comp. 88 (2019), 2383–2388.
 * O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4 (the `q = 1` Möbius bound, [H, (2.21)]); Acta Arith.
   165 (2014) and hal-02572851 (Liouville route to (2.22)).
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`

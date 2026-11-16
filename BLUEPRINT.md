@@ -81,7 +81,8 @@ differences from [H]; `NOTES.md` has the details.
  Prelim/ThetaExplicit.lean; (2.20) MoebiusCoprime; (2.21) RamareMoebius, proved from PlattGRH by
  Helfgott's RSBounds (a Lake dependency; Prelim/RamareMoebius.lean); (2.14), (2.17) with [H]'s
  constants Prelim/PsiHelfgott.lean (RSBounds);
- (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog; (2.24) for x < 11815
+ (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog (with [H]'s 1.00303:
+ MoebiusLogSharp, not used); (2.24) for x < 11815
  SmallMoebius
 ```
 

@@ -5,7 +5,7 @@ import TernaryGoldbach.Prelim.Mcheck
 
 From `abs_mcheck_sub_one_le`: `|m̌(x) − 1| ≤ (1 − γ)|m(x) − M(x)/x| + (1 + ∫₁ˣ |M(u)| du/u)/x`, with
 * `|m(x)| ≤ 0.03/log x` for `x ≥ 11815` (Ramaré's bound, [H, (2.21)]);
-* on `[2·10⁵, 10⁹)`: `|M(n)| ≤ 0.571 √n` (RSBounds' (M)) and `∑_{t < 2·10⁵} |M(t)|/t ≤ 130` (kernel);
+* on `[2·10⁵, 10⁹)`: `|M(n)| ≤ 0.571 √n` (RSBounds' (M)) and `∑_{t < 2·10⁵} |M(t)|/t ≤ 131` (kernel);
 * beyond `10⁹`: RSBounds' `|N(n)| ≤ 0.017 n` (`N(n) = ∑_{k ≤ n} μ(k) log k`), its bound
   `|M(n)| ≤ |C₀| + |N(n)|/log n + ∑_{10⁹ ≤ k < n} |N(k)| (1/log k − 1/log(k+1))` with `|C₀| ≤ 1743`,
   and `∑_{t < 10⁹} |M(t)| log(1 + 1/t) ≤ 36113`.
@@ -42,8 +42,8 @@ structure McheckBigInputs : Prop where
   mOfN : ∀ n : ℕ, 10 ^ 9 ≤ n → |mertR n| ≤ 1743 + |nfun n| / Real.log n + iint (10 ^ 9) n
   /-- RSBounds: `S(10⁹) ≤ 36113`. -/
   sX0 : sfun (10 ^ 9) ≤ 36113
-  /-- Kernel: `∑_{t < 2·10⁵} |M(t)|/t ≤ 130`. -/
-  sX1 : ∑ t ∈ Ico (1 : ℕ) 200000, |mertR t| / (t : ℝ) ≤ 130
+  /-- Kernel: `∑_{t < 2·10⁵} |M(t)|/t ≤ 131`. -/
+  sX1 : ∑ t ∈ Ico (1 : ℕ) 200000, |mertR t| / (t : ℝ) ≤ 131
 
 /-! ### Elementary inequalities -/
 
@@ -219,9 +219,9 @@ theorem abs_mcheck_sub_one_le_mid (h : McheckBigInputs) {x : ℝ} (hx : 200000 �
   have hMx : |mertR x| ≤ 0.571 * s := by
     rw [mertR_floor]; exact (h.mertSqrt N (by omega) hN9).trans (by nlinarith [Real.sqrt_nonneg (N : ℝ)])
   -- the integral of `|M|`
-  have hS : sfun N ≤ 130 + 1.142 * (s - Real.sqrt 199999) := by
+  have hS : sfun N ≤ 131 + 1.142 * (s - Real.sqrt 199999) := by
     rw [sfun, ← Finset.sum_Ico_consecutive _ (show 1 ≤ 200000 by norm_num) hN2]
-    have h1 : ∑ t ∈ Ico (1 : ℕ) 200000, |mertR (t : ℝ)| * Real.log (1 + 1 / (t : ℝ)) ≤ 130 := by
+    have h1 : ∑ t ∈ Ico (1 : ℕ) 200000, |mertR (t : ℝ)| * Real.log (1 + 1 / (t : ℝ)) ≤ 131 := by
       have := (sfun_le_sum_div 200000).trans h.sX1
       rwa [sfun] at this
     have h2 : ∑ t ∈ Ico 200000 N, |mertR (t : ℝ)| * Real.log (1 + 1 / (t : ℝ)) ≤
@@ -247,7 +247,7 @@ theorem abs_mcheck_sub_one_le_mid (h : McheckBigInputs) {x : ℝ} (hx : 200000 �
     have h1 : Real.sqrt N ≤ N := by
       rw [Real.sqrt_le_left (by positivity)]; nlinarith
     nlinarith
-  have hI : mertAbsInt x ≤ 131 + 1.142 * (s - Real.sqrt 199999) := by
+  have hI : mertAbsInt x ≤ 132 + 1.142 * (s - Real.sqrt 199999) := by
     rw [mertAbsInt_eq]; linarith
   -- assemble
   have hγ : 1 - γ ≤ 1 / 2 := by linarith [Real.one_half_lt_eulerMascheroniConstant]
@@ -260,16 +260,16 @@ theorem abs_mcheck_sub_one_le_mid (h : McheckBigInputs) {x : ℝ} (hx : 200000 �
   have hmain := abs_mcheck_sub_one_le hx1
   have hA : (1 - γ) * |msumR x - mertR x / x| ≤ 1 / 2 * (0.0025 + 0.571 / s) :=
     mul_le_mul hγ hmM (abs_nonneg _) (by norm_num)
-  have hnum : 1 + mertAbsInt x ≤ 1.142 * s - (1.142 * 447.2 - 132) := by nlinarith
-  have hB : (1 + mertAbsInt x) / x ≤ 1.142 / s - (1.142 * 447.2 - 132) / s ^ 2 := by
-    calc (1 + mertAbsInt x) / x ≤ (1.142 * s - (1.142 * 447.2 - 132)) / x :=
+  have hnum : 1 + mertAbsInt x ≤ 1.142 * s - (1.142 * 447.2 - 133) := by nlinarith
+  have hB : (1 + mertAbsInt x) / x ≤ 1.142 / s - (1.142 * 447.2 - 133) / s ^ 2 := by
+    calc (1 + mertAbsInt x) / x ≤ (1.142 * s - (1.142 * 447.2 - 133)) / x :=
           div_le_div_of_nonneg_right hnum hx0.le
-      _ = 1.142 / s - (1.142 * 447.2 - 132) / s ^ 2 := by
+      _ = 1.142 / s - (1.142 * 447.2 - 133) / s ^ 2 := by
           rw [← hs2]; field_simp
-  have hAMGM := div_sub_div_sq_le (a := 1.142 * 447.2 - 132) (b := 1.142 + 0.2855) (by norm_num) hs0
-  have e : 1 / 2 * (0.0025 + 0.571 / s) + (1.142 / s - (1.142 * 447.2 - 132) / s ^ 2) =
-      0.00125 + ((1.142 + 0.2855) / s - (1.142 * 447.2 - 132) / s ^ 2) := by ring
-  have hfin : (0.00125 : ℝ) + (1.142 + 0.2855) ^ 2 / (4 * (1.142 * 447.2 - 132)) ≤ 0.00303 := by
+  have hAMGM := div_sub_div_sq_le (a := 1.142 * 447.2 - 133) (b := 1.142 + 0.2855) (by norm_num) hs0
+  have e : 1 / 2 * (0.0025 + 0.571 / s) + (1.142 / s - (1.142 * 447.2 - 133) / s ^ 2) =
+      0.00125 + ((1.142 + 0.2855) / s - (1.142 * 447.2 - 133) / s ^ 2) := by ring
+  have hfin : (0.00125 : ℝ) + (1.142 + 0.2855) ^ 2 / (4 * (1.142 * 447.2 - 133)) ≤ 0.00303 := by
     norm_num
   linarith
 

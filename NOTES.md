@@ -379,6 +379,23 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   `∑_{(n,q)=1} μ(n)/n H(x/n) = ∑_{k≤x, rad k | q} 1/k ∈ [1, q/φ(q)]` and Mathlib's
   `eulerMascheroniSeq` bounds ([H]: `1.00303 q/φ(q)` from [Ramb]). Downstream: `(log t + 2.96)·2x/t`
   in `typeI1_first`.
+* **(2.23) with [H]'s `1.00303`** (`MoebiusLogSharp.lean`, from `PlattGRH`; not used by the main
+  theorems). Ramaré's reduction [Ramb, Lemma 1.9, Cor. 1.10] (`MoebiusLogCoprime.lean`): the coprime
+  sum is `∑_{a ≤ x, a q-factored} m̌(x/a)/a`, `m̌(y) = ∑_{n ≤ y} μ(n)/n log(y/n)`, so `|m̌(y)| ≤ 1.00303`
+  for `y ≥ 1` suffices (the maximum is `m̌(29) = 1.0030213…`). [Ramb] takes `0 ≤ m̌ ≤ m̌(30)` from
+  Balazard. We prove the bound on `|m̌|` thus:
+  1. `m̌(x) − 1 = (1−γ)(m(x) − M(x)/x) − (1 + I(x))/x` with `|I(x)| ≤ ∫₁ˣ |M(u)| du/u` (`Mcheck.lean`:
+     from `∑ μ(n)/n H(x/n) = 1`, `∑ μ(n)⌊x/n⌋ = 1`, and summation by parts with `|R'(t)| ≤ 1/t`).
+     [Ramb, §3] has a sharper identity (Balazard's; corrected in Ramaré's 2019 corrigendum), with
+     kernel `(7/4 − γ)/t²`; ours needs a longer kernel range.
+  2. `x ≥ 2·10⁵` (`McheckBig.lean`, `McheckRSBounds.lean`): `|m̌(x) − 1| ≤ 0.00303` from Ramaré's
+     `0.03/log x`, RSBounds' `|M(n)| ≤ 0.571 √n` on `[33, 10⁹]`, its `|N(n)| ≤ 0.017 n`, `|C₀| ≤ 1743`
+     and `S(10⁹) ≤ 36113` beyond, and `∑_{t < 2·10⁵} |M(t)|/t ≤ 131` (kernel). The bound is `≤ 0.0026`
+     below `10⁹` and `≤ 0.0022` beyond.
+  3. `1 ≤ x ≤ 2·10⁵` (`SmallMcheck.lean`, `SmallMcheckData1–10.lean`, `SmallMcheckMain.lean`,
+     `McheckSmall.lean`; `scripts/gen_mcheck_small.py`): a kernel walk at scale `10²⁰`, with `μ` by
+     trial division (`muTD`) and `log(1 + 1/k)` from its Taylor series with Mathlib's remainder
+     bound; `m̌` is monotone between integers. Tightest at `k = 30` (margin `8.7·10⁻⁶`).
 * **(2.24)** for `x < 11815`: kernel (`SmallMoebius.lean`, `(k+1) m(k)² ≤ 2`).
 * (2.20) is proved elementarily (`MoebiusCoprime.lean`).
 

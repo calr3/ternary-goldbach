@@ -126,6 +126,7 @@ The kernel evaluates these finite checks (`decide +kernel`, no `native_decide`):
 | `Prelim/SmallMertensLower.lean` | (2.13) for `3 ≤ N ≤ 10⁴`, and its base value at `10⁴` | about 1 min |
 | `Prelim/SmallCGrid.lean` | `y ∑_{u≤3000} \|μ(u)\|/u² β(y, u) ≤ 2.8` on `[2.8, 80)` | 21 s |
 | `Prelim/SmallMoebius.lean` | `\|∑_{n≤k} μ(n)/n\| ≤ √(2/(k+1))`, `k < 11815` | 51 s |
+| `Prelim/SmallMcheckData1–10.lean` | `\|m̌(k)\| ≤ 1.00303` for `k ≤ 2·10⁵` and `∑_{t<2·10⁵} \|M(t)\|/t ≤ 131`, for [H]'s (2.23) with `1.00303` (not used by the main theorems): 100 chunks of 2000 steps, `μ` by trial division | 106–178 s per file, about 23 min in all |
 | `Prelim/SmallMertensProd.lean` | [RS62, Thm 15] for primes `5 ≤ x ≤ 10⁵`, `log θ(x)` to `10⁻²⁵` (tightest at `x = 23`, margin `2.4·10⁻⁷`); `∏_{p≤10⁵} p/(p−1) ≤ 20.5116` | 5.5 min |
 | `Prelim/RamareBound.lean`, `RamareWalk.lean` | the product over primes `≤ 1000` and the walk for `c_E` | about 2 min |
 | `MinorArcs/H2Bound.lean` | `α_n`, `β_n` for `n ≤ 15` | seconds |
