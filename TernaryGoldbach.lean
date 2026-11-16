@@ -43,6 +43,9 @@ import TernaryGoldbach.Prelim.PNTMertens
 import TernaryGoldbach.Prelim.MertensWindow
 import TernaryGoldbach.Prelim.MertensProduct
 import TernaryGoldbach.Prelim.MoebiusLog
+import TernaryGoldbach.Prelim.MoebiusLogCoprime
+import TernaryGoldbach.Prelim.Mcheck
+import TernaryGoldbach.Prelim.McheckBig
 import TernaryGoldbach.Prelim.MoebiusDecay
 import TernaryGoldbach.Prelim.MoebiusBound
 import TernaryGoldbach.Prelim.Liouville
