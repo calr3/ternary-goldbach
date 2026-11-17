@@ -72,6 +72,11 @@ The script:
    dependencies, rebuilds (nothing is left to compile after step 3), exports `Challenge` and
    `Solution`, and replays `Solution` in Lean's kernel.
 
+The log is quiet for long stretches. In a test run here (4 cores, 15 GB, with everything already
+built), steps 1–4 took 20 seconds; after `Building Solution` the export of `Solution` ran for about
+80 minutes with no output (one process at full CPU) before `Running Lean default kernel on solution`
+started the replay, which is the part that takes about a day.
+
 **Success** looks like this at the end of the log:
 
 ```
