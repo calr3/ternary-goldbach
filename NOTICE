@@ -10,7 +10,7 @@ project (https://github.com/AlexKontorovich/PrimeNumberTheoremAnd), licensed und
 the Apache License 2.0.
 
 The proof uses RSBounds (https://github.com/Garald1/RSBounds), by Harald Andrés Helfgott (with
-Claude), as a Lake dependency pinned to commit ec35ed41b034506e303b2ba90cf18963d6265403. It is
+Claude), as a Lake dependency pinned to commit 82d7a55f02e52cd071cd8ed800cc889a23ad3e61. It is
 not distributed with this repository. At that commit RSBounds is under the Apache License 2.0,
 except for the files that its THIRD_PARTY_NOTICES.md lists as remaining under the MIT License; it
 contains code from PrimeNumberTheoremAnd, IEANTN, teal-sea/zeta-lab and this repository under

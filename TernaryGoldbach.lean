@@ -122,6 +122,7 @@ import TernaryGoldbach.MinorArcs.FirstChoiceFinal
 import TernaryGoldbach.MinorArcs.TrigSums
 import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.MinorArcs.Eta2Fourier
+import TernaryGoldbach.MinorArcs.Eta2DDBound
 import TernaryGoldbach.MinorArcs.InnerSums
 import TernaryGoldbach.MinorArcs.InnerSumsGen
 import TernaryGoldbach.MinorArcs.Eta2Log

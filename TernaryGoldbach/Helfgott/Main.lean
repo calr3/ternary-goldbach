@@ -70,6 +70,13 @@ theorem ternaryGoldbachFrom : TernaryGoldbachFrom (10 ^ 27) := by
   have h1 := repSum_lower_bound N hN hN27
   have h2 := nonprime_input N hN27
   have h3 := final_inequality_crude N hN27
+  -- [H]'s `7.3306` (`nonprime_input`) is below the `35.5` that `final_inequality_crude` allows
+  have h4 : 7.3306 * (N * √N) * Real.log N ≤ 35.5 * (N * √N) * Real.log N := by
+    have hN1 : (1 : ℝ) ≤ N := by exact_mod_cast le_trans (by norm_num) hN27
+    have : 0 ≤ (N : ℝ) * √N * Real.log N := by
+      have := Real.log_nonneg hN1
+      positivity
+    nlinarith
   apply isSumOfThreePrimes_of_repSum_ne_zero (P := fun n => n.Prime ∧ Odd n) (fun n h => h.1)
   intro h0
   linarith

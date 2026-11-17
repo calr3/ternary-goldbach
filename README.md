@@ -38,7 +38,7 @@ it depends on:
 Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
 proved from `PlattGRH` (`Prelim.ramareMoebius_of_plattGRH`). The proof is Helfgott's formalization
 of his note `mobius003.tex`, which follows Schoenfeld and Ramaré's recursive idea (Garald1/RSBounds, a Lake
-dependency pinned to commit `ec35ed4`; see "Helfgott's RSBounds" below). The minor arcs take it as a
+dependency pinned to commit `82d7a55`; see "Helfgott's RSBounds" below). The minor arcs take it as a
 `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. RSBounds also
 proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`),
 and (2.14)–(2.19) on [H]'s ranges (`Prelim/PsiHelfgottBook.lean`).
@@ -55,7 +55,7 @@ our proof avoids it (`HYPOTHESES.md`, Finding 5).
 
 H. A. Helfgott's RSBounds development (https://github.com/Garald1/RSBounds, with Claude; Apache 2.0,
 with a few files under MIT) is a Lake dependency, pinned in `lakefile.lean` and `lake-manifest.json` to
-commit `ec35ed4`. The main theorems use 2429 of its modules. It provides:
+commit `82d7a55`. The main theorems use 2439 of its modules. It provides:
 * `RSBounds.Moebius003.ramareMoebius_of_finiteRH`: [H, (2.21)], Ramaré's `0.03/log x` for
   `x ≥ 11815`, from RH up to `1894438.5122` (the formalization of `mobius003.tex`). Its inputs are
   Schoenfeld's (5.6b*) (1976), PsiCert, and kernel-checked bounds for sums of `μ` (`MoebiusCert`)
@@ -69,7 +69,11 @@ commit `ec35ed4`. The main theorems use 2429 of its modules. It provides:
 * `RSBounds.HelfgottPsiBoundsBook` and `RSBounds.HelfgottLowBook`: (2.14), (2.16), (2.17) and (2.18)
   on [H]'s ranges, with kernel-checked walks below `2.5·10⁷` (`RSBounds/HelfgottSmall/`) and
   `2·10⁶` (`RSBounds/HelfgottLow/`, which also covers (2.19) for `117 ≤ y < 2·10⁶ + 1`). The main
-  theorems do not use them (`Prelim/PsiHelfgottBook.lean`).
+  theorems do not use them (`Prelim/PsiHelfgottBook.lean`);
+* `RSBounds.HelfgottB6`: [H, Lemma B.1.2, (B.6)] with [H]'s `31.521` (`MinorArcs/InnerSums.lean`);
+* `RSBounds.HelfgottAppA`: the sup norms of [H, Appendix A], `|η₊|_∞ ≤ 1.079955` and
+  `|η₊ · t|_∞ ≤ 1.19073` ([H, (14.3), (14.24)]), and from them [H, (14.28)] with `8.4029·10⁻¹²`
+  (`MinorArcs/EBound.lean`) and [H, (14.51)] with `7.3306` (`Helfgott.nonprime_input`).
 
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 (`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses.
@@ -85,11 +89,12 @@ hypotheses.
 
 A full `lake build TernaryGoldbach Challenge Solution` succeeded on 2026-11-16 at commit `60ac565`,
 with RSBounds as a Lake dependency at `0393b52` (11924 jobs; about 8.5 hours on 4 cores, with
-Mathlib's prebuilt files), and again on 2026-11-17 after RSBounds was bumped to `ec35ed4` (13435
-jobs; its new modules took about 1.5 hours). `#print axioms` gives only `propext`,
-`Classical.choice` and `Quot.sound` for both main theorems and for the theorems of
-`Prelim/PsiHelfgottBook.lean`. With 16 GB of memory, `MinorArcs/G2TailNum.lean` was killed for lack of
-memory while three other modules compiled alongside it; rerunning `lake build` compiled it alone.
+Mathlib's prebuilt files). It succeeded twice more on 2026-11-17: after RSBounds was bumped to
+`ec35ed4` (13435 jobs; its new modules took about 1.5 hours), and after the main proof switched to
+[H]'s constants for (B.6), (14.28) and (14.51), with RSBounds at `82d7a55` (13459 jobs).
+`#print axioms` gives only `propext`, `Classical.choice` and `Quot.sound` for both main theorems and
+for the theorems of `Prelim/PsiHelfgottBook.lean`. With 16 GB of memory, `MinorArcs/G2TailNum.lean`
+was killed for lack of memory while three other modules compiled alongside it; rerunning `lake build` compiled it alone.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
 metadata are in [`formalization.yaml`](formalization.yaml).
@@ -115,7 +120,7 @@ finishing, so it needs a long uninterrupted run.
 
 The same two statements have passed Comparator with another proof. Helfgott reported on Zulip
 (2026-11-16) that Comparator accepted RSBounds' assembly of them, `RSBounds.Moebius003.UpstreamMain`, in 22 h 56 min. RSBounds'
-[challenge file](https://github.com/Garald1/RSBounds/blob/ec35ed41b034506e303b2ba90cf18963d6265403/comparator/TernaryGoldbachChallenge.lean) has the same definitions and the same two theorem
+[challenge file](https://github.com/Garald1/RSBounds/blob/82d7a55f02e52cd071cd8ed800cc889a23ad3e61/comparator/TernaryGoldbachChallenge.lean) has the same definitions and the same two theorem
 statements as `Challenge.lean`, under other names. That proof is RSBounds' route, built on this
 repository at `192ca57`, not the proof on `main`. The earliest recorded run is from 2026-11-06, at
 commit `83ac1e1`, when the main theorems took four hypotheses (`RHUpTo`, `PlattGRH`,
@@ -174,15 +179,15 @@ required inequality fail (`MinorArcs/LSQuotRed.lean`), so everything reduces to 
 `30030`, checked by the kernel for `4 ≤ n < 2600` (`LSQuot8g.lean`, about 90 s), plus a short
 exchange argument for `n ≤ 3` (`LSQuot9.lean`).
 
-(B.6) is proved with the constant `c₀ = 32` in place of [H]'s `31.521` (the true maximum is
-`31.52065`, at `t ≈ 17.4`), as Helfgott suggested; (B.11) follows. For `t ≥ 2`, three integrations
-by parts give `(2πt)² η̂₂(t) = F(e(−t/4), 1/2πt) + O*(6120/(2πt)³)` with `F` a polynomial, and the
-kernel bisects `‖F(z, w)‖ + 6120w³ ≤ 32` over `|z| = 1`, `0 ≤ w ≤ 2/25`. For `t ≤ 2`, it checks
-Taylor polynomials of degree `< 50` on a grid (`MinorArcs/Eta2DDExpand.lean`, `Eta2DDTaylor.lean`,
-`Eta2DDBound.lean`; about 4 minutes in all).
+(B.6) is proved with [H]'s constant `c₀ = 31.521` (the true maximum is `31.52065`, at `t ≈ 17.4`) by
+Helfgott, in RSBounds (`RSBounds/HelfgottB6/`): Taylor expansions for `2πt ≤ 28`, using our
+`MinorArcs/Eta2DDTaylor.lean`, and ten integrations by parts with a second-order bisection beyond,
+where the margin is only about `0.00035`. (B.11) follows. Our own kernel check of the cruder `32`
+(`MinorArcs/Eta2DDBound.lean`: three integrations by parts and a bisection for `t ≥ 2`, Taylor
+polynomials below) is no longer used.
 
-With `c₀ = 32` (for [H]'s `31.521`) and `c₊ = 2`, Theorem 3.1.1 has `2.511 x/√t` for [H]'s
-`2.5 x/√t`, and the worst cell of the final minor-arc inequality is `1.00666` (against `1.007`).
+With `c₀ = 31.521` and `c₊ = 2`, Theorem 3.1.1 has `2.511 x/√t` for [H]'s `2.5 x/√t`, and the
+worst cell of the final minor-arc inequality is `1.00666` (against `1.007`).
 
 (9.94) is proved by Parseval from four elementary integrals (`MajorArcs/EtaPlusSqLog.lean`; the
 integrals by exact polynomial integration, `MajorArcs/EtaONum.lean`); [H]'s own derivation of it
@@ -218,8 +223,8 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
       with constants `0.8764` and `3.8x^{5/6}`;
     * the large sieve for primes (Props 12.1.2 and 12.2.4 proved; 12.2.4 with `c₊ = 2`);
     * Ch. 11 and a repaired Theorem 13.2.1;
-    * [H, (14.28)] in a weaker form;
-  * **non-prime terms**, [H, (14.51)], with constant `35.5` for [H]'s `7.3306`;
+    * [H, (14.28)] with [H]'s `8.4029·10⁻¹²`;
+  * **non-prime terms**, [H, (14.51)], with [H]'s constant `7.3306`;
   * **final inequality**: `(1.049 − 1.0072) x²/κ = 0.0418 x²/κ > 0` beats the error terms
     (`Helfgott/Numerics.lean`).
 * **Inputs from [H, §2]** (`Prelim/`):
@@ -269,14 +274,11 @@ Because of the route we took:
 
 | [H] | Statement | [H]'s constant | ours | why |
 |---|---|---|---|---|
-| Thm 3.1.1 | first case: the other terms | `2.5 x/√t`, `3.36 x^{5/6}` | `2.511 x/√t`, `3.8 x^{5/6}` | `2.511` follows from `c₀ = 32` and `c₊ = 2` (next two rows); `3.8 x^{5/6}` collects cruder lower-order terms |
-| Lemma B.1.2, (B.6) | `\|η̂₂''\|_∞` | `31.521` | `32` | rounded up, as Helfgott suggested, for a simpler kernel check. [H]'s value is right: the maximum is `31.52065` |
+| Thm 3.1.1 | first case: the other terms | `2.5 x/√t`, `3.36 x^{5/6}` | `2.511 x/√t`, `3.8 x^{5/6}` | `2.511` follows from `c₊ = 2` (next row); `3.8 x^{5/6}` collects cruder lower-order terms |
 | Prop 12.2.4 | `c₊` in `(log Q₀ + c₊)/(log Q + c_E)` | `1.36` | `2` | [H]'s `1.36` needs a finite check over 88 million pairs `(q, n)`; `c₊ = 2` allows a structural argument instead. [H]'s check passes in our interval-arithmetic run (`scripts/rigorous/p1224_rig.c`), outside Lean |
 | Props 9.3.2, 9.4.2, 9.5.1 | explicit formulas | — | weaker | we count zeros by Jensen's formula in windows, not by `N(T)` |
 | Cor 7.1.3, Thm 7.1.4, Prop 7.1.5 | error terms from GRH, e.g. Cor 7.1.3 | `2.485·10⁻¹⁹ + (381500/√q + 76)/√y` | `10⁻¹⁷ + 4.7·10⁶/(√q √y)`, `y ≥ 10²⁵` | they come from the weaker explicit formulas; each is stated for the range the proof uses (`NOTES.md`) |
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` | our own assembly of the main term and the error terms |
-| (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` | [H]'s value needs the sharp sup norms of Appendix A; we use the cruder `\|h_H\| ≤ 3.15` |
-| (14.51) | non-prime terms | `7.3306` | `35.5` | [H]'s formula and [H]'s `\|η_*\|_∞ ≤ 1.414`, with `\|η₊\|_∞ ≤ 1.94` for [H]'s `1.079955` (which needs the sharp sup norms of Appendix A) and elementary bounds for `ψ` and `ψ − θ` |
 | (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | the minor arcs use Ramaré's Liouville route, which suffices. [H]'s `4/5` ([Ramb, Thm 1.12]) is proved too, under the same hypothesis (`Prelim/MoebiusCoprimeSharp.lean`) |
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | the minor arcs use an elementary bound, which needs no hypothesis and suffices. [H]'s `1.00303 q/φ(q)` ([Ramb, Cor. 1.10]) is proved too, from `PlattGRH` (`Prelim/MoebiusLogSharp.lean`) |
 
@@ -383,7 +385,7 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
   for `x ≥ 11815` along Schoenfeld and Ramaré's recursive idea, shared on the Lean Zulip; formalized in
   Garald1/RSBounds (`RSBounds/Moebius003/`).
-* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `ec35ed4`), a Lake
+* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `82d7a55`), a Lake
   dependency (Apache 2.0, with a few files under MIT; it contains code from PrimeNumberTheoremAnd, IEANTN
   and teal-sea/zeta-lab, under their own licenses).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).

@@ -11,7 +11,7 @@ the hypotheses and checks them against their sources.
   book's. Its minor-arc bound is `1.00948` (the 2013 paper has `0.97392`), so [H]'s final margin is
   `0.048779·x²/κ`. Ours is `0.0418·x²/κ` (`1.049 − 1.0072`).
 * Where the final inequality has room, we prove cruder constants than the book's sharp ones (e.g.
-  the non-prime terms: `35.5` instead of `7.3306`). Each change is recorded in the docstrings and
+  `c₊ = 2` instead of `1.36` in Prop 12.2.4). Each change is recorded in the docstrings and
   in the README.
 * Published results enter only as the two hypotheses of `Statement.lean`, as `Fact` instances
   (`RamareMoebius` is also a `Fact`, provided from `Fact PlattGRH` by `Prelim/RamareMoebius.lean`).
@@ -533,7 +533,7 @@ are kept as exact expressions in `c₊`.
   `0.276 x^{5/6}(log x)^{3/2} + 1234 x^{2/3} log x`. Piece generators: `scripts/gen_a1_pieces.py`,
   `scripts/gen_b_pieces.py` (exact rational checks first); Taylor exp/log bounds `log_le_num`,
   `le_log_num` (`SecondNumerics.lean`).
-* With `c₀ = 32` (below): `√c₀ ∈ [5.6568, 5.6569]`, `c₂ ∈ [0.6664, 0.6665]`, `2√c₀/π ≤ 3.6015`.
+* With `c₀ = 31.521` (below): `√c₀ ∈ [5.6143, 5.6144]`, `c₂ ∈ [0.6714, 0.6715]`, `2√c₀/π ≤ 3.575`.
 
 ## Ch. 11: Prop 11.2.3 erratum and Prop 11.2.3′
 
@@ -638,7 +638,7 @@ beyond Platt's range, where only `g(q) ≥ g(300000)` is available.
 `scripts/gen_cells.py`; worst cell `1.00666`, at the bottom), and `NumericsAsymp.lean` beyond
 (it quotes the bounds of `c8_g0` and `chain8` from the generated file: update them after regenerating). Then
 `S_{η₊} = S₁ + S₂` (`S₁`: primes `> √x`) with `|a + b|² ≤ (1+t)|a|² + (1+1/t)|b|²`, `I₀ ≥ 8.6294x`, and
-(14.28) with `8·10⁻¹¹` give `(1.0001·1.007 + 10001·22.75·8·10⁻¹¹) ≤ 1.0072` (`t = 10⁻⁴`).
+(14.28) with `8.4029·10⁻¹²` give `(1.0001·1.007 + 10001·22.75·8.4029·10⁻¹²) ≤ 1.0072` (`t = 10⁻⁴`).
 
 ## Major arcs: (14.7) and (14.27) (`MajorArcs/`)
 
@@ -659,17 +659,26 @@ beyond Platt's range, where only `g(q) ≥ g(300000)` is available.
   `(η◦∗η◦)(ρ) ≥ ‖η◦‖₂² − ½(2−ρ)²‖η◦'‖₂²`; moments of `η_*`; `FourierMain.lean`: (10.22) by Fourier
   inversion). Total `1.314 · 0.800689 = 1.05211`, minus `0.00283` for `η₊ → η◦` and the `β`-tail, minus
   the residuals: `1.049` holds with a margin of about `6.6·10⁻⁵`.
-* **(14.28)** (`MinorArcs/EBound.lean`, `Helfgott/HHBound.lean`) with `8·10⁻¹¹` for [H]'s
-  `8.4029·10⁻¹²`, which is exactly tight at `x = 4.9·10²⁶` and needs Appendix A's sharp sup norms. Ours
-  uses `|h_H| ≤ (3/π)·TV(h) + O(Hε²) ≤ 3.15` (integrate by parts against `G_H(z) = ∫_0^z sin(Hv)/(πv)dv`,
-  `|G_H| ≤ 3/π`).
+* **(14.28)** (`MinorArcs/EBound.lean`) with [H]'s `8.4029·10⁻¹²`, which is exactly tight at
+  `x = 4.9·10²⁶`: Helfgott's proof in RSBounds (`RSBounds/HelfgottAppA/`), from the sup norms of
+  Appendix A, `|η₊|_∞ ≤ 1.079955` and `|η₊ · t|_∞ ≤ 1.19073`, proved there via
+  `|h − h_H| ≤ ‖g''‖₁/(πH) ≤ 0.0803` by Fourier inversion ([H]'s (A.36) fails for very small `t`), with
+  our `ψ` bounds (2.15), (5.5) as inputs. The same sup norms give (14.51) with [H]'s `7.3306`
+  (`Helfgott.nonprime_input`). Our cruder `|η₊| ≤ 1.94` (`Helfgott/HHBound.lean`:
+  `|h_H| ≤ (3/π)·TV(h) + O(Hε²) ≤ 3.15`) is still used by the major arcs (`HHFourier.lean`,
+  `ArcChars.lean`), which Helfgott's files import.
 * `final_inequality_crude` with margin `0.0418` uses `v = N^{1/64}` (the `N^{1/16}` + `log u ≤ u/e`
-  argument loses a factor of about 4.6).
+  argument loses a factor of about 4.6). It is stated for `35.5 · N^{3/2} log N`, our earlier
+  constant for (14.51); `Helfgott.Main` uses it with `7.3306 ≤ 35.5`, so that `Helfgott/Numerics.lean`,
+  which much of the development imports, need not change.
 
-## Lemma B.1.2 with `c₀ = 32` (`MinorArcs/Eta2DD*.lean`, `InnerSums.lean`)
+## Lemma B.1.2: [H]'s `c₀ = 31.521` (RSBounds) and our `32` (`MinorArcs/Eta2DD*.lean`)
 
-Helfgott suggested a slightly weaker constant than his `31.521` (the true maximum is `31.52065`, at
-`t ≈ 17.4`).
+The main theorems use [H]'s `31.521` (the true maximum is `31.52065`, at `t ≈ 17.4`), proved by
+Helfgott in RSBounds (`RSBounds/HelfgottB6/`: our Taylor lemmas with degree `< 90` for `2πt ≤ 28`; ten
+integrations by parts, remainder `4·10!·(4¹¹−1)w¹⁰`, and a second-order bisection in `(z, w)` beyond,
+since the margin at the maximum is only about `0.00035`). Our own check of the weaker `32`, which
+Helfgott had suggested, is below; it is no longer used (`Eta2DDBound.lean`).
 * `t ≥ 2`: `eta2DD t = F(z, w) + O*(6120 w³)`, `z = e(−t/4)`, `w = 1/2πt`, by three integrations by
   parts of `Jq`. `F` is a polynomial in `z, w` (`Fz`); `z` is treated as free on the circle,
   parametrised by `zm m = ((1−m²) + 2mi)/(1+m²)` for `m ∈ [−1, 1]` and sign `±`. `chk` bisects

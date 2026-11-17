@@ -118,7 +118,7 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
   have hsq1 : √(c₀ * c₁) ≤ 5.657 := by
     rw [Real.sqrt_le_left (by norm_num)]
     have : c₀ = √c₀ ^ 2 := (Real.sq_sqrt (by norm_num [c₀])).symm
-    have : √c₀ ^ 2 ≤ 5.6569 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
+    have : √c₀ ^ 2 ≤ 5.6144 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
     have hc00 : (0 : ℝ) < c₀ := by norm_num [c₀]
     nlinarith
   have hA : 2 * √(c₀ * c₁) / π ≤ 3.6015 := by rw [div_le_iff₀ (by linarith)]; nlinarith
@@ -165,6 +165,7 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
     calc 3 * c₁ / 2 * (U / c₂ / z) * logPlus z * Real.log (q / c₂)
         = 3 * c₁ / 2 * (U / c₂) * (logPlus z / z) * Real.log (q / c₂) := by field_simp
       _ ≤ 3 * 1.000001 / 2 * (1225 * T / 0.6664) * 0.368 * (2 * L) := by
+          have : (0.6664 : ℝ) ≤ c₂ := by linarith
           gcongr
       _ ≤ 0.00034 * L * T ^ 2 := by
           have h1 : 1225 * T / 0.6664 ≤ 1838.3 * T := by rw [div_le_iff₀ (by norm_num)]; nlinarith
@@ -187,8 +188,8 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
           have : (q : ℝ) * 349 ≤ T ^ 2 := by rwa [le_div_iff₀ (by norm_num)] at hqQ
           rw [le_div_iff₀ (by norm_num)]; nlinarith
         have : c₀ * rexp 3 * q ^ 2 ≤ 32 * 20.1 * (T ^ 4 / 121801) := by
-          have : c₀ = 32 := rfl
-          rw [this]; gcongr
+          have : c₀ ≤ 32 := by norm_num [c₀]
+          gcongr
         have : (5.5 : ℝ) ≤ eta2'L1 := by unfold eta2'L1; have := Real.log_two_gt_d9; linarith
         have : T * (4 * π * eta2'L1 * T ^ 3) ≥ T * (4 * 3.1415 * 5.5 * T ^ 3) := by gcongr
         nlinarith [pow_pos hT0 4]
@@ -249,10 +250,10 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
       _ ≤ _ := by
           have : T * √T * 2449 ≤ T ^ 2 := by nlinarith
           nlinarith
-  have hc232 : c₂ ^ (3 / 2 : ℝ) ≤ 0.5443 := by
+  have hc232 : c₂ ^ (3 / 2 : ℝ) ≤ 0.551 := by
     rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add (by linarith), Real.rpow_one,
       ← Real.sqrt_eq_rpow]
-    have : √c₂ ≤ 0.8165 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
+    have : √c₂ ≤ 0.8195 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
     nlinarith [Real.sqrt_nonneg c₂]
   have hlx3 : Real.log (2 * rexp 1 * T ^ 3 / c₂) ≤ 3 * L + 2.1 := by
     have h1 : 2 * rexp 1 * T ^ 3 / c₂ ≤ 8.159 * T ^ 3 := by
@@ -268,7 +269,7 @@ theorem b441_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (hqQ : (
     have hsx2 : √(2 * T ^ 3) ≤ 1.41422 * (T * √T) := by
       rw [Real.sqrt_le_left (by positivity), mul_pow, mul_pow, sq (√T), hss]; nlinarith [pow_pos hT0 3]
     have hk : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 11.77 := by
-      have : c₀ = 32 := rfl
+      have : c₀ = 31.521 := rfl
       rw [this, div_le_iff₀ (by positivity)]
       have : 0 ≤ c₂ ^ (3 / 2 : ℝ) := by positivity
       nlinarith
@@ -387,7 +388,7 @@ theorem typeI1_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     have hk : c₀ * (1 / 2 - 2 / π ^ 2) ≤ 15.761 := by
       have h0 : 0.1 ≤ 2 / π ^ 2 := by
         rw [le_div_iff₀ (by positivity)]; nlinarith [Real.pi_lt_d2, Real.pi_pos]
-      have hc : c₀ = 32 := rfl
+      have hc : c₀ = 31.521 := rfl
       rw [hc]; nlinarith
     have hk0 : 0 ≤ c₀ * (1 / 2 - 2 / π ^ 2) :=
       mul_nonneg (by norm_num [c₀]) (by linarith [pi_two_div_sq_le])
@@ -493,7 +494,7 @@ theorem b450_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
       have h := Real.pi_lt_d4
       have h2 : π ^ 2 < 3.1416 ^ 2 := pow_lt_pow_left₀ h Real.pi_pos.le (by norm_num)
       rw [le_div_iff₀ (by positivity)]; nlinarith
-    have : c₀ = 32 := rfl
+    have : c₀ = 31.521 := rfl
     nlinarith
   have hk0 : 0 ≤ (1 / 4 - 1 / π ^ 2) * c₀ := by
     have : 1 / π ^ 2 ≤ 1 / 4 := by

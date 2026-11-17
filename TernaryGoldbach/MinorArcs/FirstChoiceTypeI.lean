@@ -13,16 +13,16 @@ open Real
 
 namespace TernaryGoldbach.MinorArcs
 
-theorem sqrt_c₀_bounds : 5.6568 ≤ √c₀ ∧ √c₀ ≤ 5.6569 := by
+theorem sqrt_c₀_bounds : 5.6143 ≤ √c₀ ∧ √c₀ ≤ 5.6144 := by
   unfold c₀
   constructor
   · rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
   · rw [Real.sqrt_le_left (by norm_num)]; norm_num
 
-theorem c₂_bounds : 0.6664 ≤ c₂ ∧ c₂ ≤ 0.6665 := by
+theorem c₂_bounds : 0.6714 ≤ c₂ ∧ c₂ ≤ 0.6715 := by
   obtain ⟨h1, h2⟩ := sqrt_c₀_bounds
-  have hp1 := Real.pi_gt_d4
-  have hp2 := Real.pi_lt_d4
+  have hp1 := Real.pi_gt_d6
+  have hp2 := Real.pi_lt_d6
   unfold c₂
   constructor
   · rw [le_div_iff₀ (by positivity)]; nlinarith
@@ -118,7 +118,7 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
   have hsq1 : √(c₀ * c₁) ≤ 5.657 := by
     rw [Real.sqrt_le_left (by norm_num)]
     have : c₀ = √c₀ ^ 2 := (Real.sq_sqrt (by norm_num [c₀])).symm
-    have : √c₀ ^ 2 ≤ 5.6569 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
+    have : √c₀ ^ 2 ≤ 5.6144 ^ 2 := pow_le_pow_left₀ (by linarith) hc0b 2
     have hc00 : (0 : ℝ) < c₀ := by norm_num [c₀]
     nlinarith
   have hA : 2 * √(c₀ * c₁) / π ≤ 3.6015 := by
@@ -166,8 +166,8 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
             _ ≤ 20.1 := by norm_num
         have hq2 : (q : ℝ) ^ 2 ≤ S ^ 4 := by nlinarith
         have : c₀ * rexp 3 * q ^ 2 ≤ 32 * 20.1 * S ^ 4 := by
-          have : c₀ = 32 := rfl
-          rw [this]; gcongr
+          have : c₀ ≤ 32 := by norm_num [c₀]
+          gcongr
         have : 2 * (4 * π * eta2'L1 * S ^ 6) ≥ 2 * (4 * 3.1415 * 5.5 * S ^ 6) := by
           have : (5.5 : ℝ) ≤ eta2'L1 := by unfold eta2'L1; have := Real.log_two_gt_d9; linarith
           gcongr
@@ -223,15 +223,15 @@ theorem bound_4_41_first {T U : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (
   -- Term e.
   have te : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) * √(2 * S ^ 6) *
       Real.log (2 * rexp 1 * S ^ 6 / c₂) ≤ 0.00062 * S ^ 5 := by
-    have hc32 : c₂ ^ (3 / 2 : ℝ) ≤ 0.545 := by
+    have hc32 : c₂ ^ (3 / 2 : ℝ) ≤ 0.551 := by
       have hc0 : 0 ≤ c₂ := by linarith
       rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num, Real.rpow_add' hc0 (by norm_num), Real.rpow_one,
         ← Real.sqrt_eq_rpow]
-      have : √c₂ ≤ 0.8165 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
+      have : √c₂ ≤ 0.8195 := by rw [Real.sqrt_le_left (by norm_num)]; nlinarith
       nlinarith [Real.sqrt_nonneg c₂]
     have h1 : 20 * c₀ * c₂ ^ (3 / 2 : ℝ) / (3 * π ^ 2) ≤ 11.8 := by
       rw [div_le_iff₀ (by positivity)]
-      have : c₀ = 32 := rfl
+      have : c₀ = 31.521 := rfl
       rw [this]
       have : (0 : ℝ) ≤ c₂ ^ (3 / 2 : ℝ) := by positivity
       nlinarith

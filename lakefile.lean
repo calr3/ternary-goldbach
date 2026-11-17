@@ -11,7 +11,7 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "v
 -- to this package instead of fetching the older commit, so RSBounds is compiled against the current
 -- modules. Only the RSBounds modules that `TernaryGoldbach` imports, and their dependencies, are built.
 require RSBounds from git "https://github.com/Garald1/RSBounds" @
-  "ec35ed41b034506e303b2ba90cf18963d6265403"
+  "82d7a55f02e52cd071cd8ed800cc889a23ad3e61"
 
 -- Each theorem takes as `Fact` instances only the hypotheses its proof uses; the
 -- `unusedSectionVars` linter (on by default) reports a hypothesis a theorem takes but does not use.

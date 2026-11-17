@@ -12,7 +12,7 @@ typeset PDF; equation numbers are the book's.
 * §4.1, trigonometric sums: Lemmas 4.1.1–4.1.3, stated in full generality and **proved** in
   `MinorArcs/TrigSums.lean`.
 * §4.2, Type I estimates: Lemmas 4.2.2–4.2.4, which [H, §6.2] applies with `η = η₂`,
-  `c₀ = 31.521` (we use `c₀ = 32`, `InnerSums.lean`), `|η₂'|₁ = 8 log 2`, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
+  `c₀ = 31.521` (`InnerSums.lean`), `|η₂'|₁ = 8 log 2, `ρ₀ = 4`.  We state them for exactly that `η`, so that the
   smoothing hypotheses ("η continuous, piecewise `C²`, compactly supported, `|η|₁ = 1`,
   `c₀ ≥ |η̂''|_∞`") become separate facts about `η₂` (`eta2_*` below).  Lemma 4.2.1 is only the
   template for these proofs and isn't stated.
@@ -93,7 +93,7 @@ noncomputable def typeI2 (α x U V : ℝ) : ℂ :=
 /-- `|η₂|₁ = 1` [H, (6.1)]. -/
 theorem eta2_L1 : ∫ t, |eta2 t| = 1 := Helfgott.integral_abs_eta2
 
-/-- `|η̂₂''|_∞ ≤ c₀` [H, (B.6), Lemma B.2.3] (`c₀ = 32`; [H]: `31.521`), written via
+/-- `|η̂₂''|_∞ ≤ c₀` [H, (B.6), Lemma B.2.3] (`c₀ = 31.521`), written via
 `η̂''(t) = (2πit)² η̂(t)`. From `eta2_fourier_bound'`. -/
 theorem eta2_fourier_bound (t : ℝ) : (2 * π * t) ^ 2 * ‖fourier eta2 t‖ ≤ c₀ := by
   have h : fourier eta2 t = FourierTransform.fourier (fun u => (eta2 u : ℂ)) t :=

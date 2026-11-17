@@ -183,8 +183,8 @@ theorem b451_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q) (hqQ :
     have e6 : c₂ * T ^ 3 / (T / 6) = 6 * c₂ * T ^ 2 := by field_simp
     have hw₀e : rexp 1 ≤ w₀ := by
       rw [hw₀def, le_div_iff₀ (by positivity), e6]
-      have : rexp 1 * (6 * c₂ * T ^ 2) ≤ 2.72 * (6 * 0.6665 * T ^ 2) := by
-        have : 6 * c₂ * T ^ 2 ≤ 6 * 0.6665 * T ^ 2 := by nlinarith [sq_nonneg T]
+      have : rexp 1 * (6 * c₂ * T ^ 2) ≤ 2.72 * (6 * 0.6715 * T ^ 2) := by
+        have : 6 * c₂ * T ^ 2 ≤ 6 * 0.6715 * T ^ 2 := by nlinarith [sq_nonneg T]
         exact mul_le_mul (by linarith) this (by positivity) (by norm_num)
       nlinarith [sq_nonneg T]
     have hww₀ : w₀ ≤ w := by
@@ -238,8 +238,8 @@ theorem b451_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q) (hqQ :
         have hq2 : (q : ℝ) ^ 2 ≤ T ^ 4 / 121801 := by
           rw [le_div_iff₀ (by norm_num)]; nlinarith
         have : c₀ * rexp 3 * q ^ 2 ≤ 32 * 20.1 * (T ^ 4 / 121801) := by
-          have : c₀ = 32 := rfl
-          rw [this]; gcongr
+          have : c₀ ≤ 32 := by norm_num [c₀]
+          gcongr
         have : (5.5 : ℝ) ≤ eta2'L1 := by unfold eta2'L1; have := Real.log_two_gt_d9; linarith
         have : T * (4 * π * eta2'L1 * T ^ 3) ≥ T * (4 * 3.1415 * 5.5 * T ^ 3) := by gcongr
         nlinarith [pow_pos hT0 4]
@@ -307,7 +307,7 @@ theorem b451_second {T : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : T / 6 < q) (hqQ :
       norm_num at this; linarith
     have hl50 : 0 ≤ Real.log (5 * D) := Real.log_nonneg (by nlinarith)
     have h5c : 5 * c₀ / (6 * π ^ 2) ≤ 2.71 := by
-      have : c₀ = 32 := rfl
+      have : c₀ = 31.521 := rfl
       rw [this, div_le_iff₀ (by positivity)]; nlinarith
     calc 2 * √c₀ / π * √(2 * c₂ * T ^ 3) * (2 + 12 * Real.log (5 * D)) + 5 * c₀ / (6 * π ^ 2)
         ≤ 3.6015 * (1.15932 * (T * √T)) * (2 + 12 * (2 * L + 7.6217)) + 2.71 := by gcongr
@@ -351,9 +351,9 @@ theorem b452_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
     rw [div_le_iff₀ (by positivity)]
     rcases hc with hc | ⟨-, -, hδq⟩
     · have h1 : 1 / (2 * c₂) * (T / 6) ≤ |δ| * q := mul_le_mul hδ hc.le (by positivity) hδ0.le
-      have h2 : 1 / (2 * 0.6665) * (T / 6) ≤ 1 / (2 * c₂) * (T / 6) := by
+      have h2 : 1 / (2 * 0.6715) * (T / 6) ≤ 1 / (2 * c₂) * (T / 6) := by
         gcongr
-      have : T ^ 3 ≤ 8.064 * T ^ 2 * (1 / (2 * 0.6665) * (T / 6)) := by
+      have : T ^ 3 ≤ 8.064 * T ^ 2 * (1 / (2 * 0.6715) * (T / 6)) := by
         have : T ^ 3 = T * T ^ 2 := by ring
         rw [this]; nlinarith [pow_pos hT0 2]
       nlinarith [pow_pos hT0 2]
@@ -475,7 +475,7 @@ theorem b452_second {α δ T : ℝ} {a : ℤ} {q : ℕ} (hT : 6e6 ≤ T)
   -- the last term.
   have tC : 35 * c₀ * c₂ / (3 * π ^ 2) * q * Real.log D ≤ (0.1446 * L + 0.4346) * T ^ 2 := by
     have hk : 35 * c₀ * c₂ / (3 * π ^ 2) ≤ 25.22 := by
-      have : c₀ = 32 := rfl
+      have : c₀ = 31.521 := rfl
       rw [this, div_le_iff₀ (by positivity)]; nlinarith
     calc 35 * c₀ * c₂ / (3 * π ^ 2) * q * Real.log D ≤ 25.22 * (T ^ 2 / 349) * (2 * L + 6.0122) := by
           have : (0 : ℝ) < c₀ := by norm_num [c₀]

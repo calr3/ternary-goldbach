@@ -1,14 +1,15 @@
 import TernaryGoldbach.MinorArcs.FourierSums
 import TernaryGoldbach.Helfgott.Eta2
 import TernaryGoldbach.MinorArcs.Eta2Fourier
-import TernaryGoldbach.MinorArcs.Eta2DDBound
+import RSBounds.HelfgottB6.Main
 
 /-!
 # The inner sums of the Type I estimates [H, §4.2]
 
 * `norm_fourier_comp_affine`: `‖𝓕[h(λ· + μ)](t)‖ = λ⁻¹ ‖𝓕h(t/λ)‖`.
-* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 32` ([H, (B.6)] has `31.521`), from `norm_eta2DD_le`
-  (`Eta2DDBound.lean`).
+* `eta2_fourier_bound'`: `|η̂₂''|_∞ ≤ c₀ = 31.521` ([H, (B.6)]), Helfgott's proof in RSBounds
+  (`RSBounds.HelfgottB6`). Our own check of the cruder `32` is `MinorArcs/Eta2DDBound.lean`, no
+  longer used.
 * `Todd`: `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], and `norm_Todd_le`: the three
   bounds of [H, (4.36)], from [H, (2.2)] and [H, Lemma 2.3.1] (`MinorArcs/FourierSums.lean`).
 * `Todd_main`: the main term [H, (4.33)–(4.34)]: for `q ∣ m` (`m/q` odd) and `|δ|m/x ≤ 1/2`,
@@ -58,8 +59,8 @@ namespace MinorArcs
 
 open TernaryGoldbach.Helfgott (eta2)
 
-/-- The constant `c₀ = 32 ≥ |η̂₂''|_∞` ([H, (B.6)] has `31.521`; `norm_eta2DD_le`). -/
-def c₀ : ℝ := 32
+/-- The constant `c₀ = 31.521 ≥ |η̂₂''|_∞` ([H, (B.6)]; `RSBounds.HelfgottB6`). -/
+def c₀ : ℝ := 31.521
 
 /-- `|η₂'|₁ = 8 log 2` [H, (6.1)]; it is the total variation of `η₂` (`eVariationOn_eta2`). -/
 noncomputable def eta2'L1 : ℝ := 8 * Real.log 2
@@ -75,22 +76,14 @@ theorem norm_fourier_eta2_neg (t : ℝ) :
     funext v; rw [map_mul, conj_e, Complex.conj_ofReal, mul_neg, neg_neg]
   rw [this, integral_conj, Complex.norm_conj]
 
-/-- **[H, Lemma B.1.2, (B.6)] with `32`**: `|η̂₂''|_∞ ≤ 32`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
-(`η̂''(t) = (2πit)² η̂(t)`), from `norm_eta2DD_le`. -/
+/-- **[H, Lemma B.1.2, (B.6)]**: `|η̂₂''|_∞ ≤ 31.521`, written as `(2πt)² |η̂₂(t)| ≤ c₀`
+(`η̂''(t) = (2πit)² η̂(t)`). Helfgott's proof (Garald1/RSBounds, `RSBounds/HelfgottB6/`): Taylor
+expansions for `2πt ≤ 28` and ten integrations by parts with a bisection beyond. (The cruder
+`‖η̂₂''‖ ≤ 32`, `norm_eta2DD_le`, is ours.) -/
 theorem eta2_fourier_bound' (t : ℝ) :
     (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ ≤ c₀ := by
-  wlog ht : 0 ≤ t generalizing t
-  · have h := this (-t) (by linarith)
-    rwa [norm_fourier_eta2_neg, show (2 * π * -t) ^ 2 = (2 * π * t) ^ 2 by ring] at h
-  rcases eq_or_lt_of_le ht with h0 | hpos
-  · subst h0; unfold c₀; norm_num
-  have hn : (2 * π * t) ^ 2 * ‖𝓕 (fun u => (eta2 u : ℂ)) t‖ = ‖eta2DD t‖ := by
-    rw [← eta2DD_eq hpos.ne', norm_mul]
-    congr 1
-    rw [show ((2 * π * t) ^ 2 : ℂ) = (((2 * π * t) ^ 2 : ℝ) : ℂ) by push_cast; ring,
-      Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-  rw [hn]; unfold c₀
-  exact norm_eta2DD_le ht
+  unfold c₀
+  exact _root_.RSBounds.HelfgottB6.eta2_fourier_bound_31521 t
 
 /-- `T_{m,∘}(α) = ∑_{n odd} e(αmn) η₂(mn/x)` [H, (4.35)], with `n = 2r + 1`. -/
 noncomputable def Todd (α x : ℝ) (m : ℕ) : ℂ :=

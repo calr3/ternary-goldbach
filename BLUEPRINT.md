@@ -19,8 +19,8 @@ differences from [H]; `NOTES.md` has the details.
 | (14.50) circle identity | `circle_identity_input` | ✅ |
 | (14.27) major arcs `≥ 1.058259 x²/κ` | `major_arcs_input` (`MajorArcs/MajorTotal.lean`) | ✅ with `1.049` |
 | (14.49) minor arcs `≤ 1.00948 x²/κ` | `minor_arcs_input` (`MinorArcs/MinorTotal.lean`) | ✅ with `1.0072`, via repair 3 of Thm 13.2.1 |
-| (14.51) non-prime terms | `nonprime_input` | ✅ with `35.5` for `7.3306` |
-| final inequality | `final_inequality_crude` (`Helfgott/Numerics.lean`) | ✅ margin `0.0418 x²/κ` |
+| (14.51) non-prime terms | `nonprime_input` | ✅ with [H]'s `7.3306` (Appendix A sup norms, RSBounds) |
+| final inequality | `final_inequality_crude` (`Helfgott/Numerics.lean`; stated with `35.5 ≥ 7.3306`) | ✅ margin `0.0418 x²/κ` |
 | `N < 10²⁷`: [HP13] | `ternaryGoldbachUpTo_1e27` (`Helfgott/SmallCases.lean`) | ✅ binary Goldbach up to `4·10¹⁸` (`binary_goldbach_input`, the hypothesis `BinaryGoldbachInput`) and a prime in `[n − 4·10¹⁸, n − 4]` from a prime ladder up to `10²⁷` (`Ladder.ladder_prime`, `Ladder/`), checked by the kernel, in place of [HP13]'s |
 
 ## Minor arcs: (14.49) ⟸ Thm 13.2.1
@@ -29,7 +29,7 @@ differences from [H]; `NOTES.md` has the details.
 (14.49)  [§14.3: numerics]  ✅ MinorArcs/MinorTotal.lean `minor_total` (≤ 1.0072 x²/κ)
  │   [S_{η₊} = S₁ + S₂ (S₁: primes > √x); numerics `numerics_M`: generated cells
  │    (NumericsCells, scripts/gen_cells.py, worst Mexpr 1.00666 ≤ 1.007) and NumericsAsymp;
- │    (14.7) from MajorArcs/L2Major.lean; (14.28) with 8·10⁻¹¹ (MinorArcs/EBound.lean)]
+ │    (14.7) from MajorArcs/L2Major.lean; (14.28) with [H]'s 8.4029·10⁻¹² (MinorArcs/EBound.lean, RSBounds)]
  └─ Thm 13.2.1  (minor-arc total: ℓ² over arcs × ℓ∞ bounds)
      │   ⚠ [H]'s proof uses arcs at scale x/κ for the ℓ∞ input but at scale x for the ℓ² input and
      │     (14.27); see NOTES "Ch. 13: scale erratum"
@@ -48,7 +48,7 @@ differences from [H]; `NOTES.md` has the details.
      │   │    §4.2: Lemma 4.2.2 ✅ MinorArcs/TypeIProof.lean; Lemma 4.2.3 ✅ MinorArcs/TypeILogProof.lean
      │   │          ((4.40) corrected; the unused (4.42) is omitted); Lemma 4.2.4 ✅ MinorArcs/TypeI2Rest.lean
      │   │          ((4.50)–(4.52) corrected, see NOTES);
-     │   │    App. B: |η̂₂''|_∞ ≤ 32 ✅ MinorArcs/Eta2DDBound.lean (kernel grids; [H] has 31.521),
+     │   │    App. B: |η̂₂''|_∞ ≤ 31.521 ✅ RSBounds.HelfgottB6 (our ≤ 32 in Eta2DDBound.lean, unused),
      │   │          (B.17), (B.18) ✅ MinorArcs/Eta2LogFourier.lean]
      │   ├─ Ch 5  Type II sums: S₁ via a sum with μ (§5.1), S₂ via the large sieve (§5.2, Prop 5.2.4)
      │   │   [§5.2: Lemmas 5.2.1, 5.2.3, Prop 5.2.4 ✅ MinorArcs/TypeII.lean (v = 2); sharp large

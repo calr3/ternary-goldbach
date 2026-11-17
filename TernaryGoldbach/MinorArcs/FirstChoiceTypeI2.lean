@@ -185,7 +185,7 @@ theorem typeI2_c0_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 ≤ q) (h
   have hpi' := Real.pi_lt_d6
   set K₀ := c₀ * (1 / 8 - 1 / (2 * π ^ 2)) with hK₀
   have hK1 : K₀ ≤ 2.379 := by
-    rw [hK₀]; have : c₀ = 32 := rfl
+    rw [hK₀]; have : c₀ = 31.521 := rfl
     rw [this]
     have : 1 / (2 * π ^ 2) ≥ 1 / (2 * 3.1416 ^ 2) := by
       apply one_div_le_one_div_of_le (by positivity); nlinarith
@@ -304,7 +304,7 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
     rw [h1]
     have h2 : 2 * (√c₀ * √c) / π ≤ 3.6014 * (1 + 1.3863 / √t) := by
       rw [div_le_iff₀ (by linarith)]
-      have hm : √c₀ * √c ≤ 5.6569 * (1 + 1.3863 / √t) :=
+      have hm : √c₀ * √c ≤ 5.6144 * (1 + 1.3863 / √t) :=
         mul_le_mul hc0b hsc (Real.sqrt_nonneg _) (by norm_num)
       have ha : 0 ≤ 1 + 1.3863 / √t := by positivity
       have : 3.6014 * (1 + 1.3863 / √t) * 3.141592 ≤ 3.6014 * (1 + 1.3863 / √t) * π :=
@@ -312,7 +312,9 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
       nlinarith
     have h3 : 3 * c / (2 * c₂ * rexp 1) ≤ 0.82807 * (1 + 2.7726 / √t) := by
       rw [div_le_iff₀ (by positivity)]
-      have h1 : 2 * 0.6664 * 2.7182818283 ≤ 2 * c₂ * rexp 1 := by gcongr
+      have h1 : 2 * 0.6664 * 2.7182818283 ≤ 2 * c₂ * rexp 1 := by
+        have : (0.6664 : ℝ) ≤ c₂ := by linarith
+        gcongr
       have ha : 0 ≤ 1 + 2.7726 / √t := by positivity
       have h2 : 0.82807 * (1 + 2.7726 / √t) * (2 * 0.6664 * 2.7182818283) ≤
           0.82807 * (1 + 2.7726 / √t) * (2 * c₂ * rexp 1) :=
@@ -356,7 +358,7 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
     unfold coefQ
     have hs1 : √(c₀ * c) ≤ 9.734 := by
       rw [Real.sqrt_le_left (by norm_num)]
-      have : c₀ = 32 := rfl
+      have : c₀ = 31.521 := rfl
       rw [this]; nlinarith
     have hs1' : √(c₀ * c) / π ≤ 3.0985 := by rw [div_le_iff₀ (by linarith)]; nlinarith
     have hs10 : 0 ≤ √(c₀ * c) / π := by positivity
@@ -379,8 +381,8 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
         rw [div_le_iff₀ (by positivity)]
         have : (q : ℝ) ^ 2 ≤ T ^ 2 / 36 := by nlinarith
         have : c₀ * rexp 3 * q ^ 2 * V1 T ≤ 32 * 20.1 * (T ^ 2 / 36) * (9 * T / 2) := by
-          have : c₀ = 32 := rfl
-          rw [this]; gcongr
+          have : c₀ ≤ 32 := by norm_num [c₀]
+          gcongr
         have : 2 * (4 * 3.141592 * 5.5 * T ^ 3) ≤ 2 * (4 * π * eta2'L1 * T ^ 3) := by gcongr
         nlinarith [pow_pos hT0 3]
       have := Real.log_le_sub_one_of_pos (show 0 < c₀ * rexp 3 * q ^ 2 * V1 T / (4 * π * eta2'L1 * T ^ 3) by
@@ -393,7 +395,7 @@ theorem typeI2_small_rest_first {T t : ℝ} {q : ℕ} (hT : 6e6 ≤ T) (hq : 1 �
       rw [div_le_iff₀ (by linarith)]
       have : √(3 * c₀ * c) ≤ 16.859 := by
         rw [Real.sqrt_le_left (by norm_num)]
-        have : c₀ = 32 := rfl
+        have : c₀ = 31.521 := rfl
         rw [this]; nlinarith
       nlinarith
     have h4 : 3 * c / (2 * c₂) ≤ 6.6641 := by rw [div_le_iff₀ (by positivity)]; nlinarith
