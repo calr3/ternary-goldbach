@@ -50,7 +50,7 @@ sources:
     type: "formalization"
     authors: ["H. A. Helfgott"]
     id: "https://github.com/Garald1/RSBounds"
-    location: "Lake dependency, pinned to commit 0393b52 (lakefile.lean, lake-manifest.json)"
+    location: "Lake dependency, pinned to commit ec35ed4 (lakefile.lean, lake-manifest.json)"
     relationship: "uses"
     license: "MIT"
     note: >-

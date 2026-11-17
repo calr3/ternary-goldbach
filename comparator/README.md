@@ -51,9 +51,9 @@ container with 4 cores and 15 GB of memory, got through building and exporting `
 without finishing, and the container restarted before it gave a verdict.
 
 The same two statements have passed Comparator with another proof. Helfgott reported on Zulip
-(2026-11-16) that RSBounds' [Comparator configuration](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator-ternary-goldbach.json),
+(2026-11-16) that RSBounds' [Comparator configuration](https://github.com/Garald1/RSBounds/blob/ec35ed41b034506e303b2ba90cf18963d6265403/comparator-ternary-goldbach.json),
 which checks `RSBounds.Moebius003.UpstreamMain` against RSBounds'
-[challenge file](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator/TernaryGoldbachChallenge.lean), passed in 22 h 56 min. That challenge file has the same definitions and the same two theorem
+[challenge file](https://github.com/Garald1/RSBounds/blob/ec35ed41b034506e303b2ba90cf18963d6265403/comparator/TernaryGoldbachChallenge.lean), passed in 22 h 56 min. That challenge file has the same definitions and the same two theorem
 statements as `Challenge.lean` (as `ternary_goldbach_of_two_hypotheses` and
 `ternary_goldbach_large_of_plattGRH`), plus `ramareMoebius_of_plattGRH`. Its proof is RSBounds'
 assembly, built on this repository at `192ca57`.

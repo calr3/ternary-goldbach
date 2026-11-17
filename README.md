@@ -38,9 +38,10 @@ it depends on:
 Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
 proved from `PlattGRH` (`Prelim.ramareMoebius_of_plattGRH`). The proof is Helfgott's formalization
 of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds, a Lake
-dependency pinned to commit `0393b52`; see "Helfgott's RSBounds" below). The minor arcs take it as a
+dependency pinned to commit `ec35ed4`; see "Helfgott's RSBounds" below). The minor arcs take it as a
 `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. RSBounds also
-proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`).
+proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`),
+and (2.14)–(2.19) on [H]'s ranges (`Prelim/PsiHelfgottBook.lean`).
 
 The bounds for `ψ`, `θ` and Mertens' product (Lemma C.2.2) that replace [H]'s citations of
 [RS62], [RS75] and [RR96] (`Prelim.theta_explicit`, `Prelim.psi_two_sided`) use RH up to `10⁸`,
@@ -52,9 +53,9 @@ our proof avoids it (`HYPOTHESES.md`, Finding 5).
 
 ### Helfgott's RSBounds
 
-H. A. Helfgott's RSBounds development (https://github.com/Garald1/RSBounds, with Claude; MIT, with
-Apache 2.0 file headers) is a Lake dependency, pinned in `lakefile.lean` and `lake-manifest.json` to
-commit `0393b52`. The proof uses 2429 of its modules. It provides:
+H. A. Helfgott's RSBounds development (https://github.com/Garald1/RSBounds, with Claude; Apache 2.0,
+with a few files under MIT) is a Lake dependency, pinned in `lakefile.lean` and `lake-manifest.json` to
+commit `ec35ed4`. The main theorems use 2429 of its modules. It provides:
 * `RSBounds.Moebius003.ramareMoebius_of_finiteRH`: [H, (2.21)], Ramaré's `0.03/log x` for
   `x ≥ 11815`, from RH up to `1894438.5122` (the formalization of `mobius003.tex`). Its inputs are
   Schoenfeld's (5.6b*) (1976), PsiCert, and kernel-checked bounds for sums of `μ` (`MoebiusCert`)
@@ -64,7 +65,11 @@ commit `0393b52`. The proof uses 2429 of its modules. It provides:
 * Rosser–Schoenfeld (1975), `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to
   `1894438.5122`, with the first 29 zeros located by kernel-checked certificates (RSBounds'
   `vendor/rh100/`, from `teal-sea/zeta-lab`);
-* `RSBounds.HelfgottPsiBoundsFinal`: [H, (2.14)] and (2.17) with `1.0004` and `1.0008`.
+* `RSBounds.HelfgottPsiBoundsFinal`: [H, (2.14)] and (2.17) with `1.0004` and `1.0008`;
+* `RSBounds.HelfgottPsiBoundsBook` and `RSBounds.HelfgottLowBook`: (2.14), (2.16), (2.17) and (2.18)
+  on [H]'s ranges, with kernel-checked walks below `2.5·10⁷` (`RSBounds/HelfgottSmall/`) and
+  `2·10⁶` (`RSBounds/HelfgottLow/`, which also covers (2.19) for `117 ≤ y < 2·10⁶ + 1`). The main
+  theorems do not use them (`Prelim/PsiHelfgottBook.lean`).
 
 RH up to `1894438.5122` follows from `PlattGRH` at `q = 1`
 (`RSBounds.Moebius003.finiteRH_of_plattGRH`), so nothing is added to the hypotheses.
@@ -108,7 +113,7 @@ finishing, so it needs a long uninterrupted run.
 
 The same two statements have passed Comparator with another proof. Helfgott reported on Zulip
 (2026-11-16) that Comparator accepted RSBounds' assembly of them, `RSBounds.Moebius003.UpstreamMain`, in 22 h 56 min. RSBounds'
-[challenge file](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator/TernaryGoldbachChallenge.lean) has the same definitions and the same two theorem
+[challenge file](https://github.com/Garald1/RSBounds/blob/ec35ed41b034506e303b2ba90cf18963d6265403/comparator/TernaryGoldbachChallenge.lean) has the same definitions and the same two theorem
 statements as `Challenge.lean`, under other names. That proof is RSBounds' route, built on this
 repository at `192ca57`, not the proof on `main`. The earliest recorded run is from 2026-11-06, at
 commit `83ac1e1`, when the main theorems took four hypotheses (`RHUpTo`, `PlattGRH`,
@@ -239,7 +244,9 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   (2.14) and (2.17) with [H]'s `1.0004` and `1.0008` (for `y ≥ 2.5·10⁷`) are proved by Helfgott (`Prelim/PsiHelfgott.lean`, from RSBounds:
   the kernel-checked PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]` and Rosser–Schoenfeld's (1975)
   `|ψ(x) − x| < 0.00020211 x` for `x ≥ e²³` from RH up to `1894438.5122`), and the minor arcs use
-  them.
+  them. On [H]'s ranges, (2.14)–(2.19) are proved too (`Prelim/PsiHelfgottBook.lean`, from RSBounds:
+  (2.14) for `y ≥ 2·10⁶`, (2.16) for `y > 663`, (2.17) for `y > 1.6·10⁶`, (2.18) for `y ≥ 1` and
+  (2.19) for `y ≥ 117`); the minor arcs do not need them.
 
 [`BLUEPRINT.md`](BLUEPRINT.md) maps [H] chapter by chapter to the Lean files.
 
@@ -275,8 +282,6 @@ Because of the route we took:
 
 | [H] | Statement | [H]'s range | ours | why |
 |---|---|---|---|---|
-| (2.14), (2.17) | `ψ(y) ≤ 1.0004 y`, `∑_{n≤y} Λ(n) n < 1.0008 y²/2` | (2.14): `y ≥ 2·10⁶` | `y ≥ 2.5·10⁷` | Helfgott's proof (RSBounds); the minor arcs use them only for `y ≥ 2.7·10⁷` |
-| (2.19) | `∑_{y/2<p≤y} (log p)² ≤ ½ y log y` | `y ≥ 117` | `y ≥ 2·10⁶` | the range the minor arcs use. Our interval-arithmetic check (`scripts/rigorous/`), outside Lean, confirms [H]'s statement for integers `117 ≤ n ≤ 2·10⁶`, so for all `117 ≤ y ≤ 2·10⁶` (on `[n, n+1)` the left side only decreases and the right side only increases) |
 | (2.24) | `\|∑_{n≤x} μ(n)/n\| ≤ √(2/x)` | `x ≤ 10¹²` | `x < 11815` | kernel check (`Prelim/SmallMoebius.lean`). (2.22) uses it only below `11815`, where Ramaré's `0.03/log x` (`RamareMoebius`, proved from `PlattGRH`) takes over |
 
 Stronger than [H]'s: the minor-arc total (14.49) is `1.0072 x²/κ`, against [H]'s `1.00948 x²/κ`.
@@ -376,7 +381,7 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
   for `x ≥ 11815` along Ramaré's recursive idea, shared on the Lean Zulip; formalized in
   Garald1/RSBounds (`RSBounds/Moebius003/`).
-* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `0393b52`), a Lake
+* H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `ec35ed4`), a Lake
   dependency (MIT, with Apache 2.0 file headers; it contains code from PrimeNumberTheoremAnd, IEANTN
   and teal-sea/zeta-lab, under their own licenses).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).

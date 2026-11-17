@@ -311,6 +311,9 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   PsiCert `|ψ(x) − x| ≤ 0.8√x` on `[1500, 10¹⁰]`, kernel-checked, and RS75's `0.00020211 x` above
   `e²³`); `TypeI2Large`, `TypeI2Sum` and `FirstChoiceTypeI2*` use them (as `1.0004 V` and
   `0.5004 V²`). From `|ψ(y) − y| ≤ 31.5√y` alone, [H]'s constants are not reachable below about `10⁹`.
+  On [H]'s ranges (`y ≥ 2·10⁶` for (2.14), `y > 1.6·10⁶` for (2.17)) they are in
+  `Prelim/PsiHelfgottBook.lean`, from RSBounds' kernel-checked walk below `2.5·10⁷`
+  (`RSBounds/HelfgottSmall/`, about 1,300 modules); the minor arcs do not need them.
 * (2.13): summation by parts from `X = 10⁴` with `|ψ(n) − n| ≤ cPsi(n)√n` (the tables below `5·10⁷`,
   `psi_two_sided` above) and `theta_explicit` above `10¹⁷`; kernel for `N ≤ 10⁴`
   (`SmallMertensLower.lean`); `log(3/√2) ≥ 0.74`.
@@ -318,8 +321,11 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   applied with the sieve table below `5·10⁷`, `cB` on `[4.6·10⁷, 2·10¹²]` and `theta_explicit` above.
   The minor arcs use it at `W ≥ V ≥ 2·10⁶` (`V₂ = ⌊T/3⌋`, second choice), so the Type II theorems
   assume `2·10⁶ ≤ V`. Below `2·10⁶` the `c√y` bounds are too weak for the constant `½` (with
-  `c ≈ 33`, it closes analytically only from about `4·10⁷`; hence the sieve).
-* (2.16) is only claimed for `y > 663` (it fails at `y = 3`); it is not used.
+  `c ≈ 33`, it closes analytically only from about `4·10⁷`; hence the sieve). [H]'s range `y ≥ 117`
+  is `sum_log_sq_primes_le_book` (`Prelim/PsiHelfgottBook.lean`): RSBounds' kernel-checked walk for
+  `117 ≤ y < 2·10⁶ + 1` (`RSBounds/HelfgottLow/`) and this bound above.
+* (2.16) is only claimed for `y > 663` (it fails at `y = 3`), and (2.18) for `y ≥ 1`. Neither is used;
+  both are in `Prelim/PsiHelfgottBook.lean` on [H]'s ranges, from RSBounds (`HelfgottLowBook`).
 
 ### Mertens' product, Lemma C.2.2 (`Prelim/MertensProduct.lean`)
 

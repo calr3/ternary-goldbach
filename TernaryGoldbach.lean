@@ -32,6 +32,7 @@ import TernaryGoldbach.Prelim.SmallCGrid
 import TernaryGoldbach.Prelim.LogWalk
 import TernaryGoldbach.Prelim.RamareMoebius
 import TernaryGoldbach.Prelim.PsiHelfgott
+import TernaryGoldbach.Prelim.PsiHelfgottBook
 import TernaryGoldbach.Prelim.SmallLiouville
 import TernaryGoldbach.Prelim.SmallW
 import TernaryGoldbach.Prelim.SmallMuPhi
