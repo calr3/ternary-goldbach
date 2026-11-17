@@ -19,27 +19,89 @@ landrun, the Lean kernel). The two hypotheses are published numerical results th
 formalized. They appear as explicit hypotheses of the theorems, so you also need to check that
 they say what the cited papers prove (see `HYPOTHESES.md`).
 
-## Running it
+## Running it on another machine
 
-You need `landrun` (built from its `main` branch) and a `lean4export` that matches Lean `v4.35.0`
-in `PATH`, plus a Comparator build. Then, from the repository root:
+The check takes about a day (RSBounds' run of the same statements took 22 h 56 min), almost all of
+it in a single-threaded kernel replay, so run it on a machine that will stay up.
+`comparator/run.sh` does everything below the setup and keeps a timestamped log in
+`comparator/logs/`.
+
+**What the machine needs**
+* Linux with `git` and `curl`, and network access to GitHub and Mathlib's cache.
+* Memory: at least 16 GB, preferably 32 GB. The build compiles several modules at once (with 16 GB
+  and 4 at a time, `MinorArcs/G2TailNum.lean` was once killed for lack of memory). Exporting
+  `Solution` took about 8 GB in a test run, and the kernel replay has peaked around 5 GB.
+* Cores: more cores shorten the build (a few hours on 4 cores), not the replay.
+* Disk: about 30 GB free (the build is about 15 GB, and the exports need room too).
+* `bubblewrap`, with unprivileged user namespaces or installed setuid root. This must succeed:
+  `bwrap --unshare-user --ro-bind / / true`.
+
+**Setup** (once):
 
 ```sh
-lake build
+# Lean: elan installs the version in lean-toolchain (v4.35.0) on first use
+curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+source ~/.elan/env
+# bubblewrap, e.g. on Debian or Ubuntu
+sudo apt-get install -y bubblewrap
+# the repository, at the commit to check
+git clone https://github.com/calr3/ternary-goldbach
+cd ternary-goldbach
+git checkout main        # or a specific commit; the script records which
+```
+
+**Run** (inside `tmux` or `screen`, so that it survives a closed terminal):
+
+```sh
+tmux new -s comparator
+comparator/run.sh
+```
+
+On a shared machine, cap its memory with
+`systemd-run --user --scope -p MemoryMax=40G comparator/run.sh`.
+
+The script:
+1. checks that `bwrap` can create a user namespace;
+2. downloads Mathlib's prebuilt files (`lake exe cache get`); Lake fetches the other dependencies,
+   RSBounds among them, at the commits in `lake-manifest.json`;
+3. builds `Challenge` and `Solution` (`lake build Challenge Solution`), retrying up to three times,
+   since a module killed for lack of memory is simply compiled again;
+4. prints the axioms of both main theorems, which should be only `propext`, `Classical.choice` and
+   `Quot.sound`;
+5. runs `lake comparator --config comparator/config.json`. Inside the sandbox it resolves the
+   dependencies, rebuilds (nothing is left to compile after step 3), exports `Challenge` and
+   `Solution`, and replays `Solution` in Lean's kernel.
+
+**Success** looks like this at the end of the log:
+
+```
+Lean default kernel accepts the solution
+Your solution is okay!
+...
+VERDICT: accepted (exit code 0)
+```
+
+Exit code 1 means a rejection or a failed build inside the sandbox; 2 means it could not start
+(`bwrap`, the manifest or the configuration). Either way the log says why. If the run is
+interrupted, start `comparator/run.sh` again: the build is kept, but the export and the replay start
+over.
+
+**Please report** the `commit:` and `machine:` lines at the top of the log, the `real` time, and the
+log's last 20 lines, so that this file, the README and `formalization.yaml` can record the run.
+
+### With the standalone Comparator
+
+Comparator also exists as a separate tool. That needs `landrun` (built from its `main` branch), a
+`lean4export` that matches Lean `v4.35.0` in `PATH`, and a Comparator build. Then, from the
+repository root:
+
+```sh
+lake build Challenge Solution
 systemd-run --property=RestrictAddressFamilies=~AF_UNIX --user --pty -E PATH="$PATH" \
   --working-directory $(pwd) -- bash -c 'lake env /path/to/comparator comparator/config.json'
 ```
 
 (The `systemd-run` wrapper guards against a known landrun weakness. See Comparator's README.)
-
-Lake `v4.35.0` also has the check built in:
-
-```sh
-lake comparator --config comparator/config.json
-```
-
-It builds and exports the project inside a `bwrap` sandbox, so it needs `bubblewrap`, with either
-unprivileged user namespaces or a setuid-root `bwrap`.
 
 ## Status
 
