@@ -134,8 +134,9 @@ review:
   reviewers: []
   notes: >-
     A full `lake build` (with Challenge and Solution) succeeded on 2026-11-16 at commit 60ac565,
-    with RSBounds as a Lake dependency at 0393b52; `#print axioms` gives only propext,
-    Classical.choice and Quot.sound for both main theorems. The hypothesis statements
+    with RSBounds as a Lake dependency at 0393b52, and again on 2026-11-17 with RSBounds at
+    ec35ed4; `#print axioms` gives only propext, Classical.choice and Quot.sound for both main
+    theorems. The hypothesis statements
     were checked against their sources (HYPOTHESES.md). `Challenge.lean` restates the main theorems with Mathlib-only definitions for
     leanprover/comparator. The proof on main has not been through Comparator yet. The same two
     statements passed Comparator with RSBounds' assembly of the proof (built on this repository

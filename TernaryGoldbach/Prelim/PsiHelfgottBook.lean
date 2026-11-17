@@ -23,12 +23,12 @@ The proofs are Helfgott's (Garald1/RSBounds, a Lake dependency):
   walk (`RSBounds.HelfgottSmall`).
 * (2.16), (2.18): `RSBounds.HelfgottLowBook`, a kernel-checked walk up to `2·10⁶`
   (`RSBounds.HelfgottLow`) and, above, summation by parts from (2.17) and (2.14).
-* (2.19): unconditional. `RSBounds.HelfgottLow.sum_log_sq_primes_le_small` covers
-  `117 ≤ y < 2·10⁶ + 1` by a kernel-checked walk, and `LambdaMu.sum_log_sq_primes_le` covers
-  `y ≥ 2·10⁶`.
+* (2.19): `RSBounds.HelfgottLow.sum_log_sq_primes_le_small` covers `117 ≤ y < 2·10⁶ + 1` by an
+  unconditional kernel-checked walk, and `LambdaMu.sum_log_sq_primes_le` covers `y ≥ 2·10⁶` (from
+  `PlattGRH`, through the explicit bounds for `θ`).
 
 The only premise of (2.14)–(2.18) is RH up to height `1894438.5122`, which follows from `PlattGRH`
-at `q = 1` (`RSBounds.Moebius003.finiteRH_of_plattGRH`).
+at `q = 1` (`RSBounds.Moebius003.finiteRH_of_plattGRH`). (2.19) uses `PlattGRH` only above `2·10⁶`.
 -/
 
 open Finset
@@ -60,10 +60,12 @@ theorem sum_vonMangoldt_div_sqrt_lt_a18_book (h : PlattGRH) {y : ℝ} (hy : 1 �
   TernaryGoldbach.RSBounds.HelfgottLowBook.sum_vonMangoldt_div_sqrt_lt_a18
     (TernaryGoldbach.RSBounds.Moebius003.finiteRH_of_plattGRH h) hy
 
-/-- **[H, (2.19)]** on [H]'s range: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 117`. No
-hypothesis is needed. -/
-theorem sum_log_sq_primes_le_book {y : ℝ} (hy : 117 ≤ y) :
+/-- **[H, (2.19)]** on [H]'s range: `∑_{y/2 < p ≤ y} (log p)² ≤ ½ y log y` for `y ≥ 117`. Below
+`2·10⁶ + 1` RSBounds' walk needs no hypothesis; above, `LambdaMu.sum_log_sq_primes_le` uses
+`PlattGRH`. -/
+theorem sum_log_sq_primes_le_book (h : PlattGRH) {y : ℝ} (hy : 117 ≤ y) :
     ∑ p ∈ (Ioc ⌊y / 2⌋₊ ⌊y⌋₊).filter Nat.Prime, Real.log p ^ 2 ≤ 1 / 2 * y * Real.log y :=
-  _root_.RSBounds.HelfgottLow.sum_log_sq_primes_le_of (fun _ h => sum_log_sq_primes_le h) hy
+  haveI : Fact PlattGRH := ⟨h⟩
+  _root_.RSBounds.HelfgottLow.sum_log_sq_primes_le_of (fun _ hy' => sum_log_sq_primes_le hy') hy
 
 end TernaryGoldbach.Prelim

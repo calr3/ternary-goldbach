@@ -322,8 +322,9 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
   The minor arcs use it at `W ≥ V ≥ 2·10⁶` (`V₂ = ⌊T/3⌋`, second choice), so the Type II theorems
   assume `2·10⁶ ≤ V`. Below `2·10⁶` the `c√y` bounds are too weak for the constant `½` (with
   `c ≈ 33`, it closes analytically only from about `4·10⁷`; hence the sieve). [H]'s range `y ≥ 117`
-  is `sum_log_sq_primes_le_book` (`Prelim/PsiHelfgottBook.lean`): RSBounds' kernel-checked walk for
-  `117 ≤ y < 2·10⁶ + 1` (`RSBounds/HelfgottLow/`) and this bound above.
+  is `sum_log_sq_primes_le_book` (`Prelim/PsiHelfgottBook.lean`): RSBounds' unconditional
+  kernel-checked walk for `117 ≤ y < 2·10⁶ + 1` (`RSBounds/HelfgottLow/`) and this bound above, so
+  from `PlattGRH`.
 * (2.16) is only claimed for `y > 663` (it fails at `y = 3`), and (2.18) for `y ≥ 1`. Neither is used;
   both are in `Prelim/PsiHelfgottBook.lean` on [H]'s ranges, from RSBounds (`HelfgottLowBook`).
 

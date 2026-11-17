@@ -85,8 +85,10 @@ hypotheses.
 
 A full `lake build TernaryGoldbach Challenge Solution` succeeded on 2026-11-16 at commit `60ac565`,
 with RSBounds as a Lake dependency at `0393b52` (11924 jobs; about 8.5 hours on 4 cores, with
-Mathlib's prebuilt files). `#print axioms` gives only `propext`, `Classical.choice` and `Quot.sound`
-for both main theorems. With 16 GB of memory, `MinorArcs/G2TailNum.lean` was killed for lack of
+Mathlib's prebuilt files), and again on 2026-11-17 after RSBounds was bumped to `ec35ed4` (13435
+jobs; its new modules took about 1.5 hours). `#print axioms` gives only `propext`,
+`Classical.choice` and `Quot.sound` for both main theorems and for the theorems of
+`Prelim/PsiHelfgottBook.lean`. With 16 GB of memory, `MinorArcs/G2TailNum.lean` was killed for lack of
 memory while three other modules compiled alongside it; rerunning `lake build` compiled it alone.
 
 Every hypothesis has been checked against its source ([`HYPOTHESES.md`](HYPOTHESES.md)). The project's
