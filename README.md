@@ -102,12 +102,17 @@ echo 'import TernaryGoldbach
 
 The theorems can also be checked with [Comparator](https://github.com/leanprover/comparator)
 against `Challenge.lean`, which states them with Mathlib-only definitions (see
-[`comparator/README.md`](comparator/README.md)). **The current version has not been through
-Comparator yet.** The only recorded run is from 2026-11-06, at commit `83ac1e1`, when the main
-theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`).
-Comparator accepted both theorems then. The two-hypothesis statements have not been checked with
-it: an attempt on a 4-core machine ran its kernel replay for 11.5 hours without finishing, so it
-needs a long uninterrupted run.
+[`comparator/README.md`](comparator/README.md)). **The proof on `main` has not been through
+Comparator yet.** An attempt on a 4-core machine ran its kernel replay for 11.5 hours without
+finishing, so it needs a long uninterrupted run.
+
+The same two statements have passed Comparator with another proof. Helfgott reported on Zulip
+(2026-11-16) that Comparator accepted RSBounds' assembly of them, `RSBounds.Moebius003.UpstreamMain`, in 22 h 56 min. RSBounds'
+[challenge file](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator/TernaryGoldbachChallenge.lean) has the same definitions and the same two theorem
+statements as `Challenge.lean`, under other names. That proof is RSBounds' route, built on this
+repository at `192ca57`, not the proof on `main`. The earliest recorded run is from 2026-11-06, at
+commit `83ac1e1`, when the main theorems took four hypotheses (`RHUpTo`, `PlattGRH`,
+`BinaryGoldbachInput`, `RamareMoebius`); Comparator accepted both theorems then.
 
 CI (`.github/workflows/ci.yml`) does not run the full build, which takes many hours. On every push
 and pull request it runs `scripts/ci_checks.py` (no Lean needed): imports resolve against

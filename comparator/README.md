@@ -43,12 +43,20 @@ unprivileged user namespaces or a setuid-root `bwrap`.
 
 ## Status
 
-**The current statements have not been through Comparator yet.** `Challenge.lean` and
-`config.json` state the two-hypothesis theorems (`PlattGRH`, `BinaryGoldbachInput`), and no
-completed run has been recorded for them. An attempt on 2026-11-14, at commit `8f8d4c2`, in a
+**The proof on `main` has not been through Comparator yet.** `Challenge.lean` and `config.json`
+state the two-hypothesis theorems (`PlattGRH`, `BinaryGoldbachInput`), and no completed run of
+`Solution` has been recorded for them. An attempt on 2026-11-14, at commit `8f8d4c2`, in a
 container with 4 cores and 15 GB of memory, got through building and exporting `Challenge` and
 `Solution`. Its kernel replay of `Solution` then ran for 11.5 hours (single-threaded, about 3.7 GB)
 without finishing, and the container restarted before it gave a verdict.
+
+The same two statements have passed Comparator with another proof. Helfgott reported on Zulip
+(2026-11-16) that RSBounds' [Comparator configuration](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator-ternary-goldbach.json),
+which checks `RSBounds.Moebius003.UpstreamMain` against RSBounds'
+[challenge file](https://github.com/Garald1/RSBounds/blob/0393b52234b29baf18fbfd02a60a2fca341a5c64/comparator/TernaryGoldbachChallenge.lean), passed in 22 h 56 min. That challenge file has the same definitions and the same two theorem
+statements as `Challenge.lean` (as `ternary_goldbach_of_two_hypotheses` and
+`ternary_goldbach_large_of_plattGRH`), plus `ramareMoebius_of_plattGRH`. Its proof is RSBounds'
+assembly, built on this repository at `192ca57`.
 
 The only recorded run is of an earlier version. On 2026-11-06, at commit `83ac1e1`, the main
 theorems took four hypotheses (`RHUpTo`, `PlattGRH`, `BinaryGoldbachInput`, `RamareMoebius`), and
@@ -70,5 +78,6 @@ Notes for running it in a container:
 * On a kernel that supports only an older Landlock ABI, `landrun` needs `--best-effort`, which is a
   weaker sandbox. `Solution.lean` is the project's own code, so this matters less than it would for
   untrusted input; the kernel check is unaffected.
-* Expect the kernel replay of `Solution` to take well over 11 hours (see above): it re-checks
-  RSBounds' certificates. Use a machine that will not be interrupted.
+* Expect the kernel replay of `Solution` to take about a day (see above; RSBounds' run of the same
+  statements took 22 h 56 min): it re-checks RSBounds' certificates and the prime ladder. Use a
+  machine that will not be interrupted.
