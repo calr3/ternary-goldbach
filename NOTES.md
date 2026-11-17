@@ -403,6 +403,23 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
      `McheckSmall.lean`; `scripts/gen_mcheck_small.py`): a kernel walk at scale `10²⁰`, with `μ` by
      trial division (`muTD`) and `log(1 + 1/k)` from its Taylor series with Mathlib's remainder
      bound; `m̌` is monotone between integers. Tightest at `k = 30` (margin `8.7·10⁻⁶`).
+* **(2.22) with [H]'s `4/5`** (`MoebiusCoprimeSharp.lean`; not used by the main theorems):
+  [Ramb, Thm 1.12] (Ramaré has `0.78`), under `RamareMoebius` like the `2.8` version.
+  1. `m_q(x) = ∑_{a ≤ x, a q-factored} m(x/a)/a`; writing `a = d w²` with `d` squarefree (so `d ∣ q`),
+     `|m_q(x)| ≤ ∑_{d ∣ q squarefree} S(x/d)/d` with `S(y) = ∑_{w ≤ √y} |m(y/w²)|/w²` ([Ramb]'s `m*`
+     without the maximum), so `S(y) log y ≤ C` for `y ≥ 1` gives `C (q/φ(q))/log(x/q)`, since
+     `∑_{d ∣ q squarefree} 1/d ≤ q/φ(q)` (`MstarReduce.lean`).
+  2. `y ≥ e¹⁰` (`MstarLarge.lean`): Ramaré's `0.03/log z` for `z = y/w² ≥ 11815` (at most `0.12` from
+     `w⁴ ≤ y`, `0.027` from `w⁴ > y`) and the kernel's `|m(z)| ≤ √(2/z)` below (at most
+     `2√2 t(1+t)e^{−t} ≤ 0.574`, `t = log √y ≥ 5`): `S(y) log y ≤ 0.72`.
+  3. `1 ≤ y < e¹⁰` (`SmallMstar.lean`, `SmallMstarTable.lean`, `SmallMstarTData1–2.lean`,
+     `SmallMstarSData1–6.lean`, `SmallMstarMain.lean`; `scripts/gen_mstar_small.py`): `S` depends only
+     on `k = ⌊y⌋ ≤ 22026`, and the kernel checks `S(k) log(k+1) ≤ 0.8`; the maximum is `0.7832` at
+     `k = 10` (the same peak as `ℓ` above). A table of `⌈10¹² |m(j)|⌉` (blocks of 64 at the leaves of a
+     binary tree: one packed number made every lookup leave a large term in the kernel's cache) is
+     checked against `SmallMcheck`'s walk; the `S` walk keeps `S(k)` in its state and updates only the
+     terms with `w² ∣ k + 1`, since recomputing all `√k` terms costs about 14 MB of kernel cache per
+     `k`.
 * **(2.24)** for `x < 11815`: kernel (`SmallMoebius.lean`, `(k+1) m(k)² ≤ 2`).
 * (2.20) is proved elementarily (`MoebiusCoprime.lean`).
 
@@ -814,6 +831,7 @@ the circle method below `10²⁷` would also mean redoing the major arcs, (14.7)
 * (2.22) with `2.8` uses (2.21) through Ramaré's Liouville route. With Ramaré's `0.03/log x` that
   route gives about `1.78` at best (`scripts/liouville_222_model.py`): the small-`z` peak of
   `|ℓ(z)| log z` (`0.7831` as `z → 11⁻`) caps it. [H]'s `4/5` comes from a different argument of
-  Ramaré's [Ramb], not formalized. Downstream only `2.8` is needed (the `7.82` slot of Thm 3.1.1).
+  Ramaré's [Ramb, Thm 1.12], now formalized but not used (`MoebiusCoprimeSharp.lean`, see "Sums of
+  `μ`"). Downstream only `2.8` is needed (the `7.82` slot of Thm 3.1.1).
 * A cleaner Prop 11.2.3 (with `r_w ≥ wr`; see "Ch. 11: Prop 11.2.3 erratum") would lower the factor
   `1.398` in the ℓ∞ bound to about `1.25`, but not remove it.

@@ -226,7 +226,7 @@ The top level is [H, §14.4] (`Helfgott/Main.lean`).
   * bounds on `ψ`, `θ`, and sums of `Λ` and `μ`;
   * Mertens products ([H, Lemma C.2.2]);
   * the large sieves of [MV73];
-  * (2.22) with constant `2.8`, by Ramaré's Liouville route;
+  * (2.22) with constant `2.8`, by Ramaré's Liouville route (and, not used, with [H]'s `4/5`);
   * (2.23) in the form `q/φ(q) + 2.67` (and, not used, with [H]'s `1.00303 q/φ(q)`).
 * **Explicit prime number theorem** (`Explicit/`, `Prelim/ThetaExplicit.lean`):
   `|θ(n) − n| < n/log³n + ε_pl(n) n` for `n ≥ 10¹²`. Here `ε_pl(n) = 4.92·10⁻⁷` for
@@ -277,7 +277,7 @@ Because of the route we took:
 | (14.27) | major-arc total | `1.058259 x²/κ` | `1.049 x²/κ` | our own assembly of the main term and the error terms |
 | (14.28) | `E` in the minor-arc total | `8.4029·10⁻¹²` | `8·10⁻¹¹` | [H]'s value needs the sharp sup norms of Appendix A; we use the cruder `\|h_H\| ≤ 3.15` |
 | (14.51) | non-prime terms | `7.3306` | `35.5` | [H]'s formula and [H]'s `\|η_*\|_∞ ≤ 1.414`, with `\|η₊\|_∞ ≤ 1.94` for [H]'s `1.079955` (which needs the sharp sup norms of Appendix A) and elementary bounds for `ψ` and `ψ − θ` |
-| (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | [H]'s `4/5` comes from an argument of Ramaré's [Ramb] that is not formalized. We use Ramaré's Liouville route, which gives at best about `1.78` (`NOTES.md`); the proof needs only `2.8` |
+| (2.22) | `∑_{n≤x,(n,q)=1} μ(n)/n` | `4/5` | `2.8` | the minor arcs use Ramaré's Liouville route, which suffices. [H]'s `4/5` ([Ramb, Thm 1.12]) is proved too, under the same hypothesis (`Prelim/MoebiusCoprimeSharp.lean`) |
 | (2.23) | `∑ μ(n)/n log(x/n)` | `1.00303 q/φ(q)` | `q/φ(q) + 2.67` | the minor arcs use an elementary bound, which needs no hypothesis and suffices. [H]'s `1.00303 q/φ(q)` ([Ramb, Cor. 1.10]) is proved too, from `PlattGRH` (`Prelim/MoebiusLogSharp.lean`) |
 
 [H]'s constants on a narrower range:

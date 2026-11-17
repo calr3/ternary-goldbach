@@ -1691,7 +1691,8 @@ by Helfgott's formalization of `mobius003.tex` (Garald1/RSBounds). -/
 
 /- [H, (2.22)] (Ramaré [Ramb]: constant `4/5`) is proved with constant `2.8` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_coprime_le_log`), by Ramaré's Liouville route
-(Acta Arith. 165 (2014)) from the `q = 1` bound of `Prelim/MoebiusBound.lean`. -/
+(Acta Arith. 165 (2014)) from the `q = 1` bound of `Prelim/MoebiusBound.lean`, and with [H]'s `4/5`
+in `Prelim/MoebiusCoprimeSharp.lean` (`abs_sum_moebius_div_coprime_le_log_sharp`, not used). -/
 
 /- [H, (2.24)] (Helfgott's computation, `x ≤ 10¹²`) is proved for `0 < x < 11815` in
 `Prelim/LiouvilleBound.lean` (`abs_sum_moebius_div_le_sqrt`, kernel-checked in

@@ -82,7 +82,7 @@ differences from [H]; `NOTES.md` has the details.
  Helfgott's RSBounds (a Lake dependency; Prelim/RamareMoebius.lean); (2.14), (2.17) with [H]'s
  constants Prelim/PsiHelfgott.lean (RSBounds); (2.14)–(2.19) on [H]'s ranges
  Prelim/PsiHelfgottBook.lean (RSBounds, not used);
- (2.22) with 2.8 LiouvilleBound; (2.23) with q/φ(q) + 2.67 MoebiusLog (with [H]'s 1.00303:
+ (2.22) with 2.8 LiouvilleBound (with [H]'s 4/5: MoebiusCoprimeSharp, not used); (2.23) with q/φ(q) + 2.67 MoebiusLog (with [H]'s 1.00303:
  MoebiusLogSharp, not used); (2.24) for x < 11815
  SmallMoebius
 ```
