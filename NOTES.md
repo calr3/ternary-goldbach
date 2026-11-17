@@ -364,7 +364,7 @@ with Cor 8.0.2 (zeros with `|γ| > T₀`). [H] cites `N(T, χ)` with explicit er
 
 * **(2.21)** `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`, `x ≥ 11815` (`RamareMoebius`, `ramare_moebius`) is
   proved from `PlattGRH` (`ramareMoebius_of_plattGRH`) by Helfgott's formalization of
-  `mobius003.tex` (RSBounds, `RSBounds/Moebius003/`), which follows Ramaré's
+  `mobius003.tex` (RSBounds, `RSBounds/Moebius003/`), which follows Schoenfeld and Ramaré's
   recursive idea with inputs Schoenfeld's (5.6b*), PsiCert and kernel-checked `M` bounds
   (`MoebiusCert`). `MoebiusBound.lean` derives the weaker `0.55/(log x − 0.7521)` for `x ≥ 10¹⁰`
   from it.

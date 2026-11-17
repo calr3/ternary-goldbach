@@ -37,7 +37,7 @@ it depends on:
 
 Ramaré's bound `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x` for `x ≥ 11815` ([H, (2.21)], `RamareMoebius`) is
 proved from `PlattGRH` (`Prelim.ramareMoebius_of_plattGRH`). The proof is Helfgott's formalization
-of his note `mobius003.tex`, which follows Ramaré's recursive idea (Garald1/RSBounds, a Lake
+of his note `mobius003.tex`, which follows Schoenfeld and Ramaré's recursive idea (Garald1/RSBounds, a Lake
 dependency pinned to commit `ec35ed4`; see "Helfgott's RSBounds" below). The minor arcs take it as a
 `Fact` instance, which `Prelim/RamareMoebius.lean` provides from `Fact PlattGRH`. RSBounds also
 proves [H, (2.14)] and (2.17) with [H]'s constants `1.0004` and `1.0008` (`Prelim/PsiHelfgott.lean`),
@@ -381,10 +381,10 @@ The final margin is `0.0418 x²/κ`, against [H]'s `0.04877 x²/κ`.
 * O. Ramaré, Acta Arith. 157 (2013), Cor. 1.4 (the `q = 1` Möbius bound, [H, (2.21)]); Acta Arith.
   165 (2014) and hal-02572851 (Liouville route to (2.22)).
 * [Hm] H. A. Helfgott (with Claude), `mobius003.tex`, a proof of `|∑_{n≤x} μ(n)/n| ≤ 0.03/log x`
-  for `x ≥ 11815` along Ramaré's recursive idea, shared on the Lean Zulip; formalized in
+  for `x ≥ 11815` along Schoenfeld and Ramaré's recursive idea, shared on the Lean Zulip; formalized in
   Garald1/RSBounds (`RSBounds/Moebius003/`).
 * H. A. Helfgott, RSBounds, https://github.com/Garald1/RSBounds (commit `ec35ed4`), a Lake
-  dependency (MIT, with Apache 2.0 file headers; it contains code from PrimeNumberTheoremAnd, IEANTN
+  dependency (Apache 2.0, with a few files under MIT; it contains code from PrimeNumberTheoremAnd, IEANTN
   and teal-sea/zeta-lab, under their own licenses).
 * `Prelim/PNTMertens.lean` is ported from the PrimeNumberTheoremAnd project (Apache 2.0).
 
