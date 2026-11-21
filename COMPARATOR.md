@@ -18,6 +18,18 @@ curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf 
 source ~/.elan/env
 ```
 
+To avoid running the installer script, install `elan` from the distribution's signed packages
+instead (Ubuntu 24.04 has `elan` 3.1.0; Debian packages it too), and leave out
+`source ~/.elan/env` here and in step 4:
+
+```sh
+sudo apt-get update && sudo apt-get install -y git curl tmux bubblewrap elan
+```
+
+Either way, `elan` then downloads the Lean toolchain named in `lean-toolchain` from Lean's GitHub
+releases, and Lake fetches the dependencies and Mathlib's prebuilt files. Those downloads come
+over HTTPS, pinned by `lean-toolchain` and `lake-manifest.json`, but are not package-signed.
+
 ## 2. Sandbox check
 
 This must print `SANDBOX_OK`:
